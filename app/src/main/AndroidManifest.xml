@@ -2,20 +2,110 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.tpcreative.keepsafety">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
+        android:name=".common.services.KeepSafetyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/MyMaterialTheme.Base">
+        <activity
+            android:name=".ui.splashscreen.SplashScreenActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/name_sign_in_activity" />
+        <activity
+            android:name=".SignInActivityWithDrive"
+            android:label="@string/name_sign_in_activity" />
+        <activity
+            android:name=".IdTokenActivity"
+            android:label="@string/name_id_token_activity" />
+        <activity
+            android:name=".ServerAuthCodeActivity"
+            android:label="@string/name_auth_code_activity" />
+        <activity
+            android:name=".RestApiActivity"
+            android:label="@string/name_rest_activity" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <receiver android:name=".common.services.KeepSafetyReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Upload Google Drive -->
+
+        <service
+            android:name=".demo.events.MyDriveEventService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.drive.events.HANDLE_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".demo.QueryFilesActivity" />
+        <activity android:name=".demo.RetrieveContentsActivity" />
+        <activity android:name=".demo.RetrieveContentsWithProgressDialogActivity" />
+        <activity android:name=".demo.CreateFileActivity" />
+        <activity android:name=".demo.CreateEmptyFileActivity" />
+        <activity android:name=".demo.CreateFileInAppFolderActivity" />
+        <activity android:name=".demo.CreateFolderActivity" />
+        <activity android:name=".demo.DeleteFileActivity" />
+        <activity android:name=".demo.AppendContentsActivity" />
+        <activity android:name=".demo.RewriteContentsActivity" />
+        <activity android:name=".demo.EditMetadataActivity" />
+        <activity android:name=".demo.CreateFileWithCreatorActivity" />
+        <activity android:name=".demo.RetrieveMetadataActivity" />
+        <activity android:name=".demo.CreateFileInFolderActivity" />
+        <activity android:name=".demo.CreateFolderInFolderActivity" />
+        <activity android:name=".demo.QueryFilesInFolderActivity" />
+        <activity android:name=".demo.PinFileActivity" />
+        <activity android:name=".demo.events.ListenChangeEventsForFilesActivity" />
+        <activity android:name=".demo.events.SubscribeChangeEventsForFilesActivity" />
+        <activity android:name=".demo.QueryNonTextFilesActivity" />
+        <activity android:name=".demo.QueryFilesSharedWithMeActivity" />
+        <activity android:name=".demo.QueryFilesWithTitleActivity" />
+        <activity android:name=".demo.QueryStarredTextFilesActivity" />
+        <activity android:name=".demo.QueryTextOrHtmlFilesActivity" />
+        <activity android:name=".demo.InsertUpdateCustomPropertyActivity" />
+        <activity android:name=".demo.QueryFilesWithCustomPropertyActivity" />
+        <activity android:name=".demo.DeleteCustomPropertyActivity" />
+        <activity android:name=".demo.QuerySortedFilesActivity" />
+
+        <!-- Enter pin code -->
+        <activity
+            android:name=".ui.lockscreen.EnterPinActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.main_tab.MainTabActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.verify.VerifyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.askpermission.AskPermissionActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
