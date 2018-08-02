@@ -22,5 +22,4 @@
             android:layout_height="60dp"/>
 
     </RelativeLayout>
-
 </android.support.constraint.ConstraintLayout>

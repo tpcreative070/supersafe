@@ -13,6 +13,8 @@ public class SplashScreenActivity extends BaseActivity {
     private final int TIMER = 1000;
     private String value = "" ;
     private boolean grant_access;
+    private boolean isRunning;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -20,6 +22,7 @@ public class SplashScreenActivity extends BaseActivity {
         setContentView(R.layout.activity_splash_screen);
         value  = KeepSafetyApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
+        isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);
         if (KeepSafetyApplication.getInstance().isGrantAccess()){
             grant_access = true;
         }
@@ -31,11 +34,16 @@ public class SplashScreenActivity extends BaseActivity {
             @Override
             public void run() {
                 if (grant_access){
-                    if(!"".equals(value)){
-                        Navigator.onMoveToVerifyPin(SplashScreenActivity.this);
+                    if (isRunning){
+                        if(!"".equals(value)){
+                            Navigator.onMoveToVerifyPin(SplashScreenActivity.this);
+                        }
+                        else{
+                            Navigator.onMoveSetPin(SplashScreenActivity.this);
+                        }
                     }
                     else{
-                        Navigator.onMoveSetPin(SplashScreenActivity.this);
+                        Navigator.onMoveToDashBoard(SplashScreenActivity.this);
                     }
                 }
                 else{
@@ -44,8 +52,5 @@ public class SplashScreenActivity extends BaseActivity {
             }
         },TIMER);
     }
-
-
-
 
 }

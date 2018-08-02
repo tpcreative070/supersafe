@@ -110,7 +110,8 @@
     <string name="login_action">LOG IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
-    <string name="welcome">Welcome to SupperSafe</string>
+    <string name="welcome">Welcome to Suppersafe</string>
+    <string name="safe_detail">A safe place for your photos or videos</string>
 
     /*Clock Screen*/
 
@@ -128,5 +129,6 @@
     <string name="key_grant_access">grant_access</string>
     <string name="key_data">data</string>
     <string name="key_pin">pin</string>
+    <string name="key_running">running</string>
 
 </resources>

@@ -28,16 +28,17 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.ui.me.MeFragment;
 import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
 
-public class MainTabActivity extends AppCompatActivity {
+public class MainTabActivity extends BaseActivity {
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class MainTabActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
+        PrefsController.putBoolean(getString(R.string.key_running),true);
     }
 
     private void setupViewPager(ViewPager viewPager) {

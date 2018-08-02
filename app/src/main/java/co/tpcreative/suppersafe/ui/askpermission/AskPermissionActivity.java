@@ -36,7 +36,13 @@ public class AskPermissionActivity extends BaseActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Navigator.onMoveToLogin(AskPermissionActivity.this);
+                            boolean value = PrefsController.getBoolean(getString(R.string.key_running),false);
+                            if (value){
+                                Navigator.onMoveToLogin(AskPermissionActivity.this);
+                            }
+                            else{
+                                Navigator.onMoveToDashBoard(AskPermissionActivity.this);
+                            }
                             PrefsController.putBoolean(getString(R.string.key_grant_access),true);
                             KeepSafetyApplication.getInstance().initFolder();
                             finish();

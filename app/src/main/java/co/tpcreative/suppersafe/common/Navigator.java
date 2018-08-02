@@ -6,6 +6,7 @@ import android.os.Bundle;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
+import co.tpcreative.suppersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.suppersafe.ui.login.LoginActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
@@ -22,6 +23,13 @@ public class Navigator {
 
     public static void onMoveToLogin(Context context){
         Intent intent = new Intent(context, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveToDashBoard(Context context){
+        Intent intent = new Intent(context, DashBoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
