@@ -39,4 +39,5 @@ subprojects {
     ext.appTargetSdkVersion = 27
     ext.appConstraitLayout = "1.1.0"
     ext.build_versions_java_version = 1.8
+    ext.appRoomVersion = "1.1.1"
 }

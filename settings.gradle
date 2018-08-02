@@ -1,1 +1,1 @@
-include ':app','libraryfloatingbutton','lockscreen'
+include ':app','libraryfloatingbutton'

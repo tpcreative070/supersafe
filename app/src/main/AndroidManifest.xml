@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.tpcreative.keepsafety">
+    package="co.tpcreative.suppersafe">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -20,8 +20,8 @@
         android:theme="@style/MyMaterialTheme.Base">
         <activity
             android:name=".ui.splashscreen.SplashScreenActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -96,15 +96,20 @@
         <!-- Enter pin code -->
         <activity
             android:name=".ui.lockscreen.EnterPinActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.main_tab.MainTabActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.main_tab.MainTabActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.login.LoginActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.verify.VerifyActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.askpermission.AskPermissionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.verify.VerifyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.askpermission.AskPermissionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.dashboard.DashBoardActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 

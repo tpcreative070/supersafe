@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "co.tpcreative.keepsafety"
+        applicationId "co.tpcreative.suppersafe"
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1
@@ -99,6 +99,11 @@ dependencies {
     /*Gson*/
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    /*Room**/
+
+    implementation "android.arch.persistence.room:runtime:" + appRoomVersion
+    annotationProcessor "android.arch.persistence.room:compiler:" + appRoomVersion
+
 }
 
 /*Resolved duplicated for Google api client*/
@@ -109,7 +114,6 @@ configurations {
         exclude module: 'commons-logging'
     }
 }
-
 
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->

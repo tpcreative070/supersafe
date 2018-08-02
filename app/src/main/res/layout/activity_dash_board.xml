@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.DashBoardActivity">
+
+    <RelativeLayout
+        android:background="@color/colorBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_above="@+id/llFooter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:src="@color/colorButton"
+                android:layout_gravity="center"
+                android:layout_width="60dp"
+                android:layout_height="60dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llFooter"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_marginBottom="10dp"
+                android:id="@+id/btnGrantAccess"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_rounded"
+                android:text="@string/sign_up"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_high"/>
+
+            <Button
+                android:id="@+id/btnExit"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/colorButtonDark"
+                android:background="@null"
+                android:text="@string/signed_in"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
