@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name=".common.services.KeepSafetyApplication"
@@ -112,7 +113,8 @@
         <activity
             android:name=".ui.dashboard.DashBoardActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.signup.SignUpActivity"></activity>
+        <activity android:name=".ui.signup.SignUpActivity" />
+        <activity android:name=".ui.camera.CameraActivity"></activity>
     </application>
 
 </manifest>

@@ -100,7 +100,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
 
         }
     };
-    
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -121,5 +121,6 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     public Context getContext() {
         return getApplicationContext();
     }
+
 
 }

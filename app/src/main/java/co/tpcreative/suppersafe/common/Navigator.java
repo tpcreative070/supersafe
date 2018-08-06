@@ -6,6 +6,7 @@ import android.os.Bundle;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
+import co.tpcreative.suppersafe.ui.camera.CameraActivity;
 import co.tpcreative.suppersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
@@ -64,6 +65,11 @@ public class Navigator {
 
     public static void onMoveToSignUp(Context context){
         Intent intent = new Intent(context, SignUpActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveCamera(Context context){
+        Intent intent = new Intent(context, CameraActivity.class);
         context.startActivity(intent);
     }
 

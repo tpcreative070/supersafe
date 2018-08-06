@@ -1,5 +1,4 @@
 package co.tpcreative.suppersafe.ui.main_tab;
-import android.Manifest;
 import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;

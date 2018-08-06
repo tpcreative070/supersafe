@@ -1,4 +1,5 @@
 package co.tpcreative.suppersafe.ui.privates;
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,12 +13,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.FabWithLabelView;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import java.util.List;
+
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.BaseFragment;
+import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.common.services.KeepSafetyApplication;
+import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 
 public class PrivateFragment extends BaseFragment {
@@ -115,11 +131,46 @@ public class PrivateFragment extends BaseFragment {
                         return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
                     case R.id.fab_camera:
                         showToast(actionItem.getLabel(getContext()) + " Camera");
+                        onAddPermissionCamera();
                         return  false;
                 }
                 return true; // To keep the Speed Dial open
             }
         });
+    }
+
+
+    public void onAddPermissionCamera() {
+        Dexter.withActivity(getActivity())
+                .withPermissions(
+                        Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                           Navigator.onMoveCamera(getContext());
+                        }
+                        else{
+                            Log.d(TAG,"Permission is denied");
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            /*Miss add permission in manifest*/
+                            Log.d(TAG, "request permission is failed");
+                        }
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        /* ... */
+                        token.continuePermissionRequest();
+                    }
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Log.d(TAG, "error ask permission");
+                    }
+                }).onSameThread().check();
     }
 
     @Override
