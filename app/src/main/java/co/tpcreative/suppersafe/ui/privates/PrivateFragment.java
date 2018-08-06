@@ -172,6 +172,7 @@ public class PrivateFragment extends BaseFragment {
                     }
                 }).onSameThread().check();
     }
+    
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
