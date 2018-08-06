@@ -24,6 +24,7 @@ public class EnterPinActivity extends BaseActivity {
     public static final int RESULT_BACK_PRESSED = RESULT_FIRST_USER;
     //    public static final int RESULT_TOO_MANY_TRIES = RESULT_FIRST_USER + 1;
     public static final String EXTRA_SET_PIN = "set_pin";
+    public static final String EXTRA_SIGN_UP = "sign_up";
     public static final String EXTRA_FONT_TEXT = "textFont";
     public static final String EXTRA_FONT_NUM = "numFont";
 
@@ -38,12 +39,14 @@ public class EnterPinActivity extends BaseActivity {
     private TextView mTextAttempts;
 
     private boolean mSetPin = false;
+    private boolean mSignUp = false;
     private String mFirstPin = "";
     //    private int mTryCount = 0;
 
-    public static Intent getIntent(Context context, boolean setPin) {
+    public static Intent getIntent(Context context, boolean setPin,boolean isSignUp) {
         Intent intent = new Intent(context, EnterPinActivity.class);
         intent.putExtra(EXTRA_SET_PIN, setPin);
+        intent.putExtra(EXTRA_SIGN_UP,isSignUp);
         return intent;
     }
 
@@ -72,6 +75,7 @@ public class EnterPinActivity extends BaseActivity {
         mIndicatorDots = (IndicatorDots) findViewById(R.id.indicator_dots);
 
         mSetPin = getIntent().getBooleanExtra(EXTRA_SET_PIN, false);
+        mSignUp = getIntent().getBooleanExtra(EXTRA_SIGN_UP,false);
 
         if (mSetPin) {
             changeLayoutForSetPin();
@@ -180,7 +184,12 @@ public class EnterPinActivity extends BaseActivity {
             if (pin.equals(mFirstPin)) {
                 writePinToSharedPreferences(pin);
                 setResult(RESULT_OK);
-                Navigator.onMoveToMainTab(this);
+                if (mSignUp){
+                    Navigator.onMoveToSignUp(this);
+                }
+                else{
+                    Navigator.onMoveToMainTab(this);
+                }
             } else {
                 shake();
                 mTextTitle.setText(getString(R.string.pinlock_tryagain));

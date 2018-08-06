@@ -27,7 +27,7 @@ import com.google.android.gms.tasks.Task;
 public class SignInActivityWithDrive extends AppCompatActivity implements
         View.OnClickListener {
 
-    private static final String TAG = "SignInActivity";
+    private static final String TAG = "SignUpActivity";
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleSignInClient mGoogleSignInClient;

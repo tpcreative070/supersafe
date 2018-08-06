@@ -197,6 +197,17 @@ public class KeepSafetyApplication extends MultiDexApplication implements MultiD
         return "";
     }
 
+    public void onDeleteKey(){
+        if (!isPermissionRead()) {
+            Log.d(TAG, "Please grant access permission");
+            return ;
+        }
+        boolean isFile = storage.isFileExist(getKeepSafety() + key);
+        if (isFile){
+            storage.deleteFile(getKeepSafety()+key);
+        }
+    }
+
     public boolean isPermissionRead() {
         int permission = PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permission == PermissionChecker.PERMISSION_GRANTED) {

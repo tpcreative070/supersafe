@@ -1,6 +1,5 @@
 package co.tpcreative.suppersafe.ui.verify;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,9 +9,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
@@ -20,11 +17,8 @@ import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.services.KeepSafetyReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
-import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
-import co.tpcreative.suppersafe.ui.login.LoginActivity;
 
 public class VerifyActivity extends BaseActivity implements VerifyView, TextView.OnEditorActionListener{
-
 
     private static final String TAG = VerifyActivity.class.getSimpleName();
     @BindView(R.id.tvTitle)
@@ -57,7 +51,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     @OnClick(R.id.btnLogin)
     public void onLogin(View view){
         if (isNext){
-            Navigator.onMoveSetPin(this);
+            Navigator.onMoveSetPin(this,false);
             Utils.hideSoftKeyboard(this);
         }
     }
@@ -71,7 +65,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
             }
             if (isNext){
                 Log.d(TAG,"Next");
-                Navigator.onMoveSetPin(this);
+                Navigator.onMoveSetPin(this,false);
                 Utils.hideSoftKeyboard(this);
                 return true;
             }
@@ -106,8 +100,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
 
         }
     };
-
-
+    
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -128,4 +121,5 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     public Context getContext() {
         return getApplicationContext();
     }
+
 }

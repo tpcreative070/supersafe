@@ -5,12 +5,10 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 public class KeepSafetyService extends Service {
-
     @Override
     public void onCreate() {
         super.onCreate();
     }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

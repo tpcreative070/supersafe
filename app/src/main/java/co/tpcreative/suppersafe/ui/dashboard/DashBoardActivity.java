@@ -21,7 +21,7 @@ public class DashBoardActivity extends BaseActivity {
 
     @OnClick(R.id.btnSignUp)
     public void onClickedSignUp(View view){
-
+        Navigator.onMoveSetPin(this,true);
     }
 
 }

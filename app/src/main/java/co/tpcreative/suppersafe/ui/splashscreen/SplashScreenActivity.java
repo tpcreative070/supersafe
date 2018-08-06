@@ -36,10 +36,10 @@ public class SplashScreenActivity extends BaseActivity {
                 if (grant_access){
                     if (isRunning){
                         if(!"".equals(value)){
-                            Navigator.onMoveToVerifyPin(SplashScreenActivity.this);
+                            Navigator.onMoveToVerifyPin(SplashScreenActivity.this,false);
                         }
                         else{
-                            Navigator.onMoveSetPin(SplashScreenActivity.this);
+                            Navigator.onMoveSetPin(SplashScreenActivity.this,false);
                         }
                     }
                     else{

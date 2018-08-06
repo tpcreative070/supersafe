@@ -1,4 +1,4 @@
-package co.tpcreative.suppersafe.ui.login;
+package co.tpcreative.suppersafe.ui.signin;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,10 +18,9 @@ import co.tpcreative.suppersafe.common.services.KeepSafetyReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.User;
 
-public class LoginActivity extends BaseActivity implements TextView.OnEditorActionListener{
+public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener{
 
-
-    private static final String TAG = LoginActivity.class.getSimpleName();
+    private static final String TAG = SignInActivity.class.getSimpleName();
     @BindView(R.id.edtEmail)
     MaterialEditText edtEmail;
     @BindView(R.id.btnNext)
@@ -32,7 +31,7 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signin);
         edtEmail.setOnEditorActionListener(this);
         edtEmail.addTextChangedListener(mTextWatcher);
         user = new User();
@@ -42,7 +41,7 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
             if (!KeepSafetyReceiver.isConnected()){
-                Utils.showDialog(LoginActivity.this,getString(R.string.internet));
+                Utils.showDialog(SignInActivity.this,getString(R.string.internet));
                 return false;
             }
             if (isNext){
@@ -60,7 +59,7 @@ public class LoginActivity extends BaseActivity implements TextView.OnEditorActi
     @OnClick(R.id.btnNext)
     public void onNext(View view){
         if (!KeepSafetyReceiver.isConnected()){
-            Utils.showDialog(LoginActivity.this,getString(R.string.internet));
+            Utils.showDialog(SignInActivity.this,getString(R.string.internet));
             return ;
         }
         if (isNext){

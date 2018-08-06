@@ -101,7 +101,7 @@
             android:name=".ui.main_tab.MainTabActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.signin.SignInActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.verify.VerifyActivity"
@@ -109,8 +109,10 @@
         <activity
             android:name=".ui.askpermission.AskPermissionActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.dashboard.DashBoardActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.dashboard.DashBoardActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.signup.SignUpActivity"></activity>
     </application>
 
 </manifest>

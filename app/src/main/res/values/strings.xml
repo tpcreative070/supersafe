@@ -99,7 +99,7 @@
     <string name="keep_safety">Suppersafe needs access to your file storage</string>
     <string name="allow">This allows Suppersafe to access and encrypt your photos or videos.</string>
     <string name="exit">EXIT</string>
-    <string name="login">Log in with your Supper Safe account email</string>
+    <string name="login">SIGN IN with your Supper Safe account email</string>
     <string name="email">Email</string>
     <string name="next">NEXT</string>
     <string name="confirm">Confirm</string>
@@ -107,11 +107,14 @@
     <string name="yes">YES</string>
     <string name="verify_title">Check %1$s for an access code to log in</string>
     <string name="code">Access code</string>
-    <string name="login_action">LOG IN</string>
+    <string name="login_action">SIGN IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
     <string name="welcome">Welcome to Suppersafe</string>
     <string name="safe_detail">A safe place for your photos or videos</string>
+    <string name="title_forget">Add an email in the case you forget</string>
+    <string name="name">Name</string>
+    <string name="finish">Finish</string>
 
     /*Clock Screen*/
 
