@@ -1,7 +1,11 @@
 package co.tpcreative.suppersafe.common;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
+import com.darsh.multipleimageselect.helpers.Constants;
 
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.model.User;
@@ -70,8 +74,17 @@ public class Navigator {
 
     public static void onMoveCamera(Context context){
         Intent intent = new Intent(context, CameraActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
+    public static void onMoveToAlbum(Activity activity){
+        Intent intent = new Intent(activity, AlbumSelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_LIMIT, 10);
+        activity.startActivityForResult(intent, Constants.REQUEST_CODE);
+    }
+
+
 
 
 }

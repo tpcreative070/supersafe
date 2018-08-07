@@ -1,58 +1,92 @@
 package co.tpcreative.suppersafe.ui.main_tab;
-import android.content.Context;
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+import com.darsh.multipleimageselect.helpers.Constants;
+import com.darsh.multipleimageselect.models.Image;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.leinardi.android.speeddial.FabWithLabelView;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialView;
 import java.util.ArrayList;
 import java.util.List;
+import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.ui.demo.CheeseListFragment;
 import co.tpcreative.suppersafe.ui.me.MeFragment;
 import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
 
 public class MainTabActivity extends BaseActivity {
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    @BindView(R.id.speedDial)
+    SpeedDialView mSpeedDialView;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    private Toast mToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
-        saveFile(getApplicationContext(),"Hello World");
-        String result = load(getApplicationContext());
-        Log.d(TAG,"result : "+ result);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(false);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+
         setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
+        initSpeedDial(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new PrivateFragment(), getString(R.string.privates));
         adapter.addFragment(new MeFragment(), getString(R.string.me));
+        adapter.addFragment(new CheeseListFragment(),"demo");
         viewPager.setAdapter(adapter);
     }
 
@@ -85,34 +119,153 @@ public class MainTabActivity extends BaseActivity {
         }
     }
 
-    public boolean saveFile(Context context, String mytext){
-        Log.i("TESTE", "SAVE");
-        try {
-            FileOutputStream fos = context.openFileOutput("file_name"+".txt",Context.MODE_PRIVATE);
-            Writer out = new OutputStreamWriter(fos);
-            out.write(mytext);
-            out.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+
+    private void initSpeedDial(boolean addActionItems) {
+        if (addActionItems) {
+            Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
+            FabWithLabelView fabWithLabelView = mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
+                    .fab_camera, drawable)
+                    .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,getTheme()))
+                    .setLabelColor(Color.WHITE)
+                    .setLabel(getString(R.string.camera))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
+                           getTheme()))
+                    .create());
+            if (fabWithLabelView != null) {
+                fabWithLabelView.setSpeedDialActionItem(fabWithLabelView.getSpeedDialActionItemBuilder()
+                        .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_white_1000,
+                               getTheme()))
+                        .create());
+            }
+
+            drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
+            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_green_500,
+                           getTheme()))
+                    .setLabel(R.string.photo)
+                    .setLabelColor(getResources().getColor(R.color.white))
+                    .setLabelBackgroundColor(getResources().getColor(R.color.colorBlue))
+                    .create());
+
+            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_album, R.drawable
+                    .baseline_add_to_photos_white_36)
+                    .setLabel(getString(R.string.album))
+                    .setTheme(R.style.AppTheme_Purple)
+                    .create());
+            mSpeedDialView.setMainFabAnimationRotateAngle(180);
+        }
+
+        //Set main action clicklistener.
+        mSpeedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+            @Override
+            public boolean onMainActionSelected() {
+                return false; // True to keep the Speed Dial open
+            }
+
+            @Override
+            public void onToggleChanged(boolean isOpen) {
+                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+            }
+        });
+
+        //Set option fabs clicklisteners.
+        mSpeedDialView.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
+            @Override
+            public boolean onActionSelected(SpeedDialActionItem actionItem) {
+                switch (actionItem.getId()) {
+                    case R.id.fab_album:
+                        showToast(" Album");
+                        return false; // false will close it without animation
+                    case R.id.fab_photo:
+                        showToast(actionItem.getLabel(getApplicationContext()) + " Photo");
+                        Navigator.onMoveToAlbum(MainTabActivity.this);
+                        return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
+                    case R.id.fab_camera:
+                        showToast(actionItem.getLabel(getApplicationContext()) + " Camera");
+                        onAddPermissionCamera();
+                        return  false;
+                }
+                return true; // To keep the Speed Dial open
+            }
+        });
+    }
+
+    public void onAddPermissionCamera() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            Navigator.onMoveCamera(getApplicationContext());
+                        }
+                        else{
+                            Log.d(TAG,"Permission is denied");
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            /*Miss add permission in manifest*/
+                            Log.d(TAG, "request permission is failed");
+                        }
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        /* ... */
+                        token.continuePermissionRequest();
+                    }
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Log.d(TAG, "error ask permission");
+                    }
+                }).onSameThread().check();
+    }
+
+    protected void showToast(String text) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+        mToast.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG,"Selected album :");
+        if (requestCode == Constants.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+            StringBuffer stringBuffer = new StringBuffer();
+            for (int i = 0, l = images.size(); i < l; i++) {
+                stringBuffer.append(images.get(i).path + "\n");
+            }
+            Log.d(TAG,"Selected album :" + stringBuffer.toString());
         }
     }
 
-    public String load(Context context){
-        Log.i("TESTE", "FILE");
-        try {
-            FileInputStream fis = context.openFileInput("file_name"+".txt");
-            BufferedReader r = new BufferedReader(new InputStreamReader(fis));
-            String line= r.readLine();
-            r.close();
-            return line;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("TESTE", "FILE - false");
-            return null;
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_tab, menu);
+        return true;
     }
 
+    public void onAnimationIcon(Menu menu){
+        MenuItem item = menu.getItem(0);
+        item.setIcon(R.drawable.upload_animation);
+        // Get the background, which has been compiled to an AnimationDrawable object.
+        AnimationDrawable frameAnimation = (AnimationDrawable) item.getIcon();
+        // Start the animation (looped playback by default).
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG,"running");
+                frameAnimation.start();
+            }
+        });
+    }
 
 }

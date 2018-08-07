@@ -109,6 +109,15 @@ dependencies {
 
     implementation project(':cameralibrary')
 
+    /*Multiple image select and Glide */
+
+    implementation project(':multipleimageselect')
+
+    /*Material Design*/
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+
 }
 
 /*Resolved duplicated for Google api client*/

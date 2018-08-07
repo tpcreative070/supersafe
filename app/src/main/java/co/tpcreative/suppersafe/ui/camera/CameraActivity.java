@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -222,6 +224,5 @@ public class CameraActivity extends BaseActivity implements
                 }
             });
         }
-
     };
 }

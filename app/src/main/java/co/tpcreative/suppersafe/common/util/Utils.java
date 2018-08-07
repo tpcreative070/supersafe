@@ -11,6 +11,13 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.snatik.storage.Storage;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -82,7 +89,34 @@ public class Utils {
     }
 
 
+    public boolean saveFile(Context context, String mytext){
+        Log.i("TESTE", "SAVE");
+        try {
+            FileOutputStream fos = context.openFileOutput("file_name"+".txt",Context.MODE_PRIVATE);
+            Writer out = new OutputStreamWriter(fos);
+            out.write(mytext);
+            out.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    public String load(Context context){
+        Log.i("TESTE", "FILE");
+        try {
+            FileInputStream fis = context.openFileInput("file_name"+".txt");
+            BufferedReader r = new BufferedReader(new InputStreamReader(fis));
+            String line= r.readLine();
+            r.close();
+            return line;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i("TESTE", "FILE - false");
+            return null;
+        }
+    }
 
 
 

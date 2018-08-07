@@ -114,7 +114,18 @@
             android:name=".ui.dashboard.DashBoardActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.signup.SignUpActivity" />
-        <activity android:name=".ui.camera.CameraActivity"></activity>
+        <activity android:name=".ui.camera.CameraActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name="com.darsh.multipleimageselect.activities.AlbumSelectActivity">
+            <intent-filter>
+                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ui.demo.CheeseDetailActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

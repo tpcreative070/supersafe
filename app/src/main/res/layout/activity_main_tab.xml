@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <android.support.design.widget.TabLayout
@@ -29,4 +29,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+
+    <com.leinardi.android.speeddial.SpeedDialOverlayLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:clickable_overlay="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.leinardi.android.speeddial.SpeedDialView
+        android:id="@+id/speedDial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="2dp"
+        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
+        app:sdExpansionMode="top"
+        app:sdMainFabAnimationRotateAngle="90"
+        app:sdMainFabClosedSrc="@drawable/baseline_add_white_24"
+        app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
+        app:sdOverlayLayout="@id/overlay" />
+
+
 </android.support.design.widget.CoordinatorLayout>

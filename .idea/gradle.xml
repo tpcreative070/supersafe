@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/cameralibrary" />
             <option value="$PROJECT_DIR$/floatingbuttonlibrary" />
+            <option value="$PROJECT_DIR$/multipleimageselect" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

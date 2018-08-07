@@ -46,8 +46,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorButton</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
     </style>
 
 
@@ -81,6 +81,16 @@
         <item name="colorPrimaryDark">@color/material_purple_700</item>
         <item name="colorAccent">@color/material_purple_a700</item>
         <item name="colorControlHighlight">@color/material_purple_200</item>
+    </style>
+
+    <!-- Material Design -->
+
+    <style name="Widget.CardContent" parent="android:Widget">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
 
