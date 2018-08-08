@@ -1,4 +1,5 @@
 package co.tpcreative.suppersafe.ui.camera;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,15 +19,19 @@ import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
 import com.google.gson.Gson;
+import com.snatik.storage.Storage;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.Encrypter;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.services.KeepSafetyApplication;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -58,10 +63,9 @@ public class CameraActivity extends BaseActivity implements
 
     private int mCurrentFlash;
 
-
     private Handler mBackgroundHandler;
-
-
+    private Encrypter encrypter;
+    private Storage storage;
 
     @BindView(R.id.camera)
     CameraView mCameraView;
@@ -83,7 +87,7 @@ public class CameraActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-
+        initEncrypt();
         if (mCameraView != null) {
             mCameraView.addCallback(mCallback);
         }
@@ -96,6 +100,16 @@ public class CameraActivity extends BaseActivity implements
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
+        }
+    }
+
+    public void initEncrypt(){
+        try{
+            storage = new Storage(getApplicationContext());
+            encrypter = new Encrypter();
+        }
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
         }
     }
 
@@ -209,6 +223,12 @@ public class CameraActivity extends BaseActivity implements
                         os = new FileOutputStream(file);
                         os.write(data);
                         os.close();
+
+                        String path = KeepSafetyApplication.getInstance().getKeepSafety()+"newFile.jpg";
+                        Uri outPut = Uri.parse(path);
+                        storage.deleteFile(path);
+                        storage.createFile(path,"");
+                        encrypter.encryptFile(file.getAbsolutePath(),outPut);
                         Log.d(TAG,file.getAbsolutePath());
                     } catch (IOException e) {
                         Log.w(TAG, "Cannot write to " + file, e);
@@ -218,6 +238,7 @@ public class CameraActivity extends BaseActivity implements
                                 os.close();
                             } catch (IOException e) {
                                 // Ignore
+                                e.printStackTrace();
                             }
                         }
                     }

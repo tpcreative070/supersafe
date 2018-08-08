@@ -157,11 +157,9 @@ public class KeepSafetyApplication extends MultiDexApplication implements MultiD
         }
     }
 
-
     public String getKeepSafety() {
         return keepSafety;
     }
-
 
     public void initFolder() {
         if (storage.isDirectoryExists(keepSafety)) {
