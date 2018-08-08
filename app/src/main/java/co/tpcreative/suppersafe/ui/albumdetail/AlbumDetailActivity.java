@@ -17,9 +17,7 @@ import android.view.View;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.ui.privates.PrivateAdapter;
-import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
-import co.tpcreative.suppersafe.ui.privates.PrivatePresenter;
+
 
 public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener{
     public static final String EXTRA_NAME = "cheese_name";

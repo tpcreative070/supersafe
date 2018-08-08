@@ -25,6 +25,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,8 +38,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.suppersafe.ui.me.MeFragment;
 
 public class CheeseListFragment extends Fragment {
+
+    private static final String TAG = CheeseListFragment.class.getSimpleName();
+
+    public static CheeseListFragment newInstance(int index) {
+        CheeseListFragment fragment = new CheeseListFragment();
+        Bundle b = new Bundle();
+        b.putInt("index", index);
+        fragment.setArguments(b);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -135,4 +148,14 @@ public class CheeseListFragment extends Fragment {
         }
 
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.d(TAG,"visit :"+isVisibleToUser);
+        if (isVisibleToUser) {
+            SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
+        }
+    }
+
 }

@@ -39,11 +39,12 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.ui.demo.CheeseListFragment;
 import co.tpcreative.suppersafe.ui.me.MeFragment;
 import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
 
-public class MainTabActivity extends BaseActivity {
+public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener{
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
@@ -55,16 +56,18 @@ public class MainTabActivity extends BaseActivity {
     @BindView(R.id.tabs)
     TabLayout tabLayout;
     private Toast mToast;
+    private MainViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
-
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(false);
+
+        SingletonManagerTab.getInstance().setListener(this);
 
 
         setupViewPager(viewPager);
@@ -83,11 +86,14 @@ public class MainTabActivity extends BaseActivity {
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new PrivateFragment(), getString(R.string.privates));
-        adapter.addFragment(new MeFragment(), getString(R.string.me));
-        adapter.addFragment(new CheeseListFragment(),"demo");
+        viewPager.setOffscreenPageLimit(3);
+        adapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void visitFloatingButton(int isVisit) {
+        mSpeedDialView.setVisibility(isVisit);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -100,6 +106,7 @@ public class MainTabActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Log.d(TAG,"position :" + position);
             return mFragmentList.get(position);
         }
 

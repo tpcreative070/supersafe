@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.BaseFragment;
 import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 
 public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener{
 
@@ -21,6 +22,16 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     private RecyclerView recyclerView;
     private PrivatePresenter presenter;
     private PrivateAdapter adapter;
+
+
+    public static PrivateFragment newInstance(int index) {
+        PrivateFragment fragment = new PrivateFragment();
+        Bundle b = new Bundle();
+        b.putInt("index", index);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
 
     public PrivateFragment() {
         // Required empty public constructor
@@ -131,6 +142,15 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.d(TAG,"visit :"+isVisibleToUser);
+        if (isVisibleToUser) {
+            SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
+        }
     }
 
 }
