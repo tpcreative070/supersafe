@@ -45,7 +45,7 @@ public class CheeseListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ConstraintLayout rv = (ConstraintLayout) inflater.inflate(
                 R.layout.fragment_cheese_list, container, false);
-        RecyclerView recyclerView = rv.findViewById(R.id.recyclerview);
+        RecyclerView recyclerView = rv.findViewById(R.id.recyclerView);
         setupRecyclerView(recyclerView);
         return rv;
     }
@@ -133,5 +133,6 @@ public class CheeseListFragment extends Fragment {
         public int getItemCount() {
             return mValues.size();
         }
+
     }
 }

@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".common.services.KeepSafetyApplication"
@@ -114,18 +114,18 @@
             android:name=".ui.dashboard.DashBoardActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.signup.SignUpActivity" />
-        <activity android:name=".ui.camera.CameraActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.camera.CameraActivity"
+            android:screenOrientation="portrait" />
         <activity android:name="com.darsh.multipleimageselect.activities.AlbumSelectActivity">
             <intent-filter>
-                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT"/>
+                <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.demo.CheeseDetailActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+        <activity
+            android:name=".ui.demo.CheeseDetailActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".ui.albumdetail.AlbumDetailActivity"></activity>
     </application>
 
 </manifest>

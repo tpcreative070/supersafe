@@ -1,6 +1,7 @@
-package co.tpcreative.suppersafe.ui.privates;
+package co.tpcreative.suppersafe.ui.albumdetail;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,13 +15,13 @@ import co.tpcreative.suppersafe.common.adapter.BaseAdapter;
 import co.tpcreative.suppersafe.common.adapter.BaseHolder;
 import co.tpcreative.suppersafe.model.Album;
 
-public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
+public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
 
     private Context context;
     private ItemSelectedListener itemSelectedListener;
-    private String TAG = PrivateAdapter.class.getSimpleName();
+    private String TAG = AlbumDetailAdapter.class.getSimpleName();
 
-    public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
+    public AlbumDetailAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
         this.itemSelectedListener = itemSelectedListener;
@@ -33,7 +34,7 @@ public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
 
     @Override
     public BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemHolder(inflater.inflate(R.layout.private_item, parent, false));
+        return new ItemHolder(inflater.inflate(R.layout.album_detail_item, parent, false));
     }
 
     public class ItemHolder extends BaseHolder<Album> {
@@ -41,7 +42,6 @@ public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
         public ItemHolder(View itemView) {
             super(itemView);
         }
-
         private Album data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
@@ -61,29 +61,26 @@ public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
             }
         }
 
-        @OnClick(R.id.overflow)
-        public void onClickedOverFlow(View view){
+        @OnClick(R.id.overflows)
+        public void onClickedOverFlows(View view){
             showPopupMenu(view,mPosition);
+            Log.d(TAG,"OverFlow");
         }
-
     }
 
     private void showPopupMenu(View view, int position) {
         PopupMenu popup = new PopupMenu(context, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_album, popup.getMenu());
+        inflater.inflate(R.menu.menu_album_detail, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener(position));
         popup.show();
     }
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
         int position;
-
         public MyMenuItemClickListener(int position) {
             this.position = position;
         }
-
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {

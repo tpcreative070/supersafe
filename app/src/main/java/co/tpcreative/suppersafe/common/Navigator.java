@@ -9,9 +9,11 @@ import com.darsh.multipleimageselect.helpers.Constants;
 
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.model.User;
+import co.tpcreative.suppersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.suppersafe.ui.camera.CameraActivity;
 import co.tpcreative.suppersafe.ui.dashboard.DashBoardActivity;
+import co.tpcreative.suppersafe.ui.demo.CheeseDetailActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
@@ -61,7 +63,6 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-
     public static void onMoveToVerifyPin(Context context,boolean isSignUp){
         Intent intent = EnterPinActivity.getIntent(context,false,isSignUp);
         context.startActivity(intent);
@@ -84,7 +85,11 @@ public class Navigator {
         activity.startActivityForResult(intent, Constants.REQUEST_CODE);
     }
 
-
+    public static void onMoveAlbumDetail(Context context){
+        Intent intent = new Intent(context, AlbumDetailActivity.class);
+        intent.putExtra(AlbumDetailActivity.EXTRA_NAME, "Hello World");
+        context.startActivity(intent);
+    }
 
 
 }

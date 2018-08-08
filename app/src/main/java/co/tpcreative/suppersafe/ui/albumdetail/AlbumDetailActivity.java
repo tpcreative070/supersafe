@@ -1,72 +1,72 @@
-package co.tpcreative.suppersafe.ui.privates;
+package co.tpcreative.suppersafe.ui.albumdetail;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+
+import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.BaseFragment;
-import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.ui.privates.PrivateAdapter;
+import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
+import co.tpcreative.suppersafe.ui.privates.PrivatePresenter;
 
-public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener{
+public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener{
+    public static final String EXTRA_NAME = "cheese_name";
 
-    private static final String TAG = PrivateFragment.class.getSimpleName();
-    private RecyclerView recyclerView;
-    private PrivatePresenter presenter;
-    private PrivateAdapter adapter;
-
-    public PrivateFragment() {
-        // Required empty public constructor
-    }
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+    private AlbumDetailPresenter presenter;
+    private AlbumDetailAdapter adapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected View getLayoutId(LayoutInflater inflater, ViewGroup viewGroup) {
-        ConstraintLayout view = (ConstraintLayout) inflater.inflate(
-                R.layout.fragment_private, viewGroup, false);
-        recyclerView = view.findViewById(R.id.recyclerView);
-        initRecycleView(inflater);
-        return view;
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return 0;
-    }
-
-    @Override
-    protected void work() {
-        presenter = new PrivatePresenter();
+        setContentView(R.layout.activity_album_detail);
+        presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         presenter.getData();
+
+        Intent intent = getIntent();
+        final String cheeseName = intent.getStringExtra(EXTRA_NAME);
+
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle(cheeseName);
+
+        initRecycleView(getLayoutInflater());
         adapter.setDataSource(presenter.mList);
-        super.work();
+
+
+
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){
-        adapter = new PrivateAdapter(layoutInflater,getContext(),this);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
+        adapter = new AlbumDetailAdapter(layoutInflater,getApplicationContext(),this);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
 
+
     @Override
     public void onClickItem(int position) {
-        Log.d(TAG,"Position :"+ position);
-        Navigator.onMoveAlbumDetail(getContext());
+
     }
 
     @Override
@@ -77,16 +77,6 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     @Override
     public void onPlayNextSelected(int position) {
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
@@ -132,5 +122,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
+
+
 
 }

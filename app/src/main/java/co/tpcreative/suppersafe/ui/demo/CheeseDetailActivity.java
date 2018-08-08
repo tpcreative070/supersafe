@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.activity.BaseActivity;
 
 public class CheeseDetailActivity extends AppCompatActivity {
 

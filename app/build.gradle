@@ -121,7 +121,6 @@ dependencies {
     implementation project(':gridviewlibrary')
 
 
-
 }
 
 /*Resolved duplicated for Google api client*/
