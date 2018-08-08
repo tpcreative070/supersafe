@@ -21,7 +21,7 @@ public abstract class BaseFragment extends Fragment {
     private Object object = new Object();
 
     protected abstract int getLayoutId();
-
+    protected abstract View getLayoutId(LayoutInflater inflater,ViewGroup viewGroup);
 
 
 
@@ -29,10 +29,18 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         isDead = false;
-        View view = inflater.inflate(getLayoutId(), container, false);
-        unbinder = ButterKnife.bind(this, view);
-        work();
-        return view;
+        final View viewResponse = getLayoutId(inflater,container);
+        if (viewResponse!=null){
+            unbinder = ButterKnife.bind(this, viewResponse);
+            work();
+           return viewResponse;
+        }
+        else{
+            View view = inflater.inflate(getLayoutId(), container, false);
+            unbinder = ButterKnife.bind(this, view);
+            work();
+            return view;
+        }
     }
 
     @Override

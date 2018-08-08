@@ -117,6 +117,10 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
+    /*GridView library*/
+    implementation project(':gridviewlibrary')
+
+
 
 }
 
