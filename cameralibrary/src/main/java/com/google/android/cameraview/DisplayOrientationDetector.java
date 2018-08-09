@@ -17,6 +17,8 @@
 package com.google.android.cameraview;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -29,6 +31,7 @@ import android.view.Surface;
 abstract class DisplayOrientationDetector {
 
     private final OrientationEventListener mOrientationEventListener;
+    private final String TAG = DisplayOrientationDetector.class.getSimpleName();
 
     /** Mapping from Surface.Rotation_n to degrees. */
     static final SparseIntArray DISPLAY_ORIENTATIONS = new SparseIntArray();

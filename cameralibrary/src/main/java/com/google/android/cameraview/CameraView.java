@@ -29,6 +29,7 @@ import android.support.v4.os.ParcelableCompat;
 import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import java.lang.annotation.Retention;
@@ -43,6 +44,8 @@ public class CameraView extends FrameLayout {
 
     /** The camera device faces the same direction as the device's screen. */
     public static final int FACING_FRONT = Constants.FACING_FRONT;
+
+    private static final String TAG = CameraView.class.getSimpleName();
 
     /** Direction the camera faces relative to device screen. */
     @IntDef({FACING_BACK, FACING_FRONT})
@@ -74,21 +77,28 @@ public class CameraView extends FrameLayout {
 
     private final CallbackBridge mCallbacks;
 
+    public static Context mContext = null;
+
     private boolean mAdjustViewBounds;
 
     private final DisplayOrientationDetector mDisplayOrientationDetector;
 
     public CameraView(Context context) {
         this(context, null);
+        mContext = context;
+        Log.d(TAG,"displayOrientation context");
     }
 
     public CameraView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        mContext = context;
+        Log.d(TAG,"displayOrientation context");
     }
 
     @SuppressWarnings("WrongConstant")
     public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        Log.d(TAG,"displayOrientation context");
         if (isInEditMode()){
             mCallbacks = null;
             mDisplayOrientationDetector = null;
@@ -122,6 +132,7 @@ public class CameraView extends FrameLayout {
         mDisplayOrientationDetector = new DisplayOrientationDetector(context) {
             @Override
             public void onDisplayOrientationChanged(int displayOrientation) {
+                Log.d(TAG,"displayOrientation :" + displayOrientation);
                 mImpl.setDisplayOrientation(displayOrientation);
             }
         };
@@ -149,6 +160,7 @@ public class CameraView extends FrameLayout {
     @Override
     protected void onDetachedFromWindow() {
         if (!isInEditMode()) {
+            Log.d(TAG,"displayOrientation : disable");
             mDisplayOrientationDetector.disable();
         }
         super.onDetachedFromWindow();
@@ -242,6 +254,7 @@ public class CameraView extends FrameLayout {
      * Open a camera device and start showing camera preview. This is typically called from
      * {@link Activity#onResume()}.
      */
+
     public void start() {
         if (!mImpl.start()) {
             //store the state ,and restore this state after fall back o Camera1
@@ -401,7 +414,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Take a picture. The result will be returned to
-     * {@link Callback#onPictureTaken(CameraView, byte[])}.
+     * {@link Callback#onPictureTaken(CameraView, byte[]),int orientation}.
      */
     public void takePicture() {
         mImpl.takePicture();
@@ -443,9 +456,9 @@ public class CameraView extends FrameLayout {
         }
 
         @Override
-        public void onPictureTaken(byte[] data) {
+        public void onPictureTaken(byte[] data,int orientation) {
             for (Callback callback : mCallbacks) {
-                callback.onPictureTaken(CameraView.this, data);
+                callback.onPictureTaken(CameraView.this, data,orientation);
             }
         }
 
@@ -533,7 +546,7 @@ public class CameraView extends FrameLayout {
          * @param cameraView The associated {@link CameraView}.
          * @param data       JPEG data.
          */
-        public void onPictureTaken(CameraView cameraView, byte[] data) {
+        public void onPictureTaken(CameraView cameraView, byte[] data,int orientation) {
         }
     }
 

@@ -1,26 +1,34 @@
 package co.tpcreative.suppersafe.common.util;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
+import android.os.Build;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import com.snatik.storage.Storage;
-
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import co.tpcreative.suppersafe.R;
 import de.mrapp.android.dialog.MaterialDialog;
 
@@ -30,6 +38,7 @@ import de.mrapp.android.dialog.MaterialDialog;
 
 public class Utils {
     // utility function
+    private static final String TAG = Utils.class.getSimpleName();
     private static String bytesToHexString(byte[] bytes) {
         // http://stackoverflow.com/questions/332079
         StringBuffer sb = new StringBuffer();
@@ -117,6 +126,161 @@ public class Utils {
             return null;
         }
     }
+
+
+
+    public static Bitmap getThumbnail(final byte[]data){
+        final int THUMBSIZE_HEIGHT = 600;
+        final int THUMBSIZE_WIDTH = 400;
+        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
+                BitmapFactory.decodeByteArray(data,0,data.length),
+                THUMBSIZE_HEIGHT,
+                THUMBSIZE_WIDTH);
+        return thumbImage;
+    }
+
+
+
+
+    public static Bitmap getThumbnail(File file){
+        final int THUMBSIZE_HEIGHT = 600;
+        final int THUMBSIZE_WIDTH = 400;
+        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
+                BitmapFactory.decodeFile(file.getAbsolutePath()),
+                THUMBSIZE_HEIGHT,
+                THUMBSIZE_WIDTH);
+        try {
+            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            }
+            else if (orientation == 3) {
+                matrix.postRotate(180);
+            }
+            else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return thumbImage;
+    }
+
+
+
+    public static Bitmap saveByteArrayBitmap(final byte[] data,final int orientation){
+        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+        try {
+            Matrix matrix = new Matrix();
+            matrix.setRotate(orientation+90);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true); // rotating bitmap
+            return bitmap;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+
+    public static Bitmap rotateBitmap(String src, Bitmap bitmap) {
+        try {
+            int orientation = getExifOrientation(src);
+
+            if (orientation == 1) {
+                return bitmap;
+            }
+
+            Matrix matrix = new Matrix();
+            switch (orientation) {
+                case 2:
+                    matrix.setScale(-1, 1);
+                    break;
+                case 3:
+                    matrix.setRotate(180);
+                    break;
+                case 4:
+                    matrix.setRotate(180);
+                    matrix.postScale(-1, 1);
+                    break;
+                case 5:
+                    matrix.setRotate(90);
+                    matrix.postScale(-1, 1);
+                    break;
+                case 6:
+                    matrix.setRotate(90);
+                    break;
+                case 7:
+                    matrix.setRotate(-90);
+                    matrix.postScale(-1, 1);
+                    break;
+                case 8:
+                    matrix.setRotate(-90);
+                    break;
+                default:
+                    return bitmap;
+            }
+
+            try {
+                Bitmap oriented = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                bitmap.recycle();
+                return oriented;
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                return bitmap;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return bitmap;
+    }
+
+    private static int getExifOrientation(String src) throws IOException {
+        int orientation = 1;
+        try {
+            /**
+             * if your are targeting only api level >= 5
+             * ExifInterface exif = new ExifInterface(src);
+             * orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+             */
+            if (Build.VERSION.SDK_INT >= 5) {
+                Class<?> exifClass = Class.forName("android.media.ExifInterface");
+                Constructor<?> exifConstructor = exifClass.getConstructor(new Class[] { String.class });
+                Object exifInstance = exifConstructor.newInstance(new Object[] { src });
+                Method getAttributeInt = exifClass.getMethod("getAttributeInt", new Class[] { String.class, int.class });
+                Field tagOrientationField = exifClass.getField("TAG_ORIENTATION");
+                String tagOrientation = (String) tagOrientationField.get(null);
+                orientation = (Integer) getAttributeInt.invoke(exifInstance, new Object[] { tagOrientation, 1});
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return orientation;
+    }
+
+
 
 
 

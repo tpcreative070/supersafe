@@ -1,4 +1,8 @@
 package co.tpcreative.suppersafe.ui.camera;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,26 +18,38 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
 import com.snatik.storage.Storage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 import java.util.Set;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Encrypter;
+import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.common.util.Utils;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
-        AspectRatioFragment.Listener {
+        AspectRatioFragment.Listener ,SensorOrientationChangeNotifier.Listener{
 
     private static final String TAG = CameraActivity.class.getSimpleName();
 
@@ -62,11 +78,12 @@ public class CameraActivity extends BaseActivity implements
     private int mCurrentFlash;
 
     private Handler mBackgroundHandler;
-    private Encrypter encrypter;
     private Storage storage;
+    private int mOrientation = 0;
 
     @BindView(R.id.camera)
     CameraView mCameraView;
+
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -85,7 +102,7 @@ public class CameraActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        initEncrypt();
+        storage = new Storage(this);
         if (mCameraView != null) {
             mCameraView.addCallback(mCallback);
         }
@@ -99,18 +116,33 @@ public class CameraActivity extends BaseActivity implements
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-    }
 
-    public void initEncrypt(){
         try{
-            storage = new Storage(getApplicationContext());
-            encrypter = new Encrypter();
+            String path = SupperSafeApplication.getInstance().getKeepSafety()+"picture.jpg";
+            File file = new File(path);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            path = SupperSafeApplication.getInstance().getKeepSafety()+"newFile.jpg";
+            SingletonEncryptData.getInstance().onDecryptData(fileInputStream,path);
         }
-        catch (NoSuchAlgorithmException e){
+        catch (Exception e){
             e.printStackTrace();
         }
+
+        mCameraView.start();
+
     }
 
+
+    @Override
+    public void onOrientationChange(int orientation) {
+        mOrientation = orientation;
+        if (orientation == 90 || orientation == 270){
+            Log.d(TAG,"OrientationChange Landscape :" + orientation);
+        } else {
+            // Do some portrait stuff
+            Log.d(TAG,"OrientationChange Portrait" + orientation);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,11 +154,13 @@ public class CameraActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         mCameraView.start();
+        SensorOrientationChangeNotifier.getInstance().addListener(this);
     }
 
     @Override
     protected void onPause() {
         mCameraView.stop();
+        SensorOrientationChangeNotifier.getInstance().remove(this);
         super.onPause();
     }
 
@@ -207,10 +241,11 @@ public class CameraActivity extends BaseActivity implements
         }
 
         @Override
-        public void onPictureTaken(CameraView cameraView, final byte[] data) {
+        public void onPictureTaken(CameraView cameraView, final byte[] data,int orientation) {
             Log.d(TAG, "onPictureTaken " + data.length);
             Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT)
                     .show();
+
             getBackgroundHandler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -218,12 +253,18 @@ public class CameraActivity extends BaseActivity implements
                             "picture.jpg");
                     OutputStream os = null;
                     try {
+
                         os = new FileOutputStream(file);
                         os.write(data);
                         os.close();
-                        String path = SupperSafeApplication.getInstance().getKeepSafety()+file.getName();
-                        //storage.createFile(path,data);
-                        SupperSafeApplication.getInstance().getStorage().createFile(path,data);
+
+
+//                        //SingletonEncryptData.getInstance().onEncryptData(myInputStream,path);
+                        Log.d(TAG,"displayOrientation " + mOrientation);
+                        Bitmap thumbnail = Utils.getThumbnail(file);
+                        SaveImage(thumbnail);
+
+
                     } catch (IOException e) {
                         Log.w(TAG, "Cannot write to " + file, e);
                     } finally {
@@ -240,6 +281,27 @@ public class CameraActivity extends BaseActivity implements
             });
         }
     };
+
+
+    public void SaveImage(Bitmap finalBitmap) {
+        String path = SupperSafeApplication.getInstance().getKeepSafety();
+        File myDir = new File(path);
+        myDir.mkdirs();
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        String fname = "Image-"+ n +".jpg";
+        File file = new File (myDir, fname);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

@@ -18,6 +18,7 @@ import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
 import co.tpcreative.suppersafe.ui.signup.SignUpActivity;
+import co.tpcreative.suppersafe.ui.slidepictures.SlidePicturesActivity;
 import co.tpcreative.suppersafe.ui.verify.VerifyActivity;
 
 public class Navigator {
@@ -88,6 +89,11 @@ public class Navigator {
     public static void onMoveAlbumDetail(Context context){
         Intent intent = new Intent(context, AlbumDetailActivity.class);
         intent.putExtra(AlbumDetailActivity.EXTRA_NAME, "Hello World");
+        context.startActivity(intent);
+    }
+
+    public static void onSlidePictures(Context context){
+        Intent intent = new Intent(context, SlidePicturesActivity.class);
         context.startActivity(intent);
     }
 

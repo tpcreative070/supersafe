@@ -42,7 +42,7 @@ import java.util.SortedSet;
 
 @SuppressWarnings("MissingPermission")
 @TargetApi(21)
-class Camera2 extends CameraViewImpl {
+class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.Listener {
 
     private static final String TAG = "Camera2";
 
@@ -162,7 +162,7 @@ class Camera2 extends CameraViewImpl {
                     ByteBuffer buffer = planes[0].getBuffer();
                     byte[] data = new byte[buffer.remaining()];
                     buffer.get(data);
-                    mCallback.onPictureTaken(data);
+                    mCallback.onPictureTaken(data,mDisplayOrientation);
                 }
             }
         }
@@ -209,6 +209,8 @@ class Camera2 extends CameraViewImpl {
 
     @Override
     boolean start() {
+        /*Adding Sensor Listener*/
+        SensorOrientationChangeNotifier.getInstance().addListener(this);
         if (!chooseCameraIdByFacing()) {
             return false;
         }
@@ -220,6 +222,8 @@ class Camera2 extends CameraViewImpl {
 
     @Override
     void stop() {
+        /*Adding Sensor Listener*/
+        SensorOrientationChangeNotifier.getInstance().remove(this);
         if (mCaptureSession != null) {
             mCaptureSession.close();
             mCaptureSession = null;
@@ -345,6 +349,15 @@ class Camera2 extends CameraViewImpl {
     void setDisplayOrientation(int displayOrientation) {
         mDisplayOrientation = displayOrientation;
         mPreview.setDisplayOrientation(mDisplayOrientation);
+        Log.d(TAG,"displayOrientation "+ displayOrientation);
+    }
+
+    @Override
+    public void onOrientationChange(int orientation) {
+        Log.d(TAG,"displayOrientation " +orientation);
+        mDisplayOrientation = 0;
+        mDisplayOrientation = orientation+90;
+        Log.d(TAG,"displayOrientation final " +mDisplayOrientation);
     }
 
     /**
@@ -630,10 +643,24 @@ class Camera2 extends CameraViewImpl {
             @SuppressWarnings("ConstantConditions")
             int sensorOrientation = mCameraCharacteristics.get(
                     CameraCharacteristics.SENSOR_ORIENTATION);
+
+
+            /*
+
+            Old version
+
             captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,
                     (sensorOrientation +
                             mDisplayOrientation * (mFacing == Constants.FACING_FRONT ? 1 : -1) +
                             360) % 360);
+
+                            */
+
+            if (mDisplayOrientation==0){
+                mDisplayOrientation = 90;
+            }
+            captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,mDisplayOrientation);
+
             // Stop preview and capture a still picture.
             mCaptureSession.stopRepeating();
             mCaptureSession.capture(captureRequestBuilder.build(),

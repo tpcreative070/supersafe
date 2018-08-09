@@ -79,8 +79,14 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case android.R.id.home:{
                 return true;
+            }
+            case R.id.switch_flash :{
+                Log.d(TAG,"Call here");
+                Navigator.onSlidePictures(this);
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

@@ -17,10 +17,12 @@
 package com.google.android.cameraview;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
 import android.support.v4.util.SparseArrayCompat;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import java.io.IOException;
@@ -31,11 +33,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 @SuppressWarnings("deprecation")
-class Camera1 extends CameraViewImpl {
+class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.Listener {
 
     private static final int INVALID_CAMERA_ID = -1;
 
+
     private static final SparseArrayCompat<String> FLASH_MODES = new SparseArrayCompat<>();
+
+    private static final String TAG = Camera1.class.getSimpleName();
 
     static {
         FLASH_MODES.put(Constants.FLASH_OFF, Camera.Parameters.FLASH_MODE_OFF);
@@ -71,6 +76,7 @@ class Camera1 extends CameraViewImpl {
 
     private int mDisplayOrientation;
 
+
     Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
         preview.setCallback(new PreviewImpl.Callback() {
@@ -86,6 +92,10 @@ class Camera1 extends CameraViewImpl {
 
     @Override
     boolean start() {
+
+        /*Adding Sensor Listener*/
+        SensorOrientationChangeNotifier.getInstance().addListener(this);
+
         chooseCamera();
         openCamera();
         if (mPreview.isReady()) {
@@ -96,8 +106,14 @@ class Camera1 extends CameraViewImpl {
         return true;
     }
 
+
+
     @Override
     void stop() {
+
+        /*Adding Sensor Listener*/
+        SensorOrientationChangeNotifier.getInstance().remove(this);
+
         if (mCamera != null) {
             mCamera.stopPreview();
         }
@@ -242,7 +258,7 @@ class Camera1 extends CameraViewImpl {
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
                     isPictureCaptureInProgress.set(false);
-                    mCallback.onPictureTaken(data);
+                    mCallback.onPictureTaken(data,mDisplayOrientation);
                     camera.cancelAutoFocus();
                     camera.startPreview();
                 }
@@ -250,8 +266,10 @@ class Camera1 extends CameraViewImpl {
         }
     }
 
+
     @Override
     void setDisplayOrientation(int displayOrientation) {
+        Log.d(TAG,"displayOrientation " +displayOrientation);
         if (mDisplayOrientation == displayOrientation) {
             return;
         }
@@ -268,6 +286,16 @@ class Camera1 extends CameraViewImpl {
                 mCamera.startPreview();
             }
         }
+    }
+
+
+    @Override
+    public void onOrientationChange(int orientation) {
+        Log.d(TAG,"displayOrientation " +orientation);
+        mDisplayOrientation = 0;
+        mDisplayOrientation = orientation+90;
+        mCameraParameters.setRotation(mDisplayOrientation);
+        Log.d(TAG,"displayOrientation final " +mDisplayOrientation);
     }
 
     /**

@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.security.NoSuchAlgorithmException;
 
 import butterknife.BindView;
@@ -26,6 +27,7 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Encrypter;
 import co.tpcreative.suppersafe.common.adapter.BaseAdapter;
 import co.tpcreative.suppersafe.common.adapter.BaseHolder;
+import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.Album;
 
@@ -80,29 +82,22 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
         public void bind(Album data, int position) {
             super.bind(data, position);
             imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
-
-            String path = SupperSafeApplication.getInstance().getKeepSafety()+"picture.jpg";
-
-          //  byte[] bitmapdata = SupperSafeApplication.getInstance().getStorage().readFile(path);
-          //  Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-          //  imgAlbum.setImageBitmap(bitmap);
-
-//            Glide.with(context)
-//                    .asBitmap()
-//                    .load(bitmap)
-//                    .apply(options)
-//                    .into(imgAlbum);
-
-//            String path = SupperSafeApplication.getInstance().getKeepSafety()+"newFile.jpg";
-//            String outPut = SupperSafeApplication.getInstance().getKeepSafety()+"newFilePut.jpg";
-//            File file = new File(outPut);
-//            if (!file.exists()){
-//                storage.createFile(file.getAbsolutePath(),"");
+            String path = SupperSafeApplication.getInstance().getKeepSafety() + "picture.jpg";
+            File file = new File(path);
+//            try{
+//                FileInputStream fileInputStream = new FileInputStream(file);
+//                Bitmap bitmap = SingletonEncryptData.getInstance().onDecryptData(fileInputStream);
+//                Glide.with(context)
+//                        .asBitmap()
+//                        .load(bitmap)
+//                        .apply(options)
+//                        .into(imgAlbum);
 //            }
-//            encrypter.decryptFile(Uri.parse(path),outPut,"hgS+m1eNmYvrlAuRPvXJrA==");
-//            this.mPosition = position;
-        }
+//            catch (Exception e){
+//                e.printStackTrace();
+//            }
 
+        }
         @OnClick(R.id.rlHome)
         public void onClicked(View view){
             if (itemSelectedListener!=null){

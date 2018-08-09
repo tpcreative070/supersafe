@@ -124,8 +124,9 @@
         </activity>
         <activity
             android:name=".ui.demo.CheeseDetailActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".ui.albumdetail.AlbumDetailActivity"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.albumdetail.AlbumDetailActivity" />
+        <activity android:name=".ui.slidepictures.SlidePicturesActivity"></activity>
     </application>
 
 </manifest>

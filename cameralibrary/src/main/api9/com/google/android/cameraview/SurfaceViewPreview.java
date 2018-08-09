@@ -18,6 +18,7 @@ package com.google.android.cameraview;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -27,6 +28,8 @@ import android.view.ViewGroup;
 class SurfaceViewPreview extends PreviewImpl {
 
     final SurfaceView mSurfaceView;
+    private static final String TAG = SurfaceViewPreview.class.getSimpleName();
+
 
     SurfaceViewPreview(Context context, ViewGroup parent) {
         final View view = View.inflate(context, R.layout.surface_view, parent);
