@@ -18,9 +18,7 @@ import android.view.View;
 import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
-import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,13 +29,13 @@ import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Encrypter;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.services.KeepSafetyApplication;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
         AspectRatioFragment.Listener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = CameraActivity.class.getSimpleName();
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
@@ -223,13 +221,9 @@ public class CameraActivity extends BaseActivity implements
                         os = new FileOutputStream(file);
                         os.write(data);
                         os.close();
-
-                        String path = KeepSafetyApplication.getInstance().getKeepSafety()+"newFile.jpg";
-                        Uri outPut = Uri.parse(path);
-                        storage.deleteFile(path);
-                        storage.createFile(path,"");
-                        encrypter.encryptFile(file.getAbsolutePath(),outPut);
-                        Log.d(TAG,file.getAbsolutePath());
+                        String path = SupperSafeApplication.getInstance().getKeepSafety()+file.getName();
+                        //storage.createFile(path,data);
+                        SupperSafeApplication.getInstance().getStorage().createFile(path,data);
                     } catch (IOException e) {
                         Log.w(TAG, "Cannot write to " + file, e);
                     } finally {
@@ -246,4 +240,6 @@ public class CameraActivity extends BaseActivity implements
             });
         }
     };
+
+
 }

@@ -15,7 +15,7 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
-import co.tpcreative.suppersafe.common.services.KeepSafetyApplication;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class AskPermissionActivity extends BaseActivity {
 
@@ -44,7 +44,7 @@ public class AskPermissionActivity extends BaseActivity {
                                 Navigator.onMoveToDashBoard(AskPermissionActivity.this);
                             }
                             PrefsController.putBoolean(getString(R.string.key_grant_access),true);
-                            KeepSafetyApplication.getInstance().initFolder();
+                            SupperSafeApplication.getInstance().initFolder();
                             finish();
                         }
                         else{

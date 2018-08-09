@@ -5,7 +5,7 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
-import co.tpcreative.suppersafe.common.services.KeepSafetyApplication;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class SplashScreenActivity extends BaseActivity {
 
@@ -20,16 +20,16 @@ public class SplashScreenActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        value  = KeepSafetyApplication.getInstance().readKey();
+        value  = SupperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
         isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);
-        if (KeepSafetyApplication.getInstance().isGrantAccess()){
+        if (SupperSafeApplication.getInstance().isGrantAccess()){
             grant_access = true;
         }
         else{
             grant_access = false;
         }
-        KeepSafetyApplication.getInstance().initFolder();
+        SupperSafeApplication.getInstance().initFolder();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-public class KeepSafetyService extends Service {
+public class SupperSafeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();

@@ -14,7 +14,7 @@ import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.services.KeepSafetyReceiver;
+import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.User;
 
@@ -40,7 +40,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            if (!KeepSafetyReceiver.isConnected()){
+            if (!SupperSafeReceiver.isConnected()){
                 Utils.showDialog(SignInActivity.this,getString(R.string.internet));
                 return false;
             }
@@ -58,7 +58,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
 
     @OnClick(R.id.btnNext)
     public void onNext(View view){
-        if (!KeepSafetyReceiver.isConnected()){
+        if (!SupperSafeReceiver.isConnected()){
             Utils.showDialog(SignInActivity.this,getString(R.string.internet));
             return ;
         }

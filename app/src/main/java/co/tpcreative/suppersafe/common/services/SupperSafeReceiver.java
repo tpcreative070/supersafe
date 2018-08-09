@@ -6,9 +6,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-public class KeepSafetyReceiver extends BroadcastReceiver {
+public class SupperSafeReceiver extends BroadcastReceiver {
 
-    public static final String TAG = KeepSafetyReceiver.class.getSimpleName();
+    public static final String TAG = SupperSafeReceiver.class.getSimpleName();
     public static ConnectivityReceiverListener connectivityReceiverListener;
 
     @Override
@@ -26,12 +26,11 @@ public class KeepSafetyReceiver extends BroadcastReceiver {
                 connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
             }
         }
-
     }
 
     public static boolean isConnected() {
         ConnectivityManager
-                cm = (ConnectivityManager) KeepSafetyApplication.getInstance().getApplicationContext()
+                cm = (ConnectivityManager) SupperSafeApplication.getInstance().getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null

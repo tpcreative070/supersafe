@@ -15,7 +15,7 @@ import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.services.KeepSafetyReceiver;
+import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 
 public class VerifyActivity extends BaseActivity implements VerifyView, TextView.OnEditorActionListener{
@@ -59,7 +59,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            if (!KeepSafetyReceiver.isConnected()){
+            if (!SupperSafeReceiver.isConnected()){
                 Utils.showDialog(VerifyActivity.this,getString(R.string.internet));
                 return false;
             }

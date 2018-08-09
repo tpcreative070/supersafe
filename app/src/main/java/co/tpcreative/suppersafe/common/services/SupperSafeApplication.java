@@ -14,28 +14,17 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 
-import java.util.List;
-
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
-import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
 
-public class KeepSafetyApplication extends MultiDexApplication implements MultiDexApplication.ActivityLifecycleCallbacks {
+public class SupperSafeApplication extends MultiDexApplication implements MultiDexApplication.ActivityLifecycleCallbacks {
 
-    private static final String TAG = KeepSafetyApplication.class.getSimpleName();
+    private static final String TAG = SupperSafeApplication.class.getSimpleName();
 
-    private static KeepSafetyApplication mInstance;
+    private static SupperSafeApplication mInstance;
     private String keepSafety;
     private String key;
     private Storage storage;
@@ -67,7 +56,7 @@ public class KeepSafetyApplication extends MultiDexApplication implements MultiD
                 .setEncryptContent(IVX, SECRET_KEY, SALT)
                 .build();
         storage = new Storage(getApplicationContext());
-        keepSafety = storage.getExternalStorageDirectory() + "/.KeepSafety_DoNot_Delete/";
+        keepSafety = storage.getExternalStorageDirectory() + "/.SupperSafe_DoNot_Delete/";
         key = ".encrypt_key";
         registerActivityLifecycleCallbacks(this);
     }
@@ -78,12 +67,12 @@ public class KeepSafetyApplication extends MultiDexApplication implements MultiD
         MultiDex.install(this);
     }
 
-    public static synchronized KeepSafetyApplication getInstance() {
+    public static synchronized SupperSafeApplication getInstance() {
         return mInstance;
     }
 
-    public void setConnectivityListener(KeepSafetyReceiver.ConnectivityReceiverListener listener) {
-        KeepSafetyReceiver.connectivityReceiverListener = listener;
+    public void setConnectivityListener(SupperSafeReceiver.ConnectivityReceiverListener listener) {
+        SupperSafeReceiver.connectivityReceiverListener = listener;
     }
 
     @Override
@@ -229,5 +218,8 @@ public class KeepSafetyApplication extends MultiDexApplication implements MultiD
        return false;
     }
 
+    public Storage getStorage() {
+        return storage;
+    }
 }
 

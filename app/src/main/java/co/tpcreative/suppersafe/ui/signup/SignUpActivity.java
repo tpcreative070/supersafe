@@ -14,7 +14,7 @@ import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.services.KeepSafetyReceiver;
+import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 
 public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener{
@@ -40,7 +40,7 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            if (!KeepSafetyReceiver.isConnected()){
+            if (!SupperSafeReceiver.isConnected()){
                 Utils.showDialog(SignUpActivity.this,getString(R.string.internet));
                 return false;
             }
@@ -52,7 +52,7 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
             return false;
         }
         else if (actionId == EditorInfo.IME_ACTION_DONE){
-            if (!KeepSafetyReceiver.isConnected()){
+            if (!SupperSafeReceiver.isConnected()){
                 Utils.showDialog(SignUpActivity.this,getString(R.string.internet));
                 return false;
             }

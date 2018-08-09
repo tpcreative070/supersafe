@@ -2,20 +2,15 @@ package co.tpcreative.suppersafe.ui.lockscreen;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.TextView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.controller.PrefsController;
-import co.tpcreative.suppersafe.common.services.KeepSafetyApplication;
-import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class EnterPinActivity extends BaseActivity {
 
@@ -164,15 +159,14 @@ public class EnterPinActivity extends BaseActivity {
         }
     }
 
-
     private void writePinToSharedPreferences(String pin) {
         //PrefsController.putString(getString(R.string.key_pin),Utils.sha256(pin));
-        KeepSafetyApplication.getInstance().writeKey(pin);
+        SupperSafeApplication.getInstance().writeKey(pin);
     }
 
     private String getPinFromSharedPreferences() {
         //PrefsController.getString(getString(R.string.key_pin), "");
-        return KeepSafetyApplication.getInstance().readKey();
+        return SupperSafeApplication.getInstance().readKey();
     }
 
     private void setPin(String pin) {
