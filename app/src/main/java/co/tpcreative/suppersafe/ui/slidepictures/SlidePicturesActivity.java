@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import java.io.File;
 
 import butterknife.BindView;
@@ -17,6 +20,7 @@ import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.ui.demo.Cheeses;
 
 public class SlidePicturesActivity extends BaseActivity {
 
@@ -30,7 +34,17 @@ public class SlidePicturesActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_pictures);
-        imgSlide.setImageBitmap(getThumbnail(90));
+
+        File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "picture.jpg");
+
+        RequestOptions options = new RequestOptions();
+        options.centerInside();
+        Glide.with(getApplicationContext())
+                .load(file)
+                .apply(options.fitCenter())
+                .into(imgSlide);
+
     }
 
     @OnClick(R.id.btnSlide)
@@ -41,7 +55,7 @@ public class SlidePicturesActivity extends BaseActivity {
         else{
             orientation+=90;
         }
-        Log.d(TAG,"OrientationChange :" + orientation);
+        Log.d(TAG,"displayOrientation :" + orientation);
         imgSlide.setImageBitmap(getThumbnail(orientation));
     }
 

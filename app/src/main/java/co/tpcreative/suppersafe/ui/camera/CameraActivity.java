@@ -260,7 +260,7 @@ public class CameraActivity extends BaseActivity implements
 
 
 //                        //SingletonEncryptData.getInstance().onEncryptData(myInputStream,path);
-                        Log.d(TAG,"displayOrientation " + mOrientation);
+                        Log.d(TAG,"displayOrientation callback :" + orientation);
                         Bitmap thumbnail = Utils.getThumbnail(file);
                         SaveImage(thumbnail);
 

@@ -19,6 +19,7 @@ package com.google.android.cameraview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.hardware.SensorEventListener;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -248,6 +249,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         if (mFacing == facing) {
             return;
         }
+        Log.d(TAG,"displayOrientation set face");
         mFacing = facing;
         if (isCameraOpened()) {
             stop();
@@ -347,17 +349,15 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void setDisplayOrientation(int displayOrientation) {
-        mDisplayOrientation = displayOrientation;
-        mPreview.setDisplayOrientation(mDisplayOrientation);
-        Log.d(TAG,"displayOrientation "+ displayOrientation);
+        //mDisplayOrientation = displayOrientation;
+        //mPreview.setDisplayOrientation(mDisplayOrientation);
+        mPreview.setDisplayOrientation(displayOrientation);
     }
 
     @Override
     public void onOrientationChange(int orientation) {
-        Log.d(TAG,"displayOrientation " +orientation);
-        mDisplayOrientation = 0;
-        mDisplayOrientation = orientation+90;
-        Log.d(TAG,"displayOrientation final " +mDisplayOrientation);
+        Log.d(TAG,"displayOrientation changed " +orientation);
+        mDisplayOrientation = orientation;
     }
 
     /**
@@ -656,10 +656,40 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
                             */
 
-            if (mDisplayOrientation==0){
-                mDisplayOrientation = 90;
+
+            int orientationResult = 0;
+            if (mFacing==Constants.FACING_FRONT) {
+                switch (mDisplayOrientation){
+                    case 0 :{
+                        orientationResult = 270;
+                        break;
+                    }
+                    case 90:{
+                        orientationResult = 180;
+                        break;
+                    }
+                    case 270:{
+                        orientationResult = 360;
+                        break;
+                    }
+                    default:{
+                        orientationResult = 90;
+                        break;
+                    }
+                }
             }
-            captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,mDisplayOrientation);
+            else{
+                if (mDisplayOrientation==0){
+                    orientationResult = 90;
+                }
+                else{
+                    orientationResult = mDisplayOrientation+90;
+                }
+            }
+
+            Log.d(TAG,"displayOrientation final " +orientationResult);
+
+            captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,orientationResult);
 
             // Stop preview and capture a still picture.
             mCaptureSession.stopRepeating();

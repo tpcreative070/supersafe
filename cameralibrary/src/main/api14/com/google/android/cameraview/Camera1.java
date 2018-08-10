@@ -266,17 +266,13 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         }
     }
 
-
     @Override
     void setDisplayOrientation(int displayOrientation) {
-        Log.d(TAG,"displayOrientation " +displayOrientation);
-        if (mDisplayOrientation == displayOrientation) {
-            return;
-        }
-        mDisplayOrientation = displayOrientation;
+        Log.d(TAG,"displayOrientation ??? " +displayOrientation);
+        //mDisplayOrientation = displayOrientation;
         if (isCameraOpened()) {
-            mCameraParameters.setRotation(calcCameraRotation(displayOrientation));
-            mCamera.setParameters(mCameraParameters);
+            //mCameraParameters.setRotation(calcCameraRotation(displayOrientation));
+            //mCamera.setParameters(mCameraParameters);
             final boolean needsToStopPreview = mShowingPreview && Build.VERSION.SDK_INT < 14;
             if (needsToStopPreview) {
                 mCamera.stopPreview();
@@ -288,19 +284,41 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         }
     }
 
-
     @Override
     public void onOrientationChange(int orientation) {
-        Log.d(TAG,"displayOrientation " +orientation);
-        mDisplayOrientation = 0;
-        mDisplayOrientation = orientation+90;
-        mCameraParameters.setRotation(mDisplayOrientation);
-        Log.d(TAG,"displayOrientation final " +mDisplayOrientation);
+        Log.d(TAG,"displayOrientation changed " +orientation);
+            switch (orientation){
+                case 0 :{
+                    mDisplayOrientation = 0;
+                    mCameraParameters.setRotation(calcCameraRotation(0));
+                    mCamera.setParameters(mCameraParameters);
+                    break;
+                }
+                case 90:{
+                    mDisplayOrientation = 270;
+                    mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
+                    mCamera.setParameters(mCameraParameters);
+                    break;
+                }
+                case 270:{
+                    mDisplayOrientation = 90;
+                    mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
+                    mCamera.setParameters(mCameraParameters);
+                    break;
+                }
+                default:{
+                    mDisplayOrientation = 180;
+                    mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
+                    mCamera.setParameters(mCameraParameters);
+                    break;
+                }
+       }
     }
 
     /**
      * This rewrites {@link #mCameraId} and {@link #mCameraInfo}.
      */
+
     private void chooseCamera() {
         for (int i = 0, count = Camera.getNumberOfCameras(); i < count; i++) {
             Camera.getCameraInfo(i, mCameraInfo);

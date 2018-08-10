@@ -1,13 +1,17 @@
 package co.tpcreative.suppersafe.ui.splashscreen;
 import android.os.Handler;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
-public class SplashScreenActivity extends BaseActivity {
+public class SplashScreenActivity extends BaseActivity implements SensorOrientationChangeNotifier.Listener{
 
     private Handler handler = new Handler();
     private final int TIMER = 1000;
@@ -52,5 +56,34 @@ public class SplashScreenActivity extends BaseActivity {
             }
         },TIMER);
     }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_tab, menu);
+        return true;
+    }
+
+
+    @Override
+    public void onOrientationChange(int orientation) {
+        Log.d(TAG,"displayOrientation " + orientation);
+        SupperSafeApplication.getInstance().setOrientation(orientation);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SensorOrientationChangeNotifier.getInstance().addListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SensorOrientationChangeNotifier.getInstance().remove(this);
+    }
+
 
 }

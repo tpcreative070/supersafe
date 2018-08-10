@@ -37,14 +37,16 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.ui.demo.CheeseListFragment;
 import co.tpcreative.suppersafe.ui.me.MeFragment;
 import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
 
-public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener{
+public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener{
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
@@ -57,6 +59,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     TabLayout tabLayout;
     private Toast mToast;
     private MainViewPagerAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,6 +266,25 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_tab, menu);
         return true;
+    }
+
+
+    @Override
+    public void onOrientationChange(int orientation) {
+        Log.d(TAG,"displayOrientation " + orientation);
+        SupperSafeApplication.getInstance().setOrientation(orientation);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SensorOrientationChangeNotifier.getInstance().addListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SensorOrientationChangeNotifier.getInstance().remove(this);
     }
 
     public void onAnimationIcon(Menu menu){

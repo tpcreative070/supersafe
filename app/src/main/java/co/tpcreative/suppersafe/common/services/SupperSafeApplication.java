@@ -36,6 +36,8 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
     /*Volley*/
     private RequestQueue mRequestQueue;
 
+    private int Orientation = 0;
+
 
     @Override
     public void onCreate() {
@@ -217,6 +219,16 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
        }
        return false;
     }
+
+    public int getOrientation() {
+        return Orientation;
+    }
+
+    public void setOrientation(int mOrientation) {
+        this.Orientation = mOrientation;
+    }
+
+
 
     public Storage getStorage() {
         return storage;

@@ -86,13 +86,11 @@ public class CameraView extends FrameLayout {
     public CameraView(Context context) {
         this(context, null);
         mContext = context;
-        Log.d(TAG,"displayOrientation context");
     }
 
     public CameraView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
         mContext = context;
-        Log.d(TAG,"displayOrientation context");
     }
 
     @SuppressWarnings("WrongConstant")
@@ -132,7 +130,6 @@ public class CameraView extends FrameLayout {
         mDisplayOrientationDetector = new DisplayOrientationDetector(context) {
             @Override
             public void onDisplayOrientationChanged(int displayOrientation) {
-                Log.d(TAG,"displayOrientation :" + displayOrientation);
                 mImpl.setDisplayOrientation(displayOrientation);
             }
         };
