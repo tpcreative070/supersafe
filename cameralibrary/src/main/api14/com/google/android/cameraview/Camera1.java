@@ -76,6 +76,8 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     private int mDisplayOrientation;
 
+    private int defaultOrientation ;
+
 
     Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -110,10 +112,9 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void stop() {
-
         /*Adding Sensor Listener*/
         SensorOrientationChangeNotifier.getInstance().remove(this);
-
+        Log.d(TAG,"displayOrientation Stop");
         if (mCamera != null) {
             mCamera.stopPreview();
         }
@@ -268,6 +269,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void setDisplayOrientation(int displayOrientation) {
+        defaultOrientation = displayOrientation;
         Log.d(TAG,"displayOrientation ??? " +displayOrientation);
         //mDisplayOrientation = displayOrientation;
         if (isCameraOpened()) {
@@ -277,7 +279,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             if (needsToStopPreview) {
                 mCamera.stopPreview();
             }
-            mCamera.setDisplayOrientation(calcDisplayOrientation(displayOrientation));
+            mCamera.setDisplayOrientation(calcDisplayOrientation(defaultOrientation));
             if (needsToStopPreview) {
                 mCamera.startPreview();
             }
@@ -290,7 +292,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             switch (orientation){
                 case 0 :{
                     mDisplayOrientation = 0;
-                    mCameraParameters.setRotation(calcCameraRotation(0));
+                    mCameraParameters.setRotation(calcCameraRotation(mDisplayOrientation));
                     mCamera.setParameters(mCameraParameters);
                     break;
                 }
@@ -351,7 +353,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             mAspectRatio = Constants.DEFAULT_ASPECT_RATIO;
         }
         adjustCameraParameters();
-        mCamera.setDisplayOrientation(calcDisplayOrientation(mDisplayOrientation));
+        mCamera.setDisplayOrientation(calcDisplayOrientation(defaultOrientation));
         mCallback.onCameraOpened();
     }
 
@@ -400,7 +402,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         int desiredHeight;
         final int surfaceWidth = mPreview.getWidth();
         final int surfaceHeight = mPreview.getHeight();
-        if (isLandscape(mDisplayOrientation)) {
+        if (isLandscape(defaultOrientation)) {
             desiredWidth = surfaceHeight;
             desiredHeight = surfaceWidth;
         } else {

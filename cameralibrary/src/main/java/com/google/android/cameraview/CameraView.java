@@ -159,6 +159,7 @@ public class CameraView extends FrameLayout {
         if (!isInEditMode()) {
             Log.d(TAG,"displayOrientation : disable");
             mDisplayOrientationDetector.disable();
+            SensorOrientationChangeNotifier.getInstance().clear();
         }
         super.onDetachedFromWindow();
     }

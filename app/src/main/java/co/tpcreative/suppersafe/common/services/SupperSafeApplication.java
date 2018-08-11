@@ -1,5 +1,4 @@
 package co.tpcreative.suppersafe.common.services;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -10,20 +9,16 @@ import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.PermissionChecker;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
-
-import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 
 public class SupperSafeApplication extends MultiDexApplication implements MultiDexApplication.ActivityLifecycleCallbacks {
 
     private static final String TAG = SupperSafeApplication.class.getSimpleName();
-
     private static SupperSafeApplication mInstance;
     private String keepSafety;
     private String key;
@@ -35,9 +30,7 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
     private static int stopped;
     /*Volley*/
     private RequestQueue mRequestQueue;
-
     private int Orientation = 0;
-
 
     @Override
     public void onCreate() {
@@ -58,7 +51,7 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
                 .setEncryptContent(IVX, SECRET_KEY, SALT)
                 .build();
         storage = new Storage(getApplicationContext());
-        keepSafety = storage.getExternalStorageDirectory() + "/.SupperSafe_DoNot_Delete/";
+        keepSafety = storage.getExternalStorageDirectory() + "/SupperSafe_DoNot_Delete/";
         key = ".encrypt_key";
         registerActivityLifecycleCallbacks(this);
     }
@@ -228,10 +221,9 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
         this.Orientation = mOrientation;
     }
 
-
-
     public Storage getStorage() {
         return storage;
     }
+
 }
 

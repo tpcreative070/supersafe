@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
@@ -39,7 +40,10 @@ public class SlidePicturesActivity extends BaseActivity {
                 "picture.jpg");
 
         RequestOptions options = new RequestOptions();
+        options.override(200,300);
         options.centerInside();
+        options.diskCacheStrategy(DiskCacheStrategy.NONE);
+        options.skipMemoryCache(true);
         Glide.with(getApplicationContext())
                 .load(file)
                 .apply(options.fitCenter())

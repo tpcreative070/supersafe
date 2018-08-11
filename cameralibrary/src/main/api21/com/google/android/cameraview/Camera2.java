@@ -37,6 +37,7 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 
 import java.nio.ByteBuffer;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.SortedSet;
@@ -315,6 +316,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void setFlash(int flash) {
+        Log.d(TAG,"displayOrientation set flash");
         if (mFlash == flash) {
             return;
         }
@@ -324,12 +326,21 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             updateFlash();
             if (mCaptureSession != null) {
                 try {
+                    Log.d(TAG,"displayOrientation repeat");
                     mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(),
                             mCaptureCallback, null);
                 } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                    Log.d(TAG,"displayOrientation error");
                     mFlash = saved; // Revert
                 }
             }
+            else{
+                Log.d(TAG,"displayOrientation session null");
+            }
+        }
+        else{
+            Log.d(TAG,"displayOrientation builder null");
         }
     }
 
@@ -555,6 +566,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
      * Updates the internal state of flash to {@link #mFlash}.
      */
     void updateFlash() {
+        Log.d(TAG,"displayOrientation flash " + mFlash);
         switch (mFlash) {
             case Constants.FLASH_OFF:
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,

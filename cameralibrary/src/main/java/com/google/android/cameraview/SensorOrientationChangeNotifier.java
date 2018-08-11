@@ -60,6 +60,10 @@ public class SensorOrientationChangeNotifier {
         remove(listenerWR);
     }
 
+    public void clear(){
+            mInstance = null;
+    }
+
     private void remove(WeakReference<Listener> listenerWR) {
         if (listenerWR != null)
             mListeners.remove(listenerWR);
