@@ -23,7 +23,6 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     private PrivatePresenter presenter;
     private PrivateAdapter adapter;
 
-
     public static PrivateFragment newInstance(int index) {
         PrivateFragment fragment = new PrivateFragment();
         Bundle b = new Bundle();
@@ -31,7 +30,6 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         fragment.setArguments(b);
         return fragment;
     }
-
 
     public PrivateFragment() {
         // Required empty public constructor
@@ -87,7 +85,6 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onPlayNextSelected(int position) {
-
     }
 
     @Override
