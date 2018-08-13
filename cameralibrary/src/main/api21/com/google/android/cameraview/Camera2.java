@@ -366,6 +366,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
      * <p>This rewrites {@link #mCameraId}, {@link #mCameraCharacteristics}, and optionally
      * {@link #mFacing}.</p>
      */
+    
     private boolean chooseCameraIdByFacing() {
         try {
             int internalFacing = INTERNAL_FACINGS.get(mFacing);
