@@ -42,9 +42,6 @@ import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
-import co.tpcreative.suppersafe.ui.demo.CheeseListFragment;
-import co.tpcreative.suppersafe.ui.me.MeFragment;
-import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
 
 public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener{
 
@@ -59,7 +56,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     TabLayout tabLayout;
     private Toast mToast;
     private MainViewPagerAdapter adapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,8 +129,8 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
-    }
 
+    }
 
     private void initSpeedDial(boolean addActionItems) {
         if (addActionItems) {
@@ -268,7 +264,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         return true;
     }
 
-
     @Override
     public void onOrientationChange(int orientation) {
         Log.d(TAG,"displayOrientation " + orientation);
@@ -293,7 +288,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         // Get the background, which has been compiled to an AnimationDrawable object.
         AnimationDrawable frameAnimation = (AnimationDrawable) item.getIcon();
         // Start the animation (looped playback by default).
-
         new Handler().post(new Runnable() {
             @Override
             public void run() {

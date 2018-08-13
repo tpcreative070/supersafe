@@ -1,8 +1,6 @@
 package co.tpcreative.suppersafe.ui.privates;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
 import co.tpcreative.suppersafe.model.Album;

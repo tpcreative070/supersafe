@@ -8,7 +8,6 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.os.Build;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -19,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -97,7 +95,6 @@ public class Utils {
         }
     }
 
-
     public boolean saveFile(Context context, String mytext){
         Log.i("TESTE", "SAVE");
         try {
@@ -127,8 +124,6 @@ public class Utils {
         }
     }
 
-
-
     public static Bitmap getThumbnail(final byte[]data){
         final int THUMBSIZE_HEIGHT = 600;
         final int THUMBSIZE_WIDTH = 400;
@@ -138,9 +133,6 @@ public class Utils {
                 THUMBSIZE_WIDTH);
         return thumbImage;
     }
-
-
-
 
     public static Bitmap getThumbnail(File file){
         final int THUMBSIZE_HEIGHT = 600;
@@ -171,8 +163,6 @@ public class Utils {
         return thumbImage;
     }
 
-
-
     public static Bitmap saveByteArrayBitmap(final byte[] data,final int orientation){
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
         try {
@@ -184,11 +174,8 @@ public class Utils {
         catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
-
-
 
     public static Bitmap rotateBitmap(String src, Bitmap bitmap) {
         try {
@@ -279,9 +266,5 @@ public class Utils {
         }
         return orientation;
     }
-
-
-
-
-
+    
 }
