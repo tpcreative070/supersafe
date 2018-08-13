@@ -90,10 +90,8 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     boolean start() {
-
         /*Adding Sensor Listener*/
         SensorOrientationChangeNotifier.getInstance().addListener(this);
-
         chooseCamera();
         openCamera();
         if (mPreview.isReady()) {

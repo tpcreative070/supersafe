@@ -15,11 +15,9 @@
  */
 
 package com.google.android.cameraview;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.hardware.SensorEventListener;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -35,9 +33,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
-
 import java.nio.ByteBuffer;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.SortedSet;
@@ -69,7 +65,6 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     private final CameraDevice.StateCallback mCameraDeviceCallback
             = new CameraDevice.StateCallback() {
-
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             mCamera = camera;
@@ -92,12 +87,10 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             Log.e(TAG, "onError: " + camera.getId() + " (" + error + ")");
             mCamera = null;
         }
-
     };
 
     private final CameraCaptureSession.StateCallback mSessionCallback
             = new CameraCaptureSession.StateCallback() {
-
         @Override
         public void onConfigured(@NonNull CameraCaptureSession session) {
             if (mCamera == null) {
@@ -127,11 +120,9 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                 mCaptureSession = null;
             }
         }
-
     };
 
     PictureCaptureCallback mCaptureCallback = new PictureCaptureCallback() {
-
         @Override
         public void onPrecaptureRequired() {
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
@@ -145,12 +136,10 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                 Log.e(TAG, "Failed to run precapture sequence.", e);
             }
         }
-
         @Override
         public void onReady() {
             captureStillPicture();
         }
-
     };
 
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
@@ -238,6 +227,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             mImageReader.close();
             mImageReader = null;
         }
+        Log.d(TAG,"displayOrientation Stop preview request builder");
     }
 
     @Override
@@ -699,7 +689,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                 }
             }
 
-            Log.d(TAG,"displayOrientation final " +orientationResult);
+            Log.d(TAG,"displayOrientation final " +orientationResult + " Flash :" + mFlash);
 
             captureRequestBuilder.set(CaptureRequest.JPEG_ORIENTATION,orientationResult);
 
