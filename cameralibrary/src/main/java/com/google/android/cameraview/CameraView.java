@@ -15,7 +15,6 @@
  */
 
 package com.google.android.cameraview;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -31,7 +30,6 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.FrameLayout;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;

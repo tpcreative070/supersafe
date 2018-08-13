@@ -15,7 +15,6 @@
  */
 
 package com.google.android.cameraview;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -24,13 +23,11 @@ import android.os.Build;
 import android.support.v4.util.SparseArrayCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 
 @SuppressWarnings("deprecation")
 class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.Listener {
@@ -78,7 +75,6 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     private int defaultOrientation ;
 
-
     Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
         preview.setCallback(new PreviewImpl.Callback() {
@@ -107,8 +103,6 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         mCamera.startPreview();
         return true;
     }
-
-
 
     @Override
     void stop() {

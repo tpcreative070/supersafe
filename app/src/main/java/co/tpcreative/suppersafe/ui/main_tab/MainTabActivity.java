@@ -68,7 +68,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
 
         SingletonManagerTab.getInstance().setListener(this);
 
-
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
