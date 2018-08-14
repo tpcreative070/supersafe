@@ -161,6 +161,9 @@
     <string name="url_developer">http://192.168.1.103:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
+    <string name="user_name">mail.suppersafe@gmail.com</string>
+    <string name="password">Phong@123</string>
+    <string name="tpcreative">tpcreative.co@gmail.com</string>
 
     /*Preference keys*/
     <string name="key_grant_access">grant_access</string>

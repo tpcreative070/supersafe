@@ -131,6 +131,56 @@ public class ManagerNetwork {
 
     }
 
+
+    public void onSignIn(final String email,ManagerNetworkListener ls){
+        Log.d(TAG,"url :" + url );
+        StringRequest jsonObjReq = new StringRequest(Request.Method.POST,
+                url+"/api/signin",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, response.toString());
+                        if (ls!=null){
+                            ls.showSuccessful(response.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                if (ls!=null){
+                    ls.showError(error.getMessage());
+                }
+            }
+
+        }) {
+
+            /**
+             * Passing some request headers
+             * */
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                headers.put("Authorization",SupperSafeApplication.getInstance().getApplicationContext().getString(R.string.authorization));
+                return headers;
+            }
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("email", email);
+                params.put("password","tpcreative.co");
+                return params;
+            }
+        };
+        // Adding request to request queue
+        SupperSafeApplication.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+    }
+
     public interface ManagerNetworkListener{
         void showError(final String message);
         void showSuccessful(final String message);

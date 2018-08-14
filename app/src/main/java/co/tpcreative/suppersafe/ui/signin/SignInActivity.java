@@ -1,4 +1,6 @@
 package co.tpcreative.suppersafe.ui.signin;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -18,7 +21,7 @@ import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.User;
 
-public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener{
+public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener, SignInView{
 
     private static final String TAG = SignInActivity.class.getSimpleName();
     @BindView(R.id.edtEmail)
@@ -27,6 +30,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     Button btnNext;
     private boolean isNext ;
     private User user;
+    private SignInPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,21 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         edtEmail.setOnEditorActionListener(this);
         edtEmail.addTextChangedListener(mTextWatcher);
         user = new User();
+        presenter = new SignInPresenter();
+        presenter.bindView(this);
+    }
+
+
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSuccessful(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        Navigator.onMoveToVerify(this,user);
+        presenter.onSendGmail();
     }
 
     @Override
@@ -47,7 +66,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
             if (isNext){
                 Log.d(TAG,"Next");
                 user.email = edtEmail.getText().toString().toLowerCase();
-                Navigator.onMoveToVerify(this,user);
+                presenter.onSignIn(user.email);
                 Utils.hideSoftKeyboard(this);
                 return true;
             }
@@ -64,7 +83,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         }
         if (isNext){
             user.email = edtEmail.getText().toString().toLowerCase();
-            Navigator.onMoveToVerify(this,user);
+            presenter.onSignIn(user.email);
             Utils.hideSoftKeyboard(this);
         }
     }
@@ -95,5 +114,14 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         }
     };
 
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
 
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
 }

@@ -1,1 +1,1 @@
-include ':app','floatingbuttonlibrary' , 'cameralibrary', 'multipleimageselect'
+include ':app','floatingbuttonlibrary' , 'cameralibrary', 'multipleimageselect','gmailbackgroundlibrary'
