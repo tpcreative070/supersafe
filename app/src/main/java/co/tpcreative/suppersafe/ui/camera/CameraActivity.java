@@ -19,10 +19,14 @@ import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
 import com.snatik.storage.Storage;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 import java.util.Set;
@@ -104,7 +108,7 @@ public class CameraActivity extends BaseActivity implements
             actionBar.setDisplayShowTitleEnabled(false);
         }
         try{
-            String path = SupperSafeApplication.getInstance().getKeepSafety()+"picture.jpg";
+            String path = SupperSafeApplication.getInstance().getKeepSafety()+"newFile";
             File file = new File(path);
             FileInputStream fileInputStream = new FileInputStream(file);
             path = SupperSafeApplication.getInstance().getKeepSafety()+"newFile.jpg";
@@ -237,11 +241,11 @@ public class CameraActivity extends BaseActivity implements
                         os = new FileOutputStream(file);
                         os.write(data);
                         os.close();
-//                        //SingletonEncryptData.getInstance().onEncryptData(myInputStream,path);
-                        Log.d(TAG,"displayOrientation callback :" + orientation);
                         Bitmap thumbnail = Utils.getThumbnail(file);
                         SaveImage(thumbnail);
-
+                        String path = SupperSafeApplication.getInstance().getKeepSafety() +"newFile";
+                        SingletonEncryptData.getInstance().onEncryptData(getInputStream(thumbnail),path);
+                        Log.d(TAG,"displayOrientation callback :" + orientation);
                     } catch (IOException e) {
                         Log.w(TAG, "Cannot write to " + file, e);
                     } finally {
@@ -258,6 +262,15 @@ public class CameraActivity extends BaseActivity implements
             });
         }
     };
+
+
+    public InputStream getInputStream(final Bitmap bitmap){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+        byte[] bitmapdata = bos.toByteArray();
+        ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+        return bs;
+    }
 
 
     public void SaveImage(Bitmap finalBitmap) {

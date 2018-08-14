@@ -41,6 +41,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
+            .override(200,300)
             .placeholder(R.drawable.ic_camera)
             .error(R.drawable.ic_aspect_ratio)
             .priority(Priority.HIGH);
@@ -81,21 +82,20 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
         @Override
         public void bind(Album data, int position) {
             super.bind(data, position);
-            imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
-            String path = SupperSafeApplication.getInstance().getKeepSafety() + "picture.jpg";
+            //imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
+            String path = SupperSafeApplication.getInstance().getKeepSafety() + "newFile";
             File file = new File(path);
-//            try{
-//                FileInputStream fileInputStream = new FileInputStream(file);
-//                Bitmap bitmap = SingletonEncryptData.getInstance().onDecryptData(fileInputStream);
-//                Glide.with(context)
-//                        .asBitmap()
-//                        .load(bitmap)
-//                        .apply(options)
-//                        .into(imgAlbum);
-//            }
-//            catch (Exception e){
-//                e.printStackTrace();
-//            }
+            try{
+                FileInputStream fileInputStream = new FileInputStream(file);
+                Bitmap bitmap = SingletonEncryptData.getInstance().onDecryptData(fileInputStream);
+                Glide.with(context)
+                        .load(bitmap)
+                        .apply(options)
+                        .into(imgAlbum);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
 
         }
         @OnClick(R.id.rlHome)
