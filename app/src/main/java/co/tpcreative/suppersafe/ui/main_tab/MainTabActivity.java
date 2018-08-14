@@ -39,6 +39,7 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.ManagerNetwork;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
@@ -72,6 +73,9 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
         initSpeedDial(true);
+
+        ManagerNetwork.onCheckout();
+
     }
 
     @Override

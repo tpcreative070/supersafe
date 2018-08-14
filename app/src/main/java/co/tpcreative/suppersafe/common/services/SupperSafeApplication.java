@@ -14,6 +14,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
+
+import co.tpcreative.suppersafe.BuildConfig;
+import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 
 public class SupperSafeApplication extends MultiDexApplication implements MultiDexApplication.ActivityLifecycleCallbacks {
@@ -28,6 +31,7 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
     private static int paused;
     private static int started;
     private static int stopped;
+    private static String url ;
     /*Volley*/
     private RequestQueue mRequestQueue;
     private int Orientation = 0;
@@ -85,7 +89,6 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
         ++paused;
         Log.d(TAG, "application is in foreground: " + (resumed > paused));
     }
-
 
     @Override
     public void onActivityStarted(Activity activity) {
@@ -220,6 +223,16 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
 
     public Storage getStorage() {
         return storage;
+    }
+
+    public String getUrl(){
+        if (BuildConfig.DEBUG){
+            url = getString(R.string.url_developer);
+        }
+        else{
+            url = getString(R.string.url_live);
+        }
+        return url;
     }
 
 }
