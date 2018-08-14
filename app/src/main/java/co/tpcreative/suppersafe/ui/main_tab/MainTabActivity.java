@@ -73,8 +73,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
         initSpeedDial(true);
-
-        ManagerNetwork.onCheckout();
+        ManagerNetwork.getInstance().onCheckout();
 
     }
 

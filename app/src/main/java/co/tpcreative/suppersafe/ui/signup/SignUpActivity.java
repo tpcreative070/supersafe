@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -17,7 +18,7 @@ import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 
-public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener{
+public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener, SignUpView{
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
     @BindView(R.id.edtName)
@@ -28,6 +29,7 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     Button btnFinish;
     private boolean isEmail;
     private boolean isName;
+    private SignUpPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,19 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         setContentView(R.layout.activity_sign_up);
         edtName.addTextChangedListener(mTextWatcher);
         edtEmail.addTextChangedListener(mTextWatcher);
+        presenter = new SignUpPresenter();
+        presenter.bindView(this);
+    }
+
+    @Override
+    public void showError(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSuccessful(String message) {
+        Navigator.onMoveToMainTab(this);
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -71,7 +86,6 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             if (getCurrentFocus()==edtName){
                 if (Utils.isValid(s)){
                     isName = true;
@@ -100,7 +114,6 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
                 btnFinish.setTextColor(getResources().getColor(R.color.colorDisableText));
                 btnFinish.setEnabled(false);
             }
-
         }
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -115,7 +128,9 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     @OnClick(R.id.btnFinish)
     public void onClickedFinish(View view){
         if (isName && isEmail){
-            Navigator.onMoveToMainTab(this);
+            String email = edtEmail.getText().toString().trim();
+            String name = edtName.getText().toString().trim();
+            presenter.onSignUp(email,name);
             Log.d(TAG,"onFished");
         }
     }
