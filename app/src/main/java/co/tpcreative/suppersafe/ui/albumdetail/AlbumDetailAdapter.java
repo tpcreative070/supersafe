@@ -1,8 +1,6 @@
 package co.tpcreative.suppersafe.ui.albumdetail;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -11,16 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.NoSuchAlgorithmException;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
@@ -74,6 +69,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
         public ItemHolder(View itemView) {
             super(itemView);
         }
+
         private Album data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
@@ -83,7 +79,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
         public void bind(Album data, int position) {
             super.bind(data, position);
             //imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
-            String path = SupperSafeApplication.getInstance().getKeepSafety() + "newFile";
+            String path = SupperSafeApplication.getInstance().getSupperSafe() + "newFile";
             File file = new File(path);
             try{
                 FileInputStream fileInputStream = new FileInputStream(file);
@@ -96,7 +92,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
             catch (Exception e){
                 e.printStackTrace();
             }
-
         }
         @OnClick(R.id.rlHome)
         public void onClicked(View view){

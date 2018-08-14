@@ -108,10 +108,10 @@ public class CameraActivity extends BaseActivity implements
             actionBar.setDisplayShowTitleEnabled(false);
         }
         try{
-            String path = SupperSafeApplication.getInstance().getKeepSafety()+"newFile";
+            String path = SupperSafeApplication.getInstance().getSupperSafe()+"newFile";
             File file = new File(path);
             FileInputStream fileInputStream = new FileInputStream(file);
-            path = SupperSafeApplication.getInstance().getKeepSafety()+"newFile.jpg";
+            path = SupperSafeApplication.getInstance().getSupperSafe()+"newFile.jpg";
             SingletonEncryptData.getInstance().onDecryptData(fileInputStream,path);
         }
         catch (Exception e){
@@ -243,7 +243,7 @@ public class CameraActivity extends BaseActivity implements
                         os.close();
                         Bitmap thumbnail = Utils.getThumbnail(file);
                         SaveImage(thumbnail);
-                        String path = SupperSafeApplication.getInstance().getKeepSafety() +"newFile";
+                        String path = SupperSafeApplication.getInstance().getSupperSafe() +"newFile";
                         SingletonEncryptData.getInstance().onEncryptData(getInputStream(thumbnail),path);
                         Log.d(TAG,"displayOrientation callback :" + orientation);
                     } catch (IOException e) {
@@ -274,7 +274,7 @@ public class CameraActivity extends BaseActivity implements
 
 
     public void SaveImage(Bitmap finalBitmap) {
-        String path = SupperSafeApplication.getInstance().getKeepSafety();
+        String path = SupperSafeApplication.getInstance().getSupperSafe();
         File myDir = new File(path);
         myDir.mkdirs();
         Random generator = new Random();

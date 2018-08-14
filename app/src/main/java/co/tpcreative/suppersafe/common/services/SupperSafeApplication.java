@@ -20,7 +20,7 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
 
     private static final String TAG = SupperSafeApplication.class.getSimpleName();
     private static SupperSafeApplication mInstance;
-    private String keepSafety;
+    private String suppersafe;
     private String key;
     private Storage storage;
     private EncryptConfiguration configuration;
@@ -51,7 +51,7 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
                 .setEncryptContent(IVX, SECRET_KEY, SALT)
                 .build();
         storage = new Storage(getApplicationContext());
-        keepSafety = storage.getExternalStorageDirectory() + "/SupperSafe_DoNot_Delete/";
+        suppersafe = storage.getExternalStorageDirectory() + "/SupperSafe_DoNot_Delete/";
         key = ".encrypt_key";
         registerActivityLifecycleCallbacks(this);
     }
@@ -106,15 +106,12 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
         return resumed > paused;
     }
 
-
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
-
     }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-
     }
 
     public RequestQueue getRequestQueue() {
@@ -141,15 +138,15 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
         }
     }
 
-    public String getKeepSafety() {
-        return keepSafety;
+    public String getSupperSafe() {
+        return suppersafe;
     }
 
     public void initFolder() {
-        if (storage.isDirectoryExists(keepSafety)) {
+        if (storage.isDirectoryExists(suppersafe)) {
             Log.d(TAG, "KeepSafety is existing");
         } else {
-            storage.createDirectory(keepSafety);
+            storage.createDirectory(suppersafe);
             Log.d(TAG, "KeepSafety was created");
         }
     }
@@ -160,7 +157,7 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
             return;
         }
         storage.setEncryptConfiguration(configuration);
-        storage.createFile(getKeepSafety() + key, value);
+        storage.createFile(getSupperSafe() + key, value);
         Log.d(TAG, "Created key :" + value);
     }
 
@@ -170,9 +167,9 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
             return "";
         }
         storage.setEncryptConfiguration(configuration);
-        boolean isFile = storage.isFileExist(getKeepSafety() + key);
+        boolean isFile = storage.isFileExist(getSupperSafe() + key);
         if (isFile) {
-            String value = storage.readTextFile(getKeepSafety() + key);
+            String value = storage.readTextFile(getSupperSafe() + key);
             Log.d(TAG, "Key value is : " + value);
             return value;
         }
@@ -184,9 +181,9 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
             Log.d(TAG, "Please grant access permission");
             return ;
         }
-        boolean isFile = storage.isFileExist(getKeepSafety() + key);
+        boolean isFile = storage.isFileExist(getSupperSafe() + key);
         if (isFile){
-            storage.deleteFile(getKeepSafety()+key);
+            storage.deleteFile(getSupperSafe()+key);
         }
     }
 
