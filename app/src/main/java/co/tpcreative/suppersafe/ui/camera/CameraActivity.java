@@ -1,9 +1,5 @@
 package co.tpcreative.suppersafe.ui.camera;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.SensorManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,29 +14,20 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
 import com.snatik.storage.Storage;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 import java.util.Set;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.Encrypter;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
@@ -116,7 +103,6 @@ public class CameraActivity extends BaseActivity implements
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-
         try{
             String path = SupperSafeApplication.getInstance().getKeepSafety()+"picture.jpg";
             File file = new File(path);
@@ -127,11 +113,8 @@ public class CameraActivity extends BaseActivity implements
         catch (Exception e){
             e.printStackTrace();
         }
-
         mCameraView.start();
-
     }
-
 
     @Override
     public void onOrientationChange(int orientation) {
@@ -176,7 +159,6 @@ public class CameraActivity extends BaseActivity implements
             mBackgroundHandler = null;
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -229,7 +211,6 @@ public class CameraActivity extends BaseActivity implements
 
     private CameraView.Callback mCallback
             = new CameraView.Callback() {
-
         @Override
         public void onCameraOpened(CameraView cameraView) {
             Log.d(TAG, "onCameraOpened");
@@ -253,17 +234,13 @@ public class CameraActivity extends BaseActivity implements
                             "picture.jpg");
                     OutputStream os = null;
                     try {
-
                         os = new FileOutputStream(file);
                         os.write(data);
                         os.close();
-
-
 //                        //SingletonEncryptData.getInstance().onEncryptData(myInputStream,path);
                         Log.d(TAG,"displayOrientation callback :" + orientation);
                         Bitmap thumbnail = Utils.getThumbnail(file);
                         SaveImage(thumbnail);
-
 
                     } catch (IOException e) {
                         Log.w(TAG, "Cannot write to " + file, e);

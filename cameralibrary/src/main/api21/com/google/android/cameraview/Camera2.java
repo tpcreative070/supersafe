@@ -40,6 +40,7 @@ import java.util.SortedSet;
 
 @SuppressWarnings("MissingPermission")
 @TargetApi(21)
+
 class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.Listener {
 
     private static final String TAG = "Camera2";
@@ -70,16 +71,19 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             mCamera = camera;
             mCallback.onCameraOpened();
             startCaptureSession();
+            Log.d(TAG,"onOpened");
         }
 
         @Override
         public void onClosed(@NonNull CameraDevice camera) {
             mCallback.onCameraClosed();
+            Log.d(TAG,"onClosed");
         }
 
         @Override
         public void onDisconnected(@NonNull CameraDevice camera) {
             mCamera = null;
+            Log.d(TAG,"onDisconnected");
         }
 
         @Override
@@ -99,6 +103,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             mCaptureSession = session;
             updateAutoFocus();
             updateFlash();
+            Log.d(TAG,"onConfigured");
             try {
                 mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(),
                         mCaptureCallback, null);
@@ -125,6 +130,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
     PictureCaptureCallback mCaptureCallback = new PictureCaptureCallback() {
         @Override
         public void onPrecaptureRequired() {
+            Log.d(TAG,"onPrecaptureRequired");
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
                     CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
             setState(STATE_PRECAPTURE);
@@ -139,6 +145,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         @Override
         public void onReady() {
             captureStillPicture();
+            Log.d(TAG,"onReady");
         }
     };
 
@@ -159,7 +166,6 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         }
 
     };
-
 
     private String mCameraId;
 
@@ -194,6 +200,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             @Override
             public void onSurfaceChanged() {
                 startCaptureSession();
+                Log.d(TAG,"startCaptureSession");
             }
         });
     }
@@ -208,6 +215,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         collectCameraInfo();
         prepareImageReader();
         startOpeningCamera();
+        Log.d(TAG,"start");
         return true;
     }
 
@@ -227,24 +235,35 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             mImageReader.close();
             mImageReader = null;
         }
+        Log.d(TAG,"stop");
         Log.d(TAG,"displayOrientation Stop preview request builder");
     }
 
     @Override
     boolean isCameraOpened() {
+        Log.d(TAG,"isCameraOpened");
         return mCamera != null;
     }
 
     @Override
     void setFacing(int facing) {
+        Log.d(TAG,"setFacing :" + facing);
         if (mFacing == facing) {
             return;
         }
+
         Log.d(TAG,"displayOrientation set face");
         mFacing = facing;
         if (isCameraOpened()) {
             stop();
             start();
+
+            /*Fixed camera*/
+            if (facing==0){
+                setAutoFocus(true);
+                setFlash(mFlash);
+            }
+
         }
     }
 
@@ -282,6 +301,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void setAutoFocus(boolean autoFocus) {
+        Log.d(TAG,"setAutoFocus :"+ autoFocus);
         if (mAutoFocus == autoFocus) {
             return;
         }
@@ -306,6 +326,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void setFlash(int flash) {
+        Log.d(TAG,"setFlash");
         Log.d(TAG,"displayOrientation set flash");
         if (mFlash == flash) {
             return;
@@ -341,6 +362,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void takePicture() {
+        Log.d(TAG,"takePicture");
         if (mAutoFocus) {
             lockFocus();
         } else {
@@ -366,7 +388,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
      * <p>This rewrites {@link #mCameraId}, {@link #mCameraCharacteristics}, and optionally
      * {@link #mFacing}.</p>
      */
-    
+
     private boolean chooseCameraIdByFacing() {
         try {
             int internalFacing = INTERNAL_FACINGS.get(mFacing);
@@ -533,8 +555,10 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
     /**
      * Updates the internal state of auto-focus to {@link #mAutoFocus}.
      */
+
     void updateAutoFocus() {
         if (mAutoFocus) {
+            Log.d(TAG,"updateAutoFocus");
             int[] modes = mCameraCharacteristics.get(
                     CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
             // Auto focus is not supported
@@ -543,21 +567,26 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                 mAutoFocus = false;
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_OFF);
+                Log.d(TAG,"updateAutoFocus 1");
             } else {
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                Log.d(TAG,"updateAutoFocus 2");
             }
         } else {
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_OFF);
+            Log.d(TAG,"updateAutoFocus 3");
         }
     }
 
     /**
      * Updates the internal state of flash to {@link #mFlash}.
      */
+
     void updateFlash() {
         Log.d(TAG,"displayOrientation flash " + mFlash);
+        Log.d(TAG,"updateFlash");
         switch (mFlash) {
             case Constants.FLASH_OFF:
                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
@@ -596,6 +625,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
      * Locks the focus as the first step for a still image capture.
      */
     private void lockFocus() {
+        Log.d(TAG,"lockFocus");
         mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
                 CaptureRequest.CONTROL_AF_TRIGGER_START);
         try {
@@ -609,6 +639,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
     /**
      * Captures a still picture.
      */
+
     void captureStillPicture() {
         try {
             CaptureRequest.Builder captureRequestBuilder = mCamera.createCaptureRequest(
@@ -715,6 +746,7 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
      * capturing a still picture.
      */
     void unlockFocus() {
+        Log.d(TAG,"unlockFocus");
         mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
                 CaptureRequest.CONTROL_AF_TRIGGER_CANCEL);
         try {
@@ -804,7 +836,6 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                 }
             }
         }
-
         /**
          * Called when it is ready to take a still picture.
          */
@@ -814,7 +845,5 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
          * Called when it is necessary to run the precapture sequence.
          */
         public abstract void onPrecaptureRequired();
-
     }
-
 }
