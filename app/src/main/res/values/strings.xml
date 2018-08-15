@@ -158,12 +158,17 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.1.103:8081</string>
+    <string name="url_developer">http://tpcreative.me:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
     <string name="password">Phong@123</string>
     <string name="tpcreative">tpcreative.co@gmail.com</string>
+    <string name="key_user">user</string>
+    <string name="key_email">email</string>
+    <string name="key_password">password</string>
+    <string name="key_password_default">tpcreative.co</string>
+    <string name="key_name">name</string>
 
     /*Preference keys*/
     <string name="key_grant_access">grant_access</string>

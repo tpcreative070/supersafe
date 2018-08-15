@@ -11,12 +11,15 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.request.SignInRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.User;
@@ -28,8 +31,9 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     MaterialEditText edtEmail;
     @BindView(R.id.btnNext)
     Button btnNext;
+    @BindView(R.id.progressBarCircularIndeterminate)
+    ProgressBarCircularIndeterminate progressBarCircularIndeterminate;
     private boolean isNext ;
-    private User user;
     private SignInPresenter presenter;
 
     @Override
@@ -38,11 +42,9 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         setContentView(R.layout.activity_signin);
         edtEmail.setOnEditorActionListener(this);
         edtEmail.addTextChangedListener(mTextWatcher);
-        user = new User();
         presenter = new SignInPresenter();
         presenter.bindView(this);
     }
-
 
     @Override
     public void showError(String message) {
@@ -50,10 +52,10 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
-    public void showSuccessful(String message) {
+    public void showSuccessful(String message,User user) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
         Navigator.onMoveToVerify(this,user);
-        presenter.onSendGmail();
+        //presenter.onSendGmail();
     }
 
     @Override
@@ -65,8 +67,10 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
             }
             if (isNext){
                 Log.d(TAG,"Next");
-                user.email = edtEmail.getText().toString().toLowerCase();
-                presenter.onSignIn(user.email);
+                String email = edtEmail.getText().toString().toLowerCase();
+                SignInRequest request = new SignInRequest();
+                request.email = email;
+                presenter.onSignIn(request);
                 Utils.hideSoftKeyboard(this);
                 return true;
             }
@@ -82,8 +86,10 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
             return ;
         }
         if (isNext){
-            user.email = edtEmail.getText().toString().toLowerCase();
-            presenter.onSignIn(user.email);
+            String email = edtEmail.getText().toString().toLowerCase();
+            SignInRequest request = new SignInRequest();
+            request.email = email;
+            presenter.onSignIn(request);
             Utils.hideSoftKeyboard(this);
         }
     }
@@ -119,9 +125,20 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         return getApplicationContext();
     }
 
-
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    @Override
+    public void startLoading() {
+        progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
+        btnNext.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void stopLoading() {
+        progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
+        btnNext.setVisibility(View.VISIBLE);
     }
 }

@@ -73,7 +73,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
         initSpeedDial(true);
-        ManagerNetwork.getInstance().onCheckout();
 
     }
 
@@ -282,6 +281,12 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     protected void onPause() {
         super.onPause();
         SensorOrientationChangeNotifier.getInstance().remove(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SupperSafeApplication.getInstance().getRequestQueue().getCache().clear();
     }
 
     public void onAnimationIcon(Menu menu){

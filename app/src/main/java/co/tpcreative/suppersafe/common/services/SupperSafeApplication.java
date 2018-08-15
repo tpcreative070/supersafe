@@ -15,11 +15,15 @@ import com.android.volley.toolbox.Volley;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 
+import java.util.HashMap;
+
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.api.RootAPI;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.common.network.Dependencies;
 
-public class SupperSafeApplication extends MultiDexApplication implements MultiDexApplication.ActivityLifecycleCallbacks {
+public class SupperSafeApplication extends MultiDexApplication implements Dependencies.DependenciesListener, MultiDexApplication.ActivityLifecycleCallbacks {
 
     private static final String TAG = SupperSafeApplication.class.getSimpleName();
     private static SupperSafeApplication mInstance;
@@ -36,10 +40,24 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
     private RequestQueue mRequestQueue;
     private int Orientation = 0;
 
+    protected static Dependencies dependencies;
+    public static RootAPI serverAPI ;
+    public static String authorization = null ;
+
     @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
+
+        /*Init Retrofit And RXJava*/
+
+        dependencies = Dependencies.getsInstance(getApplicationContext(),getUrl());
+        dependencies.dependenciesListener(this);
+        dependencies.init();
+        serverAPI = (RootAPI) Dependencies.serverAPI;
+
+
         new PrefsController.Builder()
                 .setContext(getApplicationContext())
                 .setMode(ContextWrapper.MODE_PRIVATE)
@@ -233,6 +251,34 @@ public class SupperSafeApplication extends MultiDexApplication implements MultiD
             url = getString(R.string.url_live);
         }
         return url;
+    }
+
+
+    /*Retrofit and RXJava*/
+
+    @Override
+    public Class onObject() {
+        return RootAPI.class;
+    }
+
+    @Override
+    public String onAuthorToken() {
+        return authorization;
+    }
+
+    @Override
+    public HashMap<String, String> onCustomHeader() {
+        HashMap<String,String>hashMap = new HashMap<>();
+        hashMap.put("Content-Type","application/json");
+        if (authorization!=null){
+            hashMap.put("Authorization",authorization);
+        }
+        return hashMap;
+    }
+
+    @Override
+    public boolean isXML() {
+        return false;
     }
 
 }

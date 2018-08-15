@@ -183,7 +183,7 @@ public class ManagerNetwork {
 
     public interface ManagerNetworkListener{
         void showError(final String message);
-        void showSuccessful(final String message);
+        void showSuccessful(final String z);
     }
 
 }

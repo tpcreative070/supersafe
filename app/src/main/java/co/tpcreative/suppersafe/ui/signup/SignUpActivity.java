@@ -1,4 +1,6 @@
 package co.tpcreative.suppersafe.ui.signup;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,14 +11,17 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.request.SignUpRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.User;
 
 public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener, SignUpView{
 
@@ -27,6 +32,8 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     MaterialEditText edtEmail;
     @BindView(R.id.btnFinish)
     Button btnFinish;
+    @BindView(R.id.progressBarCircularIndeterminate)
+    ProgressBarCircularIndeterminate progressBarCircularIndeterminate;
     private boolean isEmail;
     private boolean isName;
     private SignUpPresenter presenter;
@@ -47,7 +54,7 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
-    public void showSuccessful(String message) {
+    public void showSuccessful(String message, User user) {
         Navigator.onMoveToMainTab(this);
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
@@ -130,9 +137,33 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         if (isName && isEmail){
             String email = edtEmail.getText().toString().trim();
             String name = edtName.getText().toString().trim();
-            presenter.onSignUp(email,name);
+            SignUpRequest request = new SignUpRequest();
+            request.email = email;
+            request.name = name;
+            presenter.onSignUp(request);
             Log.d(TAG,"onFished");
         }
     }
 
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void startLoading() {
+        progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
+        btnFinish.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void stopLoading() {
+        progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
+        btnFinish.setVisibility(View.VISIBLE);
+    }
 }
