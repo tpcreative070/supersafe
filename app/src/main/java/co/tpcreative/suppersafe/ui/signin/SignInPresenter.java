@@ -1,4 +1,7 @@
 package co.tpcreative.suppersafe.ui.signin;
+import android.os.Build;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
@@ -16,6 +19,7 @@ import co.tpcreative.suppersafe.common.request.SignUpRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.NetworkUtil;
 import co.tpcreative.suppersafe.model.User;
+import co.tpcreative.suppersafe.ui.signup.SignUpView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -79,15 +83,17 @@ public class SignInPresenter extends Presenter<SignInView>{
         return value;
     }
 
-    public void onSendGmail(){
+    public void onSendGmail(String email){
         SignInView view = view();
+        String body = String.format(getString(R.string.send_code),"ABC");
+        String title = String.format(getString(R.string.send_code_title),"ABC");
         BackgroundMail.newBuilder(view.getActivity())
                 .withUsername(view.getContext().getString(R.string.user_name))
                 .withPassword(view.getContext().getString(R.string.password))
-                .withMailto(view.getContext().getString(R.string.tpcreative))
+                .withMailto(email)
                 .withType(BackgroundMail.TYPE_PLAIN)
-                .withSubject("this is the subject")
-                .withBody("this is the body")
+                .withSubject(title)
+                .withBody(body)
                 .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                     @Override
                     public void onSuccess() {
@@ -104,6 +110,15 @@ public class SignInPresenter extends Presenter<SignInView>{
                 })
                 .send();
     }
+
+    private Spanned getSpannedText(String text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            return Html.fromHtml(text);
+        }
+    }
+
 
 
 

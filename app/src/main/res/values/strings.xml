@@ -169,6 +169,13 @@
     <string name="key_password">password</string>
     <string name="key_password_default">tpcreative.co</string>
     <string name="key_name">name</string>
+    <string name="send_code">Welcome to SupperSafe,\n\n
+        Use the code below to login to SupperSafe Photo Vault. \n\n
+        %1$s \n\n
+        Didn’t request an access code? Then you can ignore this email. \n\n
+        Your Friends, \n
+        The SupperSafe Team</string>
+    <string name="send_code_title">SupperSafe Photo Vault Access Code: %1$s</string>
 
     /*Preference keys*/
     <string name="key_grant_access">grant_access</string>

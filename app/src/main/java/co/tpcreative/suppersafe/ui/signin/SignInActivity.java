@@ -55,7 +55,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     public void showSuccessful(String message,User user) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
         Navigator.onMoveToVerify(this,user);
-        //presenter.onSendGmail();
+        presenter.onSendGmail(user.email);
     }
 
     @Override
