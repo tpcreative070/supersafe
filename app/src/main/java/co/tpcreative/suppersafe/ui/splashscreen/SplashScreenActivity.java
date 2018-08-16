@@ -1,4 +1,5 @@
 package co.tpcreative.suppersafe.ui.splashscreen;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
     private String value = "" ;
     private boolean grant_access;
     private boolean isRunning;
+    private static final String TAG = SplashScreenActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,20 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                 }
             }
         },TIMER);
+
+        Log.d(TAG,"" + SupperSafeApplication.getInstance().getDeviceId());
+
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        int version = Build.VERSION.SDK_INT;
+        String versionRelease = Build.VERSION.RELEASE;
+
+        Log.e(TAG, "manufacturer " + manufacturer
+                + " \n model " + model
+                + " \n version " + version
+                + " \n versionRelease " + versionRelease
+        );
+
     }
 
 

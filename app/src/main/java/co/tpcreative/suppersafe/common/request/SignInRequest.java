@@ -1,6 +1,8 @@
 package co.tpcreative.suppersafe.common.request;
 
-public class SignInRequest {
+import co.tpcreative.suppersafe.model.Authorization;
+
+public class SignInRequest extends Authorization{
     public String email;
     public String password;
 }

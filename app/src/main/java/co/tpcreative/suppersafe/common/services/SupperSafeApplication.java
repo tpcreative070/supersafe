@@ -3,25 +3,35 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.api.RootAPI;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.network.Dependencies;
+import co.tpcreative.suppersafe.model.User;
+import co.tpcreative.suppersafe.ui.splashscreen.SplashScreenActivity;
 
 public class SupperSafeApplication extends MultiDexApplication implements Dependencies.DependenciesListener, MultiDexApplication.ActivityLifecycleCallbacks {
 
@@ -43,6 +53,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
     protected static Dependencies dependencies;
     public static RootAPI serverAPI ;
     public static String authorization = null ;
+    private Activity activity;
 
     @Override
     public void onCreate() {
@@ -94,7 +105,9 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-
+        if (activity instanceof SplashScreenActivity){
+            this.activity = activity;
+        }
     }
 
     @Override
@@ -263,7 +276,17 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
 
     @Override
     public String onAuthorToken() {
-        return authorization;
+        try{
+            String value = PrefsController.getString(getString(R.string.key_user),"");
+            final User user = new Gson().fromJson(value,User.class);
+            if (user!=null){
+                authorization = user.author.session_token;
+            }
+            return authorization;
+        }
+        catch (Exception e){
+        }
+        return null;
     }
 
     @Override
@@ -281,5 +304,29 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         return false;
     }
 
-}
+    public String getDeviceId(){
+        return Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
 
+    public String getManufacturer(){
+        String manufacturer = Build.MANUFACTURER;
+        return manufacturer;
+    }
+
+    public String getModel(){
+        String model = Build.MODEL;
+        return model;
+    }
+
+    public int getVersion(){
+        int version = Build.VERSION.SDK_INT;
+        return version;
+    }
+
+    public String getVersionRelease(){
+        String versionRelease = Build.VERSION.RELEASE;
+        return versionRelease;
+    }
+
+
+}

@@ -11,7 +11,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import butterknife.BindView;
@@ -55,7 +54,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     public void showSuccessful(String message,User user) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
         Navigator.onMoveToVerify(this,user);
-        presenter.onSendGmail(user.email);
+        presenter.onSendGmail(user.email,user.code);
     }
 
     @Override

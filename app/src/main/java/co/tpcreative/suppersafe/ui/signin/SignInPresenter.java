@@ -5,26 +5,19 @@ import android.text.Spanned;
 import android.util.Log;
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.controller.ManagerNetwork;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
 import co.tpcreative.suppersafe.common.request.SignInRequest;
-import co.tpcreative.suppersafe.common.request.SignUpRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.NetworkUtil;
-import co.tpcreative.suppersafe.model.User;
-import co.tpcreative.suppersafe.ui.signup.SignUpView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
-
 
 public class SignInPresenter extends Presenter<SignInView>{
 
@@ -43,9 +36,16 @@ public class SignInPresenter extends Presenter<SignInView>{
             return;
         }
 
+
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email),request.email);
         hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_device_id),SupperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer),SupperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model),SupperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+SupperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease),SupperSafeApplication.getInstance().getVersionRelease());
         subscriptions.add(SupperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -83,10 +83,10 @@ public class SignInPresenter extends Presenter<SignInView>{
         return value;
     }
 
-    public void onSendGmail(String email){
+    public void onSendGmail(String email,String code){
         SignInView view = view();
-        String body = String.format(getString(R.string.send_code),"ABC");
-        String title = String.format(getString(R.string.send_code_title),"ABC");
+        String body = String.format(getString(R.string.send_code),code);
+        String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
                 .withUsername(view.getContext().getString(R.string.user_name))
                 .withPassword(view.getContext().getString(R.string.password))

@@ -41,6 +41,12 @@ public class SignUpPresenter extends Presenter<SignUpView>{
         hash.put(getString(R.string.key_email),request.email);
         hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
         hash.put(getString(R.string.key_name),request.name);
+        hash.put(getString(R.string.key_device_id),SupperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer),SupperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model),SupperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+SupperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease),SupperSafeApplication.getInstance().getVersionRelease());
         subscriptions.add(SupperSafeApplication.serverAPI.onSignUP(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
