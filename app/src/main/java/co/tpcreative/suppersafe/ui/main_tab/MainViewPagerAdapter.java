@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 import android.view.ViewGroup;
 import java.util.ArrayList;
-import co.tpcreative.suppersafe.ui.demo.CheeseListFragment;
 import co.tpcreative.suppersafe.ui.me.MeFragment;
 import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
 
@@ -29,10 +28,8 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 		arrayList.clear();
 		arrayList.add("PRIVATE");
 		arrayList.add("ME");
-		arrayList.add("DEMO");
 		fragments.add(PrivateFragment.newInstance(0));
 		fragments.add(MeFragment.newInstance(1));
-		fragments.add(CheeseListFragment.newInstance(2));
 	}
 
 	@Override
@@ -61,11 +58,6 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 				currentFragment.onResume();
 				fragments.get(1).onPause();
 			}
-			else if (currentFragment instanceof CheeseListFragment){
-				Log.d(TAG,"scanner");
-				currentFragment.onResume();
-				fragments.get(2).onPause();
-			}
 		}
 		super.setPrimaryItem(container, position, object);
 	}
@@ -83,4 +75,5 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 	public Fragment getCurrentFragment() {
 		return currentFragment;
 	}
+
 }

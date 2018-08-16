@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
+import com.darsh.multipleimageselect.activities.HelperActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
 
 import co.tpcreative.suppersafe.R;
@@ -14,7 +15,9 @@ import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.suppersafe.ui.camera.CameraActivity;
 import co.tpcreative.suppersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.suppersafe.ui.demo.CheeseDetailActivity;
+import co.tpcreative.suppersafe.ui.help.HelpActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
+import co.tpcreative.suppersafe.ui.settings.SettingsActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
 import co.tpcreative.suppersafe.ui.signup.SignUpActivity;
@@ -92,6 +95,16 @@ public class Navigator {
 
     public static void onSlidePictures(Context context){
         Intent intent = new Intent(context, SlidePicturesActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onSettings(Context context){
+        Intent intent = new Intent(context, SettingsActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onHelp(Context context){
+        Intent intent = new Intent(context, HelpActivity.class);
         context.startActivity(intent);
     }
 

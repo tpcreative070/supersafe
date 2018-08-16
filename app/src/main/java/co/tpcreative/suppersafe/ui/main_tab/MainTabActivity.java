@@ -7,9 +7,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -39,7 +36,6 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.controller.ManagerNetwork;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
@@ -64,7 +60,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         setContentView(R.layout.activity_main_tab);
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_36);
         ab.setDisplayHomeAsUpEnabled(false);
 
         SingletonManagerTab.getInstance().setListener(this);
@@ -80,11 +76,20 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:{
+                Log.d(TAG,"Home action");
                 return true;
             }
             case R.id.switch_flash :{
                 Log.d(TAG,"Call here");
                 Navigator.onSlidePictures(this);
+                return true;
+            }
+            case R.id.settings :{
+                Navigator.onSettings(this);
+                return true;
+            }
+            case R.id.help :{
+                Navigator.onHelp(this);
                 return true;
             }
         }
@@ -102,36 +107,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         mSpeedDialView.setVisibility(isVisit);
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Log.d(TAG,"position :" + position);
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-
-    }
 
     private void initSpeedDial(boolean addActionItems) {
         if (addActionItems) {

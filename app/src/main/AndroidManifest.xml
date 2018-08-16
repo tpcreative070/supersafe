@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".common.services.SupperSafeApplication"
@@ -127,7 +127,13 @@
             android:name=".ui.demo.CheeseDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.albumdetail.AlbumDetailActivity" />
-        <activity android:name=".ui.slidepictures.SlidePicturesActivity"></activity>
+        <activity android:name=".ui.slidepictures.SlidePicturesActivity" />
+        <activity android:name=".ui.settings.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/settings"/>
+        <activity android:name=".ui.help.HelpActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/help"></activity>
     </application>
 
 </manifest>
