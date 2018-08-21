@@ -11,6 +11,9 @@
     </style>
 
 
+
+
+
     <!--White color added font-->
 
     <style name="brandonRegularTextView" parent="TextAppearance.AppCompat">
@@ -49,6 +52,27 @@
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
     </style>
+
+
+    <!--Slibr-->
+
+    <style name="Theme.Slidr.Slidable" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+    </style>
+
 
 
     <!--Splash screen -->

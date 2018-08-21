@@ -14,14 +14,10 @@
 package co.tpcreative.suppersafe.demo;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -49,7 +45,8 @@ public class HomeActivity extends AppCompatActivity {
     private static  final String TAG = HomeActivity.class.getSimpleName();
 
 
-    private final Class[] sActivities = new Class[] {CreateEmptyFileActivity.class,
+    private final Class[] sActivities = new Class[] {
+            CreateEmptyFileActivity.class, DeleteSpecificFolderActivity.class,
             CreateFileActivity.class, CreateFolderActivity.class, CreateFileInFolderActivity.class,
             CreateFolderInFolderActivity.class, CreateFileInAppFolderActivity.class,
             CreateFileWithCreatorActivity.class, RetrieveMetadataActivity.class,

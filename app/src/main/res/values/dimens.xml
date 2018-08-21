@@ -12,6 +12,7 @@
     <dimen name="margin_right">40dp</dimen>
     <dimen name="margin_left">40dp</dimen>
 
+
     // default
     <dimen name="default_delete_button_size_width">39dp</dimen>
     <dimen name="default_delete_button_size_height">27dp</dimen>

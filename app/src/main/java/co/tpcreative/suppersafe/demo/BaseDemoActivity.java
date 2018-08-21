@@ -13,18 +13,28 @@
  */
 package co.tpcreative.suppersafe.demo;
 
+import android.accounts.Account;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
@@ -35,13 +45,30 @@ import com.google.android.gms.drive.OpenFileActivityOptions;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.api.services.drive.DriveScopes;
+import com.jaychang.sa.DialogFactory;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.util.Utils;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import retrofit2.http.FormUrlEncoded;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive services.
@@ -53,6 +80,16 @@ public abstract class BaseDemoActivity extends AppCompatActivity {
      * Request code for Google Sign-in
      */
     protected static final int REQUEST_CODE_SIGN_IN = 0;
+
+
+    /*
+    * Request OAuthor
+    *
+    *
+    * */
+
+    protected static final int REQUEST_CODE_OAU_THOR = 10;
+
 
     /**
      * Request code for the Drive picker
@@ -69,10 +106,27 @@ public abstract class BaseDemoActivity extends AppCompatActivity {
      */
     private DriveResourceClient mDriveResourceClient;
 
+    /*
+    * Handle User manager
+    *
+    * */
+
+    private GoogleSignInAccount mSignInAccount;
+
+    /*
+    * Handle GoogleSignInClient
+    *
+    * */
+
+    GoogleSignInClient mGoogleSignInClient;
+
     /**
      * Tracks completion of the drive picker
      */
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
+
+    private static final int RC_GET_TOKEN = 9002;
+
 
     @Override
     protected void onStart() {
@@ -99,6 +153,11 @@ public abstract class BaseDemoActivity extends AppCompatActivity {
 
                 Task<GoogleSignInAccount> getAccountTask =
                     GoogleSignIn.getSignedInAccountFromIntent(data);
+
+               // GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+
+
                 if (getAccountTask.isSuccessful()) {
                     initializeDriveClient(getAccountTask.getResult());
                 } else {
@@ -115,6 +174,15 @@ public abstract class BaseDemoActivity extends AppCompatActivity {
                     mOpenItemTaskSource.setException(new RuntimeException("Unable to open file"));
                 }
                 break;
+            case  RC_GET_TOKEN :
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                handleSignInResult(task);
+                break;
+
+            case REQUEST_CODE_OAU_THOR :
+                Log.d(TAG,"response author :");
+                break;
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -127,24 +195,41 @@ public abstract class BaseDemoActivity extends AppCompatActivity {
         Set<Scope> requiredScopes = new HashSet<>(2);
         requiredScopes.add(Drive.SCOPE_FILE);
         requiredScopes.add(Drive.SCOPE_APPFOLDER);
+
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(Drive.SCOPE_FILE)
+                .requestScopes(Drive.SCOPE_APPFOLDER)
+                .requestIdToken(getString(R.string.server_client_id))
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
         if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
             initializeDriveClient(signInAccount);
+            refreshIdToken();
         } else {
             GoogleSignInOptions signInOptions =
                     new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.server_client_id))
+                            .requestEmail()
                       .requestScopes(Drive.SCOPE_FILE)
                       .requestScopes(Drive.SCOPE_APPFOLDER)
                       .build();
-            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, signInOptions);
-            startActivityForResult(googleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+            mGoogleSignInClient = GoogleSignIn.getClient(this, signInOptions);
+            startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
         }
+
+
     }
 
     /**
      * Continues the sign-in process, initializing the Drive clients with the current
      * user's account.
      */
+
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
@@ -217,4 +302,86 @@ public abstract class BaseDemoActivity extends AppCompatActivity {
     protected DriveResourceClient getDriveResourceClient() {
         return mDriveResourceClient;
     }
+
+    protected GoogleSignInAccount getSignInAccount(){
+        return mSignInAccount;
+    }
+
+    protected void getIdToken() {
+        Log.d(TAG,"getIdToken");
+        // Show an account picker to let the user choose a Google account from the device.
+        // If the GoogleSignInOptions only asks for IDToken and/or profile and/or email then no
+        // consent screen will be shown here.
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_GET_TOKEN);
+    }
+
+    private void refreshIdToken() {
+        // Attempt to silently refresh the GoogleSignInAccount. If the GoogleSignInAccount
+        // already has a valid token this method may complete immediately.
+        //
+        // If the user has not previously signed in on this device or the sign-in has expired,
+        // this asynchronous branch will attempt to sign in the user silently and get a valid
+        // ID token. Cross-device single sign on will occur in this branch.
+        mGoogleSignInClient.silentSignIn()
+                .addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        handleSignInResult(task);
+                    }
+                });
+    }
+
+    private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            mSignInAccount = account;
+            String idToken = account.getIdToken();
+
+            Set<String> requiredScopes = new HashSet<>(1);
+            requiredScopes.add(DriveScopes.DRIVE);
+            getToken(idToken);
+            Log.d(TAG,getString(R.string.access_token,idToken));
+            // TODO(developer): send ID Token to server and validate
+        } catch (ApiException e) {
+            Log.w(TAG, "handleSignInResult:error", e);
+        }
+    }
+
+
+
+    public void getToken(String token){
+        OkHttpClient okHttpclient = new OkHttpClient();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("grant_type", "authorization_code")
+                .add("client_id", "1076955648444-ab5isinjq4r80l7if7entekdldlk0ffj.apps.googleusercontent.com")
+                                .add("client_secret", "zQdcuUFFw70W5Is8dZsUQQDm")
+                                .add("redirect_uri","http://tpcreative.me/google-api-php-client/examples/idtoken.php")
+                                .add("code", "4/4-GMMhmHCXhWEzkobqIHGG_EnNYYsAkukHspeYUk9E8")
+                                .add("id_token",token)
+                                .build();
+        final Request request = new Request.Builder()
+                .url("https://www.googleapis.com/oauth2/v3/token")
+                .post(requestBody)
+                .build();
+        okHttpclient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    final String message = jsonObject.toString(5);
+                    Log.i(TAG, message);
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG,"onResponse error here");
+            }
+        });
+    }
+
+
+
 }

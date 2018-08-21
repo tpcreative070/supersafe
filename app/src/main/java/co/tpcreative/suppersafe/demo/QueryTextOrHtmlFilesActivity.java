@@ -74,7 +74,8 @@ public class QueryTextOrHtmlFilesActivity extends BaseDemoActivity {
         getDriveResourceClient()
                 .query(query)
                 .addOnSuccessListener(this,
-                        metadataBuffer -> mResultsAdapter.append(metadataBuffer))
+                        metadataBuffer ->
+                                mResultsAdapter.append(metadataBuffer))
                 .addOnFailureListener(this, e -> {
                     Log.e(TAG, "Error retrieving files", e);
                     showMessage(getString(R.string.query_failed));

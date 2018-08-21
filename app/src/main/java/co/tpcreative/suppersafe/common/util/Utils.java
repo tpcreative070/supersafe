@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -85,6 +86,31 @@ public class Utils {
             }
         });
         builder.show();
+    }
+
+    public static boolean mCreateAndSaveFileOverride(String fileName,String path_folder_name,String responseJson, boolean append) {
+        final String newLine = System.getProperty("line.separator");
+        try{
+            File root = new File(path_folder_name+ "/" + fileName);
+            if (!root.exists()){
+                File parentFolder = new File(path_folder_name);
+                if (!parentFolder.exists()) {
+                    parentFolder.mkdirs();
+                }
+                root.createNewFile();
+            }
+            FileWriter file = new FileWriter(root,append);
+            file.write("\r\n");
+            file.write(responseJson);
+            file.write("\r\n");
+
+            file.flush();
+            file.close();
+            return true ;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false ;
+        }
     }
 
     public static void hideSoftKeyboard(Activity context) {

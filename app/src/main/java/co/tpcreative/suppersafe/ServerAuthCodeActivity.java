@@ -107,6 +107,7 @@ public class ServerAuthCodeActivity extends AppCompatActivity implements
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 String authCode = account.getServerAuthCode();
+                Log.d(TAG,"author code :" + authCode);
 
                 // Show signed-un UI
                 updateUI(account);

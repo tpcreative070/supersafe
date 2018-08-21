@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 /**
  * Simple list-based Activity to redirect to one of the other Activities. The code here is
- * uninteresting, {@link SignInActivity} is a good place to start if you are curious about
+ * uninteresting, {@link GoogleSignInActivity} is a good place to start if you are curious about
  * {@code GoogleSignInApi}.
  */
 public class ChooserActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final Class[] CLASSES = new Class[]{
-            SignInActivity.class,
+            GoogleSignInActivity.class,
             SignInActivityWithDrive.class,
             IdTokenActivity.class,
             ServerAuthCodeActivity.class,

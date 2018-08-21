@@ -69,7 +69,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
         initSpeedDial(true);
-
     }
 
     @Override
@@ -106,7 +105,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     public void visitFloatingButton(int isVisit) {
         mSpeedDialView.setVisibility(isVisit);
     }
-
 
 
     private void initSpeedDial(boolean addActionItems) {

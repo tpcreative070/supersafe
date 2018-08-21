@@ -52,13 +52,14 @@
     <!-- TODO(user): replace with your real server client ID -->
     <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
          from https://console.developers.google.com/ -->
-    <string name="server_client_id">257396657114-kcb3f0b0rd5c6huffgonfhagf3mtjusu.apps.googleusercontent.com</string>
+    <string name="server_client_id">1076955648444-ab5isinjq4r80l7if7entekdldlk0ffj.apps.googleusercontent.com</string>
 
     <string name="download_progress">Download Progress:</string>
     <string name="menu_settings">Settings</string>
     <string name="button_subscribe">Listen for Changes</string>
     <string name="button_unsubscribe">Stop Listening for Changes</string>
     <string name="file_created">Created file: %1$s.</string>
+    <string name="access_token">token id : %1$s.</string>
     <string name="file_create_error">Error while trying to create the file.</string>
     <string name="select_folder">Select a folder</string>
     <string name="select_file">Select file</string>
@@ -158,13 +159,27 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.1.108:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
     <string name="password">Phong@123</string>
     <string name="tpcreative">tpcreative.co@gmail.com</string>
-
+    <string name="verify_change">Verify/Change Account</string>
+    <string name="cloud">Cloud</string>
+    <string name="enable_cloud_sync">Enable Cloud Sync</string>
+    <string name="upgrade_to_pro">Upgrade To Pro</string>
+    <string name="verify">Verify</string>
+    <string name="your_email">Your Email</string>
+    <string name="send_verification_code">SEND VERIFICATION CODE</string>
+    <string name="or">OR</string>
+    <string name="login_with_google">LOGIN WITH GOOGLE</string>
+    <string name="cancel">CANCEL</string>
+    <string name="save">SAVE</string>
+    <string name="signin_with_google">SignIn with Google</string>
+    <string name="choose_google_account">Choose your Google account to sign in SupperSafe</string>
+    <string name="ok">OK</string>
+    <string name="enable_cloud">Enable cloud sync after sign in</string>
 
 
     <string name="key_user">user</string>

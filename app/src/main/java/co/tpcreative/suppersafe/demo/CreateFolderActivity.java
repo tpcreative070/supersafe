@@ -43,14 +43,16 @@ public class CreateFolderActivity extends BaseDemoActivity {
                 .continueWithTask(task -> {
                     DriveFolder parentFolder = task.getResult();
                     MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                                                          .setTitle(".NewFolder***")
+                                                          .setTitle("NewFolder")
                                                           .setMimeType(DriveFolder.MIME_TYPE)
-                                                          .setStarred(true)
+                                                          .setStarred(false)
                                                           .build();
                     return getDriveResourceClient().createFolder(parentFolder, changeSet);
                 })
                 .addOnSuccessListener(this,
                         driveFolder -> {
+                    Log.d(TAG,getString(R.string.file_created,
+                            driveFolder.getDriveId().encodeToString()));
                             showMessage(getString(R.string.file_created,
                                     driveFolder.getDriveId().encodeToString()));
                             finish();
@@ -60,6 +62,10 @@ public class CreateFolderActivity extends BaseDemoActivity {
                     showMessage(getString(R.string.file_create_error));
                     finish();
                 });
+    }
+
+    private void getListFolder(){
+        Task<DriveFolder>  mList = getDriveResourceClient().getRootFolder();
     }
     // [END create_folder]
 }

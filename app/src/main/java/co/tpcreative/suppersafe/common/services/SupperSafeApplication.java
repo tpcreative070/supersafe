@@ -60,7 +60,6 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         super.onCreate();
         mInstance = this;
 
-
         /*Init Retrofit And RXJava*/
 
         dependencies = Dependencies.getsInstance(getApplicationContext(),getUrl());

@@ -8,7 +8,9 @@ import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.darsh.multipleimageselect.activities.HelperActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
 
+import co.tpcreative.suppersafe.ChooserActivity;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.demo.HomeActivity;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
@@ -23,6 +25,7 @@ import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
 import co.tpcreative.suppersafe.ui.signup.SignUpActivity;
 import co.tpcreative.suppersafe.ui.slidepictures.SlidePicturesActivity;
 import co.tpcreative.suppersafe.ui.verify.VerifyActivity;
+import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
 public class Navigator {
 
@@ -107,6 +110,23 @@ public class Navigator {
         Intent intent = new Intent(context, HelpActivity.class);
         context.startActivity(intent);
     }
+
+    public static void onVerifyAccount(Context context){
+        Intent intent = new Intent(context,VerifyAccountActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onHomeActivity(Context context){
+        Intent intent = new Intent(context, HomeActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onChooseActivity(Context context){
+        Intent intent = new Intent(context, ChooserActivity.class);
+        context.startActivity(intent);
+    }
+
+
 
 
 }

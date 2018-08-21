@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignInActivity"
+            android:name=".GoogleSignInActivity"
             android:label="@string/name_sign_in_activity" />
         <activity
             android:name=".SignInActivityWithDrive"
@@ -66,6 +66,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".demo.HomeActivity" />
         <activity android:name=".demo.QueryFilesActivity" />
         <activity android:name=".demo.RetrieveContentsActivity" />
         <activity android:name=".demo.RetrieveContentsWithProgressDialogActivity" />
@@ -128,12 +129,26 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.albumdetail.AlbumDetailActivity" />
         <activity android:name=".ui.slidepictures.SlidePicturesActivity" />
-        <activity android:name=".ui.settings.SettingsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/settings"/>
-        <activity android:name=".ui.help.HelpActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/help"></activity>
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/settings"
+            android:theme="@style/Theme.Slidr.Slidable" />
+        <activity
+            android:name=".ui.help.HelpActivity"
+            android:label="@string/help"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.verifyaccount.VerifyAccountActivity"
+            android:label="@string/verify"
+            android:theme="@style/Theme.Slidr.Slidable" />
+        <activity android:name=".demo.DeleteSpecificFolderActivity"></activity>
+
+        <activity android:name=".ChooserActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".demo.oauthor.GoogleAuthActivity"
+           ></activity>
+
     </application>
 
 </manifest>

@@ -31,8 +31,9 @@ public class CreateFileActivity extends BaseDemoActivity {
 
     @Override
     protected void onDriveClientReady() {
-        //createFile();
-        createFileInAppFolder();
+        createFile();
+        getIdToken();
+        //createFileInAppFolder();
     }
 
     private void createFile() {
@@ -49,7 +50,7 @@ public class CreateFileActivity extends BaseDemoActivity {
                     }
 
                     MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                                                          .setTitle(".HelloWorld.jpg")
+                                                             .setTitle("HelloWorld.jpg")
                                                           .setMimeType("image/jpeg")
                                                           .build();
 
@@ -57,6 +58,9 @@ public class CreateFileActivity extends BaseDemoActivity {
                 })
                 .addOnSuccessListener(this,
                         driveFile -> {
+
+                    Log.d(TAG,getString(R.string.file_created,
+                            driveFile.getDriveId()));
                             showMessage(getString(R.string.file_created,
                                     driveFile.getDriveId().encodeToString()));
                             finish();
@@ -92,6 +96,8 @@ public class CreateFileActivity extends BaseDemoActivity {
                 })
                 .addOnSuccessListener(this,
                         driveFile -> {
+                            Log.d(TAG,getString(R.string.file_created,
+                                    driveFile.getDriveId().encodeToString()));
                             showMessage(getString(R.string.file_created,
                                     driveFile.getDriveId().encodeToString()));
                             finish();
