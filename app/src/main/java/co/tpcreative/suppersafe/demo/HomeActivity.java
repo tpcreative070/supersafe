@@ -33,6 +33,7 @@ import com.snatik.storage.Storage;
 
 import java.util.List;
 
+import co.tpcreative.suppersafe.ChooserActivity;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.demo.events.ListenChangeEventsForFilesActivity;
 import co.tpcreative.suppersafe.demo.events.SubscribeChangeEventsForFilesActivity;
@@ -47,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private final Class[] sActivities = new Class[] {
             CreateEmptyFileActivity.class, DeleteSpecificFolderActivity.class,
+            ChooserActivity.class,UploadFileAndViewActivity.class,
             CreateFileActivity.class, CreateFolderActivity.class, CreateFileInFolderActivity.class,
             CreateFolderInFolderActivity.class, CreateFileInAppFolderActivity.class,
             CreateFileWithCreatorActivity.class, RetrieveMetadataActivity.class,

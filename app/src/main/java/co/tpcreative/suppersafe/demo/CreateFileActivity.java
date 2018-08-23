@@ -12,15 +12,24 @@
  * limitations under the License.
  */
 package co.tpcreative.suppersafe.demo;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.api.services.drive.DriveScopes;
+import com.jaychang.sa.AuthCallback;
+import com.jaychang.sa.AuthData;
+import com.jaychang.sa.AuthDataHolder;
+import com.jaychang.sa.SocialUser;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import co.tpcreative.suppersafe.R;
 
 /**
@@ -30,7 +39,31 @@ public class CreateFileActivity extends BaseDemoActivity {
     private static final String TAG = "CreateFileActivity";
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(TAG,"onCreate");
+        List<String> requiredScopes = new ArrayList<>();
+        requiredScopes.add(DriveScopes.DRIVE);
+        AuthDataHolder.getInstance().googleAuthData = new AuthData(requiredScopes, new AuthCallback() {
+            @Override
+            public void onSuccess(SocialUser socialUser) {
+                Log.d(TAG,"onSuccess : " + socialUser.accessToken);
+            }
+            @Override
+            public void onError(Throwable throwable) {
+                Log.d(TAG,"onError");
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG,"onCancel");
+            }
+        });
+    }
+
+    @Override
     protected void onDriveClientReady() {
+        Log.d(TAG,"onReady");
         createFile();
         getIdToken();
         //createFileInAppFolder();
@@ -58,7 +91,6 @@ public class CreateFileActivity extends BaseDemoActivity {
                 })
                 .addOnSuccessListener(this,
                         driveFile -> {
-
                     Log.d(TAG,getString(R.string.file_created,
                             driveFile.getDriveId()));
                             showMessage(getString(R.string.file_created,

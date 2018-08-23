@@ -74,7 +74,6 @@ dependencies {
 
     implementation 'com.google.apis:google-api-services-people:v1-rev139-1.22.0'
 
-
     /*Google drive*/
     implementation 'com.google.apis:google-api-services-drive:v3-rev126-1.24.1'
     implementation 'com.google.android.gms:play-services-drive:15.0.1'
@@ -154,10 +153,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
 
     /*api project(':oauthor common')*/
-    implementation(name: 'library-common', ext: 'aar')
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.41'
-    implementation 'nl.dionsegijn:konfetti:1.1.2'
-
+    implementation project(':library-common')
 
 
 }

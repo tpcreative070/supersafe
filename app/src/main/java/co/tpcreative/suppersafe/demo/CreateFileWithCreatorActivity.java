@@ -15,9 +15,12 @@ package co.tpcreative.suppersafe.demo;
 
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.drive.CreateFileActivityOptions;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveId;
@@ -27,6 +30,8 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.jaychang.sa.AuthData;
+import com.jaychang.sa.AuthDataHolder;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -107,4 +112,5 @@ public class CreateFileWithCreatorActivity extends BaseDemoActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

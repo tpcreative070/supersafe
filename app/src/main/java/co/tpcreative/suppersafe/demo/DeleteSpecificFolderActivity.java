@@ -1,11 +1,13 @@
 package co.tpcreative.suppersafe.demo;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveFile;
@@ -35,6 +37,8 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
+import com.jaychang.sa.AuthData;
+import com.jaychang.sa.AuthDataHolder;
 
 
 import java.io.File;
@@ -69,8 +73,7 @@ public class DeleteSpecificFolderActivity extends BaseDemoActivity {
     }
 
     public void onDelete(){
-
-        final String sFilename = "NewFolder";
+        final String sFilename = "HelloWorld.jpg";
         Query query = new Query.Builder()
                 .addFilter( Filters.eq( SearchableField.TITLE, sFilename ) )
                 .build();
@@ -85,6 +88,8 @@ public class DeleteSpecificFolderActivity extends BaseDemoActivity {
                             Log.i( TAG, "Deleting file: " + sFilename + "  DriveId:(" + m.getDriveId() + ")" );
                             getDriveResourceClient().delete( driveResource );
                         }
+                        Log.d(TAG,"finish");
+                        finish();
                     }
                 } )
                 .addOnFailureListener( this, new OnFailureListener() {
@@ -94,20 +99,5 @@ public class DeleteSpecificFolderActivity extends BaseDemoActivity {
                     }
                 } );
     }
-
-
-    public void getOAuthor(String account) {
-        // Try to perform a Drive API request, for instance:
-        // File file = service.files().insert(body, mediaContent).execute();
-        Set<String> requiredScopes = new HashSet<>(1);
-        requiredScopes.add(DriveScopes.DRIVE);
-        GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(this, requiredScopes);
-        credential.setSelectedAccountName(account);
-        Drive service = new Drive.Builder(AndroidHttp.newCompatibleTransport(), new GsonFactory(), credential).build();
-
-
-
-    }
-
 
 }

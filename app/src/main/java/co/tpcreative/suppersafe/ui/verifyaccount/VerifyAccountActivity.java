@@ -17,6 +17,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.ftinc.kit.util.SizeUtils;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.jaychang.sa.AuthCallback;
 import com.jaychang.sa.AuthData;
@@ -111,26 +112,8 @@ public class VerifyAccountActivity extends BaseActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Log.d(TAG,"positive");
-                       // Navigator.onHomeActivity(VerifyAccountActivity.this);
-                        //Navigator.onHomeActivity(VerifyAccountActivity.this);
-                        List<String>requiredScopes = new ArrayList<>();
-                        requiredScopes.add(DriveScopes.DRIVE);
-                        AuthDataHolder.getInstance().googleAuthData = new AuthData(requiredScopes, new AuthCallback() {
-                            @Override
-                            public void onSuccess(SocialUser socialUser) {
-                                Log.d(TAG,"onSuccess : " + socialUser.accessToken);
-                            }
-                            @Override
-                            public void onError(Throwable throwable) {
-                                Log.d(TAG,"onError");
-                            }
-
-                            @Override
-                            public void onCancel() {
-                                Log.d(TAG,"onCancel");
-                            }
-                        });
-                        GoogleAuthActivity.start(VerifyAccountActivity.this);
+                        //Navigator.onChooseActivity(VerifyAccountActivity.this);
+                        Navigator.onHomeActivity(VerifyAccountActivity.this);
                     }
                 })
                 .show();

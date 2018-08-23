@@ -1,11 +1,15 @@
 package co.tpcreative.suppersafe.ui.main_tab;
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -36,9 +40,11 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.ManagerService;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.common.services.SupperSafeService;
 
 public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener{
 
@@ -53,6 +59,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     TabLayout tabLayout;
     private Toast mToast;
     private MainViewPagerAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,9 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
         initSpeedDial(true);
+
+        ManagerService.getInstance().onStartService();
+
     }
 
     @Override
@@ -261,6 +271,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     protected void onDestroy() {
         super.onDestroy();
         SupperSafeApplication.getInstance().getRequestQueue().getCache().clear();
+        ManagerService.getInstance().onStopService();
     }
 
     public void onAnimationIcon(Menu menu){
@@ -277,5 +288,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
             }
         });
     }
+
 
 }

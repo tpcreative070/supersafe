@@ -28,6 +28,7 @@ import java.util.UUID;
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.api.RootAPI;
+import co.tpcreative.suppersafe.common.controller.ManagerService;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.network.Dependencies;
 import co.tpcreative.suppersafe.model.User;
@@ -67,6 +68,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         dependencies.init();
         serverAPI = (RootAPI) Dependencies.serverAPI;
 
+        ManagerService.getInstance().setContext(this);
 
         new PrefsController.Builder()
                 .setContext(getApplicationContext())
@@ -86,6 +88,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         suppersafe = storage.getExternalStorageDirectory() + "/SupperSafe_DoNot_Delete/";
         key = ".encrypt_key";
         registerActivityLifecycleCallbacks(this);
+        Log.d(TAG,suppersafe);
     }
 
     @Override

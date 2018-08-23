@@ -18,6 +18,8 @@
     <string-array name="titles_array">
         <item>Create an empty file</item>
         <item>Delete Specific File or Folder</item>
+        <item>Choose Activity</item>
+        <item>Upload AND VIEW File</item>
         <item>Create a file</item>
         <item>Create a folder</item>
         <item>Create a file in a folder</item>

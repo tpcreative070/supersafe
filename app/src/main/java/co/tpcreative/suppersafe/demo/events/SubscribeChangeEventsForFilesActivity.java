@@ -12,32 +12,22 @@
  * limitations under the License.
  */
 package co.tpcreative.suppersafe.demo.events;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.drive.events.ChangeEvent;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-
 import java.util.Date;
-
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.demo.BaseDemoActivity;
 
@@ -203,4 +193,5 @@ public class SubscribeChangeEventsForFilesActivity extends BaseDemoActivity {
             showMessage(getString(R.string.tickle_finished));
         }
     }
+
 }

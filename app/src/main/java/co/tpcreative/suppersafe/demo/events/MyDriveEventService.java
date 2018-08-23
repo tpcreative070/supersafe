@@ -12,11 +12,9 @@
  * limitations under the License.
  */
 package co.tpcreative.suppersafe.demo.events;
-
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
 import com.google.android.gms.drive.events.ChangeEvent;
 import com.google.android.gms.drive.events.DriveEventService;
 
@@ -27,6 +25,7 @@ import com.google.android.gms.drive.events.DriveEventService;
  * For this sample, events are rebroadcast locally so they can be displayed in the activity.
  * [END_EXCLUDE]
  */
+
 public class MyDriveEventService extends DriveEventService {
     private static final String TAG = "MyDriveEventService";
 

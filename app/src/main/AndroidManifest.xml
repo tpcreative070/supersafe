@@ -66,6 +66,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".common.services.SupperSafeService" />
+
         <activity android:name=".demo.HomeActivity" />
         <activity android:name=".demo.QueryFilesActivity" />
         <activity android:name=".demo.RetrieveContentsActivity" />
@@ -141,14 +143,12 @@
             android:name=".ui.verifyaccount.VerifyAccountActivity"
             android:label="@string/verify"
             android:theme="@style/Theme.Slidr.Slidable" />
-        <activity android:name=".demo.DeleteSpecificFolderActivity"></activity>
-
-        <activity android:name=".ChooserActivity"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".demo.oauthor.GoogleAuthActivity"
-           ></activity>
-
+        <activity android:name=".demo.DeleteSpecificFolderActivity" />
+        <activity
+            android:name=".ChooserActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".demo.oauthor.GoogleAuthActivity" />
+        <activity android:name=".demo.UploadFileAndViewActivity"></activity>
     </application>
 
 </manifest>

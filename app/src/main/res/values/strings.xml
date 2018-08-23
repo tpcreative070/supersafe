@@ -159,7 +159,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.100:8081</string>
+    <string name="url_developer">http://192.168.0.101:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>

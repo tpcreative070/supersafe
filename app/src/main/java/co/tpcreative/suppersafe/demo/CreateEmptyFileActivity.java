@@ -13,9 +13,12 @@
  */
 package co.tpcreative.suppersafe.demo;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.MetadataChangeSet;
@@ -23,6 +26,8 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.jaychang.sa.AuthData;
+import com.jaychang.sa.AuthDataHolder;
 
 import co.tpcreative.suppersafe.R;
 
@@ -63,4 +68,7 @@ public class CreateEmptyFileActivity extends BaseDemoActivity {
                 });
         // [END create_empty_file]
     }
+
+
+
 }

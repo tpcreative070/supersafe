@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
 import com.jaychang.sa.AuthData;
 import com.jaychang.sa.AuthDataHolder;
 import com.jaychang.sa.DialogFactory;
@@ -62,9 +63,10 @@ public class GoogleAuthActivity extends SimpleAuthActivity
     super.onCreate(savedInstanceState);
 
     GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-      .requestId()
       .requestProfile()
       .requestEmail()
+            .requestScopes(Drive.SCOPE_FILE)
+            .requestScopes(Drive.SCOPE_APPFOLDER)
       .requestIdToken(getString(R.string.server_client_id));
 
     setupScopes(gsoBuilder);
@@ -128,6 +130,7 @@ public class GoogleAuthActivity extends SimpleAuthActivity
       retrySignIn = false;
       handleSignInResult(signInResult);
     }
+
   }
 
   private void handleSignInResult(GoogleSignInResult result) {
@@ -156,7 +159,6 @@ public class GoogleAuthActivity extends SimpleAuthActivity
     } else {
       String errorMsg = result.getStatus().getStatusMessage();
       if (errorMsg == null) {
-        Log.d(TAG,"Cancel :159");
         handCancel();
       } else {
         Throwable error = new Throwable(result.getStatus().getStatusMessage());
@@ -180,7 +182,7 @@ public class GoogleAuthActivity extends SimpleAuthActivity
             loadingDialog.dismiss();
             setGoogleDisconnectRequested(GoogleAuthActivity.this, false);
             setGoogleRevokeRequested(GoogleAuthActivity.this, false);
-            String token = GoogleAuthUtil.getToken(getApplicationContext(), account.getAccount().name, getAccessTokenScope());
+            String token = GoogleAuthUtil.getToken(getApplicationContext(), account.getAccount(), getAccessTokenScope());
             listener.onTokenReady(token);
           }
         } catch (Exception e) {
@@ -197,7 +199,7 @@ public class GoogleAuthActivity extends SimpleAuthActivity
     if (getAuthData().getScopes().size() > 0) {
       scopes = "oauth2:" + TextUtils.join(" ", getAuthData().getScopes());
     }
-
+    Log.d(TAG,"getAccessTokenScope :"+scopes);
     return scopes;
   }
 

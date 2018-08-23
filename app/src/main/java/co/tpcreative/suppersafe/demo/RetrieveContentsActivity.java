@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
@@ -26,6 +27,8 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.jaychang.sa.AuthData;
+import com.jaychang.sa.AuthDataHolder;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -102,4 +105,5 @@ public class RetrieveContentsActivity extends BaseDemoActivity {
                 });
         // [END read_contents]
     }
+
 }

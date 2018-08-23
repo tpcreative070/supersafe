@@ -24,4 +24,5 @@ public class DashBoardActivity extends BaseActivity {
         Navigator.onMoveSetPin(this,true);
     }
 
+
 }

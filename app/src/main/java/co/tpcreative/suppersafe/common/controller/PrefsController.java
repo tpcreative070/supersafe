@@ -1,5 +1,4 @@
 package co.tpcreative.suppersafe.common.controller;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -7,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.text.TextUtils;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
