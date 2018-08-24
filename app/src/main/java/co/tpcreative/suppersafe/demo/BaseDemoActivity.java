@@ -12,31 +12,17 @@
  * limitations under the License.
  */
 package co.tpcreative.suppersafe.demo;
-
-import android.accounts.Account;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
-
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
@@ -50,34 +36,13 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.api.services.drive.DriveScopes;
-import com.jaychang.sa.AuthData;
-import com.jaychang.sa.DialogFactory;
-import com.jaychang.sa.SimpleAuthActivity;
 import com.jaychang.sa.SocialUser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.ManagerService;
-import co.tpcreative.suppersafe.common.util.Utils;
-import co.tpcreative.suppersafe.demo.oauthor.GoogleAuthActivity;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import retrofit2.http.FormUrlEncoded;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive services.

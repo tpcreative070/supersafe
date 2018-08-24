@@ -1,4 +1,7 @@
 package co.tpcreative.suppersafe.ui.privates;
 
-public interface PrivateView {
+import co.tpcreative.suppersafe.common.presenter.BaseView;
+
+public interface PrivateView extends BaseView {
+
 }

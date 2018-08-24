@@ -7,14 +7,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.adapter.BaseAdapter;
 import co.tpcreative.suppersafe.common.adapter.BaseHolder;
 import co.tpcreative.suppersafe.model.Album;
+import co.tpcreative.suppersafe.model.CategoryMain;
 
-public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
+public class PrivateAdapter extends BaseAdapter<CategoryMain, BaseHolder> {
 
     private Context context;
     private ItemSelectedListener itemSelectedListener;
@@ -36,7 +39,7 @@ public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.private_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<Album> {
+    public class ItemHolder extends BaseHolder<CategoryMain> {
 
         public ItemHolder(View itemView) {
             super(itemView);
@@ -45,12 +48,15 @@ public class PrivateAdapter extends BaseAdapter<Album, BaseHolder> {
         private Album data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
+        @BindView(R.id.tvTitle)
+        TextView tvTitle;
         int mPosition;
 
         @Override
-        public void bind(Album data, int position) {
+        public void bind(CategoryMain data, int position) {
             super.bind(data, position);
             imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
+            tvTitle.setText(data.getName());
             this.mPosition = position;
         }
 

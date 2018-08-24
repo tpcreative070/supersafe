@@ -203,6 +203,11 @@
     <string name="key_versionRelease">versionRelease</string>
     <string name="key_code">code</string>
 
+    <string name="key_main_album">Main Album</string>
+    <string name="key_card_ids">Cards &#38; Ids</string>
+    <string name="key_videos">Videos</string>
+    <string name="key_significant_other">Significant Other</string>
+
     <string name="device_type">Android</string>
 
 

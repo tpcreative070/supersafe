@@ -57,6 +57,10 @@ public class SupperSafeService extends Service implements SupperSafeReceiver.Con
 
     }
 
+    public void getAction(){
+        Log.d(TAG,"Action");
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // If we get killed, after returning from here, restart
@@ -93,6 +97,5 @@ public class SupperSafeService extends Service implements SupperSafeReceiver.Con
             listener = mListener;
         }
     }
-
 
 }

@@ -49,6 +49,7 @@
             <!-- Action -->
 
             <LinearLayout
+                android:id="@+id/llAction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="50dp"
@@ -91,6 +92,7 @@
                     android:layout_height="wrap_content">
 
                     <Button
+                        android:id="@+id/btnSendVerifyCode"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_high"
                         android:background="@drawable/bg_button_rounded"
@@ -168,6 +170,7 @@
             <!-- Edit Email -->
 
             <LinearLayout
+                android:id="@+id/llChangeEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="50dp"
@@ -203,6 +206,7 @@
                     android:weightSum="2">
 
                     <Button
+                        android:id="@+id/btnCancel"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_high"
                         android:layout_marginRight="10dp"
@@ -213,11 +217,12 @@
                         android:textSize="@dimen/text_size_normal" />
 
                     <Button
+                        android:id="@+id/btnSave"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_high"
                         android:layout_marginLeft="10dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_button_rounded"
+                        android:background="@drawable/bg_button_disable_rounded"
                         android:text="@string/save"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_normal" />
@@ -228,6 +233,7 @@
             <!-- Verify code -->
 
             <LinearLayout
+                android:id="@+id/llVerifyCode"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -258,7 +264,6 @@
                     app:met_primaryColor="@color/colorButton"
                     app:met_textColorHint="@color/colorButton" />
 
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -274,7 +279,7 @@
                         android:visibility="invisible" />
 
                     <Button
-                        android:id="@+id/btnLogin"
+                        android:id="@+id/btnSignIn"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_high"
                         android:layout_marginBottom="20dp"
@@ -298,7 +303,7 @@
                         android:layout_centerVertical="true"
                         android:background="@color/colorButton"
                         android:elevation="10dp"
-                        android:visibility="invisible" />
+                        android:visibility="invisible"/>
 
                     <Button
                         android:id="@+id/btnReSend"
@@ -307,11 +312,10 @@
                         android:background="@null"
                         android:text="@string/resend"
                         android:textColor="@color/colorButtonDark"
-                        android:textSize="@dimen/text_size_normal" />
+                        android:textSize="@dimen/text_size_normal"/>
+
                 </RelativeLayout>
             </LinearLayout>
-
-
 
         </LinearLayout>
     </RelativeLayout>

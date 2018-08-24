@@ -72,7 +72,7 @@
         android:layout_weight="1"
         android:background="@color/blue_grey_900">
 
-        <Button
+        <com.google.android.gms.common.SignInButton
             android:text="SIGN IN WITH GOOGLE"
             android:textColor="@color/colorButton"
             android:id="@+id/sign_in_button"

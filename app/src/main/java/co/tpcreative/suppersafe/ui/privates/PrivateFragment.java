@@ -1,7 +1,9 @@
 package co.tpcreative.suppersafe.ui.privates;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -61,6 +63,22 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         presenter.getData();
         adapter.setDataSource(presenter.mList);
         super.work();
+    }
+
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void stopLoading() {
+
+    }
+
+    @Nullable
+    @Override
+    public Context getContext() {
+        return super.getContext();
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){

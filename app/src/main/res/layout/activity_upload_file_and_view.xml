@@ -87,13 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/tvSize"
-                android:layout_marginTop="20dp"
-                android:layout_gravity="center"
-                android:text="Size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+
 
             <LinearLayout
                 android:orientation="vertical"
@@ -117,6 +111,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/tvSize"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:text="Size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Call Info"
+                android:layout_gravity="center"
+                android:id="@+id/btnSize"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
             <LinearLayout

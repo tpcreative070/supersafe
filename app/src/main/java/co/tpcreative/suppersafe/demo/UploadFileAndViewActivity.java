@@ -1,14 +1,7 @@
 package co.tpcreative.suppersafe.demo;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -16,18 +9,13 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.CreateFileActivityOptions;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.About;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
@@ -37,25 +25,22 @@ import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.controller.ManagerService;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.DriveFileName;
@@ -184,6 +169,11 @@ public class UploadFileAndViewActivity extends BaseDemoActivity {
         Navigator.onMoveToAlbum(UploadFileAndViewActivity.this);
     }
 
+    @OnClick(R.id.btnSize)
+    public void onCallInfo(){
+        ManagerService.getInstance().getMyService().getAction();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -238,6 +228,7 @@ public class UploadFileAndViewActivity extends BaseDemoActivity {
                break;
        }
     }
+
 
     private void onDownloadFile(DriveFileName file) {
         // [START read_with_progress_listener]
@@ -482,7 +473,6 @@ public class UploadFileAndViewActivity extends BaseDemoActivity {
     }
 
 
-
     // [START create_folder]
     private void checkFolder() {
         Query query = new Query.Builder()
@@ -719,10 +709,6 @@ public class UploadFileAndViewActivity extends BaseDemoActivity {
                     finish();
                 });
     }
-
-
-
-
 
 
     public static String getMimeType(String url) {
