@@ -42,13 +42,14 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvEmail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/tpcreative"
                                 android:textSize="@dimen/text_size_normal" />
 
                             <TextView
-                                android:id="@+id/tvVerifyAccount"
+                                android:id="@+id/tvStatus"
                                 android:textColor="@color/colorAccent"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/llEnableCloud"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/llAccount"
@@ -72,12 +74,63 @@
                                 android:textSize="@dimen/text_size_normal" />
 
                             <TextView
+                                android:id="@+id/tvEnableCloud"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:paddingLeft="10dp"
                                 android:text="@string/enable_cloud_sync"
                                 android:textColor="@color/colorButton"
                                 android:textSize="@dimen/text_size_normal" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/llAboutLocal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/llEnableCloud"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/local"
+                                android:textColor="@color/colorBackground"
+                                android:textSize="@dimen/text_size_normal" />
+
+
+                            <LinearLayout
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tvPhotos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:text="@string/photos"
+                                    android:textColor="@color/colorButton"
+                                    android:textSize="@dimen/text_size_normal"/>
+
+                                <TextView
+                                    android:id="@+id/tvVideos"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:text="@string/videos"
+                                    android:textColor="@color/colorButton"
+                                    android:textSize="@dimen/text_size_normal"/>
+
+                                <TextView
+                                    android:id="@+id/tvOthers"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:text="@string/others"
+                                    android:textColor="@color/colorButton"
+                                    android:textSize="@dimen/text_size_normal"/>
+                            </LinearLayout>
+
                         </LinearLayout>
 
                         <RelativeLayout

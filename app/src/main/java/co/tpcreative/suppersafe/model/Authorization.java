@@ -9,4 +9,5 @@ public class Authorization implements Serializable {
     public String version;
     public String versionRelease;
     public String session_token;
+
 }

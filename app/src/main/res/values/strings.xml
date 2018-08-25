@@ -159,13 +159,14 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.101:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
     <string name="password">Phong@123</string>
     <string name="tpcreative">tpcreative.co@gmail.com</string>
     <string name="verify_change">Verify/Change Account</string>
+    <string name="view_change">View/Change Account</string>
     <string name="cloud">Cloud</string>
     <string name="enable_cloud_sync">Enable Cloud Sync</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
@@ -180,6 +181,14 @@
     <string name="choose_google_account">Choose your Google account to sign in SupperSafe</string>
     <string name="ok">OK</string>
     <string name="enable_cloud">Enable cloud sync after sign in</string>
+    <string name="local">Local</string>
+    <string name="photos">Photos</string>
+    <string name="videos">Videos</string>
+    <string name="others">Others</string>
+    <string name="account">Account</string>
+    <string name="license_status">License Status</string>
+    <string name="free">Free</string>
+    <string name="pro">Pro</string>
 
 
     <string name="key_user">user</string>
@@ -202,6 +211,7 @@
     <string name="key_version">version</string>
     <string name="key_versionRelease">versionRelease</string>
     <string name="key_code">code</string>
+    <string name="key_verify_account">verify_account</string>
 
     <string name="key_main_album">Main Album</string>
     <string name="key_card_ids">Cards &#38; Ids</string>

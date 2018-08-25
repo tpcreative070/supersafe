@@ -44,8 +44,11 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         setContentView(R.layout.activity_sign_up);
         edtName.addTextChangedListener(mTextWatcher);
         edtEmail.addTextChangedListener(mTextWatcher);
+        edtEmail.setOnEditorActionListener(this);
+        edtName.setOnEditorActionListener(this);
         presenter = new SignUpPresenter();
         presenter.bindView(this);
+        Log.d(TAG,"onCreate");
     }
 
     @Override
@@ -69,6 +72,7 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
             if (isEmail && isName){
                 Log.d(TAG,"Next");
                 Utils.hideSoftKeyboard(this);
+                onSignUp();
                 return true;
             }
             return false;
@@ -79,8 +83,8 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
                 return false;
             }
             if (isEmail && isName){
-                Log.d(TAG,"Next");
                 Utils.hideSoftKeyboard(this);
+                onSignUp();
                 return true;
             }
             return false;
@@ -135,14 +139,20 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     @OnClick(R.id.btnFinish)
     public void onClickedFinish(View view){
         if (isName && isEmail){
-            String email = edtEmail.getText().toString().trim();
-            String name = edtName.getText().toString().trim();
-            SignUpRequest request = new SignUpRequest();
-            request.email = email;
-            request.name = name;
-            presenter.onSignUp(request);
-            Log.d(TAG,"onFished");
+           onSignUp();
         }
+    }
+
+
+    public void onSignUp(){
+        String email = edtEmail.getText().toString().trim();
+        String name = edtName.getText().toString().trim();
+        SignUpRequest request = new SignUpRequest();
+        request.email = email;
+        request.name = name;
+        presenter.onSignUp(request);
+        Utils.hideSoftKeyboard(this);
+        Log.d(TAG,"onFished");
     }
 
     @Override
@@ -166,4 +176,5 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
         btnFinish.setVisibility(View.VISIBLE);
     }
+
 }

@@ -36,7 +36,6 @@ public class SignInPresenter extends Presenter<SignInView>{
             return;
         }
 
-
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email),request.email);
         hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
@@ -71,7 +70,7 @@ public class SignInPresenter extends Presenter<SignInView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));

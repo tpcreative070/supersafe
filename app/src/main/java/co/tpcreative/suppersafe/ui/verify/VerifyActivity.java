@@ -62,11 +62,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     @OnClick(R.id.btnLogin)
     public void onLogin(View view){
         if (isNext){
-            VerifyCodeRequest request = new VerifyCodeRequest();
-            request.code = edtCode.getText().toString().trim();
-            request.email = presenter.user.email;
-            presenter.onVerifyCode(request);
-            Utils.hideSoftKeyboard(this);
+           onVerifyCode();
         }
     }
 
@@ -86,16 +82,20 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
             }
             if (isNext){
                 Log.d(TAG,"Next");
-                VerifyCodeRequest request = new VerifyCodeRequest();
-                request.code = edtCode.getText().toString().trim();
-                request.email = presenter.user.email;
-                presenter.onVerifyCode(request);
-                Utils.hideSoftKeyboard(this);
+                onVerifyCode();
                 return true;
             }
             return false;
         }
         return false;
+    }
+
+    public void onVerifyCode(){
+        VerifyCodeRequest request = new VerifyCodeRequest();
+        request.code = edtCode.getText().toString().trim();
+        request.email = presenter.user.email;
+        presenter.onVerifyCode(request);
+        Utils.hideSoftKeyboard(this);
     }
 
     /*Detecting textWatch*/

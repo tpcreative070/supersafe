@@ -9,6 +9,5 @@ import co.tpcreative.suppersafe.model.User;
 public interface SignUpView extends BaseView {
     void showError(String message);
     void showSuccessful(String message, User user);
-    Context getContext();
     Activity getActivity();
 }

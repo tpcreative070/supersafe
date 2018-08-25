@@ -18,7 +18,7 @@ import retrofit2.HttpException;
 
 public class SignUpPresenter extends Presenter<SignUpView>{
 
-    private static String TAG = SignInPresenter.class.getSimpleName();
+    private static String TAG = SignUpPresenter.class.getSimpleName();
 
     public SignUpPresenter(){
 

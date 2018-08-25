@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
 import co.tpcreative.suppersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
@@ -66,6 +67,11 @@ public class VerifyPresenter extends Presenter<VerifyView>{
                     }
                     else{
                         view.showSuccessful(onResponse.message);
+                        final User mUser = User.getInstance().getUserInfo();
+                        if (mUser!=null){
+                            mUser.verified = true;
+                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        }
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
@@ -84,7 +90,6 @@ public class VerifyPresenter extends Presenter<VerifyView>{
                     view.stopLoading();
                 }));
     }
-
 
     public void onResendCode(VerifyCodeRequest request){
         Log.d(TAG,"info");
@@ -167,7 +172,6 @@ public class VerifyPresenter extends Presenter<VerifyView>{
                 })
                 .send();
     }
-
 
 
 }

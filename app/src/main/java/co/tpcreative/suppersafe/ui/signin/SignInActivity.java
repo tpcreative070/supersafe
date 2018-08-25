@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -52,6 +54,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
 
     @Override
     public void showSuccessful(String message,User user) {
+        Log.d(TAG,"user : " + new Gson().toJson(user));
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
         Navigator.onMoveToVerify(this,user);
         presenter.onSendGmail(user.email,user.code);
@@ -65,12 +68,7 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
                 return false;
             }
             if (isNext){
-                Log.d(TAG,"Next");
-                String email = edtEmail.getText().toString().toLowerCase();
-                SignInRequest request = new SignInRequest();
-                request.email = email;
-                presenter.onSignIn(request);
-                Utils.hideSoftKeyboard(this);
+                  onSignIn();
                 return true;
             }
             return false;
@@ -85,12 +83,16 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
             return ;
         }
         if (isNext){
-            String email = edtEmail.getText().toString().toLowerCase();
-            SignInRequest request = new SignInRequest();
-            request.email = email;
-            presenter.onSignIn(request);
-            Utils.hideSoftKeyboard(this);
+          onSignIn();
         }
+    }
+
+    public void onSignIn(){
+        String email = edtEmail.getText().toString().toLowerCase();
+        SignInRequest request = new SignInRequest();
+        request.email = email;
+        presenter.onSignIn(request);
+        Utils.hideSoftKeyboard(this);
     }
 
     /*Detecting textWatch*/

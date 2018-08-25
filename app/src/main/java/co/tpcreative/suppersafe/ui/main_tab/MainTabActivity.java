@@ -46,7 +46,7 @@ import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeService;
 
-public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener{
+public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView{
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
@@ -59,6 +59,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     TabLayout tabLayout;
     private Toast mToast;
     private MainViewPagerAdapter adapter;
+    private MainTabPresenter presenter;
 
 
     @Override
@@ -78,6 +79,10 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         initSpeedDial(true);
 
         ManagerService.getInstance().onStartService();
+
+        presenter = new MainTabPresenter();
+        presenter.bindView(this);
+        presenter.onGetUserInfo();
 
     }
 
@@ -289,5 +294,23 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         });
     }
 
+
+
+    /*MainTab View*/
+
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void stopLoading() {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
 
 }

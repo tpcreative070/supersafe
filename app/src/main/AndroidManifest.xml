@@ -65,7 +65,6 @@
                 <action android:name="com.google.android.gms.drive.events.HANDLE_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".common.services.SupperSafeService" />
 
         <activity android:name=".demo.HomeActivity" />
@@ -148,7 +147,10 @@
             android:name=".ChooserActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".demo.oauthor.GoogleAuthActivity" />
-        <activity android:name=".demo.UploadFileAndViewActivity"></activity>
+        <activity android:name=".demo.UploadFileAndViewActivity" />
+        <activity android:name=".ui.manageraccount.ManagerAccountActivity"
+            android:theme="@style/Theme.Slidr.Slidable"
+            android:label="@string/account"></activity>
     </application>
 
 </manifest>

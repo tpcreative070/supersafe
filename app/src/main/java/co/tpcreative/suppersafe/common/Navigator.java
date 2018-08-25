@@ -19,6 +19,7 @@ import co.tpcreative.suppersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.suppersafe.ui.demo.CheeseDetailActivity;
 import co.tpcreative.suppersafe.ui.help.HelpActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
+import co.tpcreative.suppersafe.ui.manageraccount.ManagerAccountActivity;
 import co.tpcreative.suppersafe.ui.settings.SettingsActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
@@ -123,6 +124,11 @@ public class Navigator {
 
     public static void onChooseActivity(Context context){
         Intent intent = new Intent(context, ChooserActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onManagerAccount(Context context){
+        Intent intent = new Intent(context, ManagerAccountActivity.class);
         context.startActivity(intent);
     }
 
