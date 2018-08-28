@@ -1,5 +1,5 @@
 package co.tpcreative.suppersafe.demo.oauthor;
-
+import android.accounts.Account;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -26,18 +25,14 @@ import com.jaychang.sa.AuthDataHolder;
 import com.jaychang.sa.DialogFactory;
 import com.jaychang.sa.SimpleAuthActivity;
 import com.jaychang.sa.SocialUser;
-import com.jaychang.sa.utils.AppUtils;
 import com.jaychang.sa.utils.PreferenceUtils;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.suppersafe.R;
 
 public class GoogleAuthActivity extends SimpleAuthActivity
   implements GoogleApiClient.OnConnectionFailedListener,
   GoogleApiClient.ConnectionCallbacks {
-
 
   private static final String TAG = GoogleAuthActivity.class.getSimpleName();
 
@@ -58,13 +53,41 @@ public class GoogleAuthActivity extends SimpleAuthActivity
     context.startActivity(intent);
   }
 
+
+  /*
+  *  AuthDataHolder.getInstance().googleAuthData = new AuthData(requiredScopes, new AuthCallback() {
+            @Override
+            public void onSuccess(SocialUser socialUser) {
+                Log.d(TAG,"onSuccess : " + socialUser.accessToken);
+            }
+            @Override
+            public void onError(Throwable throwable) {
+                Log.d(TAG,"onError");
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG,"onCancel");
+            }
+        });
+        GoogleAuthActivity.start(getActivity());
+  *
+  *
+  *
+  *
+  *
+  * */
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    Account account = new Account("butlerichotel@gmail.com",GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+
     GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
       .requestProfile()
       .requestEmail()
+            .setAccount(account)
             .requestScopes(Drive.SCOPE_FILE)
             .requestScopes(Drive.SCOPE_APPFOLDER)
       .requestIdToken(getString(R.string.server_client_id));

@@ -1,4 +1,9 @@
 package co.tpcreative.suppersafe.ui.verifyaccount;
+import android.Manifest;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.os.Build;
@@ -19,42 +24,35 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ftinc.kit.util.SizeUtils;
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.drive.Drive;
-import com.google.api.services.drive.DriveScopes;
-import com.jaychang.sa.AuthCallback;
-import com.jaychang.sa.AuthData;
-import com.jaychang.sa.AuthDataHolder;
-import com.jaychang.sa.SocialUser;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
-import co.tpcreative.suppersafe.demo.oauthor.GoogleAuthActivity;
-import co.tpcreative.suppersafe.ui.verify.VerifyActivity;
+import co.tpcreative.suppersafe.ui.enablecloud.EnableCloudActivity;
 
-public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener{
+public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,VerifyAccountView{
 
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
-
     private SlidrConfig mConfig;
     @BindView(R.id.imgEdit)
     ImageView imgEdit;
@@ -79,6 +77,26 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @BindView(R.id.btnSignIn)
     Button btnSignIn;
     private boolean isNext ;
+
+    @BindView(R.id.btnReSend)
+    Button btnResend;
+    @BindView(R.id.btnSendVerifyCode)
+    Button btnSendVerifyCode;
+    @BindView(R.id.progressBarCircularIndeterminateSignIn)
+    ProgressBarCircularIndeterminate progressBarCircularIndeterminateSignIn;
+    @BindView(R.id.progressBarCircularIndeterminateReSend)
+    ProgressBarCircularIndeterminate progressBarCircularIndeterminateReSend;
+
+    @BindView(R.id.progressBarCircularIndeterminateVerifyCode)
+    ProgressBarCircularIndeterminate progressBarCircularIndeterminateVerifyCode;
+    @BindView(R.id.tvEmail)
+    TextView tvEmail;
+
+    private VerifyAccountPresenter presenter;
+
+    public static final int REQUEST_CODE_EMAIL = 2000;
+    public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 2001;
+
 
 
     private boolean isBack = true;
@@ -112,38 +130,47 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
        // tvTitle.setText(getString(R.string.verify_title,"tpcreative.co@gmail.com"));
 
-        String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + "tpcreative.co@gmail.com" +"</font>");
-        tvTitle.setText(Html.fromHtml(sourceString));
+
 
         edtCode.addTextChangedListener(mTextWatcher);
         edtEmail.addTextChangedListener(mTextWatcher);
+        edtCode.setOnEditorActionListener(this);
+        edtEmail.setOnEditorActionListener(this);
+
+        presenter = new VerifyAccountPresenter();
+        presenter.bindView(this);
+
+        if (presenter.mUser!=null){
+           if (presenter.mUser.email!=null){
+               tvEmail.setText(presenter.mUser.email);
+               String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + presenter.mUser.email +"</font>");
+               tvTitle.setText(Html.fromHtml(sourceString));
+           }
+        }
 
     }
 
-
-
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
             if (!SupperSafeReceiver.isConnected()){
                 Utils.showDialog(this,getString(R.string.internet));
                 return false;
             }
             if (isNext){
                 Log.d(TAG,"Next");
-                VerifyCodeRequest request = new VerifyCodeRequest();
-                request.code = edtCode.getText().toString().trim();
-                Utils.hideSoftKeyboard(this);
-
-                /*Do Something here*/
-
+                if (getCurrentFocus() == edtCode){
+                    onVerifyCode();
+                }
+                if (getCurrentFocus() == edtEmail){
+                    onChangedEmail();
+                }
                 return true;
             }
             return false;
         }
         return false;
     }
-
 
     /*Detecting textWatch*/
 
@@ -164,6 +191,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 }
             }
             else if (getCurrentFocus() == edtCode){
+                Log.d(TAG,"code");
                 if (Utils.isValid(value)){
                     btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
                     btnSignIn.setTextColor(getResources().getColor(R.color.white));
@@ -175,7 +203,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                     isNext = false;
                 }
             }
-
         }
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -187,23 +214,27 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         }
     };
 
-
     @OnClick(R.id.llGoogle)
     public void onClickedGoogle(View view){
-        Log.d(TAG,"google");
-        onShowDialog();
+       onShowDialog();
     }
 
     @OnClick(R.id.imgEdit)
     public void onClickedEdit(View view){
         Log.d(TAG,"edit");
         onShowView(view);
+        edtEmail.requestFocus();
+        edtEmail.setText(presenter.mUser.email);
+        edtEmail.setSelection(edtEmail.length());
     }
 
     @OnClick(R.id.btnSendVerifyCode)
     public void onClickedSendVerifyCode(View view){
         Log.d(TAG,"Verify code");
-        onShowView(view);
+       //onShowView(view);
+        final VerifyCodeRequest verifyCodeRequest = new VerifyCodeRequest();
+        verifyCodeRequest.email = presenter.mUser.email;
+        presenter.onResendCode(verifyCodeRequest);
     }
 
     @OnClick(R.id.btnCancel)
@@ -217,8 +248,19 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onClickedSave(){
         Log.d(TAG,"onSave");
         if (isNext){
+           onChangedEmail();
             /*Do something here*/
         }
+    }
+
+    public void onChangedEmail(){
+        final String email = edtEmail.getText().toString().trim();
+        presenter.onChangeEmail(email);
+    }
+
+    @Override
+    public void onChangeEmailSuccessful() {
+      onShowView(llAction);
     }
 
     @OnClick(R.id.btnReSend)
@@ -232,7 +274,16 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         Log.d(TAG,"onSignIn");
         if (isNext){
             /*Do something here*/
+            onVerifyCode();
         }
+    }
+
+    public void onVerifyCode(){
+        VerifyCodeRequest request = new VerifyCodeRequest();
+        request.code = edtCode.getText().toString().trim();
+        request.email = presenter.mUser.email;
+        presenter.onVerifyCode(request);
+        Utils.hideSoftKeyboard(this);
     }
 
     @Override
@@ -315,11 +366,114 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Log.d(TAG,"positive");
-                        //Navigator.onChooseActivity(VerifyAccountActivity.this);
-                        Navigator.onHomeActivity(VerifyAccountActivity.this);
+                        ServiceManager.getInstance().onPickUpNewEmail(VerifyAccountActivity.this);
                     }
                 })
                 .show();
     }
+
+    public void onShowDialogEnableSync(){
+        new MaterialStyledDialog.Builder(this)
+                .setTitle(R.string.enable_cloud_sync)
+                .setDescription(R.string.message_prompt)
+                .setHeaderDrawable(R.drawable.ic_drive_cloud)
+                .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
+                .setHeaderColor(R.color.colorPrimary)
+                .setCancelable(true)
+                .setPositiveText(R.string.enable_now)
+                .setNegativeText(R.string.cancel)
+                .setCheckBox(false,R.string.enable_cloud)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Log.d(TAG,"positive");
+                        Navigator.onCheckSystem(VerifyAccountActivity.this);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finish();
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public void showError(String message) {
+
+    }
+
+    @Override
+    public void showSuccessful(String message) {
+        onShowView(btnSendVerifyCode);
+    }
+
+    @Override
+    public void showSuccessfulVerificationCode() {
+        Log.d(TAG,"successful");
+        edtCode.setText("");
+        onShowDialogEnableSync();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void startLoading() {
+        progressBarCircularIndeterminateVerifyCode.setVisibility(View.VISIBLE);
+        btnSendVerifyCode.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
+        btnSendVerifyCode.setText("");
+    }
+
+    @Override
+    public void stopLoading() {
+        progressBarCircularIndeterminateVerifyCode.setVisibility(View.INVISIBLE);
+        btnSendVerifyCode.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
+        btnSendVerifyCode.setText(getString(R.string.send_verification_code));
+    }
+
+    @Override
+    public void onLoading() {
+        progressBarCircularIndeterminateReSend.setVisibility(View.VISIBLE);
+        btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
+        btnSignIn.setText("");
+    }
+
+    @Override
+    public void onFinishing() {
+        progressBarCircularIndeterminateReSend.setVisibility(View.INVISIBLE);
+        btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
+        btnSignIn.setText(getString(R.string.login_action));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case EnableCloudActivity.ENABLE_CLOUD :
+                if (resultCode == Activity.RESULT_OK) {
+                    finish();
+                }
+                break;
+            case REQUEST_CODE_EMAIL :
+                if (resultCode == Activity.RESULT_OK) {
+                    String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    Log.d(TAG,"accountName : " + accountName);
+                }
+                break;
+             default:
+                 Log.d(TAG,"Nothing action");
+                 break;
+        }
+    }
+
 
 }

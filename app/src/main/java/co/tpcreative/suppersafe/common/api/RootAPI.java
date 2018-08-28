@@ -3,6 +3,7 @@ import java.util.Map;
 
 import co.tpcreative.suppersafe.common.api.response.BaseResponse;
 import co.tpcreative.suppersafe.common.response.SignInResponse;
+import co.tpcreative.suppersafe.common.response.UserCloudResponse;
 import co.tpcreative.suppersafe.common.response.VerifyCodeResponse;
 import io.reactivex.Observable;
 import retrofit2.http.FieldMap;
@@ -15,6 +16,8 @@ public interface RootAPI{
     String SIGN_IN = "/api/signin";
     String VERIFY_CODE = "api/verifycode";
     String RESEND_CODE = "api/resendcode";
+    String CHECK_USER_CLOUD = "/api/usercloud/check";
+    String ADD_USER_CLOUD = "/api/usercloud/add/";
 
 
     @FormUrlEncoded
@@ -32,6 +35,15 @@ public interface RootAPI{
     @FormUrlEncoded
     @POST(RESEND_CODE)
     Observable<VerifyCodeResponse> onResendCode(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(CHECK_USER_CLOUD)
+    Observable<UserCloudResponse> onCheckUserCloud(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(ADD_USER_CLOUD)
+    Observable<UserCloudResponse> onAddUserCloud(@FieldMap Map<String,String>request);
+
 
 
 }

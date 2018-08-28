@@ -21,10 +21,6 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.api.services.drive.DriveScopes;
-import com.jaychang.sa.AuthCallback;
-import com.jaychang.sa.AuthData;
-import com.jaychang.sa.AuthDataHolder;
-import com.jaychang.sa.SocialUser;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -42,23 +38,6 @@ public class CreateFileActivity extends BaseDemoActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
-        List<String> requiredScopes = new ArrayList<>();
-        requiredScopes.add(DriveScopes.DRIVE);
-        AuthDataHolder.getInstance().googleAuthData = new AuthData(requiredScopes, new AuthCallback() {
-            @Override
-            public void onSuccess(SocialUser socialUser) {
-                Log.d(TAG,"onSuccess : " + socialUser.accessToken);
-            }
-            @Override
-            public void onError(Throwable throwable) {
-                Log.d(TAG,"onError");
-            }
-
-            @Override
-            public void onCancel() {
-                Log.d(TAG,"onCancel");
-            }
-        });
     }
 
     @Override

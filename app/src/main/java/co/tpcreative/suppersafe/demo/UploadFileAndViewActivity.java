@@ -11,8 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.About;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
@@ -40,7 +38,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
-import co.tpcreative.suppersafe.common.controller.ManagerService;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.DriveFileName;
@@ -171,7 +169,7 @@ public class UploadFileAndViewActivity extends BaseDemoActivity {
 
     @OnClick(R.id.btnSize)
     public void onCallInfo(){
-        ManagerService.getInstance().getMyService().getAction();
+        ServiceManager.getInstance().getMyService().getAction();
     }
 
     @Override

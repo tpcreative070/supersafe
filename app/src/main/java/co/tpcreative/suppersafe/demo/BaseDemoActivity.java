@@ -36,13 +36,12 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.jaychang.sa.SocialUser;
 import java.util.HashSet;
 import java.util.Set;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.controller.ManagerService;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 
 /**
  * An abstract activity that handles authorization and connection to the Drive services.
@@ -200,8 +199,8 @@ public abstract class BaseDemoActivity extends AppCompatActivity{
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
-        ManagerService.getInstance().setDriveClient(mDriveClient);
-        ManagerService.getInstance().setDriveResourceClient(mDriveResourceClient);
+        ServiceManager.getInstance().setDriveClient(mDriveClient);
+        ServiceManager.getInstance().setDriveResourceClient(mDriveResourceClient);
         onDriveClientReady();
     }
 
@@ -305,12 +304,6 @@ public abstract class BaseDemoActivity extends AppCompatActivity{
         try {
             GoogleSignInAccount acct = completedTask.getResult(ApiException.class);
             mSignInAccount = acct;
-            final SocialUser user = new SocialUser();
-            user.userId = acct.getId();
-            user.accessToken = acct.getIdToken();
-            user.profilePictureUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : "";
-            user.email = acct.getEmail();
-            user.fullName = acct.getDisplayName();
             // TODO(developer): send ID Token to server and validate
         } catch (ApiException e) {
             Log.w(TAG, "handleSignInResult:error", e);

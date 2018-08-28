@@ -1,4 +1,4 @@
-package co.tpcreative.suppersafe.ui.manageraccount;
+package co.tpcreative.suppersafe.ui.accountmanager;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,11 +18,12 @@ import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.model.User;
 
-public class ManagerAccountActivity extends BaseActivity {
+public class AccountManagerActivity extends BaseActivity {
 
-    private static final String TAG = ManagerAccountActivity.class.getSimpleName();
+    private static final String TAG = AccountManagerActivity.class.getSimpleName();
 
     private SlidrConfig mConfig;
     @BindView(R.id.tvEmail)
@@ -36,7 +37,7 @@ public class ManagerAccountActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manager_account);
+        setContentView(R.layout.activity_account_manager);
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -74,8 +75,22 @@ public class ManagerAccountActivity extends BaseActivity {
         if (mUser!=null){
             mUser.verified = false;
             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+            ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
+                @Override
+                public void onCompletedDisconnect() {
+                    onBackPressed();
+                }
+
+                @Override
+                public void onCompletedSignOut() {
+                    onBackPressed();
+                }
+                @Override
+                public void onError() {
+
+                }
+            });
         }
-        onBackPressed();
     }
 
 }

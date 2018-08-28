@@ -20,8 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -30,9 +28,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.snatik.storage.Storage;
-
 import java.util.List;
-
 import co.tpcreative.suppersafe.ChooserActivity;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.demo.events.ListenChangeEventsForFilesActivity;

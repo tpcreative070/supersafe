@@ -1,5 +1,6 @@
 package co.tpcreative.suppersafe;
 
+import android.accounts.Account;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -20,33 +20,35 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
 import com.google.android.gms.drive.DriveContents;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.drive.Metadata;
+import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.drive.DriveScopes;
+import com.google.gson.Gson;
 import com.jaychang.sa.DialogFactory;
-
+import com.jaychang.sa.SocialUser;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import co.tpcreative.suppersafe.demo.oauthor.GoogleAuthActivity;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -55,7 +57,7 @@ import co.tpcreative.suppersafe.demo.oauthor.GoogleAuthActivity;
 public class SignInActivityWithDrive extends AppCompatActivity implements
         View.OnClickListener {
 
-    private static final String TAG = "SignUpActivity";
+    private static final String TAG = "SignInActivityWithDrive";
     private static final int RC_SIGN_IN = 9001;
     private static final int RC_SING_OAUTHOR = 9002;
 
@@ -76,6 +78,10 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
      */
     private DriveResourceClient mDriveResourceClient;
 
+    private DriveFolder mDriveFolder;
+
+    private boolean isFolderExisting;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,14 +96,13 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.disconnect_button).setOnClickListener(this);
 
-
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(Drive.SCOPE_FILE)
                 .requestScopes(Drive.SCOPE_APPFOLDER)
                 .requestIdToken(getString(R.string.server_client_id))
-                .requestEmail()
+                .requestProfile()
                 .build();
-        // [END configure_signin]
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, signInOptions);
         // [END build_client]
         // [END customize_button]
@@ -106,17 +111,24 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
     @Override
     public void onStart() {
         super.onStart();
-
         // Check if the user is already signed in and all required scopes are granted
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null && GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE,Drive.SCOPE_APPFOLDER)) {
             initializeDriveClient(account);
             updateUI(account);
-            getAccessToken(account);
+            //getAccessToken(account);
 
         } else {
             updateUI(null);
         }
+
+        // Check if the user is already signed in and all required scopes are granted
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     // [START onActivityResult]
@@ -146,7 +158,7 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             initializeDriveClient(account);
             updateUI(account);
-            getAccessToken(account);
+            //getAccessToken(account);
         } catch (ApiException e) {
             // Signed out, show unauthenticated UI.
             Log.w(TAG, "handleSignInResult:error", e);
@@ -163,7 +175,7 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
 
     // [START signOut]
     private void signOut() {
-        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+        mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 // [START_EXCLUDE]
@@ -192,16 +204,45 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
         if (account != null) {
             mStatusTextView.setText(getString(R.string.signed_in_fmt, account.getDisplayName()));
 
-            Log.d(TAG,"request token :"+ account.getIdToken());
+            //Log.d(TAG,String.format(getString(R.string.access_token),account.getIdToken()));
+
+            SocialUser user = new SocialUser();
+            user.fullName = account.getDisplayName();
+            user.userId = account.getId();
+            user.email = account.getEmail();
+            user.username = account.getGivenName();
+
+            Log.d(TAG,"response user :"+new Gson().toJson(user));
 
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.signed_out);
-
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
+    }
+
+
+
+    public void onRequestSyncData(){
+        mDriveClient.requestSync().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG,"Complete sync");
+                listFiles();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG,"Cancel sync");
+            }
+        }).addOnCanceledListener(new OnCanceledListener() {
+            @Override
+            public void onCanceled() {
+                Log.d(TAG,"Cancel sync");
+            }
+        });
     }
 
     @Override
@@ -218,7 +259,6 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
                 break;
         }
     }
-
 
 
     private String getAccessTokenScope() {
@@ -276,6 +316,7 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
+        onRequestSyncData();
         createFile();
     }
 
@@ -300,10 +341,9 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
                         writer.write("Hello World!");
                     }
                     MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                            .setTitle("HelloWorld.jpg")
+                            .setTitle("HelloWorld123.jpg")
                             .setMimeType("image/jpeg")
                             .build();
-
                     return getDriveResourceClient().createFile(parent, changeSet, contents);
                 })
                 .addOnSuccessListener(this,
@@ -315,14 +355,118 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
                         })
                 .addOnFailureListener(this, e -> {
                     Log.e(TAG, "Unable to create file", e);
+                    signOut();
                     showMessage(getString(R.string.file_create_error));
                 });
         // [END create_file]
     }
 
+
+    private void listFiles() {
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.MIME_TYPE, "image/jpeg"))
+                .build();
+        // [START query_files]
+        Task<MetadataBuffer> queryTask = getDriveResourceClient().query(query);
+        // [END query_files]
+        // [START query_results]
+
+        queryTask
+                .addOnSuccessListener(this,
+                        metadataBuffer -> {
+                            // Handle results...
+                            // [START_EXCLUDE]
+                            int count = 0;
+                            for (Metadata index : metadataBuffer){
+                               count+=1;
+                            }
+                            int countPrevious = PrefsController.getInt(getString(R.string.key_count_sync),0);
+                            if (countPrevious==count){
+                                // signOut();
+                            }
+                            PrefsController.putInt(getString(R.string.key_count_sync),count);
+                            Log.d(TAG,"count :"+count);
+                            // [END_EXCLUDE]
+                        })
+                .addOnFailureListener(this, e -> {
+                    // Handle failure...
+                    // [START_EXCLUDE]
+                    Log.e(TAG, "Error retrieving files", e);
+                    showMessage(getString(R.string.query_failed));
+                    signOut();
+                    // [END_EXCLUDE]
+                });
+        // [END query_results]
+    }
+
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
+
+    // [START create_folder]
+    private void checkFolder() {
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE))
+                .build();
+        Task<MetadataBuffer> queryTask = getDriveResourceClient().query(query);
+        StringBuilder stringBuilder = new StringBuilder();
+        queryTask
+                .addOnSuccessListener(this,
+                        metadataBuffer -> {
+                            for (Metadata index : metadataBuffer){
+                                String info = "Name :" +index.getTitle() + " Id :" + index.getDriveId() + " Resource Id :" + index.getDriveId().getResourceId();
+                                stringBuilder.append(info);
+                                stringBuilder.append("\n");
+                                if (index.getTitle().equals("NewFolder")){
+                                    isFolderExisting = true;
+                                }
+                            }
+                            if (!isFolderExisting){
+                                createFolder();
+                            }
+                            else{
+                                showMessage("Folder is existing !!!");
+                            }
+                            Log.d(TAG,stringBuilder.toString());
+
+                        })
+                .addOnFailureListener(this, e -> {
+                    // Handle failure...
+                    // [START_EXCLUDE]
+                    Log.e(TAG, "Error retrieving files", e);
+                    showMessage(getString(R.string.query_failed));
+                    // [END_EXCLUDE]
+                });
+        // [END query_results]
+    }
+
+    // [START create_folder]
+    private void createFolder() {
+        getDriveResourceClient()
+                .getRootFolder()
+                .continueWithTask(task -> {
+                    DriveFolder parentFolder = task.getResult();
+                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
+                            .setTitle("NewFolder")
+                            .setMimeType(DriveFolder.MIME_TYPE)
+                            .setStarred(false)
+                            .build();
+                    return getDriveResourceClient().createFolder(parentFolder, changeSet);
+                })
+                .addOnSuccessListener(this,
+                        driveFolder -> {
+                            mDriveFolder = driveFolder;
+                            Log.d(TAG,getString(R.string.file_created,
+                                    driveFolder.getDriveId().encodeToString()));
+                            showMessage(getString(R.string.file_created,
+                                    driveFolder.getDriveId().encodeToString()));
+                        })
+                .addOnFailureListener(this, e -> {
+                    Log.e(TAG, "Unable to create file", e);
+                    showMessage(getString(R.string.file_create_error));
+                });
+    }
+
 
 
 

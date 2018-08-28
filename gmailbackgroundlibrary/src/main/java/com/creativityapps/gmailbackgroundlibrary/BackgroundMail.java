@@ -272,7 +272,7 @@ public class BackgroundMail {
                 progressDialog = new ProgressDialog(mContext);
                 progressDialog.setMessage(sendingMessage);
                 progressDialog.setCancelable(false);
-                progressDialog.show();
+                //progressDialog.show();
             }
         }
 

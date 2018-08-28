@@ -148,9 +148,18 @@
             android:screenOrientation="portrait" />
         <activity android:name=".demo.oauthor.GoogleAuthActivity" />
         <activity android:name=".demo.UploadFileAndViewActivity" />
-        <activity android:name=".ui.manageraccount.ManagerAccountActivity"
-            android:theme="@style/Theme.Slidr.Slidable"
-            android:label="@string/account"></activity>
+        <activity
+            android:name=".ui.accountmanager.AccountManagerActivity"
+            android:label="@string/account"
+            android:theme="@style/Theme.Slidr.Slidable" />
+        <activity
+            android:name=".ui.enablecloud.EnableCloudActivity"
+            android:label="@string/enable_cloud_sync" />
+        <activity
+            android:name=".ui.cloudmanager.CloudManagerActivity"
+            android:label="@string/cloud_manager"
+            android:theme="@style/Theme.Slidr.Slidable" />
+        <activity android:name=".ui.checksystem.CheckSystemActivity"></activity>
     </application>
 
 </manifest>

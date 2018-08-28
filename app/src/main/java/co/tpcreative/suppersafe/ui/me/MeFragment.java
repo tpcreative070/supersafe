@@ -1,5 +1,6 @@
 package co.tpcreative.suppersafe.ui.me;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,18 +14,31 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.api.services.drive.DriveScopes;
+import com.google.gson.Gson;
+import com.jaychang.sa.AuthCallback;
+import com.jaychang.sa.AuthData;
+import com.jaychang.sa.AuthDataHolder;
+import com.jaychang.sa.SocialUser;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.SignInActivityWithDrive;
 import co.tpcreative.suppersafe.common.BaseFragment;
 import co.tpcreative.suppersafe.common.Navigator;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.suppersafe.ui.privates.PrivateFragment;
+import co.tpcreative.suppersafe.demo.oauthor.GoogleAuthActivity;
+import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
 public class MeFragment extends BaseFragment implements MeView{
 
     private static final String TAG = MeFragment.class.getSimpleName();
-
     @BindView(R.id.nsv)
     NestedScrollView nestedScrollView;
     @BindView(R.id.imgSettings)
@@ -124,6 +138,7 @@ public class MeFragment extends BaseFragment implements MeView{
     @Override
     public void onResume() {
         super.onResume();
+        ServiceManager.getInstance().onGetLastSignIn();
         presenter.onShowUserInfo();
         if (presenter.mUser!=null){
             if (presenter.mUser.verified){
@@ -134,13 +149,44 @@ public class MeFragment extends BaseFragment implements MeView{
             }
             tvEmail.setText(presenter.mUser.email);
         }
+
+        if (ServiceManager.getInstance().getDriveResourceClient()!=null){
+            String value = String.format(getString(R.string.monthly_used),"100","100");
+            tvEnableCloud.setText(value);
+        }
+        else{
+            tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
+        }
+
+
         Log.d(TAG,"OnResume");
     }
 
     @OnClick(R.id.llSettings)
     public void onSettings(View view){
-        Navigator.onSettings(getActivity());
+       // Navigator.onSettings(getActivity());
         Log.d(TAG,"Settings");
+        Intent intent = new Intent(getActivity(), SignInActivityWithDrive.class);
+        startActivity(intent);
+//        List<String> requiredScopes = new ArrayList<>();
+//        requiredScopes.add(DriveScopes.DRIVE);
+//        AuthDataHolder.getInstance().googleAuthData = new AuthData(requiredScopes, new AuthCallback() {
+//            @Override
+//            public void onSuccess(SocialUser socialUser) {
+//                Log.d(TAG,"onSuccess : " + socialUser.accessToken);
+//                Log.d(TAG,"user :" + new Gson().toJson(socialUser));
+//            }
+//            @Override
+//            public void onError(Throwable throwable) {
+//                Log.d(TAG,"onError");
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                Log.d(TAG,"onCancel");
+//            }
+//        });
+//        GoogleAuthActivity.start(getActivity());
     }
 
 
@@ -158,9 +204,20 @@ public class MeFragment extends BaseFragment implements MeView{
 
     @OnClick(R.id.llEnableCloud)
     public void onEnableCloud(View view){
-
+        if (presenter.mUser!=null){
+            if (presenter.mUser.verified){
+                if (ServiceManager.getInstance().getDriveClient() == null){
+                    Navigator.onCheckSystem(getActivity());
+                }
+                else{
+                    Navigator.onManagerCloud(getActivity());
+                }
+            }
+            else{
+                Navigator.onVerifyAccount(getActivity());
+            }
+        }
     }
-
 
     @Override
     public void startLoading() {
@@ -177,6 +234,5 @@ public class MeFragment extends BaseFragment implements MeView{
     public Context getContext() {
         return super.getContext();
     }
-
 
 }

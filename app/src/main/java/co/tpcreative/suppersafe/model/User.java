@@ -12,6 +12,7 @@ public class User extends BaseResponse implements Serializable{
 
     public String email;
     public String code ;
+    public String cloud_id;
     public Authorization author;
     public boolean verified ;
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
-import com.darsh.multipleimageselect.activities.HelperActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
 
 import co.tpcreative.suppersafe.ChooserActivity;
@@ -15,11 +14,13 @@ import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.suppersafe.ui.camera.CameraActivity;
+import co.tpcreative.suppersafe.ui.checksystem.CheckSystemActivity;
 import co.tpcreative.suppersafe.ui.dashboard.DashBoardActivity;
-import co.tpcreative.suppersafe.ui.demo.CheeseDetailActivity;
+import co.tpcreative.suppersafe.ui.enablecloud.EnableCloudActivity;
 import co.tpcreative.suppersafe.ui.help.HelpActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
-import co.tpcreative.suppersafe.ui.manageraccount.ManagerAccountActivity;
+import co.tpcreative.suppersafe.ui.accountmanager.AccountManagerActivity;
+import co.tpcreative.suppersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.suppersafe.ui.settings.SettingsActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
@@ -128,11 +129,23 @@ public class Navigator {
     }
 
     public static void onManagerAccount(Context context){
-        Intent intent = new Intent(context, ManagerAccountActivity.class);
+        Intent intent = new Intent(context, AccountManagerActivity.class);
         context.startActivity(intent);
     }
 
+    public static void onEnableCloud(Activity context){
+        Intent intent = new Intent(context, EnableCloudActivity.class);
+        context.startActivityForResult(intent,EnableCloudActivity.ENABLE_CLOUD);
+    }
 
+    public static void onManagerCloud(Context context){
+        Intent intent = new Intent(context, CloudManagerActivity.class);
+        context.startActivity(intent);
+    }
 
+    public static void onCheckSystem(Activity context){
+        Intent intent = new Intent(context, CheckSystemActivity.class);
+        context.startActivityForResult(intent,EnableCloudActivity.ENABLE_CLOUD);
+    }
 
 }

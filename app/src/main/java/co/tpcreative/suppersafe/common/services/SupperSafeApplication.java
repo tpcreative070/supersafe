@@ -3,16 +3,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import com.android.volley.Request;
@@ -23,12 +19,11 @@ import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.api.RootAPI;
-import co.tpcreative.suppersafe.common.controller.ManagerService;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.network.Dependencies;
 import co.tpcreative.suppersafe.model.User;
@@ -68,7 +63,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         dependencies.init();
         serverAPI = (RootAPI) Dependencies.serverAPI;
 
-        ManagerService.getInstance().setContext(this);
+        ServiceManager.getInstance().setContext(this);
 
         new PrefsController.Builder()
                 .setContext(getApplicationContext())

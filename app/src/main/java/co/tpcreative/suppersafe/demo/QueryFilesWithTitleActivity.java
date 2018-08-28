@@ -12,26 +12,16 @@
  * limitations under the License.
  */
 package co.tpcreative.suppersafe.demo;
-
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ListView;
-
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.google.android.gms.drive.widget.DataBufferAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.jaychang.sa.AuthData;
-import com.jaychang.sa.AuthDataHolder;
-
 import co.tpcreative.suppersafe.R;
 
 /**

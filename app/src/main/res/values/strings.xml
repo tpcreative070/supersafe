@@ -159,7 +159,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.100:8081</string>
+    <string name="url_developer">http://192.168.0.102:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
@@ -169,6 +169,8 @@
     <string name="view_change">View/Change Account</string>
     <string name="cloud">Cloud</string>
     <string name="enable_cloud_sync">Enable Cloud Sync</string>
+    <string name="message_prompt">All your files will be sync to cloud. They will never lost.</string>
+    <string name="enable_now">ENABLE NOW</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
     <string name="verify">Verify</string>
     <string name="your_email">Your Email</string>
@@ -189,6 +191,21 @@
     <string name="license_status">License Status</string>
     <string name="free">Free</string>
     <string name="pro">Pro</string>
+    <string name="link_your_google_drive">Link Google Drive to store your encrypted files</string>
+    <string name="google_drive_account">Your Google Drive account is below. Link it to restore previous files</string>
+    <string name="link_google_drive">LINK GOOGLE DRIVE</string>
+    <string name="user_another_google_drive">USE ANOTHER GOOGLE DRIVE</string>
+    <string name="cloud_manager">Cloud Manager</string>
+    <string name="monthly_used">Monthly Usage %1$s/%2$s</string>
+    <string name="choose_an_account">Please select %1$s to link to Google Drive</string>
+    <string name="choose_an_new_account">Please select or add your Google account to sign in with SupperSafe</string>
+    <string name="not_the_same_account">Not the same account</string>
+    <string name="choose_the_same_account">Please select %1$s</string>
+    <string name="select_again">SELECT AGAIN</string>
+    <string name="user_another">USER ANOTHER</string>
+    <string name="user_another_google_drive_title">Are you sure want to change another Google Drive?</string>
+
+
 
 
     <string name="key_user">user</string>
@@ -217,7 +234,6 @@
     <string name="key_card_ids">Cards &#38; Ids</string>
     <string name="key_videos">Videos</string>
     <string name="key_significant_other">Significant Other</string>
-
     <string name="device_type">Android</string>
 
 
@@ -226,5 +242,7 @@
     <string name="key_data">data</string>
     <string name="key_pin">pin</string>
     <string name="key_running">running</string>
+    <string name="key_cloud_id">cloud_id</string>
+    <string name="key_count_sync">count_sync</string>
 
 </resources>

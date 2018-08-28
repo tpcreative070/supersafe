@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.suppersafe.R;
@@ -62,6 +64,9 @@ public class BaseActivity extends AppCompatActivity {
         System.gc();
     }
 
+    protected void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
 
     protected void setDisplayHomeAsUpEnabled(boolean check){
         actionBar.setDisplayHomeAsUpEnabled(check);
