@@ -18,6 +18,7 @@ public interface RootAPI{
     String RESEND_CODE = "api/resendcode";
     String CHECK_USER_CLOUD = "/api/usercloud/check";
     String ADD_USER_CLOUD = "/api/usercloud/add/";
+    String CHECK_USER_ID = "/api/user/checkUser";
 
 
     @FormUrlEncoded
@@ -44,6 +45,9 @@ public interface RootAPI{
     @POST(ADD_USER_CLOUD)
     Observable<UserCloudResponse> onAddUserCloud(@FieldMap Map<String,String>request);
 
+    @FormUrlEncoded
+    @POST(CHECK_USER_ID)
+    Observable<VerifyCodeResponse> onCheckUserId(@FieldMap Map<String,String>request);
 
 
 }

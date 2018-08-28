@@ -204,7 +204,9 @@
     <string name="select_again">SELECT AGAIN</string>
     <string name="user_another">USER ANOTHER</string>
     <string name="user_another_google_drive_title">Are you sure want to change another Google Drive?</string>
-
+    <string name="verify_email">Verify Email</string>
+    <string name="pin_code">PIN CODE</string>
+    <string name="description_pin_code">A Pin code has been sent to your email %1$s</string>
 
 
 
@@ -244,5 +246,6 @@
     <string name="key_running">running</string>
     <string name="key_cloud_id">cloud_id</string>
     <string name="key_count_sync">count_sync</string>
+    <string name="key_google_oauth">google_oauth</string>
 
 </resources>

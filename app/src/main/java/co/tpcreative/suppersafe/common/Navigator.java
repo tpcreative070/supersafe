@@ -10,6 +10,7 @@ import com.darsh.multipleimageselect.helpers.Constants;
 import co.tpcreative.suppersafe.ChooserActivity;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.demo.HomeActivity;
+import co.tpcreative.suppersafe.model.GoogleOauth;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
@@ -143,8 +144,11 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onCheckSystem(Activity context){
+    public static void onCheckSystem(Activity context, final GoogleOauth googleOauth){
         Intent intent = new Intent(context, CheckSystemActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(context.getString(R.string.key_google_oauth),googleOauth);
+        intent.putExtras(bundle);
         context.startActivityForResult(intent,EnableCloudActivity.ENABLE_CLOUD);
     }
 

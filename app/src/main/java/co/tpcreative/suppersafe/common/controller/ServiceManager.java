@@ -303,7 +303,6 @@ public class ServiceManager {
                 }).onSameThread().check();
     }
 
-
     public interface ServiceManagerListener {
         void onCompletedDisconnect();
         void onCompletedSignOut();
@@ -314,6 +313,5 @@ public class ServiceManager {
         void onGrantedPermission();
         void onError();
     }
-
 
 }

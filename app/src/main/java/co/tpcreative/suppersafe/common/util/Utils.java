@@ -29,6 +29,7 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import de.mrapp.android.dialog.MaterialDialog;
 
 /**
@@ -118,6 +119,22 @@ public class Utils {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public static void hideKeyboard(View view) {
+        // Check if no view has focus:
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) SupperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    public static void showKeyboard(View view) {
+        // Check if no view has focus:
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager)  SupperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 

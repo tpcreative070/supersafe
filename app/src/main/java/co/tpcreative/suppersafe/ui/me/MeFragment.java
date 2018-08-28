@@ -207,7 +207,7 @@ public class MeFragment extends BaseFragment implements MeView{
         if (presenter.mUser!=null){
             if (presenter.mUser.verified){
                 if (ServiceManager.getInstance().getDriveClient() == null){
-                    Navigator.onCheckSystem(getActivity());
+                    Navigator.onCheckSystem(getActivity(),null);
                 }
                 else{
                     Navigator.onManagerCloud(getActivity());

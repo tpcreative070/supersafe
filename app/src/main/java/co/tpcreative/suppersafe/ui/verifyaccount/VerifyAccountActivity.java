@@ -3,6 +3,7 @@ import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
@@ -16,10 +17,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,6 +32,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.ftinc.kit.util.SizeUtils;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -48,6 +53,8 @@ import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.GoogleOauth;
+import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.enablecloud.EnableCloudActivity;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,VerifyAccountView{
@@ -100,6 +107,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
 
     private boolean isBack = true;
+    private boolean isSync  = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -360,6 +368,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                         Log.d(TAG,"checked :" + b);
+                       isSync = b;
                     }
                 })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -387,7 +396,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Log.d(TAG,"positive");
-                        Navigator.onCheckSystem(VerifyAccountActivity.this);
+                        Navigator.onCheckSystem(VerifyAccountActivity.this,null);
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -467,6 +476,11 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 if (resultCode == Activity.RESULT_OK) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     Log.d(TAG,"accountName : " + accountName);
+                    GoogleOauth googleOauth = new GoogleOauth();
+                    googleOauth.email = accountName;
+                    googleOauth.isEnableSync = isSync;
+                    final User user = User.getInstance().getUserInfo();
+                    Navigator.onCheckSystem(VerifyAccountActivity.this,googleOauth);
                 }
                 break;
              default:
@@ -475,5 +489,10 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         }
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ServiceManager.getInstance().onGetLastSignIn();
+        isSync = true;
+    }
 }
