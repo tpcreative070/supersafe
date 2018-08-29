@@ -2,6 +2,7 @@ package co.tpcreative.suppersafe.common.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import java.io.BufferedReader;
@@ -128,6 +130,13 @@ public class Utils {
             InputMethodManager inputManager = (InputMethodManager) SupperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    }
+
+    public static  int dpToPx(int dp) {
+        Resources r = SupperSafeApplication.getInstance().getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                dp, r.getDisplayMetrics());
+        return px;
     }
 
     public static void showKeyboard(View view) {

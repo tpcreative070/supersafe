@@ -1,1 +1,11 @@
-include ':app','floatingbuttonlibrary' , 'cameralibrary', 'multipleimageselect','gmailbackgroundlibrary','slibrlibrary','materialstyledialoglibrary','library-common'
+include ':app',
+        'floatingbuttonlibrary' ,
+        'cameralibrary',
+        'multipleimageselect',
+        'gmailbackgroundlibrary',
+        'slibrlibrary',
+        'materialstyledialoglibrary',
+        'library-common',
+        'library-circular',
+        'library-progress'
+

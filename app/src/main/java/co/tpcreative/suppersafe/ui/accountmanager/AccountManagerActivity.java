@@ -6,20 +6,21 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import com.ftinc.kit.util.SizeUtils;
 import com.google.gson.Gson;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
+import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.User;
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
 public class AccountManagerActivity extends BaseActivity {
 
@@ -32,6 +33,8 @@ public class AccountManagerActivity extends BaseActivity {
     TextView tvStatus;
     @BindView(R.id.tvLicenseStatus)
     TextView tvLicenseStatus;
+    @BindView(R.id.progressbar_circular)
+    CircularProgressBar mCircularProgressBar;
 
 
     @Override
@@ -66,6 +69,27 @@ public class AccountManagerActivity extends BaseActivity {
             }
             tvEmail.setText(mUser.email);
         }
+
+        setProgressValue();
+    }
+
+
+    public void setProgressValue(){
+        CircularProgressDrawable circularProgressDrawable;
+        CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
+                .colors(getResources().getIntArray(R.array.gplus_colors))
+                .sweepSpeed(2)
+                .rotationSpeed(2)
+                .strokeWidth(Utils.dpToPx(3))
+                .style(CircularProgressDrawable.STYLE_ROUNDED);
+        mCircularProgressBar.setIndeterminateDrawable(circularProgressDrawable = b.build());
+        // /!\ Terrible hack, do not do this at home!
+        circularProgressDrawable.setBounds(0,
+                0,
+                mCircularProgressBar.getWidth(),
+                mCircularProgressBar.getHeight());
+        mCircularProgressBar.setVisibility(View.INVISIBLE);
+        mCircularProgressBar.setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.btnSignOut)

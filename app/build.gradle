@@ -156,6 +156,12 @@ dependencies {
     implementation project(':library-common')
 
 
+    /*Progress bar*/
+
+    implementation project(':library-circular')
+    implementation project(':library-progress')
+
+
 }
 
 /*Resolved duplicated for Google api client*/
