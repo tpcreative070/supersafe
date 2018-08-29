@@ -7,12 +7,14 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
@@ -67,6 +69,12 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     public void showError(String message) {
         Log.d(TAG,message);
         Navigator.onEnableCloud(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unbindView();
     }
 
     @Override
@@ -128,8 +136,8 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     @Override
     public void onShowUserCloud(boolean error, String message) {
         Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+        stopLoading();
         if (!error){
-
            onBackPressed();
         }
     }
@@ -141,14 +149,15 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
 
     @Override
     public void sendEmailSuccessful() {
-        if (presenter.mUser!=null){
-            onVerifyInputCode(presenter.mUser.email);
+        if (presenter.googleOauth!=null){
+            onVerifyInputCode(presenter.googleOauth.email);
         }
     }
 
     @Override
     public void onSignUpFailed(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+        stopLoading();
     }
 
 
@@ -157,6 +166,13 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         Log.d(TAG,""+isExisting);
         //signIn(userId);
         Toast.makeText(this,userId +" is existing  :" + isExisting,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSignInFailed(String message) {
+        stopLoading();
+        Toast.makeText(this,""+message,Toast.LENGTH_SHORT).show();
+        onBackPressed();
     }
 
     @Override
@@ -171,16 +187,19 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
                    }
                    @Override
                    public void onCompletedSignOut() {
+                       startLoading();
                        signIn(presenter.mUser.email);
                    }
 
                    @Override
                    public void onError() {
+                       startLoading();
                        signIn(presenter.mUser.email);
                    }
                });
            }
            else{
+               stopLoading();
                onBackPressed();
            }
        }
@@ -204,6 +223,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         dialog.title(getString(R.string.verify_email));
         dialog.content(Html.fromHtml(value));
         dialog.theme(Theme.LIGHT);
+        dialog.inputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
         dialog.input(getString(R.string.pin_code), null, false, new MaterialDialog.InputCallback() {
             @Override
             public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -216,6 +236,13 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         });
         dialog.positiveText(getString(R.string.ok));
         dialog.negativeText(getString(R.string.cancel));
+        dialog.onNegative(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                stopLoading();
+                onBackPressed();
+            }
+        });
         EditText editText = dialog.show().getInputEditText();
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override

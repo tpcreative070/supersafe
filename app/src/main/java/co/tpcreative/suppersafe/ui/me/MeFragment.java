@@ -138,6 +138,7 @@ public class MeFragment extends BaseFragment implements MeView{
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume");
         ServiceManager.getInstance().onGetLastSignIn();
         presenter.onShowUserInfo();
         if (presenter.mUser!=null){

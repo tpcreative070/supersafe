@@ -49,6 +49,7 @@ import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeReceiver;
@@ -171,7 +172,9 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                     onVerifyCode();
                 }
                 if (getCurrentFocus() == edtEmail){
+                    Utils.hideSoftKeyboard(this);
                     onChangedEmail();
+
                 }
                 return true;
             }
@@ -239,10 +242,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @OnClick(R.id.btnSendVerifyCode)
     public void onClickedSendVerifyCode(View view){
         Log.d(TAG,"Verify code");
-       //onShowView(view);
-        final VerifyCodeRequest verifyCodeRequest = new VerifyCodeRequest();
-        verifyCodeRequest.email = presenter.mUser.email;
-        presenter.onResendCode(verifyCodeRequest);
+        presenter.onCheckUser(presenter.mUser.email);
     }
 
     @OnClick(R.id.btnCancel)
@@ -261,9 +261,30 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         }
     }
 
+
+    @Override
+    public void showUserExisting(String user_id, boolean isExisting) {
+
+    }
+
+    @Override
+    public void onSignUpFailed(String message) {
+
+    }
+
+    @Override
+    public void onSignInFailed(String message) {
+
+    }
+
     public void onChangedEmail(){
         final String email = edtEmail.getText().toString().trim();
+        tvEmail.setText(email);
+        String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + email +"</font>");
+        tvTitle.setText(Html.fromHtml(sourceString));
         presenter.onChangeEmail(email);
+        Utils.hideSoftKeyboard(this);
+        Utils.hideKeyboard(edtEmail);
     }
 
     @Override
@@ -479,7 +500,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                     GoogleOauth googleOauth = new GoogleOauth();
                     googleOauth.email = accountName;
                     googleOauth.isEnableSync = isSync;
-                    final User user = User.getInstance().getUserInfo();
                     Navigator.onCheckSystem(VerifyAccountActivity.this,googleOauth);
                 }
                 break;
@@ -495,4 +515,11 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         ServiceManager.getInstance().onGetLastSignIn();
         isSync = true;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unbindView();
+    }
+
 }

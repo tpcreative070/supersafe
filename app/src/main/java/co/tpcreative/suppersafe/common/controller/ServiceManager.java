@@ -137,7 +137,6 @@ public class ServiceManager {
         return myService;
     }
 
-
     public void onGetLastSignIn() {
         Set<Scope> requiredScopes = new HashSet<>(2);
         requiredScopes.add(Drive.SCOPE_FILE);
@@ -153,6 +152,10 @@ public class ServiceManager {
         if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
             initializeDriveClient(signInAccount);
         }
+        else{
+            mDriveResourceClient = null;
+            mDriveClient = null;
+        }
     }
 
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
@@ -164,7 +167,6 @@ public class ServiceManager {
         mGoogleSignInAccount = googleSignInAccount;
         handleSignInResult(signInAccount);
     }
-
 
     private void handleSignInResult(GoogleSignInAccount signInAccount) {
         try {

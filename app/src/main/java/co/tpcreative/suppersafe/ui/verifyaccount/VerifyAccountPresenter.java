@@ -12,10 +12,12 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
 import co.tpcreative.suppersafe.common.request.SignInRequest;
+import co.tpcreative.suppersafe.common.request.SignUpRequest;
 import co.tpcreative.suppersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.NetworkUtil;
 import co.tpcreative.suppersafe.model.User;
+import co.tpcreative.suppersafe.ui.checksystem.CheckSystemView;
 import co.tpcreative.suppersafe.ui.signin.SignInView;
 import co.tpcreative.suppersafe.ui.verify.VerifyView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -145,8 +147,171 @@ public class VerifyAccountPresenter extends Presenter<VerifyAccountView> {
     }
 
 
+    public void onCheckUser(final String email){
+        Log.d(TAG,"info onCheckUser");
+        VerifyAccountView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_user_id),email);
+        hash.put(getString(R.string.key_device_id), SupperSafeApplication.getInstance().getDeviceId());
+        subscriptions.add(SupperSafeApplication.serverAPI.onCheckUserId(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    if (onResponse.error){
+                        SignUpRequest request = new SignUpRequest();
+                        request.email = email;
+                        request.name = "Google";
+                        onSignUp(request);
+                    }
+                    else{
+                        view.showUserExisting(email,!onResponse.error);
+                        SignInRequest request = new SignInRequest();
+                        request.email = email;
+                        onSignIn(request);
+                    }
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+    public void onSignIn(SignInRequest request){
+        Log.d(TAG,"info");
+        VerifyAccountView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_email),request.email);
+        hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_device_id),SupperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer),SupperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model),SupperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+SupperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease),SupperSafeApplication.getInstance().getVersionRelease());
+        subscriptions.add(SupperSafeApplication.serverAPI.onSignIn(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (onResponse.error){
+                        view.onSignInFailed(onResponse.message);
+                    }
+                    else{
+                        mUser = onResponse.user;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
+                        onSendGmail(mUser.email,onResponse.user.code);
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            view.onSignInFailed(msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+    public void onSignUp(SignUpRequest request){
+        Log.d(TAG,"info");
+        VerifyAccountView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_email),request.email);
+        hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_name),request.name);
+        hash.put(getString(R.string.key_device_id),SupperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer),SupperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model),SupperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+SupperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease),SupperSafeApplication.getInstance().getVersionRelease());
+        subscriptions.add(SupperSafeApplication.serverAPI.onSignUP(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (onResponse.error){
+                        view.onSignUpFailed(onResponse.message);
+                    }
+                    else{
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
+                        String code = onResponse.user.code;
+                        mUser = onResponse.user;
+                        if (code!=null){
+                            onSendGmail(request.email,code);
+                        }
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+
 
     public void onSendGmail(String email,String code){
+        Log.d(TAG,"email :"+email);
         VerifyAccountView view = view();
         String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);

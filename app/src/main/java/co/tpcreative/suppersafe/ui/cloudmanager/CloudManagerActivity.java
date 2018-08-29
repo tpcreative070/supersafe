@@ -122,6 +122,21 @@ public class CloudManagerActivity extends BaseActivity {
                 .addOnFailureListener(this, e -> {
                     Log.e(TAG, "Unable to create file", e);
                     showMessage(getString(R.string.file_create_error));
+                    ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
+                        @Override
+                        public void onCompletedDisconnect() {
+
+                        }
+                        @Override
+                        public void onCompletedSignOut() {
+                            finish();
+                        }
+                        @Override
+                        public void onError() {
+
+                            finish();
+                        }
+                    });
                 });
         // [END create_file]
     }

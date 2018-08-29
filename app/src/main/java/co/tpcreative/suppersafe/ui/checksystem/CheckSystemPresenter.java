@@ -11,6 +11,7 @@ import java.util.Map;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
+import co.tpcreative.suppersafe.common.request.SignInRequest;
 import co.tpcreative.suppersafe.common.request.SignUpRequest;
 import co.tpcreative.suppersafe.common.request.UserCloudRequest;
 import co.tpcreative.suppersafe.common.request.VerifyCodeRequest;
@@ -85,11 +86,11 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     }
                     else{
                         view.showUserExisting(email,!onResponse.error);
-                        onSendGmail(email,onResponse.code);
+                        SignInRequest request = new SignInRequest();
+                        request.email = email;
+                        onSignIn(request);
                         isUserExisting = !onResponse.error;
                     }
-
-                    view.stopLoading();
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -97,6 +98,59 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+    public void onSignIn(SignInRequest request){
+        Log.d(TAG,"info");
+        CheckSystemView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_email),request.email);
+        hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_device_id),SupperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer),SupperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model),SupperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+SupperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease),SupperSafeApplication.getInstance().getVersionRelease());
+        subscriptions.add(SupperSafeApplication.serverAPI.onSignIn(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (onResponse.error){
+                        view.onSignInFailed(onResponse.message);
+                    }
+                    else{
+                        mUser = onResponse.user;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
+                        onSendGmail(mUser.email,onResponse.user.code);
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            view.onSignInFailed(msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -135,7 +189,6 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
                 .subscribe(onResponse -> {
-                    view.stopLoading();
                     if (onResponse.error){
                         view.onSignUpFailed(onResponse.message);
                     }
@@ -188,7 +241,6 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
                 .subscribe(onResponse -> {
-                    view.stopLoading();
                     if (onResponse.error){
                         view.showFailedVerificationCode();
                     }
@@ -244,7 +296,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                         view.stopLoading();
                     }
                     else{
-                        onSendGmail(mUser.email,onResponse.code);
+                        onSendGmail(googleOauth.email,onResponse.code);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
@@ -282,7 +334,6 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                         //do some magic
                         Log.d(TAG,"Successful");
                         if (view!=null){
-                            view.stopLoading();
                             view.sendEmailSuccessful();
                         }
                     }
@@ -329,7 +380,6 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                     }
                     view.onShowUserCloud(onResponse.error,onResponse.message);
-                    view.stopLoading();
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();

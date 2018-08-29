@@ -74,6 +74,7 @@
     <string name="file_not_pinnable">File is not pinnable.</string>
     <string name="file_already_pinned">File is already pinned.</string>
     <string name="query_failed">Problem while retrieving files.</string>
+    <string name="query_successful">Query successful</string>
     <string name="read_failed">Error while retrieving file.</string>
     <string name="metadata_retrieved">Metadata successfully fetched. Title: %1$s</string>
     <string name="content_loaded">File contents successfully read.</string>

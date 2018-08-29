@@ -8,6 +8,7 @@ public interface CheckSystemView extends BaseView {
     void showSuccessful(String user_id);
     void showUserExisting(String user_id,boolean isExisting);
     void onSignUpFailed(String message);
+    void onSignInFailed(String message);
     Activity getActivity();
     void showSuccessfulVerificationCode();
     void showFailedVerificationCode();

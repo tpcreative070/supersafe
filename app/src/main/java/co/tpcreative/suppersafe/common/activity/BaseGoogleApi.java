@@ -2,40 +2,47 @@
 package co.tpcreative.suppersafe.common.activity;
 import android.accounts.Account;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.MetadataBuffer;
+import com.google.android.gms.drive.query.Filters;
+import com.google.android.gms.drive.query.Query;
+import com.google.android.gms.drive.query.SearchableField;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.android.gms.tasks.Tasks;
-
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.controller.ServiceManager;
+
 
 /**
  * An abstract activity that handles authorization and connection to the Drive services.
  */
 
-public abstract class BaseGoogleApi extends BaseActivity{
+public abstract class BaseGoogleApi extends AppCompatActivity{
 
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
 
@@ -44,20 +51,6 @@ public abstract class BaseGoogleApi extends BaseActivity{
      */
     protected static final int REQUEST_CODE_SIGN_IN = 0;
 
-
-    /*
-     * Request OAuthor
-     *
-     *
-     * */
-
-    protected static final int REQUEST_CODE_OAU_THOR = 10;
-
-
-    /**
-     * Request code for the Drive picker
-     */
-    protected static final int REQUEST_CODE_OPEN_ITEM = 1;
 
     /**
      * Handles high-level drive functions like sync
@@ -88,13 +81,100 @@ public abstract class BaseGoogleApi extends BaseActivity{
      */
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
 
-    private static final int RC_GET_TOKEN = 9002;
+
+    Unbinder unbinder;
+    protected ActionBar actionBar ;
+    int onStartCount = 0;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        actionBar = getSupportActionBar();
+        onStartCount = 1;
+        if (savedInstanceState == null) // 1st time
+        {
+            this.overridePendingTransition(R.animator.anim_slide_in_left,
+                    R.animator.anim_slide_out_left);
+        } else // already created so reverse animation
+        {
+            onStartCount = 2;
+        }
+    }
+
+    protected float getRandom(float range, float startsfrom) {
+        return (float) (Math.random() * range) + startsfrom;
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+        Log.d(TAG,"action here");
+        unbinder = ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (unbinder != null)
+            unbinder.unbind();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        System.gc();
+    }
+
+    protected void setDisplayHomeAsUpEnabled(boolean check){
+        actionBar.setDisplayHomeAsUpEnabled(check);
+    }
+
+    protected void setNoTitle(){
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    protected void setFullScreen(){
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    protected void setAdjustScreen(){
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        /*android:windowSoftInputMode="adjustPan|adjustResize"*/
+    }
+
+    protected String getResourceString(int code) {
+        return getResources().getString(code);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :{
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //signIn();
+        if (onStartCount > 1) {
+            this.overridePendingTransition(R.animator.anim_slide_in_right,
+                    R.animator.anim_slide_out_right);
+        } else if (onStartCount == 1) {
+            onStartCount++;
+        }
     }
+
 
     /**
      * Handles resolution callbacks.
@@ -118,12 +198,10 @@ public abstract class BaseGoogleApi extends BaseActivity{
                     Log.d(TAG,"sign in successful");
                     initializeDriveClient(getAccountTask.getResult());
                 } else {
-                    Log.e(TAG, "Sign-in failed.");
+                    Log.e(TAG, "Sign-in failed..");
                 }
                 break;
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -139,11 +217,10 @@ public abstract class BaseGoogleApi extends BaseActivity{
             initializeDriveClient(signInAccount);
         } else {
             GoogleSignInOptions signInOptions =
-
                     new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(getString(R.string.server_client_id))
-                            .requestEmail()
                             .requestScopes(Drive.SCOPE_FILE)
+                            .requestProfile()
                             .requestScopes(Drive.SCOPE_APPFOLDER)
                             .build();
             mGoogleSignInClient = GoogleSignIn.getClient(this, signInOptions);
@@ -184,9 +261,9 @@ public abstract class BaseGoogleApi extends BaseActivity{
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
         mSignInAccount = signInAccount;
+        listFiles();
         onDriveClientReady();
         handleSignInResult(mSignInAccount);
-        createFile();
         Log.d(TAG,"Google client ready");
     }
 
@@ -202,18 +279,6 @@ public abstract class BaseGoogleApi extends BaseActivity{
      */
     protected abstract void onDriveClientReady();
 
-    protected DriveClient getDriveClient() {
-        return mDriveClient;
-    }
-
-    protected DriveResourceClient getDriveResourceClient() {
-        return mDriveResourceClient;
-    }
-
-    protected GoogleSignInAccount getSignInAccount(){
-        return mSignInAccount;
-    }
-
 
     private void handleSignInResult(GoogleSignInAccount signInAccount) {
         try {
@@ -227,42 +292,57 @@ public abstract class BaseGoogleApi extends BaseActivity{
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG,"onDestroy");
-        super.onDestroy();
-    }
-
-    private void createFile() {
-        // [START create_file]
-        final Task<DriveFolder> rootFolderTask = getDriveResourceClient().getRootFolder();
-        final Task<DriveContents> createContentsTask = getDriveResourceClient().createContents();
-        Tasks.whenAll(rootFolderTask, createContentsTask)
-                .continueWithTask(task -> {
-                    DriveFolder parent = rootFolderTask.getResult();
-                    DriveContents contents = createContentsTask.getResult();
-                    OutputStream outputStream = contents.getOutputStream();
-                    try (Writer writer = new OutputStreamWriter(outputStream)) {
-                        writer.write("Hello World!");
-                    }
-                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                            .setTitle("HelloWorld123.jpg")
-                            .setMimeType("image/jpeg")
-                            .build();
-                    return getDriveResourceClient().createFile(parent, changeSet, contents);
-                })
+    private void listFiles() {
+        Query query = new Query.Builder()
+                .addFilter(Filters.eq(SearchableField.MIME_TYPE, "image/jpeg"))
+                .build();
+        Task<MetadataBuffer> queryTask = mDriveResourceClient.query(query);
+        StringBuilder stringBuilder = new StringBuilder();
+        queryTask
                 .addOnSuccessListener(this,
-                        driveFile -> {
-                            Log.d(TAG,getString(R.string.file_created,
-                                    driveFile.getDriveId()));
-                            showMessage(getString(R.string.file_created,
-                                    driveFile.getDriveId().encodeToString()));
+                        metadataBuffer -> {
+                            Log.d(TAG,"list file successful");
+                            showMessage(getString(R.string.query_successful));
+                            onRequestSyncData();
                         })
                 .addOnFailureListener(this, e -> {
-                    Log.e(TAG, "Unable to create file", e);
-                    showMessage(getString(R.string.file_create_error));
+                    // Handle failure...
+                    // [START_EXCLUDE]
+                    mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.e(TAG, "Error retrieving files", e);
+                            showMessage(getString(R.string.query_failed));
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "Error retrieving files", e);
+                            showMessage(getString(R.string.query_failed));
+                        }
+                    });
+                    // [END_EXCLUDE]
                 });
-        // [END create_file]
+        // [END query_results]
+    }
+
+    public void onRequestSyncData(){
+        mDriveClient.requestSync().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Log.d(TAG,"Complete sync");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG,"Cancel sync");
+            }
+        }).addOnCanceledListener(new OnCanceledListener() {
+            @Override
+            public void onCanceled() {
+                Log.d(TAG,"Cancel sync");
+            }
+        });
     }
 
 }

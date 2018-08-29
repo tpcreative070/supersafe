@@ -87,7 +87,7 @@ public class AccountManagerActivity extends BaseActivity {
                 }
                 @Override
                 public void onError() {
-                    onError();
+                    onBackPressed();
                 }
             });
         }

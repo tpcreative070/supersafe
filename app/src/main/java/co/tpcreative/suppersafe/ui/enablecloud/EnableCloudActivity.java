@@ -115,7 +115,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                             public void onCompletedDisconnect() {
 
                             }
-
                             @Override
                             public void onCompletedSignOut() {
                                 signIn(accountName);
@@ -131,7 +130,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                     else{
                         if (accountName.equals(cloud_id)){
                             presenter.mUser.cloud_id = accountName;
-                            signIn(accountName);
                             ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
                                 @Override
                                 public void onCompletedDisconnect() {
@@ -140,11 +138,13 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
 
                                 @Override
                                 public void onCompletedSignOut() {
+                                    onShowProgressDialog();
                                     signIn(accountName);
                                 }
 
                                 @Override
                                 public void onError() {
+                                    onShowProgressDialog();
                                     signIn(accountName);
                                 }
                             });
@@ -160,7 +160,24 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                       String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                       Log.d(TAG,"accountName : " + accountName);
                       presenter.mUser.cloud_id = accountName;
-                      signIn(accountName);
+                      ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
+                          @Override
+                          public void onCompletedDisconnect() {
+
+                          }
+
+                          @Override
+                          public void onCompletedSignOut() {
+                              onShowProgressDialog();
+                              signIn(accountName);
+                          }
+
+                          @Override
+                          public void onError() {
+                              onShowProgressDialog();
+                              signIn(accountName);
+                          }
+                      });
                   }
                   break;
             default:
@@ -200,7 +217,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             Log.d(TAG,"positive");
-
                         }
                     })
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -243,7 +259,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                         else{
                             ServiceManager.getInstance().onPickUpNewEmailNoTitle(EnableCloudActivity.this,cloud_id);
                         }
-
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -259,26 +274,38 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     @Override
     public void showError(String message) {
         Log.d(TAG,""+message);
+        onSopProgressDialog();
     }
 
     @Override
     public void showSuccessful(String message) {
+        onSopProgressDialog();
         presenter.mUser.cloud_id= message;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
         onBackPressed();
     }
 
     public void onShowProgressDialog(){
+        if (progressDialog!=null){
+            if (progressDialog.isShowing()){
+                return;
+            }
+        }
         progressDialog = new ProgressDialog(EnableCloudActivity.this);
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
-    public void onDismiss(){
+    public void onSopProgressDialog(){
         if (progressDialog!=null){
             progressDialog.dismiss();
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unbindView();
+    }
 }

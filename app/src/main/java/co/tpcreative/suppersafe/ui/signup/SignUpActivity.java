@@ -177,4 +177,10 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         btnFinish.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unbindView();
+    }
+
 }

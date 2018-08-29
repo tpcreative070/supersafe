@@ -142,4 +142,11 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
         btnNext.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unbindView();
+    }
+
 }
