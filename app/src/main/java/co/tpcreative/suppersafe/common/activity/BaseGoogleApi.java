@@ -2,6 +2,7 @@
 package co.tpcreative.suppersafe.common.activity;
 import android.accounts.Account;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -12,35 +13,28 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.drive.MetadataBuffer;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
-import java.util.HashSet;
-import java.util.Set;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.gson.Gson;
+import java.io.IOException;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
+import co.tpcreative.suppersafe.model.User;
 
-
-/**
- * An abstract activity that handles authorization and connection to the Drive services.
- */
 
 public abstract class BaseGoogleApi extends AppCompatActivity{
 
@@ -51,22 +45,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
      */
     protected static final int REQUEST_CODE_SIGN_IN = 0;
 
-
-    /**
-     * Handles high-level drive functions like sync
-     */
-    private DriveClient mDriveClient;
-
-    /**
-     * Handle access to Drive resources/files.
-     */
-    private DriveResourceClient mDriveResourceClient;
-
-    /*
-     * Handle User manager
-     *
-     * */
-
     private GoogleSignInAccount mSignInAccount;
 
     /*
@@ -74,13 +52,9 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
      *
      * */
 
-    GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInClient mGoogleSignInClient;
 
-    /**
-     * Tracks completion of the drive picker
-     */
-    private TaskCompletionSource<DriveId> mOpenItemTaskSource;
-
+    private User mUser;
 
     Unbinder unbinder;
     protected ActionBar actionBar ;
@@ -99,6 +73,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
         {
             onStartCount = 2;
         }
+        mGoogleSignInClient = GoogleSignIn.getClient(this, SupperSafeApplication.getInstance().getGoogleSignInOptions(null));
+        mUser = User.getInstance().getUserInfo();
     }
 
     protected float getRandom(float range, float startsfrom) {
@@ -173,8 +149,24 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
         } else if (onStartCount == 1) {
             onStartCount++;
         }
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null && GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE,Drive.SCOPE_APPFOLDER)) {
+            getGoogleSignInClient(account.getAccount());
+            initializeDriveClient(account);
+            mSignInAccount = account;
+            onDriveSuccessful();
+        } else {
+            final User mUser = User.getInstance().getUserInfo();
+            mUser.driveConnected = false;
+            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+            onDriveError();
+        }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     /**
      * Handles resolution callbacks.
@@ -204,67 +196,106 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
         }
     }
 
-    /**
-     * Starts the sign-in process and initializes the Drive client.
-     */
-
-    protected void signIn() {
-        Set<Scope> requiredScopes = new HashSet<>(2);
-        requiredScopes.add(Drive.SCOPE_FILE);
-        requiredScopes.add(Drive.SCOPE_APPFOLDER);
-        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
-            initializeDriveClient(signInAccount);
-        } else {
-            GoogleSignInOptions signInOptions =
-                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(getString(R.string.server_client_id))
-                            .requestScopes(Drive.SCOPE_FILE)
-                            .requestProfile()
-                            .requestScopes(Drive.SCOPE_APPFOLDER)
-                            .build();
-            mGoogleSignInClient = GoogleSignIn.getClient(this, signInOptions);
-            //mGoogleSignInClient.getSignInIntent().putExtra("email","butlerichotel@gmail.com");
-            startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
-        }
-    }
-
     protected void signIn(final String email) {
         Log.d(TAG,"Sign in");
-        Set<Scope> requiredScopes = new HashSet<>(2);
-        requiredScopes.add(Drive.SCOPE_FILE);
-        requiredScopes.add(Drive.SCOPE_APPFOLDER);
-        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
-            initializeDriveClient(signInAccount);
-        } else {
-            Account account = new Account(email, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            GoogleSignInOptions signInOptions =
-                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(getString(R.string.server_client_id))
-                            .requestProfile()
-                            .setAccount(account)
-                            .requestScopes(Drive.SCOPE_FILE)
-                            .requestScopes(Drive.SCOPE_APPFOLDER)
-                            .build();
-            mGoogleSignInClient = GoogleSignIn.getClient(this, signInOptions);
-            startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+        Account account = new Account(email, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        mGoogleSignInClient = GoogleSignIn.getClient(this,SupperSafeApplication.getInstance().getGoogleSignInOptions(account));
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+
+    private GoogleSignInClient getGoogleSignInClient(Account account){
+        mGoogleSignInClient = GoogleSignIn.getClient(this, SupperSafeApplication.getInstance().getGoogleSignInOptions(account));
+        return mGoogleSignInClient;
+    }
+
+    protected void getAccessToken(){
+        if (mSignInAccount!=null){
+            new GetAccessToken().execute(mSignInAccount.getAccount());
         }
     }
+
+    private class GetAccessToken extends AsyncTask<Account, Void, String> {
+        @Override
+        protected String doInBackground(Account... accounts) {
+            try {
+                if (accounts==null){
+                    return null;
+                }
+                if (accounts[0]==null){
+                    return null;
+                }
+                GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
+                        SupperSafeApplication.getInstance(), SupperSafeApplication.getInstance().getRequiredScopesString());
+                Log.d(TAG,"Account :"+ new Gson().toJson(accounts));
+                credential.setSelectedAccount(accounts[0]);
+                try {
+                    String value = credential.getToken();
+                    return value;
+                }
+                catch (GoogleAuthException e){
+                    Log.d(TAG,"Error occurred on GoogleAuthException");
+                }
+            } catch (UserRecoverableAuthIOException recoverableException) {
+                Log.d(TAG,"Error occurred on UserRecoverableAuthIOException");
+            } catch (IOException e) {
+                Log.d(TAG,"Error occurred on IOException");
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String accessToken) {
+            super.onPostExecute(accessToken);
+            if (accessToken!=null){
+                mUser = User.getInstance().getUserInfo();
+                if (mUser!=null){
+                    mUser.access_token =String.format(SupperSafeApplication.getInstance().getString(R.string.access_token),accessToken);
+                    PrefsController.putString(SupperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+                    if (ServiceManager.getInstance().getMyService()==null){
+                        return;
+                    }
+                    Log.d(TAG,"Call DriveAbout");
+                    ServiceManager.getInstance().getMyService().getDriveAbout(new SupperSafeServiceView() {
+                        @Override
+                        public void onError(String message) {
+                            Log.d(TAG,"error :"+ message);
+                            revokeAccess();
+                        }
+                        @Override
+                        public void onSuccessful(String message) {
+                            Log.d(TAG,"successful :"+ message);
+                        }
+                        @Override
+                        public void onStart() {
+
+                        }
+                        @Override
+                        public void startLoading() {
+
+                        }
+                        @Override
+                        public void stopLoading() {
+
+                        }
+                    });
+                }
+            }
+            Log.d(TAG,"response token : "+ String.format(SupperSafeApplication.getInstance().getString(R.string.access_token),accessToken));
+        }
+    }
+
 
     /**
      * Continues the sign-in process, initializing the Drive clients with the current
      * user's account.
      */
 
+
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
-        mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
-        mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
         mSignInAccount = signInAccount;
-        listFiles();
         onDriveClientReady();
-        handleSignInResult(mSignInAccount);
         Log.d(TAG,"Google client ready");
+        Log.d(TAG,"Account :"+ mSignInAccount.getAccount());
+        new GetAccessToken().execute(mSignInAccount.getAccount());
     }
 
     /**
@@ -277,72 +308,62 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
     /**
      * Called after the user has signed in and the Drive client has been initialized.
      */
+
     protected abstract void onDriveClientReady();
 
+    protected abstract void onDriveSuccessful();
 
-    private void handleSignInResult(GoogleSignInAccount signInAccount) {
-        try {
-            if (signInAccount!=null){
-             Log.d(TAG,"name :"+signInAccount.getDisplayName());
-            }
-            // TODO(developer): send ID Token to server and validate
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.w(TAG, "handleSignInResult:error", e);
-        }
-    }
+    protected abstract void onDriveError();
 
-    private void listFiles() {
-        Query query = new Query.Builder()
-                .addFilter(Filters.eq(SearchableField.MIME_TYPE, "image/jpeg"))
-                .build();
-        Task<MetadataBuffer> queryTask = mDriveResourceClient.query(query);
-        StringBuilder stringBuilder = new StringBuilder();
-        queryTask
-                .addOnSuccessListener(this,
-                        metadataBuffer -> {
-                            Log.d(TAG,"list file successful");
-                            showMessage(getString(R.string.query_successful));
-                            onRequestSyncData();
-                        })
-                .addOnFailureListener(this, e -> {
-                    // Handle failure...
-                    // [START_EXCLUDE]
-                    mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.e(TAG, "Error retrieving files", e);
-                            showMessage(getString(R.string.query_failed));
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "Error retrieving files", e);
-                            showMessage(getString(R.string.query_failed));
-                        }
-                    });
-                    // [END_EXCLUDE]
-                });
-        // [END query_results]
-    }
+    protected abstract void onDriveSignOut();
 
-    public void onRequestSyncData(){
-        mDriveClient.requestSync().addOnCompleteListener(new OnCompleteListener<Void>() {
+    protected abstract void onDriveRevokeAccess();
+
+
+    protected void signOut() {
+        mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Log.d(TAG,"Complete sync");
+                final  User mUser = User.getInstance().getUserInfo();
+                if (mUser!=null){
+                    mUser.driveConnected = false;
+                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                }
+                onDriveSignOut();
+            }
+        });
+    }
+
+    protected void signOut(ServiceManager.ServiceManagerSyncDataListener ls) {
+        if (mGoogleSignInClient==null){
+            return;
+        }
+        mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                onDriveSignOut();
+                ls.onCompleted();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,"Cancel sync");
-            }
-        }).addOnCanceledListener(new OnCanceledListener() {
-            @Override
-            public void onCanceled() {
-                Log.d(TAG,"Cancel sync");
+                ls.onError();
             }
         });
+    }
+
+    protected void revokeAccess() {
+        if (mGoogleSignInClient==null){
+            return;
+        }
+        Log.d(TAG,"onRevokeAccess");
+        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                     onDriveRevokeAccess();
+                    }
+                });
     }
 
 }

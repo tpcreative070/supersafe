@@ -25,7 +25,7 @@ public class SignUpPresenter extends Presenter<SignUpView>{
     }
 
     public void onSignUp(SignUpRequest request){
-        Log.d(TAG,"info");
+        Log.d(TAG,"info onSignUp");
         SignUpView view = view();
         if (view == null) {
             return;

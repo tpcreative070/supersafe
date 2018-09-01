@@ -10,6 +10,7 @@ import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class SplashScreenActivity extends BaseActivity implements SensorOrientationChangeNotifier.Listener{
@@ -70,9 +71,8 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
         );
-
+        ServiceManager.getInstance().onStartService();
     }
-
 
 
     @Override

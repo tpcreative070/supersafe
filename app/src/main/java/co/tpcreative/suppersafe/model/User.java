@@ -15,6 +15,9 @@ public class User extends BaseResponse implements Serializable{
     public String cloud_id;
     public Authorization author;
     public boolean verified ;
+    public String access_token;
+    public boolean driveConnected;
+    public DriveAbout driveAbout;
 
     private static User instance ;
 

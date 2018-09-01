@@ -127,6 +127,8 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     @Override
     protected void onDriveClientReady() {
         Log.d(TAG,"onDriveClient");
+        presenter.mUser.driveConnected = true;
+        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
         UserCloudRequest request = new UserCloudRequest();
         request.cloud_id = presenter.mUser.email;
         request.user_id  = presenter.mUser.email;
@@ -180,13 +182,9 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
        if (presenter.googleOauth!=null){
            if (presenter.googleOauth.isEnableSync){
                Log.d(TAG,"Syn google drive");
-               ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
+               signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                    @Override
-                   public void onCompletedDisconnect() {
-
-                   }
-                   @Override
-                   public void onCompletedSignOut() {
+                   public void onCompleted() {
                        startLoading();
                        signIn(presenter.mUser.email);
                    }
@@ -195,6 +193,11 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
                    public void onError() {
                        startLoading();
                        signIn(presenter.mUser.email);
+                   }
+
+                   @Override
+                   public void onCancel() {
+
                    }
                });
            }
@@ -254,5 +257,28 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         });
         editText.setFocusable(false);
     }
+
+
+    @Override
+    protected void onDriveSuccessful() {
+
+    }
+
+    @Override
+    protected void onDriveError() {
+
+    }
+
+    @Override
+    protected void onDriveSignOut() {
+
+    }
+
+    @Override
+    protected void onDriveRevokeAccess() {
+
+    }
+
+
 
 }

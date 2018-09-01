@@ -37,12 +37,13 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
-public class MainTabActivity extends BaseActivity implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView{
+public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView{
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
@@ -79,6 +80,7 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
+
 
     }
 
@@ -260,7 +262,6 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
     protected void onResume() {
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
-        ServiceManager.getInstance().onGetLastSignIn();
     }
 
     @Override
@@ -310,4 +311,29 @@ public class MainTabActivity extends BaseActivity implements SingletonManagerTab
         return getApplicationContext();
     }
 
+
+    @Override
+    protected void onDriveClientReady() {
+
+    }
+
+    @Override
+    protected void onDriveSuccessful() {
+
+    }
+
+    @Override
+    protected void onDriveError() {
+
+    }
+
+    @Override
+    protected void onDriveSignOut() {
+
+    }
+
+    @Override
+    protected void onDriveRevokeAccess() {
+
+    }
 }

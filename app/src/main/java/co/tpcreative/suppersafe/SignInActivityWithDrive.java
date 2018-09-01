@@ -78,10 +78,6 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
      */
     private DriveResourceClient mDriveResourceClient;
 
-    private DriveFolder mDriveFolder;
-
-    private boolean isFolderExisting;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,26 +221,6 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
 
 
 
-    public void onRequestSyncData(){
-        mDriveClient.requestSync().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.d(TAG,"Complete sync");
-                listFiles();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,"Cancel sync");
-            }
-        }).addOnCanceledListener(new OnCanceledListener() {
-            @Override
-            public void onCanceled() {
-                Log.d(TAG,"Cancel sync");
-            }
-        });
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -259,7 +235,6 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
                 break;
         }
     }
-
 
     private String getAccessTokenScope() {
         List<String> requiredScopes = new ArrayList<>();
@@ -316,157 +291,7 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
-        onRequestSyncData();
-        createFile();
     }
-
-    protected DriveClient getDriveClient() {
-        return mDriveClient;
-    }
-
-    protected DriveResourceClient getDriveResourceClient() {
-        return mDriveResourceClient;
-    }
-
-    private void createFile() {
-        // [START create_file]
-        final Task<DriveFolder> rootFolderTask = getDriveResourceClient().getRootFolder();
-        final Task<DriveContents> createContentsTask = getDriveResourceClient().createContents();
-        Tasks.whenAll(rootFolderTask, createContentsTask)
-                .continueWithTask(task -> {
-                    DriveFolder parent = rootFolderTask.getResult();
-                    DriveContents contents = createContentsTask.getResult();
-                    OutputStream outputStream = contents.getOutputStream();
-                    try (Writer writer = new OutputStreamWriter(outputStream)) {
-                        writer.write("Hello World!");
-                    }
-                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                            .setTitle("HelloWorld123.jpg")
-                            .setMimeType("image/jpeg")
-                            .build();
-                    return getDriveResourceClient().createFile(parent, changeSet, contents);
-                })
-                .addOnSuccessListener(this,
-                        driveFile -> {
-                            Log.d(TAG,getString(R.string.file_created,
-                                    driveFile.getDriveId()));
-                            showMessage(getString(R.string.file_created,
-                                    driveFile.getDriveId().encodeToString()));
-                        })
-                .addOnFailureListener(this, e -> {
-                    Log.e(TAG, "Unable to create file", e);
-                    signOut();
-                    showMessage(getString(R.string.file_create_error));
-                });
-        // [END create_file]
-    }
-
-
-    private void listFiles() {
-        Query query = new Query.Builder()
-                .addFilter(Filters.eq(SearchableField.MIME_TYPE, "image/jpeg"))
-                .build();
-        // [START query_files]
-        Task<MetadataBuffer> queryTask = getDriveResourceClient().query(query);
-        // [END query_files]
-        // [START query_results]
-
-        queryTask
-                .addOnSuccessListener(this,
-                        metadataBuffer -> {
-                            // Handle results...
-                            // [START_EXCLUDE]
-                            int count = 0;
-                            for (Metadata index : metadataBuffer){
-                               count+=1;
-                            }
-                            int countPrevious = PrefsController.getInt(getString(R.string.key_count_sync),0);
-                            if (countPrevious==count){
-                                // signOut();
-                            }
-                            PrefsController.putInt(getString(R.string.key_count_sync),count);
-                            Log.d(TAG,"count :"+count);
-                            // [END_EXCLUDE]
-                        })
-                .addOnFailureListener(this, e -> {
-                    // Handle failure...
-                    // [START_EXCLUDE]
-                    Log.e(TAG, "Error retrieving files", e);
-                    showMessage(getString(R.string.query_failed));
-                    signOut();
-                    // [END_EXCLUDE]
-                });
-        // [END query_results]
-    }
-
-    protected void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    // [START create_folder]
-    private void checkFolder() {
-        Query query = new Query.Builder()
-                .addFilter(Filters.eq(SearchableField.MIME_TYPE, DriveFolder.MIME_TYPE))
-                .build();
-        Task<MetadataBuffer> queryTask = getDriveResourceClient().query(query);
-        StringBuilder stringBuilder = new StringBuilder();
-        queryTask
-                .addOnSuccessListener(this,
-                        metadataBuffer -> {
-                            for (Metadata index : metadataBuffer){
-                                String info = "Name :" +index.getTitle() + " Id :" + index.getDriveId() + " Resource Id :" + index.getDriveId().getResourceId();
-                                stringBuilder.append(info);
-                                stringBuilder.append("\n");
-                                if (index.getTitle().equals("NewFolder")){
-                                    isFolderExisting = true;
-                                }
-                            }
-                            if (!isFolderExisting){
-                                createFolder();
-                            }
-                            else{
-                                showMessage("Folder is existing !!!");
-                            }
-                            Log.d(TAG,stringBuilder.toString());
-
-                        })
-                .addOnFailureListener(this, e -> {
-                    // Handle failure...
-                    // [START_EXCLUDE]
-                    Log.e(TAG, "Error retrieving files", e);
-                    showMessage(getString(R.string.query_failed));
-                    // [END_EXCLUDE]
-                });
-        // [END query_results]
-    }
-
-    // [START create_folder]
-    private void createFolder() {
-        getDriveResourceClient()
-                .getRootFolder()
-                .continueWithTask(task -> {
-                    DriveFolder parentFolder = task.getResult();
-                    MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
-                            .setTitle("NewFolder")
-                            .setMimeType(DriveFolder.MIME_TYPE)
-                            .setStarred(false)
-                            .build();
-                    return getDriveResourceClient().createFolder(parentFolder, changeSet);
-                })
-                .addOnSuccessListener(this,
-                        driveFolder -> {
-                            mDriveFolder = driveFolder;
-                            Log.d(TAG,getString(R.string.file_created,
-                                    driveFolder.getDriveId().encodeToString()));
-                            showMessage(getString(R.string.file_created,
-                                    driveFolder.getDriveId().encodeToString()));
-                        })
-                .addOnFailureListener(this, e -> {
-                    Log.e(TAG, "Unable to create file", e);
-                    showMessage(getString(R.string.file_create_error));
-                });
-    }
-
 
 
 

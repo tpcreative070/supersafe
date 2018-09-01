@@ -37,7 +37,6 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
 
 
     public CheckSystemPresenter(){
-        mUser = new User();
         final User user = User.getInstance().getUserInfo();
         if (user!=null){
             mUser = user;
@@ -102,7 +101,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Log.d(TAG, "Can not call check user" + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));
@@ -155,7 +154,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Log.d(TAG, "Can not call sign in" + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));
@@ -212,7 +211,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Log.d(TAG, "Can not call sign up" + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));
@@ -264,7 +263,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Log.d(TAG, "Can not call verify code" + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));
@@ -368,6 +367,8 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         hash.put(getString(R.string.key_user_id),cloudRequest.user_id);
         hash.put(getString(R.string.key_cloud_id),cloudRequest.cloud_id);
         hash.put(getString(R.string.key_device_id), SupperSafeApplication.getInstance().getDeviceId());
+
+
         subscriptions.add(SupperSafeApplication.serverAPI.onAddUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -391,7 +392,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Log.d(TAG, "Can not call add user cloud" + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));
@@ -399,7 +400,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
     }
 
     public void onUserCloudChecking(){
-        Log.d(TAG,"info");
+        Log.d(TAG,"onUserCloudChecking");
         CheckSystemView view = view();
         if (view == null) {
             return;
@@ -414,6 +415,9 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),mUser.email);
         hash.put(getString(R.string.key_device_id), SupperSafeApplication.getInstance().getDeviceId());
+
+        Log.d(TAG,"request :"+ new Gson().toJson(hash));
+
         subscriptions.add(SupperSafeApplication.serverAPI.onCheckUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -438,7 +442,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Log.d(TAG, "Can not call check user cloud " + throwable.getMessage());
                     }
                     view.stopLoading();
                 }));

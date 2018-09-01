@@ -85,7 +85,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     @Override
     protected void onDriveClientReady() {
         Log.d(TAG,"Google drive ready");
-        ServiceManager.getInstance().onGetLastSignIn();
         UserCloudRequest request = new UserCloudRequest();
         request.user_id = presenter.mUser.email;
         request.cloud_id = presenter.mUser.cloud_id;
@@ -110,13 +109,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                     final String cloud_id = presenter.mUser.cloud_id;
                     if (cloud_id==null){
                         presenter.mUser.cloud_id = accountName;
-                        ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
-                            @Override
-                            public void onCompletedDisconnect() {
 
-                            }
+
+                        signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                             @Override
-                            public void onCompletedSignOut() {
+                            public void onCompleted() {
                                 signIn(accountName);
                             }
 
@@ -124,20 +121,22 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                             public void onError() {
                                 signIn(accountName);
                             }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
                         });
 
                     }
                     else{
                         if (accountName.equals(cloud_id)){
                             presenter.mUser.cloud_id = accountName;
-                            ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
-                                @Override
-                                public void onCompletedDisconnect() {
 
-                                }
 
+                            signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                                 @Override
-                                public void onCompletedSignOut() {
+                                public void onCompleted() {
                                     onShowProgressDialog();
                                     signIn(accountName);
                                 }
@@ -146,6 +145,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                                 public void onError() {
                                     onShowProgressDialog();
                                     signIn(accountName);
+                                }
+
+                                @Override
+                                public void onCancel() {
+
                                 }
                             });
                         }
@@ -160,24 +164,23 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                       String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                       Log.d(TAG,"accountName : " + accountName);
                       presenter.mUser.cloud_id = accountName;
-                      ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
+                      signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                           @Override
-                          public void onCompletedDisconnect() {
-
-                          }
-
-                          @Override
-                          public void onCompletedSignOut() {
+                          public void onCompleted() {
                               onShowProgressDialog();
                               signIn(accountName);
                           }
-
                           @Override
                           public void onError() {
                               onShowProgressDialog();
                               signIn(accountName);
                           }
+                          @Override
+                          public void onCancel() {
+
+                          }
                       });
+
                   }
                   break;
             default:
@@ -281,6 +284,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     public void showSuccessful(String message) {
         onSopProgressDialog();
         presenter.mUser.cloud_id= message;
+        presenter.mUser.driveConnected = true;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
         onBackPressed();
     }
@@ -308,4 +312,26 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
         super.onDestroy();
         presenter.unbindView();
     }
+
+    @Override
+    protected void onDriveSuccessful() {
+        Log.d(TAG,"onDriveSuccessful");
+    }
+
+    @Override
+    protected void onDriveError() {
+        Log.d(TAG,"onDriveError");
+    }
+
+    @Override
+    protected void onDriveSignOut() {
+        Log.d(TAG,"onDriveSignOut");
+    }
+
+    @Override
+    protected void onDriveRevokeAccess() {
+        Log.d(TAG,"onDriveRevokeAccess");
+    }
+
+
 }

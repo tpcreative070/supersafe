@@ -139,7 +139,6 @@ public class MeFragment extends BaseFragment implements MeView{
     public void onResume() {
         super.onResume();
         Log.d(TAG,"onResume");
-        ServiceManager.getInstance().onGetLastSignIn();
         presenter.onShowUserInfo();
         if (presenter.mUser!=null){
             if (presenter.mUser.verified){
@@ -151,15 +150,13 @@ public class MeFragment extends BaseFragment implements MeView{
             tvEmail.setText(presenter.mUser.email);
         }
 
-        if (ServiceManager.getInstance().getDriveResourceClient()!=null){
+        if (presenter.mUser.driveConnected){
             String value = String.format(getString(R.string.monthly_used),"100","100");
             tvEnableCloud.setText(value);
         }
         else{
             tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
         }
-
-
         Log.d(TAG,"OnResume");
     }
 
@@ -167,27 +164,10 @@ public class MeFragment extends BaseFragment implements MeView{
     public void onSettings(View view){
        // Navigator.onSettings(getActivity());
         Log.d(TAG,"Settings");
-        Intent intent = new Intent(getActivity(), SignInActivityWithDrive.class);
-        startActivity(intent);
-//        List<String> requiredScopes = new ArrayList<>();
-//        requiredScopes.add(DriveScopes.DRIVE);
-//        AuthDataHolder.getInstance().googleAuthData = new AuthData(requiredScopes, new AuthCallback() {
-//            @Override
-//            public void onSuccess(SocialUser socialUser) {
-//                Log.d(TAG,"onSuccess : " + socialUser.accessToken);
-//                Log.d(TAG,"user :" + new Gson().toJson(socialUser));
-//            }
-//            @Override
-//            public void onError(Throwable throwable) {
-//                Log.d(TAG,"onError");
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                Log.d(TAG,"onCancel");
-//            }
-//        });
-//        GoogleAuthActivity.start(getActivity());
+        //Intent intent = new Intent(getActivity(), SignInActivityWithDrive.class);
+       // startActivity(intent);
+        Navigator.onManagerCloud(getActivity());
+
     }
 
 
@@ -207,7 +187,7 @@ public class MeFragment extends BaseFragment implements MeView{
     public void onEnableCloud(View view){
         if (presenter.mUser!=null){
             if (presenter.mUser.verified){
-                if (ServiceManager.getInstance().getDriveClient() == null){
+                if (!presenter.mUser.driveConnected){
                     Navigator.onCheckSystem(getActivity(),null);
                 }
                 else{

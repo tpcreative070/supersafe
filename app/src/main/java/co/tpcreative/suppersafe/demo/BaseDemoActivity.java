@@ -199,8 +199,6 @@ public abstract class BaseDemoActivity extends AppCompatActivity{
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mDriveClient = Drive.getDriveClient(getApplicationContext(), signInAccount);
         mDriveResourceClient = Drive.getDriveResourceClient(getApplicationContext(), signInAccount);
-        ServiceManager.getInstance().setDriveClient(mDriveClient);
-        ServiceManager.getInstance().setDriveResourceClient(mDriveResourceClient);
         onDriveClientReady();
     }
 

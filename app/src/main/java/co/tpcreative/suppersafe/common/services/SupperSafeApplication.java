@@ -1,5 +1,6 @@
 package co.tpcreative.suppersafe.common.services;
 import android.Manifest;
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -14,11 +15,20 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
@@ -48,8 +58,12 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
 
     protected static Dependencies dependencies;
     public static RootAPI serverAPI ;
-    public static String authorization = null ;
+    private String authorization = null ;
     private Activity activity;
+
+    private GoogleSignInOptions.Builder options;
+    private Set<Scope> requiredScopes;
+    private List<String> requiredScopesString;
 
     @Override
     public void onCreate() {
@@ -84,6 +98,40 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         key = ".encrypt_key";
         registerActivityLifecycleCallbacks(this);
         Log.d(TAG,suppersafe);
+
+         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.server_client_id))
+                        .requestScopes(Drive.SCOPE_FILE)
+                        .requestProfile()
+                        .requestScopes(Drive.SCOPE_APPFOLDER);
+
+
+         requiredScopes = new HashSet<>(2);
+         requiredScopes.add(Drive.SCOPE_FILE);
+         requiredScopes.add(Drive.SCOPE_APPFOLDER);
+
+         requiredScopesString = new ArrayList<>();
+         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
+         requiredScopesString.add(DriveScopes.DRIVE_FILE);
+
+    }
+
+    public GoogleSignInOptions getGoogleSignInOptions(final Account account){
+        if (options!=null){
+            if (account!=null){
+                options.setAccount(account);
+            }
+            return options.build();
+        }
+        return options.build();
+    }
+
+    public List<String> getRequiredScopesString(){
+        return requiredScopesString;
+    }
+
+    public Set<Scope> getRequiredScopes(){
+        return requiredScopes;
     }
 
     @Override

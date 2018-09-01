@@ -44,6 +44,7 @@
 
     <string name="desc_rest_activity">Demonstrate using Google Sign In with a Google REST API</string>
     <string name="name_rest_activity">RestApiActivity</string>
+    <string name="sign_in_by_oauth">Sign In Google By Oauth</string>
 
     <!-- Messages for the Rest API activity -->
     <string name="connections_fmt">Connections: %1$s</string>
@@ -59,8 +60,9 @@
     <string name="button_subscribe">Listen for Changes</string>
     <string name="button_unsubscribe">Stop Listening for Changes</string>
     <string name="file_created">Created file: %1$s.</string>
-    <string name="access_token">token id : %1$s.</string>
+    <string name="access_token">Bearer %1$s</string>
     <string name="file_create_error">Error while trying to create the file.</string>
+    <string name="folder_create_error">Error while trying to create the folder</string>
     <string name="select_folder">Select a folder</string>
     <string name="select_file">Select file</string>
     <string name="custom_property_deleted">Custom properties successfully deleted.</string>
@@ -160,7 +162,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.102:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
@@ -208,7 +210,8 @@
     <string name="verify_email">Verify Email</string>
     <string name="pin_code">PIN CODE</string>
     <string name="description_pin_code">A Pin code has been sent to your email %1$s</string>
-
+    <string name="type_folder">application/vnd.google-apps.folder</string>
+    <string name="type_image">image/jpeg</string>
 
 
     <string name="key_user">user</string>

@@ -81,13 +81,9 @@ public class GoogleAuthActivity extends SimpleAuthActivity
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    Account account = new Account("butlerichotel@gmail.com",GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-
     GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
       .requestProfile()
       .requestEmail()
-            .setAccount(account)
             .requestScopes(Drive.SCOPE_FILE)
             .requestScopes(Drive.SCOPE_APPFOLDER)
       .requestIdToken(getString(R.string.server_client_id));

@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -32,11 +33,14 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.people.v1.PeopleService;
 import com.google.api.services.people.v1.model.ListConnectionsResponse;
 import com.google.api.services.people.v1.model.Person;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
+
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 /**
  * Activity to demonstrate using the Google Sign In API with a Google API that uses the Google
@@ -261,6 +265,7 @@ public class RestApiActivity extends AppCompatActivity implements
     private void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.hide();
+            mProgressDialog.dismiss();
         }
     }
 
@@ -295,10 +300,19 @@ public class RestApiActivity extends AppCompatActivity implements
 
             Context context = mActivityRef.get().getApplicationContext();
             try {
+
                 GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
-                        context,
-                        Collections.singleton(CONTACTS_SCOPE));
+                        context, SupperSafeApplication.getInstance().getRequiredScopesString());
+                Log.d(TAG,"Account :"+ new Gson().toJson(accounts));
                 credential.setSelectedAccount(accounts[0]);
+
+                try {
+                    String value = credential.getToken();
+                    Log.d(TAG,"token :" + value);
+                }
+                catch (GoogleAuthException e){
+                    e.printStackTrace();
+                }
 
                 PeopleService service = new PeopleService.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                         .setApplicationName("Google Sign In Quickstart")

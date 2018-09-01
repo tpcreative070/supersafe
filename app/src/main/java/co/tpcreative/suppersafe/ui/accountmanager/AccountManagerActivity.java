@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import com.ftinc.kit.util.SizeUtils;
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.util.Utils;
@@ -22,10 +24,9 @@ import co.tpcreative.suppersafe.model.User;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
-public class AccountManagerActivity extends BaseActivity {
+public class AccountManagerActivity extends BaseGoogleApi {
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
-
     private SlidrConfig mConfig;
     @BindView(R.id.tvEmail)
     TextView tvEmail;
@@ -35,7 +36,8 @@ public class AccountManagerActivity extends BaseActivity {
     TextView tvLicenseStatus;
     @BindView(R.id.progressbar_circular)
     CircularProgressBar mCircularProgressBar;
-
+    @BindView(R.id.btnSignOut)
+    Button btnSignOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +71,8 @@ public class AccountManagerActivity extends BaseActivity {
             }
             tvEmail.setText(mUser.email);
         }
-
         setProgressValue();
     }
-
 
     public void setProgressValue(){
         CircularProgressDrawable circularProgressDrawable;
@@ -89,7 +89,7 @@ public class AccountManagerActivity extends BaseActivity {
                 mCircularProgressBar.getWidth(),
                 mCircularProgressBar.getHeight());
         mCircularProgressBar.setVisibility(View.INVISIBLE);
-        mCircularProgressBar.setVisibility(View.VISIBLE);
+        mCircularProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @OnClick(R.id.btnSignOut)
@@ -98,23 +98,51 @@ public class AccountManagerActivity extends BaseActivity {
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
             mUser.verified = false;
+            mUser.driveConnected = false;
             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            ServiceManager.getInstance().onSignOut(new ServiceManager.ServiceManagerListener() {
+            signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                 @Override
-                public void onCompletedDisconnect() {
-                    onBackPressed();
-                }
-
-                @Override
-                public void onCompletedSignOut() {
+                public void onCompleted() {
                     onBackPressed();
                 }
                 @Override
                 public void onError() {
                     onBackPressed();
                 }
+
+                @Override
+                public void onCancel() {
+
+                }
             });
         }
+    }
+
+    @Override
+    protected void onDriveClientReady() {
+
+    }
+
+    @Override
+    protected void onDriveSuccessful() {
+        Log.d(TAG,"onDriveSuccessful");
+        btnSignOut.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    protected void onDriveError() {
+        Log.d(TAG,"onDriveError");
+    }
+
+    @Override
+    protected void onDriveSignOut() {
+        Log.d(TAG,"onDriveSignOut");
+    }
+
+    @Override
+    protected void onDriveRevokeAccess() {
+        Log.d(TAG,"onDriveRevokeAccess");
     }
 
 }

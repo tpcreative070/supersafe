@@ -512,7 +512,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @Override
     protected void onResume() {
         super.onResume();
-        ServiceManager.getInstance().onGetLastSignIn();
         isSync = true;
     }
 

@@ -7,20 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveResourceClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -29,63 +19,20 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeService;
-import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
+import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
 import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
-public class ServiceManager {
+
+public class ServiceManager implements SupperSafeServiceView{
 
     private static final String TAG = ServiceManager.class.getSimpleName();
-
     private static ServiceManager instance;
     private SupperSafeService myService;
     private Context mContext;
-    private DriveClient mDriveClient;
-    private DriveResourceClient mDriveResourceClient;
-    private GoogleSignInAccount mGoogleSignInAccount;
-
-    public GoogleSignInClient getGoogleSignInClient() {
-        return mGoogleSignInClient;
-    }
-
-    public void setGoogleSignInClient(GoogleSignInClient mGoogleSignInClient) {
-        this.mGoogleSignInClient = mGoogleSignInClient;
-    }
-
-    private GoogleSignInClient mGoogleSignInClient;
-
-    public GoogleSignInAccount getGoogleSignInAccount() {
-        return mGoogleSignInAccount;
-    }
-
-    public void setGoogleSignInAccount(final GoogleSignInAccount mGoogleSignInAccount) {
-        this.mGoogleSignInAccount = mGoogleSignInAccount;
-    }
-
-    public DriveClient getDriveClient() {
-        return mDriveClient;
-    }
-
-    public DriveResourceClient getDriveResourceClient() {
-        return mDriveResourceClient;
-    }
-
-    public void setDriveClient(final DriveClient mDriveClient) {
-        this.mDriveClient = mDriveClient;
-    }
-
-
-    public void setDriveResourceClient(final DriveResourceClient mDriveResourceClient) {
-        this.mDriveResourceClient = mDriveResourceClient;
-    }
 
 
     public static ServiceManager getInstance() {
@@ -103,8 +50,8 @@ public class ServiceManager {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             Log.d(TAG, "connected");
             myService = ((SupperSafeService.LocalBinder) binder).getService();
+            myService.bindView(ServiceManager.this);
         }
-
         //binder comes from server to communicate with method's of
         public void onServiceDisconnected(ComponentName className) {
             Log.d(TAG, "disconnected");
@@ -137,87 +84,13 @@ public class ServiceManager {
         return myService;
     }
 
-    public void onGetLastSignIn() {
-        Set<Scope> requiredScopes = new HashSet<>(2);
-        requiredScopes.add(Drive.SCOPE_FILE);
-        requiredScopes.add(Drive.SCOPE_APPFOLDER);
-        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestScopes(Drive.SCOPE_FILE)
-                .requestScopes(Drive.SCOPE_APPFOLDER)
-                .requestIdToken(SupperSafeApplication.getInstance().getString(R.string.server_client_id))
-                .requestProfile()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(SupperSafeApplication.getInstance(), signInOptions);
-        final GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(SupperSafeApplication.getInstance());
-        if (signInAccount != null && signInAccount.getGrantedScopes().containsAll(requiredScopes)) {
-            initializeDriveClient(signInAccount);
-        }
-        else{
-            mDriveResourceClient = null;
-            mDriveClient = null;
-        }
+    protected void showMessage(String message) {
+        Toast.makeText(SupperSafeApplication.getInstance(), message, Toast.LENGTH_LONG).show();
     }
 
-    private void initializeDriveClient(GoogleSignInAccount signInAccount) {
-        final DriveClient driveClient = Drive.getDriveClient(SupperSafeApplication.getInstance(), signInAccount);;
-        final DriveResourceClient driveResourceClient =  Drive.getDriveResourceClient(SupperSafeApplication.getInstance(), signInAccount);;
-        final GoogleSignInAccount googleSignInAccount = signInAccount;
-        mDriveClient = driveClient;
-        mDriveResourceClient = driveResourceClient;
-        mGoogleSignInAccount = googleSignInAccount;
-        handleSignInResult(signInAccount);
-    }
-
-    private void handleSignInResult(GoogleSignInAccount signInAccount) {
-        try {
-            if (signInAccount != null) {
-                Log.d(TAG, "name :" + signInAccount.getDisplayName());
-            }
-            // TODO(developer): send ID Token to server and validate
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.w(TAG, "handleSignInResult:error", e);
-        }
-    }
-
-    public void onSignOut(final ServiceManagerListener listener) {
-        if (mGoogleSignInClient==null){
-            listener.onError();
-            return;
-        }
-
-        if (mDriveResourceClient==null){
-            listener.onError();
-            return;
-        }
-        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-               Log.d(TAG,"Sign out completed");
-               mDriveResourceClient = null;
-               mDriveClient = null;
-               listener.onCompletedSignOut();
-            }
-        });
-
-    }
-
-    public void onDisconnectGoogleApi(final ServiceManagerListener ls) {
-        if (mGoogleSignInClient==null){
-            ls.onError();
-            return;
-        }
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        mDriveResourceClient = null;
-                        mDriveClient = null;
-                        mGoogleSignInClient = null;
-                        mGoogleSignInAccount = null;
-                        ls.onCompletedDisconnect();
-                    }
-                });
+    private String getString(int res){
+        String value = SupperSafeApplication.getInstance().getString(res);
+        return value;
     }
 
     public void onPickUpNewEmailNoTitle(Activity context,String account){
@@ -305,15 +178,65 @@ public class ServiceManager {
                 }).onSameThread().check();
     }
 
-    public interface ServiceManagerListener {
-        void onCompletedDisconnect();
-        void onCompletedSignOut();
-        void onError();
-    }
-
     public interface ServiceManagerAskPermissionListener{
         void onGrantedPermission();
         void onError();
     }
 
+    public interface ServiceManagerSyncDataListener {
+        void onCompleted();
+        void onError();
+        void onCancel();
+    }
+
+    /*Response Network*/
+
+    public void onGetDriveAbout(){
+        if (myService!=null){
+            myService.getDriveAbout();
+        }
+        else{
+            Log.d(TAG,"My services is null");
+        }
+    }
+
+    public void onCreateFolder(){
+        if (myService!=null){
+            myService.onCreateFolder();
+        }
+        else{
+            Log.d(TAG,"My services is null");
+        }
+    }
+
+    public void onDismissRXJava(){
+        if (myService!=null){
+            myService.unbindView();
+        }
+    }
+
+    @Override
+    public void onError(String message) {
+        Log.d(TAG,"onError response :" +message);
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+        Log.d(TAG,"onSuccessful Response  :" +message);
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void stopLoading() {
+
+    }
 }

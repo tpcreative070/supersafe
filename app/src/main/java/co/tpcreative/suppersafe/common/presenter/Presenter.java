@@ -1,4 +1,7 @@
 package co.tpcreative.suppersafe.common.presenter;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +14,7 @@ import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class Presenter<V> {
+public class Presenter<V>{
 
     @Nullable
     private volatile V view;
