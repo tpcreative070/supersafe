@@ -132,7 +132,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
 
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SupperSafeApplication.serverAPI.onGetDriveAbout(access_token,RootAPI.GET_DRIVE_ABOUT)
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
@@ -206,7 +206,77 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
 
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SupperSafeApplication.serverAPI.onCrateFolder(access_token,RootAPI.CREATE_FOLDẺ,request)
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onCrateFolder(access_token,request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error!=null){
+                        Log.d(TAG,"onError 1");
+                        view.onError(new Gson().toJson(onResponse.error));
+                    }
+                    else{
+                        Log.d(TAG,"onSuccessful 2");
+                        final User mUser = User.getInstance().getUserInfo();
+                        mUser.driveAbout = onResponse;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        view.onSuccessful(new Gson().toJson(onResponse));
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError(""+msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError(""+e.getMessage());
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :"+ throwable.getMessage());
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+
+    public void onCheckInAppFolderExisting(){
+
+        SupperSafeServiceView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SupperSafeApplication.getInstance())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user==null){
+            return;
+        }
+
+        if (user.access_token==null){
+            return;
+        }
+        String access_token = user.access_token;
+        Log.d(TAG,"access_token : " + access_token);
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onCheckInAppFolderExisting(access_token,"name = 'SupperSafe 2 sub folder'","appDataFolder")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
@@ -275,7 +345,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
 
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SupperSafeApplication.serverAPI.onGetDriveAbout(access_token,RootAPI.GET_DRIVE_ABOUT)
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())

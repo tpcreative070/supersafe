@@ -209,6 +209,15 @@ public class ServiceManager implements SupperSafeServiceView{
         }
     }
 
+    public void onCheckInAppFolderExisting(){
+        if (myService!=null){
+            myService.onCheckInAppFolderExisting();
+        }
+        else{
+            Log.d(TAG,"My services is null");
+        }
+    }
+
     public void onDismissRXJava(){
         if (myService!=null){
             myService.unbindView();

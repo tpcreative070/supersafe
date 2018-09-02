@@ -148,6 +148,11 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
         ServiceManager.getInstance().onCreateFolder();
     }
 
+    @OnClick(R.id.btnCheckInAppFolder)
+    public void onCheckInAppFolder(View view){
+        ServiceManager.getInstance().onCheckInAppFolderExisting();
+    }
+
     @Override
     protected void onDriveClientReady() {
         btnSignIn.setVisibility(View.GONE);

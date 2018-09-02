@@ -82,6 +82,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.onGetUserInfo();
 
 
+
+
     }
 
     @Override

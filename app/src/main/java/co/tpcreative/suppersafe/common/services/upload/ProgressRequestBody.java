@@ -2,6 +2,7 @@ package co.tpcreative.suppersafe.common.services.upload;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +13,8 @@ import okhttp3.RequestBody;
 import okio.BufferedSink;
 
 public class ProgressRequestBody extends RequestBody {
+
+    private final String TAG = ProgressRequestBody.class.getSimpleName();
 
     private File mFile;
     private String mPath;
@@ -51,7 +54,7 @@ public class ProgressRequestBody extends RequestBody {
 
     @Override
     public void writeTo(BufferedSink sink) throws IOException {
-        long fileLength = mFile.length();
+        long fileLength = this.mFile.length();
         byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
         FileInputStream in = new FileInputStream(mFile);
         long uploaded = 0;
@@ -60,10 +63,10 @@ public class ProgressRequestBody extends RequestBody {
             int read;
             Handler handler = new Handler(Looper.getMainLooper());
             while ((read = in.read(buffer)) != -1) {
-                // update progress on UI thread
-                handler.post(new ProgressUpdater(uploaded, fileLength));
                 uploaded += read;
                 sink.write(buffer, 0, read);
+                // update progress on UI thread
+                handler.post(new ProgressUpdater(uploaded, fileLength));
             }
         } finally {
             in.close();
@@ -79,7 +82,13 @@ public class ProgressRequestBody extends RequestBody {
         }
         @Override
         public void run() {
-            mListener.onProgressUpdate((int)(100 * mUploaded / mTotal));
+            final int percent = (int)(100 * mUploaded / mTotal);
+            if (percent==100){
+                mListener.onFinish();
+            }
+            else{
+                mListener.onProgressUpdate(percent);
+            }
         }
     }
 }

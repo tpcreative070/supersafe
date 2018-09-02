@@ -58,6 +58,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
 
     protected static Dependencies dependencies;
     public static RootAPI serverAPI ;
+    public static RootAPI serverDriveApi;
     private String authorization = null ;
     private Activity activity;
 
@@ -70,12 +71,17 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         super.onCreate();
         mInstance = this;
 
-        /*Init Retrofit And RXJava*/
+        /*Init own service api*/
 
         dependencies = Dependencies.getsInstance(getApplicationContext(),getUrl());
         dependencies.dependenciesListener(this);
         dependencies.init();
         serverAPI = (RootAPI) Dependencies.serverAPI;
+
+        /*Init Drive api*/
+
+        serverDriveApi = new RetrofitHelper().getCityService();
+
 
         ServiceManager.getInstance().setContext(this);
 

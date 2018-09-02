@@ -23,6 +23,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -35,8 +36,9 @@ public interface RootAPI{
     String CHECK_USER_CLOUD = "/api/usercloud/check";
     String ADD_USER_CLOUD = "/api/usercloud/add/";
     String CHECK_USER_ID = "/api/user/checkUser";
-    String GET_DRIVE_ABOUT = "https://www.googleapis.com/drive/v2/about";
-    String CREATE_FOLDẺ= "https://www.googleapis.com/drive/v3/files";
+    String GET_DRIVE_ABOUT = "/drive/v2/about";
+    String CREATE_FOLDER = "/drive/v3/files";
+    String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
 
 
     @FormUrlEncoded
@@ -68,13 +70,17 @@ public interface RootAPI{
     Observable<VerifyCodeResponse> onCheckUserId(@FieldMap Map<String,String>request);
 
     @Headers({"Accept: application/json"})
-    @GET()
-    Observable<DriveAbout> onGetDriveAbout(@Header("Authorization") String token, @Url String url);
+    @GET(GET_DRIVE_ABOUT)
+    Observable<DriveAbout> onGetDriveAbout(@Header("Authorization") String token);
 
     @Headers({"Accept: application/json"})
-    @POST()
-    Observable<DriveAbout> onCrateFolder(@Header("Authorization") String token, @Url String url, @Body DriveApiRequest request);
+    @POST(CREATE_FOLDER)
+    Observable<DriveAbout> onCrateFolder(@Header("Authorization") String token, @Body DriveApiRequest request);
 
+
+    @Headers({"Accept: application/json"})
+    @GET(CHECK_IN_APP_FOLDER_EXITING)
+    Observable<DriveAbout> onCheckInAppFolderExisting(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value);
 
     @POST()
     @Multipart
@@ -84,10 +90,8 @@ public interface RootAPI{
                                         @Part MultipartBody.Part dataPart,
                                         @Query("type") String videoType);
 
-
     @POST()
     Call<DriveResponse> uploadFileMutil(@Url String url,
                                         @Header("Authorization") String authToken,
                                         @Body RequestBody requestBody);
-
 }
