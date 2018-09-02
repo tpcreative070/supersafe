@@ -48,6 +48,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+
+            <TextView
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:id="@+id/tvStatus"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
             <Button
                 android:layout_gravity="center"
                 android:id="@+id/btnSignIn"
@@ -91,6 +101,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Upload File" />
+
+            <Button
+                android:id="@+id/btnUploadFileExtension"
+                android:text="Upload File Extension"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:text="Download"
+                android:layout_gravity="center"
+                android:id="@+id/btnDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <Button
                 android:layout_gravity="center"

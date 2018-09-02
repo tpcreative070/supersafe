@@ -212,6 +212,9 @@
     <string name="description_pin_code">A Pin code has been sent to your email %1$s</string>
     <string name="type_folder">application/vnd.google-apps.folder</string>
     <string name="type_image">image/jpeg</string>
+    <string name="url_drive_upload">https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart</string>
+
+    <string name="url_drive_download">https://www.googleapis.com/drive/v3/files/%1$s?alt=media</string>
 
 
     <string name="key_user">user</string>

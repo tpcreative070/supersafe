@@ -8,6 +8,7 @@ import java.util.Map;
 
 
 public class DownloadFileRequest {
+    public String Authorization;
     public String file ;
     public String api_name ;
     public String file_name ;

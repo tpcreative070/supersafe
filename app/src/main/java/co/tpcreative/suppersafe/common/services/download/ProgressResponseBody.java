@@ -45,6 +45,7 @@ public class ProgressResponseBody extends ResponseBody {
         return bufferedSource;
     }
 
+
     private synchronized Source source(Source source) {
         return new ForwardingSource(source) {
             long totalBytesRead = 0L;

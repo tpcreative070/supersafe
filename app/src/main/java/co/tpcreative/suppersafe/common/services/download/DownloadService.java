@@ -117,6 +117,15 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
                 .subscribe(handleResult(reqest));
     }
 
+    public synchronized void downloadDriveFileByGET(final DownloadFileRequest reqest){
+        RetrofitInterface downloadService = createService(RetrofitInterface.class, this.ip,reqest.mapHeader);
+        downloadService.downloadDriveFile(reqest.api_name,reqest.Authorization)
+                .flatMap(processResponse(reqest))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.computation())
+                .subscribe(handleResult(reqest));
+    }
+
     private synchronized Function<Response<ResponseBody>, Observable<File>> processResponse(final DownloadFileRequest request) {
         return new Function<Response<ResponseBody>, Observable<File>>() {
             @Override

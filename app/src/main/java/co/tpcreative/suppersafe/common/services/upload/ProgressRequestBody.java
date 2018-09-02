@@ -16,6 +16,7 @@ public class ProgressRequestBody extends RequestBody {
     private File mFile;
     private String mPath;
     private UploadCallbacks mListener;
+    private String type ;
 
     private static final int DEFAULT_BUFFER_SIZE = 2048;
 
@@ -33,7 +34,14 @@ public class ProgressRequestBody extends RequestBody {
     @Override
     public MediaType contentType() {
         // i want to upload only images
-        return MediaType.parse("image/*");
+        if (type==null){
+            return MediaType.parse("image/*");
+        }
+        return MediaType.parse(type);
+    }
+
+    public void setContentType(String type){
+        this.type = type;
     }
 
     @Override

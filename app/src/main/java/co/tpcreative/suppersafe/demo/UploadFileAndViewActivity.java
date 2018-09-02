@@ -619,6 +619,7 @@ public class UploadFileAndViewActivity extends BaseDemoActivity {
                         Log.i(TAG, "U AR A MORON! Unable to write file contents.");
                     }
 
+
                     MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                             .setTitle(file.getName())
                             .setMimeType(getMimeType(file.getAbsolutePath()))

@@ -168,6 +168,10 @@ dependencies {
     implementation files('libs/httpclient-4.3.6.jar')
     implementation files('libs/systembartint-1.0.3.jar')
 
+    /*Choose File*/
+
+    implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.10'
+
 
 }
 
