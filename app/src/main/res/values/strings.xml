@@ -255,4 +255,9 @@
     <string name="key_count_sync">count_sync</string>
     <string name="key_google_oauth">google_oauth</string>
 
+    /*Google Drive api*/
+    <string name="key_parents">parents</string>
+    <string name="key_appDataFolder">appDataFolder</string>
+    <string name="key_supper_safe">SupperSafe</string>
+
 </resources>

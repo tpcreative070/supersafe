@@ -7,8 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.google.android.gms.drive.DriveFolder;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.api.RootAPI;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
@@ -201,9 +206,84 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
         }
 
         DriveApiRequest request = new DriveApiRequest();
-        request.mimeType = "application/vnd.google-apps.folder";
-        request.name = "New Folder Name";
+        request.mimeType = DriveFolder.MIME_TYPE;
+        request.name = getString(R.string.key_supper_safe);
 
+        String access_token = user.access_token;
+        Log.d(TAG,"access_token : " + access_token);
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onCrateFolder(access_token,request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error!=null){
+                        Log.d(TAG,"onError 1");
+                        view.onError(new Gson().toJson(onResponse.error));
+                    }
+                    else{
+                        Log.d(TAG,"onSuccessful 2");
+                        final User mUser = User.getInstance().getUserInfo();
+                        mUser.driveAbout = onResponse;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        view.onSuccessful(new Gson().toJson(onResponse));
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError(""+msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError(""+e.getMessage());
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :"+ throwable.getMessage());
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+    public void onCreateInAppFolder(){
+        SupperSafeServiceView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SupperSafeApplication.getInstance())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user==null){
+            return;
+        }
+
+        if (user.access_token==null){
+            return;
+        }
+
+        DriveApiRequest request = new DriveApiRequest();
+        request.mimeType =  DriveFolder.MIME_TYPE;
+        request.name =  getString(R.string.key_supper_safe);
+        List<String> mList = new ArrayList<>();
+        mList.add(getString(R.string.key_appDataFolder));
+        request.parents = mList;
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
         subscriptions.add(SupperSafeApplication.serverDriveApi.onCrateFolder(access_token,request)
@@ -276,7 +356,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
         }
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SupperSafeApplication.serverDriveApi.onCheckInAppFolderExisting(access_token,"name = 'SupperSafe 2 sub folder'","appDataFolder")
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onCheckInAppFolderExisting(access_token,"name = '"+getString(R.string.key_supper_safe)+"'", getString(R.string.key_appDataFolder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
@@ -296,6 +376,11 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
                         mUser.driveAbout = onResponse;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         view.onSuccessful(new Gson().toJson(onResponse));
+                        if (onResponse.files!=null){
+                            if (onResponse.files.size()==0){
+                                onCreateInAppFolder();
+                            }
+                        }
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
