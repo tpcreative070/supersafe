@@ -39,6 +39,9 @@ public interface RootAPI{
     String GET_DRIVE_ABOUT = "/drive/v2/about";
     String CREATE_FOLDER = "/drive/v3/files";
     String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
+    String GET_LIST_FILE_IN_APP_FOLDER = "/drive/v3/files";
+
+
 
 
     @FormUrlEncoded
@@ -82,6 +85,13 @@ public interface RootAPI{
     @GET(CHECK_IN_APP_FOLDER_EXITING)
     Observable<DriveAbout> onCheckInAppFolderExisting(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value);
 
+
+    @Headers({"Accept: application/json"})
+    @GET(CHECK_IN_APP_FOLDER_EXITING)
+    Observable<DriveAbout> onGetListFile(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value);
+
+
+
     @POST()
     @Multipart
     Call<DriveResponse> uploadFileMutil(@Url String url,
@@ -89,6 +99,14 @@ public interface RootAPI{
                                         @Part MultipartBody.Part metaPart,
                                         @Part MultipartBody.Part dataPart,
                                         @Query("type") String videoType);
+
+    @POST()
+    @Multipart
+    Call<DriveResponse> uploadFileMultipleInAppFolder(@Url String url,
+                                        @Header("Authorization") String authToken,
+                                        @Part MultipartBody.Part metaPart,
+                                        @Part MultipartBody.Part dataPart,
+                                        @Query("type") String type);
 
     @POST()
     Call<DriveResponse> uploadFileMutil(@Url String url,

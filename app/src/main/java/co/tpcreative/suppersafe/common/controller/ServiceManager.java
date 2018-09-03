@@ -24,6 +24,7 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeService;
 import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
+import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
 
@@ -209,12 +210,41 @@ public class ServiceManager implements SupperSafeServiceView{
         }
     }
 
-    public void onCheckInAppFolderExisting(){
+    public void onCheckInAppFolderExisting(String folderName){
         if (myService!=null){
-            myService.onCheckInAppFolderExisting();
+            myService.onCheckInAppFolderExisting(folderName);
         }
         else{
             Log.d(TAG,"My services is null");
+        }
+    }
+
+    public void onGetListFileInApp(){
+        if (myService!=null){
+            myService.onGetListFolderInApp();
+        }
+        else{
+            Log.d(TAG,"My services is null");
+        }
+    }
+
+    public void onInitMainCategories(){
+        final List<MainCategories> mList = MainCategories.getInstance().getList();
+        if (mList!=null){
+            final int total = mList.size()-1;
+            for (int i = 0 ; i<mList.size();i++){
+                if (myService!=null){
+                    if (total==i){
+                        myService.onCheckInAppFolderExisting(mList.get(i).getName(),true);
+                    }
+                    else{
+                        myService.onCheckInAppFolderExisting(mList.get(i).getName(),false);
+                    }
+                }
+                else{
+                    Log.d(TAG,"My services is null");
+                }
+            }
         }
     }
 

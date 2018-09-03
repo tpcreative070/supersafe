@@ -15,9 +15,9 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.adapter.BaseAdapter;
 import co.tpcreative.suppersafe.common.adapter.BaseHolder;
 import co.tpcreative.suppersafe.model.Album;
-import co.tpcreative.suppersafe.model.CategoryMain;
+import co.tpcreative.suppersafe.model.MainCategories;
 
-public class PrivateAdapter extends BaseAdapter<CategoryMain, BaseHolder> {
+public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     private Context context;
     private ItemSelectedListener itemSelectedListener;
@@ -39,7 +39,7 @@ public class PrivateAdapter extends BaseAdapter<CategoryMain, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.private_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<CategoryMain> {
+    public class ItemHolder extends BaseHolder<MainCategories> {
 
         public ItemHolder(View itemView) {
             super(itemView);
@@ -53,7 +53,7 @@ public class PrivateAdapter extends BaseAdapter<CategoryMain, BaseHolder> {
         int mPosition;
 
         @Override
-        public void bind(CategoryMain data, int position) {
+        public void bind(MainCategories data, int position) {
             super.bind(data, position);
             imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
             tvTitle.setText(data.getName());

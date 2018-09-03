@@ -213,7 +213,7 @@
     <string name="type_folder">application/vnd.google-apps.folder</string>
     <string name="type_image">image/jpeg</string>
     <string name="url_drive_upload">https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart</string>
-
+    <string name="url_drive_upload_in_app_folder_children">https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart</string>
     <string name="url_drive_download">https://www.googleapis.com/drive/v3/files/%1$s?alt=media</string>
 
 
@@ -254,10 +254,14 @@
     <string name="key_cloud_id">cloud_id</string>
     <string name="key_count_sync">count_sync</string>
     <string name="key_google_oauth">google_oauth</string>
+    <string name="key_main_categories">main_categories</string>
 
     /*Google Drive api*/
     <string name="key_parents">parents</string>
     <string name="key_appDataFolder">appDataFolder</string>
     <string name="key_supper_safe">SupperSafe</string>
+    <string name="key_mime_type_folder">"mimeType = 'application/vnd.google-apps.folder'"</string>
+    <string name="key_mime_type_image">"mimeType = 'image/jpeg'"</string>
+
 
 </resources>

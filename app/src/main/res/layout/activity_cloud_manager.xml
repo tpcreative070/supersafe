@@ -7,7 +7,6 @@
     android:background="@color/white"
     tools:context=".ui.cloudmanager.CloudManagerActivity">
 
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -34,21 +33,22 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
-
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
 
             <TextView
                 android:layout_margin="10dp"
@@ -136,8 +136,38 @@
                 android:layout_gravity="center"
                 android:text="Create In App Folder"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btnUploadFileInAppFolder"
+                android:text="Upload File In App Folder"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_gravity="center"
+                android:text="Get List Folder"
+                android:id="@+id/btnGetListFolder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <Button
+                android:layout_gravity="center"
+                android:text="Init Main Categories"
+                android:id="@+id/btnMainCategories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_gravity="center"
+                android:id="@+id/btnPrintInAppFolder"
+                android:text="Print In App Folder"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

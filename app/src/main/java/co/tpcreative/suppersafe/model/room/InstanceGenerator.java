@@ -10,7 +10,6 @@ import java.util.UUID;
 import co.tpcreative.suppersafe.model.History;
 import co.tpcreative.suppersafe.model.Save;
 
-
 @Database(entities = {History.class, Save.class}, version = 1, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
@@ -30,7 +29,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     InstanceGenerator.class,
-                    "db-keep-safety.db")
+                    "db-supper-safe.db")
                     .allowMainThreadQueries()
                     .build();
         }
@@ -78,7 +77,6 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return false;
     }
-
 
     public synchronized void onInsert(Save cTalkManager){
         try {

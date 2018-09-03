@@ -32,6 +32,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import de.mrapp.android.dialog.MaterialDialog;
@@ -328,6 +330,12 @@ public class Utils {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
         return type;
+    }
+
+    public static void Log(final String TAG,final String message){
+        if (BuildConfig.DEBUG){
+            Log.d(TAG,message);
+        }
     }
 
 }

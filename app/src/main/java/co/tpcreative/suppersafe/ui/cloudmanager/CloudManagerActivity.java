@@ -10,23 +10,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
 import com.ftinc.kit.util.SizeUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.obsez.android.lib.filechooser.ChooserDialog;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
@@ -35,6 +30,7 @@ import co.tpcreative.suppersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.suppersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.suppersafe.common.api.request.UploadingFileRequest;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
+import co.tpcreative.suppersafe.common.request.DriveApiRequest;
 import co.tpcreative.suppersafe.common.response.DriveResponse;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
@@ -45,6 +41,7 @@ import co.tpcreative.suppersafe.common.util.NetworkUtil;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.demo.UploadFileAndViewActivity;
 import co.tpcreative.suppersafe.model.DriveType;
+import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.User;
 import io.reactivex.Observable;
 import okhttp3.MediaType;
@@ -67,11 +64,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
     @BindView(R.id.tvStatus)
     TextView tvStatus;
 
-    private final String FOLDER_NAME = "SUPPER_SAFE";
-    private final String FOLDER_NAME_IN_APP = "SUPPER_SAFE_IN_APP";
     private DriveType driveType;
     private UploadService uploadService;
-
     private List<File>mListFile;
 
     private DownloadService downloadService;
@@ -150,12 +144,35 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
 
     @OnClick(R.id.btnCheckInAppFolder)
     public void onCheckInAppFolder(View view){
-        ServiceManager.getInstance().onCheckInAppFolderExisting();
+        final String folderName = getString(R.string.key_main_album);
+        ServiceManager.getInstance().onCheckInAppFolderExisting(folderName);
     }
 
     @OnClick(R.id.btnCreateInAppFolder)
     public void onCreateInAppFolder(View view){
-        ServiceManager.getInstance().onCheckInAppFolderExisting();
+        final String folderName = getString(R.string.key_main_album);
+        ServiceManager.getInstance().onCheckInAppFolderExisting(folderName);
+    }
+
+    @OnClick(R.id.btnUploadFileInAppFolder)
+    public void onUploadFileInAppFolder(View view){
+        driveType = DriveType.IN_APP_FOLDER;
+        Navigator.onMoveToAlbum(this);
+    }
+
+    @OnClick(R.id.btnGetListFolder)
+    public void onClickedListInApp(){
+        ServiceManager.getInstance().onGetListFileInApp();
+    }
+
+    @OnClick(R.id.btnMainCategories)
+    public void onClickedInitMainCategories(View view){
+        ServiceManager.getInstance().onInitMainCategories();
+    }
+
+    @OnClick(R.id.btnPrintInAppFolder)
+    public void onClickedPrintInAppFolder(View view){
+       Utils.Log(TAG,"Main categories : "+new Gson().toJson( MainCategories.getInstance().getMainCategoriesList()));
     }
 
     @Override
@@ -206,7 +223,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
                 case IN_FOLDER:
                     mListFile.clear();
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
-
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         Log.d(TAG, "Selected album :" + path);
@@ -216,10 +232,15 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
                         onUploadFile(file);
 
                     }
-
-
-                    //uploadMultipart();
                     break;
+                case IN_APP_FOLDER:
+                    images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+                    for (int i = 0, l = images.size(); i < l; i++) {
+                        String path = images.get(i).path;
+                        Log.d(TAG, "Selected album :" + path);
+                        final File file  = new File(path);
+                        onUploadFileInAppFolder(file);
+                    }
                  default:
                      Log.d(TAG,"Nothing");
                      break;
@@ -352,36 +373,70 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
 
     }
 
-    public void uploadMultipart() {
-        try {
-            if (NetworkUtil.pingIpAddress(getApplicationContext())) {
-                Toast.makeText(this, "Please check internet", Toast.LENGTH_SHORT).show();
-                return;
+
+
+    public void onUploadFileInAppFolder(final File file){
+        Log.d(TAG,"Upload File To In App Folder");
+        final User mUser = User.getInstance().getUserInfo();
+        MediaType  contentType = MediaType.parse("application/json; charset=UTF-8");
+        HashMap<String,Object> content = new HashMap<>();
+        content.put(getString(R.string.key_name),file.getName());
+
+        List<String> list = new ArrayList<>();
+        list.add("1PINsLydefzvuIqFjEPE04AELiLdRGI3Y7OedM3XS1UI_wVg5j8U");
+        content.put(getString(R.string.key_parents),list);
+
+
+        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType,new Gson().toJson(content)));
+
+        Log.d(TAG,"parents: " +new Gson().toJson(content));
+
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
+            @Override
+            public void onProgressUpdate(int percentage) {
+                Log.d(TAG,"Progressing "+ percentage +"%");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvStatus.setText(""+percentage+"%");
+                    }
+                });
             }
-            Toast.makeText(this, "Uploading", Toast.LENGTH_SHORT).show();
-            UploadingFileRequest request = new UploadingFileRequest();
+            @Override
+            public void onError() {
+                Log.d(TAG,"onError");
+                tvStatus.setText("onError");
+            }
+            @Override
+            public void onFinish() {
+                Log.d(TAG,"onFinish");
+                tvStatus.setText("onFinish");
+            }
+        });
 
-            HashMap<String,String> header = new HashMap<>();
-            final User mUser = User.getInstance().getUserInfo();
-            header.put("Authorization",mUser.access_token);
-            header.put("Content-Type","application/json");
+        fileBody.setContentType(Utils.getMimeType(file.getAbsolutePath()));
+        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
 
 
-            request.mapHeader = header;
-            request.list = mListFile;
+        Call<DriveResponse> request = SupperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload),mUser.access_token,metaPart,dataPart,Utils.getMimeType(file.getAbsolutePath()));
+        request.enqueue(new Callback<DriveResponse>(){
+            @Override
+            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
+                Log.d(TAG,"response successful :"+ new Gson().toJson(response.body()));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvStatus.setText("response successful :"+ new Gson().toJson(response.body()));
+                    }
+                });
+            }
+            @Override
+            public void onFailure(Call<DriveResponse> call, Throwable t) {
+                Log.d(TAG,"response failed :"+ t.getMessage());
+                tvStatus.setText("response failed  :"+ t.getMessage());
+            }
+        });
 
-            HashMap<String,String> body = new HashMap<>();
-            body.put("name","abc");
-            body.put("mimeType","image/jpeg");
-            request.mapBody = body;
-
-            uploadService.setListener(this, "https://www.googleapis.com/drive/v3/files");
-            uploadService.postUploadFileMulti(request);
-
-        }
-        catch (Exception e){
-            Log.d(TAG,"Error occurred "+ e.getMessage());
-        }
     }
 
 
