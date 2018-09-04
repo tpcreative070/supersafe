@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 
+import com.google.android.gms.common.util.Hex;
+import com.google.common.base.Charsets;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -390,5 +393,9 @@ public class Utils {
         return result;
     }
 
+    public static String getHexCode(String value){
+        String hexString = Hex.bytesToStringUppercase(value.getBytes(Charsets.UTF_8));
+        return hexString;
+    }
 
 }

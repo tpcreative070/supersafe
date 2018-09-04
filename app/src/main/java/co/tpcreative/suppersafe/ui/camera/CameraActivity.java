@@ -33,11 +33,13 @@ import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.TypeFile;
+import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 
 public class CameraActivity extends BaseActivity implements
@@ -272,6 +274,13 @@ public class CameraActivity extends BaseActivity implements
                     SupperSafeApplication.getInstance().getLocalCategoriesId(),
                             null);
                     InstanceGenerator.getInstance(CameraActivity.this).onInsert(items);
+
+                    ServiceManager.getInstance().onUploadFilesToInAppFolder(new File(originalPath),SupperSafeApplication.getInstance().getGlobalCategoriesId());
+
+                    //ServiceManager.getInstance().onUploadFilesToInAppFolder(originalPath);
+
+                    Utils.Log(TAG,SupperSafeApplication.getInstance().getLocalCategoriesId());
+
                     Log.d(TAG,thumbnailPath);
                 } catch (Exception e) {
                     Log.w(TAG, "Cannot write to " + e);

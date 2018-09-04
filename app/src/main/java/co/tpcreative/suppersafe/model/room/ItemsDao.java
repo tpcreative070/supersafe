@@ -18,6 +18,7 @@ public interface ItemsDao {
     @Delete
     void delete(Items... items);
 
-    @Query("Select * FROM items")
-    List<Items> loadAll();
+    @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id")
+    List<Items> loadAll(String localCategories_Id);
+
 }

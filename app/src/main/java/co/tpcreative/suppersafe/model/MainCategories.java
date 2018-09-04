@@ -2,6 +2,7 @@ package co.tpcreative.suppersafe.model;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
@@ -11,13 +12,14 @@ import java.util.List;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.common.util.Utils;
 
 public class MainCategories implements Serializable {
 
     private final int imageResource;
     private final String localId;
+    @SerializedName("id")
     private final String globalId;
-
     private static MainCategories instance ;
 
     private static final String TAG = MainCategories.class.getSimpleName();
@@ -29,7 +31,6 @@ public class MainCategories implements Serializable {
         this.globalId = globalId;
     }
 
-
     public MainCategories(){
         this.imageResource = 0;
         this.name = null;
@@ -38,12 +39,12 @@ public class MainCategories implements Serializable {
     }
 
     public List<MainCategories> getList(){
-        List<MainCategories> list = new ArrayList<>();
-        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_main_album),0));
-        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_card_ids),0));
-        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_videos),0));
-        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_significant_other),0));
-        return list;
+        List<MainCategories> mList = new ArrayList<>();
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_main_album)),null,SupperSafeApplication.getInstance().getString(R.string.key_main_album), R.drawable.face_1));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_card_ids)),null,SupperSafeApplication.getInstance().getString(R.string.key_card_ids), R.drawable.face_2));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_videos)),null,SupperSafeApplication.getInstance().getString(R.string.key_videos), R.drawable.face_3));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_significant_other)),null,SupperSafeApplication.getInstance().getString(R.string.key_significant_other), R.drawable.face_4));
+        return mList;
     }
 
     public String isCheckId(String name){

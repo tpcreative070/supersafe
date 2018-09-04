@@ -144,7 +144,6 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         return options.build();
     }
 
-
     public EncryptConfiguration getConfigurationFile() {
         return configurationFile;
     }

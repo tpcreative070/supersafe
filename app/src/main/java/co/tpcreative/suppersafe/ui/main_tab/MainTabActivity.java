@@ -42,6 +42,7 @@ import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.model.User;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView{
 
@@ -80,9 +81,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
-
-
-
 
     }
 
@@ -264,6 +262,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     protected void onResume() {
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
+        ServiceManager.getInstance().onRefreshData();
+
     }
 
     @Override

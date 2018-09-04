@@ -18,6 +18,7 @@ public class User extends BaseResponse implements Serializable{
     public String access_token;
     public boolean driveConnected;
     public DriveAbout driveAbout;
+    public boolean isRefresh;
 
     private static User instance ;
 

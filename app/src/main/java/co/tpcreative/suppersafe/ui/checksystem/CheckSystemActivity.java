@@ -133,6 +133,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         request.cloud_id = presenter.mUser.email;
         request.user_id  = presenter.mUser.email;
         presenter.onAddUserCloud(request);
+        ServiceManager.getInstance().onRefreshData();
     }
 
     @Override

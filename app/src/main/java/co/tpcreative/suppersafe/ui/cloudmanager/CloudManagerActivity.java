@@ -174,6 +174,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
         btnSignIn.setVisibility(View.GONE);
         btnDriveAbout.setVisibility(View.VISIBLE);
         btnDisconnect.setVisibility(View.VISIBLE);
+        ServiceManager.getInstance().onRefreshData();
     }
 
     @Override
@@ -365,7 +366,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
         });
 
     }
-
 
 
     public void onUploadFileInAppFolder(final File file){

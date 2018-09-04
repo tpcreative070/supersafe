@@ -47,6 +47,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                         }
                         else{
                             Navigator.onMoveSetPin(SplashScreenActivity.this,false);
+
                         }
                     }
                     else{

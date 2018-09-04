@@ -7,6 +7,8 @@ import android.content.Context;
 import android.util.Log;
 import java.util.List;
 import java.util.UUID;
+
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.History;
 import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.Save;
@@ -156,7 +158,11 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     public final synchronized List<Items> getListItems(){
         try{
-            return instance.itemsDao().loadAll();
+            String localId = SupperSafeApplication.getInstance().getLocalCategoriesId();
+            if (localId==null){
+                return null;
+            }
+            return instance.itemsDao().loadAll(localId);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

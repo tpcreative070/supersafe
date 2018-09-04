@@ -95,6 +95,12 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onClickItem(int position) {
         Log.d(TAG,"Position :"+ position);
         try {
+            if (presenter.mList.get(position).getGlobalId()!=null){
+                SupperSafeApplication.getInstance().setGlobalCategoriesId(presenter.mList.get(position).getGlobalId());
+            }
+            else{
+                SupperSafeApplication.getInstance().setGlobalCategoriesId(null);
+            }
             SupperSafeApplication.getInstance().setLocalCategoriesId(presenter.mList.get(position).getLocalId());
             Navigator.onMoveAlbumDetail(getContext());
         }
@@ -172,7 +178,14 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         Log.d(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
+            if (presenter!=null){
+                presenter.getData();
+            }
         }
     }
 
+    @Override
+    public void onReload() {
+        adapter.setDataSource(presenter.mList);
+    }
 }

@@ -18,13 +18,17 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeService;
 import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
+import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.MainCategories;
+import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
 
@@ -197,7 +201,7 @@ public class ServiceManager implements SupperSafeServiceView{
             myService.getDriveAbout();
         }
         else{
-            Log.d(TAG,"My services is null");
+            Utils.Log(TAG,"My services is null");
         }
     }
 
@@ -206,7 +210,7 @@ public class ServiceManager implements SupperSafeServiceView{
             myService.onCreateFolder();
         }
         else{
-            Log.d(TAG,"My services is null");
+            Utils.Log(TAG,"My services is null");
         }
     }
 
@@ -215,7 +219,7 @@ public class ServiceManager implements SupperSafeServiceView{
             myService.onCheckInAppFolderExisting(folderName);
         }
         else{
-            Log.d(TAG,"My services is null");
+            Utils.Log(TAG,"My services is null");
         }
     }
 
@@ -224,7 +228,7 @@ public class ServiceManager implements SupperSafeServiceView{
             myService.onGetListFolderInApp();
         }
         else{
-            Log.d(TAG,"My services is null");
+            Utils.Log(TAG,"My services is null");
         }
     }
 
@@ -242,9 +246,40 @@ public class ServiceManager implements SupperSafeServiceView{
                     }
                 }
                 else{
-                    Log.d(TAG,"My services is null");
+                    Utils.Log(TAG,"My services is null");
                 }
             }
+        }
+    }
+
+    public void onRefreshData(){
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.driveConnected){
+                if (!mUser.isRefresh){
+                    onInitMainCategories();
+                }
+            }
+        }
+    }
+
+    public void onUploadFilesToInAppFolder(final File file,String folderId){
+        if (myService!=null){
+            final User mUser = User.getInstance().getUserInfo();
+            if (mUser!=null){
+                if (mUser.driveConnected && folderId!=null){
+                    myService.onUploadFileInAppFolder(file,folderId);
+                }
+                else{
+                    Utils.Log(TAG,"Drive api not ready");
+                }
+            }
+            else{
+                Utils.Log(TAG,"User not ready");
+            }
+        }
+        else{
+            Utils.Log(TAG,"My services is null");
         }
     }
 

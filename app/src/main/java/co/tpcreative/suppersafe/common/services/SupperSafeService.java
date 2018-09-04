@@ -606,12 +606,17 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
                                 final List<MainCategories> categories = new ArrayList<>();
                                 final List<DriveResponse> mList = onResponse.files;
                                 for (DriveResponse index : mList){
-                                    categories.add(new MainCategories(null,index.id,index.name,0));
+                                    categories.add(new MainCategories(Utils.getHexCode(index.name),index.id,index.name,R.drawable.face_1));
                                 }
                                 PrefsController.putString(getString(R.string.key_main_categories),new Gson().toJson(categories));
                             }
                             else{
                                 PrefsController.putString(getString(R.string.key_main_categories),null);
+                            }
+                            final User mUser = User.getInstance().getUserInfo();
+                            if (mUser!=null){
+                               mUser.isRefresh = true;
+                               PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                             }
                         }
                         view.onSuccessful(new Gson().toJson(onResponse));
