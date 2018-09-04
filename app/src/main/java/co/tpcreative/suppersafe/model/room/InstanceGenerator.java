@@ -8,9 +8,10 @@ import android.util.Log;
 import java.util.List;
 import java.util.UUID;
 import co.tpcreative.suppersafe.model.History;
+import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.Save;
 
-@Database(entities = {History.class, Save.class}, version = 1, exportSchema = false)
+@Database(entities = {History.class, Save.class, Items.class}, version = 1, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
@@ -21,6 +22,8 @@ public abstract class InstanceGenerator extends RoomDatabase {
     @Ignore
     public abstract SaveDao saveDao();
 
+    @Ignore
+    public abstract ItemsDao itemsDao();
 
     @Ignore
     public static final String TAG = InstanceGenerator.class.getSimpleName();
@@ -122,6 +125,56 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return false;
     }
+
+
+
+    /*Items action*/
+
+    public synchronized void onInsert(Items cTalkManager){
+        try {
+            if (cTalkManager==null){
+                return;
+            }
+            instance.itemsDao().insert(cTalkManager);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public synchronized void onUpdate(Items cTalkManager){
+        try {
+            if (cTalkManager==null){
+                return;
+            }
+            instance.itemsDao().update(cTalkManager);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public final synchronized List<Items> getListItems(){
+        try{
+            return instance.itemsDao().loadAll();
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized boolean onDelete(Items entity){
+        try{
+            instance.itemsDao().delete(entity);
+            return true;
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return false;
+    }
+
 
 }
 

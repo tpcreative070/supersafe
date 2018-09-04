@@ -6,9 +6,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.os.Build;
+import android.support.media.ExifInterface;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -18,11 +18,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -32,6 +34,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.UUID;
 
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
@@ -187,6 +193,32 @@ public class Utils {
                 BitmapFactory.decodeByteArray(data,0,data.length),
                 THUMBSIZE_HEIGHT,
                 THUMBSIZE_WIDTH);
+        InputStream in = null;
+        try {
+            in = new ByteArrayInputStream(data);
+            ExifInterface exifInterface = new ExifInterface(in);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            }
+            else if (orientation == 3) {
+                matrix.postRotate(180);
+            }
+            else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+        } catch (IOException e) {
+            // Handle any errors
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {}
+            }
+        }
         return thumbImage;
     }
 
@@ -337,5 +369,26 @@ public class Utils {
             Log.d(TAG,message);
         }
     }
+
+    public static String getUUId(){
+        try {
+            return UUID.randomUUID().toString();
+        }
+        catch (Exception e){
+            return ""+System.currentTimeMillis();
+        }
+    }
+
+    public static String getDateIdentifier(){
+        return ""+System.currentTimeMillis();
+    }
+
+    public static String getCurrentDateTime() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+        String result = dateFormat.format(date);
+        return result;
+    }
+
 
 }

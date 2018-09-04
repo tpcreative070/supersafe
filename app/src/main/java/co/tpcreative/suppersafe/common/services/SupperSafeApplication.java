@@ -47,6 +47,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
     private String key;
     private Storage storage;
     private EncryptConfiguration configuration;
+    private EncryptConfiguration configurationFile;
     private static int resumed;
     private static int paused;
     private static int started;
@@ -65,6 +66,8 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
     private GoogleSignInOptions.Builder options;
     private Set<Scope> requiredScopes;
     private List<String> requiredScopesString;
+    private String localCategories_Id;
+    private String globalCategories_Id;
 
     @Override
     public void onCreate() {
@@ -99,6 +102,15 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         configuration = new EncryptConfiguration.Builder()
                 .setEncryptContent(IVX, SECRET_KEY, SALT)
                 .build();
+
+        /*Config file*/
+        String IVX_ = "abcdefghijklmnop"; // 16 lenght - not secret
+        String SECRET_KEY_ = "secret@123"; // 16 lenght - secret
+        byte[] SALT_ = "0000111100001111".getBytes(); // random 16 bytes array
+        configurationFile = new EncryptConfiguration.Builder()
+                .setEncryptContent(IVX_, SECRET_KEY_, SALT_)
+                .build();
+
         storage = new Storage(getApplicationContext());
         suppersafe = storage.getExternalStorageDirectory() + "/SupperSafe_DoNot_Delete/";
         key = ".encrypt_key";
@@ -131,6 +143,12 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         }
         return options.build();
     }
+
+
+    public EncryptConfiguration getConfigurationFile() {
+        return configurationFile;
+    }
+
 
     public List<String> getRequiredScopesString(){
         return requiredScopesString;
@@ -378,6 +396,25 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         String versionRelease = Build.VERSION.RELEASE;
         return versionRelease;
     }
+
+    public String getLocalCategoriesId() {
+        return localCategories_Id;
+    }
+
+    public void setLocalCategoriesId(String localCategories_Id) {
+        this.localCategories_Id = localCategories_Id;
+    }
+
+    public String getGlobalCategoriesId() {
+        return globalCategories_Id;
+    }
+
+    public void setGlobalCategoriesId(String globalCategories_Id) {
+        this.globalCategories_Id = globalCategories_Id;
+    }
+
+
+
 
 
 }

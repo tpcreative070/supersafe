@@ -1,5 +1,4 @@
 package co.tpcreative.suppersafe.ui.cloudmanager;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -30,20 +29,15 @@ import co.tpcreative.suppersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.suppersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.suppersafe.common.api.request.UploadingFileRequest;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
-import co.tpcreative.suppersafe.common.request.DriveApiRequest;
 import co.tpcreative.suppersafe.common.response.DriveResponse;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
-import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
 import co.tpcreative.suppersafe.common.services.download.DownloadService;
 import co.tpcreative.suppersafe.common.services.upload.ProgressRequestBody;
 import co.tpcreative.suppersafe.common.services.upload.UploadService;
-import co.tpcreative.suppersafe.common.util.NetworkUtil;
 import co.tpcreative.suppersafe.common.util.Utils;
-import co.tpcreative.suppersafe.demo.UploadFileAndViewActivity;
 import co.tpcreative.suppersafe.model.DriveType;
 import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.User;
-import io.reactivex.Observable;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -254,7 +248,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
     public void onDownloadFile(){
 
         DownloadFileRequest request = new DownloadFileRequest();
-
         request.api_name = String.format(getString(R.string.url_drive_download),"1_w6_Rg-ZC9dFXqK_1hYCA1qhAr4nbla1");
         request.file_name = "20180823_161706.zip";
         request.path_folder_output  = SupperSafeApplication.getInstance().getSupperSafe();
@@ -472,4 +465,5 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
     public void onSpeed(double speed) {
         Log.d(TAG,"speed :" + speed);
     }
+
 }

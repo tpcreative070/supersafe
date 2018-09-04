@@ -7,34 +7,43 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-
 import com.google.android.gms.drive.DriveFolder;
 import com.google.gson.Gson;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.common.api.RootAPI;
+import co.tpcreative.suppersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.presenter.PresenterService;
 import co.tpcreative.suppersafe.common.request.DriveApiRequest;
 import co.tpcreative.suppersafe.common.response.DriveResponse;
+import co.tpcreative.suppersafe.common.services.download.DownloadService;
+import co.tpcreative.suppersafe.common.services.upload.ProgressRequestBody;
 import co.tpcreative.suppersafe.common.util.NetworkUtil;
+import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.HttpException;
+import retrofit2.Response;
 
 public class SupperSafeService extends PresenterService<SupperSafeServiceView> implements SupperSafeReceiver.ConnectivityReceiverListener {
-
 
     private final IBinder mBinder = new LocalBinder(); // Binder given to clients
     private Intent mIntent;
     private SupperSafeServiceListener listener;
     private SupperSafeReceiver androidReceiver;
+    private DownloadService downloadService;
     private static final String TAG = SupperSafeService.class.getSimpleName();
 
     public interface SupperSafeServiceListener{
@@ -47,6 +56,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
     public void onCreate() {
         super.onCreate();
         Log.d(TAG,"onCreate");
+        downloadService = new DownloadService(this);
         onInitReceiver();
     }
 
@@ -212,7 +222,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
         request.name = getString(R.string.key_supper_safe);
 
         String access_token = user.access_token;
-        Log.d(TAG,"access_token : " + access_token);
+        Utils.Log(TAG,"access_token : " + access_token);
         subscriptions.add(SupperSafeApplication.serverDriveApi.onCrateFolder(access_token,request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -596,7 +606,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
                                 final List<MainCategories> categories = new ArrayList<>();
                                 final List<DriveResponse> mList = onResponse.files;
                                 for (DriveResponse index : mList){
-                                    categories.add(new MainCategories(index.id,index.name,0));
+                                    categories.add(new MainCategories(null,index.id,index.name,0));
                                 }
                                 PrefsController.putString(getString(R.string.key_main_categories),new Gson().toJson(categories));
                             }
@@ -630,6 +640,124 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
                     view.stopLoading();
                 }));
     }
+
+
+    public void onUploadFileInAppFolder(final File file,final String id){
+        Log.d(TAG,"Upload File To In App Folder");
+        final User mUser = User.getInstance().getUserInfo();
+        MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
+        HashMap<String,Object> content = new HashMap<>();
+        content.put(getString(R.string.key_name),file.getName());
+
+        List<String> list = new ArrayList<>();
+        list.add(id);
+        content.put(getString(R.string.key_parents),list);
+
+        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType,new Gson().toJson(content)));
+
+        Log.d(TAG,"parents: " +new Gson().toJson(content));
+
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
+            @Override
+            public void onProgressUpdate(int percentage) {
+                Utils.Log(TAG,"Progressing "+ percentage +"%");
+            }
+            @Override
+            public void onError() {
+                Utils.Log(TAG,"onError");
+            }
+            @Override
+            public void onFinish() {
+                Utils.Log(TAG,"onFinish");
+            }
+        });
+
+        fileBody.setContentType(Utils.getMimeType(file.getAbsolutePath()));
+        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
+
+        Call<DriveResponse> request = SupperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload),mUser.access_token,metaPart,dataPart,Utils.getMimeType(file.getAbsolutePath()));
+        request.enqueue(new Callback<DriveResponse>(){
+            @Override
+            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
+                Utils.Log(TAG,"response successful :"+ new Gson().toJson(response.body()));
+            }
+            @Override
+            public void onFailure(Call<DriveResponse> call, Throwable t) {
+                Utils.Log(TAG,"response failed :"+ t.getMessage());
+            }
+        });
+    }
+
+
+
+    public void onDownloadFile(String fileName,String pathOutput,final String id){
+        DownloadFileRequest request = new DownloadFileRequest();
+        request.api_name = String.format(getString(R.string.url_drive_download),id);
+        request.file_name = fileName;
+        request.path_folder_output  = pathOutput;
+        final User mUser = User.getInstance().getUserInfo();
+        request.Authorization = mUser.access_token;
+        downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
+            @Override
+            public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
+                Utils.Log(TAG,"onDownLoadCompleted "+ file_name.getAbsolutePath());
+            }
+
+            @Override
+            public void onDownLoadError(String error) {
+                Utils.Log(TAG,"onDownLoadError "+ error);
+            }
+
+            @Override
+            public void onProgressingDownloading(int percent) {
+                Utils.Log(TAG,"Progressing "+ percent +"%");
+            }
+
+            @Override
+            public void onAttachmentElapsedTime(long elapsed) {
+
+            }
+
+            @Override
+            public void onAttachmentAllTimeForDownloading(long all) {
+
+            }
+
+            @Override
+            public void onAttachmentRemainingTime(long all) {
+
+            }
+
+            @Override
+            public void onAttachmentSpeedPerSecond(double all) {
+
+            }
+
+            @Override
+            public void onAttachmentTotalDownload(long totalByte, long totalByteDownloaded) {
+
+            }
+
+            @Override
+            public void onSavedCompleted() {
+                Utils.Log(TAG,"onSavedCompleted ");
+            }
+
+            @Override
+            public void onErrorSave(String name) {
+                Utils.Log(TAG,"onErrorSave");
+            }
+
+            @Override
+            public void onCodeResponse(int code, DownloadFileRequest request) {
+
+            }
+        },"https://www.googleapis.com/drive/v3/files/");
+        request.mapHeader = new HashMap<>();
+        request.mapObject = new HashMap<>();
+        downloadService.downloadDriveFileByGET(request);
+    }
+
 
 
     public void getDriveAbout(SupperSafeServiceView view){

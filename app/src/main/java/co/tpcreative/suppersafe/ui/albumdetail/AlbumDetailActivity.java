@@ -1,36 +1,92 @@
 package co.tpcreative.suppersafe.ui.albumdetail;
+import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.darsh.multipleimageselect.helpers.Constants;
+import com.darsh.multipleimageselect.models.Image;
+import com.ftinc.kit.util.SizeUtils;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.leinardi.android.speeddial.FabWithLabelView;
+import com.leinardi.android.speeddial.SpeedDialActionItem;
+import com.leinardi.android.speeddial.SpeedDialOverlayLayout;
+import com.leinardi.android.speeddial.SpeedDialView;
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrPosition;
+
+import java.util.ArrayList;
+import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.util.Utils;
 
 
 public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener{
     public static final String EXTRA_NAME = "cheese_name";
 
+    private static final String TAG = AlbumDetailActivity.class.getSimpleName();
+
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.speedDial)
+    SpeedDialView mSpeedDialView;
+    @BindView(R.id.main_content)
+    CoordinatorLayout main_content;
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
-
+    private SlidrConfig mConfig;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_detail);
+        initRecycleView(getLayoutInflater());
+        initSpeedDial(true);
+
+        //android O fix bug orientation
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        int primary = getResources().getColor(R.color.colorPrimary);
+        int secondary = getResources().getColor(R.color.colorPrimaryDark);
+
+        mConfig = new SlidrConfig.Builder()
+                .primaryColor(primary)
+                .secondaryColor(secondary)
+                .position(SlidrPosition.LEFT)
+                .velocityThreshold(2400)
+                .touchSize(SizeUtils.dpToPx(this, 32))
+                .build();
+        Slidr.attach(this, mConfig);
+
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         presenter.getData();
@@ -44,23 +100,153 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(cheeseName);
-
-        initRecycleView(getLayoutInflater());
-        adapter.setDataSource(presenter.mList);
-
-
+        Utils.Log(TAG,Utils.getCurrentDateTime());
 
     }
+
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void stopLoading() {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        presenter.getData();
+    }
+
+    @Override
+    public void onReloadData() {
+        adapter.setDataSource(presenter.mList);
+    }
+
+    /*Init Floating View*/
+
+    private void initSpeedDial(boolean addActionItems) {
+        if (addActionItems) {
+            Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
+            FabWithLabelView fabWithLabelView = mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
+                    .fab_camera, drawable)
+                    .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,getTheme()))
+                    .setLabelColor(Color.WHITE)
+                    .setLabel(getString(R.string.camera))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
+                            getTheme()))
+                    .create());
+            if (fabWithLabelView != null) {
+                fabWithLabelView.setSpeedDialActionItem(fabWithLabelView.getSpeedDialActionItemBuilder()
+                        .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_white_1000,
+                                getTheme()))
+                        .create());
+            }
+
+            drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
+            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_green_500,
+                            getTheme()))
+                    .setLabel(R.string.photo)
+                    .setLabelColor(getResources().getColor(R.color.white))
+                    .setLabelBackgroundColor(getResources().getColor(R.color.colorBlue))
+                    .create());
+
+            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_album, R.drawable
+                    .baseline_add_to_photos_white_36)
+                    .setLabel(getString(R.string.album))
+                    .setTheme(R.style.AppTheme_Purple)
+                    .create());
+            mSpeedDialView.setMainFabAnimationRotateAngle(180);
+        }
+
+        //Set main action clicklistener.
+        mSpeedDialView.setOnChangeListener(new SpeedDialView.OnChangeListener() {
+            @Override
+            public boolean onMainActionSelected() {
+                return false; // True to keep the Speed Dial open
+            }
+
+            @Override
+            public void onToggleChanged(boolean isOpen) {
+                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+            }
+        });
+
+        //Set option fabs clicklisteners.
+        mSpeedDialView.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
+            @Override
+            public boolean onActionSelected(SpeedDialActionItem actionItem) {
+                switch (actionItem.getId()) {
+                    case R.id.fab_album:
+                        showToast(" Album");
+                        return false; // false will close it without animation
+                    case R.id.fab_photo:
+                        showToast(actionItem.getLabel(getApplicationContext()) + " Photo");
+                        Navigator.onMoveToAlbum(AlbumDetailActivity.this);
+                        return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
+                    case R.id.fab_camera:
+                        showToast(actionItem.getLabel(getApplicationContext()) + " Camera");
+                        onAddPermissionCamera();
+                        return  false;
+                }
+                return true; // To keep the Speed Dial open
+            }
+        });
+
+    }
+
+    /*Init grant permission*/
+
+    public void onAddPermissionCamera() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            Navigator.onMoveCamera(getApplicationContext());
+                        }
+                        else{
+                            Log.d(TAG,"Permission is denied");
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            /*Miss add permission in manifest*/
+                            Log.d(TAG, "request permission is failed");
+                        }
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        /* ... */
+                        token.continuePermissionRequest();
+                    }
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Log.d(TAG, "error ask permission");
+                    }
+                }).onSameThread().check();
+    }
+
 
     public void initRecycleView(LayoutInflater layoutInflater){
         adapter = new AlbumDetailAdapter(layoutInflater,getApplicationContext(),this);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(0), false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
-
 
     @Override
     public void onClickItem(int position) {
@@ -112,6 +298,20 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG,"Selected album :");
+        if (requestCode == Constants.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+            StringBuffer stringBuffer = new StringBuffer();
+            for (int i = 0, l = images.size(); i < l; i++) {
+                stringBuffer.append(images.get(i).path + "\n");
+            }
+            Log.d(TAG,"Selected album :" + stringBuffer.toString());
+        }
+    }
+
     /**
      * Converting dp to pixel
      */
@@ -120,7 +320,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
-
 
 
 }

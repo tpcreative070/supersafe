@@ -15,10 +15,10 @@ public class PrivatePresenter extends Presenter<PrivateView> {
     public void  getData(){
         PrivateView view = view();
         mList.clear();
-        mList.add(new MainCategories(null,view.getContext().getString(R.string.key_main_album), R.drawable.face_1));
-        mList.add(new MainCategories(null,view.getContext().getString(R.string.key_card_ids), R.drawable.face_2));
-        mList.add(new MainCategories(null,view.getContext().getString(R.string.key_videos), R.drawable.face_3));
-        mList.add(new MainCategories(null,view.getContext().getString(R.string.key_significant_other), R.drawable.face_4));
+        mList.add(new MainCategories("0",null,view.getContext().getString(R.string.key_main_album), R.drawable.face_1));
+        mList.add(new MainCategories("1",null,view.getContext().getString(R.string.key_card_ids), R.drawable.face_2));
+        mList.add(new MainCategories("2",null,view.getContext().getString(R.string.key_videos), R.drawable.face_3));
+        mList.add(new MainCategories("3",null,view.getContext().getString(R.string.key_significant_other), R.drawable.face_4));
     }
 
 }

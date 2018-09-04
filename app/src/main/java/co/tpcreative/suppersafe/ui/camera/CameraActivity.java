@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
 import com.snatik.storage.Storage;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,6 +36,9 @@ import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.Items;
+import co.tpcreative.suppersafe.model.TypeFile;
+import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback,
@@ -47,6 +49,9 @@ public class CameraActivity extends BaseActivity implements
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
     private static final String FRAGMENT_DIALOG = "dialog";
+
+    private Storage storage;
+
 
     private static final int[] FLASH_OPTIONS = {
             CameraView.FLASH_AUTO,
@@ -67,14 +72,13 @@ public class CameraActivity extends BaseActivity implements
     };
 
     private int mCurrentFlash;
-
     private Handler mBackgroundHandler;
-    private Storage storage;
     private int mOrientation = 0;
+
+    private boolean isProgress;
 
     @BindView(R.id.camera)
     CameraView mCameraView;
-
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -107,6 +111,8 @@ public class CameraActivity extends BaseActivity implements
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        /*
         try{
             String path = SupperSafeApplication.getInstance().getSupperSafe()+"newFile";
             File file = new File(path);
@@ -117,6 +123,9 @@ public class CameraActivity extends BaseActivity implements
         catch (Exception e){
             e.printStackTrace();
         }
+        */
+
+
         mCameraView.start();
     }
 
@@ -217,71 +226,96 @@ public class CameraActivity extends BaseActivity implements
             = new CameraView.Callback() {
         @Override
         public void onCameraOpened(CameraView cameraView) {
-            Log.d(TAG, "onCameraOpened");
+            Utils.Log(TAG, "onCameraOpened");
         }
 
         @Override
         public void onCameraClosed(CameraView cameraView) {
-            Log.d(TAG, "onCameraClosed");
+            Utils.Log(TAG, "onCameraClosed");
         }
 
         @Override
         public void onPictureTaken(CameraView cameraView, final byte[] data,int orientation) {
-            Log.d(TAG, "onPictureTaken " + data.length);
-            Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT)
-                    .show();
-
-            getBackgroundHandler().post(new Runnable() {
-                @Override
-                public void run() {
-                    File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                            "picture.jpg");
-                    OutputStream os = null;
-                    try {
-                        os = new FileOutputStream(file);
-                        os.write(data);
-                        os.close();
-                        Bitmap thumbnail = Utils.getThumbnail(file);
-                        SaveImage(thumbnail);
-                        String path = SupperSafeApplication.getInstance().getSupperSafe() +"newFile";
-                        SingletonEncryptData.getInstance().onEncryptData(getInputStream(thumbnail),path);
-                        Log.d(TAG,"displayOrientation callback :" + orientation);
-                    } catch (IOException e) {
-                        Log.w(TAG, "Cannot write to " + file, e);
-                    } finally {
-                        if (os != null) {
-                            try {
-                                os.close();
-                            } catch (IOException e) {
-                                // Ignore
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            });
+            Utils.Log(TAG, "onPictureTaken " + data.length);
+            Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT).show();
+            onSaveData(data);
         }
     };
 
+    public void onSaveData(final byte[]data){
+        getBackgroundHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                InputStream originalFile = null;
+                Bitmap thumbnail = null;
+                try {
+                    thumbnail = Utils.getThumbnail(data);
+                    originalFile = new ByteArrayInputStream(data);
+                    String path = SupperSafeApplication.getInstance().getSupperSafe();
+                    String currentTime = Utils.getCurrentDateTime();
+                    String uuId = Utils.getUUId();
+                    String pathContent = path + uuId+"/";
+                    storage.createDirectory(pathContent);
+                    String thumbnailPath = pathContent+"thumbnail_"+currentTime;
+                    String originalPath = pathContent+currentTime;
+                    storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
+                    storage.createFile(thumbnailPath,thumbnail);
+                    storage.createFile(originalPath,data);
 
-    public InputStream getInputStream(final Bitmap bitmap){
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-        byte[] bitmapdata = bos.toByteArray();
-        ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
-        return bs;
+                    Items items = new Items(false,
+                            0,
+                    currentTime,
+                            thumbnailPath,
+                    originalPath,
+                    uuId,
+                      null,
+                    SupperSafeApplication.getInstance().getLocalCategoriesId(),
+                            null);
+                    InstanceGenerator.getInstance(CameraActivity.this).onInsert(items);
+                    Log.d(TAG,thumbnailPath);
+                } catch (Exception e) {
+                    Log.w(TAG, "Cannot write to " + e);
+                } finally {
+                    if (originalFile!=null){
+                        try {
+                            originalFile.close();
+                            thumbnail = null;
+                        } catch (IOException ignored) {}
+                    }
+                    Utils.Log(TAG,"Finally");
+                }
+            }
+        });
     }
 
+    public InputStream getInputStream(final Bitmap bitmap){
+        ByteArrayInputStream bs =null;
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
+            bs = new ByteArrayInputStream(bitmapdata);
+            bos.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        finally {
+            if (bs!=null){
+                try {
+                    bs.close();
+                } catch (IOException ignored) {}
+            }
+        }
+        return bs;
+    }
 
     public void SaveImage(Bitmap finalBitmap) {
         String path = SupperSafeApplication.getInstance().getSupperSafe();
         File myDir = new File(path);
         myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-"+ n +".jpg";
-        File file = new File (myDir, fname);
+        String thumbnailPath = "thumbnail_"+Utils.getCurrentDateTime()+".jpg";
+        File file = new File (myDir, thumbnailPath);
         if (file.exists ()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -292,6 +326,5 @@ public class CameraActivity extends BaseActivity implements
             e.printStackTrace();
         }
     }
-
 
 }

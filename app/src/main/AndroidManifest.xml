@@ -128,7 +128,9 @@
         <activity
             android:name=".ui.demo.CheeseDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.albumdetail.AlbumDetailActivity" />
+        <activity android:name=".ui.albumdetail.AlbumDetailActivity"
+            android:label=""
+            android:theme="@style/Theme.Slidr.Slidable"/>
         <activity android:name=".ui.slidepictures.SlidePicturesActivity" />
         <activity
             android:name=".ui.settings.SettingsActivity"

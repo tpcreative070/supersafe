@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/materialstyledialoglibrary" />
             <option value="$PROJECT_DIR$/multipleimageselect" />
             <option value="$PROJECT_DIR$/slibrlibrary" />
+            <option value="$PROJECT_DIR$/storage" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

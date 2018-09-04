@@ -18,6 +18,7 @@ public class BaseActivity extends AppCompatActivity {
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
+    private Toast mToast;
     public static final String TAG = BaseActivity.class.getSimpleName();
 
     @Override
@@ -63,6 +64,15 @@ public class BaseActivity extends AppCompatActivity {
         super.onLowMemory();
         System.gc();
     }
+
+    protected void showToast(String text) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+        mToast.show();
+    }
+
 
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();

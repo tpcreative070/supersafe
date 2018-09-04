@@ -15,30 +15,34 @@ import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 public class MainCategories implements Serializable {
 
     private final int imageResource;
-    private final String id;
+    private final String localId;
+    private final String globalId;
+
     private static MainCategories instance ;
 
     private static final String TAG = MainCategories.class.getSimpleName();
 
-    public MainCategories(String id, String name, int imageResource ) {
+    public MainCategories(String localId,String globalId, String name, int imageResource ) {
         this.name = name;
         this.imageResource = imageResource;
-        this.id = id;
+        this.localId = localId;
+        this.globalId = globalId;
     }
 
 
     public MainCategories(){
-        this.id = null;
         this.imageResource = 0;
         this.name = null;
+        this.localId = null;
+        this.globalId = null;
     }
 
     public List<MainCategories> getList(){
         List<MainCategories> list = new ArrayList<>();
-        list.add(new MainCategories(null, SupperSafeApplication.getInstance().getString(R.string.key_main_album),0));
-        list.add(new MainCategories(null, SupperSafeApplication.getInstance().getString(R.string.key_card_ids),0));
-        list.add(new MainCategories(null, SupperSafeApplication.getInstance().getString(R.string.key_videos),0));
-        list.add(new MainCategories(null, SupperSafeApplication.getInstance().getString(R.string.key_significant_other),0));
+        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_main_album),0));
+        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_card_ids),0));
+        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_videos),0));
+        list.add(new MainCategories(null,null, SupperSafeApplication.getInstance().getString(R.string.key_significant_other),0));
         return list;
     }
 
@@ -46,7 +50,7 @@ public class MainCategories implements Serializable {
         final List<MainCategories>mList = getMainCategoriesList();
         for (MainCategories index : mList){
             if (name.equals(index.name)){
-                return index.id;
+                return index.globalId;
             }
         }
         return null;
@@ -87,9 +91,11 @@ public class MainCategories implements Serializable {
         return imageResource;
     }
 
-    public String getId() {
-        return id;
+    public String getGlobalId() {
+        return globalId;
     }
 
-
+    public String getLocalId() {
+        return localId;
+    }
 }

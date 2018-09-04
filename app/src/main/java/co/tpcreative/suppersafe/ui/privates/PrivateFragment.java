@@ -17,6 +17,7 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.BaseFragment;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener{
 
@@ -93,7 +94,13 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     @Override
     public void onClickItem(int position) {
         Log.d(TAG,"Position :"+ position);
-        Navigator.onMoveAlbumDetail(getContext());
+        try {
+            SupperSafeApplication.getInstance().setLocalCategoriesId(presenter.mList.get(position).getLocalId());
+            Navigator.onMoveAlbumDetail(getContext());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

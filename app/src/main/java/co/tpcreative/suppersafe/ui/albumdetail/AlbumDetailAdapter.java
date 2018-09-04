@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -25,8 +26,9 @@ import co.tpcreative.suppersafe.common.adapter.BaseHolder;
 import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.Album;
+import co.tpcreative.suppersafe.model.Items;
 
-public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
+public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
     private Context context;
     private ItemSelectedListener itemSelectedListener;
@@ -36,7 +38,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
-            .override(200,300)
+            .override(400,400)
             .placeholder(R.drawable.ic_camera)
             .error(R.drawable.ic_aspect_ratio)
             .priority(Priority.HIGH);
@@ -64,28 +66,29 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.album_detail_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<Album> {
+    public class ItemHolder extends BaseHolder<Items> {
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
 
-        private Album data;
+        private Items data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         int mPosition;
 
         @Override
-        public void bind(Album data, int position) {
+        public void bind(Items data, int position) {
             super.bind(data, position);
-            //imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
-            String path = SupperSafeApplication.getInstance().getSupperSafe() + "newFile";
+            String path = data.thumbnailPath;
             File file = new File(path);
             try{
-                FileInputStream fileInputStream = new FileInputStream(file);
-                Bitmap bitmap = SingletonEncryptData.getInstance().onDecryptData(fileInputStream);
+                if (!file.exists() || !file.isFile()){
+                    return;
+                }
+                storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
                 Glide.with(context)
-                        .load(bitmap)
+                        .load(storage.readFile(path))
                         .apply(options)
                         .into(imgAlbum);
             }
@@ -100,11 +103,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Album, BaseHolder> {
             }
         }
 
-        @OnClick(R.id.overflows)
-        public void onClickedOverFlows(View view){
-            showPopupMenu(view,mPosition);
-            Log.d(TAG,"OverFlow");
-        }
     }
 
     private void showPopupMenu(View view, int position) {

@@ -1,4 +1,7 @@
 package co.tpcreative.suppersafe.ui.albumdetail;
 
-public interface AlbumDetailView {
+import co.tpcreative.suppersafe.common.presenter.BaseView;
+
+public interface AlbumDetailView  extends BaseView{
+    void onReloadData();
 }

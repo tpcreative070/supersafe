@@ -7,5 +7,6 @@ include ':app',
         'materialstyledialoglibrary',
         'library-common',
         'library-circular',
-        'library-progress'
+        'library-progress',
+        'storage'
 
