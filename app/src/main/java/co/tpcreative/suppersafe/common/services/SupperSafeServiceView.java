@@ -1,7 +1,9 @@
 package co.tpcreative.suppersafe.common.services;
 
+import co.tpcreative.suppersafe.model.EnumStatus;
+
 public interface SupperSafeServiceView {
-    void onError(String message);
+    void onError(String message, EnumStatus status);
     void onSuccessful(String message);
     void onStart();
     void startLoading();

@@ -40,6 +40,7 @@ public class ProgressRequestBody extends RequestBody {
         if (type==null){
             return MediaType.parse("image/*");
         }
+
         return MediaType.parse(type);
     }
 

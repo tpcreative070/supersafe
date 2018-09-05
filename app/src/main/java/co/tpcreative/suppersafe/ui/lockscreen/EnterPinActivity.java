@@ -10,6 +10,7 @@ import android.widget.TextView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
+import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 
 public class EnterPinActivity extends BaseActivity {

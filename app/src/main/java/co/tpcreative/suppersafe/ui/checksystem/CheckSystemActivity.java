@@ -74,6 +74,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ServiceManager.getInstance().onInitMainCategories();
         presenter.unbindView();
     }
 

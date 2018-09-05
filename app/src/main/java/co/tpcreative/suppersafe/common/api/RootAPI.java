@@ -44,6 +44,7 @@ public interface RootAPI{
 
 
 
+
     @FormUrlEncoded
     @POST(SIGN_UP)
     Observable<SignInResponse> onSignUP(@FieldMap Map<String,String> request);
@@ -90,6 +91,9 @@ public interface RootAPI{
     @GET(CHECK_IN_APP_FOLDER_EXITING)
     Observable<DriveAbout> onGetListFile(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value);
 
+    @Headers({"Accept: application/json"})
+    @GET(GET_LIST_FILE_IN_APP_FOLDER)
+    Observable<DriveAbout> onGetListFileInAppFolder(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value);
 
 
     @POST()

@@ -156,9 +156,8 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
     }
 
-    public final synchronized List<Items> getListItems(){
+    public final synchronized List<Items> getListItems(final String localId){
         try{
-            String localId = SupperSafeApplication.getInstance().getLocalCategoriesId();
             if (localId==null){
                 return null;
             }
@@ -169,6 +168,38 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return null;
     }
+
+    public final synchronized List<Items> getListItems(){
+        try{
+            return instance.itemsDao().loadAll();
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+    public final synchronized List<Items> getListSyncDataItems(){
+        try{
+            return instance.itemsDao().loadSyncDataItems(false);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized Items getItemId(int id){
+        try{
+            return instance.itemsDao().loadItemId(id);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
 
     public final synchronized boolean onDelete(Items entity){
         try{

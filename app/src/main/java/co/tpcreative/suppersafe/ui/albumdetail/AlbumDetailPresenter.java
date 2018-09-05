@@ -6,6 +6,7 @@ import java.util.List;
 
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.Album;
 import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
@@ -38,7 +39,8 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
     public void  getData(){
         AlbumDetailView view = view();
         mList.clear();
-        final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems();
+        String localId = SupperSafeApplication.getInstance().getLocalCategoriesId();
+        final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(localId);
         if (data!=null){
             mList = data;
         }

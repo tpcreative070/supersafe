@@ -3,6 +3,7 @@ package co.tpcreative.suppersafe.common.network;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -14,9 +15,13 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class BaseDependencies {
 
-    private static int DEFAULT_TIMEOUT = 5;
+    private static int DEFAULT_TIMEOUT = 1;
     protected OkHttpClient provideOkHttpClientDefault() {
+        int timeout = getTimeOut();
         OkHttpClient okBuilder = new OkHttpClient.Builder()
+                .readTimeout(timeout, TimeUnit.MINUTES)
+                .writeTimeout(timeout, TimeUnit.MINUTES)
+                .connectTimeout(timeout, TimeUnit.MINUTES)
                 .addInterceptor(
                         new Interceptor() {
                             @Override
@@ -33,10 +38,6 @@ public class BaseDependencies {
                                 return chain.proceed(builder.build());
                             }
                         }).build();
-        int timeout = getTimeOut();
-        okBuilder.newBuilder().connectTimeout(timeout, MINUTES);
-        okBuilder.newBuilder().readTimeout(timeout, MINUTES);
-        okBuilder.newBuilder().writeTimeout(timeout, MINUTES);
         return okBuilder;
     }
 

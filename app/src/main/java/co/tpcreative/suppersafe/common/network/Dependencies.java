@@ -30,7 +30,7 @@ public class Dependencies<T> extends BaseDependencies  {
     private Context context;
     private String URL ;
     private DependenciesListener dependenciesListener;
-    private int  mTimeOut = 5 ;
+    private int  mTimeOut = 1 ;
     public static final String TAG = Dependencies.class.getSimpleName();
 
     private Dependencies(Context context){

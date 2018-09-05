@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
@@ -73,6 +72,8 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                 + " \n versionRelease " + versionRelease
         );
         ServiceManager.getInstance().onStartService();
+        ServiceManager.getInstance().setSyncData(false);
+        ServiceManager.getInstance().setCountSyncData(0);
     }
 
 
@@ -101,6 +102,5 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
         super.onPause();
         SensorOrientationChangeNotifier.getInstance().remove(this);
     }
-
 
 }

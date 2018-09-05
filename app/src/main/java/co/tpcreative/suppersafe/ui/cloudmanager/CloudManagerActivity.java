@@ -133,19 +133,17 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
 
     @OnClick(R.id.btnCreateFolder)
     public void onCreateFolder(View view){
-        ServiceManager.getInstance().onCreateFolder();
+
     }
 
     @OnClick(R.id.btnCheckInAppFolder)
     public void onCheckInAppFolder(View view){
-        final String folderName = getString(R.string.key_main_album);
-        ServiceManager.getInstance().onCheckInAppFolderExisting(folderName);
+
     }
 
     @OnClick(R.id.btnCreateInAppFolder)
     public void onCreateInAppFolder(View view){
-        final String folderName = getString(R.string.key_main_album);
-        ServiceManager.getInstance().onCheckInAppFolderExisting(folderName);
+
     }
 
     @OnClick(R.id.btnUploadFileInAppFolder)

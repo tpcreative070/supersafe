@@ -2,7 +2,6 @@ package co.tpcreative.suppersafe.ui.camera;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -18,28 +17,24 @@ import android.view.View;
 import android.widget.Toast;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
+import com.google.common.net.MediaType;
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Random;
 import java.util.Set;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
-import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.Items;
-import co.tpcreative.suppersafe.model.TypeFile;
-import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 
 public class CameraActivity extends BaseActivity implements
@@ -53,6 +48,8 @@ public class CameraActivity extends BaseActivity implements
     private static final String FRAGMENT_DIALOG = "dialog";
 
     private Storage storage;
+
+
 
 
     private static final int[] FLASH_OPTIONS = {
@@ -127,8 +124,8 @@ public class CameraActivity extends BaseActivity implements
         }
         */
 
-
         mCameraView.start();
+
     }
 
     @Override
@@ -240,11 +237,23 @@ public class CameraActivity extends BaseActivity implements
         public void onPictureTaken(CameraView cameraView, final byte[] data,int orientation) {
             Utils.Log(TAG, "onPictureTaken " + data.length);
             Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT).show();
+            if (isProgress){
+                Utils.Log(TAG, "Progressing");
+                return;
+            }
+
+            if (SupperSafeApplication.getInstance().getLocalCategoriesId()==null){
+                Utils.Log(TAG, "Local id is null");
+                return;
+            }
+
             onSaveData(data);
+
         }
     };
 
     public void onSaveData(final byte[]data){
+        isProgress = true;
         getBackgroundHandler().post(new Runnable() {
             @Override
             public void run() {
@@ -272,16 +281,12 @@ public class CameraActivity extends BaseActivity implements
                     uuId,
                       null,
                     SupperSafeApplication.getInstance().getLocalCategoriesId(),
-                            null);
+                            SupperSafeApplication.getInstance().getGlobalCategoriesId(),
+                            MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype());
                     InstanceGenerator.getInstance(CameraActivity.this).onInsert(items);
-
-                    ServiceManager.getInstance().onUploadFilesToInAppFolder(new File(originalPath),SupperSafeApplication.getInstance().getGlobalCategoriesId());
-
-                    //ServiceManager.getInstance().onUploadFilesToInAppFolder(originalPath);
-
                     Utils.Log(TAG,SupperSafeApplication.getInstance().getLocalCategoriesId());
-
-                    Log.d(TAG,thumbnailPath);
+                    //ServiceManager.getInstance().onUploadFilesToInAppFolder(new File(originalPath),SupperSafeApplication.getInstance().getGlobalCategoriesId(),MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype());
+                    Log.d(TAG,new Gson().toJson(items));
                 } catch (Exception e) {
                     Log.w(TAG, "Cannot write to " + e);
                 } finally {
@@ -292,7 +297,9 @@ public class CameraActivity extends BaseActivity implements
                         } catch (IOException ignored) {}
                     }
                     Utils.Log(TAG,"Finally");
+                    isProgress = false;
                 }
+
             }
         });
     }

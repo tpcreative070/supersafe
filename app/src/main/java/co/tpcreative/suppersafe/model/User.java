@@ -19,6 +19,9 @@ public class User extends BaseResponse implements Serializable{
     public boolean driveConnected;
     public DriveAbout driveAbout;
     public boolean isRefresh;
+    public boolean isDownLoad;
+    public boolean isUpload;
+    public boolean isInitMainCategoriesProgressing;
 
     private static User instance ;
 

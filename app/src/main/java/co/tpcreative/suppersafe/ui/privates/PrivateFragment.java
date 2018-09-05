@@ -101,8 +101,10 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
             else{
                 SupperSafeApplication.getInstance().setGlobalCategoriesId(null);
             }
+
             SupperSafeApplication.getInstance().setLocalCategoriesId(presenter.mList.get(position).getLocalId());
             Navigator.onMoveAlbumDetail(getContext());
+
         }
         catch (Exception e){
             e.printStackTrace();

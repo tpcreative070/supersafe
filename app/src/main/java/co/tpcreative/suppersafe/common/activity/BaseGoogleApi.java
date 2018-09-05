@@ -33,6 +33,7 @@ import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
+import co.tpcreative.suppersafe.model.EnumStatus;
 import co.tpcreative.suppersafe.model.User;
 
 
@@ -256,10 +257,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                     Log.d(TAG,"Call DriveAbout");
                     ServiceManager.getInstance().getMyService().getDriveAbout(new SupperSafeServiceView() {
                         @Override
-                        public void onError(String message) {
+                        public void onError(String message, EnumStatus status) {
                             Log.d(TAG,"error :"+ message);
                             revokeAccess();
                         }
+
                         @Override
                         public void onSuccessful(String message) {
                             Log.d(TAG,"successful :"+ message);

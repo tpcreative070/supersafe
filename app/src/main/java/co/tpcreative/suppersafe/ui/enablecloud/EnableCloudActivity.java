@@ -61,6 +61,8 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
         super.onBackPressed();
     }
 
+
+
     @OnClick(R.id.btnLinkGoogleDrive)
     public void onGoogleDrive(View view){
         btnUserAnotherAccount.setEnabled(false);
@@ -311,6 +313,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ServiceManager.getInstance().onInitMainCategories();
         presenter.unbindView();
     }
 

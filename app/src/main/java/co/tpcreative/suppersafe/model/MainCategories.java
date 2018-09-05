@@ -60,7 +60,6 @@ public class MainCategories implements Serializable {
     public List<MainCategories> getMainCategoriesList(){
         try{
             String value = PrefsController.getString(SupperSafeApplication.getInstance().getString(R.string.key_main_categories),null);
-            Log.d(TAG,"value :"+value);
             if (value!=null){
                 Type listType = new TypeToken<ArrayList<MainCategories>>(){}.getType();
                 final List<MainCategories> mainCategoriesList = new Gson().fromJson(value,listType);

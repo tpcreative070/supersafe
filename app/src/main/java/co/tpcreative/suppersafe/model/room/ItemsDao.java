@@ -21,4 +21,13 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id")
     List<Items> loadAll(String localCategories_Id);
 
+    @Query("Select * FROM items WHERE isSync = :isSync")
+    List<Items> loadSyncDataItems(boolean isSync);
+
+    @Query("Select * FROM items WHERE id = :id")
+    Items loadItemId(int id);
+
+    @Query("Select * FROM items")
+    List<Items> loadAll();
+
 }

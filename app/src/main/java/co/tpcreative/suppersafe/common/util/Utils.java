@@ -190,14 +190,15 @@ public class Utils {
     }
 
     public static Bitmap getThumbnail(final byte[]data){
+        InputStream in = null;
+        Bitmap thumbImage = null;
+        try {
         final int THUMBSIZE_HEIGHT = 600;
         final int THUMBSIZE_WIDTH = 400;
-        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
+        thumbImage = ThumbnailUtils.extractThumbnail(
                 BitmapFactory.decodeByteArray(data,0,data.length),
                 THUMBSIZE_HEIGHT,
                 THUMBSIZE_WIDTH);
-        InputStream in = null;
-        try {
             in = new ByteArrayInputStream(data);
             ExifInterface exifInterface = new ExifInterface(in);
             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
@@ -215,6 +216,7 @@ public class Utils {
             thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
         } catch (IOException e) {
             // Handle any errors
+            e.printStackTrace();
         } finally {
             if (in != null) {
                 try {
