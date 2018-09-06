@@ -278,6 +278,10 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                         public void stopLoading() {
 
                         }
+                        @Override
+                        public void onNetworkConnectionChanged(boolean isConnect) {
+
+                        }
                     });
                 }
             }

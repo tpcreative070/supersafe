@@ -31,10 +31,11 @@ import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
-import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.DriveDescription;
 import co.tpcreative.suppersafe.model.Items;
+import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 
 public class CameraActivity extends BaseActivity implements
@@ -242,7 +243,7 @@ public class CameraActivity extends BaseActivity implements
                 return;
             }
 
-            if (SupperSafeApplication.getInstance().getLocalCategoriesId()==null){
+            if (MainCategories.getInstance().intent_localCategoriesId==null){
                 Utils.Log(TAG, "Local id is null");
                 return;
             }
@@ -273,6 +274,14 @@ public class CameraActivity extends BaseActivity implements
                     storage.createFile(thumbnailPath,thumbnail);
                     storage.createFile(originalPath,data);
 
+                    DriveDescription description = new DriveDescription();
+                    description.fullFileExtension  = currentTime+getString(R.string.key_jpg);
+                    description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
+                    description.globalCategories_Id = MainCategories.getInstance().intent_globalCategoriesId;
+                    description.nameMainCategories = MainCategories.getInstance().intent_name;
+                    description.local_id = uuId;
+                    description.global_id = null;
+
                     Items items = new Items(false,
                             0,
                     currentTime,
@@ -280,12 +289,11 @@ public class CameraActivity extends BaseActivity implements
                     originalPath,
                     uuId,
                       null,
-                    SupperSafeApplication.getInstance().getLocalCategoriesId(),
-                            SupperSafeApplication.getInstance().getGlobalCategoriesId(),
-                            MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype());
+                    description.localCategories_Id,
+                            description.globalCategories_Id,
+                            MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype(),
+                            new Gson().toJson(description));
                     InstanceGenerator.getInstance(CameraActivity.this).onInsert(items);
-                    Utils.Log(TAG,SupperSafeApplication.getInstance().getLocalCategoriesId());
-                    //ServiceManager.getInstance().onUploadFilesToInAppFolder(new File(originalPath),SupperSafeApplication.getInstance().getGlobalCategoriesId(),MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype());
                     Log.d(TAG,new Gson().toJson(items));
                 } catch (Exception e) {
                     Log.w(TAG, "Cannot write to " + e);

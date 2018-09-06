@@ -68,6 +68,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
         downloadService = new DownloadService(this);
         storage = new Storage(this);
         onInitReceiver();
+        SupperSafeApplication.getInstance().setConnectivityListener(this);
     }
 
     public Storage getStorage() {
@@ -95,7 +96,11 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-
+        Utils.Log(TAG,"Connected :" + isConnected);
+        SupperSafeServiceView view = view();
+        if (view!=null){
+            view.onNetworkConnectionChanged(isConnected);
+        }
     }
 
     public void getAction(){
@@ -539,7 +544,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
 
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SupperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,getString(R.string.key_mime_type_all_files), getString(R.string.key_appDataFolder))
+        subscriptions.add(SupperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,getString(R.string.key_mime_type_all_files), getString(R.string.key_appDataFolder),getString(R.string.key_specific_fields))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
@@ -641,6 +646,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
         }
 
         content.put(getString(R.string.key_name),file.getName());
+        content.put(getString(R.string.key_description),new Gson().toJson(items.description));
         List<String> list = new ArrayList<>();
         list.add(items.globalCategories_Id);
         content.put(getString(R.string.key_parents),list);

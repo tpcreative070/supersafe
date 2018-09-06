@@ -17,7 +17,8 @@ import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.BaseFragment;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.MainCategories;
 
 public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener{
 
@@ -96,15 +97,20 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         Log.d(TAG,"Position :"+ position);
         try {
             if (presenter.mList.get(position).getGlobalId()!=null){
-                SupperSafeApplication.getInstance().setGlobalCategoriesId(presenter.mList.get(position).getGlobalId());
+                MainCategories.getInstance().intent_globalCategoriesId = presenter.mList.get(position).getGlobalId();
             }
             else{
-                SupperSafeApplication.getInstance().setGlobalCategoriesId(null);
+                MainCategories.getInstance().intent_globalCategoriesId = null;
             }
 
-            SupperSafeApplication.getInstance().setLocalCategoriesId(presenter.mList.get(position).getLocalId());
-            Navigator.onMoveAlbumDetail(getContext());
+            MainCategories.getInstance().intent_localCategoriesId = presenter.mList.get(position).getLocalId();
+            MainCategories.getInstance().intent_name = presenter.mList.get(position).getName();
 
+            if (MainCategories.getInstance().intent_localCategoriesId==null){
+                Utils.Log(TAG,"intent_localId is null");
+                return;
+            }
+            Navigator.onMoveAlbumDetail(getContext());
         }
         catch (Exception e){
             e.printStackTrace();

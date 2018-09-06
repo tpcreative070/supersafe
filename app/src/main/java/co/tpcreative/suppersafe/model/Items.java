@@ -20,6 +20,7 @@ public class Items implements Serializable {
     public String thumbnailPath;
     public String originalPath;
     public String mimeType;
+    public String description;
 
 
     @Ignore
@@ -27,7 +28,7 @@ public class Items implements Serializable {
     @Ignore
     private boolean isDeleted;
 
-    public Items(boolean isSync,int fileType,String name,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String globalCategories_Id,String mimeType){
+    public Items(boolean isSync,int fileType,String name,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String globalCategories_Id,String mimeType,String driveDescription){
         this.name = name;
         this.fileType = fileType;
         this.isSync = isSync;
@@ -38,6 +39,7 @@ public class Items implements Serializable {
         this.thumbnailPath = thumbnailPath;
         this.originalPath = originalPath;
         this.mimeType = mimeType;
+        this.description = driveDescription;
     }
 
     public Items(){

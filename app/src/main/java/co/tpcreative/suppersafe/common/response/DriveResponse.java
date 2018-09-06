@@ -5,4 +5,6 @@ public class DriveResponse {
     public String id;
     public String name;
     public String mimeType;
+    public String description;
+
 }

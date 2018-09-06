@@ -358,7 +358,6 @@ public class ServiceManager implements SupperSafeServiceView{
 
         countSyncData = 0;
 
-
         if (myService!=null){
             final User mUser = User.getInstance().getUserInfo();
             if (mUser!=null){
@@ -514,6 +513,10 @@ public class ServiceManager implements SupperSafeServiceView{
 
     }
 
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnect) {
+        GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
+    }
 
     public String checkGlobalId(final String localId){
         try{

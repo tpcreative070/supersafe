@@ -20,7 +20,16 @@ public class MainCategories implements Serializable {
     private final String localId;
     @SerializedName("id")
     private final String globalId;
+    private final String name;
     private static MainCategories instance ;
+
+
+    /*Send data to camera action*/
+
+    public transient String intent_name;
+    public transient String intent_globalCategoriesId;
+    public transient String intent_localCategoriesId;
+
 
     private static final String TAG = MainCategories.class.getSimpleName();
 
@@ -85,7 +94,7 @@ public class MainCategories implements Serializable {
         return name;
     }
 
-    private final String name;
+
 
     public int getImageResource() {
         return imageResource;

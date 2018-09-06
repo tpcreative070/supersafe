@@ -162,7 +162,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.101:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
@@ -259,10 +259,15 @@
     /*Google Drive api*/
     <string name="key_parents">parents</string>
     <string name="key_appDataFolder">appDataFolder</string>
+    <string name="key_specific_fields">files(id,name,kind,mimeType,description)</string>
     <string name="key_supper_safe">SupperSafe</string>
     <string name="key_mime_type_folder">"mimeType = 'application/vnd.google-apps.folder'"</string>
     <string name="key_mime_type_all_files">"mimeType != 'application/vnd.google-apps.folder'"</string>
     <string name="key_mime_type_image">"mimeType = 'image/jpeg'"</string>
+    <string name="key_fullFileExtension">fullFileExtension</string>
+    <string name="key_description">description</string>
+    <string name="key_jpg">.jpg</string>
+    <string name="key_png">.png</string>
 
 
 </resources>

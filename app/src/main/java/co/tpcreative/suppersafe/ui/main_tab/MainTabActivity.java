@@ -41,6 +41,7 @@ import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.suppersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
@@ -51,7 +52,7 @@ import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 import io.reactivex.Observable;
 
-public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView{
+public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
@@ -270,8 +271,19 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
         ServiceManager.getInstance().onSyncDataToDriveStore();
-
         ServiceManager.getInstance().onGetListFilesInAppFolder();
+        GoogleDriveConnectionManager.getInstance().setListener(this);
+    }
+
+
+    /*GoogleDriveConnectionManagerListener*/
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnect) {
+        Utils.Log(TAG,"Is connected :" + isConnect);
+        if (isConnect){
+            getAccessToken();
+        }
     }
 
     @Override

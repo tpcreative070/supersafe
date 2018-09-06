@@ -1,4 +1,5 @@
 package co.tpcreative.suppersafe.ui.albumdetail;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import co.tpcreative.suppersafe.common.presenter.Presenter;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.Album;
 import co.tpcreative.suppersafe.model.Items;
+import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 
 public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
@@ -39,7 +41,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
     public void  getData(){
         AlbumDetailView view = view();
         mList.clear();
-        String localId = SupperSafeApplication.getInstance().getLocalCategoriesId();
+        String localId = MainCategories.getInstance().intent_localCategoriesId;
         final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(localId);
         if (data!=null){
             mList = data;
