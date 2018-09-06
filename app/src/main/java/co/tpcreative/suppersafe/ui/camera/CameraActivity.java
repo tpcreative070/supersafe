@@ -260,7 +260,7 @@ public class CameraActivity extends BaseActivity implements
         getBackgroundHandler().post(new Runnable() {
             @Override
             public void run() {
-                InputStream originalFile = null;
+                InputStream  originalFile = null;
                 Bitmap thumbnail = null;
                 try {
                     thumbnail = Utils.getThumbnail(data);

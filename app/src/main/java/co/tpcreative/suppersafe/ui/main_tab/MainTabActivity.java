@@ -289,6 +289,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onDestroy();
         SupperSafeApplication.getInstance().getRequestQueue().getCache().clear();
         ServiceManager.getInstance().onStopService();
+        ServiceManager.getInstance().onDismissRXJava();
     }
 
     public void onAnimationIcon(Menu menu){

@@ -1,15 +1,20 @@
 package co.tpcreative.suppersafe.common.services.download;
+import android.graphics.Bitmap;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.snatik.storage.Storage;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import co.tpcreative.suppersafe.common.api.request.DownloadFileRequest;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -39,6 +44,7 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
     private Object context;
     private String ip ;
     private DownLoadServiceListener listener;
+    private Storage storage;
     
     
     public DownloadService(Object context) {
@@ -56,6 +62,7 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
     public void onProgressingDownload(DownLoadServiceListener downLoadServiceListener,String ip){
         this.listener  = downLoadServiceListener;
         this.ip = ip;
+        storage = new Storage(SupperSafeApplication.getInstance());
     }
 
     @Override
@@ -208,7 +215,7 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
             public void onNext(File file) {
                 this.file_name = file;
                 listener.onDownLoadCompleted(file,mFileName);
-                Log.d(TAG,"File downloaded to " + file.getAbsolutePath());
+                Log.d(TAG,"File onNext to " + file.getAbsolutePath());
             }
         };
     }

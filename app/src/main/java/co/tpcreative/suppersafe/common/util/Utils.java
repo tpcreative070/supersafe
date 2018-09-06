@@ -16,10 +16,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-
 import com.google.android.gms.common.util.Hex;
 import com.google.common.base.Charsets;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -41,11 +39,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
-
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import de.mrapp.android.dialog.MaterialDialog;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Created by pc on 07/16/2017.
@@ -398,6 +398,33 @@ public class Utils {
     public static String getHexCode(String value){
         String hexString = Hex.bytesToStringUppercase(value.getBytes(Charsets.UTF_8));
         return hexString;
+    }
+
+    public void onWriteLargeFile(File input,File output){
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(input);
+            int length = 0;
+            FileOutputStream fOutputStream = new FileOutputStream(
+                    output);
+            //note the following line
+            byte[] buffer = new byte[1024];
+            while ((length = inputStream.read(buffer)) > 0) {
+                fOutputStream.write(buffer, 0, length);
+            }
+            fOutputStream.flush();
+            fOutputStream.close();
+            inputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
     }
 
 
