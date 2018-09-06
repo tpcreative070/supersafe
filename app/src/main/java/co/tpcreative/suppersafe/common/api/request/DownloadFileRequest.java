@@ -6,14 +6,15 @@
 package co.tpcreative.suppersafe.common.api.request;
 import java.util.Map;
 
+import co.tpcreative.suppersafe.model.Items;
+
 
 public class DownloadFileRequest {
     public String Authorization;
     public String file ;
     public String api_name ;
     public String file_name ;
-    public String config;
-    public String device_param;
+    public Items items;
     public String path_folder_output;
     public Map<String,String> mapHeader;
     public Map<String,Object> mapObject;

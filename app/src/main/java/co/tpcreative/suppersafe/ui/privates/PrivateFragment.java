@@ -96,16 +96,8 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onClickItem(int position) {
         Log.d(TAG,"Position :"+ position);
         try {
-            if (presenter.mList.get(position).getGlobalId()!=null){
-                MainCategories.getInstance().intent_globalCategoriesId = presenter.mList.get(position).getGlobalId();
-            }
-            else{
-                MainCategories.getInstance().intent_globalCategoriesId = null;
-            }
-
             MainCategories.getInstance().intent_localCategoriesId = presenter.mList.get(position).getLocalId();
             MainCategories.getInstance().intent_name = presenter.mList.get(position).getName();
-
             if (MainCategories.getInstance().intent_localCategoriesId==null){
                 Utils.Log(TAG,"intent_localId is null");
                 return;

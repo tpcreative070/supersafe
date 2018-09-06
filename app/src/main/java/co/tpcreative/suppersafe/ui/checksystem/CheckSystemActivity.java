@@ -74,7 +74,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ServiceManager.getInstance().onInitMainCategories();
+        //ServiceManager.getInstance().onInitMainCategories();
         presenter.unbindView();
     }
 
@@ -134,7 +134,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         request.cloud_id = presenter.mUser.email;
         request.user_id  = presenter.mUser.email;
         presenter.onAddUserCloud(request);
-        ServiceManager.getInstance().onRefreshData();
+        //ServiceManager.getInstance().onRefreshData();
     }
 
     @Override

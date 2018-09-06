@@ -26,11 +26,14 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.List;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
+import co.tpcreative.suppersafe.common.response.DriveResponse;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.services.SupperSafeServiceView;
 import co.tpcreative.suppersafe.model.EnumStatus;
@@ -280,6 +283,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                         }
                         @Override
                         public void onNetworkConnectionChanged(boolean isConnect) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(List<DriveResponse> lists) {
 
                         }
                     });

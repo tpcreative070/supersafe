@@ -15,31 +15,31 @@ public class Items implements Serializable {
     public String global_id;
     public String local_id;
     public String localCategories_Id;
-    public String globalCategories_Id;
     public int fileType;
     public String thumbnailPath;
     public String originalPath;
     public String mimeType;
     public String description;
-
+    public int statusAction;
 
     @Ignore
     private boolean isChecked;
     @Ignore
     private boolean isDeleted;
 
-    public Items(boolean isSync,int fileType,String name,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String globalCategories_Id,String mimeType,String driveDescription){
+
+    public Items(boolean isSync,int fileType,String name,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String mimeType,String driveDescription,EnumStatus enumStatus){
         this.name = name;
         this.fileType = fileType;
         this.isSync = isSync;
         this.local_id = local_id;
         this.global_id = global_id;
         this.localCategories_Id = localCategories_Id;
-        this.globalCategories_Id = globalCategories_Id;
-        this.thumbnailPath = thumbnailPath;
         this.originalPath = originalPath;
+        this.thumbnailPath = thumbnailPath;
         this.mimeType = mimeType;
         this.description = driveDescription;
+        this.statusAction = enumStatus.ordinal();
     }
 
     public Items(){
@@ -66,7 +66,6 @@ public class Items implements Serializable {
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }
-
 
     @Ignore
     public int getId() {

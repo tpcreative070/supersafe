@@ -72,7 +72,8 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                 + " \n versionRelease " + versionRelease
         );
         ServiceManager.getInstance().onStartService();
-        ServiceManager.getInstance().setSyncData(false);
+        ServiceManager.getInstance().setUploadData(false);
+        ServiceManager.getInstance().setDownloadData(false);
         ServiceManager.getInstance().setCountSyncData(0);
     }
 

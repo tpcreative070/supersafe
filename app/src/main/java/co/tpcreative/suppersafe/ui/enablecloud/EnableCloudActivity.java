@@ -91,7 +91,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
         request.user_id = presenter.mUser.email;
         request.cloud_id = presenter.mUser.cloud_id;
         presenter.onAddUserCloud(request);
-        ServiceManager.getInstance().onRefreshData();
+        //ServiceManager.getInstance().onRefreshData();
     }
 
     @Override
@@ -313,7 +313,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ServiceManager.getInstance().onInitMainCategories();
+       // ServiceManager.getInstance().onInitMainCategories();
         presenter.unbindView();
     }
 

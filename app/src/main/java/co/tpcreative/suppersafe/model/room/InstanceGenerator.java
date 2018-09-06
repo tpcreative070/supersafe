@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
+import co.tpcreative.suppersafe.model.EnumStatus;
 import co.tpcreative.suppersafe.model.History;
 import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.Save;
@@ -180,9 +181,19 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<Items> getListSyncDataItems(){
+    public final synchronized List<Items> getListSyncUploadDataItems(){
         try{
-            return instance.itemsDao().loadSyncDataItems(false);
+            return instance.itemsDao().loadSyncDataItems(false,EnumStatus.UPLOAD.ordinal());
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getListSyncDownloadDataItems(){
+        try{
+            return instance.itemsDao().loadSyncDataItems(false,EnumStatus.DOWNLOAD.ordinal());
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -193,6 +204,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     public final synchronized Items getItemId(int id){
         try{
             return instance.itemsDao().loadItemId(id);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized Items getItemId(String localId){
+        try{
+            return instance.itemsDao().loadItemId(localId);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -33,13 +32,11 @@ import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.SensorOrientationChangeNotifier;
-import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.suppersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
@@ -47,10 +44,6 @@ import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
-import co.tpcreative.suppersafe.model.MainCategories;
-import co.tpcreative.suppersafe.model.User;
-import co.tpcreative.suppersafe.model.room.InstanceGenerator;
-import io.reactivex.Observable;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
@@ -270,8 +263,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     protected void onResume() {
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
-        ServiceManager.getInstance().onSyncDataToDriveStore();
-        ServiceManager.getInstance().onGetListFilesInAppFolder();
+        ServiceManager.getInstance().onSyncData();
         GoogleDriveConnectionManager.getInstance().setListener(this);
     }
 

@@ -18,8 +18,6 @@ public class MainCategories implements Serializable {
 
     private final int imageResource;
     private final String localId;
-    @SerializedName("id")
-    private final String globalId;
     private final String name;
     private static MainCategories instance ;
 
@@ -33,38 +31,27 @@ public class MainCategories implements Serializable {
 
     private static final String TAG = MainCategories.class.getSimpleName();
 
-    public MainCategories(String localId,String globalId, String name, int imageResource ) {
+    public MainCategories(String localId, String name, int imageResource ) {
         this.name = name;
         this.imageResource = imageResource;
         this.localId = localId;
-        this.globalId = globalId;
     }
 
     public MainCategories(){
         this.imageResource = 0;
         this.name = null;
         this.localId = null;
-        this.globalId = null;
     }
 
     public List<MainCategories> getList(){
         List<MainCategories> mList = new ArrayList<>();
-        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_main_album)),null,SupperSafeApplication.getInstance().getString(R.string.key_main_album), R.drawable.face_1));
-        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_card_ids)),null,SupperSafeApplication.getInstance().getString(R.string.key_card_ids), R.drawable.face_2));
-        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_videos)),null,SupperSafeApplication.getInstance().getString(R.string.key_videos), R.drawable.face_3));
-        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_significant_other)),null,SupperSafeApplication.getInstance().getString(R.string.key_significant_other), R.drawable.face_4));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_main_album)),SupperSafeApplication.getInstance().getString(R.string.key_main_album), R.drawable.face_1));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_card_ids)),SupperSafeApplication.getInstance().getString(R.string.key_card_ids), R.drawable.face_2));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_videos)),SupperSafeApplication.getInstance().getString(R.string.key_videos), R.drawable.face_3));
+        mList.add(new MainCategories(Utils.getHexCode(SupperSafeApplication.getInstance().getString(R.string.key_significant_other)),SupperSafeApplication.getInstance().getString(R.string.key_significant_other), R.drawable.face_4));
         return mList;
     }
 
-    public String isCheckId(String name){
-        final List<MainCategories>mList = getMainCategoriesList();
-        for (MainCategories index : mList){
-            if (name.equals(index.name)){
-                return index.globalId;
-            }
-        }
-        return null;
-    }
 
     public List<MainCategories> getMainCategoriesList(){
         try{
@@ -98,10 +85,6 @@ public class MainCategories implements Serializable {
 
     public int getImageResource() {
         return imageResource;
-    }
-
-    public String getGlobalId() {
-        return globalId;
     }
 
     public String getLocalId() {

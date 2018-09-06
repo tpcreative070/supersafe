@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import co.tpcreative.suppersafe.common.api.request.DownloadFileRequest;
+import co.tpcreative.suppersafe.common.util.Utils;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;

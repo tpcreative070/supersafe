@@ -154,12 +154,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
 
     @OnClick(R.id.btnGetListFolder)
     public void onClickedListInApp(){
-        ServiceManager.getInstance().onGetListFileInApp();
+        //ServiceManager.getInstance().onGetListFileInApp();
     }
 
     @OnClick(R.id.btnMainCategories)
     public void onClickedInitMainCategories(View view){
-        ServiceManager.getInstance().onInitMainCategories();
+        //ServiceManager.getInstance().onInitMainCategories();
     }
 
     @OnClick(R.id.btnPrintInAppFolder)
@@ -172,7 +172,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
         btnSignIn.setVisibility(View.GONE);
         btnDriveAbout.setVisibility(View.VISIBLE);
         btnDisconnect.setVisibility(View.VISIBLE);
-        ServiceManager.getInstance().onRefreshData();
+        //ServiceManager.getInstance().onRefreshData();
     }
 
     @Override
@@ -247,8 +247,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
     public void onDownloadFile(){
 
         DownloadFileRequest request = new DownloadFileRequest();
-        request.api_name = String.format(getString(R.string.url_drive_download),"1_w6_Rg-ZC9dFXqK_1hYCA1qhAr4nbla1");
-        request.file_name = "20180823_161706.zip";
+        request.api_name = String.format(getString(R.string.url_drive_download),"1Uah6aCFKrihJx2tyxEC-n94ShkMFku8YI-fZJZZGT1ZQE4js85g");
+        request.file_name = "20180823_161706.jpg";
         request.path_folder_output  = SupperSafeApplication.getInstance().getSupperSafe();
         final User mUser = User.getInstance().getUserInfo();
         request.Authorization = mUser.access_token;

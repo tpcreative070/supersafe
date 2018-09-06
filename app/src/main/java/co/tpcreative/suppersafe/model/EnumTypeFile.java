@@ -1,6 +1,6 @@
 package co.tpcreative.suppersafe.model;
 
-public enum TypeFile {
+public enum EnumTypeFile {
     IMAGE,
     VIDEO,
     FILES

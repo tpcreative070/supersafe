@@ -7,7 +7,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.presenter.Presenter;
+import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.MainCategories;
 
@@ -27,6 +29,7 @@ public class PrivatePresenter extends Presenter<PrivateView> {
         }
         else{
             mList = MainCategories.getInstance().getList();
+            PrefsController.putString(SupperSafeApplication.getInstance().getString(R.string.key_main_categories),new Gson().toJson(mList));
         }
         view.onReload();
         Utils.Log(TAG,new Gson().toJson(mList));
