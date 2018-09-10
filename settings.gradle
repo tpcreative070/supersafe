@@ -8,5 +8,7 @@ include ':app',
         'library-common',
         'library-circular',
         'library-progress',
-        'storage'
+        'storage',
+        'photodraweeview',
+        'frescoimageviewer'
 
