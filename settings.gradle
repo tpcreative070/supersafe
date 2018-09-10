@@ -9,6 +9,5 @@ include ':app',
         'library-circular',
         'library-progress',
         'storage',
-        'photodraweeview',
-        'frescoimageviewer'
+        'photoview'
 

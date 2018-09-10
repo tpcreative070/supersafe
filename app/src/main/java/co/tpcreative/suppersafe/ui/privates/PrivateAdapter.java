@@ -9,6 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
@@ -22,6 +27,15 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     private Context context;
     private ItemSelectedListener itemSelectedListener;
     private String TAG = PrivateAdapter.class.getSimpleName();
+
+    RequestOptions options = new RequestOptions()
+            .centerCrop()
+            .override(400,400)
+            .placeholder(R.drawable.ic_camera)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+            .error(R.drawable.ic_aspect_ratio)
+            .priority(Priority.HIGH);
 
     public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
@@ -55,7 +69,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         @Override
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
-            imgAlbum.setImageDrawable(context.getResources().getDrawable(data.getImageResource()));
+            Glide.with(context)
+                    .load(context.getResources().getDrawable(data.getImageResource()))
+                    .apply(options)
+                    .into(imgAlbum);
             tvTitle.setText(data.getName());
             this.mPosition = position;
         }

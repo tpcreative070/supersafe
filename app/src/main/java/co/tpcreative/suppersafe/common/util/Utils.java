@@ -8,6 +8,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.os.Build;
+import android.os.Handler;
+import android.support.annotation.StringRes;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.media.ExifInterface;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +20,9 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.common.util.Hex;
 import com.google.common.base.Charsets;
 import java.io.BufferedReader;
@@ -434,6 +441,56 @@ public class Utils {
                 } catch (IOException ignored) {}
             }
         }
+    }
+
+
+    private Utils() {
+        throw new AssertionError();
+    }
+
+    public static void showToast(Context context, @StringRes int text, boolean isLong) {
+        showToast(context, context.getString(text), isLong);
+    }
+
+    public static void showToast(Context context, String text, boolean isLong) {
+        Toast.makeText(context, text, isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
+    }
+
+    public static void showInfoSnackbar(final View view, final @StringRes int text, final boolean isLong) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                multilineSnackbar(
+                        Snackbar.make(
+                                view, text,
+                                isLong ? BaseTransientBottomBar.LENGTH_LONG : BaseTransientBottomBar.LENGTH_SHORT)
+                ).show();
+            }
+        }, 100);
+    }
+
+    public static void showGotItSnackbar(final View view, final @StringRes int text) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                multilineSnackbar(
+                        Snackbar.make(
+                                view, text, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                .setAction(R.string.got_it, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                    }
+                                })
+                ).show();
+            }
+        }, 200);
+    }
+
+    private static Snackbar multilineSnackbar(Snackbar snackbar) {
+        TextView textView = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        textView.setMaxLines(5);
+        return snackbar;
     }
 
 

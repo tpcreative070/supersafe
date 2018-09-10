@@ -26,7 +26,7 @@ import co.tpcreative.suppersafe.ui.settings.SettingsActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
 import co.tpcreative.suppersafe.ui.signup.SignUpActivity;
-import co.tpcreative.suppersafe.ui.slidepictures.SlidePicturesActivity;
+import co.tpcreative.suppersafe.ui.photosslideshow.PhotoSlideShowActivity;
 import co.tpcreative.suppersafe.ui.verify.VerifyActivity;
 import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
@@ -99,8 +99,8 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onSlidePictures(Context context){
-        Intent intent = new Intent(context, SlidePicturesActivity.class);
+    public static void onPhotoSlider(Context context){
+        Intent intent = new Intent(context, PhotoSlideShowActivity.class);
         context.startActivity(intent);
     }
 

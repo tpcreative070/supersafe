@@ -362,5 +362,5 @@ public class CameraActivity extends BaseActivity implements
         }
     }
 
-    
+
 }

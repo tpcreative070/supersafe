@@ -105,7 +105,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
             case R.id.switch_flash :{
                 Log.d(TAG,"Call here");
-                Navigator.onSlidePictures(this);
                 return true;
             }
             case R.id.settings :{

@@ -22,14 +22,11 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import co.tpcreative.suppersafe.BuildConfig;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.api.RootAPI;
@@ -37,7 +34,6 @@ import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.network.Dependencies;
 import co.tpcreative.suppersafe.model.User;
-import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 import co.tpcreative.suppersafe.ui.splashscreen.SplashScreenActivity;
 
 public class SupperSafeApplication extends MultiDexApplication implements Dependencies.DependenciesListener, MultiDexApplication.ActivityLifecycleCallbacks {
@@ -132,6 +128,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
          requiredScopesString = new ArrayList<>();
          requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
          requiredScopesString.add(DriveScopes.DRIVE_FILE);
+
 
     }
 

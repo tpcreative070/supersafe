@@ -215,7 +215,9 @@
     <string name="url_drive_upload">https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart</string>
     <string name="url_drive_upload_in_app_folder_children">https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart</string>
     <string name="url_drive_download">https://www.googleapis.com/drive/v3/files/%1$s?alt=media</string>
-
+    <string name="got_it">Got it!</string>
+    <string name="share">Share</string>
+    <string name="custom_objects_hint">This example uses custom image objects and shows images via custom formatter.</string>
 
     <string name="key_user">user</string>
     <string name="key_email">email</string>

@@ -11,6 +11,8 @@
     <dimen name="text_size_normal">15sp</dimen>
     <dimen name="margin_right">40dp</dimen>
     <dimen name="margin_left">40dp</dimen>
+    <dimen name="activity_margin">16dp</dimen>
+    <dimen name="image_size">40dp</dimen>
 
 
     // default

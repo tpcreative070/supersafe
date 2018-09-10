@@ -25,7 +25,6 @@ public class MainCategories implements Serializable {
     /*Send data to camera action*/
 
     public transient String intent_name;
-    public transient String intent_globalCategoriesId;
     public transient String intent_localCategoriesId;
 
 

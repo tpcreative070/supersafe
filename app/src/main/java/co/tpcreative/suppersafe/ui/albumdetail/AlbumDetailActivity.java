@@ -88,9 +88,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     private SlidrConfig mConfig;
     private Disposable subscriptions;
     private Storage storage;
-
     private Cipher mCipher;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -282,7 +280,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
     @Override
     public void onClickItem(int position) {
-
+        Navigator.onPhotoSlider(this);
     }
 
     @Override

@@ -131,7 +131,7 @@
         <activity android:name=".ui.albumdetail.AlbumDetailActivity"
             android:label=""
             android:theme="@style/Theme.Slidr.Slidable"/>
-        <activity android:name=".ui.slidepictures.SlidePicturesActivity" />
+        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity" />
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings"

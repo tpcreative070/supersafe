@@ -41,4 +41,5 @@ subprojects {
     ext.build_versions_java_version = 1.8
     ext.appRoomVersion = "1.1.1"
     ext.fresco = "1.10.0"
+    ext.glide = "4.7.1"
 }

@@ -58,7 +58,6 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
 
-
     /*Support grant permission*/
     implementation 'com.karumi:dexter:5.0.0'
 
@@ -115,7 +114,7 @@ dependencies {
     implementation project(':multipleimageselect')
 
     /*Material Design*/
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    implementation 'com.github.bumptech.glide:glide:'+glide
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     /* Gmail background library */
@@ -172,8 +171,11 @@ dependencies {
     /*Android Storage*/
     implementation project(':storage')
 
+    /*PhotoView*/
+    implementation project(':photoview')
 
-
+    /*Exoplayer video*/
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
 
 
 }

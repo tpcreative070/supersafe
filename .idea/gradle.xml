@@ -11,14 +11,13 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/cameralibrary" />
             <option value="$PROJECT_DIR$/floatingbuttonlibrary" />
-            <option value="$PROJECT_DIR$/frescoimageviewer" />
             <option value="$PROJECT_DIR$/gmailbackgroundlibrary" />
             <option value="$PROJECT_DIR$/library-circular" />
             <option value="$PROJECT_DIR$/library-common" />
             <option value="$PROJECT_DIR$/library-progress" />
             <option value="$PROJECT_DIR$/materialstyledialoglibrary" />
             <option value="$PROJECT_DIR$/multipleimageselect" />
-            <option value="$PROJECT_DIR$/photodraweeview" />
+            <option value="$PROJECT_DIR$/photoview" />
             <option value="$PROJECT_DIR$/slibrlibrary" />
             <option value="$PROJECT_DIR$/storage" />
           </set>
