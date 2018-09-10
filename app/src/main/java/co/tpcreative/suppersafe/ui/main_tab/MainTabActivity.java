@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
@@ -30,6 +31,14 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.FabWithLabelView;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.snatik.storage.Storage;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +68,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private Toast mToast;
     private MainViewPagerAdapter adapter;
     private MainTabPresenter presenter;
-
+    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +91,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
+
+        storage = new Storage(this);
 
     }
 
@@ -264,9 +275,45 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
         ServiceManager.getInstance().onSyncData();
+        ServiceManager.getInstance().testLoop();
         GoogleDriveConnectionManager.getInstance().setListener(this);
+        Utils.Log(TAG,"path database :" + SupperSafeApplication.getInstance().getPathDatabase());
+
+       // File output = new File(SupperSafeApplication.getInstance().getSupperSafe()+getString(R.string.key_database));
+       // File input = new File(SupperSafeApplication.getInstance().getPathDatabase());
+       // storage.createFile(output,input);
+       onBackUp();
     }
 
+    public void onBackUp(){
+        try {
+            String inFileName = getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+            String outFileName = SupperSafeApplication.getInstance().getSupperSafe()+"/database_copy.db";
+
+            if (!storage.isFileExist(inFileName)){
+                Utils.Log(TAG,"Path is not existing :" + SupperSafeApplication.getInstance().getPathDatabase());
+                return;
+            }
+
+            // Open the empty db as the output stream
+            OutputStream output = new FileOutputStream(outFileName);
+            // Transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer))>0){
+                output.write(buffer, 0, length);
+            }
+            // Close the streams
+            output.flush();
+            output.close();
+            fis.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     /*GoogleDriveConnectionManagerListener*/
 
@@ -288,8 +335,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     protected void onDestroy() {
         super.onDestroy();
         SupperSafeApplication.getInstance().getRequestQueue().getCache().clear();
-        ServiceManager.getInstance().onStopService();
-        ServiceManager.getInstance().onDismissRXJava();
+        ServiceManager.getInstance().onDismissServices();
     }
 
     public void onAnimationIcon(Menu menu){

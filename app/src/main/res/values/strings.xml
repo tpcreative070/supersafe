@@ -268,6 +268,8 @@
     <string name="key_description">description</string>
     <string name="key_jpg">.jpg</string>
     <string name="key_png">.png</string>
-
+    <string name="key_mime_type_sdcard_jpg">image/jpeg</string>
+    <string name="key_mime_type_sdcard_png">image/png</string>
+    <string name="key_database">db-supper-safe.db</string>
 
 </resources>

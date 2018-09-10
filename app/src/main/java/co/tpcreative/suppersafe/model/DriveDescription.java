@@ -21,6 +21,7 @@ public class DriveDescription implements Serializable{
     public String subFolderName;
     public String mimeType;
     public String name;
+    public String globalName;
     public int typeFile;
 
 

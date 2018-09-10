@@ -227,16 +227,18 @@ public class Utils {
         return thumbImage;
     }
 
-    public static Bitmap getThumbnail(File file){
-        final int THUMBSIZE_HEIGHT = 600;
-        final int THUMBSIZE_WIDTH = 400;
-        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
-                BitmapFactory.decodeFile(file.getAbsolutePath()),
-                THUMBSIZE_HEIGHT,
-                THUMBSIZE_WIDTH);
+    public static Bitmap getThumbnail(final File file){
+        InputStream in = null;
+        Bitmap thumbImage = null;
         try {
-            ExifInterface exif = new ExifInterface(file.getAbsolutePath());
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            final int THUMBSIZE_HEIGHT = 600;
+            final int THUMBSIZE_WIDTH = 400;
+            thumbImage = ThumbnailUtils.extractThumbnail(
+                    BitmapFactory.decodeFile(file.getAbsolutePath()),
+                    THUMBSIZE_HEIGHT,
+                    THUMBSIZE_WIDTH);
+            ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
             Log.d("EXIF", "Exif: " + orientation);
             Matrix matrix = new Matrix();
             if (orientation == 6) {
@@ -249,12 +251,19 @@ public class Utils {
                 matrix.postRotate(270);
             }
             thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
+            // Handle any errors
             e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {}
+            }
         }
         return thumbImage;
     }
+
 
     public static Bitmap saveByteArrayBitmap(final byte[] data,final int orientation){
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);

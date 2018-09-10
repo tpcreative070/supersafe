@@ -723,6 +723,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
         Items items = new Items(false,
                 description.typeFile,
                 description.name,
+                description.globalName,
                 description.thumbnailPath,
                 description.originalPath ,
                 description.subFolderName,
@@ -791,7 +792,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
             return;
         }
 
-        content.put(getString(R.string.key_name),file.getName());
+        content.put(getString(R.string.key_name),items.globalName);
         content.put(getString(R.string.key_description),new Gson().toJson(items.description));
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));

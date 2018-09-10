@@ -11,6 +11,7 @@ import com.snatik.storage.helpers.ImmutablePair;
 import com.snatik.storage.helpers.SizeUnit;
 import com.snatik.storage.security.SecurityUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Common class for internal and external storage implementations
@@ -39,6 +44,7 @@ public class Storage {
 
     private final Context mContext;
     private EncryptConfiguration mConfiguration;
+    private Cipher mCipher;
 
     public Storage(Context context) {
         mContext = context;
@@ -46,6 +52,10 @@ public class Storage {
 
     public void setEncryptConfiguration(EncryptConfiguration configuration) {
         mConfiguration = configuration;
+    }
+
+    public EncryptConfiguration getmConfiguration() {
+        return mConfiguration;
     }
 
     public String getExternalStorageDirectory() {
@@ -115,12 +125,10 @@ public class Storage {
     public boolean createFile(String path, byte[] content) {
         try {
             OutputStream stream = new FileOutputStream(new File(path));
-
             // encrypt if needed
             if (mConfiguration != null && mConfiguration.isEncrypted()) {
                 content = encrypt(content, Cipher.ENCRYPT_MODE);
             }
-
             stream.write(content);
             stream.flush();
             stream.close();
@@ -131,11 +139,115 @@ public class Storage {
         return true;
     }
 
+    public void createFile(File output,File input){
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(input);
+            int length = 0;
+            FileOutputStream fOutputStream = new FileOutputStream(
+                    output);
+            //note the following line
+            byte[] buffer = new byte[1024*1024];
+            while ((length = inputStream.read(buffer)) > 0) {
+                if (mConfiguration != null && mConfiguration.isEncrypted()) {
+                    buffer = encrypt(buffer, Cipher.ENCRYPT_MODE);
+                }
+                fOutputStream.write(buffer, 0, length);
+            }
+            fOutputStream.flush();
+            fOutputStream.close();
+            inputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
+    public void createLargeFile(File output, File input, Cipher mCipher){
+
+        if (mConfiguration == null || !mConfiguration.isEncrypted()) {
+           return;
+        }
+
+        FileInputStream inputStream = null;
+        CipherOutputStream cipherOutputStream;
+        try {
+            inputStream = new FileInputStream(input);
+            FileOutputStream outputStream = new FileOutputStream(output);
+            cipherOutputStream = new CipherOutputStream(outputStream, mCipher);
+            //note the following line
+            byte buffer[] = new byte[1024 * 1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                Log.d(getClass().getCanonicalName(), "writing from File path...");
+                cipherOutputStream.write(buffer, 0, bytesRead);
+            }
+            cipherOutputStream.close();
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
+
+    public Cipher getCipher(int mode) {
+        if (mConfiguration != null && mConfiguration.isEncrypted()) {
+            try {
+              SecretKeySpec  mSecretKeySpec = new SecretKeySpec(mConfiguration.getSecretKey(), SecurityUtil.AES_ALGORITHM);
+              IvParameterSpec mIvParameterSpec = new IvParameterSpec(mConfiguration.getIvParameter());
+              mCipher = Cipher.getInstance(SecurityUtil.AES_TRANSFORMATION);
+              mCipher.init(mode, mSecretKeySpec, mIvParameterSpec);
+              return mCipher;
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public void readFile(final File input){
+        final int BUFFER_SIZE = 1024*1024; //this is actually bytes
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(input);
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int read = 0;
+            while( ( read = inputStream.read( buffer ) ) > 0 ){
+                // call your other methodes here...
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
     public boolean createFile(String path, Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-        return createFile(path, byteArray);
+        return createFile(path,byteArray);
     }
 
     public boolean deleteFile(String path) {
@@ -296,6 +408,7 @@ public class Storage {
         return false;
     }
 
+
     protected byte[] readFile(final FileInputStream stream) {
         class Reader extends Thread {
             byte[] array = null;
@@ -435,4 +548,6 @@ public class Storage {
             }
         }
     }
+
+
 }

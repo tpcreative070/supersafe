@@ -28,8 +28,8 @@ public interface ItemsDao {
     Items loadItemId(int id);
 
 
-    @Query("Select * FROM items WHERE name = :name")
-    Items loadItemId(String name);
+    @Query("Select * FROM items WHERE globalName = :globalName")
+    Items loadItemId(String globalName);
 
 
     @Query("Select * FROM items")

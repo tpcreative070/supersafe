@@ -287,11 +287,13 @@ public class CameraActivity extends BaseActivity implements
                     description.global_id = null;
                     description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
                     description.name = currentTime;
+                    description.globalName = uuId;
                     description.typeFile = EnumTypeFile.IMAGE.ordinal();
 
                     Items items = new Items(false,
                             description.typeFile,
                             description.name,
+                            description.globalName,
                             description.thumbnailPath,
                             description.originalPath ,
                             description.local_id,

@@ -21,6 +21,7 @@ public class Items implements Serializable {
     public String mimeType;
     public String description;
     public int statusAction;
+    public String globalName;
 
     @Ignore
     private boolean isChecked;
@@ -28,8 +29,9 @@ public class Items implements Serializable {
     private boolean isDeleted;
 
 
-    public Items(boolean isSync,int fileType,String name,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String mimeType,String driveDescription,EnumStatus enumStatus){
+    public Items(boolean isSync,int fileType,String name,String globalName,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String mimeType,String driveDescription,EnumStatus enumStatus){
         this.name = name;
+        this.globalName = globalName;
         this.fileType = fileType;
         this.isSync = isSync;
         this.local_id = local_id;

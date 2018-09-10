@@ -427,7 +427,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
                 tvStatus.setText("response failed  :"+ t.getMessage());
             }
         });
-
     }
 
 
@@ -439,7 +438,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
                 .withChosenListener(new ChooserDialog.Result() {
                     @Override
                     public void onChoosePath(String path, File pathFile) {
-                     onUploadFile(pathFile);
+
+                        onUploadFile(pathFile);
                     }
                 })
                 .build()

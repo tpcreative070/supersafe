@@ -37,6 +37,7 @@ import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.network.Dependencies;
 import co.tpcreative.suppersafe.model.User;
+import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 import co.tpcreative.suppersafe.ui.splashscreen.SplashScreenActivity;
 
 public class SupperSafeApplication extends MultiDexApplication implements Dependencies.DependenciesListener, MultiDexApplication.ActivityLifecycleCallbacks {
@@ -334,6 +335,11 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
         return url;
     }
 
+
+    public String getPathDatabase(){
+        String currentDBPath=getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
+        return currentDBPath;
+    }
 
     /*Retrofit and RXJava*/
 

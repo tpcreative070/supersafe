@@ -243,9 +243,16 @@ public class AlbumSelectActivity extends HelperActivity {
                 sendMessage(Constants.FETCH_STARTED);
             }
 
+            String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                    + " OR "
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
+            Uri queryUri = MediaStore.Files.getContentUri("external");
             Cursor cursor = getApplicationContext().getContentResolver()
-                    .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                            null, null, MediaStore.Images.Media.DATE_ADDED);
+                    .query(queryUri, projection,
+                            selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
             if (cursor == null) {
                 sendMessage(Constants.ERROR);
                 return;

@@ -1,6 +1,8 @@
 package co.tpcreative.suppersafe.common.response;
 
-public class DriveResponse {
+import java.io.Serializable;
+
+public class DriveResponse implements Serializable{
     public String kind ;
     public String id;
     public String name;

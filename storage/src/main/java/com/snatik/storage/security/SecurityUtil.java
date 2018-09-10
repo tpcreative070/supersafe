@@ -6,10 +6,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -23,6 +25,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityUtil {
 
     private static final String TAG = "SecurityUtil";
+    public static final String AES_ALGORITHM = "AES";
+    public static final String AES_TRANSFORMATION = "AES/CTR/NoPadding";
+
 
     /**
      * Encrypt or Descrypt the content. <br>
@@ -51,9 +56,9 @@ public class SecurityUtil {
         }
 
         try {
-            SecretKey secretkey = new SecretKeySpec(secretKey, CipherAlgorithmType.AES.getAlgorithmName());
+            SecretKey secretkey = new SecretKeySpec(secretKey, AES_ALGORITHM);
             IvParameterSpec IV = new IvParameterSpec(ivx);
-            String transformation = CipherTransformationType.AES_CBC_PKCS5Padding;
+            String transformation = AES_TRANSFORMATION;
             Cipher decipher = Cipher.getInstance(transformation);
             decipher.init(encryptionMode, secretkey, IV);
             return decipher.doFinal(content);
@@ -102,6 +107,16 @@ public class SecurityUtil {
         } catch (UnsupportedEncodingException e) {
         }
         return null;
+    }
+
+    public static byte[] generateKey(String password) throws Exception {
+        byte[] keyStart = password.getBytes("UTF-8");
+        KeyGenerator kgen = KeyGenerator.getInstance("AES");
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
+        sr.setSeed(keyStart);
+        kgen.init(128, sr);
+        SecretKey skey = kgen.generateKey();
+        return skey.getEncoded();
     }
 
 }

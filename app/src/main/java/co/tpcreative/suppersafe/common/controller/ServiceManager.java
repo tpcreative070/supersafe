@@ -11,9 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
-import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.media.ExifInterface;
 import android.util.Log;
@@ -21,7 +18,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
-import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -52,12 +48,11 @@ import co.tpcreative.suppersafe.model.DriveDescription;
 import co.tpcreative.suppersafe.model.EnumStatus;
 import co.tpcreative.suppersafe.model.EnumTypeFile;
 import co.tpcreative.suppersafe.model.Items;
-import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
-import co.tpcreative.suppersafe.ui.camera.CameraActivity;
 import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -478,7 +473,7 @@ public class ServiceManager implements SupperSafeServiceView {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
-                    Observable.fromIterable(mList)
+                   subscriptions = Observable.fromIterable(mList)
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
 
@@ -529,8 +524,7 @@ public class ServiceManager implements SupperSafeServiceView {
                                                             mItem.isSync = true;
                                                             mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                             Log.d(TAG, "Donwload id.........................................:  " + mItem.id);
-                                                            onMultipleRxJava(file_name.getAbsolutePath(),request.items.thumbnailPath);
-                                                            InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).onUpdate(mItem);
+                                                            onDownloadMultipleRxJava(file_name.getAbsolutePath(),request.items.thumbnailPath,mItem);
                                                         } else {
                                                             Utils.Log(TAG, "Failed Save 3");
                                                         }
@@ -545,7 +539,7 @@ public class ServiceManager implements SupperSafeServiceView {
 
                                         @Override
                                         public void onProgressDownload(int percentage) {
-
+                                            isDownloadData = true;
                                         }
 
                                         @Override
@@ -601,60 +595,141 @@ public class ServiceManager implements SupperSafeServiceView {
         }
     }
 
-    public void onMultipleRxJava(String mOriginalPath, final String mThumbnailPath){
+    public void onDownloadMultipleRxJava(String mOriginalPath, final String mThumbnailPath, final Items items){
        subscriptions = Observable.create(subscriber -> {
            Utils.Log(TAG,"Start Progressing encrypt thumbnail data");
            final String thumbnailPath = mThumbnailPath;
            final String originalPath = mOriginalPath;
-           final byte[]data = storage.readFile(originalPath);
-           boolean isSuccessful = false;
+           final Items mItem = items;
+           final DriveDescription description;
            InputStream in = null;
            Bitmap thumbImage = null;
-           try {
-               final int THUMB_SIZE_HEIGHT = 600;
-               final int THUMB_SIZE_WIDTH = 400;
-               thumbImage = ThumbnailUtils.extractThumbnail(
-                       BitmapFactory.decodeByteArray(data,0,data.length),
-                       THUMB_SIZE_HEIGHT,
-                       THUMB_SIZE_WIDTH);
-               in = new ByteArrayInputStream(data);
-               ExifInterface exifInterface = new ExifInterface(in);
-               int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-               Log.d("EXIF", "Exif: " + orientation);
-               Matrix matrix = new Matrix();
-               if (orientation == 6) {
-                   matrix.postRotate(90);
-               }
-               else if (orientation == 3) {
-                   matrix.postRotate(180);
-               }
-               else if (orientation == 8) {
-                   matrix.postRotate(270);
-               }
-               thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
-               storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
-               storage.createFile(thumbnailPath, thumbImage);
-           } catch (IOException e) {
-               // Handle any errors
-               e.printStackTrace();
-               subscriber.onComplete();
-               subscriber.onNext(isSuccessful);
-           } finally {
-               if (in != null) {
+
+
+           description = DriveDescription.getInstance().getDriveDescription(items.description);
+
+
+           EnumTypeFile enumTypeFile = EnumTypeFile.values()[description.typeFile];
+
+           switch (enumTypeFile){
+               case IMAGE: {
+                   final byte[]data = storage.readFile(originalPath);
                    try {
-                       in.close();
-                   } catch (IOException ignored) {}
+                       final int THUMB_SIZE_HEIGHT = 600;
+                       final int THUMB_SIZE_WIDTH = 400;
+                       thumbImage = ThumbnailUtils.extractThumbnail(
+                               BitmapFactory.decodeByteArray(data, 0, data.length),
+                               THUMB_SIZE_HEIGHT,
+                               THUMB_SIZE_WIDTH);
+                       in = new ByteArrayInputStream(data);
+                       ExifInterface exifInterface = new ExifInterface(in);
+                       int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                       Log.d("EXIF", "Exif: " + orientation);
+                       Matrix matrix = new Matrix();
+                       if (orientation == 6) {
+                           matrix.postRotate(90);
+                       } else if (orientation == 3) {
+                           matrix.postRotate(180);
+                       } else if (orientation == 8) {
+                           matrix.postRotate(270);
+                       }
+                       thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+                       storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
+                       storage.createFile(thumbnailPath, thumbImage);
+                   } catch (IOException e) {
+                       // Handle any errors
+                       e.printStackTrace();
+                       subscriber.onComplete();
+                       subscriber.onNext(items);
+                   } finally {
+                       if (in != null) {
+                           try {
+                               in.close();
+                           } catch (IOException ignored) {
+                           }
+                       }
+                       InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).onUpdate(mItem);
+                       subscriber.onNext(items);
+                       subscriber.onComplete();
+                   }
+                   break;
                }
-               isSuccessful = true;
-               subscriber.onComplete();
-               subscriber.onNext(isSuccessful);
+
+               case VIDEO: {
+                   Utils.Log(TAG,"Video downloading....");
+//                   try {
+//                       final int THUMB_SIZE_HEIGHT = 600;
+//                       final int THUMB_SIZE_WIDTH = 400;
+//                       thumbImage = ThumbnailUtils.extractThumbnail(
+//                               BitmapFactory.decodeByteArray(data, 0, data.length),
+//                               THUMB_SIZE_HEIGHT,
+//                               THUMB_SIZE_WIDTH);
+//                       in = new ByteArrayInputStream(data);
+//                       ExifInterface exifInterface = new ExifInterface(in);
+//                       int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+//                       Log.d("EXIF", "Exif: " + orientation);
+//                       Matrix matrix = new Matrix();
+//                       if (orientation == 6) {
+//                           matrix.postRotate(90);
+//                       } else if (orientation == 3) {
+//                           matrix.postRotate(180);
+//                       } else if (orientation == 8) {
+//                           matrix.postRotate(270);
+//                       }
+//                       thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+//                       storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
+//                       storage.createFile(thumbnailPath, thumbImage);
+//                   } catch (IOException e) {
+//                       // Handle any errors
+//                       e.printStackTrace();
+//                       subscriber.onComplete();
+//                       subscriber.onNext(items);
+//                   } finally {
+//                       if (in != null) {
+//                           try {
+//                               in.close();
+//                           } catch (IOException ignored) {
+//                           }
+//                       }
+//                       subscriber.onNext(items);
+//                       subscriber.onComplete();
+//                       break;
+//                   }
+               }
+                default:{
+                    break;
+                }
            }
-           Utils.Log(TAG,"End up RXJava ");
-        }).observeOn(Schedulers.computation())
+        })
+               .subscribeOn(Schedulers.computation())
                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+               .observeOn(Schedulers.io())
                 .subscribe(response -> {
-                    Utils.Log(TAG,"Thumbnail saved successful " +(boolean)response);
+                    final Items mItem = (Items) response;
+                    if (mItem!=null){
+                        Utils.Log(TAG,"Thumbnail saved successful");
+                        InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).onUpdate(mItem);
+                    }
+                    else{
+                        Utils.Log(TAG,"Thumbnail saved failed");
+                    }
+                });
+    }
+
+    public void testLoop(){
+        subscriptions = Observable.create(subscriber -> {
+            for (int i = 0 ; i< 10;i++){
+                Utils.Log(TAG,"loop "+ i);
+            }
+            subscriber.onNext(true);
+            subscriber.onComplete();
+            Utils.Log(TAG,"End up RXJava ");
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+                    Utils.Log(TAG,"Loop for successful " +(boolean)response);
                 });
     }
 
@@ -683,7 +758,7 @@ public class ServiceManager implements SupperSafeServiceView {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
-                    Observable.fromIterable(mList)
+                    subscriptions = Observable.fromIterable(mList)
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
                                 Utils.Log(TAG, "Sync Data");
@@ -702,6 +777,10 @@ public class ServiceManager implements SupperSafeServiceView {
                                     isWorking = false;
                                 }
 
+                                if (myService==null){
+                                    isWorking = false;
+                                }
+
                                 Utils.Log(TAG, "Sync Data !!!");
 
                                 if (isWorking) {
@@ -715,6 +794,7 @@ public class ServiceManager implements SupperSafeServiceView {
                                         @Override
                                         public void onProgressUpdate(int percentage) {
                                             //Utils.Log(TAG,"onProgressUpdate "+ percentage +"%");
+                                            isUploadData = true;
                                         }
 
                                         @Override
@@ -729,7 +809,6 @@ public class ServiceManager implements SupperSafeServiceView {
                                             try {
                                                 if (response != null) {
                                                     if (response.id != null) {
-
                                                         final Items mItem = InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).getItemId(response.name);
                                                         if (mItem != null) {
                                                             mItem.isSync = true;
@@ -807,15 +886,60 @@ public class ServiceManager implements SupperSafeServiceView {
     }
 
 
-    public void onDismissRXJava() {
-        if (myService != null) {
-            myService.unbindView();
+    public void onDismissServices() {
+        if (isDownloadData || isUploadData){
+          Utils.Log(TAG,"Progress download is :" + isDownloadData);
+          Utils.Log(TAG,"Progress upload is :" + isUploadData);
         }
-        if (subscriptions!=null){
-            subscriptions.dispose();
+        else{
+            onStopService();
+            if (myService != null) {
+                myService.unbindView();
+            }
+            if (subscriptions!=null){
+                subscriptions.dispose();
+            }
         }
         Utils.Log(TAG,"Dismiss Service manager");
     }
+
+
+    private Observable<Integer> getObservableItems() {
+        return Observable.create(subscriber -> {
+            for (int i = 0;i<10;i++) {
+                subscriber.onNext(i);
+            }
+            subscriber.onComplete();
+        });
+    }
+
+    public void getObservable(){
+        getObservableItems().
+                subscribeOn(Schedulers.io()).
+                observeOn(AndroidSchedulers.mainThread()).
+                subscribe(new Observer<Integer>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                    @Override
+                    public void onError(Throwable e) {}
+
+                    @Override
+                    public void onNext(Integer pojoObject) {
+                        // Show Progress
+                    }
+                });
+    }
+
+
+
 
     @Override
     public void onError(String message, EnumStatus status) {

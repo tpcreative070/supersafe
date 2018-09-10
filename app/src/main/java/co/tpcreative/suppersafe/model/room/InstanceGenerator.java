@@ -8,6 +8,7 @@ import android.util.Log;
 import java.util.List;
 import java.util.UUID;
 
+import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.EnumStatus;
 import co.tpcreative.suppersafe.model.History;
@@ -35,7 +36,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     InstanceGenerator.class,
-                    "db-supper-safe.db")
+                    SupperSafeApplication.getInstance().getString(R.string.key_database))
                     .allowMainThreadQueries()
                     .build();
         }

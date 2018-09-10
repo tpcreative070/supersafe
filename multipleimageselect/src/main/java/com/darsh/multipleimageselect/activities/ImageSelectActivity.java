@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -344,7 +345,9 @@ public class ImageSelectActivity extends HelperActivity {
                 }
             }
 
-            Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
+
+            Uri queryUri = MediaStore.Files.getContentUri("external");
+            Cursor cursor = getContentResolver().query(queryUri, projection,
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?", new String[]{ album }, MediaStore.Images.Media.DATE_ADDED);
             if (cursor == null) {
                 sendMessage(Constants.ERROR);
