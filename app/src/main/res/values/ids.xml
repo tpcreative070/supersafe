@@ -26,4 +26,5 @@
     <item name="fab_camera" type="id"/>
     <item name="fab_photo" type="id"/>
     <item name="fab_album" type="id"/>
+    <item name="fab_glide_tag" type="id"/>
 </resources>

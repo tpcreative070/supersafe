@@ -15,6 +15,7 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.request.target.ViewTarget;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
@@ -70,6 +71,7 @@ public class SupperSafeApplication extends MultiDexApplication implements Depend
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        ViewTarget.setTagId(R.id.fab_glide_tag);
 
         /*Init own service api*/
 

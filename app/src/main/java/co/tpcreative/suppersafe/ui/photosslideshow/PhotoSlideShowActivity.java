@@ -78,6 +78,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     private boolean isReload;
     private AlertDialog dialog;
     private Cipher mCipher;
+    private int degree = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         imgOverflow.setOnClickListener(this);
         imgDelete.setOnClickListener(this);
         imgExport.setOnClickListener(this);
+        imgRotate.setOnClickListener(this);
     }
 
     class SamplePagerAdapter extends PagerAdapter {
@@ -141,8 +143,8 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             catch (Exception e){
                 e.printStackTrace();
             }
-
             container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            photoView.setTag("myview" + position);
             return photoView;
 
         }
@@ -227,6 +229,21 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 }
                 break;
             }
+            case R.id.imgRotate : {
+                try {
+                    View mView = (View) viewPager.findViewWithTag("myview" + viewPager.getCurrentItem());
+                    if (mView != null) {
+                        degree = degree + 90;
+                        mView.setRotation(degree);
+                        if (degree == 360) {
+                            degree = 0;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
     }
 
@@ -245,7 +262,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         });
         popup.show();
     }
-
 
     /*ViewPresenter*/
 
@@ -279,7 +295,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
        adapter.notifyDataSetChanged();
     }
 
-
     public void onStartProgressing(){
         if (dialog==null){
             dialog = new SpotsDialog.Builder()
@@ -299,7 +314,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         }
     }
 
-
     public void exportFile(String output,String input){
         mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
         onStartProgressing();
@@ -316,7 +330,5 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             }
         });
     }
-
-
 
 }
