@@ -1,11 +1,8 @@
 package co.tpcreative.suppersafe.model;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Created by troy379 on 10.03.17.
- */
+
 public class CustomImage {
 
     private String url;
@@ -22,7 +19,7 @@ public class CustomImage {
 
     public List<CustomImage> getList(){
         List<CustomImage> mList = new ArrayList<>();
-        String root = "http://192.168.0.101/files/";
+        String root = "http://192.168.0.102/files/";
         mList.add(new CustomImage(root+"20180910_135632.jpg","Image 1"));
         mList.add(new CustomImage(root+"20180910_135639.jpg","Image 2"));
         mList.add(new CustomImage(root+"20180910_135644.jpg","Image 3"));
@@ -41,9 +38,6 @@ public class CustomImage {
         this.description = description;
     }
 
-
-
-
     public String getUrl() {
         return url;
     }
@@ -51,4 +45,5 @@ public class CustomImage {
     public String getDescription() {
         return description;
     }
+
 }

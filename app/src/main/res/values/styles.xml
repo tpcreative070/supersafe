@@ -51,6 +51,16 @@
         <item name="colorAccent">@color/colorButton</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+
+    </style>
+
+
+    <!--Change menu item for text color -->
+    <style name="menu_item_color">
+        <item name="android:textColor">@color/material_gray_800</item>
     </style>
 
 
@@ -71,6 +81,20 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
 
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+
+
+    </style>
+
+
+    <!--Menu item for text color -->
+    <style name="PopupMenuLight" parent="@android:style/Widget.PopupMenu">
+        <item name="android:textColor">@color/material_gray_200</item>
+    </style>
+
+    <style name="PopupMenuDark" parent="@android:style/Widget.PopupMenu">
+        <item name="android:textColor">@color/material_gray_800</item>
     </style>
 
 

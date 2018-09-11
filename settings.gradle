@@ -9,5 +9,6 @@ include ':app',
         'library-circular',
         'library-progress',
         'storage',
-        'photoview'
+        'photoview',
+        'library-progress-dialog'
 

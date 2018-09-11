@@ -162,7 +162,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.100:8081</string>
+    <string name="url_developer">http://192.168.0.101:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
@@ -218,8 +218,14 @@
     <string name="got_it">Got it!</string>
     <string name="share">Share</string>
     <string name="custom_objects_hint">This example uses custom image objects and shows images via custom formatter.</string>
+    <string name="device_type">Android</string>
+    <string name="slide_show">Slideshow</string>
+    <string name="ask_delete">Are you sure you want to delete this item ?</string>
+
 
     <string name="key_user">user</string>
+    <string name="key_items">items</string>
+    <string name="key_list_items">list_items</string>
     <string name="key_email">email</string>
     <string name="key_user_id">user_id</string>
     <string name="key_password">password</string>
@@ -245,7 +251,7 @@
     <string name="key_card_ids">Cards &#38; Ids</string>
     <string name="key_videos">Videos</string>
     <string name="key_significant_other">Significant Other</string>
-    <string name="device_type">Android</string>
+
 
 
     /*Preference keys*/

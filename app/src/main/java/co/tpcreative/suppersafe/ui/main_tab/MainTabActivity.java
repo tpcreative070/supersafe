@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
 import com.karumi.dexter.Dexter;
@@ -53,6 +55,7 @@ import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.EnumTypeFile;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
@@ -117,6 +120,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
         }
         return super.onOptionsItemSelected(item);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -209,7 +213,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Navigator.onMoveCamera(getApplicationContext());
+                            Navigator.onMoveCamera(MainTabActivity.this);
                         }
                         else{
                             Log.d(TAG,"Permission is denied");
@@ -246,6 +250,46 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG,"Selected album :");
+        switch (requestCode){
+            case Navigator.CAMERA_ACTION :{
+                if (resultCode == Activity.RESULT_OK) {
+                }
+                else{
+                    Utils.Log(TAG,"Nothing to do on Camera");
+                }
+                break;
+            }
+            case Navigator.PHOTO_SLIDE_SHOW:{
+                break;
+            }
+            case Constants.REQUEST_CODE :{
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+                    for (int i = 0, l = images.size(); i < l; i++) {
+                        String path = images.get(i).path;
+                        String id = "" + images.get(i).id;
+                        String mimeType = Utils.getMimeType(path);
+                        Log.d(TAG, "mimeType " + mimeType);
+                        Log.d(TAG, "path " + path);
+                        if (mimeType.equals(getString(R.string.key_mime_type_sdcard_jpg)) || mimeType.equals(getString(R.string.key_mime_type_sdcard_png))) {
+                            //onUploadFileRXJava(EnumTypeFile.IMAGE, path, mimeType, id);
+                        } else {
+                           // onUploadFileRXJava(EnumTypeFile.VIDEO, path, mimeType, id);
+                        }
+                    }
+                }
+                else {
+                    Utils.Log(TAG,"Nothing to do on Gallery");
+                }
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do");
+                break;
+            }
+        }
+
+
         if (requestCode == Constants.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
             StringBuffer stringBuffer = new StringBuffer();

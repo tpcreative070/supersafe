@@ -18,6 +18,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
@@ -196,9 +197,10 @@ public class Utils {
         }
     }
 
-    public static Bitmap getThumbnail(final byte[]data){
+    public static Bitmap getThumbnail(final byte[]mData){
         InputStream in = null;
         Bitmap thumbImage = null;
+        final byte[]data = mData;
         try {
         final int THUMBSIZE_HEIGHT = 600;
         final int THUMBSIZE_WIDTH = 400;
@@ -493,5 +495,55 @@ public class Utils {
         return snackbar;
     }
 
+
+    public static void slideToRight(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,view.getWidth(),0,0);
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
+    }
+    // To animate view slide out from right to left
+    public static void slideToLeft(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,-view.getWidth(),0,0);
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+        view.setVisibility(View.GONE);
+    }
+
+    // To animate view slide out from top to bottom
+    public static void slideToBottomHeader(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,-view.getHeight(), 0);
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    // To animate view slide out from bottom to top
+    public static void slideToTopHeader(View view){
+        Utils.Log(TAG," "+ view.getHeight());
+        TranslateAnimation animate = new TranslateAnimation(0,0,0,-view.getHeight());
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    // To animate view slide out from top to bottom
+    public static void slideToBottomFooter(View view){
+        TranslateAnimation animate = new TranslateAnimation(0,0,0, view.getHeight());
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
+
+    // To animate view slide out from bottom to top
+    public static void slideToTopFooter(View view){
+        Utils.Log(TAG," "+ view.getHeight());
+        TranslateAnimation animate = new TranslateAnimation(0,0,view.getHeight(),0);
+        animate.setDuration(500);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
+    }
 
 }

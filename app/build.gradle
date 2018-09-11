@@ -177,6 +177,8 @@ dependencies {
     /*Exoplayer video*/
     implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
 
+    /*Progress dialog*/
+    implementation project(':library-progress-dialog')
 
 }
 

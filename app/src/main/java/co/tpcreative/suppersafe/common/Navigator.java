@@ -7,10 +7,14 @@ import android.os.Bundle;
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import co.tpcreative.suppersafe.ChooserActivity;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.demo.HomeActivity;
 import co.tpcreative.suppersafe.model.GoogleOauth;
+import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.suppersafe.ui.askpermission.AskPermissionActivity;
@@ -31,6 +35,10 @@ import co.tpcreative.suppersafe.ui.verify.VerifyActivity;
 import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
 public class Navigator {
+
+    public static final int PHOTO_SLIDE_SHOW = 100;
+    public static final int CAMERA_ACTION = 1001;
+
 
     public static void onMoveToMainTab(Context context){
         Intent intent = new Intent(context, MainTabActivity.class);
@@ -81,10 +89,9 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveCamera(Context context){
-        Intent intent = new Intent(context, CameraActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public static void onMoveCamera(Activity activity){
+        Intent intent = new Intent(activity, CameraActivity.class);
+        activity.startActivityForResult(intent,Navigator.CAMERA_ACTION);
     }
 
     public static void onMoveToAlbum(Activity activity){
@@ -99,9 +106,13 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onPhotoSlider(Context context){
+    public static void onPhotoSlider(Activity context, final Items items, final List<Items> mList){
         Intent intent = new Intent(context, PhotoSlideShowActivity.class);
-        context.startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(context.getString(R.string.key_items),items);
+        bundle.putSerializable(context.getString(R.string.key_list_items),(ArrayList)mList);
+        intent.putExtras(bundle);
+        context.startActivityForResult(intent,PHOTO_SLIDE_SHOW);
     }
 
     public static void onSettings(Context context){

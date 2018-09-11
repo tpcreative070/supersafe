@@ -47,13 +47,10 @@ import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.Cipher;
-
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.Navigator;
@@ -74,9 +71,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener{
     public static final String EXTRA_NAME = "cheese_name";
-
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
-
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.speedDial)
@@ -152,7 +147,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     @Override
     protected void onResume() {
         super.onResume();
-        presenter.getData();
     }
 
     @Override
@@ -230,7 +224,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                 return true; // To keep the Speed Dial open
             }
         });
-
     }
 
     /*Init grant permission*/
@@ -243,7 +236,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Navigator.onMoveCamera(getApplicationContext());
+                            Navigator.onMoveCamera(AlbumDetailActivity.this);
                         }
                         else{
                             Log.d(TAG,"Permission is denied");
@@ -280,7 +273,13 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
     @Override
     public void onClickItem(int position) {
-        Navigator.onPhotoSlider(this);
+        Utils.Log(TAG,"Position : "+ position);
+        try {
+            Navigator.onPhotoSlider(this,presenter.mList.get(position),presenter.mList);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -332,24 +331,56 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG,"Selected album :");
-        if (requestCode == Constants.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
-            for (int i = 0, l = images.size(); i < l; i++) {
-                String path = images.get(i).path;
-                String id = ""+images.get(i).id;
-                String mimeType = Utils.getMimeType(path);
-                Log.d(TAG,"mimeType "+ mimeType);
-                Log.d(TAG,"path "+ path);
-                if (mimeType.equals(getString(R.string.key_mime_type_sdcard_jpg)) || mimeType.equals(getString(R.string.key_mime_type_sdcard_png)) ){
-                    onUploadFileRXJava(EnumTypeFile.IMAGE,path,mimeType,id);
+
+
+        switch (requestCode){
+            case Navigator.CAMERA_ACTION :{
+                if (resultCode == Activity.RESULT_OK) {
+                    Utils.Log(TAG,"reload data");
+                    presenter.getData();
                 }
                 else{
-                    onUploadFileRXJava(EnumTypeFile.VIDEO,path,mimeType,id);
+                    Utils.Log(TAG,"Nothing to do on Camera");
                 }
+                break;
+            }
+            case Navigator.PHOTO_SLIDE_SHOW:{
+                if (resultCode == Activity.RESULT_OK) {
+                    Utils.Log(TAG,"reload data");
+                    presenter.getData();
+                }
+                else{
+                    Utils.Log(TAG,"Nothing to do on Camera");
+                }
+                break;
+            }
+            case Constants.REQUEST_CODE :{
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+                    for (int i = 0, l = images.size(); i < l; i++) {
+                        String path = images.get(i).path;
+                        String id = "" + images.get(i).id;
+                        String mimeType = Utils.getMimeType(path);
+                        Log.d(TAG, "mimeType " + mimeType);
+                        Log.d(TAG, "path " + path);
+                        if (mimeType.equals(getString(R.string.key_mime_type_sdcard_jpg)) || mimeType.equals(getString(R.string.key_mime_type_sdcard_png))) {
+                            onUploadFileRXJava(EnumTypeFile.IMAGE, path, mimeType, id);
+                        } else {
+                            onUploadFileRXJava(EnumTypeFile.VIDEO, path, mimeType, id);
+                        }
+                    }
+                }
+                else {
+                    Utils.Log(TAG,"Nothing to do on Gallery");
+                }
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do");
+                break;
             }
         }
     }
-
 
     public void onUploadFileRXJava(final EnumTypeFile  status,final String path,String mimeType,String id){
         subscriptions = Observable.create(subscriber -> {

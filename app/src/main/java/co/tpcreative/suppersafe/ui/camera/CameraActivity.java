@@ -1,4 +1,5 @@
 package co.tpcreative.suppersafe.ui.camera;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -53,8 +54,6 @@ public class CameraActivity extends BaseActivity implements
     private Storage storage;
 
 
-
-
     private static final int[] FLASH_OPTIONS = {
             CameraView.FLASH_AUTO,
             CameraView.FLASH_OFF,
@@ -76,8 +75,8 @@ public class CameraActivity extends BaseActivity implements
     private int mCurrentFlash;
     private Handler mBackgroundHandler;
     private int mOrientation = 0;
-
     private boolean isProgress;
+    private boolean isReload;
 
     @BindView(R.id.camera)
     CameraView mCameraView;
@@ -215,6 +214,16 @@ public class CameraActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isReload){
+            Intent intent = new Intent();
+            setResult(RESULT_OK,intent);
+            Utils.Log(TAG,"onBackPressed");
+        }
+        super.onBackPressed();
+    }
+
     private Handler getBackgroundHandler() {
         if (mBackgroundHandler == null) {
             HandlerThread thread = new HandlerThread("background");
@@ -249,7 +258,7 @@ public class CameraActivity extends BaseActivity implements
                 Utils.Log(TAG, "Local id is null");
                 return;
             }
-
+            isReload = true;
             onSaveData(data);
 
         }

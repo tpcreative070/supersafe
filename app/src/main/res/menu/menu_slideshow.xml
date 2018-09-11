@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".ui.home.MainActivity">
+    <item
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:id="@+id/action_slideshow"
+        android:title="@string/slide_show" />
+</menu>

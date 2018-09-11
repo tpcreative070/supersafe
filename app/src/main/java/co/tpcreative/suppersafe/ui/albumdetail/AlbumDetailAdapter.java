@@ -80,6 +80,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         @Override
         public void bind(Items data, int position) {
             super.bind(data, position);
+            mPosition = position;
             try{
                 String path = data.thumbnailPath;
                 File file = new File(""+path);
