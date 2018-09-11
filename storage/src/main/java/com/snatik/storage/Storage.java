@@ -8,6 +8,7 @@ import android.os.StatFs;
 import android.util.Log;
 
 import com.snatik.storage.helpers.ImmutablePair;
+import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
 import com.snatik.storage.security.SecurityUtil;
 
@@ -139,7 +140,7 @@ public class Storage {
         return true;
     }
 
-    public void createFile(File output,File input){
+    public void createFile(File output,File input, int mode){
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(input);
@@ -150,7 +151,7 @@ public class Storage {
             byte[] buffer = new byte[1024*1024];
             while ((length = inputStream.read(buffer)) > 0) {
                 if (mConfiguration != null && mConfiguration.isEncrypted()) {
-                    buffer = encrypt(buffer, Cipher.ENCRYPT_MODE);
+                    buffer = encrypt(buffer,mode);
                 }
                 fOutputStream.write(buffer, 0, length);
             }
@@ -168,6 +169,39 @@ public class Storage {
             }
         }
     }
+
+    public void createFile(File output, File input, int mode, OnStorageListener listener){
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(input);
+            int length = 0;
+            FileOutputStream fOutputStream = new FileOutputStream(
+                    output);
+            //note the following line
+            byte[] buffer = new byte[1024*1024];
+            while ((length = inputStream.read(buffer)) > 0) {
+                if (mConfiguration != null && mConfiguration.isEncrypted()) {
+                    buffer = encrypt(buffer,mode);
+                }
+                fOutputStream.write(buffer, 0, length);
+            }
+            fOutputStream.flush();
+            fOutputStream.close();
+            inputStream.close();
+            listener.onSuccessful();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            listener.onFailed();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
 
     public void createLargeFile(File output, File input, Cipher mCipher){
 
@@ -202,6 +236,43 @@ public class Storage {
             }
         }
     }
+
+    public void createLargeFile(File output, File input, Cipher mCipher,OnStorageListener listener){
+
+        if (mConfiguration == null || !mConfiguration.isEncrypted()) {
+            return;
+        }
+
+        FileInputStream inputStream = null;
+        CipherOutputStream cipherOutputStream;
+        try {
+            inputStream = new FileInputStream(input);
+            FileOutputStream outputStream = new FileOutputStream(output);
+            cipherOutputStream = new CipherOutputStream(outputStream, mCipher);
+            //note the following line
+            byte buffer[] = new byte[1024 * 1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                Log.d(getClass().getCanonicalName(), "writing from File path...");
+                cipherOutputStream.write(buffer, 0, bytesRead);
+            }
+            cipherOutputStream.close();
+            outputStream.flush();
+            outputStream.close();
+            listener.onSuccessful();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            listener.onFailed();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
 
 
     public Cipher getCipher(int mode) {

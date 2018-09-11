@@ -730,6 +730,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
                 description.global_id,
                 description.localCategories_Id,
                 description.mimeType,
+                description.fileExtension,
                 new Gson().toJson(description),
                 EnumStatus.DOWNLOAD);
         InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).onInsert(items);

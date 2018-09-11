@@ -485,6 +485,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                null,
                                description.localCategories_Id,
                                description.mimeType,
+                               description.fileExtension,
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
 
@@ -548,6 +549,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                null,
                                description.localCategories_Id,
                                description.mimeType,
+                               description.fileExtension,
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
 

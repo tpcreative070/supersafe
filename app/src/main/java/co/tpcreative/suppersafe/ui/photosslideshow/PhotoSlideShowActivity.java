@@ -1,5 +1,6 @@
 package co.tpcreative.suppersafe.ui.photosslideshow;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,14 +23,22 @@ import com.bumptech.glide.request.RequestOptions;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.snatik.storage.Storage;
+import com.snatik.storage.helpers.OnStorageListener;
+
 import java.io.File;
 import java.util.List;
+
+import javax.crypto.Cipher;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.Items;
+import dmax.dialog.SpotsDialog;
+
 
 public class PhotoSlideShowActivity extends BaseActivity implements View.OnClickListener ,PhotoSlideShowView{
 
@@ -67,11 +76,15 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     private ViewPager viewPager;
     private SamplePagerAdapter adapter;
     private boolean isReload;
+    private AlertDialog dialog;
+    private Cipher mCipher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos_slideshow);
         storage = new Storage(this);
+        storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
         presenter = new PhotoSlideShowPresenter();
         presenter.bindView(this);
         presenter.getIntent(this);
@@ -82,6 +95,8 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         viewPager.setAdapter(adapter);
         imgArrowBack.setOnClickListener(this);
         imgOverflow.setOnClickListener(this);
+        imgDelete.setOnClickListener(this);
+        imgExport.setOnClickListener(this);
     }
 
     class SamplePagerAdapter extends PagerAdapter {
@@ -117,7 +132,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 String path = presenter.mList.get(position).thumbnailPath;
                 File file = new File(""+path);
                 if (file.exists() || file.isFile()){
-                    storage.setEncryptConfiguration(SupperSafeApplication.getInstance().getConfigurationFile());
                     Glide.with(context)
                             .load(storage.readFile(path))
                             .apply(options)
@@ -149,12 +163,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         }
 
     }
-
-    @OnClick(R.id.imgDelete)
-    public void onClickedDelete(View view){
-        onAskDelete();
-    }
-
 
     public void onAskDelete(){
         new MaterialDialog.Builder(this)
@@ -195,6 +203,30 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 openOptionMenu(view);
                 break;
             }
+            case R.id.imgDelete :{
+                onAskDelete();
+                break;
+            }
+            case R.id.imgExport :{
+                Utils.Log(TAG,"Action here");
+                try {
+                    if (presenter.mList!=null){
+                        if (presenter.mList.size()>0){
+                            final Items items = presenter.mList.get(viewPager.getCurrentItem());
+                            String  input = items.originalPath;
+                            if (storage.isFileExist(input)){
+                                String output = SupperSafeApplication.getInstance().getSupperSafe()+items.name+items.nameExtension;
+                                Utils.Log(TAG,output);
+                                exportFile(output,input);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
     }
 
@@ -213,7 +245,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         });
         popup.show();
     }
-
 
 
     /*ViewPresenter*/
@@ -247,4 +278,45 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         isReload = true;
        adapter.notifyDataSetChanged();
     }
+
+
+    public void onStartProgressing(){
+        if (dialog==null){
+            dialog = new SpotsDialog.Builder()
+                    .setContext(this)
+                    .setMessage(getString(R.string.progressing))
+                    .setCancelable(true)
+                    .build();
+        }
+        if (!dialog.isShowing()){
+            dialog.show();
+        }
+    }
+
+    public void onStopProgressing(){
+        if (dialog!=null){
+            dialog.dismiss();
+        }
+    }
+
+
+    public void exportFile(String output,String input){
+        mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
+        onStartProgressing();
+        storage.createLargeFile(new File(output), new File(input),mCipher, new OnStorageListener() {
+            @Override
+            public void onSuccessful() {
+                onStopProgressing();
+                Utils.Log(TAG,"Exporting successful");
+            }
+            @Override
+            public void onFailed() {
+                onStopProgressing();
+                Utils.Log(TAG,"Exporting failed");
+            }
+        });
+    }
+
+
+
 }

@@ -309,6 +309,7 @@ public class CameraActivity extends BaseActivity implements
                     null,
                             description.localCategories_Id,
                             description.mimeType,
+                            description.fileExtension,
                             new Gson().toJson(description),
                             EnumStatus.UPLOAD);
 
