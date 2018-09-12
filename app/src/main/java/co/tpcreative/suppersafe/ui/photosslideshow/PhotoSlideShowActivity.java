@@ -3,6 +3,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -24,20 +26,20 @@ import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
-
 import java.io.File;
-import java.util.List;
-
 import javax.crypto.Cipher;
-
 import butterknife.BindView;
-import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.Items;
+import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class PhotoSlideShowActivity extends BaseActivity implements View.OnClickListener ,PhotoSlideShowView{
@@ -45,8 +47,8 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     private static final String TAG = PhotoSlideShowActivity.class.getSimpleName();
     private RequestOptions options = new RequestOptions()
             .centerCrop()
-            .override(400,500)
-            .placeholder(R.drawable.ic_camera)
+            .override(400,600)
+            .placeholder(R.color.black38)
             .error(R.drawable.ic_aspect_ratio)
             .priority(Priority.HIGH);
 
@@ -78,7 +80,9 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     private boolean isReload;
     private AlertDialog dialog;
     private Cipher mCipher;
-    private int degree = 0;
+
+    private Disposable subscriptions;
+    private boolean isProgressing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,10 +147,9 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             catch (Exception e){
                 e.printStackTrace();
             }
-            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            container.addView(photoView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             photoView.setTag("myview" + position);
             return photoView;
-
         }
 
         @Override
@@ -161,7 +164,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
         @Override
         public int getItemPosition(@NonNull Object object) {
-            return PagerAdapter.POSITION_NONE;
+            return POSITION_NONE;
         }
 
     }
@@ -231,13 +234,13 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             }
             case R.id.imgRotate : {
                 try {
-                    View mView = (View) viewPager.findViewWithTag("myview" + viewPager.getCurrentItem());
-                    if (mView != null) {
-                        degree = degree + 90;
-                        mView.setRotation(degree);
-                        if (degree == 360) {
-                            degree = 0;
-                        }
+                    if (isProgressing){
+                        return;
+                    }
+                    final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id);
+                    if (items!=null) {
+                        onRotateBitmap(items);
+                        isReload = true;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -292,7 +295,16 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     @Override
     public void onDeleteSuccessful() {
         isReload = true;
-       adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"Destroy");
+        if (subscriptions!=null){
+            subscriptions.dispose();
+        }
     }
 
     public void onStartProgressing(){
@@ -322,6 +334,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             public void onSuccessful() {
                 onStopProgressing();
                 Utils.Log(TAG,"Exporting successful");
+                Toast.makeText(PhotoSlideShowActivity.this,"Exported successful",Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onFailed() {
@@ -329,6 +342,89 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 Utils.Log(TAG,"Exporting failed");
             }
         });
+    }
+
+
+    public void onRotateBitmap(final Items items){
+        subscriptions = Observable.create(subscriber -> {
+            isProgressing = true;
+            Utils.Log(TAG,"Start Progressing encrypt thumbnail data");
+            final  Items mItem = items;
+            final String mThumbnailPath = mItem.thumbnailPath;
+            final String mOriginalPath = mItem.originalPath;
+            int mDegrees = mItem.degrees;
+
+            if (mDegrees>=360){
+                mDegrees = 90;
+            }
+            else{
+                if (mDegrees>90){
+                    mDegrees = mDegrees+90;
+                }
+                else{
+                    mDegrees = 180;
+                }
+            }
+
+            final  int valueDegrees = mDegrees;
+            mItem.degrees = valueDegrees;
+
+            final File mPath = Utils.getPackagePath(getApplicationContext());
+            try {
+                mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
+                storage.createLargeFile(mPath, new File(mOriginalPath),mCipher, new OnStorageListener() {
+                    @Override
+                    public void onSuccessful() {
+                        Bitmap thumbImage = null;
+                        try {
+                            Utils.Log(TAG,"degrees :" +valueDegrees );
+                            thumbImage = Utils.getThumbnailScaleRotate(mPath.getAbsolutePath(),valueDegrees);
+                            storage.createFile(mThumbnailPath, thumbImage);
+                            subscriber.onNext(mItem);
+                            subscriber.onComplete();
+                        }
+                        catch (Exception e) {
+                            subscriber.onNext(null);
+                            subscriber.onComplete();
+                            e.printStackTrace();
+                        }
+                        finally {
+                        }
+
+                    }
+                    @Override
+                    public void onFailed() {
+                        subscriber.onNext(null);
+                        subscriber.onComplete();
+                    }
+                });
+            } catch (Exception e) {
+                subscriber.onNext(null);
+                subscriber.onComplete();
+                e.printStackTrace();
+            } finally {
+                isProgressing = false;
+            }
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+                    final Items mItem = (Items) response;
+                    if (mItem!=null){
+                        InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).onUpdate(items);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                viewPager.getAdapter().notifyDataSetChanged();
+                            }
+                        });
+                        Utils.Log(TAG,"Thumbnail saved successful");
+                    }
+                    else{
+                        Utils.Log(TAG,"Thumbnail saved failed");
+                    }
+                });
     }
 
 }

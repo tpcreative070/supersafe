@@ -721,6 +721,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
 
     public void onSaveItem(final DriveDescription description){
         Items items = new Items(false,
+                description.degrees,
                 description.typeFile,
                 description.name,
                 description.globalName,

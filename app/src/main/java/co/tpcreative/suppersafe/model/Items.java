@@ -23,6 +23,7 @@ public class Items implements Serializable {
     public String description;
     public int statusAction;
     public String globalName;
+    public int degrees;
 
     @Ignore
     private boolean isChecked;
@@ -30,11 +31,12 @@ public class Items implements Serializable {
     private boolean isDeleted;
 
 
-    public Items(boolean isSync,int fileType,String name,String globalName,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String mimeType,String nameExtension,String driveDescription,EnumStatus enumStatus){
+    public Items(boolean isSync,int degrees,int fileType,String name,String globalName,String thumbnailPath,String originalPath,String local_id,String global_id,String localCategories_Id ,String mimeType,String nameExtension,String driveDescription,EnumStatus enumStatus){
         this.name = name;
         this.globalName = globalName;
         this.fileType = fileType;
         this.isSync = isSync;
+        this.degrees = degrees;
         this.local_id = local_id;
         this.global_id = global_id;
         this.localCategories_Id = localCategories_Id;

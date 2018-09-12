@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ThumbnailUtils;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
@@ -30,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -61,6 +63,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Utils {
     // utility function
+
+
+
+    final public static int THUMB_SIZE_HEIGHT = 600;
+    final public static int THUMB_SIZE_WIDTH = 400;
+
+
     private static final String TAG = Utils.class.getSimpleName();
     private static String bytesToHexString(byte[] bytes) {
         // http://stackoverflow.com/questions/332079
@@ -168,34 +177,6 @@ public class Utils {
         }
     }
 
-    public boolean saveFile(Context context, String mytext){
-        Log.i("TESTE", "SAVE");
-        try {
-            FileOutputStream fos = context.openFileOutput("file_name"+".txt",Context.MODE_PRIVATE);
-            Writer out = new OutputStreamWriter(fos);
-            out.write(mytext);
-            out.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public String load(Context context){
-        Log.i("TESTE", "FILE");
-        try {
-            FileInputStream fis = context.openFileInput("file_name"+".txt");
-            BufferedReader r = new BufferedReader(new InputStreamReader(fis));
-            String line= r.readLine();
-            r.close();
-            return line;
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.i("TESTE", "FILE - false");
-            return null;
-        }
-    }
 
     public static Bitmap getThumbnail(final byte[]mData){
         InputStream in = null;
@@ -273,6 +254,166 @@ public class Utils {
         return thumbImage;
     }
 
+
+    /*Scale image before to save*/
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
+    public static Bitmap getThumbnailScale(byte[] data) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        InputStream in = null;
+        Bitmap thumbImage = null  ;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        try{
+            options.inJustDecodeBounds = true;
+            //options.inPurgeable = true;
+            BitmapFactory.decodeByteArray(data, 0, data.length, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, Utils.THUMB_SIZE_WIDTH, Utils.THUMB_SIZE_HEIGHT);
+
+            // Decode bitmap with inSampleSize set
+             options.inJustDecodeBounds = false;
+            thumbImage =  ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(data, 0, data.length, options),Utils.THUMB_SIZE_WIDTH,Utils.THUMB_SIZE_HEIGHT);
+
+
+            in = new ByteArrayInputStream(data);
+            ExifInterface exifInterface = new ExifInterface(in);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            }
+            else if (orientation == 3) {
+                matrix.postRotate(180);
+            }
+            else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+            return thumbImage;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try {
+                if (in!=null){
+                    in.close();
+                }
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return thumbImage;
+    }
+
+    public static Bitmap getThumbnailScale(String  path) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        FileInputStream inputStream = null;
+        Bitmap thumbImage = null  ;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        try{
+            options.inJustDecodeBounds = true;
+            //options.inPurgeable = true;
+            BitmapFactory.decodeFile(path,options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, Utils.THUMB_SIZE_WIDTH, Utils.THUMB_SIZE_HEIGHT);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+
+            thumbImage =  ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path, options),Utils.THUMB_SIZE_WIDTH,Utils.THUMB_SIZE_HEIGHT);
+
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            }
+            else if (orientation == 3) {
+                matrix.postRotate(180);
+            }
+            else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+            return thumbImage;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+
+        }
+        return thumbImage;
+
+    }
+
+    public static Bitmap getThumbnailScaleRotate(String  path,int degrees) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        FileInputStream inputStream = null;
+        Bitmap thumbImage = null  ;
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        try{
+            options.inJustDecodeBounds = true;
+            //options.inPurgeable = true;
+            BitmapFactory.decodeFile(path,options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, Utils.THUMB_SIZE_WIDTH, Utils.THUMB_SIZE_HEIGHT);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+
+            thumbImage =  ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path, options),Utils.THUMB_SIZE_WIDTH,Utils.THUMB_SIZE_HEIGHT);
+
+           // ExifInterface exifInterface = new ExifInterface(path);
+          //  int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+            //Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            matrix.postRotate(degrees);
+            thumbImage = Bitmap.createBitmap(thumbImage, 0, 0, thumbImage.getWidth(), thumbImage.getHeight(), matrix, true); // rotating bitmap
+            return thumbImage;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+
+        }
+        return thumbImage;
+    }
+
+    public static File getPackagePath(Context context){
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "temporary.jpg");
+        return file;
+    }
 
     public static Bitmap saveByteArrayBitmap(final byte[] data,final int orientation){
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);

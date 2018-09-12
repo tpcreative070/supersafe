@@ -31,6 +31,7 @@
             android:layout_height="50dp">
             <ImageView
                 android:id="@+id/imgArrowBack"
+                android:layout_marginLeft="7dp"
                 android:padding="7dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"

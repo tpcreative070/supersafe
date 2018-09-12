@@ -474,8 +474,10 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.name = currentTime;
                        description.globalName = uuId;
                        description.typeFile = EnumTypeFile.IMAGE.ordinal();
+                       description.degrees = 0;
 
                        items = new Items(false,
+                               description.degrees,
                                description.typeFile,
                                description.name,
                                description.globalName,
@@ -538,8 +540,10 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.name = currentTime;
                        description.globalName = uuId;
                        description.typeFile = EnumTypeFile.VIDEO.ordinal();
+                       description.degrees = 0;
 
                        items = new Items(false,
+                               description.degrees ,
                                description.typeFile,
                                description.name,
                                description.globalName,

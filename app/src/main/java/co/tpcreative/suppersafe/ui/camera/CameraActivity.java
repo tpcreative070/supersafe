@@ -272,7 +272,7 @@ public class CameraActivity extends BaseActivity implements
                 InputStream  originalFile = null;
                 Bitmap thumbnail = null;
                 try {
-                    thumbnail = Utils.getThumbnail(data);
+                    thumbnail = Utils.getThumbnailScale(data);
                     originalFile = new ByteArrayInputStream(data);
                     String path = SupperSafeApplication.getInstance().getSupperSafe();
                     String currentTime = Utils.getCurrentDateTime();
@@ -298,8 +298,10 @@ public class CameraActivity extends BaseActivity implements
                     description.name = currentTime;
                     description.globalName = uuId;
                     description.typeFile = EnumTypeFile.IMAGE.ordinal();
+                    description.degrees = 0;
 
                     Items items = new Items(false,
+                            description.degrees,
                             description.typeFile,
                             description.name,
                             description.globalName,
