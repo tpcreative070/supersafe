@@ -285,6 +285,8 @@ public class CameraActivity extends BaseActivity implements
                     storage.createFile(thumbnailPath,thumbnail);
                     storage.createFile(originalPath,data);
 
+
+
                     DriveDescription description = new DriveDescription();
                     description.fileExtension = getString(R.string.key_jpg);
                     description.originalPath = originalPath;
@@ -297,12 +299,12 @@ public class CameraActivity extends BaseActivity implements
                     description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
                     description.name = currentTime;
                     description.globalName = uuId;
-                    description.typeFile = EnumTypeFile.IMAGE.ordinal();
+                    description.fileType = EnumTypeFile.IMAGE.ordinal();
                     description.degrees = 0;
 
                     Items items = new Items(false,
                             description.degrees,
-                            description.typeFile,
+                            description.fileType,
                             description.name,
                             description.globalName,
                             description.thumbnailPath,

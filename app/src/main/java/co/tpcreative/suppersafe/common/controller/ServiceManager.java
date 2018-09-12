@@ -609,7 +609,7 @@ public class ServiceManager implements SupperSafeServiceView {
            description = DriveDescription.getInstance().getDriveDescription(items.description);
 
 
-           EnumTypeFile enumTypeFile = EnumTypeFile.values()[description.typeFile];
+           EnumTypeFile enumTypeFile = EnumTypeFile.values()[description.fileType];
 
            switch (enumTypeFile){
                case IMAGE: {

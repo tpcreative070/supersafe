@@ -23,7 +23,7 @@ public class DriveDescription implements Serializable{
     public String name;
     public String globalName;
     public int degrees;
-    public int typeFile;
+    public int fileType;
 
 
 

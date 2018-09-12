@@ -7,10 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import com.google.android.gms.drive.DriveFolder;
+
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.snatik.storage.Storage;
 
 import java.io.File;
@@ -18,14 +16,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import co.tpcreative.suppersafe.R;
 import co.tpcreative.suppersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.suppersafe.common.controller.PrefsController;
 import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.presenter.PresenterService;
-import co.tpcreative.suppersafe.common.request.DriveApiRequest;
 import co.tpcreative.suppersafe.common.response.DriveResponse;
 import co.tpcreative.suppersafe.common.services.download.DownloadService;
 import co.tpcreative.suppersafe.common.services.upload.ProgressRequestBody;
@@ -34,10 +30,8 @@ import co.tpcreative.suppersafe.common.util.Utils;
 import co.tpcreative.suppersafe.model.DriveDescription;
 import co.tpcreative.suppersafe.model.EnumStatus;
 import co.tpcreative.suppersafe.model.Items;
-import co.tpcreative.suppersafe.model.MainCategories;
 import co.tpcreative.suppersafe.model.User;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
-import co.tpcreative.suppersafe.ui.camera.CameraActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -722,7 +716,7 @@ public class SupperSafeService extends PresenterService<SupperSafeServiceView> i
     public void onSaveItem(final DriveDescription description){
         Items items = new Items(false,
                 description.degrees,
-                description.typeFile,
+                description.fileType,
                 description.name,
                 description.globalName,
                 description.thumbnailPath,

@@ -56,7 +56,6 @@
 
         </RelativeLayout>
 
-
         <LinearLayout
             android:id="@+id/llBottom"
             android:background="#7F000000"

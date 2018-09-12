@@ -128,9 +128,10 @@
         <activity
             android:name=".ui.demo.CheeseDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.albumdetail.AlbumDetailActivity"
+        <activity
+            android:name=".ui.albumdetail.AlbumDetailActivity"
             android:label=""
-            android:theme="@style/Theme.Slidr.Slidable"/>
+            android:theme="@style/Theme.Slidr.Slidable" />
         <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity" />
         <activity
             android:name=".ui.settings.SettingsActivity"
@@ -143,8 +144,8 @@
         <activity
             android:name=".ui.verifyaccount.VerifyAccountActivity"
             android:label="@string/verify"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@style/Theme.Slidr.Slidable" />
+            android:theme="@style/Theme.Slidr.Slidable"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".demo.DeleteSpecificFolderActivity" />
         <activity
             android:name=".ChooserActivity"
@@ -162,7 +163,12 @@
             android:name=".ui.cloudmanager.CloudManagerActivity"
             android:label="@string/cloud_manager"
             android:theme="@style/Theme.Slidr.Slidable" />
-        <activity android:name=".ui.checksystem.CheckSystemActivity"></activity>
+        <activity android:name=".ui.checksystem.CheckSystemActivity" />
+        <activity android:name=".ui.player.PlayerActivity"></activity>
+
+        <meta-data android:name="fr.maxcom.libmedia.apiKey"
+            android:value="KPFZ6BJ56yxIqZ1CK2XGtg+EsBgRMe2VG9RnQkSV08KM2nqbAWXbKL/2VsutLN4KO+GhFAsSTaXGlI+xWlM24lik4lFYzG9RMjfJzCU915Z/PdyNITTFmzQqlg==" />
+
     </application>
 
 </manifest>

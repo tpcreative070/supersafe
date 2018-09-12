@@ -26,6 +26,8 @@ import co.tpcreative.suppersafe.ui.help.HelpActivity;
 import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.suppersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.suppersafe.ui.cloudmanager.CloudManagerActivity;
+import co.tpcreative.suppersafe.ui.player.PlayerActivity;
+import co.tpcreative.suppersafe.ui.player.PlayerPresenter;
 import co.tpcreative.suppersafe.ui.settings.SettingsActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
@@ -161,6 +163,14 @@ public class Navigator {
         bundle.putSerializable(context.getString(R.string.key_google_oauth),googleOauth);
         intent.putExtras(bundle);
         context.startActivityForResult(intent,EnableCloudActivity.ENABLE_CLOUD);
+    }
+
+    public static void onPlayer(Context context,final Items items){
+        Intent intent = new Intent(context, PlayerActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(context.getString(R.string.key_items),items);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
     }
 
 }

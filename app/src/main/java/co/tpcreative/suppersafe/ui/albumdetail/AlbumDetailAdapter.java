@@ -26,6 +26,8 @@ import co.tpcreative.suppersafe.common.adapter.BaseHolder;
 import co.tpcreative.suppersafe.common.controller.SingletonEncryptData;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.model.Album;
+import co.tpcreative.suppersafe.model.DriveDescription;
+import co.tpcreative.suppersafe.model.EnumTypeFile;
 import co.tpcreative.suppersafe.model.Items;
 
 public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
@@ -75,6 +77,8 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         private Items data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
+        @BindView(R.id.imgVideoCam)
+        ImageView imgVideoCam;
         int mPosition;
 
         @Override
@@ -92,6 +96,19 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         .load(storage.readFile(path))
                         .apply(options)
                         .into(imgAlbum);
+                
+                EnumTypeFile enumTypeFile = EnumTypeFile.values()[data.fileType];
+                switch (enumTypeFile){
+                    case VIDEO:{
+                        imgVideoCam.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    default:{
+                        imgVideoCam.setVisibility(View.INVISIBLE);
+                        break;
+                    }
+                }
+
             }
             catch (Exception e){
                 e.printStackTrace();

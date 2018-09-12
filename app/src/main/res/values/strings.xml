@@ -254,7 +254,6 @@
     <string name="key_significant_other">Significant Other</string>
 
 
-
     /*Preference keys*/
     <string name="key_grant_access">grant_access</string>
     <string name="key_data">data</string>
@@ -276,6 +275,7 @@
     <string name="key_fullFileExtension">fullFileExtension</string>
     <string name="key_description">description</string>
     <string name="key_jpg">.jpg</string>
+    <string name="key_mp4">.mp4</string>
     <string name="key_png">.png</string>
     <string name="key_mime_type_sdcard_jpg">image/jpeg</string>
     <string name="key_mime_type_sdcard_png">image/png</string>

@@ -473,12 +473,12 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.mimeType = mMimeType;
                        description.name = currentTime;
                        description.globalName = uuId;
-                       description.typeFile = EnumTypeFile.IMAGE.ordinal();
+                       description.fileType = EnumTypeFile.IMAGE.ordinal();
                        description.degrees = 0;
 
                        items = new Items(false,
                                description.degrees,
-                               description.typeFile,
+                               description.fileType,
                                description.name,
                                description.globalName,
                                description.thumbnailPath,
@@ -528,7 +528,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
 
                        DriveDescription description = new DriveDescription();
-                       description.fileExtension = getString(R.string.key_jpg);
+                       description.fileExtension = getString(R.string.key_mp4);
                        description.originalPath = originalPath;
                        description.thumbnailPath = thumbnailPath;
                        description.subFolderName = uuId;
@@ -539,12 +539,12 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.mimeType = mMimeType;
                        description.name = currentTime;
                        description.globalName = uuId;
-                       description.typeFile = EnumTypeFile.VIDEO.ordinal();
+                       description.fileType = EnumTypeFile.VIDEO.ordinal();
                        description.degrees = 0;
 
                        items = new Items(false,
                                description.degrees ,
-                               description.typeFile,
+                               description.fileType,
                                description.name,
                                description.globalName,
                                description.thumbnailPath,
@@ -559,7 +559,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
                    } catch (Exception e) {
                        Log.w(TAG, "Cannot write to " + e);
-                       subscriber.onNext(items);
+                       subscriber.onNext(null);
                        subscriber.onComplete();
                    } finally {
                        Utils.Log(TAG,"Finally");
@@ -587,6 +587,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                             presenter.getData();
                         }
                     });
+                    Utils.Log(TAG,new Gson().toJson(items));
                 });
     }
 

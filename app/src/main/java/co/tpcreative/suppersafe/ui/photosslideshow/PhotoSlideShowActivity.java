@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +31,11 @@ import java.io.File;
 import javax.crypto.Cipher;
 import butterknife.BindView;
 import co.tpcreative.suppersafe.R;
+import co.tpcreative.suppersafe.common.Navigator;
 import co.tpcreative.suppersafe.common.activity.BaseActivity;
 import co.tpcreative.suppersafe.common.services.SupperSafeApplication;
 import co.tpcreative.suppersafe.common.util.Utils;
+import co.tpcreative.suppersafe.model.EnumTypeFile;
 import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
@@ -118,7 +121,17 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
-            PhotoView photoView = new PhotoView(container.getContext());
+            //PhotoView photoView = new PhotoView(container.getContext());
+
+            LayoutInflater inflater = getLayoutInflater();
+            View myView = inflater.inflate(R.layout.content_view, null);
+            PhotoView photoView = myView.findViewById(R.id.imgPhoto);
+            ImageView imgPlayer = myView.findViewById(R.id.imgPlayer);
+
+
+            final Items mItems = presenter.mList.get(position);
+            EnumTypeFile enumTypeFile = EnumTypeFile.values()[mItems.fileType];
+
             photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
                 public void onPhotoTap(ImageView view, float x, float y) {
@@ -134,8 +147,17 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                     }
                 }
             });
+
+            imgPlayer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Items items = presenter.mList.get(viewPager.getCurrentItem());
+                    Navigator.onPlayer(PhotoSlideShowActivity.this,items);
+                }
+            });
+
             try{
-                String path = presenter.mList.get(position).thumbnailPath;
+                String path = mItems.thumbnailPath;
                 File file = new File(""+path);
                 if (file.exists() || file.isFile()){
                     Glide.with(context)
@@ -147,9 +169,21 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             catch (Exception e){
                 e.printStackTrace();
             }
-            container.addView(photoView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+            switch (enumTypeFile){
+                case VIDEO:{
+                    imgPlayer.setVisibility(View.VISIBLE);
+                    break;
+                }
+                default:{
+                    imgPlayer.setVisibility(View.INVISIBLE);
+                    break;
+                }
+            }
+            container.addView(myView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             photoView.setTag("myview" + position);
-            return photoView;
+            return myView;
         }
 
         @Override
@@ -166,7 +200,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         public int getItemPosition(@NonNull Object object) {
             return POSITION_NONE;
         }
-
     }
 
     public void onAskDelete(){
@@ -196,11 +229,11 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (isHide){
-            return;
-        }
         switch (view.getId()){
             case R.id.imgArrowBack :{
+                if (isHide){
+                    break;
+                }
                 onBackPressed();
                 break;
             }
@@ -209,10 +242,16 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 break;
             }
             case R.id.imgDelete :{
+                if (isHide){
+                    break;
+                }
                 onAskDelete();
                 break;
             }
             case R.id.imgExport :{
+                if (isHide){
+                    break;
+                }
                 Utils.Log(TAG,"Action here");
                 try {
                     if (presenter.mList!=null){
@@ -220,7 +259,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                             final Items items = presenter.mList.get(viewPager.getCurrentItem());
                             String  input = items.originalPath;
                             if (storage.isFileExist(input)){
-                                String output = SupperSafeApplication.getInstance().getSupperSafe()+items.name+items.nameExtension;
+                                String output = SupperSafeApplication.getInstance().getSupperSafe()+items.name+items.fileExtension;
                                 Utils.Log(TAG,output);
                                 exportFile(output,input);
                             }
@@ -233,6 +272,9 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 break;
             }
             case R.id.imgRotate : {
+                if (isHide){
+                    break;
+                }
                 try {
                     if (isProgressing){
                         return;
@@ -343,7 +385,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             }
         });
     }
-
 
     public void onRotateBitmap(final Items items){
         subscriptions = Observable.create(subscriber -> {
