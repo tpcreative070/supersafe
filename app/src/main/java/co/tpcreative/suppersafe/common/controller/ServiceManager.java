@@ -387,6 +387,7 @@ public class ServiceManager implements SupperSafeServiceView {
     }
 
     public void onSyncData() {
+        Utils.Log(TAG,"Preparing sync data");
         if (isDownloadData) {
             Utils.Log(TAG, "List items is downloading...");
             return;
@@ -395,7 +396,6 @@ public class ServiceManager implements SupperSafeServiceView {
             Utils.Log(TAG, "List items is uploading...");
             return;
         }
-
 
         if (myService != null) {
             myService.onGetListOnlyFilesInApp(new SupperSafeServiceView() {
@@ -414,8 +414,10 @@ public class ServiceManager implements SupperSafeServiceView {
                     final List<Items> items = InstanceGenerator.getInstance(SupperSafeApplication.getInstance()).getListSyncUploadDataItems();
                     if (items != null) {
                         if (items.size() > 0) {
+                            Utils.Log(TAG,"Preparing uploading...");
                             onUploadDataToStore();
                         } else {
+                            Utils.Log(TAG,"Preparing downloading...");
                             onDownloadFilesFromDriveStore();
                         }
                     } else {

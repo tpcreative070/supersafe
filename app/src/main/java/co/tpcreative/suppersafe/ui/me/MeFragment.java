@@ -1,6 +1,5 @@
 package co.tpcreative.suppersafe.ui.me;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,28 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.api.services.drive.DriveScopes;
-import com.google.gson.Gson;
-import com.jaychang.sa.AuthCallback;
-import com.jaychang.sa.AuthData;
-import com.jaychang.sa.AuthDataHolder;
-import com.jaychang.sa.SocialUser;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.SignInActivityWithDrive;
 import co.tpcreative.suppersafe.common.BaseFragment;
 import co.tpcreative.suppersafe.common.Navigator;
-import co.tpcreative.suppersafe.common.controller.ServiceManager;
 import co.tpcreative.suppersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.suppersafe.demo.oauthor.GoogleAuthActivity;
-import co.tpcreative.suppersafe.ui.verifyaccount.VerifyAccountActivity;
 
 public class MeFragment extends BaseFragment implements MeView{
 

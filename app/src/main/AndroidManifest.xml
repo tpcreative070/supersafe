@@ -30,21 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".GoogleSignInActivity"
-            android:label="@string/name_sign_in_activity" />
-        <activity
-            android:name=".SignInActivityWithDrive"
-            android:label="@string/name_sign_in_activity" />
-        <activity
-            android:name=".IdTokenActivity"
-            android:label="@string/name_id_token_activity" />
-        <activity
-            android:name=".ServerAuthCodeActivity"
-            android:label="@string/name_auth_code_activity" />
-        <activity
-            android:name=".RestApiActivity"
-            android:label="@string/name_rest_activity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -58,44 +43,7 @@
 
         <!-- Upload Google Drive -->
 
-        <service
-            android:name=".demo.events.MyDriveEventService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.drive.events.HANDLE_EVENT" />
-            </intent-filter>
-        </service>
         <service android:name=".common.services.SupperSafeService" />
-
-        <activity android:name=".demo.HomeActivity" />
-        <activity android:name=".demo.QueryFilesActivity" />
-        <activity android:name=".demo.RetrieveContentsActivity" />
-        <activity android:name=".demo.RetrieveContentsWithProgressDialogActivity" />
-        <activity android:name=".demo.CreateFileActivity" />
-        <activity android:name=".demo.CreateEmptyFileActivity" />
-        <activity android:name=".demo.CreateFileInAppFolderActivity" />
-        <activity android:name=".demo.CreateFolderActivity" />
-        <activity android:name=".demo.DeleteFileActivity" />
-        <activity android:name=".demo.AppendContentsActivity" />
-        <activity android:name=".demo.RewriteContentsActivity" />
-        <activity android:name=".demo.EditMetadataActivity" />
-        <activity android:name=".demo.CreateFileWithCreatorActivity" />
-        <activity android:name=".demo.RetrieveMetadataActivity" />
-        <activity android:name=".demo.CreateFileInFolderActivity" />
-        <activity android:name=".demo.CreateFolderInFolderActivity" />
-        <activity android:name=".demo.QueryFilesInFolderActivity" />
-        <activity android:name=".demo.PinFileActivity" />
-        <activity android:name=".demo.events.ListenChangeEventsForFilesActivity" />
-        <activity android:name=".demo.events.SubscribeChangeEventsForFilesActivity" />
-        <activity android:name=".demo.QueryNonTextFilesActivity" />
-        <activity android:name=".demo.QueryFilesSharedWithMeActivity" />
-        <activity android:name=".demo.QueryFilesWithTitleActivity" />
-        <activity android:name=".demo.QueryStarredTextFilesActivity" />
-        <activity android:name=".demo.QueryTextOrHtmlFilesActivity" />
-        <activity android:name=".demo.InsertUpdateCustomPropertyActivity" />
-        <activity android:name=".demo.QueryFilesWithCustomPropertyActivity" />
-        <activity android:name=".demo.DeleteCustomPropertyActivity" />
-        <activity android:name=".demo.QuerySortedFilesActivity" />
 
         <!-- Enter pin code -->
         <activity
@@ -126,9 +74,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.demo.CheeseDetailActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.albumdetail.AlbumDetailActivity"
             android:label=""
             android:theme="@style/Theme.Slidr.Slidable" />
@@ -146,12 +91,6 @@
             android:label="@string/verify"
             android:theme="@style/Theme.Slidr.Slidable"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".demo.DeleteSpecificFolderActivity" />
-        <activity
-            android:name=".ChooserActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".demo.oauthor.GoogleAuthActivity" />
-        <activity android:name=".demo.UploadFileAndViewActivity" />
         <activity
             android:name=".ui.accountmanager.AccountManagerActivity"
             android:label="@string/account"
@@ -165,9 +104,6 @@
             android:theme="@style/Theme.Slidr.Slidable" />
         <activity android:name=".ui.checksystem.CheckSystemActivity" />
         <activity android:name=".ui.player.PlayerActivity"></activity>
-
-        <meta-data android:name="fr.maxcom.libmedia.apiKey"
-            android:value="KPFZ6BJ56yxIqZ1CK2XGtg+EsBgRMe2VG9RnQkSV08KM2nqbAWXbKL/2VsutLN4KO+GhFAsSTaXGlI+xWlM24lik4lFYzG9RMjfJzCU915Z/PdyNITTFmzQqlg==" />
 
     </application>
 

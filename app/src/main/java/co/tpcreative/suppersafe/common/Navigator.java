@@ -3,16 +3,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import co.tpcreative.suppersafe.ChooserActivity;
 import co.tpcreative.suppersafe.R;
-import co.tpcreative.suppersafe.demo.HomeActivity;
 import co.tpcreative.suppersafe.model.GoogleOauth;
 import co.tpcreative.suppersafe.model.Items;
 import co.tpcreative.suppersafe.model.User;
@@ -27,7 +22,6 @@ import co.tpcreative.suppersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.suppersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.suppersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.suppersafe.ui.player.PlayerActivity;
-import co.tpcreative.suppersafe.ui.player.PlayerPresenter;
 import co.tpcreative.suppersafe.ui.settings.SettingsActivity;
 import co.tpcreative.suppersafe.ui.signin.SignInActivity;
 import co.tpcreative.suppersafe.ui.main_tab.MainTabActivity;
@@ -129,16 +123,6 @@ public class Navigator {
 
     public static void onVerifyAccount(Context context){
         Intent intent = new Intent(context,VerifyAccountActivity.class);
-        context.startActivity(intent);
-    }
-
-    public static void onHomeActivity(Context context){
-        Intent intent = new Intent(context, HomeActivity.class);
-        context.startActivity(intent);
-    }
-
-    public static void onChooseActivity(Context context){
-        Intent intent = new Intent(context, ChooserActivity.class);
         context.startActivity(intent);
     }
 

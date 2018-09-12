@@ -112,7 +112,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
 
     @OnClick(R.id.btnChooseActivity)
     public void onChooseActivity(View view) {
-        Navigator.onChooseActivity(this);
     }
 
     @OnClick(R.id.btnUpload)
