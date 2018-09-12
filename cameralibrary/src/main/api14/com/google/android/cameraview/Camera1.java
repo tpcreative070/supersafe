@@ -74,6 +74,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
     private int mDisplayOrientation;
 
     private int defaultOrientation ;
+    private boolean isFirst = true;
 
     Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
@@ -90,6 +91,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     boolean start() {
+        Log.d(TAG,"Start Camera");
         /*Adding Sensor Listener*/
         SensorOrientationChangeNotifier.getInstance().addListener(this);
         chooseCamera();
@@ -98,7 +100,13 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             setUpPreview();
         }
         mShowingPreview = true;
-        mCamera.startPreview();
+        if (isFirst){
+            isFirst = false;
+        }
+        else{
+            Log.d(TAG,"startPreview");
+            mCamera.startPreview();
+        }
         return true;
     }
 
@@ -125,6 +133,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                 }
                 mCamera.setPreviewDisplay(mPreview.getSurfaceHolder());
                 if (needsToStopPreview) {
+                    Log.d(TAG,"startPreview");
                     mCamera.startPreview();
                 }
             } else {
@@ -253,6 +262,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
                     isPictureCaptureInProgress.set(false);
                     mCallback.onPictureTaken(data,mDisplayOrientation);
                     camera.cancelAutoFocus();
+                    Log.d(TAG,"startPreview");
                     camera.startPreview();
                 }
             });
@@ -273,6 +283,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
             }
             mCamera.setDisplayOrientation(calcDisplayOrientation(defaultOrientation));
             if (needsToStopPreview) {
+                Log.d(TAG,"startPreview");
                 mCamera.startPreview();
             }
         }
@@ -381,6 +392,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
         setFlashInternal(mFlash);
         mCamera.setParameters(mCameraParameters);
         if (mShowingPreview) {
+            Log.d(TAG,"startPreview");
             mCamera.startPreview();
         }
     }

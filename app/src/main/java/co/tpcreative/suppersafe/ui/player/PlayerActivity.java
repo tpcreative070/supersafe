@@ -15,9 +15,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.File;
@@ -65,6 +63,7 @@ public class PlayerActivity extends BaseActivity implements PlayerViews{
         if (mCipher!=null){
             presenter.onGetIntent(this);
         }
+
     }
 
 

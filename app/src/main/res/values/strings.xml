@@ -222,6 +222,7 @@
     <string name="slide_show">Slideshow</string>
     <string name="ask_delete">Are you sure you want to delete this item ?</string>
     <string name="progressing">Progressing...</string>
+    <string name="done">Done</string>
 
 
     <string name="key_user">user</string>
