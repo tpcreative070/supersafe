@@ -347,6 +347,12 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         if (subscriptions!=null){
             subscriptions.dispose();
         }
+        try {
+            storage.deleteFile(Utils.getPackagePath(getApplicationContext()).getAbsolutePath());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void onStartProgressing(){

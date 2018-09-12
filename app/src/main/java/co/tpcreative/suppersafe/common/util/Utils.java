@@ -411,7 +411,7 @@ public class Utils {
 
     public static File getPackagePath(Context context){
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                "temporary.jpg");
+                ".temporary.jpg");
         return file;
     }
 
