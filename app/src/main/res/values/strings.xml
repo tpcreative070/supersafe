@@ -101,9 +101,9 @@
     <string name="album">Add album</string>
     <string name="grant_access">GRANT ACCESS</string>
     <string name="keep_safety">Suppersafe needs access to your file storage</string>
-    <string name="allow">This allows Suppersafe to access and encrypt your photos or videos.</string>
+    <string name="allow">This allows Supersafe to access and encrypt your photos or videos.</string>
     <string name="exit">EXIT</string>
-    <string name="login">SIGN IN with your Supper Safe account email</string>
+    <string name="login">SIGN IN with your Super Safe account email</string>
     <string name="email">Email</string>
     <string name="next">NEXT</string>
     <string name="confirm">Confirm</string>
@@ -114,7 +114,7 @@
     <string name="login_action">SIGN IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
-    <string name="welcome">Welcome to Suppersafe</string>
+    <string name="welcome">Welcome to Supersafe</string>
     <string name="safe_detail">A safe place for your photos or videos</string>
     <string name="title_forget">Add an email in the case you forget</string>
     <string name="name">Name</string>
@@ -233,13 +233,13 @@
     <string name="key_password">password</string>
     <string name="key_password_default">tpcreative.co</string>
     <string name="key_name">name</string>
-    <string name="send_code">Welcome to SupperSafe,\n\n
-        Use the code below to login to SupperSafe Photo Vault. \n\n
+    <string name="send_code">Welcome to SuperSafe,\n\n
+        Use the code below to login to SuperSafe Photo Vault. \n\n
         %1$s \n\n
         Didn’t request an access code? Then you can ignore this email. \n\n
         Your Friends, \n
         The SupperSafe Team</string>
-    <string name="send_code_title">SupperSafe Photo Vault Access Code: %1$s</string>
+    <string name="send_code_title">SuperSafe Photo Vault Access Code: %1$s</string>
     <string name="key_device_id">device_id</string>
     <string name="key_device_type">device_type</string>
     <string name="key_manufacturer">manufacturer</string>
@@ -280,6 +280,6 @@
     <string name="key_png">.png</string>
     <string name="key_mime_type_sdcard_jpg">image/jpeg</string>
     <string name="key_mime_type_sdcard_png">image/png</string>
-    <string name="key_database">db-supper-safe.db</string>
+    <string name="key_database">db-super-safe.db</string>
 
 </resources>

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "co.tpcreative.suppersafe"
+        applicationId "co.tpcreative.supersafe"
         minSdkVersion 17
         targetSdkVersion 27
         versionCode 1

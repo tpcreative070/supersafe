@@ -35,7 +35,7 @@
             android:textSize="@dimen/textsize_title"/>
 
 
-        <co.tpcreative.suppersafe.ui.lockscreen.IndicatorDots
+        <co.tpcreative.supersafe.ui.lockscreen.IndicatorDots
             android:layout_centerInParent="true"
             android:layout_below="@+id/title"
             android:id="@+id/indicator_dots"
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <co.tpcreative.suppersafe.ui.lockscreen.PinLockView
+            <co.tpcreative.supersafe.ui.lockscreen.PinLockView
                 android:layout_centerInParent="true"
                 android:id="@+id/pinlockView"
                 android:layout_width="match_parent"
