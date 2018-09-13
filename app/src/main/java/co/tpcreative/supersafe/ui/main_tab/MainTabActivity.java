@@ -329,7 +329,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             String inFileName = getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
             File dbFile = new File(inFileName);
             FileInputStream fis = new FileInputStream(dbFile);
-            String outFileName = SuperSafeApplication.getInstance().getSupperSafe()+"/database_copy.db";
+            String outFileName = SuperSafeApplication.getInstance().getSuperSafe()+"/database_copy.db";
 
             if (!storage.isFileExist(inFileName)){
                 Utils.Log(TAG,"Path is not existing :" + SuperSafeApplication.getInstance().getPathDatabase());

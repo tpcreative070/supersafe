@@ -247,7 +247,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
         DownloadFileRequest request = new DownloadFileRequest();
         request.api_name = String.format(getString(R.string.url_drive_download),"1Uah6aCFKrihJx2tyxEC-n94ShkMFku8YI-fZJZZGT1ZQE4js85g");
         request.file_name = "20180823_161706.jpg";
-        request.path_folder_output  = SuperSafeApplication.getInstance().getSupperSafe();
+        request.path_folder_output  = SuperSafeApplication.getInstance().getSuperSafe();
         final User mUser = User.getInstance().getUserInfo();
         request.Authorization = mUser.access_token;
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {

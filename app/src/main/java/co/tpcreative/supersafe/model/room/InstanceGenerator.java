@@ -11,20 +11,13 @@ import java.util.UUID;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.History;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.Save;
 
-@Database(entities = {History.class, Save.class, Items.class}, version = 1, exportSchema = false)
+@Database(entities = {Items.class}, version = 1, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
     private static InstanceGenerator instance;
-
-    @Ignore
-    public abstract HistoryDao historyDao();
-    @Ignore
-    public abstract SaveDao saveDao();
 
     @Ignore
     public abstract ItemsDao itemsDao();
@@ -51,85 +44,6 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return ""+System.currentTimeMillis();
         }
     }
-
-    public synchronized void onInsert(History cTalkManager){
-        try {
-            if (cTalkManager==null){
-                return;
-            }
-            instance.historyDao().insert(cTalkManager);
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-    }
-
-    public final synchronized List<History> getList(){
-        try{
-            return instance.historyDao().loadAll();
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-        return null;
-    }
-
-    public final synchronized boolean onDelete(History entity){
-        try{
-            instance.historyDao().delete(entity);
-            return true;
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-        return false;
-    }
-
-    public synchronized void onInsert(Save cTalkManager){
-        try {
-            if (cTalkManager==null){
-                return;
-            }
-            instance.saveDao().insert(cTalkManager);
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-    }
-
-    public synchronized void onUpdate(Save cTalkManager){
-        try {
-            if (cTalkManager==null){
-                return;
-            }
-            instance.saveDao().update(cTalkManager);
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-    }
-
-    public final synchronized List<Save> getListSave(){
-        try{
-            return instance.saveDao().loadAll();
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-        return null;
-    }
-
-    public final synchronized boolean onDelete(Save entity){
-        try{
-            instance.saveDao().delete(entity);
-            return true;
-        }
-        catch (Exception e){
-            Log.d(TAG,e.getMessage());
-        }
-        return false;
-    }
-
 
 
     /*Items action*/

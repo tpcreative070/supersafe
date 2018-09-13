@@ -259,7 +259,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                             final Items items = presenter.mList.get(viewPager.getCurrentItem());
                             String  input = items.originalPath;
                             if (storage.isFileExist(input)){
-                                String output = SuperSafeApplication.getInstance().getSupperSafe()+items.name+items.fileExtension;
+                                String output = SuperSafeApplication.getInstance().getSuperSafe()+items.name+items.fileExtension;
                                 Utils.Log(TAG,output);
                                 exportFile(output,input);
                             }

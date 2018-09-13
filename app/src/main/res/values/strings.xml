@@ -53,7 +53,7 @@
     <!-- TODO(user): replace with your real server client ID -->
     <!-- Server Client ID.  This should be a valid Web OAuth 2.0 Client ID obtained
          from https://console.developers.google.com/ -->
-    <string name="server_client_id">1076955648444-ab5isinjq4r80l7if7entekdldlk0ffj.apps.googleusercontent.com</string>
+    <string name="server_client_id">789377331744-tmo35q55ba00kn55213q9od4cutk3vt3.apps.googleusercontent.com</string>
 
     <string name="download_progress">Download Progress:</string>
     <string name="menu_settings">Settings</string>
@@ -162,7 +162,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.101:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>

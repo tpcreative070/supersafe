@@ -442,7 +442,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
 
 
-                       String rootPath = SuperSafeApplication.getInstance().getSupperSafe();
+                       String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
                        String currentTime = Utils.getCurrentDateTime();
                        String uuId = Utils.getUUId();
                        String pathContent = rootPath + uuId+"/";
@@ -514,7 +514,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                MediaStore.Images.Thumbnails.MINI_KIND,
                                options);
 
-                       String rootPath = SuperSafeApplication.getInstance().getSupperSafe();
+                       String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
                        String currentTime = Utils.getCurrentDateTime();
                        String uuId = Utils.getUUId();
                        String pathContent = rootPath + uuId+"/";

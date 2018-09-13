@@ -502,7 +502,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 request.api_name = String.format(getString(R.string.url_drive_download), itemObject.global_id);
                                 request.file_name = itemObject.name;
                                 request.Authorization = mUser.access_token;
-                                String path = SuperSafeApplication.getInstance().getSupperSafe();
+                                String path = SuperSafeApplication.getInstance().getSuperSafe();
                                 String pathFolder = path + itemObject.local_id + "/";
                                 request.path_folder_output = pathFolder;
 
@@ -721,7 +721,7 @@ public class ServiceManager implements SuperSafeServiceView {
     public void testLoop(){
         subscriptions = Observable.create(subscriber -> {
             for (int i = 0 ; i< 10;i++){
-                Utils.Log(TAG,"loop "+ i);
+               // Utils.Log(TAG,"loop "+ i);
             }
             subscriber.onNext(true);
             subscriber.onComplete();

@@ -210,7 +210,7 @@ public class CameraActivity extends BaseActivity implements
                 try {
                     thumbnail = Utils.getThumbnailScale(data);
                     originalFile = new ByteArrayInputStream(data);
-                    String path = SuperSafeApplication.getInstance().getSupperSafe();
+                    String path = SuperSafeApplication.getInstance().getSuperSafe();
                     String currentTime = Utils.getCurrentDateTime();
                     String uuId = Utils.getUUId();
                     String pathContent = path + uuId+"/";
