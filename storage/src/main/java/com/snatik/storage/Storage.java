@@ -140,7 +140,7 @@ public class Storage {
         return true;
     }
 
-    public void createFile(File output,File input, int mode){
+    public boolean createFile(File output,File input, int mode){
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(input);
@@ -158,8 +158,10 @@ public class Storage {
             fOutputStream.flush();
             fOutputStream.close();
             inputStream.close();
+            return true;
         } catch (IOException ex) {
             ex.printStackTrace();
+            return false;
         }
         finally {
             if (inputStream != null) {
@@ -202,11 +204,10 @@ public class Storage {
         }
     }
 
-
-    public void createLargeFile(File output, File input, Cipher mCipher){
+    public void createLargeFile(File output, File input, Cipher mCipher,int count){
 
         if (mConfiguration == null || !mConfiguration.isEncrypted()) {
-           return;
+            return;
         }
 
         FileInputStream inputStream = null;
@@ -216,7 +217,7 @@ public class Storage {
             FileOutputStream outputStream = new FileOutputStream(output);
             cipherOutputStream = new CipherOutputStream(outputStream, mCipher);
             //note the following line
-            byte buffer[] = new byte[1024 * 1024];
+            byte buffer[] = new byte[count];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 Log.d(getClass().getCanonicalName(), "writing from File path...");
@@ -235,6 +236,39 @@ public class Storage {
                 } catch (IOException ignored) {}
             }
         }
+    }
+
+
+    public boolean createLargeFile( File output,File input,Cipher mCipher){
+
+        if (mConfiguration == null || !mConfiguration.isEncrypted()) {
+           return false;
+        }
+
+        FileInputStream inputStream = null;
+        CipherOutputStream cipherOutputStream;
+        try {
+            inputStream = new FileInputStream(input);
+            FileOutputStream outputStream = new FileOutputStream(output);
+            cipherOutputStream = new CipherOutputStream(outputStream, mCipher);
+            //note the following line
+            byte buffer[] = new byte[1024 * 1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                Log.d(getClass().getCanonicalName(), "writing from File path...");
+                cipherOutputStream.write(buffer, 0, bytesRead);
+            }
+            cipherOutputStream.close();
+            outputStream.flush();
+            outputStream.close();
+            inputStream.close();
+            return true;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+        }
+        return false;
     }
 
     public void createLargeFile(File output, File input, Cipher mCipher,OnStorageListener listener){

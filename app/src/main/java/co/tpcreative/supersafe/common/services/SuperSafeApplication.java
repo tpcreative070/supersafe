@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
@@ -23,6 +24,8 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -418,5 +421,15 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     }
 
 
+    public File getPackagePath(Context context){
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                ".temporary.jpg");
+        return file;
+    }
+
+    public File getPackageFolderPath(Context context){
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+        return file;
+    }
 
 }

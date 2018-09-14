@@ -63,9 +63,13 @@ import co.tpcreative.supersafe.model.EnumTypeFile;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.camera.CameraActivity;
+import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -126,6 +130,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         storage = new Storage(this);
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
+
 
     }
 
@@ -389,57 +394,65 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
            final String mPath = path;
            final String mMimeType = mimeType;
            final String mVideo_id = id;
-           final Items mItem;
           // InputStream originalFile = null;
            Bitmap thumbnail = null;
            switch (enumTypeFile){
                case IMAGE:
 
                    Utils.Log(TAG,"Start RXJava Image Progressing");
-
                    Items items = null;
                    try {
 
-                       final int THUMBSIZE_HEIGHT = 600;
-                       final int THUMBSIZE_WIDTH = 400;
+//                       final int THUMBSIZE_HEIGHT = 600;
+//                       final int THUMBSIZE_WIDTH = 400;
+//
+//
+//                       BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+//                       bmpFactoryOptions.inJustDecodeBounds = true;
+//                       Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
+//                       int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
+//                       int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
+//                       if(heightRatio > 1 || widthRatio > 1)
+//                       {
+//                           if(heightRatio > widthRatio)
+//                           {
+//                               bmpFactoryOptions.inSampleSize = heightRatio;
+//                           }
+//                           else
+//                           {
+//                               bmpFactoryOptions.inSampleSize = widthRatio;
+//                           }
+//                       }
+//                       bmpFactoryOptions.inJustDecodeBounds = false;
+//                       bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
+//
+//                       thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
+//                               THUMBSIZE_HEIGHT,
+//                               THUMBSIZE_WIDTH);
+//                       ExifInterface exifInterface = new ExifInterface(mPath);
+//                       int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+//                       Log.d("EXIF", "Exif: " + orientation);
+//                       Matrix matrix = new Matrix();
+//                       if (orientation == 6) {
+//                           matrix.postRotate(90);
+//                       }
+//                       else if (orientation == 3) {
+//                           matrix.postRotate(180);
+//                       }
+//                       else if (orientation == 8) {
+//                           matrix.postRotate(270);
+//                       }
+//                       thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
 
 
-                       BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
-                       bmpFactoryOptions.inJustDecodeBounds = true;
-                       Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
-                       int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
-                       int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
-                       if(heightRatio > 1 || widthRatio > 1)
-                       {
-                           if(heightRatio > widthRatio)
-                           {
-                               bmpFactoryOptions.inSampleSize = heightRatio;
-                           }
-                           else
-                           {
-                               bmpFactoryOptions.inSampleSize = widthRatio;
-                           }
-                       }
-                       bmpFactoryOptions.inJustDecodeBounds = false;
-                       bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
 
-                       thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
-                               THUMBSIZE_HEIGHT,
-                               THUMBSIZE_WIDTH);
-                       ExifInterface exifInterface = new ExifInterface(mPath);
-                       int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                       Log.d("EXIF", "Exif: " + orientation);
-                       Matrix matrix = new Matrix();
-                       if (orientation == 6) {
-                           matrix.postRotate(90);
-                       }
-                       else if (orientation == 3) {
-                           matrix.postRotate(180);
-                       }
-                       else if (orientation == 8) {
-                           matrix.postRotate(270);
-                       }
-                       thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
+                       File mFileThumbnail =  new Compressor(AlbumDetailActivity.this)
+                               .setMaxWidth(640)
+                               .setMaxHeight(480)
+                               .setQuality(85)
+                               .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                               .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(AlbumDetailActivity.this).getAbsolutePath())
+                               .compressToFile(new File(mPath),getString(R.string.key_temporary));
 
 
                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
@@ -449,10 +462,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        storage.createDirectory(pathContent);
                        String thumbnailPath = pathContent+"thumbnail_"+currentTime;
                        String originalPath = pathContent+currentTime;
-
-
-                       storage.createFile(thumbnailPath,thumbnail);
-                       storage.createLargeFile(new File(originalPath),new File(mPath),mCipher);
 
 
                        DriveDescription description = new DriveDescription();
@@ -491,14 +500,31 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
 
+
+
+                       Utils.Log(TAG,"start compress");
+                       boolean createdThumbnail = storage.createFile(new File(thumbnailPath),mFileThumbnail,Cipher.ENCRYPT_MODE);
+                       boolean createdOriginal  = storage.createLargeFile(new File(originalPath),new File(mPath),mCipher);
+                       Utils.Log(TAG,"start end");
+
+
+                       if (createdThumbnail && createdOriginal){
+                           subscriber.onNext(items);
+                           subscriber.onComplete();
+                           Utils.Log(TAG,"CreatedFile successful");
+                       }
+                       else{
+                           subscriber.onNext(null);
+                           subscriber.onComplete();
+                           Utils.Log(TAG,"CreatedFile failed");
+                       }
+
                    } catch (Exception e) {
                        Log.w(TAG, "Cannot write to " + e);
                        subscriber.onNext(false);
                        subscriber.onComplete();
                    } finally {
                        Utils.Log(TAG,"Finally");
-                       subscriber.onNext(items);
-                       subscriber.onComplete();
                    }
                    break;
 
@@ -521,10 +547,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        storage.createDirectory(pathContent);
                        String thumbnailPath = pathContent+"thumbnail_"+currentTime;
                        String originalPath = pathContent+currentTime;
-
-
-                       storage.createFile(thumbnailPath,thumbnail);
-                       storage.createLargeFile(new File(originalPath),new File(mPath),mCipher);
 
 
                        DriveDescription description = new DriveDescription();
@@ -557,14 +579,27 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
 
+                       mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
+                       boolean createdThumbnail =  storage.createFile(thumbnailPath,thumbnail);
+                       boolean createdOriginal  = storage.createLargeFile(new File(originalPath),new File(mPath),mCipher);
+
+                       if (createdThumbnail && createdOriginal){
+                           subscriber.onNext(items);
+                           subscriber.onComplete();
+                           Utils.Log(TAG,"CreatedFile successful");
+                       }
+                       else{
+                           subscriber.onNext(null);
+                           subscriber.onComplete();
+                           Utils.Log(TAG,"CreatedFile failed");
+                       }
+
                    } catch (Exception e) {
                        Log.w(TAG, "Cannot write to " + e);
                        subscriber.onNext(null);
                        subscriber.onComplete();
                    } finally {
                        Utils.Log(TAG,"Finally");
-                       subscriber.onNext(items);
-                       subscriber.onComplete();
                    }
                    break;
            }
@@ -632,6 +667,13 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         super.onDestroy();
         if (subscriptions!=null){
            // subscriptions.dispose();
+        }
+
+        try {
+            storage.deleteFile(Utils.getPackagePath(getApplicationContext()).getAbsolutePath());
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

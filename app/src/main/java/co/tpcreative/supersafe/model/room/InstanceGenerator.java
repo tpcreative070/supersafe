@@ -136,6 +136,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final synchronized Items getLocalId(String localId){
+        try{
+            return instance.itemsDao().loadLocalId(localId);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
 
     public final synchronized boolean onDelete(Items entity){
         try{

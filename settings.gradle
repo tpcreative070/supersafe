@@ -10,5 +10,6 @@ include ':app',
         'library-progress',
         'storage',
         'photoview',
-        'library-progress-dialog'
+        'library-progress-dialog',
+        'compressorlibrary'
 

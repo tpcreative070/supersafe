@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.photosslideshow;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -48,10 +50,16 @@ public class PhotoSlideShowPresenter extends Presenter<PhotoSlideShowView>{
         try {
             PhotoSlideShowView view = view();
             final Items items = mList.get(position);
-            InstanceGenerator.getInstance(view.getContext()).onDelete(items);
-            storage.deleteDirectory(items.local_id);
-            mList.remove(position);
-            view.onDeleteSuccessful();
+            final Items mItem = InstanceGenerator.getInstance(view.getContext()).getLocalId(items.local_id);
+            if (mItem!=null){
+                InstanceGenerator.getInstance(view.getContext()).onDelete(mItem);
+                storage.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafe()+mItem.local_id);
+                mList.remove(position);
+                view.onDeleteSuccessful();
+            }
+            else{
+                Utils.Log(TAG,"Not found");
+            }
         }
         catch (Exception e){
             e.printStackTrace();

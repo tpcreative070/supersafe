@@ -198,7 +198,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
         @Override
         public int getItemPosition(@NonNull Object object) {
-            return POSITION_NONE;
+            return PagerAdapter.POSITION_NONE;
         }
     }
 

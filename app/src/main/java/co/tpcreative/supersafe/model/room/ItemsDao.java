@@ -31,6 +31,9 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE globalName = :globalName")
     Items loadItemId(String globalName);
 
+    @Query("Select * FROM items WHERE local_id = :local_id")
+    Items loadLocalId(String local_id);
+
 
     @Query("Select * FROM items")
     List<Items> loadAll();

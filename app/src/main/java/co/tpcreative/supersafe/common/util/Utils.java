@@ -409,6 +409,11 @@ public class Utils {
         return file;
     }
 
+    public static File getPackageFolderPath(Context context){
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+        return file;
+    }
+
     public static Bitmap saveByteArrayBitmap(final byte[] data,final int orientation){
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
         try {
