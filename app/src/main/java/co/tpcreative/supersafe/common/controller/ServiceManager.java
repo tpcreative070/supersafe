@@ -719,6 +719,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 });
     }
 
+    
     public void testLoop(){
         subscriptions = Observable.create(subscriber -> {
             for (int i = 0 ; i< 10;i++){
