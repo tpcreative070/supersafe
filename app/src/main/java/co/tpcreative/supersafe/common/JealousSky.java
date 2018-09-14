@@ -169,7 +169,7 @@ public class JealousSky {
     /**
      * Encryption Method Wrapper
      * @param fileInput InputStream of File to Encrypt
-     * @param fileNameOutput File name of Encrypted File
+     * @param fileNameOutput File thumbnailName of Encrypted File
      * @return Encrypted File
      * @throws NoSuchPaddingException
      * @throws InvalidKeyException
@@ -279,7 +279,7 @@ public class JealousSky {
     /**
      * Decryption Method Wrapper
      * @param fileInput InputStream to Decrypt
-     * @param fileNameOutput File name of Decrypted File
+     * @param fileNameOutput File thumbnailName of Decrypted File
      * @return Decrypted File
      * @throws NoSuchPaddingException
      * @throws InvalidKeyException

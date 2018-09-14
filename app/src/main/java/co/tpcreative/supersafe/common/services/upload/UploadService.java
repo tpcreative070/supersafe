@@ -146,7 +146,7 @@ public class UploadService {
                 for (File index : upload.list) {
                     File sourceFile = new File(index.getAbsolutePath());
                     //builder.addPart("file", new FileBody(sourceFile));
-                    Log.d(TAG,"get name :"+ sourceFile.getName());
+                    Log.d(TAG,"get thumbnailName :"+ sourceFile.getName());
                     ContentBody cbFile = new FileBody(sourceFile, ContentType.create("image/jpeg"),sourceFile.getName());
                     builder.addPart("data",cbFile);
                 }

@@ -28,6 +28,8 @@ import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
+import co.tpcreative.supersafe.model.DriveTitle;
+import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
@@ -248,7 +250,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         DriveApiRequest request = new DriveApiRequest();
         request.mimeType =  DriveFolder.MIME_TYPE;
-        request.name =  folderName;
+        request.thumbnailName =  folderName;
         List<String> mList = new ArrayList<>();
         mList.add(getString(R.string.key_appDataFolder));
         request.parents = mList;
@@ -348,7 +350,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         String access_token = user.access_token;
         Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onCheckInAppFolderExisting(access_token,"name = '"+folderName+"'", getString(R.string.key_appDataFolder))
+        subscriptions.add(SuperSafeApplication.serverDriveApi.onCheckInAppFolderExisting(access_token,"thumbnailName = '"+folderName+"'", getString(R.string.key_appDataFolder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.startLoading())
@@ -470,7 +472,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                 final Map<String,MainCategories> hash = new HashMap<>();
 
                                 for (DriveResponse index : mList){
-                                    hash.put(index.name,new MainCategories(Utils.getHexCode(index.name),index.id,index.name,R.drawable.face_1));
+                                    hash.put(index.thumbnailName,new MainCategories(Utils.getHexCode(index.thumbnailName),index.id,index.thumbnailName,R.drawable.face_1));
                                 }
 
                                 for (Map.Entry<String,MainCategories> index : hash.entrySet()){
@@ -570,16 +572,40 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                             Utils.Log(TAG, "Body list only files count " + onResponse.files.size() + "/" + mListItem.size());
                             final List<DriveResponse> driveResponse = onResponse.files;
                             for (DriveResponse index : driveResponse) {
-
                                 final DriveDescription description = DriveDescription.getInstance().getDriveDescription(index.description);
-                                Utils.Log(TAG,"response special "+ new Gson().toJson(description));
                                 if (description != null) {
-                                    final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(index.name);
-                                    if (items == null) {
-                                        description.global_id = index.id;
-                                        onSaveItem(description);
+                                    String result = Utils.hexToString(index.name);
+                                    DriveTitle driveTitle = new Gson().fromJson(result,DriveTitle.class);
+                                    Utils.Log(TAG,"response special "+ new Gson().toJson(driveTitle));
+                                    if (driveTitle != null) {
+                                        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.globalName);
+                                        if (items==null){
+                                            EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
+                                            switch (enumTypeFile){
+                                                case ORIGINAL:{
+                                                    description.global_original_id = index.id;
+                                                }
+                                                case THUMBNAIL:{
+                                                    description.global_thumbnail_id = index.id;
+                                                }
+                                            }
+                                            onSaveItem(description);
+                                        }
+                                        else{
+                                            EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
+                                            switch (enumTypeFile){
+                                                case ORIGINAL:{
+                                                    items.global_original_id = index.id;
+                                                }
+                                                case THUMBNAIL:{
+                                                    items.global_thumbnail_id = index.id;
+                                                }
+                                            }
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                                            Log.d(TAG, "This item is existing");
+                                        }
                                     } else {
-                                        Log.d(TAG, "This item is existing");
+                                        Log.d(TAG, "Can not convert item");
                                     }
                                 }
                             }
@@ -715,14 +741,19 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
     public void onSaveItem(final DriveDescription description){
         Items items = new Items(false,
+                description.originalSync,
+                description.thumbnailSync,
                 description.degrees,
                 description.fileType,
-                description.name,
+                description.formatType,
+                description.originalName,
+                description.thumbnailName,
                 description.globalName,
-                description.thumbnailPath,
                 description.originalPath ,
+                description.thumbnailPath,
                 description.subFolderName,
-                description.global_id,
+                description.global_original_id,
+                description.global_thumbnail_id,
                 description.localCategories_Id,
                 description.mimeType,
                 description.fileExtension,
@@ -730,7 +761,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 EnumStatus.DOWNLOAD);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
-
 
     public void onUploadFileInAppFolder(final File file,final String id,final String mimeType){
         Log.d(TAG,"Upload File To In App Folder");
@@ -776,8 +806,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
     public void onUploadFileInAppFolder(final Items items ,final ServiceManager.UploadServiceListener listener){
         Log.d(TAG,"Upload File To In App Folder !!!");
-
-
+        SuperSafeServiceView view = view();
         final User mUser = User.getInstance().getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
         HashMap<String,Object> content = new HashMap<>();
@@ -785,10 +814,20 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         if (!storage.isFileExist(items.originalPath)){
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+            view.onError("This original is not found",EnumStatus.UPLOAD);
             return;
         }
 
-        content.put(getString(R.string.key_name),items.globalName);
+        if (items.originalSync){
+            view.onError("This original already synced",EnumStatus.UPLOAD);
+            return;
+        }
+
+        DriveTitle contentTitle = new DriveTitle();
+        contentTitle.globalName = items.globalName;
+        contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
+        String hex = Utils.stringToHex(new Gson().toJson(contentTitle));
+        content.put(getString(R.string.key_name),hex);
         content.put(getString(R.string.key_description),new Gson().toJson(items.description));
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));
@@ -796,7 +835,83 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType,new Gson().toJson(content)));
         Log.d(TAG,"parents: " +new Gson().toJson(content));
 
+
+
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
+            @Override
+            public void onProgressUpdate(int percentage) {
+                Utils.Log(TAG,"Progressing "+ percentage +"%");
+                listener.onProgressUpdate(percentage);
+            }
+            @Override
+            public void onError() {
+                Utils.Log(TAG,"onError");
+                if (view!=null){
+                    view.onError("Error upload",EnumStatus.UPLOAD);
+                }
+                listener.onError();
+            }
+            @Override
+            public void onFinish() {
+                listener.onFinish();
+                Utils.Log(TAG,"onFinish");
+            }
+        });
+
+        fileBody.setContentType(items.mimeType);
+        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
+
+        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload),mUser.access_token,metaPart,dataPart,items.mimeType);
+        request.enqueue(new Callback<DriveResponse>(){
+            @Override
+            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
+                Utils.Log(TAG,"response successful :"+ new Gson().toJson(response.body()));
+                listener.onResponseData(response.body());
+            }
+            @Override
+            public void onFailure(Call<DriveResponse> call, Throwable t) {
+                Utils.Log(TAG,"response failed :"+ t.getMessage());
+                if (view!=null){
+                    view.onError("Error upload" + t.getMessage(),EnumStatus.UPLOAD);
+                }
+                listener.onFailure();
+            }
+        });
+    }
+
+
+    public void onUploadThumbnailFileInAppFolder(final Items items ,final ServiceManager.UploadServiceListener listener){
+        Log.d(TAG,"Upload File To In App Folder !!!");
         SuperSafeServiceView view = view();
+        final User mUser = User.getInstance().getUserInfo();
+        MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
+        HashMap<String,Object> content = new HashMap<>();
+        final File file = new File(items.thumbnailPath);
+
+        if (!storage.isFileExist(items.thumbnailPath)){
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+            view.onError("This thumbnail is not found",EnumStatus.UPLOAD);
+            return;
+        }
+
+        if (items.thumbnailSync){
+            view.onError("This thumbnail already synced",EnumStatus.UPLOAD);
+            return;
+        }
+
+        DriveTitle contentTitle = new DriveTitle();
+        contentTitle.globalName = items.globalName;
+        contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
+        String hex = Utils.stringToHex(new Gson().toJson(contentTitle));
+        content.put(getString(R.string.key_name),hex);
+        content.put(getString(R.string.key_description),new Gson().toJson(items.description));
+        List<String> list = new ArrayList<>();
+        list.add(getString(R.string.key_appDataFolder));
+        content.put(getString(R.string.key_parents),list);
+        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType,new Gson().toJson(content)));
+        Log.d(TAG,"parents: " +new Gson().toJson(content));
+
+
 
         ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
             @Override
@@ -842,6 +957,80 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
 
     public void onDownloadFile(final DownloadFileRequest request,final ServiceManager.DownloadServiceListener listener){
+        SuperSafeServiceView view = view();
+        Utils.Log(TAG,"onDownloadFile !!!!");
+        downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
+            @Override
+            public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
+                Utils.Log(TAG,"onDownLoadCompleted "+ file_name.getAbsolutePath());
+                listener.onDownLoadCompleted(file_name,request);
+            }
+
+            @Override
+            public void onDownLoadError(String error) {
+                listener.onError(error);
+                Utils.Log(TAG,"onDownLoadError "+ error);
+                if (view!=null){
+                    view.onError("Error download " + error,EnumStatus.DOWNLOAD);
+                }
+            }
+
+            @Override
+            public void onProgressingDownloading(int percent) {
+                listener.onProgressDownload(percent);
+                Utils.Log(TAG,"Progressing "+ percent +"%");
+            }
+
+            @Override
+            public void onAttachmentElapsedTime(long elapsed) {
+
+            }
+
+            @Override
+            public void onAttachmentAllTimeForDownloading(long all) {
+
+            }
+
+            @Override
+            public void onAttachmentRemainingTime(long all) {
+
+            }
+
+            @Override
+            public void onAttachmentSpeedPerSecond(double all) {
+
+            }
+
+            @Override
+            public void onAttachmentTotalDownload(long totalByte, long totalByteDownloaded) {
+
+            }
+
+            @Override
+            public void onSavedCompleted() {
+                Utils.Log(TAG,"onSavedCompleted ");
+            }
+
+            @Override
+            public void onErrorSave(String name) {
+                listener.onError(name);
+                Utils.Log(TAG,"onErrorSave");
+                if (view!=null){
+                    view.onError("Error download save " + name,EnumStatus.DOWNLOAD);
+                }
+            }
+
+            @Override
+            public void onCodeResponse(int code, DownloadFileRequest request) {
+
+            }
+        },"https://www.googleapis.com/drive/v3/files/");
+        request.mapHeader = new HashMap<>();
+        request.mapObject = new HashMap<>();
+        downloadService.downloadDriveFileByGET(request);
+    }
+
+    public void onDownloadThumbnailFile(final DownloadFileRequest request,final ServiceManager.DownloadServiceListener listener){
         SuperSafeServiceView view = view();
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override
@@ -913,6 +1102,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         request.mapObject = new HashMap<>();
         downloadService.downloadDriveFileByGET(request);
     }
+
 
 
     public void getDriveAbout(SuperSafeServiceView view){

@@ -25,8 +25,10 @@ import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.util.Hex;
+import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
+
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -554,8 +556,7 @@ public class Utils {
     }
 
     public static String getHexCode(String value){
-        String hexString = Hex.bytesToStringUppercase(value.getBytes(Charsets.UTF_8));
-        return hexString;
+        return Base64.encodeBase64String(value.getBytes(Charsets.UTF_8));
     }
 
     public void onWriteLargeFile(File input,File output){
@@ -685,5 +686,21 @@ public class Utils {
         animate.setFillAfter(true);
         view.startAnimation(animate);
     }
+
+    public static String stringToHex(String content){
+        return Base64.encodeBase64String(content.getBytes(Charsets.UTF_8));
+    }
+
+    public static String hexToString(String hex){
+        try {
+            byte[] data= Base64.decodeBase64(hex.getBytes());
+            return new String(data,Charsets.UTF_8);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

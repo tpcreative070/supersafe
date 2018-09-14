@@ -16,17 +16,18 @@ public class DriveDescription implements Serializable{
     public String originalPath;
     public String thumb;
     public String local_id;
-    public String global_id;
+    public String global_original_id;
+    public String global_thumbnail_id;
     public String subFolderName;
     public String mimeType;
-    public String name;
+    public String thumbnailName;
+    public String originalName;
     public String globalName;
     public int degrees;
+    public int formatType;
+    public boolean thumbnailSync;
+    public boolean originalSync;
     public int fileType;
-
-
-
-
 
 
     private static DriveDescription instance;

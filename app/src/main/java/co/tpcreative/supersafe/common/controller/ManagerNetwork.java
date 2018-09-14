@@ -122,7 +122,7 @@ public class ManagerNetwork {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", email);
                 params.put("password", "tpcreative.co");
-                params.put("name",name);
+                params.put("thumbnailName",name);
                 return params;
             }
         };

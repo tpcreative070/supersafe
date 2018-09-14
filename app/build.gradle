@@ -181,6 +181,10 @@ dependencies {
     /*Compress image*/
     implementation project(':compressorlibrary')
 
+    /*Apache common hex*/
+
+    implementation 'commons-codec:commons-codec:1.9'
+
 
 }
 

@@ -35,7 +35,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumTypeFile;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
@@ -130,7 +130,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
 
             final Items mItems = presenter.mList.get(position);
-            EnumTypeFile enumTypeFile = EnumTypeFile.values()[mItems.fileType];
+            EnumFormatType enumTypeFile = EnumFormatType.values()[mItems.formatType];
 
             photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
@@ -259,7 +259,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                             final Items items = presenter.mList.get(viewPager.getCurrentItem());
                             String  input = items.originalPath;
                             if (storage.isFileExist(input)){
-                                String output = SuperSafeApplication.getInstance().getSuperSafe()+items.name+items.fileExtension;
+                                String output = SuperSafeApplication.getInstance().getSuperSafe()+items.thumbnailName +items.fileExtension;
                                 Utils.Log(TAG,output);
                                 exportFile(output,input);
                             }

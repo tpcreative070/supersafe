@@ -1,16 +1,11 @@
 package co.tpcreative.supersafe.ui.camera;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +15,9 @@ import com.google.android.cameraview.CameraView;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-import java.io.ByteArrayInputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 
 import javax.crypto.Cipher;
@@ -35,12 +28,13 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
+import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.EnumTypeFile;
+
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
 import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -239,22 +233,35 @@ public class CameraActivity extends BaseActivity implements
                 description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
                 description.nameMainCategories = MainCategories.getInstance().intent_name;
                 description.local_id = uuId;
-                description.global_id = null;
+                description.global_original_id = null;
                 description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
-                description.name = currentTime;
+                description.thumbnailName = currentTime;
                 description.globalName = uuId;
-                description.fileType = EnumTypeFile.IMAGE.ordinal();
+                description.formatType = EnumFormatType.IMAGE.ordinal();
                 description.degrees = 0;
+                description.thumbnailSync = false;
+                description.originalSync = false;
+                description.global_thumbnail_id = null;
+                description.fileType = EnumFileType.NONE.ordinal();
+                description.originalName = currentTime;
+                description.thumbnailName = "thumbnail_"+currentTime;
+
+
 
                 Items items = new Items(false,
+                        description.originalSync,
+                        description.thumbnailSync,
                         description.degrees,
                         description.fileType,
-                        description.name,
+                        description.formatType,
+                        description.originalName,
+                        description.thumbnailName ,
                         description.globalName,
-                        description.thumbnailPath,
                         description.originalPath ,
+                        description.thumbnailPath,
                         description.local_id,
-                        null,
+                        description.global_original_id,
+                        description.global_thumbnail_id,
                         description.localCategories_Id,
                         description.mimeType,
                         description.fileExtension,

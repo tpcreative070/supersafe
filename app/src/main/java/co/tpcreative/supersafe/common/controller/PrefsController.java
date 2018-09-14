@@ -19,7 +19,7 @@ public final class PrefsController {
 
     /**
      * Initialize the Prefs helper class to keep a reference to the SharedPreference for this
-     * application the SharedPreference will use the package name of the application as the Key.
+     * application the SharedPreference will use the package thumbnailName of the application as the Key.
      * <p/>
      * This method is deprecated please us the new builder.
      *
@@ -67,10 +67,10 @@ public final class PrefsController {
     }
 
     /**
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue Value to return if this preference does not exist.
      * @return Returns the preference value if it exists, or defValue.  Throws
-     * ClassCastException if there is a preference with this name that is not
+     * ClassCastException if there is a preference with this thumbnailName that is not
      * an int.
      * @see SharedPreferences#getInt(String, int)
      */
@@ -79,10 +79,10 @@ public final class PrefsController {
     }
 
     /**
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue Value to return if this preference does not exist.
      * @return Returns the preference value if it exists, or defValue.  Throws
-     * ClassCastException if there is a preference with this name that is not
+     * ClassCastException if there is a preference with this thumbnailName that is not
      * a boolean.
      * @see SharedPreferences#getBoolean(String, boolean)
      */
@@ -91,10 +91,10 @@ public final class PrefsController {
     }
 
     /**
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue Value to return if this preference does not exist.
      * @return Returns the preference value if it exists, or defValue.  Throws
-     * ClassCastException if there is a preference with this name that is not
+     * ClassCastException if there is a preference with this thumbnailName that is not
      * a long.
      * @see SharedPreferences#getLong(String, long)
      */
@@ -105,10 +105,10 @@ public final class PrefsController {
     /**
      * Returns the double that has been saved as a long raw bits value in the long preferences.
      *
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue the double Value to return if this preference does not exist.
      * @return Returns the preference value if it exists, or defValue.  Throws
-     * ClassCastException if there is a preference with this name that is not
+     * ClassCastException if there is a preference with this thumbnailName that is not
      * a long.
      * @see SharedPreferences#getLong(String, long)
      */
@@ -117,10 +117,10 @@ public final class PrefsController {
     }
 
     /**
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue Value to return if this preference does not exist.
      * @return Returns the preference value if it exists, or defValue.  Throws
-     * ClassCastException if there is a preference with this name that is not
+     * ClassCastException if there is a preference with this thumbnailName that is not
      * a float.
      * @see SharedPreferences#getFloat(String, float)
      */
@@ -129,10 +129,10 @@ public final class PrefsController {
     }
 
     /**
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue Value to return if this preference does not exist.
      * @return Returns the preference value if it exists, or defValue.  Throws
-     * ClassCastException if there is a preference with this name that is not
+     * ClassCastException if there is a preference with this thumbnailName that is not
      * a String.
      * @see SharedPreferences#getString(String, String)
      */
@@ -142,10 +142,10 @@ public final class PrefsController {
 
 
     /**
-     * @param key      The name of the preference to retrieve.
+     * @param key      The thumbnailName of the preference to retrieve.
      * @param defValue Value to return if this preference does not exist.
      * @return Returns the preference values if they exist, or defValues.
-     * Throws ClassCastException if there is a preference with this name
+     * Throws ClassCastException if there is a preference with this thumbnailName
      * that is not a Set.
      * @see SharedPreferences#getStringSet(String, Set)
      */
@@ -171,7 +171,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The new value for the preference.
      * @see Editor#putLong(String, long)
      */
@@ -186,7 +186,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The new value for the preference.
      * @see Editor#putInt(String, int)
      */
@@ -203,7 +203,7 @@ public final class PrefsController {
     /**
      * Saves the double as a long raw bits inside the preferences.
      *
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The double value to be save in the preferences.
      * @see Editor#putLong(String, long)
      */
@@ -218,7 +218,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The new value for the preference.
      * @see Editor#putFloat(String, float)
      */
@@ -233,7 +233,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The new value for the preference.
      * @see Editor#putBoolean(String, boolean)
      */
@@ -248,7 +248,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The new value for the preference.
      * @see Editor#putString(String, String)
      */
@@ -263,7 +263,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key   The name of the preference to modify.
+     * @param key   The thumbnailName of the preference to modify.
      * @param value The new value for the preference.
      * @see Editor#putStringSet(String, Set)
      */
@@ -298,7 +298,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key The name of the preference to remove.
+     * @param key The thumbnailName of the preference to remove.
      * @see Editor#remove(String)
      */
     public static void remove(final String key) {
@@ -324,7 +324,7 @@ public final class PrefsController {
     }
 
     /**
-     * @param key The name of the preference to check.
+     * @param key The thumbnailName of the preference to check.
      * @return true if preference contains this key value.
      * @see SharedPreferences#contains(String)
      */
@@ -351,7 +351,7 @@ public final class PrefsController {
     }
 
     /**
-     * Builder class for the EasyPrefs instance. You only have to call this once in the Application onCreate. And in the rest of the code base you can call Prefs.method name.
+     * Builder class for the EasyPrefs instance. You only have to call this once in the Application onCreate. And in the rest of the code base you can call Prefs.method thumbnailName.
      */
     public final static class Builder {
         private String mKey;
@@ -401,9 +401,9 @@ public final class PrefsController {
         }
 
         /**
-         * Set the default sharedpreference file name. Often the package name of the application is used, but if the {@link android.preference.PreferenceActivity} or {@link android.preference.PreferenceFragment} is used android append that with _preference.
+         * Set the default sharedpreference file thumbnailName. Often the package thumbnailName of the application is used, but if the {@link android.preference.PreferenceActivity} or {@link android.preference.PreferenceFragment} is used android append that with _preference.
          *
-         * @param defaultSharedPreference true if default sharedpreference name should used.
+         * @param defaultSharedPreference true if default sharedpreference thumbnailName should used.
          * @return the {@link com.pixplicity.easyprefs.library.Prefs.Builder} object.
          */
         public Builder setUseDefaultSharedPreference(boolean defaultSharedPreference) {

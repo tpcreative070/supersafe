@@ -20,7 +20,7 @@ import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.model.EnumTypeFile;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 
 public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
@@ -90,7 +90,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         .apply(options)
                         .into(imgAlbum);
                 
-                EnumTypeFile enumTypeFile = EnumTypeFile.values()[data.fileType];
+                EnumFormatType enumTypeFile = EnumFormatType.values()[data.formatType];
                 switch (enumTypeFile){
                     case VIDEO:{
                         imgVideoCam.setVisibility(View.VISIBLE);

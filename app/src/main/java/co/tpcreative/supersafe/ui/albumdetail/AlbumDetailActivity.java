@@ -9,16 +9,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.media.ExifInterface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -58,18 +55,16 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
+import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.EnumTypeFile;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.camera.CameraActivity;
 import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.observers.ConsumerSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -369,9 +364,9 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                         Log.d(TAG, "mimeType " + mimeType);
                         Log.d(TAG, "path " + path);
                         if (mimeType.equals(getString(R.string.key_mime_type_sdcard_jpg)) || mimeType.equals(getString(R.string.key_mime_type_sdcard_png))) {
-                            onUploadFileRXJava(EnumTypeFile.IMAGE, path, mimeType, id);
+                            onUploadFileRXJava(EnumFormatType.IMAGE, path, mimeType, id);
                         } else {
-                            onUploadFileRXJava(EnumTypeFile.VIDEO, path, mimeType, id);
+                            onUploadFileRXJava(EnumFormatType.VIDEO, path, mimeType, id);
                         }
                     }
                 }
@@ -387,10 +382,10 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         }
     }
 
-    public void onUploadFileRXJava(final EnumTypeFile  status,final String path,String mimeType,String id){
+    public void onUploadFileRXJava(final EnumFormatType  status,final String path,String mimeType,String id){
         subscriptions = Observable.create(subscriber -> {
 
-           final EnumTypeFile enumTypeFile = status;
+           final EnumFormatType enumTypeFile = status;
            final String mPath = path;
            final String mMimeType = mimeType;
            final String mVideo_id = id;
@@ -478,29 +473,38 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
                        description.nameMainCategories = MainCategories.getInstance().intent_name;
                        description.local_id = uuId;
-                       description.global_id = null;
+                       description.global_original_id = null;
                        description.mimeType = mMimeType;
-                       description.name = currentTime;
+                       description.thumbnailName = currentTime;
                        description.globalName = uuId;
-                       description.fileType = EnumTypeFile.IMAGE.ordinal();
+                       description.formatType = EnumFormatType.IMAGE.ordinal();
                        description.degrees = 0;
+                       description.thumbnailSync = false;
+                       description.originalSync = false;
+                       description.global_thumbnail_id = null;
+                       description.fileType = EnumFileType.NONE.ordinal();
+                       description.originalName = currentTime;
+                       description.thumbnailName = "thumbnail_"+currentTime;
 
                        items = new Items(false,
+                               description.originalSync,
+                               description.thumbnailSync,
                                description.degrees,
                                description.fileType,
-                               description.name,
+                               description.formatType,
+                               description.originalName,
+                               description.thumbnailName ,
                                description.globalName,
-                               description.thumbnailPath,
                                description.originalPath ,
+                               description.thumbnailPath,
                                description.local_id,
-                               null,
+                               description.global_original_id,
+                               description.global_thumbnail_id,
                                description.localCategories_Id,
                                description.mimeType,
                                description.fileExtension,
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
-
-
 
                        Utils.Log(TAG,"start compress");
                        boolean createdThumbnail = storage.createFile(new File(thumbnailPath),mFileThumbnail,Cipher.ENCRYPT_MODE);
@@ -557,22 +561,34 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
                        description.nameMainCategories = MainCategories.getInstance().intent_name;
                        description.local_id = uuId;
-                       description.global_id = null;
+                       description.global_original_id = null;
                        description.mimeType = mMimeType;
-                       description.name = currentTime;
+                       description.thumbnailName = currentTime;
                        description.globalName = uuId;
-                       description.fileType = EnumTypeFile.VIDEO.ordinal();
+                       description.formatType = EnumFormatType.VIDEO.ordinal();
                        description.degrees = 0;
+                       description.thumbnailSync = false;
+                       description.originalSync = false;
+                       description.global_thumbnail_id = null;
+                       description.fileType = EnumFileType.NONE.ordinal();
+                       description.originalName = currentTime;
+                       description.thumbnailName = "thumbnail_"+currentTime;
+
 
                        items = new Items(false,
-                               description.degrees ,
+                               description.originalSync,
+                               description.thumbnailSync,
+                               description.degrees,
                                description.fileType,
-                               description.name,
+                               description.formatType,
+                               description.originalName,
+                               description.thumbnailName ,
                                description.globalName,
-                               description.thumbnailPath,
                                description.originalPath ,
+                               description.thumbnailPath,
                                description.local_id,
-                               null,
+                               description.global_original_id,
+                               description.global_thumbnail_id,
                                description.localCategories_Id,
                                description.mimeType,
                                description.fileExtension,
