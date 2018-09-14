@@ -240,15 +240,12 @@ public class Storage {
         }
     }
 
-    public boolean createLargeFile(File output,File input,Cipher mCipher){
-
-
-
+    public boolean createLargeFile(File output,File input,Cipher cipher){
+        final Cipher mCipher = cipher;
         Log.d(TAG,"Call here");
         if (mConfiguration == null || !mConfiguration.isEncrypted()) {
            return false;
         }
-
         FileInputStream inputStream = null;
         CipherOutputStream cipherOutputStream;
         try {

@@ -47,10 +47,15 @@ import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
+import com.snatik.storage.security.SecurityUtil;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -85,8 +90,9 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     private SlidrConfig mConfig;
     private Disposable subscriptions;
     private Storage storage;
+    private Storage mStorage;
     private Cipher mCipher;
-
+    private Cipher mCiphers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,10 +132,14 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         Utils.Log(TAG,Utils.getCurrentDateTime());
 
         storage = new Storage(this);
+
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
 
 
+        mStorage = new Storage(this);
+        mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
     }
 
     @Override
@@ -386,6 +396,10 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     }
 
     public void onUploadFileRXJava(final EnumFormatType  status,final String path,String mimeType,String id){
+
+//        final  Storage storage = new Storage(SuperSafeApplication.getInstance());
+//        storage.setEncryptConfiguration(storage.getmConfiguration());
+//        Cipher mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
         subscriptions = Observable.create(subscriber -> {
 
            final EnumFormatType enumTypeFile = status;
@@ -393,6 +407,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
            final String mMimeType = mimeType;
            final String mVideo_id = id;
            final Items items ;
+
           // InputStream originalFile = null;
            Bitmap thumbnail = null;
            switch (enumTypeFile){
@@ -598,9 +613,14 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                EnumStatus.UPLOAD);
 
 
-                       mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
+
+
+
+
+
                        boolean createdThumbnail =  storage.createFile(thumbnailPath,thumbnail);
-                       boolean createdOriginal  = storage.createLargeFile(new File(originalPath),new File(mPath),mCipher);
+                       mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
+                       boolean createdOriginal  = mStorage.createLargeFile(new File(originalPath),new File(mPath),mCiphers);
 
                        if (createdThumbnail && createdOriginal){
                            subscriber.onNext(items);
