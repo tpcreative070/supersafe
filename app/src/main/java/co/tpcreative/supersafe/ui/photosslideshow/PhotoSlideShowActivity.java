@@ -217,6 +217,9 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                                if (presenter.mList.size()>0){
                                    presenter.onDelete(viewPager.getCurrentItem());
                                }
+                               else{
+                                   onBackPressed();
+                               }
                            }
                        }
                        catch (Exception e){
@@ -259,7 +262,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                             final Items items = presenter.mList.get(viewPager.getCurrentItem());
                             String  input = items.originalPath;
                             if (storage.isFileExist(input)){
-                                String output = SuperSafeApplication.getInstance().getSuperSafe()+items.thumbnailName +items.fileExtension;
+                                String output = SuperSafeApplication.getInstance().getSuperSafe()+items.originalName +items.fileExtension;
                                 Utils.Log(TAG,output);
                                 exportFile(output,input);
                             }
@@ -338,6 +341,9 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     public void onDeleteSuccessful() {
         isReload = true;
         adapter.notifyDataSetChanged();
+        if (presenter.mList.size()==0){
+            onBackPressed();
+        }
     }
 
     @Override
@@ -375,8 +381,9 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     }
 
     public void exportFile(String output,String input){
-        mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
         onStartProgressing();
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+        mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
         storage.createLargeFile(new File(output), new File(input),mCipher, new OnStorageListener() {
             @Override
             public void onSuccessful() {
@@ -418,8 +425,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
             final File mPath = Utils.getPackagePath(getApplicationContext());
             try {
-                mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
-                storage.createLargeFile(mPath, new File(mOriginalPath),mCipher, new OnStorageListener() {
+                storage.createFile(mPath, new File(mOriginalPath),Cipher.DECRYPT_MODE, new OnStorageListener() {
                     @Override
                     public void onSuccessful() {
                         Bitmap thumbImage = null;

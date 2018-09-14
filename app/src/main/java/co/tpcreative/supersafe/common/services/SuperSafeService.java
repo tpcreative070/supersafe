@@ -52,6 +52,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     private SupperSafeServiceListener listener;
     private SuperSafeReceiver androidReceiver;
     private DownloadService downloadService;
+    private DownloadService downloadServiceThumbnail;
     protected Storage storage;
     private static final String TAG = SuperSafeService.class.getSimpleName();
 
@@ -66,6 +67,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         super.onCreate();
         Log.d(TAG,"onCreate");
         downloadService = new DownloadService(this);
+        downloadServiceThumbnail = new DownloadService(this);
         storage = new Storage(this);
         onInitReceiver();
         SuperSafeApplication.getInstance().setConnectivityListener(this);
@@ -551,6 +553,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
 
         String access_token = user.access_token;
+        view.onSuccessful(access_token);
         Log.d(TAG,"access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,getString(R.string.key_mime_type_all_files), getString(R.string.key_appDataFolder),getString(R.string.key_specific_fields))
                 .subscribeOn(Schedulers.io())
@@ -569,7 +572,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     else{
                         try {
                             final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems();
-                            Utils.Log(TAG, "Body list only files count " + onResponse.files.size() + "/" + mListItem.size());
                             final List<DriveResponse> driveResponse = onResponse.files;
                             for (DriveResponse index : driveResponse) {
                                 final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
@@ -584,21 +586,26 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                             switch (enumTypeFile){
                                                 case ORIGINAL:{
                                                     description.global_original_id = index.id;
+                                                    break;
                                                 }
                                                 case THUMBNAIL:{
                                                     description.global_thumbnail_id = index.id;
+                                                    break;
                                                 }
                                             }
                                             onSaveItem(description);
+                                            Log.d(TAG, "This item is new");
                                         }
                                         else{
                                             EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
                                             switch (enumTypeFile){
                                                 case ORIGINAL:{
                                                     items.global_original_id = index.id;
+                                                    break;
                                                 }
                                                 case THUMBNAIL:{
                                                     items.global_thumbnail_id = index.id;
+                                                    break;
                                                 }
                                             }
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
@@ -849,7 +856,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 if (view!=null){
                     view.onError("Error upload",EnumStatus.UPLOAD);
                 }
-                listener.onError();
             }
             @Override
             public void onFinish() {
@@ -874,7 +880,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 if (view!=null){
                     view.onError("Error upload" + t.getMessage(),EnumStatus.UPLOAD);
                 }
-                listener.onFailure();
             }
         });
     }
@@ -882,7 +887,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
     public void onUploadThumbnailFileInAppFolder(final Items items ,final ServiceManager.UploadServiceListener listener){
         Log.d(TAG,"Upload File To In App Folder !!!");
-        SuperSafeServiceView view = view();
         final User mUser = User.getInstance().getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
         HashMap<String,Object> content = new HashMap<>();
@@ -890,12 +894,12 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         if (!storage.isFileExist(items.thumbnailPath)){
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
-            view.onError("This thumbnail is not found",EnumStatus.UPLOAD);
+            listener.onError("This thumbnail is not found",EnumStatus.UPLOAD);
             return;
         }
 
         if (items.thumbnailSync){
-            view.onError("This thumbnail already synced",EnumStatus.UPLOAD);
+            listener.onError("This thumbnail already synced",EnumStatus.UPLOAD);
             return;
         }
 
@@ -912,7 +916,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         Log.d(TAG,"parents: " +new Gson().toJson(content));
 
 
-
         ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
             @Override
             public void onProgressUpdate(int percentage) {
@@ -922,10 +925,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             @Override
             public void onError() {
                 Utils.Log(TAG,"onError");
-                if (view!=null){
-                    view.onError("Error upload",EnumStatus.UPLOAD);
+                if (listener!=null){
+                    listener.onError("Error upload",EnumStatus.UPLOAD);
                 }
-                listener.onError();
             }
             @Override
             public void onFinish() {
@@ -947,17 +949,15 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             @Override
             public void onFailure(Call<DriveResponse> call, Throwable t) {
                 Utils.Log(TAG,"response failed :"+ t.getMessage());
-                if (view!=null){
-                    view.onError("Error upload" + t.getMessage(),EnumStatus.UPLOAD);
+                if (listener!=null){
+                    listener.onError("Error upload" + t.getMessage(),EnumStatus.UPLOAD);
                 }
-                listener.onFailure();
             }
         });
     }
 
 
     public void onDownloadFile(final DownloadFileRequest request,final ServiceManager.DownloadServiceListener listener){
-        SuperSafeServiceView view = view();
         Utils.Log(TAG,"onDownloadFile !!!!");
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override
@@ -968,10 +968,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
             @Override
             public void onDownLoadError(String error) {
-                listener.onError(error);
                 Utils.Log(TAG,"onDownLoadError "+ error);
-                if (view!=null){
-                    view.onError("Error download " + error,EnumStatus.DOWNLOAD);
+                if (listener!=null){
+                    listener.onError("Error download " + error,EnumStatus.DOWNLOAD);
                 }
             }
 
@@ -1013,10 +1012,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
             @Override
             public void onErrorSave(String name) {
-                listener.onError(name);
                 Utils.Log(TAG,"onErrorSave");
-                if (view!=null){
-                    view.onError("Error download save " + name,EnumStatus.DOWNLOAD);
+                if (listener!=null){
+                    listener.onError("Error download save " + name,EnumStatus.DOWNLOAD);
                 }
             }
 
@@ -1031,8 +1029,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
     public void onDownloadThumbnailFile(final DownloadFileRequest request,final ServiceManager.DownloadServiceListener listener){
-        SuperSafeServiceView view = view();
-        downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
+        downloadServiceThumbnail.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override
             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                 Utils.Log(TAG,"onDownLoadCompleted "+ file_name.getAbsolutePath());
@@ -1041,10 +1038,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
             @Override
             public void onDownLoadError(String error) {
-                listener.onError(error);
                 Utils.Log(TAG,"onDownLoadError "+ error);
-                if (view!=null){
-                    view.onError("Error download " + error,EnumStatus.DOWNLOAD);
+                if (listener!=null){
+                    listener.onError("Error download " + error,EnumStatus.DOWNLOAD);
                 }
             }
 
@@ -1086,10 +1082,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
             @Override
             public void onErrorSave(String name) {
-                listener.onError(name);
                 Utils.Log(TAG,"onErrorSave");
-                if (view!=null){
-                    view.onError("Error download save " + name,EnumStatus.DOWNLOAD);
+                if (listener!=null){
+                    listener.onError("Error download save " + name,EnumStatus.DOWNLOAD);
                 }
             }
 
@@ -1100,7 +1095,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         },"https://www.googleapis.com/drive/v3/files/");
         request.mapHeader = new HashMap<>();
         request.mapObject = new HashMap<>();
-        downloadService.downloadDriveFileByGET(request);
+        downloadServiceThumbnail.downloadDriveFileByGET(request);
     }
 
 

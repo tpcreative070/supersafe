@@ -314,7 +314,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
         ServiceManager.getInstance().onSyncData();
-        ServiceManager.getInstance().testLoop();
+       // ServiceManager.getInstance().testLoop();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
 

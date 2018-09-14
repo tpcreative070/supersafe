@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Suppersafe</string>
+    <string name="app_name">Supersafe</string>
     <string name="title_text">Google Sign-In\nQuickstart</string>
 
     <!-- Sign-in status messages -->

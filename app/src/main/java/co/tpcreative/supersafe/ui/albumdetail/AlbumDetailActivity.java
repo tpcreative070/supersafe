@@ -614,10 +614,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
 
 
-
-
-
-
                        boolean createdThumbnail =  storage.createFile(thumbnailPath,thumbnail);
                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                        boolean createdOriginal  = mStorage.createLargeFile(new File(originalPath),new File(mPath),mCiphers);

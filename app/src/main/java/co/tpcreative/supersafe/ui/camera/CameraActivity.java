@@ -208,14 +208,17 @@ public class CameraActivity extends BaseActivity implements
         subscriptions = Observable.create(subscriber -> {
             File thumbnail = null;
             final byte[]data = mData;
+            final Bitmap mBitmap;
             try {
-                thumbnail =  new Compressor(CameraActivity.this)
-                        .setMaxWidth(640)
-                        .setMaxHeight(480)
-                        .setQuality(85)
-                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                        .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(CameraActivity.this).getAbsolutePath())
-                        .compressToFile(data,getString(R.string.key_temporary));
+
+                mBitmap = Utils.getThumbnailScale(data);
+//                thumbnail =  new Compressor(CameraActivity.this)
+//                        .setMaxWidth(640)
+//                        .setMaxHeight(480)
+//                        .setQuality(85)
+//                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
+//                        .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(CameraActivity.this).getAbsolutePath())
+//                        .compressToFile(data,getString(R.string.key_temporary));
 
                 String path = SuperSafeApplication.getInstance().getSuperSafe();
                 String currentTime = Utils.getCurrentDateTime();
@@ -246,8 +249,6 @@ public class CameraActivity extends BaseActivity implements
                 description.originalName = currentTime;
                 description.thumbnailName = "thumbnail_"+currentTime;
 
-
-
                 Items items = new Items(false,
                         description.originalSync,
                         description.thumbnailSync,
@@ -268,7 +269,7 @@ public class CameraActivity extends BaseActivity implements
                         new Gson().toJson(description),
                         EnumStatus.UPLOAD);
 
-                boolean createdThumbnail = storage.createFile(new File(thumbnailPath),thumbnail,Cipher.ENCRYPT_MODE);
+                boolean createdThumbnail = storage.createFile(thumbnailPath,mBitmap);
                 boolean createdOriginal = storage.createFile(originalPath,data);
                 if (createdThumbnail && createdOriginal){
                     subscriber.onNext(items);
@@ -309,30 +310,6 @@ public class CameraActivity extends BaseActivity implements
     });
 
     }
-
-    public void getBase64(final Bitmap bitmap){
-        try {
-            final Bitmap mBitmap = bitmap;
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-            byte[] b = baos.toByteArray();
-            baos.close();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public String getReadableFileSize(long size) {
-        if (size <= 0) {
-            return "0";
-        }
-        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
-
 
 
 }
