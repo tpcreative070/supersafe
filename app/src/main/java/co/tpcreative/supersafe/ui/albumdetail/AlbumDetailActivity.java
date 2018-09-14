@@ -9,8 +9,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -389,65 +392,65 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
            final String mPath = path;
            final String mMimeType = mimeType;
            final String mVideo_id = id;
+           final Items items ;
           // InputStream originalFile = null;
            Bitmap thumbnail = null;
            switch (enumTypeFile){
                case IMAGE:
 
                    Utils.Log(TAG,"Start RXJava Image Progressing");
-                   Items items = null;
                    try {
 
-//                       final int THUMBSIZE_HEIGHT = 600;
-//                       final int THUMBSIZE_WIDTH = 400;
-//
-//
-//                       BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
-//                       bmpFactoryOptions.inJustDecodeBounds = true;
-//                       Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
-//                       int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
-//                       int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
-//                       if(heightRatio > 1 || widthRatio > 1)
-//                       {
-//                           if(heightRatio > widthRatio)
-//                           {
-//                               bmpFactoryOptions.inSampleSize = heightRatio;
-//                           }
-//                           else
-//                           {
-//                               bmpFactoryOptions.inSampleSize = widthRatio;
-//                           }
-//                       }
-//                       bmpFactoryOptions.inJustDecodeBounds = false;
-//                       bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
-//
-//                       thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
-//                               THUMBSIZE_HEIGHT,
-//                               THUMBSIZE_WIDTH);
-//                       ExifInterface exifInterface = new ExifInterface(mPath);
-//                       int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-//                       Log.d("EXIF", "Exif: " + orientation);
-//                       Matrix matrix = new Matrix();
-//                       if (orientation == 6) {
-//                           matrix.postRotate(90);
-//                       }
-//                       else if (orientation == 3) {
-//                           matrix.postRotate(180);
-//                       }
-//                       else if (orientation == 8) {
-//                           matrix.postRotate(270);
-//                       }
-//                       thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
+                       final int THUMBSIZE_HEIGHT = 600;
+                       final int THUMBSIZE_WIDTH = 400;
+
+
+                       BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+                       bmpFactoryOptions.inJustDecodeBounds = true;
+                       Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
+                       int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
+                       int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
+                       if(heightRatio > 1 || widthRatio > 1)
+                       {
+                           if(heightRatio > widthRatio)
+                           {
+                               bmpFactoryOptions.inSampleSize = heightRatio;
+                           }
+                           else
+                           {
+                               bmpFactoryOptions.inSampleSize = widthRatio;
+                           }
+                       }
+                       bmpFactoryOptions.inJustDecodeBounds = false;
+                       bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
+
+                       thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
+                               THUMBSIZE_HEIGHT,
+                               THUMBSIZE_WIDTH);
+                       ExifInterface exifInterface = new ExifInterface(mPath);
+                       int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                       Log.d("EXIF", "Exif: " + orientation);
+                       Matrix matrix = new Matrix();
+                       if (orientation == 6) {
+                           matrix.postRotate(90);
+                       }
+                       else if (orientation == 3) {
+                           matrix.postRotate(180);
+                       }
+                       else if (orientation == 8) {
+                           matrix.postRotate(270);
+                       }
+                       thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
 
 
 
-                       File mFileThumbnail =  new Compressor(AlbumDetailActivity.this)
-                               .setMaxWidth(640)
-                               .setMaxHeight(480)
-                               .setQuality(85)
-                               .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                               .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(AlbumDetailActivity.this).getAbsolutePath())
-                               .compressToFile(new File(mPath),getString(R.string.key_temporary));
+//                       File mFileThumbnail =  new Compressor(AlbumDetailActivity.this)
+//                               .setMaxWidth(640)
+//                               .setMaxHeight(480)
+//                               .setQuality(85)
+//                               .setCompressFormat(Bitmap.CompressFormat.JPEG)
+//                               .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(AlbumDetailActivity.this).getAbsolutePath())
+//                               .compressToFile(new File(mPath),getString(R.string.key_temporary));
 
 
                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
@@ -507,8 +510,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                EnumStatus.UPLOAD);
 
                        Utils.Log(TAG,"start compress");
-                       boolean createdThumbnail = storage.createFile(new File(thumbnailPath),mFileThumbnail,Cipher.ENCRYPT_MODE);
-                       boolean createdOriginal  = storage.createLargeFile(new File(originalPath),new File(mPath),mCipher);
+                       boolean createdThumbnail = storage.createFile(thumbnailPath,thumbnail);
+                       boolean createdOriginal  = storage.createFile(new File(originalPath),new File(mPath),Cipher.ENCRYPT_MODE);
                        Utils.Log(TAG,"start end");
 
 
@@ -534,7 +537,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
                case VIDEO:
                    Utils.Log(TAG,"Start RXJava Video Progressing");
-                   items = null;
                    try {
                        BitmapFactory.Options options = new BitmapFactory.Options();
                        options.inDither = false;
@@ -594,6 +596,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                description.fileExtension,
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
+
 
                        mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
                        boolean createdThumbnail =  storage.createFile(thumbnailPath,thumbnail);

@@ -572,7 +572,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                             Utils.Log(TAG, "Body list only files count " + onResponse.files.size() + "/" + mListItem.size());
                             final List<DriveResponse> driveResponse = onResponse.files;
                             for (DriveResponse index : driveResponse) {
-                                final DriveDescription description = DriveDescription.getInstance().getDriveDescription(index.description);
+                                final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                 if (description != null) {
                                     String result = Utils.hexToString(index.name);
                                     DriveTitle driveTitle = new Gson().fromJson(result,DriveTitle.class);
@@ -828,7 +828,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
         String hex = Utils.stringToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name),hex);
-        content.put(getString(R.string.key_description),new Gson().toJson(items.description));
+        content.put(getString(R.string.key_description),DriveDescription.getInstance().convertToHex(items.description));
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));
         content.put(getString(R.string.key_parents),list);
@@ -904,7 +904,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
         String hex = Utils.stringToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name),hex);
-        content.put(getString(R.string.key_description),new Gson().toJson(items.description));
+        content.put(getString(R.string.key_description),DriveDescription.getInstance().convertToHex(items.description));
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));
         content.put(getString(R.string.key_parents),list);

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.StatFs;
 import android.util.Log;
 
@@ -238,9 +240,11 @@ public class Storage {
         }
     }
 
+    public boolean createLargeFile(File output,File input,Cipher mCipher){
 
-    public boolean createLargeFile( File output,File input,Cipher mCipher){
 
+
+        Log.d(TAG,"Call here");
         if (mConfiguration == null || !mConfiguration.isEncrypted()) {
            return false;
         }
@@ -255,13 +259,13 @@ public class Storage {
             byte buffer[] = new byte[1024 * 1024];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
-                Log.d(getClass().getCanonicalName(), "writing from File path...");
                 cipherOutputStream.write(buffer, 0, bytesRead);
             }
             cipherOutputStream.close();
             outputStream.flush();
             outputStream.close();
             inputStream.close();
+            Log.d(TAG,"Call end");
             return true;
         } catch (IOException ex) {
             ex.printStackTrace();

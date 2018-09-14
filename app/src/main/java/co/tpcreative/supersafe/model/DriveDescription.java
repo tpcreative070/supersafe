@@ -56,5 +56,26 @@ public class DriveDescription implements Serializable{
         return null;
     }
 
+    public String convertToHex(final String value){
+        try {
+            return Utils.stringToHex(value);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public DriveDescription hexToObject(String value){
+        try {
+            String result = Utils.hexToString(value);
+            return new Gson().fromJson(result,DriveDescription.class);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

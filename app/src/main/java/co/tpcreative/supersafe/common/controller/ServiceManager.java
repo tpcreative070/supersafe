@@ -343,22 +343,19 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-
-
         countSyncData = 0;
 
         if (myService != null) {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
+                    isDownloadData = true;
                    subscriptions = Observable.fromIterable(mList)
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
 
                                 /*Do something here*/
                                 final Items itemObject = i;
-
-                                isDownloadData = true;
                                 boolean isWorking = true;
 
                                 if (itemObject.localCategories_Id == null) {
@@ -529,7 +526,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                 }
                             })
                             .doOnComplete(() -> {
-                                Log.d(TAG, "Completed");
+                                isDownloadData = false;
+                                Log.d(TAG, "Completed download^^^^^^^^^^^^^^^^^^^^^666^^^^^^^^^^^^^^^^^^");
                             })
                             .subscribe();
                 } else {
@@ -585,14 +583,13 @@ public class ServiceManager implements SuperSafeServiceView {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
+                    isUploadData = true;
                     subscriptions = Observable.fromIterable(mList)
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
                                 Utils.Log(TAG, "Sync Data");
                                 /*Do something here*/
                                 final Items itemObject = i;
-
-                                isUploadData = true;
                                 boolean isWorking = true;
 
                                 if (itemObject.localCategories_Id == null) {
@@ -619,9 +616,6 @@ public class ServiceManager implements SuperSafeServiceView {
                                 Utils.Log(TAG, "Sync Data !!!");
 
                                 if (isWorking) {
-
-
-
 
                                     myService.onUploadFileInAppFolder(itemObject, new UploadServiceListener() {
                                         @Override
@@ -754,7 +748,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                 }
                             })
                             .doOnComplete(() -> {
-                                Log.d(TAG, "Completed");
+                                isUploadData  = false;
+                                Log.d(TAG, "Completed upload^^^^^^^^^^^^^^^^^^^^^666^^^^^^^^^^^^^^^^^^");
                             })
                             .subscribe();
                 } else {
