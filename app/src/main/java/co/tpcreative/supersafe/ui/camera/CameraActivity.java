@@ -247,6 +247,7 @@ public class CameraActivity extends BaseActivity implements
                 description.global_thumbnail_id = null;
                 description.fileType = EnumFileType.NONE.ordinal();
                 description.originalName = currentTime;
+                description.title = currentTime;
                 description.thumbnailName = "thumbnail_"+currentTime;
 
                 Items items = new Items(false,
@@ -255,6 +256,7 @@ public class CameraActivity extends BaseActivity implements
                         description.degrees,
                         description.fileType,
                         description.formatType,
+                        description.title,
                         description.originalName,
                         description.thumbnailName ,
                         description.globalName,

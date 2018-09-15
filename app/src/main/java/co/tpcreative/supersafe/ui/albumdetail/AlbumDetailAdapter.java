@@ -104,7 +104,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setVisibility(View.VISIBLE);
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                         tvTitle.setVisibility(View.VISIBLE);
-                        tvTitle.setText(data.originalName);
+                        tvTitle.setText(data.title);
                         //imgAlbum.setImageDrawable(context.getResources().getDrawable(R.drawable.image_background_audio_video));
                         Glide.with(context)
                                 .load(R.drawable.ic_video_audio_v3)

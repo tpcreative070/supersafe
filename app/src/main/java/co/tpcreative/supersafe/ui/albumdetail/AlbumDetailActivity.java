@@ -502,7 +502,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.originalSync = false;
                        description.global_thumbnail_id = null;
                        description.fileType = EnumFileType.NONE.ordinal();
-                       description.originalName = mMimeTypeFile.name;
+                       description.originalName = currentTime;
+                       description.title = mMimeTypeFile.name;
                        description.thumbnailName = "thumbnail_" + currentTime;
 
                        items = new Items(false,
@@ -511,6 +512,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                description.degrees,
                                description.fileType,
                                description.formatType,
+                               description.title,
                                description.originalName,
                                description.thumbnailName,
                                description.globalName,
@@ -588,7 +590,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.originalSync = false;
                        description.global_thumbnail_id = null;
                        description.fileType = EnumFileType.NONE.ordinal();
-                       description.originalName =  mMimeTypeFile.name;;
+                       description.originalName = currentTime;
+                       description.title = mMimeTypeFile.name;
                        description.thumbnailName = "thumbnail_" + currentTime;
 
 
@@ -598,6 +601,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                description.degrees,
                                description.fileType,
                                description.formatType,
+                               description.title,
                                description.originalName,
                                description.thumbnailName,
                                description.globalName,
@@ -668,7 +672,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.global_original_id = null;
                        description.global_thumbnail_id = null;
                        description.fileType = EnumFileType.NONE.ordinal();
-                       description.originalName = mMimeTypeFile.name;
+                       description.originalName = currentTime;
+                       description.title = mMimeTypeFile.name;
                        description.thumbnailName = null;
 
                        items = new Items(false,
@@ -677,6 +682,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                description.degrees,
                                description.fileType,
                                description.formatType,
+                               description.title,
                                description.originalName,
                                description.thumbnailName,
                                description.globalName,

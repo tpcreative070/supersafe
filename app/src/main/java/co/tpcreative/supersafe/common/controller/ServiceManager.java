@@ -436,6 +436,9 @@ public class ServiceManager implements SuperSafeServiceView {
 
                                         });
                                     }
+                                    else{
+                                        Utils.Log(TAG, "Original already downloaded");
+                                    }
 
                                     if (!itemsThumbnail.thumbnailSync) {
                                         Utils.Log(TAG, "Downloading thumbnail data !!!");
@@ -500,8 +503,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                     }
 
                                 } else {
-                                    onUpdateSyncDataStatus(mList, EnumStatus.DOWNLOAD);
-                                    Utils.Log(TAG, "Not Working");
+                                    Utils.Log(TAG, "Thumbnail already downloaded");
                                 }
                             })
                             .doOnComplete(() -> {
@@ -650,6 +652,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                             }
                                         });
                                     }
+                                    else{
+                                        Utils.Log(TAG, "Original already uploaded");
+                                    }
 
                                     if (!itemObject.thumbnailSync) {
                                         Utils.Log(TAG, "Uploading thumbnail data !!!");
@@ -708,8 +713,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                             }
                                         });
                                     } else {
-                                        onUpdateSyncDataStatus(mList, EnumStatus.UPLOAD);
-                                        Utils.Log(TAG, "Not Working");
+                                        Utils.Log(TAG, "Thumbnail already uploaded");
                                     }
                                 }
                                 else{

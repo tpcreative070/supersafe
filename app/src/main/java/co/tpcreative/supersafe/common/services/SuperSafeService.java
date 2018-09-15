@@ -630,7 +630,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                     }
                                 }
                             }
-                            view.onSuccessful("Body list only files count " + onResponse.files.size() + "/" + mListItem.size());
                             view.onSuccessful(onResponse.files);
                         }
                         catch(Exception e){
@@ -767,6 +766,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.degrees,
                 description.fileType,
                 description.formatType,
+                description.title,
                 description.originalName,
                 description.thumbnailName,
                 description.globalName,
@@ -827,7 +827,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
     public void onUploadFileInAppFolder(final Items items ,final ServiceManager.UploadServiceListener listener){
         Log.d(TAG,"Upload File To In App Folder !!!");
-        SuperSafeServiceView view = view();
         final User mUser = User.getInstance().getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
         HashMap<String,Object> content = new HashMap<>();
@@ -835,12 +834,12 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         if (!storage.isFileExist(items.originalPath)){
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
-            view.onError("This original is not found",EnumStatus.UPLOAD);
+            listener.onError("This original is not found",EnumStatus.UPLOAD);
             return;
         }
 
         if (items.originalSync){
-            view.onError("This original already synced",EnumStatus.UPLOAD);
+            listener.onError("This original already synced",EnumStatus.UPLOAD);
             return;
         }
 
@@ -867,8 +866,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             @Override
             public void onError() {
                 Utils.Log(TAG,"onError");
-                if (view!=null){
-                    view.onError("Error upload",EnumStatus.UPLOAD);
+                if (listener!=null){
+                    listener.onError("Error upload",EnumStatus.UPLOAD);
                 }
             }
             @Override
@@ -891,8 +890,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             @Override
             public void onFailure(Call<DriveResponse> call, Throwable t) {
                 Utils.Log(TAG,"response failed :"+ t.getMessage());
-                if (view!=null){
-                    view.onError("Error upload" + t.getMessage(),EnumStatus.UPLOAD);
+                if (listener!=null){
+                    listener.onError("Error upload" + t.getMessage(),EnumStatus.UPLOAD);
                 }
             }
         });

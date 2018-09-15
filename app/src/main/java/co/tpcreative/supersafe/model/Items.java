@@ -29,6 +29,7 @@ public class Items implements Serializable {
     public boolean thumbnailSync;
     public boolean originalSync;
     public int fileType;
+    public String title;
 
     @Ignore
     private boolean isChecked;
@@ -36,12 +37,13 @@ public class Items implements Serializable {
     private boolean isDeleted;
 
 
-    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String originalName,String thumbnailName,String globalName,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus){
+    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String globalName,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.globalName = globalName;
         this.fileType = fileType;
         this.formatType = formatType;
+        this.title = title;
         this.isSync = isSync;
         this.thumbnailSync = thumbnailSync;
         this.originalSync = originalSync;
