@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,6 +27,11 @@ import com.darsh.multipleimageselect.R;
 import com.darsh.multipleimageselect.adapters.CustomAlbumSelectAdapter;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Album;
+import com.darsh.multipleimageselect.models.Image;
+import com.darsh.multipleimageselect.models.MimeTypeFile;
+import com.darsh.multipleimageselect.models.Utils;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +41,8 @@ import java.util.HashSet;
  * Created by Darshan on 4/14/2015.
  */
 public class AlbumSelectActivity extends HelperActivity {
+
+    private static final String TAG = AlbumSelectActivity.class.getSimpleName();
     private ArrayList<Album> albums;
 
     private TextView errorDisplay;
@@ -247,12 +255,15 @@ public class AlbumSelectActivity extends HelperActivity {
                     + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                     + " OR "
                     + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+                    + " OR "
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                    + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO;
 
             Uri queryUri = MediaStore.Files.getContentUri("external");
             Cursor cursor = getApplicationContext().getContentResolver()
                     .query(queryUri, projection,
-                            selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
+                            selection,null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
             if (cursor == null) {
                 sendMessage(Constants.ERROR);
                 return;
@@ -280,11 +291,17 @@ public class AlbumSelectActivity extends HelperActivity {
                          */
                         file = new File(image);
                         if (file.exists()) {
-                            temp.add(new Album(album, image));
-                            albumSet.add(albumId);
+                            String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
+                            final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
+                            if (mimeTypeFile != null) {
+                                temp.add(new Album(album, image));
+                                albumSet.add(albumId);
+                            }
+                            else{
+                                Log.d(TAG,"value "+extensionFile);
+                            }
                         }
                     }
-
                 } while (cursor.moveToPrevious());
             }
             cursor.close();

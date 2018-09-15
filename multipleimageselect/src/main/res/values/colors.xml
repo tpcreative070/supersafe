@@ -15,4 +15,9 @@
     <color name="multiple_image_select_imageSelectBackground">#000000</color>
 
     <color name="multiple_image_select_buttonText">#FFFFFF</color>
+    <color name="background_audio_video">#1DE9B6</color>
+
+    <color name="colorPrimary">#371989</color>
+    <color name="colorPrimaryDark">#2d0b89</color>
+
 </resources>

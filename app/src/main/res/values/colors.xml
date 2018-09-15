@@ -3,7 +3,7 @@
     <color name="colorPrimary">#371989</color>
     <color name="colorPrimaryDark">#2d0b89</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="background_audio_video">#1DE9B6</color>
 
     <color name="text_numberpressed">#fff</color>
     <color name="text_numberaction">#FF4081</color>

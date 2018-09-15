@@ -44,7 +44,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-
 public class PhotoSlideShowActivity extends BaseActivity implements View.OnClickListener ,PhotoSlideShowView{
 
     private static final String TAG = PhotoSlideShowActivity.class.getSimpleName();
@@ -52,7 +51,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
             .centerCrop()
             .override(400,600)
             .placeholder(R.color.black38)
-            .error(R.drawable.ic_aspect_ratio)
+            .error(R.drawable.baseline_music_note_white_48)
             .priority(Priority.HIGH);
 
 
@@ -170,9 +169,12 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                 e.printStackTrace();
             }
 
-
             switch (enumTypeFile){
                 case VIDEO:{
+                    imgPlayer.setVisibility(View.VISIBLE);
+                    break;
+                }
+                case AUDIO:{
                     imgPlayer.setVisibility(View.VISIBLE);
                     break;
                 }
@@ -283,9 +285,12 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                         return;
                     }
                     final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id);
-                    if (items!=null) {
-                        onRotateBitmap(items);
-                        isReload = true;
+                    EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
+                    if (formatTypeFile!=EnumFormatType.AUDIO){
+                        if (items!=null) {
+                            onRotateBitmap(items);
+                            isReload = true;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

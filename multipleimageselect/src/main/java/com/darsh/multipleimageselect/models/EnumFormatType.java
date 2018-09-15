@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.model;
+package com.darsh.multipleimageselect.models;
 
 public enum EnumFormatType {
     IMAGE,

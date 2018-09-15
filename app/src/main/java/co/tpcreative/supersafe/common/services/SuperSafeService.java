@@ -30,6 +30,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveTitle;
 import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
@@ -593,6 +594,19 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                     break;
                                                 }
                                             }
+
+                                            EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
+                                            switch (formatTypeFile){
+                                                case AUDIO:{
+                                                    description.thumbnailSync = true;
+                                                    break;
+                                                }
+                                                default:{
+                                                    description.thumbnailSync =false;
+                                                    break;
+                                                }
+                                            }
+
                                             onSaveItem(description);
                                             Log.d(TAG, "This item is new");
                                         }

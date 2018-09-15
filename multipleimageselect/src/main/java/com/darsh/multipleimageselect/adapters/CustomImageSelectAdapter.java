@@ -1,14 +1,22 @@
 package com.darsh.multipleimageselect.adapters;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.darsh.multipleimageselect.R;
+import com.darsh.multipleimageselect.models.EnumFormatType;
 import com.darsh.multipleimageselect.models.Image;
+import com.darsh.multipleimageselect.models.MimeTypeFile;
+import com.darsh.multipleimageselect.models.Utils;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
 
@@ -16,8 +24,11 @@ import java.util.ArrayList;
  * Created by Darshan on 4/18/2015.
  */
 public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
+    private static final String TAG = CustomImageSelectAdapter.class.getSimpleName();
+    private Context context;
     public CustomImageSelectAdapter(Context context, ArrayList<Image> images) {
         super(context, images);
+        this.context = context;
     }
 
     @Override
@@ -29,6 +40,8 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
 
             viewHolder = new ViewHolder();
             viewHolder.imageView = (ImageView) convertView.findViewById(R.id.image_view_image_select);
+            viewHolder.imgAudioVideo = (ImageView) convertView.findViewById(R.id.imgAudioVideo);
+            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
             viewHolder.view = convertView.findViewById(R.id.view_alpha);
 
             convertView.setTag(viewHolder);
@@ -57,15 +70,61 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
                 .placeholder(R.drawable.image_placeholder)
                 .priority(Priority.HIGH);
 
-        Glide.with(context)
-                .load(arrayList.get(position).path)
-                .apply(options).into(viewHolder.imageView);
 
+        final Image data = arrayList.get(position);
+        try {
+            String extensionFile = FilenameUtils.getExtension(data.path);
+            final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
+            if (mimeTypeFile != null) {
+                EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
+
+                switch (formatTypeFile){
+                    case AUDIO:{
+                        viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
+                        viewHolder.imgAudioVideo.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
+                        viewHolder.tvTitle.setVisibility(View.VISIBLE);
+                        viewHolder.tvTitle.setText(data.name);
+                        Glide.with(context)
+                                .load(R.drawable.image_background_audio_video)
+                                .apply(options).into(viewHolder.imageView);
+                        break;
+                    }
+                    case VIDEO:{
+                        viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
+                        viewHolder.imgAudioVideo.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_videocam_white_36));
+                        viewHolder.tvTitle.setVisibility(View.INVISIBLE);;
+                        Glide.with(context)
+                                .load(data.path)
+                                .apply(options).into(viewHolder.imageView);
+                        break;
+                    }
+                    default:{
+                        viewHolder.tvTitle.setVisibility(View.INVISIBLE);
+                        viewHolder.imgAudioVideo.setVisibility(View.INVISIBLE);
+                        Glide.with(context)
+                                .load(data.path)
+                                .apply(options).into(viewHolder.imageView);
+                        break;
+                    }
+                }
+            }
+            else {
+                viewHolder.tvTitle.setVisibility(View.INVISIBLE);
+                Glide.with(context)
+                        .load(R.drawable.ic_music)
+                        .apply(options).into(viewHolder.imageView);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         return convertView;
     }
 
     private static class ViewHolder {
         public ImageView imageView;
+        public ImageView imgAudioVideo;
         public View view;
+        public TextView tvTitle;
     }
 }

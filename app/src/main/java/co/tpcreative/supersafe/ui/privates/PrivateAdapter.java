@@ -70,7 +70,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             Glide.with(context)
-                    .load(context.getResources().getDrawable(data.getImageResource()))
+                    .load(data.getImageResource())
                     .apply(options)
                     .into(imgAlbum);
             tvTitle.setText(data.getName());

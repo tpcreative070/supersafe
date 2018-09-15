@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,7 +30,12 @@ import android.widget.Toast;
 import com.darsh.multipleimageselect.R;
 import com.darsh.multipleimageselect.adapters.CustomImageSelectAdapter;
 import com.darsh.multipleimageselect.helpers.Constants;
+import com.darsh.multipleimageselect.models.EnumFormatType;
 import com.darsh.multipleimageselect.models.Image;
+import com.darsh.multipleimageselect.models.MimeTypeFile;
+import com.darsh.multipleimageselect.models.Utils;
+
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,6 +45,8 @@ import java.util.HashSet;
  * Created by Darshan on 4/18/2015.
  */
 public class ImageSelectActivity extends HelperActivity {
+
+    private static final String TAG = ImageSelectActivity.class.getSimpleName();
     private ArrayList<Image> images;
     private String album;
 
@@ -378,7 +386,15 @@ public class ImageSelectActivity extends HelperActivity {
 
                     file = new File(path);
                     if (file.exists()) {
-                        temp.add(new Image(id, name, path, isSelected));
+                        String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
+                        final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
+                        if (mimeTypeFile != null) {
+                            temp.add(new Image(id, name, path, isSelected));
+                            //EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
+                        }
+                    }
+                    else{
+                        Log.d(TAG,"value "+file.getAbsolutePath());
                     }
 
                 } while (cursor.moveToPrevious());

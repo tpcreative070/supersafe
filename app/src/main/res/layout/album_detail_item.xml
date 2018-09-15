@@ -22,12 +22,22 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:id="@+id/imgAlbum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:src="@drawable/face_1" />
+                android:src="@drawable/image_background_audio_video" />
+
+            <TextView
+                android:textColor="@color/multiple_image_select_buttonText"
+                android:layout_margin="5dp"
+                android:maxLines="2"
+                android:id="@+id/tvTitle"
+                android:layout_gravity="center|top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <ImageView
                 android:id="@+id/imgVideoCam"
                 android:visibility="invisible"

@@ -68,6 +68,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
@@ -372,15 +373,24 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
+                        String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
                         Log.d(TAG, "mimeType " + mimeType);
+                        Log.d(TAG, "name " + name);
                         Log.d(TAG, "path " + path);
-                        if (mimeType.equals(getString(R.string.key_mime_type_sdcard_jpg)) || mimeType.equals(getString(R.string.key_mime_type_sdcard_png))) {
-                            onUploadFileRXJava(EnumFormatType.IMAGE, path, mimeType, id);
-                        } else {
-                            onUploadFileRXJava(EnumFormatType.VIDEO, path, mimeType, id);
+                        String fileExtension = Utils.getFileExtension(path);
+                        Log.d(TAG,"file extension "+ Utils.getFileExtension(path));
+
+                        try {
+                            final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                            mimeTypeFile.name = name;
+                            onUploadFileRXJava(mimeTypeFile, path,id);
                         }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                     }
                 }
                 else {
@@ -395,44 +405,43 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         }
     }
 
-    public void onUploadFileRXJava(final EnumFormatType  status,final String path,String mimeType,String id){
+    public void onUploadFileRXJava(final MimeTypeFile mimeTypeFile, final String path, String id){
 
 //        final  Storage storage = new Storage(SuperSafeApplication.getInstance());
 //        storage.setEncryptConfiguration(storage.getmConfiguration());
 //        Cipher mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
         subscriptions = Observable.create(subscriber -> {
 
-           final EnumFormatType enumTypeFile = status;
-           final String mPath = path;
-           final String mMimeType = mimeType;
-           final String mVideo_id = id;
-           final Items items ;
+
+
+            final MimeTypeFile mMimeTypeFile = mimeTypeFile;
+            final EnumFormatType enumTypeFile  = mMimeTypeFile.formatType;
+            final String mPath = path;
+            final String mMimeType  = mMimeTypeFile.mimeType;
+            final String mVideo_id = id;
+            final Items items ;
+
+            Utils.Log(TAG,"object "+ new Gson().toJson(mMimeTypeFile));
 
           // InputStream originalFile = null;
            Bitmap thumbnail = null;
            switch (enumTypeFile){
-               case IMAGE:
-
-                   Utils.Log(TAG,"Start RXJava Image Progressing");
+               case IMAGE: {
+                   Utils.Log(TAG, "Start RXJava Image Progressing");
                    try {
 
                        final int THUMBSIZE_HEIGHT = 600;
                        final int THUMBSIZE_WIDTH = 400;
-
 
                        BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
                        bmpFactoryOptions.inJustDecodeBounds = true;
                        Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
                        int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
                        int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
-                       if(heightRatio > 1 || widthRatio > 1)
-                       {
-                           if(heightRatio > widthRatio)
-                           {
+                       if (heightRatio > 1 || widthRatio > 1) {
+                           if (heightRatio > widthRatio) {
                                bmpFactoryOptions.inSampleSize = heightRatio;
-                           }
-                           else
-                           {
+                           } else {
                                bmpFactoryOptions.inSampleSize = widthRatio;
                            }
                        }
@@ -448,15 +457,12 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        Matrix matrix = new Matrix();
                        if (orientation == 6) {
                            matrix.postRotate(90);
-                       }
-                       else if (orientation == 3) {
+                       } else if (orientation == 3) {
                            matrix.postRotate(180);
-                       }
-                       else if (orientation == 8) {
+                       } else if (orientation == 8) {
                            matrix.postRotate(270);
                        }
                        thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
-
 
 
 //                       File mFileThumbnail =  new Compressor(AlbumDetailActivity.this)
@@ -471,19 +477,14 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
                        String currentTime = Utils.getCurrentDateTime();
                        String uuId = Utils.getUUId();
-                       String pathContent = rootPath + uuId+"/";
+                       String pathContent = rootPath + uuId + "/";
                        storage.createDirectory(pathContent);
-                       String thumbnailPath = pathContent+"thumbnail_"+currentTime;
-                       String originalPath = pathContent+currentTime;
+                       String thumbnailPath = pathContent + "thumbnail_" + currentTime;
+                       String originalPath = pathContent + currentTime;
 
 
                        DriveDescription description = new DriveDescription();
-                       if (mMimeType.equals(getString(R.string.key_mime_type_sdcard_jpg))) {
-                           description.fileExtension = getString(R.string.key_jpg);
-                       }
-                       else{
-                           description.fileExtension = getString(R.string.key_png);
-                       }
+                       description.fileExtension = mMimeTypeFile.extension;
 
                        description.originalPath = originalPath;
                        description.thumbnailPath = thumbnailPath;
@@ -501,8 +502,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.originalSync = false;
                        description.global_thumbnail_id = null;
                        description.fileType = EnumFileType.NONE.ordinal();
-                       description.originalName = currentTime;
-                       description.thumbnailName = "thumbnail_"+currentTime;
+                       description.originalName = mMimeTypeFile.name;
+                       description.thumbnailName = "thumbnail_" + currentTime;
 
                        items = new Items(false,
                                description.originalSync,
@@ -511,9 +512,9 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                description.fileType,
                                description.formatType,
                                description.originalName,
-                               description.thumbnailName ,
+                               description.thumbnailName,
                                description.globalName,
-                               description.originalPath ,
+                               description.originalPath,
                                description.thumbnailPath,
                                description.local_id,
                                description.global_original_id,
@@ -524,21 +525,20 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                new Gson().toJson(description),
                                EnumStatus.UPLOAD);
 
-                       Utils.Log(TAG,"start compress");
-                       boolean createdThumbnail = storage.createFile(thumbnailPath,thumbnail);
-                       boolean createdOriginal  = storage.createFile(new File(originalPath),new File(mPath),Cipher.ENCRYPT_MODE);
-                       Utils.Log(TAG,"start end");
+                       Utils.Log(TAG, "start compress");
+                       boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
+                       boolean createdOriginal = storage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
+                       Utils.Log(TAG, "start end");
 
 
-                       if (createdThumbnail && createdOriginal){
+                       if (createdThumbnail && createdOriginal) {
                            subscriber.onNext(items);
                            subscriber.onComplete();
-                           Utils.Log(TAG,"CreatedFile successful");
-                       }
-                       else{
+                           Utils.Log(TAG, "CreatedFile successful");
+                       } else {
                            subscriber.onNext(null);
                            subscriber.onComplete();
-                           Utils.Log(TAG,"CreatedFile failed");
+                           Utils.Log(TAG, "CreatedFile failed");
                        }
 
                    } catch (Exception e) {
@@ -546,12 +546,13 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        subscriber.onNext(false);
                        subscriber.onComplete();
                    } finally {
-                       Utils.Log(TAG,"Finally");
+                       Utils.Log(TAG, "Finally");
                    }
                    break;
+               }
 
-               case VIDEO:
-                   Utils.Log(TAG,"Start RXJava Video Progressing");
+               case VIDEO: {
+                   Utils.Log(TAG, "Start RXJava Video Progressing");
                    try {
                        BitmapFactory.Options options = new BitmapFactory.Options();
                        options.inDither = false;
@@ -564,14 +565,14 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
                        String currentTime = Utils.getCurrentDateTime();
                        String uuId = Utils.getUUId();
-                       String pathContent = rootPath + uuId+"/";
+                       String pathContent = rootPath + uuId + "/";
                        storage.createDirectory(pathContent);
-                       String thumbnailPath = pathContent+"thumbnail_"+currentTime;
-                       String originalPath = pathContent+currentTime;
+                       String thumbnailPath = pathContent + "thumbnail_" + currentTime;
+                       String originalPath = pathContent + currentTime;
 
 
                        DriveDescription description = new DriveDescription();
-                       description.fileExtension = getString(R.string.key_mp4);
+                       description.fileExtension = mMimeTypeFile.extension;
                        description.originalPath = originalPath;
                        description.thumbnailPath = thumbnailPath;
                        description.subFolderName = uuId;
@@ -580,7 +581,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.local_id = uuId;
                        description.global_original_id = null;
                        description.mimeType = mMimeType;
-                       description.thumbnailName = currentTime;
                        description.globalName = uuId;
                        description.formatType = EnumFormatType.VIDEO.ordinal();
                        description.degrees = 0;
@@ -588,8 +588,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        description.originalSync = false;
                        description.global_thumbnail_id = null;
                        description.fileType = EnumFileType.NONE.ordinal();
-                       description.originalName = currentTime;
-                       description.thumbnailName = "thumbnail_"+currentTime;
+                       description.originalName =  mMimeTypeFile.name;;
+                       description.thumbnailName = "thumbnail_" + currentTime;
 
 
                        items = new Items(false,
@@ -599,9 +599,9 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                description.fileType,
                                description.formatType,
                                description.originalName,
-                               description.thumbnailName ,
+                               description.thumbnailName,
                                description.globalName,
-                               description.originalPath ,
+                               description.originalPath,
                                description.thumbnailPath,
                                description.local_id,
                                description.global_original_id,
@@ -613,20 +613,18 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                                EnumStatus.UPLOAD);
 
 
-
-                       boolean createdThumbnail =  storage.createFile(thumbnailPath,thumbnail);
+                       boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
-                       boolean createdOriginal  = mStorage.createLargeFile(new File(originalPath),new File(mPath),mCiphers);
+                       boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
-                       if (createdThumbnail && createdOriginal){
+                       if (createdThumbnail && createdOriginal) {
                            subscriber.onNext(items);
                            subscriber.onComplete();
-                           Utils.Log(TAG,"CreatedFile successful");
-                       }
-                       else{
+                           Utils.Log(TAG, "CreatedFile successful");
+                       } else {
                            subscriber.onNext(null);
                            subscriber.onComplete();
-                           Utils.Log(TAG,"CreatedFile failed");
+                           Utils.Log(TAG, "CreatedFile failed");
                        }
 
                    } catch (Exception e) {
@@ -634,9 +632,87 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                        subscriber.onNext(null);
                        subscriber.onComplete();
                    } finally {
-                       Utils.Log(TAG,"Finally");
+                       Utils.Log(TAG, "Finally");
                    }
                    break;
+               }
+
+
+               case AUDIO: {
+
+                   Utils.Log(TAG, "Start RXJava Video Progressing");
+                   try {
+
+                       String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
+                       String currentTime = Utils.getCurrentDateTime();
+                       String uuId = Utils.getUUId();
+                       String pathContent = rootPath + uuId + "/";
+                       storage.createDirectory(pathContent);
+                       String originalPath = pathContent + currentTime;
+
+
+                       DriveDescription description = new DriveDescription();
+                       description.fileExtension = mMimeTypeFile.extension;
+                       description.originalPath = originalPath;
+                       description.thumbnailPath = null;
+                       description.subFolderName = uuId;
+                       description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
+                       description.nameMainCategories = MainCategories.getInstance().intent_name;
+                       description.local_id = uuId;
+                       description.mimeType = mMimeType;
+                       description.globalName = uuId;
+                       description.formatType = EnumFormatType.AUDIO.ordinal();
+                       description.degrees = 0;
+                       description.thumbnailSync = true;
+                       description.originalSync = false;
+                       description.global_original_id = null;
+                       description.global_thumbnail_id = null;
+                       description.fileType = EnumFileType.NONE.ordinal();
+                       description.originalName = mMimeTypeFile.name;
+                       description.thumbnailName = null;
+
+                       items = new Items(false,
+                               description.originalSync,
+                               description.thumbnailSync,
+                               description.degrees,
+                               description.fileType,
+                               description.formatType,
+                               description.originalName,
+                               description.thumbnailName,
+                               description.globalName,
+                               description.originalPath,
+                               description.thumbnailPath,
+                               description.local_id,
+                               description.global_original_id,
+                               description.global_thumbnail_id,
+                               description.localCategories_Id,
+                               description.mimeType,
+                               description.fileExtension,
+                               new Gson().toJson(description),
+                               EnumStatus.UPLOAD);
+
+                       mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
+                       boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
+
+                       if (createdOriginal) {
+                           subscriber.onNext(items);
+                           subscriber.onComplete();
+                           Utils.Log(TAG, "CreatedFile successful");
+                       } else {
+                           subscriber.onNext(null);
+                           subscriber.onComplete();
+                           Utils.Log(TAG, "CreatedFile failed");
+                       }
+
+                   } catch (Exception e) {
+                       Log.w(TAG, "Cannot write to " + e);
+                       subscriber.onNext(null);
+                       subscriber.onComplete();
+                   } finally {
+                       Utils.Log(TAG, "Finally");
+                   }
+                   break;
+               }
            }
             Utils.Log(TAG,"End up RXJava");
         })

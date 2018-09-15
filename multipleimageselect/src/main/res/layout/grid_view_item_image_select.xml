@@ -18,4 +18,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/multiple_image_select_imageSelectBackground"/>
+
+    <TextView
+        android:textColor="@color/multiple_image_select_buttonText"
+        android:layout_margin="5dp"
+        android:maxLines="2"
+        android:id="@+id/tvTitle"
+        android:layout_gravity="center|top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/imgAudioVideo"
+        android:src="@drawable/baseline_music_note_white_48"
+        android:layout_gravity="left|bottom"
+        android:layout_margin="10dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"/>
+
 </FrameLayout>

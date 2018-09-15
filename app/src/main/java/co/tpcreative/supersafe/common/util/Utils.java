@@ -24,11 +24,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
 
-import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,11 +45,14 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.MimeTypeFile;
 import de.mrapp.android.dialog.MaterialDialog;
 
 
@@ -530,6 +532,11 @@ public class Utils {
         return type;
     }
 
+    public static String getFileExtension(String url){
+        String fileExt = FilenameUtils.getExtension(url);
+        return fileExt;
+    }
+
     public static void Log(final String TAG,final String message){
         if (BuildConfig.DEBUG){
             Log.d(TAG,message);
@@ -713,5 +720,20 @@ public class Utils {
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
+    public static HashMap<String,MimeTypeFile> mediaTypeSupport(){
+        HashMap<String,MimeTypeFile> hashMap = new HashMap<>();
+        hashMap.put("mp4",new MimeTypeFile(".mp4", EnumFormatType.VIDEO,"video/mp4"));
+        hashMap.put("3gp",new MimeTypeFile(".3gp", EnumFormatType.VIDEO,"video/3gp"));
+        hashMap.put("wmv",new MimeTypeFile(".wmv", EnumFormatType.VIDEO,"video/wmv"));
+        hashMap.put("mkv",new MimeTypeFile(".mkv", EnumFormatType.VIDEO,"video/mkv"));
+        hashMap.put("m4a",new MimeTypeFile(".m4a", EnumFormatType.AUDIO,"audio/m4a"));
+        hashMap.put("aac",new MimeTypeFile(".aac", EnumFormatType.AUDIO,"audio/aac"));
+        hashMap.put("mp3",new MimeTypeFile(".mp3", EnumFormatType.AUDIO,"audio/mp3"));
+        hashMap.put("wav",new MimeTypeFile(".wav", EnumFormatType.AUDIO,"audio/wav"));
+        hashMap.put("m4a",new MimeTypeFile(".m4a", EnumFormatType.AUDIO,"audio/m4a"));
+        hashMap.put("jpg",new MimeTypeFile(".jpg", EnumFormatType.IMAGE,"image/jpeg"));
+        hashMap.put("png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
+        return hashMap;
+    }
 
 }
