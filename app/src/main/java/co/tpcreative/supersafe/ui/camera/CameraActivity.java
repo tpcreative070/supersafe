@@ -1,51 +1,29 @@
 package co.tpcreative.supersafe.ui.camera;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
-import com.google.common.net.MediaType;
-import com.google.gson.Gson;
-import com.snatik.storage.Storage;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.text.DecimalFormat;
-
-import javax.crypto.Cipher;
 
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.DriveDescription;
-import co.tpcreative.supersafe.model.EnumFileType;
-import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.EnumStatus;
 
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import id.zelory.compressor.Compressor;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback{
 
     private static final String TAG = CameraActivity.class.getSimpleName();
-    private Storage storage;
 
     private static final int[] FLASH_OPTIONS = {
             CameraView.FLASH_AUTO,
@@ -61,8 +39,6 @@ public class CameraActivity extends BaseActivity implements
 
 
     private int mCurrentFlash;
-    private int mOrientation = 0;
-    private boolean isProgress;
     private boolean isReload;
 
     @BindView(R.id.camera)
@@ -75,9 +51,6 @@ public class CameraActivity extends BaseActivity implements
     ImageButton btnFlash;
     @BindView(R.id.take_picture)
     FloatingActionButton take_picture;
-    private Cipher mCipher;
-    private Disposable subscriptions;
-
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -85,12 +58,12 @@ public class CameraActivity extends BaseActivity implements
             switch (v.getId()) {
                 case R.id.take_picture:
                     if (mCameraView != null) {
-                        if (isProgress){
+                        if (GalleryCameraMediaManager.getInstance().isProgressing()){
                             Utils.Log(TAG, "Progressing");
                             break;
                         }
                         mCameraView.takePicture();
-                        isProgress  = true;
+                        GalleryCameraMediaManager.getInstance().setProgressing(true);
                     }
                     break;
                 case R.id.btnFlash:
@@ -118,12 +91,9 @@ public class CameraActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        storage = new Storage(this);
-
         if (mCameraView != null) {
             mCameraView.addCallback(mCallback);
         }
-
         take_picture.setOnClickListener(mOnClickListener);
         btnDone.setOnClickListener(mOnClickListener);
         btnFlash.setOnClickListener(mOnClickListener);
@@ -135,10 +105,6 @@ public class CameraActivity extends BaseActivity implements
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-
-        storage = new Storage(this);
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-        mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
     }
 
 
@@ -160,13 +126,6 @@ public class CameraActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"onDestroy");
-        try {
-            storage.deleteFile(Utils.getPackagePath(getApplicationContext()).getAbsolutePath());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -200,118 +159,9 @@ public class CameraActivity extends BaseActivity implements
                 return;
             }
             isReload = true;
-            onSaveData(data);
+            ServiceManager.getInstance().onSaveDataOnCamera(data);
         }
     };
-
-    public void onSaveData(final byte[]mData){
-        subscriptions = Observable.create(subscriber -> {
-            File thumbnail = null;
-            final byte[]data = mData;
-            final Bitmap mBitmap;
-            try {
-
-                mBitmap = Utils.getThumbnailScale(data);
-//                thumbnail =  new Compressor(CameraActivity.this)
-//                        .setMaxWidth(640)
-//                        .setMaxHeight(480)
-//                        .setQuality(85)
-//                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
-//                        .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(CameraActivity.this).getAbsolutePath())
-//                        .compressToFile(data,getString(R.string.key_temporary));
-
-                String path = SuperSafeApplication.getInstance().getSuperSafe();
-                String currentTime = Utils.getCurrentDateTime();
-                String uuId = Utils.getUUId();
-                String pathContent = path + uuId+"/";
-                storage.createDirectory(pathContent);
-                String thumbnailPath = pathContent+"thumbnail_"+currentTime;
-                String originalPath = pathContent+currentTime;
-
-                DriveDescription description = new DriveDescription();
-                description.fileExtension = getString(R.string.key_jpg);
-                description.originalPath = originalPath;
-                description.thumbnailPath = thumbnailPath;
-                description.subFolderName = uuId;
-                description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                description.nameMainCategories = MainCategories.getInstance().intent_name;
-                description.local_id = uuId;
-                description.global_original_id = null;
-                description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
-                description.thumbnailName = currentTime;
-                description.globalName = uuId;
-                description.formatType = EnumFormatType.IMAGE.ordinal();
-                description.degrees = 0;
-                description.thumbnailSync = false;
-                description.originalSync = false;
-                description.global_thumbnail_id = null;
-                description.fileType = EnumFileType.NONE.ordinal();
-                description.originalName = currentTime;
-                description.title = currentTime;
-                description.thumbnailName = "thumbnail_"+currentTime;
-
-                Items items = new Items(false,
-                        description.originalSync,
-                        description.thumbnailSync,
-                        description.degrees,
-                        description.fileType,
-                        description.formatType,
-                        description.title,
-                        description.originalName,
-                        description.thumbnailName ,
-                        description.globalName,
-                        description.originalPath ,
-                        description.thumbnailPath,
-                        description.local_id,
-                        description.global_original_id,
-                        description.global_thumbnail_id,
-                        description.localCategories_Id,
-                        description.mimeType,
-                        description.fileExtension,
-                        new Gson().toJson(description),
-                        EnumStatus.UPLOAD);
-
-                boolean createdThumbnail = storage.createFile(thumbnailPath,mBitmap);
-                boolean createdOriginal = storage.createFile(originalPath,data);
-                if (createdThumbnail && createdOriginal){
-                    subscriber.onNext(items);
-                    subscriber.onComplete();
-                    Utils.Log(TAG,"CreatedFile successful");
-                }
-                else{
-                    subscriber.onNext(null);
-                    subscriber.onComplete();
-                    Utils.Log(TAG,"CreatedFile failed");
-                }
-
-            } catch (Exception e) {
-                subscriber.onNext(null);
-                subscriber.onComplete();
-                Log.w(TAG, "Cannot write to " + e);
-            } finally {
-                Utils.Log(TAG,"Finally");
-                isProgress = false;
-            }
-    })
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .observeOn(Schedulers.io())
-            .subscribe(response -> {
-                try {
-                    final Items mItem = (Items) response;
-                    if (mItem!=null){
-                        InstanceGenerator.getInstance(CameraActivity.this).onInsert(mItem);
-                    }
-                    Utils.Log(TAG,"Insert Successful");
-                    Utils.Log(TAG,new Gson().toJson(mItem));
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-                isProgress = false;
-    });
-
-    }
 
 
 }

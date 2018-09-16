@@ -11,5 +11,7 @@ include ':app',
         'storage',
         'photoview',
         'library-progress-dialog',
-        'compressorlibrary'
+        'compressorlibrary',
+        'image-picker-library'
+
 

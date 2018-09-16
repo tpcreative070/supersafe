@@ -184,6 +184,9 @@ dependencies {
     /*Adding detect extension files*/
     implementation 'commons-io:commons-io:2.6'
 
+    /*Image picker*/
+    implementation project(':image-picker-library')
+
 
 
 

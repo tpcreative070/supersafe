@@ -8,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -30,11 +28,11 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
-            .override(400,400)
-            .placeholder(R.drawable.ic_camera)
+            .override(400, 400)
+            .placeholder(R.color.colorPrimary)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
-            .error(R.drawable.ic_aspect_ratio)
+            .error(R.color.colorPrimary)
             .priority(Priority.HIGH);
 
     public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
@@ -69,10 +67,13 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         @Override
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
-            Glide.with(context)
-                    .load(data.getImageResource())
-                    .apply(options)
-                    .into(imgAlbum);
+//            Glide.with(context)
+//                    .load(data.getImageResource())
+//                    .apply(options)
+//                    .into(imgAlbum);
+
+            imgAlbum.setBackgroundResource(data.getImageResource());
+
             tvTitle.setText(data.getName());
             this.mPosition = position;
         }

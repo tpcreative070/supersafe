@@ -258,6 +258,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                     break;
                 }
                 Utils.Log(TAG,"Action here");
+
                 try {
                     if (presenter.mList!=null){
                         if (presenter.mList.size()>0){
@@ -367,26 +368,36 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     }
 
     public void onStartProgressing(){
-        if (dialog==null){
-            dialog = new SpotsDialog.Builder()
-                    .setContext(this)
-                    .setMessage(getString(R.string.progressing))
-                    .setCancelable(true)
-                    .build();
-        }
-        if (!dialog.isShowing()){
-            dialog.show();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (dialog==null){
+                    dialog = new SpotsDialog.Builder()
+                            .setContext(PhotoSlideShowActivity.this)
+                            .setMessage(getString(R.string.progressing))
+                            .setCancelable(true)
+                            .build();
+                }
+                if (!dialog.isShowing()){
+                    dialog.show();
+                    Utils.Log(TAG,"Showing dialog...");
+                }
+            }
+        });
     }
 
     public void onStopProgressing(){
-        if (dialog!=null){
-            dialog.dismiss();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (dialog!=null){
+                    dialog.dismiss();
+                }
+            }
+        });
     }
 
     public void exportFile(String output,String input){
-        onStartProgressing();
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
         storage.createLargeFile(new File(output), new File(input),mCipher, new OnStorageListener() {

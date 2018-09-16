@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -7,27 +6,26 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.google.common.net.MediaType;
 import com.google.gson.Gson;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.crypto.Cipher;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
@@ -37,9 +35,14 @@ import co.tpcreative.supersafe.common.services.SuperSafeService;
 import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveTitle;
+import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
@@ -48,7 +51,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
 
 public class ServiceManager implements SuperSafeServiceView {
 
@@ -59,7 +61,8 @@ public class ServiceManager implements SuperSafeServiceView {
     private boolean isUploadData;
     private Disposable subscriptions;
     private Storage storage = new Storage(SuperSafeApplication.getInstance());
-
+    private Storage mStorage = new Storage(SuperSafeApplication.getInstance());
+    private Cipher mCiphers;
 
     public boolean isDownloadData() {
         return isDownloadData;
@@ -67,7 +70,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
     public void setDownloadData(boolean downloadData) {
         isDownloadData = downloadData;
-
     }
 
     private boolean isDownloadData;
@@ -109,6 +111,7 @@ public class ServiceManager implements SuperSafeServiceView {
             myService = ((SuperSafeService.LocalBinder) binder).getService();
             myService.bindView(ServiceManager.this);
             storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+            mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         }
 
         //binder comes from server to communicate with method's of
@@ -221,7 +224,6 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG, "My services is null");
         }
     }
-
 
 
     public void onSyncData() {
@@ -569,12 +571,10 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG, "Preparing upload "+ totalList+" items to Cloud");
         }
 
-
         if (myService != null) {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
-
                     subscriptions = Observable.fromIterable(mList)
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
@@ -762,6 +762,456 @@ public class ServiceManager implements SuperSafeServiceView {
                 }
                 break;
         }
+    }
+
+
+
+    /*Gallery action*/
+
+    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id){
+        if (myService==null){
+            Utils.Log(TAG,"Service is null");
+            return;
+        }
+//        final  Storage storage = new Storage(SuperSafeApplication.getInstance());
+//        storage.setEncryptConfiguration(storage.getmConfiguration());
+//        Cipher mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
+        subscriptions = Observable.create(subscriber -> {
+            final MimeTypeFile mMimeTypeFile = mimeTypeFile;
+            final EnumFormatType enumTypeFile  = mMimeTypeFile.formatType;
+            final String mPath = path;
+            final String mMimeType  = mMimeTypeFile.mimeType;
+            final String mVideo_id = id;
+            final Items items ;
+            Utils.Log(TAG,"object "+ new Gson().toJson(mMimeTypeFile));
+            // InputStream originalFile = null;
+            Bitmap thumbnail = null;
+            switch (enumTypeFile){
+                case IMAGE: {
+                    Utils.Log(TAG, "Start RXJava Image Progressing");
+                    try {
+
+                        final int THUMBSIZE_HEIGHT = 600;
+                        final int THUMBSIZE_WIDTH = 400;
+
+                        BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+                        bmpFactoryOptions.inJustDecodeBounds = true;
+                        Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
+                        int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
+                        int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
+                        if (heightRatio > 1 || widthRatio > 1) {
+                            if (heightRatio > widthRatio) {
+                                bmpFactoryOptions.inSampleSize = heightRatio;
+                            } else {
+                                bmpFactoryOptions.inSampleSize = widthRatio;
+                            }
+                        }
+                        bmpFactoryOptions.inJustDecodeBounds = false;
+                        bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
+
+                        thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
+                                THUMBSIZE_HEIGHT,
+                                THUMBSIZE_WIDTH);
+                        ExifInterface exifInterface = new ExifInterface(mPath);
+                        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        Log.d("EXIF", "Exif: " + orientation);
+                        Matrix matrix = new Matrix();
+                        if (orientation == 6) {
+                            matrix.postRotate(90);
+                        } else if (orientation == 3) {
+                            matrix.postRotate(180);
+                        } else if (orientation == 8) {
+                            matrix.postRotate(270);
+                        }
+                        thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
+
+
+//                       File mFileThumbnail =  new Compressor(AlbumDetailActivity.this)
+//                               .setMaxWidth(640)
+//                               .setMaxHeight(480)
+//                               .setQuality(85)
+//                               .setCompressFormat(Bitmap.CompressFormat.JPEG)
+//                               .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(AlbumDetailActivity.this).getAbsolutePath())
+//                               .compressToFile(new File(mPath),getString(R.string.key_temporary));
+
+
+                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
+                        String currentTime = Utils.getCurrentDateTime();
+                        String uuId = Utils.getUUId();
+                        String pathContent = rootPath + uuId + "/";
+                        storage.createDirectory(pathContent);
+                        String thumbnailPath = pathContent + "thumbnail_" + currentTime;
+                        String originalPath = pathContent + currentTime;
+
+
+                        DriveDescription description = new DriveDescription();
+                        description.fileExtension = mMimeTypeFile.extension;
+
+                        description.originalPath = originalPath;
+                        description.thumbnailPath = thumbnailPath;
+                        description.subFolderName = uuId;
+                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
+                        description.nameMainCategories = MainCategories.getInstance().intent_name;
+                        description.local_id = uuId;
+                        description.global_original_id = null;
+                        description.mimeType = mMimeType;
+                        description.thumbnailName = currentTime;
+                        description.globalName = uuId;
+                        description.formatType = EnumFormatType.IMAGE.ordinal();
+                        description.degrees = 0;
+                        description.thumbnailSync = false;
+                        description.originalSync = false;
+                        description.global_thumbnail_id = null;
+                        description.fileType = EnumFileType.NONE.ordinal();
+                        description.originalName = currentTime;
+                        description.title = mMimeTypeFile.name;
+                        description.thumbnailName = "thumbnail_" + currentTime;
+
+                        items = new Items(false,
+                                description.originalSync,
+                                description.thumbnailSync,
+                                description.degrees,
+                                description.fileType,
+                                description.formatType,
+                                description.title,
+                                description.originalName,
+                                description.thumbnailName,
+                                description.globalName,
+                                description.originalPath,
+                                description.thumbnailPath,
+                                description.local_id,
+                                description.global_original_id,
+                                description.global_thumbnail_id,
+                                description.localCategories_Id,
+                                description.mimeType,
+                                description.fileExtension,
+                                new Gson().toJson(description),
+                                EnumStatus.UPLOAD);
+
+                        Utils.Log(TAG, "start compress");
+                        boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
+                        boolean createdOriginal = storage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
+                        Utils.Log(TAG, "start end");
+
+
+                        if (createdThumbnail && createdOriginal) {
+                            subscriber.onNext(items);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile successful");
+                        } else {
+                            subscriber.onNext(null);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile failed");
+                        }
+
+                    } catch (Exception e) {
+                        Log.w(TAG, "Cannot write to " + e);
+                        subscriber.onNext(false);
+                        subscriber.onComplete();
+                    } finally {
+                        Utils.Log(TAG, "Finally");
+                    }
+                    break;
+                }
+
+                case VIDEO: {
+                    Utils.Log(TAG, "Start RXJava Video Progressing");
+                    try {
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inDither = false;
+                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                        thumbnail = MediaStore.Video.Thumbnails.getThumbnail(SuperSafeApplication.getInstance().getContentResolver(),
+                                Long.parseLong(mVideo_id),
+                                MediaStore.Images.Thumbnails.MINI_KIND,
+                                options);
+
+                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
+                        String currentTime = Utils.getCurrentDateTime();
+                        String uuId = Utils.getUUId();
+                        String pathContent = rootPath + uuId + "/";
+                        storage.createDirectory(pathContent);
+                        String thumbnailPath = pathContent + "thumbnail_" + currentTime;
+                        String originalPath = pathContent + currentTime;
+
+
+                        DriveDescription description = new DriveDescription();
+                        description.fileExtension = mMimeTypeFile.extension;
+                        description.originalPath = originalPath;
+                        description.thumbnailPath = thumbnailPath;
+                        description.subFolderName = uuId;
+                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
+                        description.nameMainCategories = MainCategories.getInstance().intent_name;
+                        description.local_id = uuId;
+                        description.global_original_id = null;
+                        description.mimeType = mMimeType;
+                        description.globalName = uuId;
+                        description.formatType = EnumFormatType.VIDEO.ordinal();
+                        description.degrees = 0;
+                        description.thumbnailSync = false;
+                        description.originalSync = false;
+                        description.global_thumbnail_id = null;
+                        description.fileType = EnumFileType.NONE.ordinal();
+                        description.originalName = currentTime;
+                        description.title = mMimeTypeFile.name;
+                        description.thumbnailName = "thumbnail_" + currentTime;
+
+
+                        items = new Items(false,
+                                description.originalSync,
+                                description.thumbnailSync,
+                                description.degrees,
+                                description.fileType,
+                                description.formatType,
+                                description.title,
+                                description.originalName,
+                                description.thumbnailName,
+                                description.globalName,
+                                description.originalPath,
+                                description.thumbnailPath,
+                                description.local_id,
+                                description.global_original_id,
+                                description.global_thumbnail_id,
+                                description.localCategories_Id,
+                                description.mimeType,
+                                description.fileExtension,
+                                new Gson().toJson(description),
+                                EnumStatus.UPLOAD);
+
+
+                        boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
+                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
+                        boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
+
+                        if (createdThumbnail && createdOriginal) {
+                            subscriber.onNext(items);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile successful");
+                        } else {
+                            subscriber.onNext(null);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile failed");
+                        }
+
+                    } catch (Exception e) {
+                        Log.w(TAG, "Cannot write to " + e);
+                        subscriber.onNext(null);
+                        subscriber.onComplete();
+                    } finally {
+                        Utils.Log(TAG, "Finally");
+                    }
+                    break;
+                }
+
+
+                case AUDIO: {
+
+                    Utils.Log(TAG, "Start RXJava Video Progressing");
+                    try {
+
+                        String rootPath = SuperSafeApplication.getInstance().getSuperSafe();
+                        String currentTime = Utils.getCurrentDateTime();
+                        String uuId = Utils.getUUId();
+                        String pathContent = rootPath + uuId + "/";
+                        storage.createDirectory(pathContent);
+                        String originalPath = pathContent + currentTime;
+
+
+                        DriveDescription description = new DriveDescription();
+                        description.fileExtension = mMimeTypeFile.extension;
+                        description.originalPath = originalPath;
+                        description.thumbnailPath = null;
+                        description.subFolderName = uuId;
+                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
+                        description.nameMainCategories = MainCategories.getInstance().intent_name;
+                        description.local_id = uuId;
+                        description.mimeType = mMimeType;
+                        description.globalName = uuId;
+                        description.formatType = EnumFormatType.AUDIO.ordinal();
+                        description.degrees = 0;
+                        description.thumbnailSync = true;
+                        description.originalSync = false;
+                        description.global_original_id = null;
+                        description.global_thumbnail_id = null;
+                        description.fileType = EnumFileType.NONE.ordinal();
+                        description.originalName = currentTime;
+                        description.title = mMimeTypeFile.name;
+                        description.thumbnailName = null;
+
+                        items = new Items(false,
+                                description.originalSync,
+                                description.thumbnailSync,
+                                description.degrees,
+                                description.fileType,
+                                description.formatType,
+                                description.title,
+                                description.originalName,
+                                description.thumbnailName,
+                                description.globalName,
+                                description.originalPath,
+                                description.thumbnailPath,
+                                description.local_id,
+                                description.global_original_id,
+                                description.global_thumbnail_id,
+                                description.localCategories_Id,
+                                description.mimeType,
+                                description.fileExtension,
+                                new Gson().toJson(description),
+                                EnumStatus.UPLOAD);
+
+                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
+                        boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
+
+                        if (createdOriginal) {
+                            subscriber.onNext(items);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile successful");
+                        } else {
+                            subscriber.onNext(null);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile failed");
+                        }
+
+                    } catch (Exception e) {
+                        Log.w(TAG, "Cannot write to " + e);
+                        subscriber.onNext(null);
+                        subscriber.onComplete();
+                    } finally {
+                        Utils.Log(TAG, "Finally");
+                    }
+                    break;
+                }
+            }
+            Utils.Log(TAG,"End up RXJava");
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+                    final Items items = (Items) response;
+                    if (items!=null){
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+                        Utils.Log(TAG,"Write file successful ");
+                    }else{
+                        Utils.Log(TAG,"Write file Failed ");
+                    }
+                    Utils.Log(TAG,new Gson().toJson(items));
+                    GalleryCameraMediaManager.getInstance().onUpdatedView();
+                });
+    }
+
+
+
+
+    /*--------------Camera action-----------------*/
+
+    public void onSaveDataOnCamera(final byte[]mData){
+
+        if (myService==null){
+            Utils.Log(TAG,"Service is null");
+        }
+        subscriptions = Observable.create(subscriber -> {
+            File thumbnail = null;
+            final byte[]data = mData;
+            final Bitmap mBitmap;
+            try {
+                mBitmap = Utils.getThumbnailScale(data);
+//                thumbnail =  new Compressor(CameraActivity.this)
+//                        .setMaxWidth(640)
+//                        .setMaxHeight(480)
+//                        .setQuality(85)
+//                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
+//                        .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(CameraActivity.this).getAbsolutePath())
+//                        .compressToFile(data,getString(R.string.key_temporary));
+
+                String path = SuperSafeApplication.getInstance().getSuperSafe();
+                String currentTime = Utils.getCurrentDateTime();
+                String uuId = Utils.getUUId();
+                String pathContent = path + uuId+"/";
+                storage.createDirectory(pathContent);
+                String thumbnailPath = pathContent+"thumbnail_"+currentTime;
+                String originalPath = pathContent+currentTime;
+
+                DriveDescription description = new DriveDescription();
+                description.fileExtension = getString(R.string.key_jpg);
+                description.originalPath = originalPath;
+                description.thumbnailPath = thumbnailPath;
+                description.subFolderName = uuId;
+                description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
+                description.nameMainCategories = MainCategories.getInstance().intent_name;
+                description.local_id = uuId;
+                description.global_original_id = null;
+                description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
+                description.thumbnailName = currentTime;
+                description.globalName = uuId;
+                description.formatType = EnumFormatType.IMAGE.ordinal();
+                description.degrees = 0;
+                description.thumbnailSync = false;
+                description.originalSync = false;
+                description.global_thumbnail_id = null;
+                description.fileType = EnumFileType.NONE.ordinal();
+                description.originalName = currentTime;
+                description.title = currentTime;
+                description.thumbnailName = "thumbnail_"+currentTime;
+
+                Items items = new Items(false,
+                        description.originalSync,
+                        description.thumbnailSync,
+                        description.degrees,
+                        description.fileType,
+                        description.formatType,
+                        description.title,
+                        description.originalName,
+                        description.thumbnailName ,
+                        description.globalName,
+                        description.originalPath ,
+                        description.thumbnailPath,
+                        description.local_id,
+                        description.global_original_id,
+                        description.global_thumbnail_id,
+                        description.localCategories_Id,
+                        description.mimeType,
+                        description.fileExtension,
+                        new Gson().toJson(description),
+                        EnumStatus.UPLOAD);
+
+                boolean createdThumbnail = storage.createFile(thumbnailPath,mBitmap);
+                boolean createdOriginal = storage.createFile(originalPath,data);
+                if (createdThumbnail && createdOriginal){
+                    subscriber.onNext(items);
+                    subscriber.onComplete();
+                    Utils.Log(TAG,"CreatedFile successful");
+                }
+                else{
+                    subscriber.onNext(null);
+                    subscriber.onComplete();
+                    Utils.Log(TAG,"CreatedFile failed");
+                }
+
+            } catch (Exception e) {
+                subscriber.onNext(null);
+                subscriber.onComplete();
+                Log.w(TAG, "Cannot write to " + e);
+            } finally {
+                Utils.Log(TAG,"Finally");
+            }
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+                    try {
+                        final Items mItem = (Items) response;
+                        if (mItem!=null){
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
+                        }
+                        Utils.Log(TAG,"Insert Successful");
+                        Utils.Log(TAG,new Gson().toJson(mItem));
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    GalleryCameraMediaManager.getInstance().setProgressing(false);
+                });
 
     }
 
@@ -782,43 +1232,6 @@ public class ServiceManager implements SuperSafeServiceView {
         }
         Utils.Log(TAG,"Dismiss Service manager");
     }
-
-
-    private Observable<Integer> getObservableItems() {
-        return Observable.create(subscriber -> {
-            for (int i = 0;i<10;i++) {
-                subscriber.onNext(i);
-            }
-            subscriber.onComplete();
-        });
-    }
-
-    public void getObservable(){
-        getObservableItems().
-                subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(new Observer<Integer>() {
-
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                    @Override
-                    public void onError(Throwable e) {}
-
-                    @Override
-                    public void onNext(Integer pojoObject) {
-                        // Show Progress
-                    }
-                });
-    }
-
-
 
 
     @Override

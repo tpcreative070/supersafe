@@ -4,14 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:elevation="3dp"
-        app:cardCornerRadius="@dimen/card_album_radius">
-
         <RelativeLayout
             android:id="@+id/rlHome"
             android:layout_width="match_parent"
@@ -21,7 +13,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <com.litao.android.lib.view.SquaredImageView
                 android:scaleType="centerCrop"
                 android:id="@+id/imgAlbum"
                 android:layout_width="match_parent"
@@ -49,5 +41,4 @@
                 android:layout_height="@dimen/image_size_video_cam"/>
 
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>
