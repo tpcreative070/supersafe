@@ -258,7 +258,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                     break;
                 }
                 Utils.Log(TAG,"Action here");
-
                 try {
                     if (presenter.mList!=null){
                         if (presenter.mList.size()>0){

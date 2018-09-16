@@ -12,17 +12,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.snatik.storage.Storage;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.Album;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     private Context context;
+    private Storage storage;
     private ItemSelectedListener itemSelectedListener;
     private String TAG = PrivateAdapter.class.getSimpleName();
 
@@ -38,6 +43,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
+        storage = new Storage(context);
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         this.itemSelectedListener = itemSelectedListener;
     }
 
@@ -67,13 +74,16 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         @Override
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
-//            Glide.with(context)
-//                    .load(data.getImageResource())
-//                    .apply(options)
-//                    .into(imgAlbum);
-
-            imgAlbum.setBackgroundResource(data.getImageResource());
-
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.getLocalId());
+            if (items!=null){
+                Glide.with(context)
+                    .load(storage.readFile(items.thumbnailPath))
+                    .apply(options)
+                    .into(imgAlbum);
+            }
+            else{
+                imgAlbum.setBackgroundResource(data.getImageResource());
+            }
             tvTitle.setText(data.getName());
             this.mPosition = position;
         }
@@ -111,14 +121,14 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
+                case R.id.action_settings:
                     if (itemSelectedListener!=null){
-                        itemSelectedListener.onAddToFavoriteSelected(position);
+                        itemSelectedListener.onSetting(position);
                     }
                     return true;
-                case R.id.action_play_next:
+                case R.id.action_delete:
                     if (itemSelectedListener!=null){
-                        itemSelectedListener.onPlayNextSelected(position);
+                        itemSelectedListener.onDeleteAlbum(position);
                     }
                     return true;
                 default:
@@ -129,8 +139,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
-        void onAddToFavoriteSelected(int position);
-        void onPlayNextSelected(int position);
+        void onSetting(int position);
+        void onDeleteAlbum(int position);
     }
 
 }

@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
 import com.ftinc.kit.util.SizeUtils;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -47,7 +48,10 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
 public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener ,GalleryCameraMediaManager.AlbumDetailManagerListener{
@@ -101,6 +105,11 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         collapsingToolbar.setTitle(cheeseName);
         Utils.Log(TAG,Utils.getCurrentDateTime());
         GalleryCameraMediaManager.getInstance().setListener(this);
+
+
+        final Items mItem = InstanceGenerator.getInstance(this).getLatestId(MainCategories.getInstance().intent_localCategoriesId);
+        Utils.Log(TAG,"get Latest Id " + new Gson().toJson(mItem));
+
     }
 
     @Override
@@ -172,12 +181,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
                     .setLabelBackgroundColor(getResources().getColor(R.color.colorBlue))
-                    .create());
-
-            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_album, R.drawable
-                    .baseline_add_to_photos_white_36)
-                    .setLabel(getString(R.string.album))
-                    .setTheme(R.style.AppTheme_Purple)
                     .create());
             mSpeedDialView.setMainFabAnimationRotateAngle(180);
         }

@@ -1,12 +1,12 @@
 package co.tpcreative.supersafe.model;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -19,10 +19,9 @@ public class MainCategories implements Serializable {
     private final String name;
     private static MainCategories instance ;
 
-
     /*Send data to camera action*/
 
-    public transient String intent_name;
+    public transient String intent_localCategories_Name;
     public transient String intent_localCategoriesId;
 
 
@@ -42,22 +41,39 @@ public class MainCategories implements Serializable {
 
     public List<MainCategories> getList(){
         List<MainCategories> mList = new ArrayList<>();
-        mList.add(new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album), R.color.material_orange_500));
-        mList.add(new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_card_ids)), SuperSafeApplication.getInstance().getString(R.string.key_card_ids), R.color.blue_light));
-        mList.add(new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), R.color.material_lime_800));
-        mList.add(new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other), R.color.material_purple_a700));
+        final Map<String,MainCategories> hashMap = MainCategories.getInstance().getMainCategoriesHashList();
+        if (hashMap!=null){
+            for (Map.Entry<String,MainCategories> index : hashMap.entrySet()){
+                mList.add(index.getValue());
+            }
+        }
+        else{
+            final Map<String,MainCategories> map = MainCategories.getInstance().getMainCategoriesDefault();
+            for (Map.Entry<String,MainCategories> index : map.entrySet()){
+                mList.add(index.getValue());
+            }
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
+        }
         return mList;
     }
 
+    public Map<String,MainCategories>getMainCategoriesDefault(){
+        Map<String,MainCategories> map = new HashMap<>();
+        map.put(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)),new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album), R.color.material_orange_500));
+        map.put(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_card_ids)),new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_card_ids)), SuperSafeApplication.getInstance().getString(R.string.key_card_ids), R.color.blue_light));
+        map.put(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)),new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), R.color.material_lime_800));
+        map.put(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)),new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other), R.color.material_purple_a700));
+        return map;
+    }
 
-    public List<MainCategories> getMainCategoriesList(){
-        try{
-            String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories),null);
+    public Map<String,MainCategories>getMainCategoriesHashList(){
+        try {
+            String value  = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),null);
             if (value!=null){
-                Type listType = new TypeToken<ArrayList<MainCategories>>(){}.getType();
-                final List<MainCategories> mainCategoriesList = new Gson().fromJson(value,listType);
-                if (mainCategoriesList!=null){
-                    return mainCategoriesList;
+                Type type = new TypeToken<Map<String, MainCategories>>(){}.getType();
+                final Map<String,MainCategories> object  = new Gson().fromJson(value,type);
+                if (object!=null){
+                    return object;
                 }
             }
         }
@@ -66,6 +82,44 @@ public class MainCategories implements Serializable {
         }
         return null;
     }
+
+    public boolean onAddCategories(String id,String name){
+        try {
+            final Map<String,MainCategories> map = getMainCategoriesHashList();
+            if (map!=null){
+                final MainCategories object = map.get(id);
+                if (object==null){
+                    map.put(id,new MainCategories(id,name,R.color.material_orange_500));
+                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
+                    return true;
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean onDeleteCategories(String id){
+        try {
+            final Map<String,MainCategories> map = getMainCategoriesHashList();
+            if (map!=null){
+                final MainCategories object = map.get(id);
+                if (object!=null){
+                    map.remove(object.getLocalId());
+                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
+                    Utils.Log(TAG," delete "+ new Gson().toJson(map));
+                    return true;
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     public static MainCategories getInstance(){
         if (instance==null){
@@ -78,8 +132,6 @@ public class MainCategories implements Serializable {
         return name;
     }
 
-
-
     public int getImageResource() {
         return imageResource;
     }
@@ -87,4 +139,5 @@ public class MainCategories implements Serializable {
     public String getLocalId() {
         return localId;
     }
+
 }

@@ -126,6 +126,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final synchronized Items getLatestId(String id){
+        try{
+            return instance.itemsDao().getLatestId(id);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
     public final synchronized Items getItemId(String localId){
         try{
             return instance.itemsDao().loadItemId(localId);
@@ -157,6 +167,18 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return false;
     }
+
+    public final synchronized boolean onDeleteAll(String id){
+        try{
+            instance.itemsDao().deleteAll(id);
+            return true;
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return false;
+    }
+
 
 
 }

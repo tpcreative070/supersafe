@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -14,13 +15,17 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -40,6 +45,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
@@ -52,6 +58,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.MainCategories;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
@@ -185,7 +192,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             public boolean onActionSelected(SpeedDialActionItem actionItem) {
                 switch (actionItem.getId()) {
                     case R.id.fab_album:
-                        showToast(" Album");
+                        onShowDialog();
                         return false; // false will close it without animation
                     case R.id.fab_photo:
                         showToast(actionItem.getLabel(getApplicationContext()) + " Photo");
@@ -199,6 +206,35 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 return true; // To keep the Speed Dial open
             }
         });
+    }
+
+
+    public void onShowDialog(){
+        MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
+                .title(getString(R.string.create_album))
+                .theme(Theme.LIGHT)
+                .titleColor(getResources().getColor(R.color.black))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .negativeText(getString(R.string.cancel))
+                .positiveText(getString(R.string.ok))
+                .input(null, null, new MaterialDialog.InputCallback() {
+                     @Override
+                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                         Utils.Log(TAG,"Value");
+                         String value = input.toString();
+                         String base64Code = Utils.getHexCode(value);
+                         boolean response = MainCategories.getInstance().onAddCategories(base64Code,value);
+                         if (response){
+                             Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
+                         }
+                         else{
+                             Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
+                         }
+
+                         adapter.getCurrentFragment().onResume();
+                     }
+                 });
+        builder.show();
     }
 
     public void onAddPermissionCamera() {

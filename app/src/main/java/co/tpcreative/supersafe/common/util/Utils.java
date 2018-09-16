@@ -26,9 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
-
 import org.apache.commons.io.FilenameUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -564,7 +562,7 @@ public class Utils {
     }
 
     public static String getHexCode(String value){
-        return Base64.encodeBase64String(value.getBytes(Charsets.UTF_8));
+        return Base64.encodeBase64String(value.toUpperCase().getBytes(Charsets.UTF_8));
     }
 
     public void onWriteLargeFile(File input,File output){

@@ -9,7 +9,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class DriveDescription implements Serializable{
 
 
-    public String nameMainCategories;
+    public String localCategories_Name;
     public String localCategories_Id;
     public String fileExtension;
     public String thumbnailPath;

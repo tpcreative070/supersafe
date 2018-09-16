@@ -47,7 +47,6 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -851,7 +850,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
                         description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                        description.nameMainCategories = MainCategories.getInstance().intent_name;
+                        description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -883,6 +882,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_original_id,
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
+                                description.localCategories_Name,
                                 description.mimeType,
                                 description.fileExtension,
                                 new Gson().toJson(description),
@@ -940,7 +940,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
                         description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                        description.nameMainCategories = MainCategories.getInstance().intent_name;
+                        description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -972,6 +972,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_original_id,
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
+                                description.localCategories_Name,
                                 description.mimeType,
                                 description.fileExtension,
                                 new Gson().toJson(description),
@@ -1022,7 +1023,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.thumbnailPath = null;
                         description.subFolderName = uuId;
                         description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                        description.nameMainCategories = MainCategories.getInstance().intent_name;
+                        description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
                         description.local_id = uuId;
                         description.mimeType = mMimeType;
                         description.globalName = uuId;
@@ -1053,6 +1054,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_original_id,
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
+                                description.localCategories_Name,
                                 description.mimeType,
                                 description.fileExtension,
                                 new Gson().toJson(description),
@@ -1137,7 +1139,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.thumbnailPath = thumbnailPath;
                 description.subFolderName = uuId;
                 description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                description.nameMainCategories = MainCategories.getInstance().intent_name;
+                description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
                 description.local_id = uuId;
                 description.global_original_id = null;
                 description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
@@ -1169,6 +1171,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.global_original_id,
                         description.global_thumbnail_id,
                         description.localCategories_Id,
+                        description.localCategories_Name,
                         description.mimeType,
                         description.fileExtension,
                         new Gson().toJson(description),

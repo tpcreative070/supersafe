@@ -1,9 +1,8 @@
 package co.tpcreative.supersafe.ui.privates;
-
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.Presenter;
@@ -20,17 +19,8 @@ public class PrivatePresenter extends Presenter<PrivateView> {
 
     public void  getData(){
         PrivateView view = view();
-        mList.clear();
-        final List<MainCategories> result = MainCategories.getInstance().getMainCategoriesList();
-        if (result!=null){
-            mList = result;
-        }
-        else{
-            mList = MainCategories.getInstance().getList();
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories),new Gson().toJson(mList));
-        }
+        mList = MainCategories.getInstance().getList();
         view.onReload();
         Utils.Log(TAG,new Gson().toJson(mList));
     }
-
 }

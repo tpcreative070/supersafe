@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.privates;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -22,6 +21,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener{
 
@@ -100,7 +100,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         Log.d(TAG,"Position :"+ position);
         try {
             MainCategories.getInstance().intent_localCategoriesId = presenter.mList.get(position).getLocalId();
-            MainCategories.getInstance().intent_name = presenter.mList.get(position).getName();
+            MainCategories.getInstance().intent_localCategories_Name = presenter.mList.get(position).getName();
             if (MainCategories.getInstance().intent_localCategoriesId==null){
                 Utils.Log(TAG,"intent_localId is null");
                 return;
@@ -113,17 +113,28 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     }
 
     @Override
-    public void onAddToFavoriteSelected(int position) {
+    public void onSetting(int position) {
 
     }
 
     @Override
-    public void onPlayNextSelected(int position) {
+    public void onDeleteAlbum(int position) {
+        final MainCategories object = presenter.mList.get(position);
+        if (object!=null){
+            final boolean response = MainCategories.getInstance().onDeleteCategories(object.getLocalId());
+            if (response){
+                InstanceGenerator.getInstance(getActivity()).onDeleteAll(object.getLocalId());
+                presenter.getData();
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (presenter!=null){
+            presenter.getData();
+        }
     }
 
     @Override

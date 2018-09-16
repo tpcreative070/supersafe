@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
@@ -33,6 +34,7 @@ import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -577,6 +579,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                             for (DriveResponse index : driveResponse) {
                                 final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                 if (description != null) {
+                                    MainCategories.getInstance().onAddCategories(description.localCategories_Id,description.localCategories_Name);
                                     String result = Utils.hexToString(index.name);
                                     DriveTitle driveTitle = new Gson().fromJson(result,DriveTitle.class);
                                     Utils.Log(TAG,"response special "+ new Gson().toJson(driveTitle));
@@ -776,6 +779,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.global_original_id,
                 description.global_thumbnail_id,
                 description.localCategories_Id,
+                description.localCategories_Name,
                 description.mimeType,
                 description.fileExtension,
                 new Gson().toJson(description),
