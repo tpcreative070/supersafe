@@ -16,6 +16,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Utils;
 
 import co.tpcreative.supersafe.model.MainCategories;
@@ -112,6 +113,7 @@ public class CameraActivity extends BaseActivity implements
     protected void onResume() {
         super.onResume();
         mCameraView.start();
+        GalleryCameraMediaManager.getInstance().setProgressing(false);
         Utils.Log(TAG,"onResume");
     }
 
@@ -134,6 +136,7 @@ public class CameraActivity extends BaseActivity implements
             Intent intent = new Intent();
             setResult(RESULT_OK,intent);
             Utils.Log(TAG,"onBackPressed");
+            ServiceManager.getInstance().onSyncData();
         }
         super.onBackPressed();
     }

@@ -19,11 +19,12 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener{
+public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener,SingletonPrivateFragment.SingletonPrivateFragmentListener{
 
     private static final String TAG = PrivateFragment.class.getSimpleName();
     private RecyclerView recyclerView;
@@ -53,6 +54,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
                 R.layout.fragment_private, viewGroup, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         initRecycleView(inflater);
+        SingletonPrivateFragment.getInstance().setListener(this);
         return view;
     }
 
@@ -132,6 +134,10 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onUpdateView() {
         if (presenter!=null){
             presenter.getData();
         }
@@ -141,7 +147,6 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onDestroy() {
         super.onDestroy();
     }
-
 
     /**
      * Converting dp to pixel
@@ -166,6 +171,13 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onReload() {
-        adapter.setDataSource(presenter.mList);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (adapter!=null){
+                    adapter.setDataSource(presenter.mList);
+                }
+            }
+        });
     }
 }

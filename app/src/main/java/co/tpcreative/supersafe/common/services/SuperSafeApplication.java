@@ -45,6 +45,9 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private static final String TAG = SuperSafeApplication.class.getSimpleName();
     private static SuperSafeApplication mInstance;
     private String supersafe;
+    private String supersafePrivate;
+    private String supersafeBackup;
+    private String supersafeLog;
     private String key;
     private Storage storage;
     private EncryptConfiguration configuration;
@@ -116,6 +119,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         storage = new Storage(getApplicationContext());
         supersafe = storage.getExternalStorageDirectory() + "/SuperSafe_DoNot_Delete/";
         key = ".encrypt_key";
+        supersafePrivate = supersafe+"private/";
+        supersafeBackup = supersafe+"backup/";
+        supersafeLog = supersafe+"log/";
+
+
         registerActivityLifecycleCallbacks(this);
         Log.d(TAG,supersafe);
 
@@ -133,7 +141,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
          requiredScopesString = new ArrayList<>();
          requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
          requiredScopesString.add(DriveScopes.DRIVE_FILE);
-
 
     }
 
@@ -247,12 +254,27 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return supersafe;
     }
 
+    public String getSupersafePrivate() {
+        return supersafePrivate;
+    }
+
+    public String getSupersafeBackup() {
+        return supersafeBackup;
+    }
+
+    public String getSupersafeLog() {
+        return supersafeLog;
+    }
+
     public void initFolder() {
-        if (storage.isDirectoryExists(supersafe)) {
-            Log.d(TAG, "KeepSafety is existing");
+        if (storage.isDirectoryExists(supersafe) & storage.isDirectoryExists(supersafePrivate) & storage.isDirectoryExists(supersafeBackup) & storage.isDirectoryExists(supersafeLog)) {
+            Log.d(TAG, "SuperSafe is existing");
         } else {
             storage.createDirectory(supersafe);
-            Log.d(TAG, "KeepSafety was created");
+            storage.createDirectory(supersafePrivate);
+            storage.createDirectory(supersafeBackup);
+            storage.createDirectory(supersafeLog);
+            Log.d(TAG, "SuperSafe was created");
         }
     }
 

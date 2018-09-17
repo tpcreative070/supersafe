@@ -53,7 +53,7 @@ public class PhotoSlideShowPresenter extends Presenter<PhotoSlideShowView>{
             final Items mItem = InstanceGenerator.getInstance(view.getContext()).getLocalId(items.local_id);
             if (mItem!=null){
                 InstanceGenerator.getInstance(view.getContext()).onDelete(mItem);
-                storage.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafe()+mItem.local_id);
+                storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.local_id);
                 mList.remove(position);
                 view.onDeleteSuccessful();
             }

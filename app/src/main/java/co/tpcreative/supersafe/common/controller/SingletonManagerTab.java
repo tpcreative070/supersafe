@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.common.controller;
 
+import co.tpcreative.supersafe.model.EnumStatus;
+
 public class SingletonManagerTab {
 
     private static SingletonManagerTab instance ;
@@ -20,6 +22,18 @@ public class SingletonManagerTab {
         this.listener = listener;
     }
 
+    public void onAction(EnumStatus status){
+        if (listener!=null){
+            listener.onAction(status);
+        }
+    }
+
+    public void onSyncDone(){
+        if (listener!=null){
+            listener.onSyncDone();
+        }
+    }
+
     public void setVisetFloatingButton(final int isVisit){
         if (listener!=null){
             listener.visitFloatingButton(isVisit);
@@ -28,7 +42,8 @@ public class SingletonManagerTab {
 
     public interface SingleTonResponseListener{
         void visitFloatingButton(int isVisit);
+        void onAction(EnumStatus enumStatus);
+        void onSyncDone();
     }
-
 
 }

@@ -35,8 +35,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             .centerCrop()
             .override(400, 400)
             .placeholder(R.color.colorPrimary)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .skipMemoryCache(true)
             .error(R.color.colorPrimary)
             .priority(Priority.HIGH);
 

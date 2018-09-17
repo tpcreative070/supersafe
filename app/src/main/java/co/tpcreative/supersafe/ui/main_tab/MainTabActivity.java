@@ -3,14 +3,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -27,7 +23,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -47,28 +42,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.privates.PrivateFragment;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
@@ -86,6 +77,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private MainTabPresenter presenter;
     private Storage storage;
     AnimationsContainer.FramesSequenceAnimation animation;
+    private MenuItem menuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,12 +97,28 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
         ServiceManager.getInstance().onStartService();
 
+
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
-
         storage = new Storage(this);
 
+    }
+
+
+    @Override
+    public void onAction(EnumStatus enumStatus) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                onAnimationIcon(enumStatus);
+            }
+        });
+    }
+
+    @Override
+    public void onSyncDone() {
+        SingletonPrivateFragment.getInstance().onUpdateView();
     }
 
     @Override
@@ -120,8 +128,21 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 Log.d(TAG,"Home action");
                 return true;
             }
-            case R.id.switch_flash :{
-                Log.d(TAG,"Call here");
+            case R.id.action_sync :{
+                final User mUser = User.getInstance().getUserInfo();
+                if (mUser!=null){
+                    if (mUser.verified){
+                        if (!mUser.driveConnected){
+                            Navigator.onCheckSystem(this,null);
+                        }
+                        else{
+                            Navigator.onManagerCloud(this);
+                        }
+                    }
+                    else{
+                        Navigator.onVerifyAccount(this);
+                    }
+                }
                 return true;
             }
             case R.id.settings :{
@@ -241,8 +262,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                          else{
                              Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
                          }
-
-                         adapter.getCurrentFragment().onResume();
+                         SingletonPrivateFragment.getInstance().onUpdateView();
                      }
                  });
         builder.show();
@@ -347,8 +367,13 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_tab, menu);
-        onAnimationIcon(menu);
+        this.menuItem = menu.getItem(0);
         return true;
+    }
+
+
+    public MenuItem getMenuItem() {
+        return menuItem;
     }
 
     @Override
@@ -372,12 +397,25 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
        onBackUp();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SensorOrientationChangeNotifier.getInstance().remove(this);
+        final User user = User.getInstance().getUserInfo();
+        if (user!=null){
+            if (!user.driveConnected){
+                onAnimationIcon(EnumStatus.SYNC_ERROR);
+            }
+        }
+    }
+
+
     public void onBackUp(){
         try {
             String inFileName = getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
             File dbFile = new File(inFileName);
             FileInputStream fis = new FileInputStream(dbFile);
-            String outFileName = SuperSafeApplication.getInstance().getSuperSafe()+"/database_copy.db";
+            String outFileName = SuperSafeApplication.getInstance().getSupersafeBackup()+"database_copy.db";
 
             if (!storage.isFileExist(inFileName)){
                 Utils.Log(TAG,"Path is not existing :" + SuperSafeApplication.getInstance().getPathDatabase());
@@ -412,12 +450,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SensorOrientationChangeNotifier.getInstance().remove(this);
-    }
-
 
     @Override
     protected void onDestroy() {
@@ -426,14 +458,17 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         ServiceManager.getInstance().onDismissServices();
     }
 
-    public void onAnimationIcon(Menu menu){
-        MenuItem item = menu.getItem(0);
-       // animation = AnimationsContainer.getInstance().createSplashAnim(item);
-       // animation.start();
-       item.setIcon(R.drawable.ic_sync_error);
+    public void onAnimationIcon(EnumStatus status){
+        if (getMenuItem()==null){
+            return;
+        }
+        MenuItem item = getMenuItem();
+        if (animation!=null){
+            animation.stop();
+        }
+        animation = AnimationsContainer.getInstance().createSplashAnim(item, status);
+        animation.start();
     }
-
-
 
     /*MainTab View*/
 

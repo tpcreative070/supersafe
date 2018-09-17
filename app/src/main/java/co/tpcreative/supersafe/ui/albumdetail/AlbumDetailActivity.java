@@ -47,6 +47,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -66,6 +67,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
     private SlidrConfig mConfig;
+    private boolean isReload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -330,6 +332,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             mimeTypeFile.name = name;
                             ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path,id);
+                            isReload = true;
                         }
                         catch (Exception e){
                             e.printStackTrace();
@@ -356,5 +359,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (isReload){
+            ServiceManager.getInstance().onSyncData();
+        }
     }
 }

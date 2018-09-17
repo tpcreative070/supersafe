@@ -13,6 +13,7 @@ import java.lang.ref.SoftReference;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class AnimationsContainer {
     public int FPS = 10;  // animation FPS
@@ -59,9 +60,29 @@ public class AnimationsContainer {
      * @param imageView
      * @return splash screen animation
      */
-    public FramesSequenceAnimation createSplashAnim(MenuItem imageView) {
-        return new FramesSequenceAnimation(imageView, mDownAnimFrames,FPS);
+
+    public FramesSequenceAnimation createSplashAnim(MenuItem imageView, EnumStatus status) {
+        switch (status){
+            case DOWNLOAD:{
+                return new FramesSequenceAnimation(imageView, mDownAnimFrames,FPS);
+            }
+            case UPLOAD:{
+                return new FramesSequenceAnimation(imageView, mUpAnimFrames,FPS);
+            }
+            case DONE:{
+                return new FramesSequenceAnimation(imageView,R.drawable.ic_sync_done);
+            }
+            case SYNC_NONE:{
+                return new FramesSequenceAnimation(imageView,R.drawable.ic_sync_none);
+            }
+            case SYNC_ERROR:{
+                return new FramesSequenceAnimation(imageView,R.drawable.ic_sync_error);
+            }
+        }
+        return new FramesSequenceAnimation();
     }
+
+
 
     /**
      * AnimationPlayer. Plays animation frames sequence in loop
@@ -74,12 +95,23 @@ public class AnimationsContainer {
         private SoftReference<MenuItem> mSoftReferenceImageView; // Used to prevent holding ImageView when it should be dead.
         private Handler mHandler;
         private int mDelayMillis;
+        private boolean isAllow;
         private OnAnimationStoppedListener mOnAnimationStoppedListener;
 
         private Bitmap mBitmap = null;
         private BitmapFactory.Options mBitmapOptions;
 
+        public FramesSequenceAnimation(MenuItem menuItem,int res){
+            menuItem.setIcon(res);
+            isAllow = false;
+        }
+
+        public FramesSequenceAnimation(){
+
+        }
+
         public FramesSequenceAnimation(MenuItem imageView, int[] frames, int fps) {
+            isAllow = true;
             mHandler = new Handler();
             mFrames = frames;
             mIndex = -1;
@@ -116,6 +148,9 @@ public class AnimationsContainer {
          * Starts the animation
          */
         public synchronized void start() {
+            if (!isAllow){
+                return;
+            }
             mShouldRun = true;
             if (mIsRunning)
                 return;
@@ -167,5 +202,7 @@ public class AnimationsContainer {
         public synchronized void stop() {
             mShouldRun = false;
         }
+
+
     }
 }

@@ -1,9 +1,13 @@
 package co.tpcreative.supersafe.model;
 
 public enum EnumStatus {
-
     DOWNLOAD,
     UPLOAD,
+    LOADING,
+    DONE,
+    SYNC_NONE,
+    SYNC_ERROR,
+    WRITE_FILE,
     CREATE_MAIN_CATEGORIES,
     CREATE_FOLDERS_IN_APP,
     GET_LIST_FILES_IN_APP,
@@ -11,5 +15,4 @@ public enum EnumStatus {
     GET_DRIVE_ABOUT,
     CHECK_FOLDER_EXISTING,
     CHECK_FOLDER_IN_APP_EXISTING
-
 }
