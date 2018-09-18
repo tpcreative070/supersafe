@@ -90,7 +90,6 @@ public class ServiceManager implements SuperSafeServiceView {
         this.countSyncData = countSyncData;
     }
 
-
     public void onPickUpNewEmailNoTitle(Activity context, String account) {
         try {
             Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
@@ -203,16 +202,18 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
     public void onSyncData() {
-        Utils.Log(TAG,"Preparing sync data ###########################");
+        Utils.Log(TAG, "Preparing sync data ###########################");
         if (isDownloadData) {
+            SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
             Utils.Log(TAG, "List items is downloading...--------------*******************************-----------");
             return;
         }
         if (isUploadData) {
+            SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
             Utils.Log(TAG, "List items is uploading...----------------*******************************-----------");
             return;
         }
-        if (isLoadingData){
+        if (isLoadingData) {
             Utils.Log(TAG, "List items is loading...----------------*******************************-----------");
             return;
         }
@@ -223,14 +224,14 @@ public class ServiceManager implements SuperSafeServiceView {
                 @Override
                 public void onError(String message, EnumStatus status) {
                     Utils.Log(TAG, "Not Found Items :" + message);
-                    Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error content "+message+" Status "+status.ordinal(),true);
+                    onWriteLog(message,status);
                     isLoadingData = false;
                 }
 
                 @Override
                 public void onSuccessful(String message) {
                     isLoadingData = false;
-                    Utils.Log(TAG,"access_token :"+ message);
+                    Utils.Log(TAG, message);
                 }
 
                 @Override
@@ -239,14 +240,14 @@ public class ServiceManager implements SuperSafeServiceView {
                     final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
                     if (items != null) {
                         if (items.size() > 0) {
-                            Utils.Log(TAG,"Preparing uploading...");
+                            Utils.Log(TAG, "Preparing uploading...");
                             onUploadDataToStore();
                         } else {
-                            Utils.Log(TAG,"Preparing downloading...");
+                            Utils.Log(TAG, "Preparing downloading...");
                             onDownloadFilesFromDriveStore();
                         }
                     } else {
-                        Utils.Log(TAG,"Preparing downloading...!!!");
+                        Utils.Log(TAG, "Preparing downloading...!!!");
                         onDownloadFilesFromDriveStore();
                     }
                 }
@@ -295,51 +296,46 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<Items>mList = new ArrayList<>();
+        final List<Items> mList = new ArrayList<>();
         totalList = 0;
         countSyncData = 0;
-        for (Items index : list){
-            if (!index.originalSync){
-                if (!index.thumbnailSync){
+        for (Items index : list) {
+            if (!index.originalSync) {
+                if (!index.thumbnailSync) {
                     mList.add(index);
-                    totalList+=2;
+                    totalList += 2;
+                } else {
+                    mList.add(index);
+                    totalList += 1;
                 }
-                else{
+            } else {
+                if (!index.thumbnailSync) {
                     mList.add(index);
-                    totalList+=1;
-                }
-            }
-            else{
-                if (!index.thumbnailSync){
-                    mList.add(index);
-                    totalList+=1;
+                    totalList += 1;
                 }
             }
         }
 
-
-        if (mList.size()==0) {
+        isDownloadData = true;
+        SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
+        if (mList.size() == 0) {
             Utils.Log(TAG, "Data items already downloaded from Cloud !!!");
             SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+            isDownloadData = false;
             return;
+        } else {
+            String message = "Preparing download " + totalList + " items from Cloud";
+            Utils.Log(TAG, message);
+            onWriteLog(message,EnumStatus.DOWNLOAD);
         }
-        else{
-            Utils.Log(TAG, "Preparing download "+ totalList+" items from Cloud");
-        }
-
 
         if (myService != null) {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
-                   subscriptions = Observable.fromIterable(mList)
+                    subscriptions = Observable.fromIterable(mList)
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
-
-                                if (!isDownloadData){
-                                    SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
-                                }
-
                                 isDownloadData = true;
                                 /*Do something here*/
                                 final Items itemObject = i;
@@ -348,16 +344,36 @@ public class ServiceManager implements SuperSafeServiceView {
 
                                 if (itemObject.localCategories_Id == null) {
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
+                                    onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
+                                    Utils.Log(TAG,"localCategories_Id is null at "+ itemObject.id);
                                     isWorking = false;
                                 }
 
-                                if (myService==null){
+                                EnumFormatType formatTypeFile = EnumFormatType.values()[itemObject.formatType];
+                                if (itemObject.global_original_id == null) {
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
+                                    Utils.Log(TAG,"global_original_id is null at " + " format type :"+ formatTypeFile.name() + "---name global :"+ itemObject.globalName);
+                                    onWriteLog("global_original_id is null ",EnumStatus.DOWNLOAD);
+                                    onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
+                                    //Utils.Log(TAG,"Drive description on original " + new Gson().toJson(new DriveDescription().hexToObject(itemObject.description)));
                                     isWorking = false;
                                 }
 
+                                if (itemObject.global_thumbnail_id == null & formatTypeFile != EnumFormatType.AUDIO) {
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
+                                    Utils.Log(TAG,"global_thumbnail_id is null at "+ itemObject.id + " format type :"+ formatTypeFile.name()+ "---name global :"+ itemObject.globalName);
+                                    onWriteLog("global_thumbnail_id is null ",EnumStatus.DOWNLOAD);
+                                    onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
+                                    //Utils.Log(TAG,"Drive description on thumbnail " + new Gson().toJson(new Gson().toJson(itemObject)));
+                                    isWorking = false;
+                                }
+
+                                if (myService == null) {
+                                    isWorking = false;
+                                }
 
                                 if (isWorking) {
-                                    String path ;
+                                    String path;
                                     String pathFolder;
                                     if (!itemObject.originalSync) {
                                         Utils.Log(TAG, "Downloading original data !!!");
@@ -372,11 +388,10 @@ public class ServiceManager implements SuperSafeServiceView {
                                         myService.onDownloadFile(request, new ServiceManager.DownloadServiceListener() {
                                             @Override
                                             public void onError(String message, EnumStatus status) {
+                                                onWriteLog(message, EnumStatus.DOWNLOAD);
                                                 onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                                Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error content "+message+" Status "+EnumStatus.DOWNLOAD,true);
-                                                Utils.Log(TAG, "onError: !!! "+message);
+                                                Utils.Log(TAG, "onError Download: !!! on original");
                                             }
-
                                             @Override
                                             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                                                 onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
@@ -388,7 +403,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                             if (mItem != null) {
                                                                 mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                                 mItem.originalSync = true;
-                                                                Log.d(TAG, "Downloaded id original.........................................: global id " + mItem.global_original_id);
+                                                                Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
                                                                 if (mItem.thumbnailSync) {
                                                                     mItem.isSync = true;
                                                                 } else {
@@ -403,8 +418,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                                         Utils.Log(TAG, "Failed Save 1");
                                                     }
                                                 } catch (Exception e) {
+                                                    onWriteLog(e.getMessage(),EnumStatus.DOWNLOAD);
                                                     onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                                    Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error content "+e.getMessage()+" Status "+EnumStatus.DOWNLOAD,true);
                                                     e.printStackTrace();
                                                 }
                                             }
@@ -419,8 +434,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                 Utils.Log(TAG, "onSaved");
                                             }
                                         });
-                                    }
-                                    else{
+                                    } else {
                                         Utils.Log(TAG, "Original already downloaded");
                                     }
 
@@ -436,14 +450,12 @@ public class ServiceManager implements SuperSafeServiceView {
                                         req.path_folder_output = pathFolder;
 
                                         myService.onDownloadThumbnailFile(req, new ServiceManager.DownloadServiceListener() {
-
                                             @Override
                                             public void onError(String message, EnumStatus status) {
+                                                onWriteLog(message,EnumStatus.DOWNLOAD);
                                                 onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                                Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+message+" Status "+EnumStatus.DOWNLOAD,true);
-                                                Utils.Log(TAG, "onError: "+message);
+                                                Utils.Log(TAG, "onError Download: !!! on thumbnail");
                                             }
-
                                             @Override
                                             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                                                 onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
@@ -455,7 +467,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                             if (mItem != null) {
                                                                 mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                                 mItem.thumbnailSync = true;
-                                                                Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id);
+                                                                Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
                                                                 if (mItem.originalSync) {
                                                                     mItem.isSync = true;
                                                                 } else {
@@ -471,7 +483,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
-                                                    Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.DOWNLOAD,true);
+                                                    onWriteLog(e.getMessage(), EnumStatus.DOWNLOAD);
                                                 }
                                             }
 
@@ -489,7 +501,16 @@ public class ServiceManager implements SuperSafeServiceView {
                                     }
 
                                 } else {
-                                    Utils.Log(TAG, "Thumbnail already downloaded");
+                                    if (!itemObject.thumbnailSync && !itemObject.originalSync){
+                                        onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
+                                        onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
+                                        Utils.Log(TAG,"Exception download.....................2");
+                                    }
+                                    else{
+                                        onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
+                                        Utils.Log(TAG,"Exception download.....................1");
+                                    }
+
                                 }
                             })
                             .doOnComplete(() -> {
@@ -497,13 +518,22 @@ public class ServiceManager implements SuperSafeServiceView {
                             })
                             .subscribe();
                 } else {
+                    isDownloadData = false;
                     Utils.Log(TAG, "Drive api not ready");
+                    onWriteLog("Drive api not ready",EnumStatus.DOWNLOAD);
+                    SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
                 }
             } else {
+                isDownloadData = false;
                 Utils.Log(TAG, "User not ready");
+                onWriteLog("User not ready",EnumStatus.DOWNLOAD);
+                SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
             }
         } else {
+            isDownloadData = false;
             Utils.Log(TAG, "My services is null");
+            onWriteLog("My services is null",EnumStatus.DOWNLOAD);
+            SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
         }
     }
 
@@ -525,35 +555,37 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<Items>mList = new ArrayList<>();
+        final List<Items> mList = new ArrayList<>();
         totalList = 0;
         countSyncData = 0;
-        for (Items index : list){
-            if (!index.originalSync){
-                if (!index.thumbnailSync){
+        for (Items index : list) {
+            if (!index.originalSync) {
+                if (!index.thumbnailSync) {
                     mList.add(index);
-                    totalList+=2;
+                    totalList += 2;
+                } else {
+                    mList.add(index);
+                    totalList += 1;
                 }
-                else{
+            } else {
+                if (!index.thumbnailSync) {
                     mList.add(index);
-                    totalList+=1;
-                }
-            }
-            else{
-                if (!index.thumbnailSync){
-                    mList.add(index);
-                    totalList+=1;
+                    totalList += 1;
                 }
             }
         }
 
-        if (mList.size()==0) {
+        isUploadData = true;
+        SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
+        if (mList.size() == 0) {
             Utils.Log(TAG, "Data items already uploaded to Cloud !!!");
             SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+            isUploadData = false;
             return;
-        }
-        else{
-            Utils.Log(TAG, "Preparing upload "+ totalList+" items to Cloud");
+        } else {
+            String message = "Preparing upload " + totalList + " items to Cloud";
+            Utils.Log(TAG, message);
+            onWriteLog(message,EnumStatus.UPLOAD);
         }
 
         if (myService != null) {
@@ -564,10 +596,6 @@ public class ServiceManager implements SuperSafeServiceView {
                             .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
                             .doOnNext(i -> {
                                 /*Do something here*/
-                                if (!isUploadData){
-                                    SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
-                                }
-
                                 isUploadData = true;
                                 final Items itemObject = i;
                                 boolean isWorking = true;
@@ -577,7 +605,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                     isWorking = false;
                                 }
 
-                                if (myService==null){
+                                if (myService == null) {
                                     isWorking = false;
                                 }
 
@@ -590,7 +618,6 @@ public class ServiceManager implements SuperSafeServiceView {
                                                 //Utils.Log(TAG,"onProgressUpdate "+ percentage +"%");
                                                 isUploadData = true;
                                             }
-
                                             @Override
                                             public void onFinish() {
                                                 Utils.Log(TAG, "onFinish");
@@ -628,20 +655,20 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
-                                                    Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.UPLOAD,true);
+                                                    onWriteLog(e.getMessage(),EnumStatus.UPLOAD);
                                                 }
                                                 onUpdateSyncDataStatus(EnumStatus.UPLOAD);
                                             }
 
                                             @Override
                                             public void onError(String message, EnumStatus status) {
-                                                Utils.Log(TAG,"onError: " +message);
+                                                Utils.Log(TAG, "onError: " + message);
+                                                onWriteLog(message, EnumStatus.UPLOAD);
                                                 onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                                Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+message+" Status "+EnumStatus.UPLOAD,true);
                                             }
+
                                         });
-                                    }
-                                    else{
+                                    } else {
                                         Utils.Log(TAG, "Original already uploaded");
                                     }
 
@@ -650,9 +677,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                         myService.onUploadThumbnailFileInAppFolder(itemObject, new UploadServiceListener() {
                                             @Override
                                             public void onError(String message, EnumStatus status) {
+                                                onWriteLog(message,EnumStatus.UPLOAD);
                                                 onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                                Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"time " +Utils.getCurrentDateTime()+" Error Content "+message+" Status "+EnumStatus.UPLOAD,true);
-                                                Utils.Log(TAG, "onError: "+ message);
+                                                Utils.Log(TAG, "onError: " + message);
                                             }
 
                                             @Override
@@ -697,7 +724,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     }
                                                 } catch (Exception e) {
                                                     Utils.Log(TAG, "Exception");
-                                                    Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.UPLOAD,true);
+                                                    onWriteLog(e.getMessage(), EnumStatus.UPLOAD);
                                                     e.printStackTrace();
                                                 }
                                                 onUpdateSyncDataStatus(EnumStatus.UPLOAD);
@@ -706,9 +733,16 @@ public class ServiceManager implements SuperSafeServiceView {
                                     } else {
                                         Utils.Log(TAG, "Thumbnail already uploaded");
                                     }
-                                }
-                                else{
-                                    onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                } else {
+                                    if (!itemObject.originalSync && !itemObject.thumbnailSync){
+                                        onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                        onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                        Utils.Log(TAG, "Exception upload....................... 2");
+                                    }
+                                    else{
+                                        onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                        Utils.Log(TAG, "Exception upload....................... 1");
+                                    }
                                 }
                             })
                             .doOnComplete(() -> {
@@ -716,68 +750,49 @@ public class ServiceManager implements SuperSafeServiceView {
                             })
                             .subscribe();
                 } else {
+                    isUploadData = false;
                     Utils.Log(TAG, "Drive api not ready");
+                    onWriteLog("Drive api not ready",EnumStatus.UPLOAD);
+                    SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
                 }
             } else {
+                isUploadData = false;
                 Utils.Log(TAG, "User not ready");
+                onWriteLog("User not ready",EnumStatus.UPLOAD);
+                SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
             }
         } else {
+            isUploadData = false;
             Utils.Log(TAG, "My services is null");
-        }
-    }
-
-
-    public void onUpdateSyncDataStatus(EnumStatus enumStatus) {
-        switch (enumStatus) {
-            case UPLOAD:
-                countSyncData += 1;
-                    if (countSyncData == totalList) {
-                        SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
-                        isUploadData = false;
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Message :Completed upload count syn data...................uploaded " + countSyncData+"/"+totalList+" Status "+EnumStatus.DOWNLOAD,true);
-                        Utils.Log(TAG, "Completed upload count syn data...................uploaded " + countSyncData+"/"+totalList);
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+"Completed upload sync data.......................^^...........^^.......^^........"+" Status "+EnumStatus.DOWNLOAD,true);
-                        Utils.Log(TAG, "Completed upload sync data.......................^^...........^^.......^^........");
-                    } else {
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Message :Completed upload count syn data...................uploaded " + countSyncData+"/"+totalList+" Status "+EnumStatus.DOWNLOAD,true);
-                        Utils.Log(TAG, "Completed upload count syn data...................uploaded " + countSyncData+"/"+totalList);
-                    }
-                break;
-            case DOWNLOAD:
-                countSyncData += 1;
-                    if (countSyncData == totalList) {
-                        SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
-                        isDownloadData = false;
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+"Completed download count syn data...................downloaded " + countSyncData+"/"+totalList+" Status "+EnumStatus.DOWNLOAD,true);
-                        Utils.Log(TAG, "Completed download count syn data...................downloaded " + countSyncData+"/"+totalList);
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+"Completed download sync data.......................^^...........^^.......^^........"+" Status "+EnumStatus.DOWNLOAD,true);
-                        Utils.Log(TAG, "Completed download sync data.......................^^...........^^.......^^........");
-                    } else {
-                        Utils.Log(TAG, "Completed download count syn data...................downloaded " + countSyncData+"/"+totalList);
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+"Completed download count syn data...................downloaded " + countSyncData+"/"+totalList+" Status "+EnumStatus.DOWNLOAD,true);
-                    }
-                break;
+            onWriteLog("My services is null",EnumStatus.UPLOAD);
+            SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
         }
     }
 
 
     /*Gallery action*/
 
-    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id){
-        if (myService==null){
-            Utils.Log(TAG,"Service is null");
+    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id,MainCategories mainCategories) {
+        if (myService == null) {
+            Utils.Log(TAG, "Service is null");
             return;
         }
         subscriptions = Observable.create(subscriber -> {
+
             final MimeTypeFile mMimeTypeFile = mimeTypeFile;
-            final EnumFormatType enumTypeFile  = mMimeTypeFile.formatType;
+            final EnumFormatType enumTypeFile = mMimeTypeFile.formatType;
             final String mPath = path;
-            final String mMimeType  = mMimeTypeFile.mimeType;
+            final String mMimeType = mMimeTypeFile.mimeType;
             final String mVideo_id = id;
-            final Items items ;
-            Utils.Log(TAG,"object "+ new Gson().toJson(mMimeTypeFile));
+            final Items items;
+            final MainCategories mMainCategories =  mainCategories;
+            final String localCategories_Id = mMainCategories.localId;
+            final String localCategories_Name = mMainCategories.name;
+            final String localCategories_Count = ""+mMainCategories.localCategories_Count;
+
+            Utils.Log(TAG, "object " + new Gson().toJson(mMimeTypeFile));
             Bitmap thumbnail = null;
-            switch (enumTypeFile){
+            switch (enumTypeFile) {
                 case IMAGE: {
                     Utils.Log(TAG, "Start RXJava Image Progressing");
                     try {
@@ -831,8 +846,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalPath = originalPath;
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
-                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                        description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
+                        description.localCategories_Id = localCategories_Id;
+                        description.localCategories_Name = localCategories_Name;
+                        description.localCategories_Count = localCategories_Count;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -865,6 +881,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
                                 description.localCategories_Name,
+                                description.localCategories_Count ,
                                 description.mimeType,
                                 description.fileExtension,
                                 new Gson().toJson(description),
@@ -888,7 +905,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.WRITE_FILE,true);
+                        onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         subscriber.onNext(false);
                         subscriber.onComplete();
                     } finally {
@@ -922,8 +939,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalPath = originalPath;
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
-                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                        description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
+                        description.localCategories_Id = localCategories_Id;
+                        description.localCategories_Name = localCategories_Name;
+                        description.localCategories_Count = localCategories_Count;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -956,6 +974,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
                                 description.localCategories_Name,
+                                description.localCategories_Count,
                                 description.mimeType,
                                 description.fileExtension,
                                 new Gson().toJson(description),
@@ -978,7 +997,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.WRITE_FILE,true);
+                        onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         subscriber.onNext(null);
                         subscriber.onComplete();
                     } finally {
@@ -1006,8 +1025,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalPath = originalPath;
                         description.thumbnailPath = null;
                         description.subFolderName = uuId;
-                        description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                        description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
+                        description.localCategories_Id = localCategories_Id;
+                        description.localCategories_Name = localCategories_Name;
+                        description.localCategories_Count = localCategories_Count;
                         description.local_id = uuId;
                         description.mimeType = mMimeType;
                         description.globalName = uuId;
@@ -1039,6 +1059,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
                                 description.localCategories_Name,
+                                description.localCategories_Count,
                                 description.mimeType,
                                 description.fileExtension,
                                 new Gson().toJson(description),
@@ -1059,7 +1080,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
-                        Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.WRITE_FILE,true);
+                        onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         subscriber.onNext(null);
                         subscriber.onComplete();
                     } finally {
@@ -1068,20 +1089,20 @@ public class ServiceManager implements SuperSafeServiceView {
                     break;
                 }
             }
-            Utils.Log(TAG,"End up RXJava");
+            Utils.Log(TAG, "End up RXJava");
         })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
                     final Items items = (Items) response;
-                    if (items!=null){
+                    if (items != null) {
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
-                        Utils.Log(TAG,"Write file successful ");
-                    }else{
-                        Utils.Log(TAG,"Write file Failed ");
+                        Utils.Log(TAG, "Write file successful ");
+                    } else {
+                        Utils.Log(TAG, "Write file Failed ");
                     }
-                    Utils.Log(TAG,new Gson().toJson(items));
+                   // Utils.Log(TAG, new Gson().toJson(items));
                     GalleryCameraMediaManager.getInstance().onUpdatedView();
                     SingletonPrivateFragment.getInstance().onUpdateView();
                 });
@@ -1092,36 +1113,43 @@ public class ServiceManager implements SuperSafeServiceView {
 
     /*--------------Camera action-----------------*/
 
-    public void onSaveDataOnCamera(final byte[]mData){
+    public void onSaveDataOnCamera(final byte[] mData,final MainCategories mainCategories) {
 
-        if (myService==null){
+        if (myService == null) {
             GalleryCameraMediaManager.getInstance().setProgressing(false);
-            Utils.Log(TAG,"Service is null");
+            Utils.Log(TAG, "Service is null");
         }
         subscriptions = Observable.create(subscriber -> {
+
+            final MainCategories mMainCategories =  mainCategories;
+            final String localCategories_Id = mMainCategories.localId;
+            final String localCategories_Name = mMainCategories.name;
+            final String localCategories_Count = ""+mMainCategories.localCategories_Count;
+
             File thumbnail = null;
-            final byte[]data = mData;
+            final byte[] data = mData;
             final Bitmap mBitmap;
             try {
                 mBitmap = Utils.getThumbnailScale(data);
                 String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                 String currentTime = Utils.getCurrentDateTime();
                 String uuId = Utils.getUUId();
-                String pathContent = rootPath + uuId+"/";
+                String pathContent = rootPath + uuId + "/";
                 storage.createDirectory(pathContent);
-                String thumbnailPath = pathContent+"thumbnail_"+currentTime;
-                String originalPath = pathContent+currentTime;
+                String thumbnailPath = pathContent + "thumbnail_" + currentTime;
+                String originalPath = pathContent + currentTime;
 
                 DriveDescription description = new DriveDescription();
                 description.fileExtension = getString(R.string.key_jpg);
                 description.originalPath = originalPath;
                 description.thumbnailPath = thumbnailPath;
                 description.subFolderName = uuId;
-                description.localCategories_Id = MainCategories.getInstance().intent_localCategoriesId;
-                description.localCategories_Name = MainCategories.getInstance().intent_localCategories_Name;
+                description.localCategories_Id = localCategories_Id;
+                description.localCategories_Name = localCategories_Name;
+                description.localCategories_Count = localCategories_Count;
                 description.local_id = uuId;
                 description.global_original_id = null;
-                description.mimeType = MediaType.JPEG.type()+"/"+MediaType.JPEG.subtype();
+                description.mimeType = MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype();
                 description.thumbnailName = currentTime;
                 description.globalName = uuId;
                 description.formatType = EnumFormatType.IMAGE.ordinal();
@@ -1132,7 +1160,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.fileType = EnumFileType.NONE.ordinal();
                 description.originalName = currentTime;
                 description.title = currentTime;
-                description.thumbnailName = "thumbnail_"+currentTime;
+                description.thumbnailName = "thumbnail_" + currentTime;
 
                 Items items = new Items(false,
                         description.originalSync,
@@ -1142,40 +1170,40 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.formatType,
                         description.title,
                         description.originalName,
-                        description.thumbnailName ,
+                        description.thumbnailName,
                         description.globalName,
-                        description.originalPath ,
+                        description.originalPath,
                         description.thumbnailPath,
                         description.local_id,
                         description.global_original_id,
                         description.global_thumbnail_id,
                         description.localCategories_Id,
                         description.localCategories_Name,
+                        description.localCategories_Count,
                         description.mimeType,
                         description.fileExtension,
                         new Gson().toJson(description),
                         EnumStatus.UPLOAD);
 
-                boolean createdThumbnail = storage.createFile(thumbnailPath,mBitmap);
-                boolean createdOriginal = storage.createFile(originalPath,data);
-                if (createdThumbnail && createdOriginal){
+                boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
+                boolean createdOriginal = storage.createFile(originalPath, data);
+                if (createdThumbnail && createdOriginal) {
                     subscriber.onNext(items);
                     subscriber.onComplete();
-                    Utils.Log(TAG,"CreatedFile successful");
-                }
-                else{
+                    Utils.Log(TAG, "CreatedFile successful");
+                } else {
                     subscriber.onNext(null);
                     subscriber.onComplete();
-                    Utils.Log(TAG,"CreatedFile failed");
+                    Utils.Log(TAG, "CreatedFile failed");
                 }
 
             } catch (Exception e) {
                 subscriber.onNext(null);
                 subscriber.onComplete();
-                Utils.mCreateAndSaveFileOverride("log.txt",SuperSafeApplication.getInstance().getSupersafeLog(),"Time " +Utils.getCurrentDateTime()+" Error Content "+e.getMessage()+" Status "+EnumStatus.WRITE_FILE,true);
+                onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                 Log.w(TAG, "Cannot write to " + e);
             } finally {
-                Utils.Log(TAG,"Finally");
+                Utils.Log(TAG, "Finally");
             }
         })
                 .subscribeOn(Schedulers.computation())
@@ -1184,13 +1212,12 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe(response -> {
                     try {
                         final Items mItem = (Items) response;
-                        if (mItem!=null){
+                        if (mItem != null) {
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
                         }
-                        Utils.Log(TAG,"Insert Successful");
-                        Utils.Log(TAG,new Gson().toJson(mItem));
-                    }
-                    catch (Exception e){
+                        Utils.Log(TAG, "Insert Successful");
+                       // Utils.Log(TAG, new Gson().toJson(mItem));
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     GalleryCameraMediaManager.getInstance().setProgressing(false);
@@ -1199,32 +1226,80 @@ public class ServiceManager implements SuperSafeServiceView {
 
     }
 
+    public void onUpdateSyncDataStatus(EnumStatus enumStatus) {
+        switch (enumStatus) {
+            case UPLOAD:
+                countSyncData += 1;
+                if (countSyncData == totalList) {
+                    SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+                    SingletonPrivateFragment.getInstance().onUpdateView();
+                    isUploadData = false;
+                    String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
+                    String messageDone = "Completed upload sync data.......................^^...........^^.......^^........";
+                    onWriteLog(message, EnumStatus.UPLOAD);
+                    onWriteLog(messageDone, EnumStatus.UPLOAD);
+                    Utils.Log(TAG, message);
+                    Utils.Log(TAG, messageDone);
+
+                    onSyncData();
+                    Utils.Log(TAG,"Request syn data on upload.........");
+                    onWriteLog("Request syn data on upload",EnumStatus.UPLOAD);
+
+                } else {
+                    String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
+                    onWriteLog(message, EnumStatus.UPLOAD);
+                    Utils.Log(TAG, message);
+                }
+                break;
+            case DOWNLOAD:
+                countSyncData += 1;
+                if (countSyncData == totalList) {
+                    SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+                    SingletonPrivateFragment.getInstance().onUpdateView();
+                    isDownloadData = false;
+                    String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
+                    String messageDone = "Completed downloaded sync data.......................^^...........^^.......^^........";
+                    onWriteLog(message, EnumStatus.DOWNLOAD);
+                    onWriteLog(messageDone, EnumStatus.DOWNLOAD);
+                    Utils.Log(TAG, message);
+                    Utils.Log(TAG, messageDone);
+
+                    onSyncData();
+                    onWriteLog("Request syn data on download",EnumStatus.DOWNLOAD);
+                    Utils.Log(TAG,"Request syn data on download.........");
+
+                } else {
+                    String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
+                    onWriteLog(message, EnumStatus.DOWNLOAD);
+                    Utils.Log(TAG, message);
+                }
+                break;
+        }
+    }
+
+    public void onWriteLog(String message, EnumStatus status) {
+        Utils.mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + Utils.getCurrentDateTimeFormat() + " ----Status---- :" + status.name() + " ----Content--- :" + message, true);
+    }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData){
-          Utils.Log(TAG,"Progress download is :" + isDownloadData);
-          Utils.Log(TAG,"Progress upload is :" + isUploadData);
-        }
-        else{
+        if (isDownloadData || isUploadData) {
+            Utils.Log(TAG, "Progress download is :" + isDownloadData);
+            Utils.Log(TAG, "Progress upload is :" + isUploadData);
+        } else {
             onStopService();
             if (myService != null) {
                 myService.unbindView();
             }
-            if (subscriptions!=null){
+            if (subscriptions != null) {
                 subscriptions.dispose();
             }
         }
-        Utils.Log(TAG,"Dismiss Service manager");
+        Utils.Log(TAG, "Dismiss Service manager");
     }
 
 
     @Override
     public void onError(String message, EnumStatus status) {
-        final User mUser = User.getInstance().getUserInfo();
-        if (mUser != null) {
-            mUser.isInitMainCategoriesProgressing = false;
-            PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
-        }
         Log.d(TAG, "onError response :" + message);
     }
 
@@ -1251,14 +1326,15 @@ public class ServiceManager implements SuperSafeServiceView {
     @Override
     public void onNetworkConnectionChanged(boolean isConnect) {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
-        onSyncData();
+        if (isConnect){
+            onSyncData();
+        }
     }
 
     @Override
     public void onSuccessful(List<DriveResponse> lists) {
 
     }
-
 
     public interface ServiceManagerSyncDataListener {
         void onCompleted();

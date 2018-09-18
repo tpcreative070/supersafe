@@ -11,6 +11,8 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class SplashScreenActivity extends BaseActivity implements SensorOrientationChangeNotifier.Listener{
 
@@ -75,6 +77,9 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
         ServiceManager.getInstance().setUploadData(false);
         ServiceManager.getInstance().setDownloadData(false);
         ServiceManager.getInstance().setCountSyncData(0);
+
+        Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
+        Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
     }
 
 

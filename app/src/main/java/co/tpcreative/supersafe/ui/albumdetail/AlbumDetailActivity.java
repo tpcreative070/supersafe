@@ -46,12 +46,15 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
@@ -94,11 +97,10 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
-        presenter.getData();
-
+        presenter.getData(this);
         Intent intent = getIntent();
-        final String cheeseName = intent.getStringExtra(EXTRA_NAME);
 
+        final String cheeseName = intent.getStringExtra(EXTRA_NAME);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -107,10 +109,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         collapsingToolbar.setTitle(cheeseName);
         Utils.Log(TAG,Utils.getCurrentDateTime());
         GalleryCameraMediaManager.getInstance().setListener(this);
-
-
-        final Items mItem = InstanceGenerator.getInstance(this).getLatestId(MainCategories.getInstance().intent_localCategoriesId);
-        Utils.Log(TAG,"get Latest Id " + new Gson().toJson(mItem));
 
     }
 
@@ -232,7 +230,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Navigator.onMoveCamera(AlbumDetailActivity.this);
+                            Navigator.onMoveCamera(AlbumDetailActivity.this,presenter.mainCategories);
                         }
                         else{
                             Log.d(TAG,"Permission is denied");
@@ -331,7 +329,11 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             mimeTypeFile.name = name;
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path,id);
+                            if (presenter.mainCategories==null){
+                                Utils.onWriteLog("Main categories is null",EnumStatus.WRITE_FILE);
+                                return;
+                            }
+                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path,id,presenter.mainCategories);
                             isReload = true;
                         }
                         catch (Exception e){

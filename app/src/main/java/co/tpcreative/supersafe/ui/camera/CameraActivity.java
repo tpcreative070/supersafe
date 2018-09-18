@@ -10,16 +10,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
+import com.google.gson.Gson;
 
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Utils;
 
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.User;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback{
@@ -88,6 +92,9 @@ public class CameraActivity extends BaseActivity implements
         }
     };
 
+
+    private MainCategories mainCategories;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +113,15 @@ public class CameraActivity extends BaseActivity implements
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
+
+        try {
+            Bundle bundle = getIntent().getExtras();
+            mainCategories = (MainCategories) bundle.get(getString(R.string.key_main_categories));
+        }
+        catch (Exception e){
+            Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
+        }
+
     }
 
 
@@ -157,12 +173,13 @@ public class CameraActivity extends BaseActivity implements
         public void onPictureTaken(CameraView cameraView, final byte[] data,int orientation) {
             Utils.Log(TAG, "onPictureTaken " + data.length);
             Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT).show();
-            if (MainCategories.getInstance().intent_localCategoriesId==null){
+            if (mainCategories==null){
                 Utils.Log(TAG, "Local id is null");
+                Utils.onWriteLog("Main categories is null",EnumStatus.WRITE_FILE);
                 return;
             }
             isReload = true;
-            ServiceManager.getInstance().onSaveDataOnCamera(data);
+            ServiceManager.getInstance().onSaveDataOnCamera(data,mainCategories);
         }
     };
 

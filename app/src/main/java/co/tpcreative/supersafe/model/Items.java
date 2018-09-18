@@ -18,6 +18,7 @@ public class Items implements Serializable {
     public String local_id;
     public String localCategories_Id;
     public String localCategories_Name;
+    public String localCategories_Count;
     public int formatType;
     public String thumbnailPath;
     public String originalPath;
@@ -38,7 +39,7 @@ public class Items implements Serializable {
     private boolean isDeleted;
 
 
-    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String globalName,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus){
+    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String globalName,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.globalName = globalName;
@@ -54,6 +55,7 @@ public class Items implements Serializable {
         this.global_thumbnail_id = global_thumbnail_id;
         this.localCategories_Id = localCategories_Id;
         this.localCategories_Name = localCategories_Name;
+        this.localCategories_Count = localCategories_Count;
         this.originalPath = originalPath;
         this.thumbnailPath = thumbnailPath;
         this.mimeType = mimeType;

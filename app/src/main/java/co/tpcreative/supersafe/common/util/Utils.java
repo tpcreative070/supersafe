@@ -50,6 +50,7 @@ import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import de.mrapp.android.dialog.MaterialDialog;
 
@@ -561,6 +562,13 @@ public class Utils {
         return result;
     }
 
+    public static String getCurrentDateTimeFormat() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String result = dateFormat.format(date);
+        return result;
+    }
+
     public static String getHexCode(String value){
         return Base64.encodeBase64String(value.toUpperCase().getBytes(Charsets.UTF_8));
     }
@@ -733,5 +741,35 @@ public class Utils {
         hashMap.put("png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
         return hashMap;
     }
+
+    public static String DeviceInfo(){
+        try {
+            String manufacturer = Build.MANUFACTURER;
+            String model = Build.MODEL;
+            int version = Build.VERSION.SDK_INT;
+            String versionRelease = Build.VERSION.RELEASE;
+            return "manufacturer " + manufacturer
+                    + " \n model " + model
+                    + " \n version " + version
+                    + " \n versionRelease " + versionRelease
+                    + " \n app version name "+ BuildConfig.VERSION_NAME;
+
+        }
+        catch (Exception e){
+            onWriteLog(e.getMessage(),EnumStatus.DEVICE_ABOUT);
+        }
+        return "Exception";
+
+    }
+
+    public static void onWriteLog(String message, EnumStatus status) {
+        if (status==null){
+            Utils.mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + Utils.getCurrentDateTimeFormat() +" ----Content--- :" + message, true);
+        }
+        else{
+            Utils.mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + Utils.getCurrentDateTimeFormat() + " ----Status---- :" + status.name() + " ----Content--- :" + message, true);
+        }
+    }
+
 
 }

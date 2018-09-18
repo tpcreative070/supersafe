@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.privates;
+
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -8,11 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
+
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -20,6 +25,7 @@ import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.Album;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -72,30 +78,51 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         @Override
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.getLocalId());
-            if (items!=null){
-                Glide.with(context)
-                    .load(storage.readFile(items.thumbnailPath))
-                    .apply(options)
-                    .into(imgAlbum);
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.localId);
+            if (items != null) {
+                EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
+                switch (formatTypeFile) {
+                    case AUDIO: {
+                        Glide.with(context)
+                                .load(R.drawable.bg_button_rounded)
+                                .apply(options)
+                                .into(imgAlbum);
+                        break;
+                    }
+                    default: {
+                        try {
+                            if (storage.isFileExist(""+items.thumbnailPath)){
+                                Glide.with(context)
+                                        .load(storage.readFile(items.thumbnailPath))
+                                        .apply(options)
+                                        .into(imgAlbum);
+                            }
+                            else{
+                                imgAlbum.setBackgroundResource(data.imageResource);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
+            } else {
+                imgAlbum.setBackgroundResource(data.imageResource);
             }
-            else{
-                imgAlbum.setBackgroundResource(data.getImageResource());
-            }
-            tvTitle.setText(data.getName());
+            tvTitle.setText(data.name);
             this.mPosition = position;
         }
 
         @OnClick(R.id.rlHome)
-        public void onClicked(View view){
-            if (itemSelectedListener!=null){
+        public void onClicked(View view) {
+            if (itemSelectedListener != null) {
                 itemSelectedListener.onClickItem(mPosition);
             }
         }
 
         @OnClick(R.id.overflow)
-        public void onClickedOverFlow(View view){
-            showPopupMenu(view,mPosition);
+        public void onClickedOverFlow(View view) {
+            showPopupMenu(view, mPosition);
         }
 
     }
@@ -120,12 +147,12 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.action_settings:
-                    if (itemSelectedListener!=null){
+                    if (itemSelectedListener != null) {
                         itemSelectedListener.onSetting(position);
                     }
                     return true;
                 case R.id.action_delete:
-                    if (itemSelectedListener!=null){
+                    if (itemSelectedListener != null) {
                         itemSelectedListener.onDeleteAlbum(position);
                     }
                     return true;
@@ -137,7 +164,9 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
+
         void onSetting(int position);
+
         void onDeleteAlbum(int position);
     }
 

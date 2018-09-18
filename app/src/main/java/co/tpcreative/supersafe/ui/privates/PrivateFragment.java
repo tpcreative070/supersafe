@@ -101,13 +101,8 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onClickItem(int position) {
         Log.d(TAG,"Position :"+ position);
         try {
-            MainCategories.getInstance().intent_localCategoriesId = presenter.mList.get(position).getLocalId();
-            MainCategories.getInstance().intent_localCategories_Name = presenter.mList.get(position).getName();
-            if (MainCategories.getInstance().intent_localCategoriesId==null){
-                Utils.Log(TAG,"intent_localId is null");
-                return;
-            }
-            Navigator.onMoveAlbumDetail(getContext());
+            final MainCategories mainCategories = presenter.mList.get(position);
+            Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -123,9 +118,9 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onDeleteAlbum(int position) {
         final MainCategories object = presenter.mList.get(position);
         if (object!=null){
-            final boolean response = MainCategories.getInstance().onDeleteCategories(object.getLocalId());
+            final boolean response = MainCategories.getInstance().onDeleteCategories(object.localId);
             if (response){
-                InstanceGenerator.getInstance(getActivity()).onDeleteAll(object.getLocalId());
+                InstanceGenerator.getInstance(getActivity()).onDeleteAll(object.localId);
                 presenter.getData();
             }
         }
@@ -171,13 +166,18 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onReload() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (adapter!=null){
-                    adapter.setDataSource(presenter.mList);
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (adapter!=null){
+                        adapter.setDataSource(presenter.mList);
+                    }
                 }
-            }
-        });
+            });
+        }
+        catch (Exception e){
+            e.getMessage();
+        }
     }
 }

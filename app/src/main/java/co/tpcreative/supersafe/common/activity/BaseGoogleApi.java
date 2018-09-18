@@ -267,6 +267,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
                         @Override
                         public void onSuccessful(String message) {
+                            ServiceManager.getInstance().onSyncData();
                             Log.d(TAG,"successful :"+ message);
                         }
                         @Override

@@ -10,6 +10,7 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
@@ -34,6 +35,7 @@ public class Navigator {
 
     public static final int PHOTO_SLIDE_SHOW = 100;
     public static final int CAMERA_ACTION = 1001;
+    public static final int ALBUM_DETAIL = 1002;
 
 
     public static void onMoveToMainTab(Context context){
@@ -85,8 +87,11 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveCamera(Activity activity){
+    public static void onMoveCamera(Activity activity,final MainCategories mainCategories){
         Intent intent = new Intent(activity, CameraActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(activity.getString(R.string.key_main_categories),mainCategories);
+        intent.putExtras(bundle);
         activity.startActivityForResult(intent,Navigator.CAMERA_ACTION);
     }
 
@@ -96,10 +101,12 @@ public class Navigator {
         activity.startActivityForResult(intent, Constants.REQUEST_CODE);
     }
 
-    public static void onMoveAlbumDetail(Context context){
-        Intent intent = new Intent(context, AlbumDetailActivity.class);
-        intent.putExtra(AlbumDetailActivity.EXTRA_NAME, "Hello World");
-        context.startActivity(intent);
+    public static void onMoveAlbumDetail(Activity context, MainCategories mainCategories){
+        Intent intent = new Intent(context,AlbumDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(context.getString(R.string.key_main_categories),mainCategories);
+        intent.putExtras(bundle);
+        context.startActivityForResult(intent,ALBUM_DETAIL);
     }
 
     public static void onPhotoSlider(Activity context, final Items items, final List<Items> mList){

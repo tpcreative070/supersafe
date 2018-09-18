@@ -556,7 +556,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
 
         String access_token = user.access_token;
-        view.onSuccessful(access_token);
+        view.onSuccessful("access_token" +getString(R.string.access_token,access_token));
         Log.d(TAG,"access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,getString(R.string.key_mime_type_all_files), getString(R.string.key_appDataFolder),getString(R.string.key_specific_fields))
                 .subscribeOn(Schedulers.io())
@@ -574,19 +574,28 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     }
                     else{
                         try {
-                            final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems();
+                             Map<String,MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                             final List<DriveResponse> driveResponse = onResponse.files;
                             for (DriveResponse index : driveResponse) {
                                 final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                 if (description != null) {
-                                    MainCategories.getInstance().onAddCategories(description.localCategories_Id,description.localCategories_Name);
+                                    if (hash!=null){
+                                        final MainCategories result = hash.get(description.localCategories_Id);
+                                        if (result==null){
+                                            view.onSuccessful("Add new categories name "+ description.localCategories_Name);
+                                            MainCategories.getInstance().onAddCategories(description.localCategories_Id,description.localCategories_Name,description.localCategories_Count);
+                                            hash = MainCategories.getInstance().getMainCategoriesHashList();
+                                        }
+                                    }
+
                                     String result = Utils.hexToString(index.name);
                                     DriveTitle driveTitle = new Gson().fromJson(result,DriveTitle.class);
                                     Utils.Log(TAG,"response special "+ new Gson().toJson(driveTitle));
                                     if (driveTitle != null) {
                                         final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.globalName);
+                                        EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
+                                        EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
                                         if (items==null){
-                                            EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
                                             switch (enumTypeFile){
                                                 case ORIGINAL:{
                                                     description.global_original_id = index.id;
@@ -598,23 +607,22 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                 }
                                             }
 
-                                            EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
                                             switch (formatTypeFile){
                                                 case AUDIO:{
                                                     description.thumbnailSync = true;
                                                     break;
                                                 }
                                                 default:{
-                                                    description.thumbnailSync =false;
+                                                    description.thumbnailSync = false;
                                                     break;
                                                 }
                                             }
 
+                                            //view.onSuccessful("Create option Format type :"+ formatTypeFile.name());
                                             onSaveItem(description);
                                             Log.d(TAG, "This item is new");
                                         }
                                         else{
-                                            EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
                                             switch (enumTypeFile){
                                                 case ORIGINAL:{
                                                     items.global_original_id = index.id;
@@ -625,6 +633,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                     break;
                                                 }
                                             }
+                                            //view.onSuccessful("Edit option Format type :"+ formatTypeFile.name());
+                                            Utils.Log(TAG,"Global Id.............." + index.id);
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                                             Log.d(TAG, "This item is existing");
                                         }
@@ -780,6 +790,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.global_thumbnail_id,
                 description.localCategories_Id,
                 description.localCategories_Name,
+                description.localCategories_Count,
                 description.mimeType,
                 description.fileExtension,
                 new Gson().toJson(description),

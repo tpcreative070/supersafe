@@ -70,8 +70,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private GoogleSignInOptions.Builder options;
     private Set<Scope> requiredScopes;
     private List<String> requiredScopesString;
-    private String localCategories_Id;
-    private String globalCategories_Id;
+
 
     @Override
     public void onCreate() {
@@ -425,23 +424,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         String versionRelease = Build.VERSION.RELEASE;
         return versionRelease;
     }
-
-    public String getLocalCategoriesId() {
-        return localCategories_Id;
-    }
-
-    public void setLocalCategoriesId(String localCategories_Id) {
-        this.localCategories_Id = localCategories_Id;
-    }
-
-    public String getGlobalCategoriesId() {
-        return globalCategories_Id;
-    }
-
-    public void setGlobalCategoriesId(String globalCategories_Id) {
-        this.globalCategories_Id = globalCategories_Id;
-    }
-
 
     public File getPackagePath(Context context){
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),

@@ -255,7 +255,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                          Utils.Log(TAG,"Value");
                          String value = input.toString();
                          String base64Code = Utils.getHexCode(value);
-                         boolean response = MainCategories.getInstance().onAddCategories(base64Code,value);
+                         boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,null);
                          if (response){
                              Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
                          }
@@ -276,7 +276,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Navigator.onMoveCamera(MainTabActivity.this);
+                            final List<MainCategories> list = MainCategories.getInstance().getList();
+                            if (list!=null){
+                                Navigator.onMoveCamera(MainTabActivity.this,list.get(0));
+                            }
                         }
                         else{
                             Log.d(TAG,"Permission is denied");

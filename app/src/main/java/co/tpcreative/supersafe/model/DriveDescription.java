@@ -11,6 +11,7 @@ public class DriveDescription implements Serializable{
 
     public String localCategories_Name;
     public String localCategories_Id;
+    public String localCategories_Count;
     public String fileExtension;
     public String thumbnailPath;
     public String originalPath;

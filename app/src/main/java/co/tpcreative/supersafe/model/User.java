@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.model;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
@@ -21,8 +22,7 @@ public class User extends BaseResponse implements Serializable{
     public boolean isRefresh;
     public boolean isDownLoad;
     public boolean isUpload;
-    public boolean isInitMainCategoriesProgressing;
-
+    public boolean isRequestSync;
     private static User instance ;
 
     public static User getInstance(){
@@ -47,6 +47,8 @@ public class User extends BaseResponse implements Serializable{
         }
         return null;
     }
+
+
 
 
 

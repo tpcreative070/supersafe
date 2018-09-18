@@ -62,7 +62,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     }
 
 
-
     @OnClick(R.id.btnLinkGoogleDrive)
     public void onGoogleDrive(View view){
         btnUserAnotherAccount.setEnabled(false);
@@ -112,7 +111,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                     final String cloud_id = presenter.mUser.cloud_id;
                     if (cloud_id==null){
                         presenter.mUser.cloud_id = accountName;
-
 
                         signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                             @Override

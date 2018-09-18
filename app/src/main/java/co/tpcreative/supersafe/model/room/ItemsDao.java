@@ -21,13 +21,13 @@ public interface ItemsDao {
     @Query("Delete from items  WHERE localCategories_Id = :id")
     void deleteAll(String id);
 
-    @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id")
+    @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id ORDER BY id DESC")
     List<Items> loadAll(String localCategories_Id);
 
     @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id  ORDER BY id DESC LIMIT 1")
     Items getLatestId(String localCategories_Id);
 
-    @Query("Select * FROM items WHERE isSync = :isSync AND statusAction =:statusAction")
+    @Query("Select * FROM items WHERE isSync = :isSync AND statusAction =:statusAction ORDER BY id DESC LIMIT 5")
     List<Items> loadSyncDataItems(boolean isSync,int statusAction);
 
     @Query("Select * FROM items WHERE id = :id")
