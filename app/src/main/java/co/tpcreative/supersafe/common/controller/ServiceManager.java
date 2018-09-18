@@ -24,9 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -93,6 +91,45 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
+    public void onPickUpNewEmailNoTitle(Activity context, String account) {
+        try {
+            Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+            intent.putExtra("overrideTheme", 1);
+            //  intent.putExtra("selectedAccount",account);
+            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onPickUpExistingEmail(Activity context, String account) {
+        try {
+            String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_account), account);
+            Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
+            intent.putExtra("overrideTheme", 1);
+            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onPickUpNewEmail(Activity context) {
+        try {
+            String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_new_account));
+            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
+            intent.putExtra("overrideTheme", 1);
+            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static ServiceManager getInstance() {
         if (instance == null) {
             instance = new ServiceManager();
@@ -154,65 +191,6 @@ public class ServiceManager implements SuperSafeServiceView {
         return value;
     }
 
-    public void onPickUpNewEmailNoTitle(Activity context, String account) {
-        try {
-            Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
-            intent.putExtra("overrideTheme", 1);
-            //  intent.putExtra("selectedAccount",account);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onPickUpExistingEmail(Activity context, String account) {
-        try {
-            String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_account), account);
-            Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
-            intent.putExtra("overrideTheme", 1);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onPickUpNewEmail(Activity context) {
-        try {
-            String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_new_account));
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
-            intent.putExtra("overrideTheme", 1);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onPickUpNewEmail(Activity context, String account) {
-        try {
-            Account mAccount = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_new_account));
-            Intent intent = AccountPicker.newChooseAccountIntent(mAccount, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
-            intent.putExtra("overrideTheme", 1);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public interface ServiceManagerSyncDataListener {
-        void onCompleted();
-
-        void onError();
-
-        void onCancel();
-    }
 
     /*Response Network*/
 
@@ -392,7 +370,6 @@ public class ServiceManager implements SuperSafeServiceView {
                                         pathFolder = path + itemObject.local_id + "/";
                                         request.path_folder_output = pathFolder;
                                         myService.onDownloadFile(request, new ServiceManager.DownloadServiceListener() {
-
                                             @Override
                                             public void onError(String message, EnumStatus status) {
                                                 onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
@@ -434,14 +411,13 @@ public class ServiceManager implements SuperSafeServiceView {
 
                                             @Override
                                             public void onProgressDownload(int percentage) {
+                                                isDownloadData = true;
                                             }
 
                                             @Override
                                             public void onSaved() {
                                                 Utils.Log(TAG, "onSaved");
                                             }
-
-
                                         });
                                     }
                                     else{
@@ -612,6 +588,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                             @Override
                                             public void onProgressUpdate(int percentage) {
                                                 //Utils.Log(TAG,"onProgressUpdate "+ percentage +"%");
+                                                isUploadData = true;
                                             }
 
                                             @Override
@@ -621,10 +598,8 @@ public class ServiceManager implements SuperSafeServiceView {
 
                                             @Override
                                             public void onResponseData(DriveResponse response) {
-
                                                 //Utils.Log(TAG,"onResponseData global item..."+ new Gson().toJson(response));
                                                 //Utils.Log(TAG,"onResponseData local item..."+ new Gson().toJson(items));
-
                                                 try {
                                                     if (response != null) {
                                                         if (response.id != null) {
@@ -785,7 +760,6 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
-
     /*Gallery action*/
 
     public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id){
@@ -793,9 +767,6 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG,"Service is null");
             return;
         }
-//        final  Storage storage = new Storage(SuperSafeApplication.getInstance());
-//        storage.setEncryptConfiguration(storage.getmConfiguration());
-//        Cipher mCipher = storage.getCipher(Cipher.ENCRYPT_MODE);
         subscriptions = Observable.create(subscriber -> {
             final MimeTypeFile mMimeTypeFile = mimeTypeFile;
             final EnumFormatType enumTypeFile  = mMimeTypeFile.formatType;
@@ -804,7 +775,6 @@ public class ServiceManager implements SuperSafeServiceView {
             final String mVideo_id = id;
             final Items items ;
             Utils.Log(TAG,"object "+ new Gson().toJson(mMimeTypeFile));
-            // InputStream originalFile = null;
             Bitmap thumbnail = null;
             switch (enumTypeFile){
                 case IMAGE: {
@@ -844,16 +814,6 @@ public class ServiceManager implements SuperSafeServiceView {
                             matrix.postRotate(270);
                         }
                         thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
-
-
-//                       File mFileThumbnail =  new Compressor(AlbumDetailActivity.this)
-//                               .setMaxWidth(640)
-//                               .setMaxHeight(480)
-//                               .setQuality(85)
-//                               .setCompressFormat(Bitmap.CompressFormat.JPEG)
-//                               .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(AlbumDetailActivity.this).getAbsolutePath())
-//                               .compressToFile(new File(mPath),getString(R.string.key_temporary));
-
 
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1143,14 +1103,6 @@ public class ServiceManager implements SuperSafeServiceView {
             final Bitmap mBitmap;
             try {
                 mBitmap = Utils.getThumbnailScale(data);
-//                thumbnail =  new Compressor(CameraActivity.this)
-//                        .setMaxWidth(640)
-//                        .setMaxHeight(480)
-//                        .setQuality(85)
-//                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
-//                        .setDestinationDirectoryPath(SuperSafeApplication.getInstance().getPackageFolderPath(CameraActivity.this).getAbsolutePath())
-//                        .compressToFile(data,getString(R.string.key_temporary));
-
                 String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                 String currentTime = Utils.getCurrentDateTime();
                 String uuId = Utils.getUUId();
@@ -1304,6 +1256,15 @@ public class ServiceManager implements SuperSafeServiceView {
     @Override
     public void onSuccessful(List<DriveResponse> lists) {
 
+    }
+
+
+    public interface ServiceManagerSyncDataListener {
+        void onCompleted();
+
+        void onError();
+
+        void onCancel();
     }
 
     /*Upload Service*/
