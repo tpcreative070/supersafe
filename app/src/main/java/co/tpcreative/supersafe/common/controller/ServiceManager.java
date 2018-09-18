@@ -726,6 +726,7 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
+
     public void onUpdateSyncDataStatus(EnumStatus enumStatus) {
         switch (enumStatus) {
             case UPLOAD:
