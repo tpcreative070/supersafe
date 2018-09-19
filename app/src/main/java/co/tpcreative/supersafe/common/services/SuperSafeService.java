@@ -108,10 +108,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
     }
 
-    public void getAction(){
-        Log.d(TAG,"Action");
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // If we get killed, after returning from here, restart
@@ -221,310 +217,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
 
-    /*
-
-    public void onCreateInAppFolder(final String folderName, final boolean isLoadList){
-        Utils.Log(TAG,"onCreateInAppFolder");
-        SuperSafeServiceView view = view();
-        if (view == null) {
-            final User mUser = User.getInstance().getUserInfo();
-            if (mUser!=null){
-                mUser.isInitMainCategoriesProgressing = false;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            }
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("No connection",EnumStatus.CREATE_FOLDERS_IN_APP);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions",EnumStatus.CREATE_FOLDERS_IN_APP);
-            return;
-        }
-        final User user = User.getInstance().getUserInfo();
-        if (user==null){
-            view.onError("no user",EnumStatus.CREATE_FOLDERS_IN_APP);
-            return;
-        }
-
-        if (user.access_token==null){
-            view.onError("no access_token",EnumStatus.CREATE_FOLDERS_IN_APP);
-            return;
-        }
-
-        DriveApiRequest request = new DriveApiRequest();
-        request.mimeType =  DriveFolder.MIME_TYPE;
-        request.thumbnailName =  folderName;
-        List<String> mList = new ArrayList<>();
-        mList.add(getString(R.string.key_appDataFolder));
-        request.parents = mList;
-        String access_token = user.access_token;
-        Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onCrateFolder(access_token,request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
-                .subscribe(onResponse -> {
-                    if (view==null){
-                        final User mUser = User.getInstance().getUserInfo();
-                        if (mUser!=null){
-                            mUser.isInitMainCategoriesProgressing = false;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                        }
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-                    view.stopLoading();
-                    if (onResponse.error!=null){
-                        Log.d(TAG,"onError 1");
-                        view.onError(new Gson().toJson(onResponse.error),EnumStatus.CREATE_FOLDERS_IN_APP);
-                    }
-                    else{
-                        Log.d(TAG,"onSuccessful 2");
-                        view.onSuccessful(new Gson().toJson(onResponse));
-                        if (isLoadList){
-                            onGetListFolderInApp();
-                        }
-                    }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
-                }, throwable -> {
-                    if (view==null){
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        try {
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError(""+msg,EnumStatus.CREATE_FOLDERS_IN_APP);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError(""+e.getMessage(),EnumStatus.CREATE_FOLDERS_IN_APP);
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :"+ throwable.getMessage(),EnumStatus.CREATE_FOLDERS_IN_APP);
-                    }
-                    view.stopLoading();
-                }));
-    }
-
-    */
-
-
-
-    /*
-
-    public void onCheckInAppFolderExisting(final String folderName,final boolean isLoadList){
-        Utils.Log(TAG,"onCheckInAppFolderExisting");
-        SuperSafeServiceView view = view();
-        if (view == null) {
-            final User mUser = User.getInstance().getUserInfo();
-            if (mUser!=null){
-                mUser.isInitMainCategoriesProgressing = false;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            }
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection",EnumStatus.CHECK_FOLDER_EXISTING);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions",EnumStatus.CHECK_FOLDER_EXISTING);
-            return;
-        }
-        final User user = User.getInstance().getUserInfo();
-        if (user==null){
-            view.onError("no user",EnumStatus.CHECK_FOLDER_EXISTING);
-            return;
-        }
-
-        if (user.access_token==null){
-            view.onError("no access_token",EnumStatus.CHECK_FOLDER_EXISTING);
-            return;
-        }
-        if (!user.driveConnected){
-            view.onError("no driveConnected",EnumStatus.CHECK_FOLDER_EXISTING);
-            return;
-        }
-
-        String access_token = user.access_token;
-        Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onCheckInAppFolderExisting(access_token,"thumbnailName = '"+folderName+"'", getString(R.string.key_appDataFolder))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
-                .subscribe(onResponse -> {
-                    if (view==null){
-                        final User mUser = User.getInstance().getUserInfo();
-                        if (mUser!=null){
-                            mUser.isInitMainCategoriesProgressing = false;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                        }
-                        return;
-                    }
-                    view.stopLoading();
-                    if (onResponse.error!=null){
-                        Log.d(TAG,"onError 1");
-                        view.onError(new Gson().toJson(onResponse.error),EnumStatus.CHECK_FOLDER_EXISTING);
-                    }
-                    else{
-                        Log.d(TAG,"onSuccessful 2");
-                        view.onSuccessful(new Gson().toJson(onResponse));
-                        if (onResponse.files!=null){
-                            if (onResponse.files.size()==0){
-                                onCreateInAppFolder(folderName,isLoadList);
-                            }
-                            else{
-                                if (isLoadList){
-                                    onGetListFolderInApp();
-                                }
-                            }
-                        }
-                    }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
-                }, throwable -> {
-                    if (view==null){
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        try {
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError(""+msg,EnumStatus.CHECK_FOLDER_EXISTING);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError(""+e.getMessage(),EnumStatus.CHECK_FOLDER_EXISTING);
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :"+ throwable.getMessage(),EnumStatus.CHECK_FOLDER_EXISTING);
-                    }
-                    view.stopLoading();
-                }));
-    }
-
-    */
-
-
-    /*
-
-    public void onGetListFolderInApp(){
-        Utils.Log(TAG,"onGetListFolderInApp");
-        SuperSafeServiceView view = view();
-        if (view == null) {
-            final User mUser = User.getInstance().getUserInfo();
-            if (mUser!=null){
-                mUser.isInitMainCategoriesProgressing = false;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            }
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection",EnumStatus.GET_LIST_FOLDERS_IN_APP);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions",EnumStatus.GET_LIST_FOLDERS_IN_APP);
-            return;
-        }
-        final User user = User.getInstance().getUserInfo();
-        if (user==null){
-            view.onError("no user",EnumStatus.GET_LIST_FOLDERS_IN_APP);
-            return;
-        }
-
-        if (user.access_token==null){
-            view.onError("no access_token",EnumStatus.GET_LIST_FOLDERS_IN_APP);
-            return;
-        }
-
-        if (!user.driveConnected){
-            view.onError("no driveConnected",EnumStatus.GET_LIST_FOLDERS_IN_APP);
-            return;
-        }
-
-        String access_token = user.access_token;
-        Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFile(access_token,getString(R.string.key_mime_type_folder), getString(R.string.key_appDataFolder))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
-                .subscribe(onResponse -> {
-                    if (view==null){
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-                    view.stopLoading();
-                    if (onResponse.error!=null){
-                        Log.d(TAG,"onError 1");
-                        view.onError(new Gson().toJson(onResponse.error),EnumStatus.GET_LIST_FOLDERS_IN_APP);
-                    }
-                    else{
-                        Log.d(TAG,"onSuccessful 2");
-                        if (onResponse.files!=null){
-                            if (onResponse.files.size()>0){
-                                final List<MainCategories> categories = new ArrayList<>();
-                                final List<DriveResponse> mList = onResponse.files;
-                                final Map<String,MainCategories> hash = new HashMap<>();
-
-                                for (DriveResponse index : mList){
-                                    hash.put(index.thumbnailName,new MainCategories(Utils.getHexCode(index.thumbnailName),index.id,index.thumbnailName,R.drawable.face_1));
-                                }
-
-                                for (Map.Entry<String,MainCategories> index : hash.entrySet()){
-                                    categories.add(index.getValue());
-                                }
-                                PrefsController.putString(getString(R.string.key_main_categories),new Gson().toJson(categories));
-                                Log.d(TAG,"Loop???????????????" + new Gson().toJson(categories));
-                            }
-                            else{
-                                PrefsController.putString(getString(R.string.key_main_categories),null);
-                            }
-                            final User mUser = User.getInstance().getUserInfo();
-                            if (mUser!=null){
-                               mUser.isRefresh = true;
-                               mUser.isInitMainCategoriesProgressing = false;
-                               PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                            }
-                        }
-                        view.onSuccessful(new Gson().toJson(onResponse));
-                    }
-                    Log.d(TAG, "Body list folder : " + new Gson().toJson(onResponse.files));
-                }, throwable -> {
-                    if (view==null){
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        try {
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError(""+msg,EnumStatus.GET_LIST_FOLDERS_IN_APP);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError(""+e.getMessage(),EnumStatus.GET_LIST_FOLDERS_IN_APP);
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :"+ throwable.getMessage(),EnumStatus.GET_LIST_FOLDERS_IN_APP);
-                    }
-                    view.stopLoading();
-                }));
-    }
-
-   */
-
     public void onGetListOnlyFilesInApp(SuperSafeServiceView view){
         Utils.Log(TAG,"onGetListFolderInApp");
         if (view == null) {
@@ -570,13 +262,19 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     view.stopLoading();
                     if (onResponse.error!=null){
                         Log.d(TAG,"onError 1");
-                        view.onError(new Gson().toJson(onResponse.error),EnumStatus.GET_LIST_FILES_IN_APP);
+                        view.onError(new Gson().toJson(onResponse.error),EnumStatus.REQUEST_ACCESS_TOKEN);
                     }
                     else{
                         try {
                              Map<String,MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                             final List<DriveResponse> driveResponse = onResponse.files;
                             for (DriveResponse index : driveResponse) {
+
+                                if ("1CrxIQludJ8f7QzAgP3AO3ueDd3G0Go53DfW0VMUR6kKT1fXuUw".equals(index.id)){
+                                    view.onSuccessful("Found id here...........................");
+                                }
+
+
                                 final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                 if (description != null) {
                                     if (hash!=null){
@@ -588,9 +286,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                         }
                                     }
 
-                                    String result = Utils.hexToString(index.name);
-                                    DriveTitle driveTitle = new Gson().fromJson(result,DriveTitle.class);
-                                    Utils.Log(TAG,"response special "+ new Gson().toJson(driveTitle));
+                                    DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                     if (driveTitle != null) {
                                         final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.globalName);
                                         EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
@@ -618,9 +314,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                 }
                                             }
 
-                                            //view.onSuccessful("Create option Format type :"+ formatTypeFile.name());
+                                            String message = "This item is new :" +description.globalName + " - "+ index.id;
+                                            Log.d(TAG, message);
+                                            view.onSuccessful(message);
                                             onSaveItem(description);
-                                            Log.d(TAG, "This item is new");
+//
                                         }
                                         else{
                                             switch (enumTypeFile){
@@ -633,16 +331,38 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                     break;
                                                 }
                                             }
-                                            //view.onSuccessful("Edit option Format type :"+ formatTypeFile.name());
-                                            Utils.Log(TAG,"Global Id.............." + index.id);
+
+                                            String message = "This item is existing:" +description.globalName + " - "+ index.id;
+                                            if(description.globalName.equals("87cdfa94-5378-4a20-86a8-71bf22c26822")){
+                                                view.onSuccessful(message +" --- " + index.name);
+                                            }
+                                            if (description.globalName.equals("0634714f-5687-4302-8cf9-e6ec39120119")){
+                                                view.onSuccessful(message +" --- " +index.name);
+                                            }
+
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                                             Log.d(TAG, "This item is existing");
+
                                         }
                                     } else {
+                                        view.onError("Can not convert item",EnumStatus.GET_LIST_FILES_IN_APP);
                                         Log.d(TAG, "Can not convert item");
                                     }
+                                }else{
+                                    view.onError("Description item is null",EnumStatus.GET_LIST_FILES_IN_APP);
+                                    Utils.Log(TAG, "Description item is null");
                                 }
                             }
+
+                            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
+                            int count = 0;
+                            if (mList!=null){
+                                count = mList.size();
+                            }
+                            else{
+                                count = 0;
+                            }
+                            view.onSuccessful("-------------Sync data------------" + onResponse.files.size()+"/"+count);
                             view.onSuccessful(onResponse.files);
                         }
                         catch(Exception e){
@@ -675,102 +395,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 }));
     }
 
-    public void onGetListOnlyFilesInApp(){
-        Utils.Log(TAG,"onGetListFolderInApp");
-        SuperSafeServiceView view = view();
-        if (view == null) {
-            view.onError("no view", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions",EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-        final User user = User.getInstance().getUserInfo();
-        if (user==null){
-            view.onError("no user",EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-
-        if (user.access_token==null){
-            view.onError("no access_token",EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-
-        if (!user.driveConnected){
-            view.onError("no driveConnected",EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-
-        String access_token = user.access_token;
-        Log.d(TAG,"access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,getString(R.string.key_mime_type_all_files), getString(R.string.key_appDataFolder),getString(R.string.key_specific_fields))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
-                .subscribe(onResponse -> {
-                    if (view==null){
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-                    view.stopLoading();
-                    if (onResponse.error!=null){
-                        Log.d(TAG,"onError 1");
-                        view.onError(new Gson().toJson(onResponse.error),EnumStatus.GET_LIST_FILES_IN_APP);
-                    }
-                    else {
-                        try {
-                            final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems();
-                            Utils.Log(TAG, "Body list only files count " + onResponse.files.size() + "/" + mListItem.size());
-                            final List<DriveResponse> driveResponse = onResponse.files;
-                            for (DriveResponse index : driveResponse) {
-                                final DriveDescription description = new Gson().fromJson(index.description, DriveDescription.class);
-                                if (description != null) {
-                                    final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(index.name);
-                                    if (items == null) {
-                                        onSaveItem(description);
-                                    } else {
-                                        Log.d(TAG, "This item is existing");
-                                    }
-                                }
-                            }
-                            view.onSuccessful("Body list only files count " + onResponse.files.size() + "/" + mListItem.size());
-
-                        }
-                        catch(Exception e){
-                            view.onError(e.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
-                            e.printStackTrace();
-                        }
-                    }
-
-                    Log.d(TAG, "Body list only files : " + new Gson().toJson(onResponse.files));
-                }, throwable -> {
-                    if (view==null){
-                        Log.d(TAG,"View is null");
-                        return;
-                    }
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        try {
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError(""+msg,EnumStatus.GET_LIST_FILES_IN_APP);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError(""+e.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :"+ throwable.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
-                    }
-                    view.stopLoading();
-                }));
-    }
 
     public void onSaveItem(final DriveDescription description){
         Items items = new Items(false,
@@ -793,52 +417,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.localCategories_Count,
                 description.mimeType,
                 description.fileExtension,
-                new Gson().toJson(description),
+                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
                 EnumStatus.DOWNLOAD);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
-    public void onUploadFileInAppFolder(final File file,final String id,final String mimeType){
-        Log.d(TAG,"Upload File To In App Folder");
-        final User mUser = User.getInstance().getUserInfo();
-        MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
-        HashMap<String,Object> content = new HashMap<>();
-        content.put(getString(R.string.key_name),file.getName());
-        List<String> list = new ArrayList<>();
-        list.add(id);
-        content.put(getString(R.string.key_parents),list);
-        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType,new Gson().toJson(content)));
-        Log.d(TAG,"parents: " +new Gson().toJson(content));
-        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
-            @Override
-            public void onProgressUpdate(int percentage) {
-                Utils.Log(TAG,"Progressing "+ percentage +"%");
-            }
-            @Override
-            public void onError() {
-                Utils.Log(TAG,"onError");
-            }
-            @Override
-            public void onFinish() {
-                Utils.Log(TAG,"onFinish");
-            }
-        });
-
-        fileBody.setContentType(mimeType);
-        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
-
-        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload),mUser.access_token,metaPart,dataPart,mimeType);
-        request.enqueue(new Callback<DriveResponse>(){
-            @Override
-            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
-                Utils.Log(TAG,"response successful :"+ new Gson().toJson(response.body()));
-            }
-            @Override
-            public void onFailure(Call<DriveResponse> call, Throwable t) {
-                Utils.Log(TAG,"response failed :"+ t.getMessage());
-            }
-        });
-    }
 
     public void onUploadFileInAppFolder(final Items items ,final ServiceManager.UploadServiceListener listener){
         Log.d(TAG,"Upload File To In App Folder !!!");
@@ -861,16 +444,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         DriveTitle contentTitle = new DriveTitle();
         contentTitle.globalName = items.globalName;
         contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
-        String hex = Utils.stringToHex(new Gson().toJson(contentTitle));
+        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name),hex);
-        content.put(getString(R.string.key_description),DriveDescription.getInstance().convertToHex(items.description));
+        content.put(getString(R.string.key_description),items.description);
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));
         content.put(getString(R.string.key_parents),list);
         MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType,new Gson().toJson(content)));
         Log.d(TAG,"parents: " +new Gson().toJson(content));
-
-
 
         ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
             @Override
@@ -934,9 +515,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         DriveTitle contentTitle = new DriveTitle();
         contentTitle.globalName = items.globalName;
         contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
-        String hex = Utils.stringToHex(new Gson().toJson(contentTitle));
+        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name),hex);
-        content.put(getString(R.string.key_description),DriveDescription.getInstance().convertToHex(items.description));
+        content.put(getString(R.string.key_description),items.description);
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));
         content.put(getString(R.string.key_parents),list);

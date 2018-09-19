@@ -23,6 +23,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -57,8 +58,10 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.privates.PrivateFragment;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
@@ -103,6 +106,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.onGetUserInfo();
         storage = new Storage(this);
 
+        final User mUser = User.getInstance().getUserInfo();
+
+        Utils.Log(TAG,new Gson().toJson(mUser));
+
     }
 
 
@@ -119,6 +126,16 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public void onSyncDone() {
         SingletonPrivateFragment.getInstance().onUpdateView();
+    }
+
+    @Override
+    public void onRequestAccessToken() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getAccessToken();
+            }
+        });
     }
 
     @Override

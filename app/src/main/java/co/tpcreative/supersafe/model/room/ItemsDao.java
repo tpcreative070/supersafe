@@ -33,9 +33,17 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE id = :id")
     Items loadItemId(int id);
 
+    @Query("Select * FROM items WHERE globalName = :globalName AND isSync = :isSync")
+    Items loadItemId(String globalName,boolean isSync);
+
+    @Query("Select * FROM items WHERE isSync = :isSync")
+    List<Items> loadListItemId(boolean isSync);
 
     @Query("Select * FROM items WHERE globalName = :globalName")
     Items loadItemId(String globalName);
+
+    @Query("Select * FROM items WHERE globalName = :globalName")
+    List<Items>loadListItemId(String globalName);
 
     @Query("Select * FROM items WHERE local_id = :local_id")
     Items loadLocalId(String local_id);

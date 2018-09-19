@@ -146,6 +146,38 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final synchronized List<Items> getListItemId(String localId){
+        try{
+            return instance.itemsDao().loadListItemId(localId);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized Items getItemId(String localId,boolean isSync){
+        try{
+            return instance.itemsDao().loadItemId(localId,isSync);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+    public final synchronized List<Items> getListItemId(boolean isSync){
+        try{
+            return instance.itemsDao().loadListItemId(isSync);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
     public final synchronized Items getLocalId(String localId){
         try{
             return instance.itemsDao().loadLocalId(localId);

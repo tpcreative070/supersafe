@@ -224,6 +224,15 @@ public class ServiceManager implements SuperSafeServiceView {
                 @Override
                 public void onError(String message, EnumStatus status) {
                     Utils.Log(TAG, "Not Found Items :" + message);
+                    switch (status){
+                        case REQUEST_ACCESS_TOKEN:{
+                            SingletonManagerTab.getInstance().onRequestAccessToken();
+                            break;
+                        }
+                        default:{
+                            break;
+                        }
+                    }
                     onWriteLog(message,status);
                     isLoadingData = false;
                 }
@@ -231,6 +240,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 @Override
                 public void onSuccessful(String message) {
                     isLoadingData = false;
+                    onWriteLog(message,EnumStatus.GET_LIST_FILES_IN_APP);
                     Utils.Log(TAG, message);
                 }
 
@@ -279,7 +289,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
 
     public void onDownloadFilesFromDriveStore() {
-
         if (isDownloadData) {
             Utils.Log(TAG, "Downloading sync item from cloud !!!");
             return;
@@ -351,7 +360,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
                                 EnumFormatType formatTypeFile = EnumFormatType.values()[itemObject.formatType];
                                 if (itemObject.global_original_id == null) {
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                                     Utils.Log(TAG,"global_original_id is null at " + " format type :"+ formatTypeFile.name() + "---name global :"+ itemObject.globalName);
                                     onWriteLog("global_original_id is null ",EnumStatus.DOWNLOAD);
                                     onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
@@ -360,11 +368,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 }
 
                                 if (itemObject.global_thumbnail_id == null & formatTypeFile != EnumFormatType.AUDIO) {
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                                     Utils.Log(TAG,"global_thumbnail_id is null at "+ itemObject.id + " format type :"+ formatTypeFile.name()+ "---name global :"+ itemObject.globalName);
                                     onWriteLog("global_thumbnail_id is null ",EnumStatus.DOWNLOAD);
                                     onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
-                                    //Utils.Log(TAG,"Drive description on thumbnail " + new Gson().toJson(new Gson().toJson(itemObject)));
                                     isWorking = false;
                                 }
 
@@ -394,12 +400,11 @@ public class ServiceManager implements SuperSafeServiceView {
                                             }
                                             @Override
                                             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
-                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                                 Log.d(TAG, "Downloaded id original");
                                                 try {
                                                     if (request != null) {
                                                         if (request.items != null) {
-                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.id);
+                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.globalName);
                                                             if (mItem != null) {
                                                                 mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                                 mItem.originalSync = true;
@@ -419,9 +424,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     }
                                                 } catch (Exception e) {
                                                     onWriteLog(e.getMessage(),EnumStatus.DOWNLOAD);
-                                                    onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                                     e.printStackTrace();
                                                 }
+                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                             }
 
                                             @Override
@@ -458,12 +463,11 @@ public class ServiceManager implements SuperSafeServiceView {
                                             }
                                             @Override
                                             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
-                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                                 Log.d(TAG, "Downloaded id thumbnail");
                                                 try {
                                                     if (request != null) {
                                                         if (request.items != null) {
-                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.id);
+                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.globalName);
                                                             if (mItem != null) {
                                                                 mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                                 mItem.thumbnailSync = true;
@@ -485,6 +489,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     e.printStackTrace();
                                                     onWriteLog(e.getMessage(), EnumStatus.DOWNLOAD);
                                                 }
+                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                             }
 
                                             @Override
@@ -630,10 +635,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                                 try {
                                                     if (response != null) {
                                                         if (response.id != null) {
-                                                            String result = Utils.hexToString(response.name);
-                                                            DriveTitle contentTitle = new Gson().fromJson(result, DriveTitle.class);
+                                                            DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
                                                             final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.globalName);
-                                                            if (mItem != null) {
+                                                            if (mItem != null && contentTitle!=null) {
                                                                 mItem.global_original_id = response.id;
                                                                 mItem.fileType = contentTitle.fileType;
                                                                 mItem.originalSync = true;
@@ -700,10 +704,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                                 try {
                                                     if (response != null) {
                                                         if (response.id != null) {
-                                                            String result = Utils.hexToString(response.name);
-                                                            DriveTitle contentTitle = new Gson().fromJson(result, DriveTitle.class);
+                                                            DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
                                                             final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.globalName);
-                                                            if (mItem != null) {
+                                                            if (mItem != null & contentTitle!=null) {
                                                                 mItem.global_thumbnail_id = response.id;
                                                                 mItem.thumbnailSync = true;
                                                                 if (mItem.originalSync) {
@@ -884,7 +887,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.localCategories_Count ,
                                 description.mimeType,
                                 description.fileExtension,
-                                new Gson().toJson(description),
+                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
                                 EnumStatus.UPLOAD);
 
                         Utils.Log(TAG, "start compress");
@@ -977,7 +980,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.localCategories_Count,
                                 description.mimeType,
                                 description.fileExtension,
-                                new Gson().toJson(description),
+                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
                                 EnumStatus.UPLOAD);
 
 
@@ -1062,7 +1065,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.localCategories_Count,
                                 description.mimeType,
                                 description.fileExtension,
-                                new Gson().toJson(description),
+                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
                                 EnumStatus.UPLOAD);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
@@ -1182,7 +1185,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.localCategories_Count,
                         description.mimeType,
                         description.fileExtension,
-                        new Gson().toJson(description),
+                        DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
                         EnumStatus.UPLOAD);
 
                 boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
@@ -1240,10 +1243,9 @@ public class ServiceManager implements SuperSafeServiceView {
                     onWriteLog(messageDone, EnumStatus.UPLOAD);
                     Utils.Log(TAG, message);
                     Utils.Log(TAG, messageDone);
-
-                    onSyncData();
                     Utils.Log(TAG,"Request syn data on upload.........");
                     onWriteLog("Request syn data on upload",EnumStatus.UPLOAD);
+                    onSyncData();
 
                 } else {
                     String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
@@ -1264,9 +1266,9 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, message);
                     Utils.Log(TAG, messageDone);
 
-                    onSyncData();
                     onWriteLog("Request syn data on download",EnumStatus.DOWNLOAD);
                     Utils.Log(TAG,"Request syn data on download.........");
+                    onSyncData();
 
                 } else {
                     String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;

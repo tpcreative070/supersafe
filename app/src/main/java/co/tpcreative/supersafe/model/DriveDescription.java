@@ -9,6 +9,8 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class DriveDescription implements Serializable{
 
 
+    private static String TAG = DriveDescription.class.getSimpleName();
+
     public String localCategories_Name;
     public String localCategories_Id;
     public String localCategories_Count;
@@ -30,6 +32,7 @@ public class DriveDescription implements Serializable{
     public boolean thumbnailSync;
     public boolean originalSync;
     public int fileType;
+
 
 
     private static DriveDescription instance;
@@ -63,7 +66,9 @@ public class DriveDescription implements Serializable{
             return Utils.stringToHex(value);
         }
         catch (Exception e){
+            Utils.Log(TAG,"Error :" + e.getMessage());
             e.printStackTrace();
+            Utils.onWriteLog(TAG +"-" + e.getMessage(),EnumStatus.WRITE_FILE);
         }
         return null;
     }
@@ -74,6 +79,7 @@ public class DriveDescription implements Serializable{
             return new Gson().fromJson(result,DriveDescription.class);
         }
         catch (Exception e){
+            Utils.Log(TAG,"Error :" + e.getMessage());
             e.printStackTrace();
         }
         return null;

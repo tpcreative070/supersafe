@@ -28,6 +28,11 @@ public class SingletonManagerTab {
         }
     }
 
+    public void onRequestAccessToken(){
+        if (listener!=null){
+            listener.onRequestAccessToken();
+        }
+    }
     public void onSyncDone(){
         if (listener!=null){
             listener.onSyncDone();
@@ -44,6 +49,7 @@ public class SingletonManagerTab {
         void visitFloatingButton(int isVisit);
         void onAction(EnumStatus enumStatus);
         void onSyncDone();
+        void onRequestAccessToken();
     }
 
 }
