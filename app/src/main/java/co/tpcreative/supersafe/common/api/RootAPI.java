@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.request.DriveApiRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.response.SignInResponse;
+import co.tpcreative.supersafe.common.response.SyncResponse;
 import co.tpcreative.supersafe.common.response.UserCloudResponse;
 import co.tpcreative.supersafe.common.response.VerifyCodeResponse;
 import co.tpcreative.supersafe.model.DriveAbout;
@@ -34,6 +35,8 @@ public interface RootAPI{
     String CHECK_USER_CLOUD = "/api/usercloud/check";
     String ADD_USER_CLOUD = "/api/usercloud/add/";
     String CHECK_USER_ID = "/api/user/checkUser";
+    String GET_LIST_FILES_SYNC = "/api/items/listFilesSync";
+    String SYNC_DATA = "/api/items/syncData";
     String GET_DRIVE_ABOUT = "/drive/v2/about";
     String CREATE_FOLDER = "/drive/v3/files";
     String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
@@ -70,6 +73,15 @@ public interface RootAPI{
     @FormUrlEncoded
     @POST(CHECK_USER_ID)
     Observable<VerifyCodeResponse> onCheckUserId(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(GET_LIST_FILES_SYNC)
+    Observable<SyncResponse> onListFilesSync(@FieldMap Map<String,Object>request);
+
+    @FormUrlEncoded
+    @POST(SYNC_DATA)
+    Observable<SyncResponse> onSyncData(@FieldMap Map<String,Object>request);
+
 
     @Headers({"Accept: application/json"})
     @GET(GET_DRIVE_ABOUT)

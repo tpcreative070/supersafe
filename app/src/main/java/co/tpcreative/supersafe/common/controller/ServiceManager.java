@@ -201,6 +201,51 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
+
+    public void onSyncDataOwnServer(){
+        if (myService==null){
+            Utils.Log(TAG,"Service is null" );
+            return;
+        }
+        myService.onGetListSync(0, new SuperSafeServiceView() {
+            @Override
+            public void onError(String message, EnumStatus status) {
+                Utils.Log(TAG,"Error new :" + message);
+            }
+
+            @Override
+            public void onSuccessful(String message) {
+                Utils.Log(TAG,"Response new :" +message);
+            }
+
+            @Override
+            public void onSuccessful(List<DriveResponse> lists) {
+                Utils.Log(TAG,"Response new :!!!" + new Gson().toJson(lists));
+            }
+
+            @Override
+            public void onNetworkConnectionChanged(boolean isConnect) {
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void startLoading() {
+
+            }
+
+            @Override
+            public void stopLoading() {
+
+            }
+        });
+    }
+
+
     public void onSyncData() {
         Utils.Log(TAG, "Preparing sync data ###########################");
         if (isDownloadData) {

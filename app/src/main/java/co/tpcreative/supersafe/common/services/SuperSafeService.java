@@ -217,6 +217,169 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
 
+    public void onAddItems(Items items,SuperSafeServiceView view){
+        Utils.Log(TAG,"onGetListFolderInApp");
+        if (view == null) {
+            view.onError("no view", EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions",EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user==null){
+            view.onError("no user",EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+
+        Map<String,Object> hashMap = new HashMap<>();
+        hashMap.put(getString(R.string.key_user_id),user.email);
+        hashMap.put(getString(R.string.key_kind),getString(R.string.key_drive_file));
+        hashMap.put(getString(R.string.key_items_id),items.globalName);
+        hashMap.put(getString(R.string.key_global_original_id),items.global_original_id);
+        hashMap.put(getString(R.string.key_global_thumbnail_id),items.global_thumbnail_id);
+        hashMap.put(getString(R.string.key_mimeType),items.mimeType);
+        hashMap.put(getString(R.string.key_isSync),items.isSync);
+        hashMap.put(getString(R.string.key_thumbnailSync),items.thumbnailSync);
+        hashMap.put(getString(R.string.key_originalSync),items.originalSync);
+
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" +getString(R.string.access_token,access_token));
+        Log.d(TAG,"access_token : " + access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(hashMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error){
+                        Log.d(TAG,"onError:" + new Gson().toJson(onResponse));
+                        view.onError(new Gson().toJson(onResponse),EnumStatus.REQUEST_ACCESS_TOKEN);
+                    }
+                    else{
+                        try {
+                            Utils.Log(TAG,"special response :"+ new Gson().toJson(onResponse));
+                            view.onSuccessful(new Gson().toJson(onResponse));
+                        }
+                        catch(Exception e){
+                            view.onError(e.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
+                            e.printStackTrace();
+                        };
+                    }
+                }, throwable -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError(""+msg,EnumStatus.GET_LIST_FILES_IN_APP);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError(""+e.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :"+ throwable.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
+                    }
+                    view.stopLoading();
+                }));
+
+
+    }
+
+
+
+    public void onGetListSync(long nextPage,SuperSafeServiceView view){
+        Utils.Log(TAG,"onGetListFolderInApp");
+        if (view == null) {
+            view.onError("no view", EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions",EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user==null){
+            view.onError("no user",EnumStatus.GET_LIST_FILES_IN_APP);
+            return;
+        }
+
+
+        Map<String,Object> hashMap = new HashMap<>();
+        hashMap.put(getString(R.string.key_user_id),user.email);
+        hashMap.put(getString(R.string.key_next_page),0);
+
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" +getString(R.string.access_token,access_token));
+        Log.d(TAG,"access_token : " + access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onListFilesSync(hashMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error){
+                        Log.d(TAG,"onError:" + new Gson().toJson(onResponse));
+                        view.onError(new Gson().toJson(onResponse),EnumStatus.REQUEST_ACCESS_TOKEN);
+                    }
+                    else{
+                        try {
+                            Utils.Log(TAG,"special response :"+ new Gson().toJson(onResponse));
+                            view.onSuccessful(new Gson().toJson(onResponse));
+                        }
+                        catch(Exception e){
+                            view.onError(e.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
+                            e.printStackTrace();
+                        };
+                    }
+                }, throwable -> {
+                    if (view==null){
+                        Log.d(TAG,"View is null");
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError(""+msg,EnumStatus.GET_LIST_FILES_IN_APP);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError(""+e.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :"+ throwable.getMessage(),EnumStatus.GET_LIST_FILES_IN_APP);
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+
     public void onGetListOnlyFilesInApp(SuperSafeServiceView view){
         Utils.Log(TAG,"onGetListFolderInApp");
         if (view == null) {

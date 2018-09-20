@@ -106,9 +106,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.onGetUserInfo();
         storage = new Storage(this);
 
-        final User mUser = User.getInstance().getUserInfo();
+        //final User mUser = User.getInstance().getUserInfo();
+        //Utils.Log(TAG,new Gson().toJson(mUser));
 
-        Utils.Log(TAG,new Gson().toJson(mUser));
+        ServiceManager.getInstance().onSyncDataOwnServer();
 
     }
 
@@ -407,14 +408,9 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         SensorOrientationChangeNotifier.getInstance().addListener(this);
         ServiceManager.getInstance().onSyncData();
-       // ServiceManager.getInstance().testLoop();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
-
-       // File output = new File(SuperSafeApplication.getInstance().getSupperSafe()+getString(R.string.key_database));
-       // File input = new File(SuperSafeApplication.getInstance().getPathDatabase());
-       // storage.createFile(output,input);
-       onBackUp();
+        onBackUp();
     }
 
     @Override

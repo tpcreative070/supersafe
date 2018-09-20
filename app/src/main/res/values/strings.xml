@@ -284,5 +284,15 @@
     <string name="key_mime_type_sdcard_jpg">image/jpeg</string>
     <string name="key_mime_type_sdcard_png">image/png</string>
     <string name="key_database">db-super-safe.db</string>
+    <string name="key_next_page">nextPage</string>
+    <string name="key_kind">kind</string>
+    <string name="key_items_id">items_id</string>
+    <string name="key_global_original_id">global_original_id</string>
+    <string name="key_global_thumbnail_id">global_thumbnail_id</string>
+    <string name="key_mimeType">mimeType</string>
+    <string name="key_isSync">isSync</string>
+    <string name="key_thumbnailSync">thumbnailSync</string>
+    <string name="key_originalSync">originalSync</string>
+    <string name="key_drive_file">drive#file</string>
 
 </resources>
