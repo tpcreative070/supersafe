@@ -236,6 +236,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             view.onError("no user",EnumStatus.GET_LIST_FILES_IN_APP);
             return;
         }
+        
 
         Map<String,Object> hashMap = new HashMap<>();
         hashMap.put(getString(R.string.key_user_id),user.email);
