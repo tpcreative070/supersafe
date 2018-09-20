@@ -152,7 +152,6 @@ public class CameraActivity extends BaseActivity implements
             Intent intent = new Intent();
             setResult(RESULT_OK,intent);
             Utils.Log(TAG,"onBackPressed");
-            ServiceManager.getInstance().onSyncData();
         }
         super.onBackPressed();
     }

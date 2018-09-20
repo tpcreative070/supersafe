@@ -27,7 +27,7 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id  ORDER BY id DESC LIMIT 1")
     Items getLatestId(String localCategories_Id);
 
-    @Query("Select * FROM items WHERE isSync = :isSync AND statusAction =:statusAction ORDER BY id DESC LIMIT 5")
+    @Query("Select * FROM items WHERE isSync = :isSync AND statusAction =:statusAction ORDER BY id DESC LIMIT 3")
     List<Items> loadSyncDataItems(boolean isSync,int statusAction);
 
     @Query("Select * FROM items WHERE id = :id")

@@ -8,5 +8,6 @@ public class DriveResponse implements Serializable{
     public String name;
     public String mimeType;
     public String description;
-
+    public String global_original_id ;
+    public String global_thumbnail_id ;
 }

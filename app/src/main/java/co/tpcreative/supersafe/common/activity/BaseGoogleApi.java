@@ -36,7 +36,9 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
 
 
@@ -214,7 +216,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
     protected void getAccessToken(){
         if (mSignInAccount!=null){
+            Utils.Log(TAG,"Request token");
             new GetAccessToken().execute(mSignInAccount.getAccount());
+        }
+        else{
+            Utils.Log(TAG,"mSignInAccount is null");
         }
     }
 
@@ -267,7 +273,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
                         @Override
                         public void onSuccessful(String message) {
-                            ServiceManager.getInstance().onSyncData();
+                            ServiceManager.getInstance().onSyncDataOwnServer("0");
                             Log.d(TAG,"successful :"+ message);
                         }
                         @Override
@@ -289,6 +295,16 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
                         @Override
                         public void onSuccessful(List<DriveResponse> lists) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status) {
+
+                        }
+
+                        @Override
+                        public void onSuccessfulOnCheck(List<Items> lists) {
 
                         }
                     });

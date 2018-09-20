@@ -190,7 +190,6 @@ public class ServiceManager implements SuperSafeServiceView {
         return value;
     }
 
-
     /*Response Network*/
 
     public void onGetDriveAbout() {
@@ -202,47 +201,170 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
-    public void onSyncDataOwnServer(){
-        if (myService==null){
-            Utils.Log(TAG,"Service is null" );
+    public void onCheckingMissData(String nextPage){
+        Utils.Log(TAG, "Preparing checking miss data ###########################");
+        if (myService != null) {
+            myService.onCheckingMissData(nextPage, new SuperSafeServiceView() {
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    Utils.Log(TAG, "Error :" + message);
+                    if (status==EnumStatus.REQUEST_ACCESS_TOKEN){
+                        SingletonManagerTab.getInstance().onRequestAccessToken();
+                        Utils.Log(TAG,"Request token on onCheckingMissData");
+                    }
+                }
+
+                @Override
+                public void onSuccessful(String message) {
+                    Utils.Log(TAG, "Response :" + message);
+                }
+
+                @Override
+                public void onSuccessful(List<DriveResponse> lists) {
+                    Utils.Log(TAG, "Response !!!:!!!" + new Gson().toJson(lists));
+                }
+
+                @Override
+                public void onSuccessful(String nextPage, EnumStatus status) {
+                    if (status == EnumStatus.LOAD_MORE) {
+                        Utils.Log(TAG,"next page on CheckingMissData"+ nextPage);
+                        onCheckingMissData(nextPage);
+                    }
+                }
+
+                @Override
+                public void onNetworkConnectionChanged(boolean isConnect) {
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void startLoading() {
+
+                }
+
+                @Override
+                public void stopLoading() {
+
+                }
+                @Override
+                public void onSuccessfulOnCheck(List<Items> lists) {
+                    if (lists.size()>0){
+                        Utils.Log(TAG,"Found "+lists.size() + " miss");
+                        for (Items index : lists){
+                            onAddItems(index);
+                        }
+                    }
+                    else{
+                        Utils.Log(TAG,"No data miss");
+                    }
+                }
+            });
+        }
+        else {
+            Utils.Log(TAG,"My service is null");
+        }
+    }
+
+
+    public void onSyncDataOwnServer(String nextPage){
+        Utils.Log(TAG, "Preparing sync data ###########################");
+        if (isDownloadData) {
+            SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
+            Utils.Log(TAG, "List items is downloading...--------------*******************************-----------");
             return;
         }
-        myService.onGetListSync(0, new SuperSafeServiceView() {
-            @Override
-            public void onError(String message, EnumStatus status) {
-                Utils.Log(TAG,"Error new :" + message);
-            }
+        if (isUploadData) {
+            SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
+            Utils.Log(TAG, "List items is uploading...----------------*******************************-----------");
+            return;
+        }
+        if (isLoadingData) {
+            Utils.Log(TAG, "List items is loading...----------------*******************************-----------");
+            return;
+        }
 
-            @Override
-            public void onSuccessful(String message) {
-                Utils.Log(TAG,"Response new :" +message);
-            }
+        if (myService != null) {
+            isLoadingData = true;
+            myService.onGetListSync(nextPage, new SuperSafeServiceView() {
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    if (status==EnumStatus.REQUEST_ACCESS_TOKEN){
+                        SingletonManagerTab.getInstance().onRequestAccessToken();
+                        Utils.Log(TAG,"Request token on onSyncDataOwnServer");
+                    }
+                    Utils.Log(TAG, "Error :" + message);
+                    isLoadingData = false;
+                }
 
-            @Override
-            public void onSuccessful(List<DriveResponse> lists) {
-                Utils.Log(TAG,"Response new :!!!" + new Gson().toJson(lists));
-            }
+                @Override
+                public void onSuccessful(String message) {
+                    Utils.Log(TAG, "Response :" + message);
+                }
 
-            @Override
-            public void onNetworkConnectionChanged(boolean isConnect) {
+                @Override
+                public void onSuccessful(List<DriveResponse> lists) {
+                    Utils.Log(TAG, "Response !!!:!!!" + new Gson().toJson(lists));
+                }
 
-            }
+                @Override
+                public void onSuccessful(String nextPage, EnumStatus status) {
+                    if (status == EnumStatus.LOAD_MORE) {
+                        isLoadingData = false;
+                        Utils.Log(TAG,"next page on onSyncDataOwnServer "+ nextPage);
+                        onSyncDataOwnServer(nextPage);
+                    } else if (status == EnumStatus.SYNC_READY) {
+                        isLoadingData = false;
+                        final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
+                        if (items != null) {
+                            if (items.size() > 0) {
+                                Utils.Log(TAG, "Preparing downloading...");
+                                onDownloadFilesFromDriveStore();
+                            } else {
+                                Utils.Log(TAG, "Preparing uploading...");
+                                onUploadDataToStore();
 
-            @Override
-            public void onStart() {
+                            }
+                        } else {
+                            Utils.Log(TAG, "Preparing uploading...");
+                            onUploadDataToStore();
+                        }
+                    }
+                }
 
-            }
+                @Override
+                public void onNetworkConnectionChanged(boolean isConnect) {
 
-            @Override
-            public void startLoading() {
+                }
 
-            }
+                @Override
+                public void onStart() {
 
-            @Override
-            public void stopLoading() {
+                }
 
-            }
-        });
+                @Override
+                public void startLoading() {
+
+                }
+
+                @Override
+                public void stopLoading() {
+
+                }
+
+                @Override
+                public void onSuccessfulOnCheck(List<Items> lists) {
+
+                }
+            });
+        }
+        else {
+            Utils.Log(TAG,"My service is null");
+        }
     }
 
 
@@ -290,6 +412,11 @@ public class ServiceManager implements SuperSafeServiceView {
                 }
 
                 @Override
+                public void onSuccessful(String message, EnumStatus status) {
+
+                }
+
+                @Override
                 public void onSuccessful(List<DriveResponse> lists) {
                     isLoadingData = false;
                     final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
@@ -324,6 +451,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
                 @Override
                 public void stopLoading() {
+
+                }
+
+                @Override
+                public void onSuccessfulOnCheck(List<Items> lists) {
 
                 }
             });
@@ -691,6 +823,21 @@ public class ServiceManager implements SuperSafeServiceView {
                                                                 } else {
                                                                     mItem.isSync = false;
                                                                 }
+
+                                                                if (mItem.isSync){
+                                                                    EnumFormatType formatTypeFile = EnumFormatType.values()[mItem.formatType];
+                                                                    switch (formatTypeFile){
+                                                                        case AUDIO:{
+                                                                            mItem.global_thumbnail_id = "null";
+                                                                            onAddItems(mItem);
+                                                                            break;
+                                                                        }
+                                                                        default:{
+                                                                            onAddItems(mItem);
+                                                                        }
+                                                                    }
+                                                                }
+
                                                                 Log.d(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                                                             } else {
@@ -700,7 +847,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                             Utils.Log(TAG, "Failed Save 2");
                                                         }
                                                     } else {
-                                                        Utils.Log(TAG, "Failed Save 1");
+                                                        Utils.Log(TAG, "Failed Save 1 on original");
                                                     }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
@@ -759,6 +906,11 @@ public class ServiceManager implements SuperSafeServiceView {
                                                                 } else {
                                                                     mItem.isSync = false;
                                                                 }
+
+                                                                if (mItem.isSync){
+                                                                    onAddItems(mItem);
+                                                                }
+
                                                                 Log.d(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                                                             } else {
@@ -768,7 +920,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                             Utils.Log(TAG, "Failed Save 2");
                                                         }
                                                     } else {
-                                                        Utils.Log(TAG, "Failed Save 1");
+                                                        Utils.Log(TAG, "Failed Save 1 on thumbnail");
                                                     }
                                                 } catch (Exception e) {
                                                     Utils.Log(TAG, "Exception");
@@ -815,6 +967,60 @@ public class ServiceManager implements SuperSafeServiceView {
             onWriteLog("My services is null",EnumStatus.UPLOAD);
             SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
         }
+    }
+
+
+    public void onAddItems(final  Items items){
+        if (myService==null){
+            Utils.Log(TAG,"My service is null");
+            return;
+        }
+        myService.onAddItems(items, new SuperSafeServiceView() {
+            @Override
+            public void onError(String message, EnumStatus status) {
+                Utils.Log(TAG,message+ " status " + status.name());
+            }
+
+            @Override
+            public void onSuccessful(String message) {
+
+            }
+
+            @Override
+            public void onSuccessful(String message, EnumStatus status) {
+                Utils.Log(TAG,message+ " status " + status.name());
+            }
+
+            @Override
+            public void onSuccessful(List<DriveResponse> lists) {
+
+            }
+
+            @Override
+            public void onNetworkConnectionChanged(boolean isConnect) {
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void startLoading() {
+
+            }
+
+            @Override
+            public void stopLoading() {
+
+            }
+
+            @Override
+            public void onSuccessfulOnCheck(List<Items> lists) {
+
+            }
+        });
     }
 
 
@@ -1153,6 +1359,7 @@ public class ServiceManager implements SuperSafeServiceView {
                    // Utils.Log(TAG, new Gson().toJson(items));
                     GalleryCameraMediaManager.getInstance().onUpdatedView();
                     SingletonPrivateFragment.getInstance().onUpdateView();
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                 });
     }
 
@@ -1270,6 +1477,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     }
                     GalleryCameraMediaManager.getInstance().setProgressing(false);
                     SingletonPrivateFragment.getInstance().onUpdateView();
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                 });
 
     }
@@ -1290,7 +1498,8 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, messageDone);
                     Utils.Log(TAG,"Request syn data on upload.........");
                     onWriteLog("Request syn data on upload",EnumStatus.UPLOAD);
-                    onSyncData();
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    onGetDriveAbout();
 
                 } else {
                     String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
@@ -1313,7 +1522,8 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request syn data on download",EnumStatus.DOWNLOAD);
                     Utils.Log(TAG,"Request syn data on download.........");
-                    onSyncData();
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    onGetDriveAbout();
 
                 } else {
                     String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
@@ -1344,10 +1554,13 @@ public class ServiceManager implements SuperSafeServiceView {
         Utils.Log(TAG, "Dismiss Service manager");
     }
 
-
     @Override
     public void onError(String message, EnumStatus status) {
         Log.d(TAG, "onError response :" + message);
+        if (status==EnumStatus.REQUEST_ACCESS_TOKEN){
+            SingletonManagerTab.getInstance().onRequestAccessToken();
+            Utils.Log(TAG,"Request token on global");
+        }
     }
 
     @Override
@@ -1374,12 +1587,24 @@ public class ServiceManager implements SuperSafeServiceView {
     public void onNetworkConnectionChanged(boolean isConnect) {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
         if (isConnect){
-            onSyncData();
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
     }
 
     @Override
     public void onSuccessful(List<DriveResponse> lists) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+        if (status == EnumStatus.GET_DRIVE_ABOUT){
+            Utils.Log(TAG,"drive about :"+ message);
+        }
+    }
+
+    @Override
+    public void onSuccessfulOnCheck(List<Items> lists) {
 
     }
 

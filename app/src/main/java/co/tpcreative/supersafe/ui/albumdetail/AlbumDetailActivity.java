@@ -362,7 +362,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     protected void onDestroy() {
         super.onDestroy();
         if (isReload){
-            ServiceManager.getInstance().onSyncData();
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
     }
 }

@@ -6,5 +6,5 @@ import java.util.List;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 
 public class SyncResponse extends BaseResponse implements Serializable {
-    public List<DriveResponse>lists;
+    public List<DriveResponse>files;
 }
