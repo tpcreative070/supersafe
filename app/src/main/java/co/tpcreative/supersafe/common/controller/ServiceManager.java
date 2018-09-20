@@ -20,6 +20,8 @@ import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
+import com.snatik.storage.helpers.SizeUnit;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ import co.tpcreative.supersafe.model.DriveTitle;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
@@ -558,6 +561,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                 if (isWorking) {
                                     String path;
                                     String pathFolder;
+                                    itemObject.statusProgress = EnumStatusProgress.PROGRESSING.ordinal();
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(itemObject);
                                     if (!itemObject.originalSync) {
                                         Utils.Log(TAG, "Downloading original data !!!");
                                         final DownloadFileRequest request = new DownloadFileRequest();
@@ -588,6 +593,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                                 Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
                                                                 if (mItem.thumbnailSync) {
                                                                     mItem.isSync = true;
+                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                                 } else {
                                                                     mItem.isSync = false;
                                                                 }
@@ -651,6 +657,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                                 Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
                                                                 if (mItem.originalSync) {
                                                                     mItem.isSync = true;
+                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                                 } else {
                                                                     mItem.isSync = false;
                                                                 }
@@ -791,8 +798,11 @@ public class ServiceManager implements SuperSafeServiceView {
                                     isWorking = false;
                                 }
 
+
                                 if (isWorking) {
                                     if (!itemObject.originalSync) {
+                                        itemObject.statusProgress = EnumStatusProgress.PROGRESSING.ordinal();
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(itemObject);
                                         Utils.Log(TAG, "Uploading original data !!!");
                                         myService.onUploadFileInAppFolder(itemObject, new UploadServiceListener() {
                                             @Override
@@ -820,6 +830,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                                 mItem.originalSync = true;
                                                                 if (mItem.thumbnailSync) {
                                                                     mItem.isSync = true;
+                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                                 } else {
                                                                     mItem.isSync = false;
                                                                 }
@@ -903,6 +914,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                                                 mItem.thumbnailSync = true;
                                                                 if (mItem.originalSync) {
                                                                     mItem.isSync = true;
+                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                                 } else {
                                                                     mItem.isSync = false;
                                                                 }
@@ -1117,6 +1129,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalName = currentTime;
                         description.title = mMimeTypeFile.name;
                         description.thumbnailName = "thumbnail_" + currentTime;
+                        description.size = "0";
+                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
 
                         items = new Items(false,
                                 description.originalSync,
@@ -1139,7 +1153,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD);
+                                EnumStatus.UPLOAD,
+                                description.size,
+                                description.statusProgress);
 
                         Utils.Log(TAG, "start compress");
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1209,6 +1225,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalName = currentTime;
                         description.title = mMimeTypeFile.name;
                         description.thumbnailName = "thumbnail_" + currentTime;
+                        description.size = "0";
+                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
 
 
                         items = new Items(false,
@@ -1232,7 +1250,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD);
+                                EnumStatus.UPLOAD,
+                                description.size,
+                                description.statusProgress);
 
 
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1295,6 +1315,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalName = currentTime;
                         description.title = mMimeTypeFile.name;
                         description.thumbnailName = null;
+                        description.size = "0";
+                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
+
 
                         items = new Items(false,
                                 description.originalSync,
@@ -1317,7 +1340,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD);
+                                EnumStatus.UPLOAD,
+                                description.size,
+                                description.statusProgress);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
@@ -1351,6 +1376,11 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe(response -> {
                     final Items items = (Items) response;
                     if (items != null) {
+                        String mb = "0";
+                        if (storage.isFileExist(items.originalPath)){
+                            mb = ""+storage.getSize(new File(items.originalPath), SizeUnit.MB);
+                        }
+                        items.size = mb;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
                         Utils.Log(TAG, "Write file successful ");
                     } else {
@@ -1416,6 +1446,8 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.originalName = currentTime;
                 description.title = currentTime;
                 description.thumbnailName = "thumbnail_" + currentTime;
+                description.size = "0";
+                description.statusProgress = EnumStatusProgress.NONE.ordinal();
 
                 Items items = new Items(false,
                         description.originalSync,
@@ -1438,7 +1470,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.mimeType,
                         description.fileExtension,
                         DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                        EnumStatus.UPLOAD);
+                        EnumStatus.UPLOAD,
+                        description.size,
+                        description.statusProgress);
 
                 boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
                 boolean createdOriginal = storage.createFile(originalPath, data);
@@ -1468,6 +1502,11 @@ public class ServiceManager implements SuperSafeServiceView {
                     try {
                         final Items mItem = (Items) response;
                         if (mItem != null) {
+                            String mb = "0";
+                            if (storage.isFileExist(mItem.originalPath)){
+                                mb = ""+storage.getSize(new File(mItem.originalPath), SizeUnit.MB);
+                            }
+                            mItem.size = mb;
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
                         }
                         Utils.Log(TAG, "Insert Successful");

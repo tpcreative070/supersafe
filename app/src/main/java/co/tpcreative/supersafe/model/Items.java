@@ -32,6 +32,9 @@ public class Items implements Serializable {
     public boolean originalSync;
     public int fileType;
     public String title;
+    public String size;
+    public int statusProgress;
+
 
     @Ignore
     private boolean isChecked;
@@ -39,7 +42,7 @@ public class Items implements Serializable {
     private boolean isDeleted;
 
 
-    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String globalName,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus){
+    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String globalName,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus,String size,int statusProgress){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.globalName = globalName;
@@ -62,6 +65,8 @@ public class Items implements Serializable {
         this.fileExtension = fileExtension;
         this.description = driveDescription;
         this.statusAction = enumStatus.ordinal();
+        this.size = size;
+        this.statusProgress = statusProgress;
     }
 
     public Items(){

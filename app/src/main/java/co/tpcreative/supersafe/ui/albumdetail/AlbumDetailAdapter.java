@@ -7,10 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
+import com.darsh.multipleimageselect.models.Image;
 import com.snatik.storage.Storage;
 import java.security.NoSuchAlgorithmException;
 import butterknife.BindView;
@@ -22,6 +24,7 @@ import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 
 public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
@@ -84,6 +87,10 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         ImageView imgVideoCam;
         @BindView(R.id.tvTitle)
         TextView tvTitle;
+        @BindView(R.id.progressingBar)
+        ProgressBar progressingBar;
+        @BindView(R.id.imgCheck)
+        ImageView imgCheck;
         int mPosition;
         private Items data;
 
@@ -127,6 +134,27 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         Glide.with(context)
                                 .load(storage.readFile(path))
                                 .apply(options).into(imgAlbum);
+                        break;
+                    }
+                }
+
+
+                EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
+                Utils.Log(TAG,""+progress.name());
+                switch (progress){
+                    case PROGRESSING:{
+                        imgCheck.setVisibility(View.INVISIBLE);
+                        progressingBar.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    case DONE:{
+                        imgCheck.setVisibility(View.VISIBLE);
+                        progressingBar.setVisibility(View.INVISIBLE);
+                        break;
+                    }
+                    default:{
+                        imgCheck.setVisibility(View.INVISIBLE);
+                        progressingBar.setVisibility(View.INVISIBLE);
                         break;
                     }
                 }

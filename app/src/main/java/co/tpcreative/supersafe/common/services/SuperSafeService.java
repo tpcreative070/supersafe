@@ -35,6 +35,7 @@ import co.tpcreative.supersafe.model.DriveTitle;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
@@ -756,7 +757,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.mimeType,
                 description.fileExtension,
                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                EnumStatus.DOWNLOAD);
+                EnumStatus.DOWNLOAD,
+                description.size,
+                description.statusProgress);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
@@ -778,6 +781,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             listener.onError("This original already synced", EnumStatus.UPLOAD);
             return;
         }
+
 
         DriveTitle contentTitle = new DriveTitle();
         contentTitle.globalName = items.globalName;

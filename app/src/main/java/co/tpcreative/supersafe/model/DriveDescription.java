@@ -32,7 +32,8 @@ public class DriveDescription implements Serializable{
     public boolean thumbnailSync;
     public boolean originalSync;
     public int fileType;
-
+    public String size;
+    public int statusProgress;
 
 
     private static DriveDescription instance;

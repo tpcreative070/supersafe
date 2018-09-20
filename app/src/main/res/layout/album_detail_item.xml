@@ -40,5 +40,30 @@
                 android:layout_width="@dimen/image_size_video_cam"
                 android:layout_height="@dimen/image_size_video_cam"/>
 
+
+            <RelativeLayout
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_centerInParent="true"
+                    android:id="@+id/imgCheck"
+                    android:visibility="invisible"
+                    android:src="@drawable/baseline_check_circle_white_48"
+                    android:layout_width="@dimen/image_size_video_cam"
+                    android:layout_height="@dimen/image_size_video_cam"/>
+
+                <ProgressBar
+                    android:visibility="invisible"
+                    android:id="@+id/progressingBar"
+                    android:layout_centerInParent="true"
+                    android:layout_width="@dimen/image_size_video_cam"
+                    android:layout_height="@dimen/image_size_video_cam"/>
+            </RelativeLayout>
+
+
         </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
