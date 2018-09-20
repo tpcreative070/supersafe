@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -123,22 +124,27 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setVisibility(View.VISIBLE);
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_videocam_white_36));
                         tvTitle.setVisibility(View.INVISIBLE);
-                        Glide.with(context)
-                                .load(storage.readFile(path))
-                                .apply(options).into(imgAlbum);
+                        if (storage.isFileExist(path)){
+                            Glide.with(context)
+                                    .load(storage.readFile(path))
+                                    .apply(options).into(imgAlbum);
+                        }
                         break;
                     }
                     default: {
                         tvTitle.setVisibility(View.INVISIBLE);
                         imgVideoCam.setVisibility(View.INVISIBLE);
-                        Glide.with(context)
-                                .load(storage.readFile(path))
-                                .apply(options).into(imgAlbum);
+                        if (storage.isFileExist(path)){
+                            Glide.with(context)
+                                    .load(storage.readFile(path))
+                                    .apply(options).into(imgAlbum);
+                        }
                         break;
                     }
                 }
 
-
+                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.colorAccent),
+                        PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
                 Utils.Log(TAG,""+progress.name());
                 switch (progress){

@@ -84,9 +84,12 @@
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
 
-
     </style>
 
+    <!-- ProgressBar for color -->
+    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
     <!--Menu item for text color -->
     <style name="PopupMenuLight" parent="@android:style/Widget.PopupMenu">
