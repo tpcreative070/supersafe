@@ -34,6 +34,8 @@ public class DriveDescription implements Serializable{
     public int fileType;
     public String size;
     public int statusProgress;
+    public boolean isDeleteLocal;
+    public boolean isDeleteGlobal;
 
 
     private static DriveDescription instance;

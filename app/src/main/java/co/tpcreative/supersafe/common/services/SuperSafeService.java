@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.services;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -35,7 +34,6 @@ import co.tpcreative.supersafe.model.DriveTitle;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
@@ -250,24 +248,19 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
 
 
-        Map<String, Object> hashMap = new HashMap<>();
+       // Map<String, Object> hashMap = new HashMap<>();
 
-        hashMap.put(getString(R.string.key_user_id), user.email);
-        hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
-        hashMap.put(getString(R.string.key_kind), getString(R.string.key_drive_file));
-        hashMap.put(getString(R.string.key_items_id), items.globalName);
-        hashMap.put(getString(R.string.key_global_original_id), items.global_original_id);
-        hashMap.put(getString(R.string.key_global_thumbnail_id), items.global_thumbnail_id);
-        hashMap.put(getString(R.string.key_mimeType), items.mimeType);
-        hashMap.put(getString(R.string.key_isSync), items.isSync);
-        hashMap.put(getString(R.string.key_thumbnailSync), items.thumbnailSync);
-        hashMap.put(getString(R.string.key_originalSync), items.originalSync);
-        hashMap.put(getString(R.string.key_description), items.description);
-        hashMap.put(getString(R.string.key_size),items.size);
-        DriveTitle contentTitle = new DriveTitle();
-        contentTitle.globalName = items.globalName;
-        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
-        hashMap.put(getString(R.string.key_name), hex);
+        final Map<String,Object> hashMap = Items.getInstance().objectToHashMap(items);
+        if (hashMap!=null){
+            hashMap.put(getString(R.string.key_user_id), user.email);
+            hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
+            hashMap.put(getString(R.string.key_kind), getString(R.string.key_drive_file));
+            DriveTitle contentTitle = new DriveTitle();
+            contentTitle.globalName = items.items_id;
+            String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
+            hashMap.put(getString(R.string.key_name), hex);
+        }
+
 
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
@@ -367,7 +360,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
+
                         Map<String,Items> hash = new HashMap<>();
+                        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
+
+                        if (nextPage.equals("0") && onResponse.nextPage==null && list!=null){
+                            view.onSuccessfulOnCheck(list);
+                        }
+
                         if (onResponse.nextPage == null) {
                             Log.d(TAG, "Ready for sync");
                             final List<Items> mList = new ArrayList<>();
@@ -760,7 +760,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
                 EnumStatus.DOWNLOAD,
                 description.size,
-                description.statusProgress);
+                description.statusProgress,
+                description.isDeleteLocal,
+                description.isDeleteGlobal);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
@@ -785,7 +787,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
 
         DriveTitle contentTitle = new DriveTitle();
-        contentTitle.globalName = items.globalName;
+        contentTitle.globalName = items.items_id;
         contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
         String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name), hex);
@@ -859,7 +861,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
 
         DriveTitle contentTitle = new DriveTitle();
-        contentTitle.globalName = items.globalName;
+        contentTitle.globalName = items.items_id;
         contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
         String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name), hex);
@@ -980,7 +982,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             public void onCodeResponse(int code, DownloadFileRequest request) {
 
             }
-        }, "https://www.googleapis.com/drive/v3/files/");
+        }, getString(R.string.drive_api));
         request.mapHeader = new HashMap<>();
         request.mapObject = new HashMap<>();
         downloadService.downloadDriveFileByGET(request);

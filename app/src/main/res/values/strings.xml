@@ -164,6 +164,7 @@
     <string name="backdrop_subtitle">This season top 20 albums</string>
     <string name="url_developer">http://192.168.0.102:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
+    <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
     <string name="user_name">mail.suppersafe@gmail.com</string>
     <string name="password">Phong@123</string>
