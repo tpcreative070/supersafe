@@ -263,6 +263,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         hashMap.put(getString(R.string.key_thumbnailSync), items.thumbnailSync);
         hashMap.put(getString(R.string.key_originalSync), items.originalSync);
         hashMap.put(getString(R.string.key_description), items.description);
+        hashMap.put(getString(R.string.key_size),items.size);
         DriveTitle contentTitle = new DriveTitle();
         contentTitle.globalName = items.globalName;
         String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));

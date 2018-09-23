@@ -987,6 +987,8 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG,"My service is null");
             return;
         }
+
+        Utils.Log(TAG,"Preparing insert :" + new Gson().toJson(DriveDescription.getInstance().hexToObject(items.description)));
         myService.onAddItems(items, new SuperSafeServiceView() {
             @Override
             public void onError(String message, EnumStatus status) {
@@ -1376,11 +1378,14 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe(response -> {
                     final Items items = (Items) response;
                     if (items != null) {
-                        String mb = "0";
+                        long mb;
                         if (storage.isFileExist(items.originalPath)){
-                            mb = ""+storage.getSize(new File(items.originalPath), SizeUnit.MB);
+                            final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
+                            mb = (long)+storage.getSize(new File(items.originalPath), SizeUnit.B);
+                            driveDescription.size = ""+mb;
+                            items.size = driveDescription.size;
+                            items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                         }
-                        items.size = mb;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
                         Utils.Log(TAG, "Write file successful ");
                     } else {
@@ -1502,11 +1507,14 @@ public class ServiceManager implements SuperSafeServiceView {
                     try {
                         final Items mItem = (Items) response;
                         if (mItem != null) {
-                            String mb = "0";
+                            long mb;
                             if (storage.isFileExist(mItem.originalPath)){
-                                mb = ""+storage.getSize(new File(mItem.originalPath), SizeUnit.MB);
+                                final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
+                                mb = (long)+storage.getSize(new File(mItem.originalPath), SizeUnit.B);
+                                driveDescription.size = ""+mb;
+                                mItem.size = driveDescription.size;
+                                mItem.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                             }
-                            mItem.size = mb;
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
                         }
                         Utils.Log(TAG, "Insert Successful");
