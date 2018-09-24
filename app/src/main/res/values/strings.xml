@@ -305,5 +305,19 @@
     <string name="key_thumbnailSync">thumbnailSync</string>
     <string name="key_originalSync">originalSync</string>
     <string name="key_drive_file">drive#file</string>
+    <string name="key_general">General</string>
+    <string name="key_advanced">Advanced</string>
+    <string name="key_info">Info</string>
+    <string name="key_account">Account</string>
+    <string name="key_upgrade">Upgrade</string>
+    <string name="key_lock_screen">Lock screen</string>
+    <string name="key_private_cloud">Private Cloud</string>
+    <string name="key_theme">Themes</string>
+    <string name="key_break_in_alert">Break-In alerts</string>
+    <string name="key_fake_pin">Fake PIN</string>
+    <string name="key_secret_door">Secret Door</string>
+    <string name="key_album_lock">Album Lock</string>
+    <string name="key_help_support">Help&amp;Support</string>
+    <string name="key_about_SuperSafe">About Supersafe</string>
 
 </resources>

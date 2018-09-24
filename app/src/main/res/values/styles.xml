@@ -84,21 +84,15 @@
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
 
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14</item>
+
     </style>
 
 
-
-    <!--Demo-->
-    <style name="TextAppearance.MyApp.Title.Collapsed" parent="android:TextAppearance">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">11sp</item>
+    <style name="PreferenceThemeOverlay.v14">
+        <item name="android:textColor">@color/material_gray_700</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
-
-    <style name="TextAppearance.MyApp.Title.Expanded" parent="android:TextAppearance">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">14sp</item>
-    </style>
-
 
     <!-- ProgressBar for color -->
     <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">

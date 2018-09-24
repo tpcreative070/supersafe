@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+    <co.tpcreative.supersafe.common.preference.MyPreferenceCategory android:title="@string/key_general">
+        <co.tpcreative.supersafe.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_account_circle_white_36"
+            android:key="@string/key_account"
+            android:title="@string/key_account"/>
+    </co.tpcreative.supersafe.common.preference.MyPreferenceCategory>
+
+
+    <!--
+
+    <tpcreative.co.gpsspeed.common.preference.MyPreferenceCategory android:title="@string/warning">
+        <tpcreative.co.gpsspeed.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_attach_money_white_48"
+            android:key="@string/key_premium"
+            android:summary="@string/buy_description"
+            android:title="@string/buy"/>
+
+
+    </tpcreative.co.gpsspeed.common.preference.MyPreferenceCategory>
+
+
+    <tpcreative.co.gpsspeed.common.preference.MyPreferenceCategory android:title="@string/history">
+
+        <tpcreative.co.gpsspeed.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_attach_money_white_48"
+            android:key="@string/key_premium"
+            android:summary="@string/buy_description"
+            android:title="@string/buy"/>
+
+    </tpcreative.co.gpsspeed.common.preference.MyPreferenceCategory>
+
+    <tpcreative.co.gpsspeed.common.preference.MyPreferenceCategory android:title="@string/info">
+
+        <tpcreative.co.gpsspeed.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_help_white_48"
+            android:title="@string/help"
+            android:key="@string/key_help"/>
+
+        <tpcreative.co.gpsspeed.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_playlist_add_check_white_48"
+            android:title="@string/app_permission"
+            android:key="@string/key_app_permissions"/>
+
+
+        <tpcreative.co.gpsspeed.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_help_outline_white_48"
+            android:title="@string/support"
+            android:key="@string/key_support"/>
+
+        <tpcreative.co.gpsspeed.common.preference.MyPreference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_label_white_48"
+            android:key="@string/key_version"
+            android:summary=""
+            android:title="@string/version"/>
+
+    </tpcreative.co.gpsspeed.common.preference.MyPreferenceCategory>
+
+
+    -->
+
+</android.support.v7.preference.PreferenceScreen>
