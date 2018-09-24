@@ -84,15 +84,18 @@
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
 
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
     </style>
 
+    <!--
 
     <style name="PreferenceThemeOverlay.v14">
         <item name="android:textColor">@color/material_gray_700</item>
         <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
+
+    -->
 
     <!-- ProgressBar for color -->
     <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">

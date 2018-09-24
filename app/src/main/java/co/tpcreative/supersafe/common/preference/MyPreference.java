@@ -35,7 +35,8 @@ public class MyPreference extends Preference {
         TextView titleView = (TextView) view.findViewById(android.R.id.title);
         TextView summaryView = (TextView) view.findViewById(android.R.id.summary);
         ImageView imageView = (ImageView) view.findViewById(android.R.id.icon);
-        imageView.setColorFilter(getContext().getResources().getColor(R.color.material_gray_700), PorterDuff.Mode.SRC_ATOP);
+        titleView.setTextColor(getContext().getResources().getColor(R.color.material_gray_600));
+        imageView.setColorFilter(getContext().getResources().getColor(R.color.material_gray_600), PorterDuff.Mode.SRC_ATOP);
     }
 
 }
