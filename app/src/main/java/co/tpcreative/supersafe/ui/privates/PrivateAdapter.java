@@ -24,6 +24,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Album;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
@@ -68,17 +69,20 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             super(itemView);
         }
 
-        private Album data;
+        private MainCategories data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
         TextView tvTitle;
+        @BindView(R.id.imgIcon)
+        ImageView imgIcon;
         int mPosition;
 
         @Override
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.localId);
+            this.data = data;
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.localId,false);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
@@ -87,6 +91,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                                 .load(R.drawable.bg_button_rounded)
                                 .apply(options)
                                 .into(imgAlbum);
+                        imgIcon.setVisibility(View.INVISIBLE);
                         break;
                     }
                     default: {
@@ -96,6 +101,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                                         .load(storage.readFile(items.thumbnailPath))
                                         .apply(options)
                                         .into(imgAlbum);
+                                imgIcon.setVisibility(View.INVISIBLE);
                             }
                             else{
                                 imgAlbum.setBackgroundResource(data.imageResource);
@@ -107,8 +113,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     }
                 }
             } else {
+                imgIcon.setBackgroundResource(data.icon);
                 imgAlbum.setBackgroundResource(data.imageResource);
             }
+
             tvTitle.setText(data.name);
             this.mPosition = position;
         }
@@ -122,15 +130,22 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
         @OnClick(R.id.overflow)
         public void onClickedOverFlow(View view) {
-            showPopupMenu(view, mPosition);
+            if (data.localId.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
+                showPopupMenu(view, R.menu.menu_trash_album,mPosition);
+            }
+            else if(data.localId.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
+                showPopupMenu(view, R.menu.menu_main_album,mPosition);
+            }
+            else{
+                showPopupMenu(view, R.menu.menu_album,mPosition);
+            }
         }
-
     }
 
-    private void showPopupMenu(View view, int position) {
+    private void showPopupMenu(View view,int menu, int position) {
         PopupMenu popup = new PopupMenu(context, view);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_album, popup.getMenu());
+        inflater.inflate(menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new MyMenuItemClickListener(position));
         popup.show();
     }

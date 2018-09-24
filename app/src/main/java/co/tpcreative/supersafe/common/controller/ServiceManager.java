@@ -21,7 +21,6 @@ import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -430,101 +429,6 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
-    public void onSyncData() {
-        Utils.Log(TAG, "Preparing sync data ###########################");
-        if (isDownloadData) {
-            SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
-            Utils.Log(TAG, "List items is downloading...--------------*******************************-----------");
-            return;
-        }
-        if (isUploadData) {
-            SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
-            Utils.Log(TAG, "List items is uploading...----------------*******************************-----------");
-            return;
-        }
-        if (isLoadingData) {
-            Utils.Log(TAG, "List items is loading...----------------*******************************-----------");
-            return;
-        }
-
-        if (myService != null) {
-            isLoadingData = true;
-            myService.onGetListOnlyFilesInApp(new SuperSafeServiceView() {
-                @Override
-                public void onError(String message, EnumStatus status) {
-                    Utils.Log(TAG, "Not Found Items :" + message);
-                    switch (status){
-                        case REQUEST_ACCESS_TOKEN:{
-                            SingletonManagerTab.getInstance().onRequestAccessToken();
-                            break;
-                        }
-                        default:{
-                            break;
-                        }
-                    }
-                    onWriteLog(message,status);
-                    isLoadingData = false;
-                }
-
-                @Override
-                public void onSuccessful(String message) {
-                    isLoadingData = false;
-                    onWriteLog(message,EnumStatus.GET_LIST_FILES_IN_APP);
-                    Utils.Log(TAG, message);
-                }
-
-                @Override
-                public void onSuccessful(String message, EnumStatus status) {
-
-                }
-
-                @Override
-                public void onSuccessful(List<DriveResponse> lists) {
-                    isLoadingData = false;
-                    final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
-                    if (items != null) {
-                        if (items.size() > 0) {
-                            Utils.Log(TAG, "Preparing uploading...");
-                            onUploadDataToStore();
-                        } else {
-                            Utils.Log(TAG, "Preparing downloading...");
-                            onDownloadFilesFromDriveStore();
-                        }
-                    } else {
-                        Utils.Log(TAG, "Preparing downloading...!!!");
-                        onDownloadFilesFromDriveStore();
-                    }
-                }
-
-                @Override
-                public void onNetworkConnectionChanged(boolean isConnect) {
-
-                }
-
-                @Override
-                public void onStart() {
-
-                }
-
-                @Override
-                public void startLoading() {
-
-                }
-
-                @Override
-                public void stopLoading() {
-
-                }
-
-                @Override
-                public void onSuccessfulOnCheck(List<Items> lists) {
-
-                }
-            });
-        } else {
-            Utils.Log(TAG, "My services is null");
-        }
-    }
 
 
     public void onDownloadFilesFromDriveStore() {
@@ -1467,8 +1371,6 @@ public class ServiceManager implements SuperSafeServiceView {
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                 });
     }
-
-
 
 
     /*--------------Camera action-----------------*/

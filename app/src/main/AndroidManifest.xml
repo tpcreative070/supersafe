@@ -103,8 +103,10 @@
             android:label="@string/cloud_manager"
             android:theme="@style/Theme.Slidr.Slidable" />
         <activity android:name=".ui.checksystem.CheckSystemActivity" />
-        <activity android:name=".ui.player.PlayerActivity"></activity>
-
+        <activity android:name=".ui.player.PlayerActivity"/>
+        <activity android:name=".ui.trash.TrashActivity"
+            android:label="@string/key_trash"
+            android:theme="@style/Theme.Slidr.Slidable"></activity>
     </application>
 
 </manifest>

@@ -13,7 +13,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 
-@Database(entities = {Items.class}, version = 1, exportSchema = false)
+@Database(entities = {Items.class}, version = 2, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
@@ -72,12 +72,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
     }
 
-    public final synchronized List<Items> getListItems(final String localId){
+    public final synchronized List<Items> getListItems(final String localId,boolean isDeleteLocal){
         try{
             if (localId==null){
                 return null;
             }
-            return instance.itemsDao().loadAll(localId);
+            return instance.itemsDao().loadAll(localId,isDeleteLocal);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -95,10 +95,19 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final synchronized List<Items> getDeleteLocalListItems(boolean isDeleteLocal){
+        try{
+            return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
 
     public final synchronized List<Items> getListSyncUploadDataItems(){
         try{
-            return instance.itemsDao().loadSyncDataItems(false,EnumStatus.UPLOAD.ordinal());
+            return instance.itemsDao().loadSyncDataItems(false,false,EnumStatus.UPLOAD.ordinal());
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -108,7 +117,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     public final synchronized List<Items> getListSyncDownloadDataItems(){
         try{
-            return instance.itemsDao().loadSyncDataItems(false,EnumStatus.DOWNLOAD.ordinal());
+            return instance.itemsDao().loadSyncDataItems(false,false,EnumStatus.DOWNLOAD.ordinal());
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -126,9 +135,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized Items getLatestId(String id){
+    public final synchronized Items getLatestId(String id,boolean isDeleteLocal){
         try{
-            return instance.itemsDao().getLatestId(id);
+            return instance.itemsDao().getLatestId(id,isDeleteLocal);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

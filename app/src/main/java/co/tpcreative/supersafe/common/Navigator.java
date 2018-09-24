@@ -28,6 +28,7 @@ import co.tpcreative.supersafe.ui.signin.SignInActivity;
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import co.tpcreative.supersafe.ui.signup.SignUpActivity;
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity;
+import co.tpcreative.supersafe.ui.trash.TrashActivity;
 import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 
@@ -161,6 +162,11 @@ public class Navigator {
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_items),items);
         intent.putExtras(bundle);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveTrash(Context context){
+        Intent intent = new Intent(context, TrashActivity.class);
         context.startActivity(intent);
     }
 

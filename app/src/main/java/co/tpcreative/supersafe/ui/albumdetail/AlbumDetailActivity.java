@@ -18,7 +18,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.request.RequestOptions;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
 import com.ftinc.kit.util.SizeUtils;
@@ -37,6 +43,7 @@ import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
+import com.snatik.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +56,7 @@ import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
@@ -59,7 +67,6 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
 public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener ,GalleryCameraMediaManager.AlbumDetailManagerListener{
-    public static final String EXTRA_NAME = "cheese_name";
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -67,15 +74,37 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     SpeedDialView mSpeedDialView;
     @BindView(R.id.main_content)
     CoordinatorLayout main_content;
+    @BindView(R.id.backdrop)
+    ImageView backdrop;
+    @BindView(R.id.imgIcon)
+    ImageView imgIcon;
+    @BindView(R.id.tv_Photos)
+    TextView tv_Photos;
+    @BindView(R.id.tv_Videos)
+    TextView tv_Videos;
+    @BindView(R.id.tv_Audios)
+    TextView tvAudios;
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
     private SlidrConfig mConfig;
     private boolean isReload;
+    private Storage storage;
+
+    RequestOptions options = new RequestOptions()
+            .centerCrop()
+            .override(400, 400)
+            .placeholder(R.color.colorPrimary)
+            .error(R.color.colorPrimary)
+            .priority(Priority.HIGH);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_detail);
+
+        storage = new Storage(this);
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+
         initRecycleView(getLayoutInflater());
         initSpeedDial(true);
 
@@ -98,16 +127,26 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         presenter.getData(this);
-        Intent intent = getIntent();
 
-        final String cheeseName = intent.getStringExtra(EXTRA_NAME);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(cheeseName);
-        Utils.Log(TAG,Utils.getCurrentDateTime());
+        collapsingToolbar.setTitle(presenter.mainCategories.name);
+
+        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.localId,false);
+        if (items!=null){
+            Glide.with(this)
+                    .load(storage.readFile(items.thumbnailPath))
+                    .apply(options)
+                    .into(backdrop);
+            imgIcon.setVisibility(View.INVISIBLE);
+        }
+        else{
+            backdrop.setBackgroundResource(presenter.mainCategories.imageResource);
+            imgIcon.setBackgroundResource(presenter.mainCategories.icon);
+        }
         GalleryCameraMediaManager.getInstance().setListener(this);
 
     }

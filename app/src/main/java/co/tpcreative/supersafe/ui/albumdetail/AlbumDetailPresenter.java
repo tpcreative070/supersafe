@@ -30,7 +30,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
             Bundle bundle = activity.getIntent().getExtras();
             mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             if (mainCategories!=null){
-                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.localId);
+                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.localId,false);
                 if (data!=null){
                     mList = data;
                 }
@@ -51,7 +51,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
         mList.clear();
         try {
             if (mainCategories!=null){
-                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.localId);
+                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.localId,false);
                 if (data!=null){
                     mList = data;
                 }

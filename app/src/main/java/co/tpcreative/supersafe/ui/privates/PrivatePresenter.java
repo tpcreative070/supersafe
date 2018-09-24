@@ -22,6 +22,9 @@ public class PrivatePresenter extends Presenter<PrivateView> {
     public void  getData(){
         PrivateView view = view();
         mList = MainCategories.getInstance().getList();
+
+
+
         view.onReload();
         Utils.Log(TAG,new Gson().toJson(mList));
     }

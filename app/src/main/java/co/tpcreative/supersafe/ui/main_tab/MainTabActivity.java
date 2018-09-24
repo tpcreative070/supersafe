@@ -276,14 +276,22 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                          Utils.Log(TAG,"Value");
                          String value = input.toString();
                          String base64Code = Utils.getHexCode(value);
-                         boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,null);
-                         if (response){
-                             Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
+
+                         MainCategories item = MainCategories.getInstance().getTrashItem();
+                         String result = item.localId;
+                         if (base64Code.equals(result)){
+                             Toast.makeText(MainTabActivity.this,"This name already existing",Toast.LENGTH_SHORT).show();
                          }
                          else{
-                             Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
+                             boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,null);
+                             if (response){
+                                 Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
+                             }
+                             else{
+                                 Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
+                             }
+                             SingletonPrivateFragment.getInstance().onUpdateView();
                          }
-                         SingletonPrivateFragment.getInstance().onUpdateView();
                      }
                  });
         builder.show();

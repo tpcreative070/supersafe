@@ -33,6 +33,8 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -331,6 +333,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     @Override
     public void onBackPressed() {
         if (isReload){
+            SingletonPrivateFragment.getInstance().onUpdateView();
             Intent intent = new Intent();
             setResult(RESULT_OK,intent);
         }

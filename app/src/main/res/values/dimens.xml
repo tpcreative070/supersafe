@@ -5,6 +5,7 @@
     <dimen name="g_top_margin">100dp</dimen>
     <dimen name="button_high">40dp</dimen>
     <dimen name="relative_high">60dp</dimen>
+    <dimen name="linear_high">90dp</dimen>
     <dimen name="text_size_xlarge">22sp</dimen>
     <dimen name="text_size_large">16sp</dimen>
     <dimen name="text_size_title">16.5sp</dimen>
@@ -13,6 +14,7 @@
     <dimen name="margin_left">40dp</dimen>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="image_size">40dp</dimen>
+    <dimen name="image_size_custom">70dp</dimen>
     <dimen name="image_size_video_cam">20dp</dimen>
 
 
@@ -62,7 +64,7 @@
     <dimen name="textsize_fingerprint">14sp</dimen>
 
     /*Material Design*/
-    <dimen name="detail_backdrop_height">256dp</dimen>
+    <dimen name="detail_backdrop_height">200dp</dimen>
     <dimen name="card_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="list_item_avatar_size">40dp</dimen>

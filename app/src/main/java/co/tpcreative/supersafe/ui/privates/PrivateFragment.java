@@ -101,8 +101,14 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onClickItem(int position) {
         Log.d(TAG,"Position :"+ position);
         try {
-            final MainCategories mainCategories = presenter.mList.get(position);
-            Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
+            String value  = Utils.getHexCode(getString(R.string.key_trash));
+            if (value.equals(presenter.mList.get(position).localId)){
+                Navigator.onMoveTrash(getActivity());
+            }
+            else{
+                final MainCategories mainCategories = presenter.mList.get(position);
+                Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
+            }
         }
         catch (Exception e){
             e.printStackTrace();

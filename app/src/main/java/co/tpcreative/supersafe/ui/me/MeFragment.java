@@ -145,12 +145,7 @@ public class MeFragment extends BaseFragment implements MeView{
 
     @OnClick(R.id.llSettings)
     public void onSettings(View view){
-       // Navigator.onSettings(getActivity());
-        Log.d(TAG,"Settings");
-        //Intent intent = new Intent(getActivity(), SignInActivityWithDrive.class);
-       // startActivity(intent);
-        Navigator.onManagerCloud(getActivity());
-
+        Navigator.onSettings(getActivity());
     }
 
 

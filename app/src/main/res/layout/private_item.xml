@@ -13,14 +13,32 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.litao.android.lib.view.SquaredImageView
-                android:id="@+id/imgAlbum"
+
+
+            <RelativeLayout
+                android:id="@+id/rlSlider"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="wrap_content">
+
+                <com.litao.android.lib.view.SquaredImageView
+                    android:id="@+id/imgAlbum"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <com.litao.android.lib.view.SquaredImageView
+                    android:clickable="false"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/imgIcon"
+                    android:layout_width="@dimen/finger_icon"
+                    android:layout_height="@dimen/finger_icon"/>
+
+            </RelativeLayout>
+
+
             <RelativeLayout
                 android:background="@color/white"
                 android:id="@+id/llHeader"
-                android:layout_below="@+id/imgAlbum"
+                android:layout_below="@+id/rlSlider"
                 android:layout_centerInParent="true"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"

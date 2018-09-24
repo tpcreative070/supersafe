@@ -225,7 +225,14 @@
     <string name="progressing">Progressing...</string>
     <string name="done">Done</string>
     <string name="create_album">Create Album</string>
-
+    <string name="photos_default">0 Photos</string>
+    <string name="videos_default">0 Videos</string>
+    <string name="audios_default">0 Audios</string>
+    <string name="premium_features">Premium features</string>
+    <string name="what_trash">What is trash ?</string>
+    <string name="what_trash_info">It\'s temporary storage for stuffs you\'ve deleted. Everything in Trash still take up space on your device.</string>
+    <string name="upgrade_to_recover">UPGRADE TO RECOVER</string>
+    <string name="empty_trash">EMPTY TRASH</string>
 
     <string name="key_user">user</string>
     <string name="key_items">items</string>
@@ -255,6 +262,8 @@
     <string name="key_card_ids">Cards &#38; Ids</string>
     <string name="key_videos">Videos</string>
     <string name="key_significant_other">Significant Other</string>
+    <string name="key_trash">Trash</string>
+    <string name="key_empty_trash">Empty Trash</string>
 
 
     /*Preference keys*/
