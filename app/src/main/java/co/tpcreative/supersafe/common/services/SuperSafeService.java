@@ -12,6 +12,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveTitle;
 import co.tpcreative.supersafe.model.EnumFileType;
@@ -186,7 +189,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     view.stopLoading();
                     if (onResponse.error != null) {
                         Log.d(TAG, "onError 1");
-                        view.onError(new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
+                        view.onError("Error "+new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
                         Log.d(TAG, "onSuccessful 2");
                         final User mUser = User.getInstance().getUserInfo();
@@ -204,13 +207,19 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
-                            Log.d(TAG, "error" + bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError("" + msg, EnumStatus.GET_DRIVE_ABOUT);
+                            final String value = bodys.string();
+                            final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
+                            if (driveAbout!=null){
+                                if (driveAbout.error!=null){
+                                    view.onError(new Gson().toJson(driveAbout.error), EnumStatus.GET_DRIVE_ABOUT);
+                                }
+                            }
+                            else{
+                                view.onError("Error null ",EnumStatus.REQUEST_ACCESS_TOKEN);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
-                            view.onError("" + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
+                            view.onError("Exception " + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         }
                     } else {
                         Log.d(TAG, "Can not call " + throwable.getMessage());
@@ -218,6 +227,84 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     }
                     view.stopLoading();
                 }));
+    }
+
+
+
+    public void onGetFilesInfo(SuperSafeServiceView view){
+            Utils.Log(TAG, "onGetListFolderInApp");
+            if (view == null) {
+                view.onError("no view", EnumStatus.GET_FILES_INFO);
+                return;
+            }
+            if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+                view.onError("no connection", EnumStatus.GET_FILES_INFO);
+                return;
+            }
+            if (subscriptions == null) {
+                view.onError("no subscriptions", EnumStatus.GET_FILES_INFO);
+                return;
+            }
+            final User user = User.getInstance().getUserInfo();
+            if (user == null) {
+                view.onError("no user", EnumStatus.GET_FILES_INFO);
+                return;
+            }
+
+            if (!user.driveConnected){
+                view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
+                return;
+            }
+
+            String access_token = user.access_token;
+            view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
+            Log.d(TAG, "access_token : " + access_token);
+            subscriptions.add(SuperSafeApplication.serverDriveApi.onGetFilesInfo(access_token,"1-Rt3_Uei3yVIjiWOyjOL3q2jOFDpUwPmkFkydOqwuq-xynU48A")
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe(__ -> view.startLoading())
+                    .subscribe(onResponse -> {
+                        Utils.Log(TAG,"Response data from items "+new Gson().toJson(onResponse));
+                        if (view == null) {
+                            Log.d(TAG, "View is null");
+                            return;
+                        }
+                        view.stopLoading();
+                        if (onResponse.error!=null) {
+                            Log.d(TAG, "onError:" + new Gson().toJson(onResponse));
+                            view.onError("Not found this id.... :" + new Gson().toJson(onResponse.error), EnumStatus.GET_FILES_INFO);
+                        } else {
+                            view.onSuccessful("Status Items :" + new Gson().toJson(onResponse), EnumStatus.GET_FILES_INFO);
+                        }
+                    }, throwable -> {
+                        if (view == null) {
+                            Log.d(TAG, "View is null");
+                            return;
+                        }
+                        if (throwable instanceof HttpException) {
+                            ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                            try {
+                                final String value = bodys.string();
+                                final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
+                                if (driveAbout!=null){
+                                    if (driveAbout.error!=null){
+                                        view.onError(new Gson().toJson(driveAbout.error), EnumStatus.GET_FILES_INFO);
+                                    }
+                                }
+                                else{
+                                    view.onError("Error null ",EnumStatus.GET_FILES_INFO);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                view.onError("Exception " + e.getMessage(), EnumStatus.GET_FILES_INFO);
+                            }
+                        } else {
+                            Log.d(TAG, "Can not call " + throwable.getMessage());
+                            view.onError("Error :" + throwable.getMessage(), EnumStatus.GET_FILES_INFO);
+                        }
+                        view.stopLoading();
+                    }));
+
     }
 
 

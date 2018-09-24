@@ -23,6 +23,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -41,6 +42,7 @@ public interface RootAPI{
     String CREATE_FOLDER = "/drive/v3/files";
     String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
     String GET_LIST_FILE_IN_APP_FOLDER = "/drive/v3/files";
+    String GET_FILES_INFO = "/drive/v3/files/{id}";
 
 
 
@@ -96,6 +98,9 @@ public interface RootAPI{
     @GET(CHECK_IN_APP_FOLDER_EXITING)
     Observable<DriveAbout> onCheckInAppFolderExisting(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value);
 
+    @Headers({"Accept: application/json"})
+    @GET(GET_FILES_INFO)
+    Observable<DriveAbout> onGetFilesInfo(@Header("Authorization") String token, @Path("id") String id);
 
     @Headers({"Accept: application/json"})
     @GET(CHECK_IN_APP_FOLDER_EXITING)
@@ -104,7 +109,6 @@ public interface RootAPI{
     @Headers({"Accept: application/json"})
     @GET(GET_LIST_FILE_IN_APP_FOLDER)
     Observable<DriveAbout> onGetListFileInAppFolder(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value,@Query("fields")String fields);
-
 
     @POST()
     @Multipart

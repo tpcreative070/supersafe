@@ -204,6 +204,57 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
+    public void onGetFilesInfo(){
+        if (myService!=null){
+            myService.onGetFilesInfo(new SuperSafeServiceView() {
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    Utils.Log(TAG,"File Info " + message);
+                }
+
+                @Override
+                public void onSuccessful(String message) {
+
+                }
+
+                @Override
+                public void onSuccessful(String message, EnumStatus status) {
+                    Utils.Log(TAG,"File Info " + message);
+                }
+
+                @Override
+                public void onSuccessfulOnCheck(List<Items> lists) {
+
+                }
+
+                @Override
+                public void onSuccessful(List<DriveResponse> lists) {
+
+                }
+
+                @Override
+                public void onNetworkConnectionChanged(boolean isConnect) {
+
+                }
+
+                @Override
+                public void onStart() {
+
+                }
+
+                @Override
+                public void startLoading() {
+
+                }
+
+                @Override
+                public void stopLoading() {
+
+                }
+            });
+        }
+    }
+
     public void onCheckingMissData(String nextPage){
         Utils.Log(TAG, "Preparing checking miss data ###########################");
         if (myService != null) {

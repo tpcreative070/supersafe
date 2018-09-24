@@ -110,8 +110,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         //Utils.Log(TAG,new Gson().toJson(mUser));
 
         ServiceManager.getInstance().onCheckingMissData("0");
+        //ServiceManager.getInstance().onGetFilesInfo();
 
     }
+
 
 
     @Override
@@ -425,7 +427,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
         }
     }
-
 
     public void onBackUp(){
         try {

@@ -1,7 +1,9 @@
 package co.tpcreative.supersafe.model;
 
-public class ErrorResponse {
-    public String code ;
+import java.io.Serializable;
+
+public class ErrorResponse implements Serializable {
+    public int code ;
     public String message  ;
 
 
