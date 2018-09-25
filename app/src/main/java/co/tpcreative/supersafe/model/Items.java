@@ -54,6 +54,7 @@ public class Items implements Serializable {
 
     private static Items instance;
 
+
     @Ignore
     public static Items getInstance(){
         if (instance==null){
@@ -61,6 +62,7 @@ public class Items implements Serializable {
         }
         return instance;
     }
+
 
     public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String items_id,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus,String size,int statusProgress,boolean isDeleteLocal,boolean isDeleteGlobal, boolean isWaitingSyncDeleteGlobal){
         this.originalName = originalName;
@@ -95,6 +97,7 @@ public class Items implements Serializable {
     public Items(){
         this.thumbnailName = "";
         this.isSync = false;
+        this.isOriginalGlobalId = false;
     }
 
     @Ignore

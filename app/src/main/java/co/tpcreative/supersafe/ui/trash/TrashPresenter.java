@@ -42,7 +42,7 @@ public class TrashPresenter extends Presenter<TrashView>{
         TrashView view = view();
         for (int i = 0 ;i <mList.size();i++){
             if (isEmpty){
-                if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id ==null){
+                if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id == null){
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
                 }
                 else{

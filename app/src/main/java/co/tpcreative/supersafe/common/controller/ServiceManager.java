@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.controller;
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -15,17 +16,23 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.Cipher;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -204,16 +211,16 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
-    public void onCheckingMissData(String nextPage){
+    public void onCheckingMissData(String nextPage) {
         Utils.Log(TAG, "Preparing checking miss data ###########################");
         if (myService != null) {
             myService.onCheckingMissData(nextPage, new SuperSafeServiceView() {
                 @Override
                 public void onError(String message, EnumStatus status) {
                     Utils.Log(TAG, "Error :" + message);
-                    if (status==EnumStatus.REQUEST_ACCESS_TOKEN){
+                    if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
                         SingletonManagerTab.getInstance().onRequestAccessToken();
-                        Utils.Log(TAG,"Request token on onCheckingMissData");
+                        Utils.Log(TAG, "Request token on onCheckingMissData");
                     }
                 }
 
@@ -230,7 +237,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 @Override
                 public void onSuccessful(String nextPage, EnumStatus status) {
                     if (status == EnumStatus.LOAD_MORE) {
-                        Utils.Log(TAG,"next page on CheckingMissData"+ nextPage);
+                        Utils.Log(TAG, "next page on CheckingMissData" + nextPage);
                         onCheckingMissData(nextPage);
                     }
                 }
@@ -254,10 +261,11 @@ public class ServiceManager implements SuperSafeServiceView {
                 public void stopLoading() {
 
                 }
+
                 @Override
                 public void onSuccessfulOnCheck(List<Items> lists) {
-                    if (lists.size()>0){
-                        Utils.Log(TAG,"Found "+lists.size() + " miss");
+                    if (lists.size() > 0) {
+                        Utils.Log(TAG, "Found " + lists.size() + " miss");
                         final List<Items> mList = lists;
                         subscriptions = Observable.fromIterable(mList)
                                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
@@ -269,20 +277,18 @@ public class ServiceManager implements SuperSafeServiceView {
                                     //Log.d(TAG, "Completed upload^^^^^^^^^^^^^^^^^^^^^666^^^^^^^^^^^^^^^^^^");
                                 })
                                 .subscribe();
-                    }
-                    else{
-                        Utils.Log(TAG,"No data miss");
+                    } else {
+                        Utils.Log(TAG, "No data miss");
                     }
                 }
             });
-        }
-        else {
-            Utils.Log(TAG,"My service is null");
+        } else {
+            Utils.Log(TAG, "My service is null");
         }
     }
 
 
-    public void onSyncDataOwnServer(String nextPage){
+    public void onSyncDataOwnServer(String nextPage) {
         Utils.Log(TAG, "Preparing sync data ###########################");
         if (isDownloadData) {
             SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
@@ -299,12 +305,12 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        if (isDeleteOwnCloud){
+        if (isDeleteOwnCloud) {
             Utils.Log(TAG, "List sync own items is deleting...----------------*******************************-----------");
             return;
         }
 
-        if (isDeleteSyncCLoud){
+        if (isDeleteSyncCLoud) {
             Utils.Log(TAG, "List sync cloud items is deleting...----------------*******************************-----------");
             return;
         }
@@ -314,9 +320,9 @@ public class ServiceManager implements SuperSafeServiceView {
             myService.onGetListSync(nextPage, new SuperSafeServiceView() {
                 @Override
                 public void onError(String message, EnumStatus status) {
-                    if (status==EnumStatus.REQUEST_ACCESS_TOKEN){
+                    if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
                         SingletonManagerTab.getInstance().onRequestAccessToken();
-                        Utils.Log(TAG,"Request token on onSyncDataOwnServer");
+                        Utils.Log(TAG, "Request token on onSyncDataOwnServer");
                     }
                     Utils.Log(TAG, "Error :" + message);
                     isLoadingData = false;
@@ -336,15 +342,15 @@ public class ServiceManager implements SuperSafeServiceView {
                 public void onSuccessful(String nextPage, EnumStatus status) {
                     if (status == EnumStatus.LOAD_MORE) {
                         isLoadingData = false;
-                        Utils.Log(TAG,"next page on onSyncDataOwnServer "+ nextPage);
+                        Utils.Log(TAG, "next page on onSyncDataOwnServer " + nextPage);
                         onSyncDataOwnServer(nextPage);
                     } else if (status == EnumStatus.SYNC_READY) {
                         isLoadingData = false;
                         final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
 
-                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,true);
+                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, true);
 
-                        final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true,true);
+                        final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
 
 //                        if (mListOwnCloud!=null){
 //                            onDeleteOnOwnItems();
@@ -352,7 +358,7 @@ public class ServiceManager implements SuperSafeServiceView {
 //                        else if (mListCloud!=null){
 //                            onDeleteCloud();
 //                        }
-                         if (items != null) {
+                        if (items != null) {
                             if (items.size() > 0) {
                                 Utils.Log(TAG, "Preparing downloading...");
                                 onDownloadFilesFromDriveStore();
@@ -392,23 +398,23 @@ public class ServiceManager implements SuperSafeServiceView {
 
                 }
             });
-        }
-        else {
-            Utils.Log(TAG,"My service is null");
+        } else {
+            Utils.Log(TAG, "My service is null");
         }
     }
 
+    public void onDeleteCloud() {
 
-    public void onDeleteCloud(){
-
-        if (myService==null){
-            Utils.Log(TAG,"Service is null on "+ EnumStatus.DELETE_SYNC_CLOUD_DATA);
+        if (myService == null) {
+            Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
             return;
         }
 
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true,true);
+        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
 
-        if (list==null){
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
+
+        if (list == null) {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
             return;
         }
@@ -422,79 +428,85 @@ public class ServiceManager implements SuperSafeServiceView {
         totalList = 0;
         countSyncData = 0;
         for (Items index : list) {
-            if (index.global_original_id!=null) {
-               final Items item = index;
-               item.isOriginalGlobalId = true;
-               mList.add(item);
+            if (index.global_original_id != null) {
+                final Items item = index;
+                item.isOriginalGlobalId = true;
+                mList.add(item);
             }
-            if (index.global_thumbnail_id!=null){
+        }
+
+        for (Items index : lists) {
+            EnumFormatType formatTypeFile = EnumFormatType.values()[index.formatType];
+            if (index.global_thumbnail_id != null && formatTypeFile != EnumFormatType.AUDIO) {
                 final Items item = index;
                 item.isOriginalGlobalId = false;
                 mList.add(item);
             }
         }
 
-        if (mList.size()==0){
+        totalList = mList.size();
+        isDeleteSyncCLoud = true;
+        if (mList.size() == 0) {
             onDeleteOnLocal();
             isDeleteSyncCLoud = false;
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             onGetDriveAbout();
-            Utils.Log(TAG,"Not Found cloud id to delete");
+            Utils.Log(TAG, "Not Found cloud id to delete");
             return;
         }
-        countSyncData = mList.size();
-        isDeleteSyncCLoud = true;
+
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
                     final Items mItem = i;
-                    myService.onDeleteCloudItems(mItem,mItem.isOriginalGlobalId, new SuperSafeServiceView() {
-                            @Override
-                            public void onError(String message, EnumStatus status) {
-                                Utils.Log(TAG,message + "- "+ status.name());
-                                onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                            }
+                    myService.onDeleteCloudItems(mItem, mItem.isOriginalGlobalId, new SuperSafeServiceView() {
+                        @Override
+                        public void onError(String message, EnumStatus status) {
+                            Utils.Log(TAG, message + "- " + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                        }
 
-                            @Override
-                            public void onSuccessful(String message) {
+                        @Override
+                        public void onSuccessful(String message) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onSuccessful(String message, EnumStatus status) {
-                                Utils.Log(TAG,message + "- "+ status.name());
-                                onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                            }
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status) {
+                            Utils.Log(TAG, message + "- " + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                        }
 
-                            @Override
-                            public void onSuccessfulOnCheck(List<Items> lists) {
+                        @Override
+                        public void onSuccessfulOnCheck(List<Items> lists) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onSuccessful(List<DriveResponse> lists) {
+                        @Override
+                        public void onSuccessful(List<DriveResponse> lists) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onNetworkConnectionChanged(boolean isConnect) {
+                        @Override
+                        public void onNetworkConnectionChanged(boolean isConnect) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onStart() {
+                        @Override
+                        public void onStart() {
 
-                            }
+                        }
 
-                            @Override
-                            public void startLoading() {
+                        @Override
+                        public void startLoading() {
 
-                            }
-                            @Override
-                            public void stopLoading() {
+                        }
 
-                            }
-                        });
+                        @Override
+                        public void stopLoading() {
+
+                        }
+                    });
 
                 })
                 .doOnComplete(() -> {
@@ -503,9 +515,9 @@ public class ServiceManager implements SuperSafeServiceView {
 
     }
 
-    public void onDeleteOnOwnItems(){
-        if (myService==null){
-            Utils.Log(TAG,"Service is null on "+ EnumStatus.DELETE_SYNC_CLOUD_DATA);
+    public void onDeleteOnOwnItems() {
+        if (myService == null) {
+            Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
             return;
         }
 
@@ -514,16 +526,20 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,true);
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, true);
+        countSyncData = 0;
 
-        if (mList==null){
+
+        isDeleteOwnCloud = true;
+        totalList = mList.size();
+        if (mList == null) {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
+            isDeleteOwnCloud = false;
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            onGetDriveAbout();
             return;
         }
 
-        countSyncData = 0;
-        totalList = mList.size();
-        isDeleteOwnCloud = true;
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
@@ -532,7 +548,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
-                            Utils.Log(TAG,message+"--"+status.name());
+                            Utils.Log(TAG, message + "--" + status.name());
                         }
 
                         @Override
@@ -543,7 +559,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         @Override
                         public void onSuccessful(String message, EnumStatus status) {
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
-                            Utils.Log(TAG,message+"--"+status.name());
+                            Utils.Log(TAG, message + "--" + status.name());
                         }
 
                         @Override
@@ -582,13 +598,13 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe();
     }
 
-    public void onDeleteOnLocal(){
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true,true);
-        for (Items index : list){
+    public void onDeleteOnLocal() {
+        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
+        for (Items index : list) {
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
         }
     }
-    
+
 
     public void onDownloadFilesFromDriveStore() {
         if (isDownloadData) {
@@ -602,6 +618,8 @@ public class ServiceManager implements SuperSafeServiceView {
         }
 
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
+
         if (list == null) {
             Utils.Log(TAG, "No Found data from Cloud!!!");
             return;
@@ -610,23 +628,28 @@ public class ServiceManager implements SuperSafeServiceView {
         final List<Items> mList = new ArrayList<>();
         totalList = 0;
         countSyncData = 0;
-        for (Items index : list) {
-            if (!index.originalSync) {
-                if (!index.thumbnailSync) {
-                    mList.add(index);
-                    totalList += 2;
-                } else {
-                    mList.add(index);
-                    totalList += 1;
-                }
-            } else {
-                if (!index.thumbnailSync) {
-                    mList.add(index);
-                    totalList += 1;
-                }
+
+        for (int i = 0; i<list.size();i++) {
+            final Items items = list.get(i);
+            if (!items.originalSync) {
+                final Items item = items;
+                item.isOriginalGlobalId = true;
+                mList.add(item);
+                Utils.Log(TAG, "Adding original :");
             }
         }
 
+        for (int i = 0; i<lists.size();i++) {
+            final Items items = lists.get(i);
+            if (!items.thumbnailSync) {
+                final Items item = items;
+                item.isOriginalGlobalId = false;
+                mList.add(item);
+                Utils.Log(TAG, "Adding thumbnail :");
+            }
+        }
+
+        totalList = mList.size();
         isDownloadData = true;
         SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
         if (mList.size() == 0) {
@@ -637,213 +660,130 @@ public class ServiceManager implements SuperSafeServiceView {
         } else {
             String message = "Preparing download " + totalList + " items from Cloud";
             Utils.Log(TAG, message);
-            onWriteLog(message,EnumStatus.DOWNLOAD);
+            onWriteLog(message, EnumStatus.DOWNLOAD);
         }
 
         if (myService != null) {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
-                    subscriptions = Observable.fromIterable(mList)
-                            .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
-                            .doOnNext(i -> {
-                                isDownloadData = true;
-                                /*Do something here*/
-                                final Items itemObject = i;
-                                final Items itemsThumbnail = i;
-                                boolean isWorking = true;
+                    for (Items index : mList) {
+                        isDownloadData = true;
+                        /*Do something here*/
+                        final Items itemObject = index;
+                        boolean isWorking = true;
 
-                                if (itemObject.localCategories_Id == null) {
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
-                                    onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
-                                    Utils.Log(TAG,"localCategories_Id is null at "+ itemObject.id);
-                                    isWorking = false;
+                        if (itemObject.localCategories_Id == null) {
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
+                            onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
+                            Utils.Log(TAG, "localCategories_Id is null at " + itemObject.id);
+                            isWorking = false;
+                        }
+
+                        EnumFormatType formatTypeFile = EnumFormatType.values()[itemObject.formatType];
+                        if (itemObject.global_original_id == null) {
+                            Utils.Log(TAG, "global_original_id is null at " + " format type :" + formatTypeFile.name() + "---name global :" + itemObject.items_id);
+                            onWriteLog("global_original_id is null ", EnumStatus.DOWNLOAD);
+                            onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
+                            //Utils.Log(TAG,"Drive description on original " + new Gson().toJson(new DriveDescription().hexToObject(itemObject.description)));
+                            isWorking = false;
+                        }
+
+                        if (itemObject.global_thumbnail_id == null & formatTypeFile != EnumFormatType.AUDIO) {
+                            Utils.Log(TAG, "global_thumbnail_id is null at " + itemObject.id + " format type :" + formatTypeFile.name() + "---name global :" + itemObject.items_id);
+                            onWriteLog("global_thumbnail_id is null ", EnumStatus.DOWNLOAD);
+                            onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
+                            isWorking = false;
+                        }
+
+                        if (myService == null) {
+                            isWorking = false;
+                        }
+
+                        if (isWorking) {
+                            itemObject.statusProgress = EnumStatusProgress.PROGRESSING.ordinal();
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(itemObject);
+
+                            if (itemObject.isOriginalGlobalId) {
+                                Utils.Log(TAG, "Preparing downloading original file");
+                            } else {
+                                Utils.Log(TAG, "Preparing downloading thumbnail file");
+                            }
+
+                            myService.onDownloadFile(itemObject, new ServiceManager.DownloadServiceListener() {
+                                @Override
+                                public void onError(String message, EnumStatus status) {
+                                    onWriteLog(message, EnumStatus.DOWNLOAD);
+                                    onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
+                                    Utils.Log(TAG, "onError Download: !!! on");
                                 }
 
-                                EnumFormatType formatTypeFile = EnumFormatType.values()[itemObject.formatType];
-                                if (itemObject.global_original_id == null) {
-                                    Utils.Log(TAG,"global_original_id is null at " + " format type :"+ formatTypeFile.name() + "---name global :"+ itemObject.items_id);
-                                    onWriteLog("global_original_id is null ",EnumStatus.DOWNLOAD);
-                                    onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
-                                    //Utils.Log(TAG,"Drive description on original " + new Gson().toJson(new DriveDescription().hexToObject(itemObject.description)));
-                                    isWorking = false;
-                                }
-
-                                if (itemObject.global_thumbnail_id == null & formatTypeFile != EnumFormatType.AUDIO) {
-                                    Utils.Log(TAG,"global_thumbnail_id is null at "+ itemObject.id + " format type :"+ formatTypeFile.name()+ "---name global :"+ itemObject.items_id);
-                                    onWriteLog("global_thumbnail_id is null ",EnumStatus.DOWNLOAD);
-                                    onWriteLog("Delete null at id "+ itemObject.id,EnumStatus.DOWNLOAD);
-                                    isWorking = false;
-                                }
-
-                                if (myService == null) {
-                                    isWorking = false;
-                                }
-
-                                if (isWorking) {
-                                    String path;
-                                    String pathFolder;
-                                    itemObject.statusProgress = EnumStatusProgress.PROGRESSING.ordinal();
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(itemObject);
-                                    if (!itemObject.originalSync) {
-                                        Utils.Log(TAG, "Downloading original data !!!");
-                                        final DownloadFileRequest request = new DownloadFileRequest();
-                                        request.items = itemObject;
-                                        request.api_name = String.format(getString(R.string.url_drive_download), itemObject.global_original_id);
-                                        request.file_name = itemObject.originalName;
-                                        request.Authorization = mUser.access_token;
-                                        path = SuperSafeApplication.getInstance().getSupersafePrivate();
-                                        pathFolder = path + itemObject.local_id + "/";
-                                        request.path_folder_output = pathFolder;
-                                        myService.onDownloadFile(request, new ServiceManager.DownloadServiceListener() {
-                                            @Override
-                                            public void onError(String message, EnumStatus status) {
-                                                onWriteLog(message, EnumStatus.DOWNLOAD);
-                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                                Utils.Log(TAG, "onError Download: !!! on original");
-                                            }
-                                            @Override
-                                            public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
-                                                Log.d(TAG, "Downloaded id original");
-                                                try {
-                                                    if (request != null) {
-                                                        if (request.items != null) {
-                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id);
-                                                            if (mItem != null) {
-                                                                mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
-                                                                mItem.originalSync = true;
-                                                                Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
-                                                                if (mItem.thumbnailSync) {
-                                                                    mItem.isSync = true;
-                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
-                                                                } else {
-                                                                    mItem.isSync = false;
-                                                                }
-                                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
-                                                            } else {
-                                                                Utils.Log(TAG, "Failed original Save 3");
-                                                            }
-                                                        }
+                                @Override
+                                public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
+                                    try {
+                                        if (request != null) {
+                                            final Items itemsRequest = request.items;
+                                            if (itemsRequest != null) {
+                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id);
+                                                if (mItem != null) {
+                                                    mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
+                                                    if (itemsRequest.isOriginalGlobalId) {
+                                                        mItem.originalSync = true;
+                                                        Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
                                                     } else {
-                                                        Utils.Log(TAG, "Failed Save 1");
+                                                        Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
+                                                        mItem.thumbnailSync = true;
                                                     }
-                                                } catch (Exception e) {
-                                                    onWriteLog(e.getMessage(),EnumStatus.DOWNLOAD);
-                                                    e.printStackTrace();
-                                                }
-                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                            }
 
-                                            @Override
-                                            public void onProgressDownload(int percentage) {
-                                                isDownloadData = true;
-                                            }
-
-                                            @Override
-                                            public void onSaved() {
-                                                Utils.Log(TAG, "onSaved");
-                                            }
-                                        });
-                                    } else {
-                                        Utils.Log(TAG, "Original already downloaded");
-                                    }
-
-                                    if (!itemsThumbnail.thumbnailSync) {
-                                        Utils.Log(TAG, "Downloading thumbnail data !!!");
-                                        final DownloadFileRequest req = new DownloadFileRequest();
-                                        req.items = itemsThumbnail;
-                                        req.api_name = String.format(getString(R.string.url_drive_download), itemsThumbnail.global_thumbnail_id);
-                                        req.file_name = itemsThumbnail.thumbnailName;
-                                        req.Authorization = mUser.access_token;
-                                        path = SuperSafeApplication.getInstance().getSupersafePrivate();
-                                        pathFolder = path + itemsThumbnail.local_id + "/";
-                                        req.path_folder_output = pathFolder;
-
-                                        myService.onDownloadThumbnailFile(req, new ServiceManager.DownloadServiceListener() {
-                                            @Override
-                                            public void onError(String message, EnumStatus status) {
-                                                onWriteLog(message,EnumStatus.DOWNLOAD);
-                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                                Utils.Log(TAG, "onError Download: !!! on thumbnail");
-                                            }
-                                            @Override
-                                            public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
-                                                Log.d(TAG, "Downloaded id thumbnail");
-                                                try {
-                                                    if (request != null) {
-                                                        if (request.items != null) {
-                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id);
-                                                            if (mItem != null) {
-                                                                mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
-                                                                mItem.thumbnailSync = true;
-                                                                Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
-                                                                if (mItem.originalSync) {
-                                                                    mItem.isSync = true;
-                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
-                                                                } else {
-                                                                    mItem.isSync = false;
-                                                                }
-                                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
-                                                            } else {
-                                                                Utils.Log(TAG, "Failed thumbnail Save 3");
-                                                            }
-                                                        }
+                                                    if (mItem.thumbnailSync && mItem.originalSync) {
+                                                        mItem.isSync = true;
+                                                        mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                     } else {
-                                                        Utils.Log(TAG, "Failed Save 1");
+                                                        mItem.isSync = false;
                                                     }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                    onWriteLog(e.getMessage(), EnumStatus.DOWNLOAD);
+                                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
+                                                } else {
+                                                    Utils.Log(TAG, "Failed Save 3");
                                                 }
-                                                onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                             }
-
-                                            @Override
-                                            public void onProgressDownload(int percentage) {
-                                                isDownloadData = true;
-                                            }
-
-                                            @Override
-                                            public void onSaved() {
-                                                Utils.Log(TAG, "onSaved");
-                                            }
-
-                                        });
+                                        } else {
+                                            Utils.Log(TAG, "Failed Save 1");
+                                        }
+                                    } catch (Exception e) {
+                                        onWriteLog(e.getMessage(), EnumStatus.DOWNLOAD);
+                                        e.printStackTrace();
                                     }
-
-                                } else {
-                                    if (!itemObject.thumbnailSync && !itemObject.originalSync){
-                                        onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                        onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                        Utils.Log(TAG,"Exception download.....................2");
-                                    }
-                                    else{
-                                        onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                        Utils.Log(TAG,"Exception download.....................1");
-                                    }
-
+                                    onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
                                 }
-                            })
-                            .doOnComplete(() -> {
-                                //Log.d(TAG, "Completed download^^^^^^^^^^^^^^^^^^^^^666^^^^^^^^^^^^^^^^^^");
-                            })
-                            .subscribe();
+
+                                @Override
+                                public void onProgressDownload(int percentage) {
+                                    isDownloadData = true;
+                                }
+
+                                @Override
+                                public void onSaved() {
+                                    Utils.Log(TAG, "onSaved");
+                                }
+                            });
+                        }
+                    }
                 } else {
                     isDownloadData = false;
                     Utils.Log(TAG, "Drive api not ready");
-                    onWriteLog("Drive api not ready",EnumStatus.DOWNLOAD);
+                    onWriteLog("Drive api not ready", EnumStatus.DOWNLOAD);
                     SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
                 }
             } else {
                 isDownloadData = false;
                 Utils.Log(TAG, "User not ready");
-                onWriteLog("User not ready",EnumStatus.DOWNLOAD);
+                onWriteLog("User not ready", EnumStatus.DOWNLOAD);
                 SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
             }
         } else {
             isDownloadData = false;
             Utils.Log(TAG, "My services is null");
-            onWriteLog("My services is null",EnumStatus.DOWNLOAD);
+            onWriteLog("My services is null", EnumStatus.DOWNLOAD);
             SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
         }
     }
@@ -861,31 +801,34 @@ public class ServiceManager implements SuperSafeServiceView {
         }
 
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
         if (list == null) {
             Utils.Log(TAG, "No Found data from device !!!");
             return;
         }
 
-        final List<Items> mList = new ArrayList<>();
+        final List<Items>mList = new ArrayList<>();
         totalList = 0;
         countSyncData = 0;
-        for (Items index : list) {
-            if (!index.originalSync) {
-                if (!index.thumbnailSync) {
-                    mList.add(index);
-                    totalList += 2;
-                } else {
-                    mList.add(index);
-                    totalList += 1;
-                }
-            } else {
-                if (!index.thumbnailSync) {
-                    mList.add(index);
-                    totalList += 1;
-                }
+        for (int i = 0; i<list.size();i++) {
+            final Items items = list.get(i);
+            if (!items.originalSync) {
+                final Items item = items;
+                item.isOriginalGlobalId = true;
+                mList.add(item);
             }
         }
 
+        for (int i = 0; i<lists.size();i++) {
+            final Items items = lists.get(i);
+            if (!items.thumbnailSync) {
+                final Items item = items;
+                item.isOriginalGlobalId = false;
+                mList.add(item);
+            }
+        }
+
+        totalList = mList.size();
         isUploadData = true;
         SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
         if (mList.size() == 0) {
@@ -896,225 +839,156 @@ public class ServiceManager implements SuperSafeServiceView {
         } else {
             String message = "Preparing upload " + totalList + " items to Cloud";
             Utils.Log(TAG, message);
-            onWriteLog(message,EnumStatus.UPLOAD);
+            onWriteLog(message, EnumStatus.UPLOAD);
         }
 
         if (myService != null) {
             final User mUser = User.getInstance().getUserInfo();
             if (mUser != null) {
                 if (mUser.driveConnected) {
-                    subscriptions = Observable.fromIterable(mList)
-                            .concatMap(i -> Observable.just(i).delay(10000, TimeUnit.MILLISECONDS))
-                            .doOnNext(i -> {
-                                /*Do something here*/
-                                isUploadData = true;
-                                final Items itemObject = i;
-                                boolean isWorking = true;
+                    for (Items index : mList) {
+                        /*Do something here*/
+                        isUploadData = true;
+                        final Items itemObject = index;
+                        boolean isWorking = true;
 
-                                if (itemObject.localCategories_Id == null) {
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
-                                    isWorking = false;
+                        if (itemObject.localCategories_Id == null) {
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
+                            isWorking = false;
+                        }
+
+                        if (myService == null) {
+                            isWorking = false;
+                        }
+                        if (isWorking) {
+
+                            if (itemObject.isOriginalGlobalId) {
+                                Utils.Log(TAG, "Uploading original data !!! " + itemObject.items_id);
+                            } else {
+                                Utils.Log(TAG, "Uploading thumbnail data !!! " + itemObject.items_id);
+                            }
+
+                            itemObject.statusProgress = EnumStatusProgress.PROGRESSING.ordinal();
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(itemObject);
+
+                            myService.onUploadFileInAppFolder(itemObject, new UploadServiceListener() {
+                                @Override
+                                public void onProgressUpdate(int percentage) {
+                                    //Utils.Log(TAG,"onProgressUpdate "+ percentage +"%");
+                                    isUploadData = true;
                                 }
 
-                                if (myService == null) {
-                                    isWorking = false;
+                                @Override
+                                public void onFinish() {
+                                    Utils.Log(TAG, "onFinish");
                                 }
 
-
-                                if (isWorking) {
-                                    if (!itemObject.originalSync) {
-                                        itemObject.statusProgress = EnumStatusProgress.PROGRESSING.ordinal();
-                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(itemObject);
-                                        Utils.Log(TAG, "Uploading original data !!!");
-                                        myService.onUploadFileInAppFolder(itemObject, new UploadServiceListener() {
-                                            @Override
-                                            public void onProgressUpdate(int percentage) {
-                                                //Utils.Log(TAG,"onProgressUpdate "+ percentage +"%");
-                                                isUploadData = true;
-                                            }
-                                            @Override
-                                            public void onFinish() {
-                                                Utils.Log(TAG, "onFinish");
-                                            }
-
-                                            @Override
-                                            public void onResponseData(DriveResponse response) {
-                                                //Utils.Log(TAG,"onResponseData global item..."+ new Gson().toJson(response));
-                                                //Utils.Log(TAG,"onResponseData local item..."+ new Gson().toJson(items));
-                                                try {
-                                                    if (response != null) {
-                                                        if (response.id != null) {
-                                                            DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
-                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.globalName);
-                                                            if (mItem != null && contentTitle!=null) {
-                                                                mItem.global_original_id = response.id;
-                                                                mItem.fileType = contentTitle.fileType;
-                                                                mItem.originalSync = true;
-                                                                if (mItem.thumbnailSync) {
-                                                                    mItem.isSync = true;
-                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
-                                                                } else {
-                                                                    mItem.isSync = false;
-                                                                }
-
-                                                                if (mItem.isSync){
-                                                                    EnumFormatType formatTypeFile = EnumFormatType.values()[mItem.formatType];
-                                                                    switch (formatTypeFile){
-                                                                        case AUDIO:{
-                                                                            mItem.global_thumbnail_id = "null";
-                                                                            onAddItems(mItem);
-                                                                            break;
-                                                                        }
-                                                                        default:{
-                                                                            onAddItems(mItem);
-                                                                        }
-                                                                    }
-                                                                }
-
-                                                                Log.d(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
-                                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
-                                                            } else {
-                                                                Utils.Log(TAG, "Failed original Save 3");
-                                                            }
-                                                        } else {
-                                                            Utils.Log(TAG, "Failed Save 2");
-                                                        }
+                                @Override
+                                public void onResponseData(DriveResponse response) {
+                                    try {
+                                        if (response != null) {
+                                            if (response.id != null) {
+                                                DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
+                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.items_id);
+                                                if (mItem != null && contentTitle != null) {
+                                                    EnumFileType type = EnumFileType.values()[contentTitle.fileType];
+                                                    if (type == EnumFileType.ORIGINAL) {
+                                                        mItem.originalSync = true;
+                                                        mItem.global_original_id = response.id;
+                                                        Log.d(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                     } else {
-                                                        Utils.Log(TAG, "Failed Save 1 on original");
+                                                        mItem.thumbnailSync = true;
+                                                        mItem.global_thumbnail_id = response.id;
+                                                        Log.d(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                     }
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                    onWriteLog(e.getMessage(),EnumStatus.UPLOAD);
-                                                }
-                                                onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                            }
-
-                                            @Override
-                                            public void onError(String message, EnumStatus status) {
-                                                Utils.Log(TAG, "onError: " + message);
-                                                onWriteLog(message, EnumStatus.UPLOAD);
-                                                onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                            }
-
-                                        });
-                                    } else {
-                                        Utils.Log(TAG, "Original already uploaded");
-                                    }
-
-                                    if (!itemObject.thumbnailSync) {
-                                        Utils.Log(TAG, "Uploading thumbnail data !!!");
-                                        myService.onUploadThumbnailFileInAppFolder(itemObject, new UploadServiceListener() {
-                                            @Override
-                                            public void onError(String message, EnumStatus status) {
-                                                onWriteLog(message,EnumStatus.UPLOAD);
-                                                onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                                Utils.Log(TAG, "onError: " + message);
-                                            }
-
-                                            @Override
-                                            public void onProgressUpdate(int percentage) {
-                                                //Utils.Log(TAG,"onProgressUpdate "+ percentage +"%");
-                                                isUploadData = true;
-                                            }
-
-                                            @Override
-                                            public void onFinish() {
-                                                Utils.Log(TAG, "onFinish");
-                                            }
-
-                                            @Override
-                                            public void onResponseData(DriveResponse response) {
-                                                //Utils.Log(TAG,"onResponseData global item..."+ new Gson().toJson(response));
-                                                //Utils.Log(TAG,"onResponseData local item..."+ new Gson().toJson(items));
-                                                try {
-                                                    if (response != null) {
-                                                        if (response.id != null) {
-                                                            DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
-                                                            final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.globalName);
-                                                            if (mItem != null & contentTitle!=null) {
-                                                                mItem.global_thumbnail_id = response.id;
-                                                                mItem.thumbnailSync = true;
-                                                                if (mItem.originalSync) {
-                                                                    mItem.isSync = true;
-                                                                    mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
-                                                                } else {
-                                                                    mItem.isSync = false;
-                                                                }
-
-                                                                if (mItem.isSync){
-                                                                    onAddItems(mItem);
-                                                                }
-
-                                                                Log.d(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
-                                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
-                                                            } else {
-                                                                Utils.Log(TAG, "Failed thumbnail Save 3");
-                                                            }
-                                                        } else {
-                                                            Utils.Log(TAG, "Failed Save 2");
-                                                        }
+                                                    mItem.fileType = contentTitle.fileType;
+                                                    if (mItem.thumbnailSync && mItem.originalSync) {
+                                                        mItem.isSync = true;
+                                                        mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                     } else {
-                                                        Utils.Log(TAG, "Failed Save 1 on thumbnail");
+                                                        mItem.isSync = false;
                                                     }
-                                                } catch (Exception e) {
-                                                    Utils.Log(TAG, "Exception");
-                                                    onWriteLog(e.getMessage(), EnumStatus.UPLOAD);
-                                                    e.printStackTrace();
+
+                                                    if (mItem.isSync) {
+                                                        EnumFormatType formatTypeFile = EnumFormatType.values()[mItem.formatType];
+                                                        switch (formatTypeFile) {
+                                                            case AUDIO: {
+                                                                mItem.global_thumbnail_id = "null";
+                                                                onAddItems(mItem);
+                                                                break;
+                                                            }
+                                                            default: {
+                                                                onAddItems(mItem);
+                                                            }
+                                                        }
+                                                    }
+                                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
+                                                } else {
+                                                    Utils.Log(TAG, "Failed Save 3");
                                                 }
-                                                onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                            } else {
+                                                Utils.Log(TAG, "Failed Save 2");
                                             }
-                                        });
-                                    } else {
-                                        Utils.Log(TAG, "Thumbnail already uploaded");
-                                    }
-                                } else {
-                                    if (!itemObject.originalSync && !itemObject.thumbnailSync){
+                                        } else {
+                                            Utils.Log(TAG, "Failed Save 1");
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        onWriteLog(e.getMessage(), EnumStatus.UPLOAD);
+                                    } finally {
                                         onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                        onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                        Utils.Log(TAG, "Exception upload....................... 2");
-                                    }
-                                    else{
-                                        onUpdateSyncDataStatus(EnumStatus.UPLOAD);
-                                        Utils.Log(TAG, "Exception upload....................... 1");
                                     }
                                 }
-                            })
-                            .doOnComplete(() -> {
-                                //Log.d(TAG, "Completed upload^^^^^^^^^^^^^^^^^^^^^666^^^^^^^^^^^^^^^^^^");
-                            })
-                            .subscribe();
+                                @Override
+                                public void onError(String message, EnumStatus status) {
+                                    Utils.Log(TAG, "onError: " + message);
+                                    onWriteLog(message, EnumStatus.UPLOAD);
+                                    onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                }
+                            });
+
+                        } else {
+                            if (!itemObject.originalSync && !itemObject.thumbnailSync) {
+                                onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                Utils.Log(TAG, "Exception upload....................... 2");
+                            } else {
+                                onUpdateSyncDataStatus(EnumStatus.UPLOAD);
+                                Utils.Log(TAG, "Exception upload....................... 1");
+                            }
+                        }
+                    }
                 } else {
                     isUploadData = false;
                     Utils.Log(TAG, "Drive api not ready");
-                    onWriteLog("Drive api not ready",EnumStatus.UPLOAD);
+                    onWriteLog("Drive api not ready", EnumStatus.UPLOAD);
                     SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
                 }
             } else {
                 isUploadData = false;
                 Utils.Log(TAG, "User not ready");
-                onWriteLog("User not ready",EnumStatus.UPLOAD);
+                onWriteLog("User not ready", EnumStatus.UPLOAD);
                 SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
             }
         } else {
             isUploadData = false;
             Utils.Log(TAG, "My services is null");
-            onWriteLog("My services is null",EnumStatus.UPLOAD);
+            onWriteLog("My services is null", EnumStatus.UPLOAD);
             SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
         }
     }
 
 
-    public void onAddItems(final  Items items){
-        if (myService==null){
-            Utils.Log(TAG,"My service is null");
+    public void onAddItems(final Items items) {
+        if (myService == null) {
+            Utils.Log(TAG, "My service is null");
             return;
         }
 
-        Utils.Log(TAG,"Preparing insert  to own Server");
+        Utils.Log(TAG, "Preparing insert  to own Server");
         myService.onAddItems(items, new SuperSafeServiceView() {
             @Override
             public void onError(String message, EnumStatus status) {
-                Utils.Log(TAG,message+ " status " + status.name());
+                Utils.Log(TAG, message + " status " + status.name());
             }
 
             @Override
@@ -1124,7 +998,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
             @Override
             public void onSuccessful(String message, EnumStatus status) {
-                Utils.Log(TAG,message+ " status " + status.name());
+                Utils.Log(TAG, message + " status " + status.name());
             }
 
             @Override
@@ -1161,7 +1035,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
     /*Gallery action*/
 
-    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id,MainCategories mainCategories) {
+    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id, MainCategories mainCategories) {
         if (myService == null) {
             Utils.Log(TAG, "Service is null");
             return;
@@ -1174,10 +1048,10 @@ public class ServiceManager implements SuperSafeServiceView {
             final String mMimeType = mMimeTypeFile.mimeType;
             final String mVideo_id = id;
             final Items items;
-            final MainCategories mMainCategories =  mainCategories;
+            final MainCategories mMainCategories = mainCategories;
             final String localCategories_Id = mMainCategories.localId;
             final String localCategories_Name = mMainCategories.name;
-            final String localCategories_Count = ""+mMainCategories.localCategories_Count;
+            final String localCategories_Count = "" + mMainCategories.localCategories_Count;
 
             Utils.Log(TAG, "object " + new Gson().toJson(mMimeTypeFile));
             Bitmap thumbnail = null;
@@ -1242,7 +1116,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
                         description.thumbnailName = currentTime;
-                        description.globalName = uuId;
+                        description.items_id = uuId;
                         description.formatType = EnumFormatType.IMAGE.ordinal();
                         description.degrees = 0;
                         description.thumbnailSync = false;
@@ -1267,7 +1141,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.title,
                                 description.originalName,
                                 description.thumbnailName,
-                                description.globalName,
+                                description.items_id,
                                 description.originalPath,
                                 description.thumbnailPath,
                                 description.local_id,
@@ -1275,7 +1149,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_thumbnail_id,
                                 description.localCategories_Id,
                                 description.localCategories_Name,
-                                description.localCategories_Count ,
+                                description.localCategories_Count,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1344,7 +1218,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
-                        description.globalName = uuId;
+                        description.items_id = uuId;
                         description.formatType = EnumFormatType.VIDEO.ordinal();
                         description.degrees = 0;
                         description.thumbnailSync = false;
@@ -1370,7 +1244,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.title,
                                 description.originalName,
                                 description.thumbnailName,
-                                description.globalName,
+                                description.items_id,
                                 description.originalPath,
                                 description.thumbnailPath,
                                 description.local_id,
@@ -1439,7 +1313,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.localCategories_Count = localCategories_Count;
                         description.local_id = uuId;
                         description.mimeType = mMimeType;
-                        description.globalName = uuId;
+                        description.items_id = uuId;
                         description.formatType = EnumFormatType.AUDIO.ordinal();
                         description.degrees = 0;
                         description.thumbnailSync = true;
@@ -1466,7 +1340,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.title,
                                 description.originalName,
                                 description.thumbnailName,
-                                description.globalName,
+                                description.items_id,
                                 description.originalPath,
                                 description.thumbnailPath,
                                 description.local_id,
@@ -1518,10 +1392,10 @@ public class ServiceManager implements SuperSafeServiceView {
                     final Items items = (Items) response;
                     if (items != null) {
                         long mb;
-                        if (storage.isFileExist(items.originalPath)){
+                        if (storage.isFileExist(items.originalPath)) {
                             final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
-                            mb = (long)+storage.getSize(new File(items.originalPath), SizeUnit.B);
-                            driveDescription.size = ""+mb;
+                            mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
+                            driveDescription.size = "" + mb;
                             items.size = driveDescription.size;
                             items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                         }
@@ -1530,7 +1404,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     } else {
                         Utils.Log(TAG, "Write file Failed ");
                     }
-                   // Utils.Log(TAG, new Gson().toJson(items));
+                    // Utils.Log(TAG, new Gson().toJson(items));
                     GalleryCameraMediaManager.getInstance().onUpdatedView();
                     SingletonPrivateFragment.getInstance().onUpdateView();
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
@@ -1540,7 +1414,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
     /*--------------Camera action-----------------*/
 
-    public void onSaveDataOnCamera(final byte[] mData,final MainCategories mainCategories) {
+    public void onSaveDataOnCamera(final byte[] mData, final MainCategories mainCategories) {
 
         if (myService == null) {
             GalleryCameraMediaManager.getInstance().setProgressing(false);
@@ -1548,10 +1422,10 @@ public class ServiceManager implements SuperSafeServiceView {
         }
         subscriptions = Observable.create(subscriber -> {
 
-            final MainCategories mMainCategories =  mainCategories;
+            final MainCategories mMainCategories = mainCategories;
             final String localCategories_Id = mMainCategories.localId;
             final String localCategories_Name = mMainCategories.name;
-            final String localCategories_Count = ""+mMainCategories.localCategories_Count;
+            final String localCategories_Count = "" + mMainCategories.localCategories_Count;
 
             File thumbnail = null;
             final byte[] data = mData;
@@ -1578,7 +1452,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.global_original_id = null;
                 description.mimeType = MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype();
                 description.thumbnailName = currentTime;
-                description.globalName = uuId;
+                description.items_id = uuId;
                 description.formatType = EnumFormatType.IMAGE.ordinal();
                 description.degrees = 0;
                 description.thumbnailSync = false;
@@ -1603,7 +1477,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.title,
                         description.originalName,
                         description.thumbnailName,
-                        description.globalName,
+                        description.items_id,
                         description.originalPath,
                         description.thumbnailPath,
                         description.local_id,
@@ -1651,17 +1525,17 @@ public class ServiceManager implements SuperSafeServiceView {
                         final Items mItem = (Items) response;
                         if (mItem != null) {
                             long mb;
-                            if (storage.isFileExist(mItem.originalPath)){
+                            if (storage.isFileExist(mItem.originalPath)) {
                                 final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
-                                mb = (long)+storage.getSize(new File(mItem.originalPath), SizeUnit.B);
-                                driveDescription.size = ""+mb;
+                                mb = (long) +storage.getSize(new File(mItem.originalPath), SizeUnit.B);
+                                driveDescription.size = "" + mb;
                                 mItem.size = driveDescription.size;
                                 mItem.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                             }
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
                         }
                         Utils.Log(TAG, "Insert Successful");
-                       // Utils.Log(TAG, new Gson().toJson(mItem));
+                        // Utils.Log(TAG, new Gson().toJson(mItem));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1723,7 +1597,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 }
                 break;
             }
-            case DELETE_SYNC_OWN_DATA:{
+            case DELETE_SYNC_OWN_DATA: {
                 countSyncData += 1;
                 if (countSyncData == totalList) {
                     isDeleteOwnCloud = false;
@@ -1746,7 +1620,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 }
                 break;
             }
-            case DELETE_SYNC_CLOUD_DATA:{
+            case DELETE_SYNC_CLOUD_DATA: {
                 countSyncData += 1;
                 if (countSyncData == totalList) {
                     isDeleteSyncCLoud = false;
@@ -1796,9 +1670,9 @@ public class ServiceManager implements SuperSafeServiceView {
     @Override
     public void onError(String message, EnumStatus status) {
         Log.d(TAG, "onError response :" + message);
-        if (status==EnumStatus.REQUEST_ACCESS_TOKEN){
+        if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
             SingletonManagerTab.getInstance().onRequestAccessToken();
-            Utils.Log(TAG,"Request token on global");
+            Utils.Log(TAG, "Request token on global");
         }
     }
 
@@ -1825,7 +1699,7 @@ public class ServiceManager implements SuperSafeServiceView {
     @Override
     public void onNetworkConnectionChanged(boolean isConnect) {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
-        if (isConnect){
+        if (isConnect) {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
     }
@@ -1837,8 +1711,8 @@ public class ServiceManager implements SuperSafeServiceView {
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        if (status == EnumStatus.GET_DRIVE_ABOUT){
-            Utils.Log(TAG,"drive about :"+ message);
+        if (status == EnumStatus.GET_DRIVE_ABOUT) {
+            Utils.Log(TAG, "drive about :" + message);
         }
     }
 

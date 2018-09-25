@@ -26,7 +26,7 @@ public class DriveDescription implements Serializable{
     public String mimeType;
     public String thumbnailName;
     public String originalName;
-    public String globalName;
+    public String items_id;
     public int degrees;
     public int formatType;
     public boolean thumbnailSync;

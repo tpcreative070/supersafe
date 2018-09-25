@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.albumdetail;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -58,6 +59,8 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -66,7 +69,7 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
-public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView , AlbumDetailAdapter.ItemSelectedListener ,GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener {
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -135,15 +138,20 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.name);
 
-        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.localId,false);
-        if (items!=null){
-            Glide.with(this)
-                    .load(storage.readFile(items.thumbnailPath))
-                    .apply(options)
-                    .into(backdrop);
-            imgIcon.setVisibility(View.INVISIBLE);
-        }
-        else{
+        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.localId, false);
+        if (items != null) {
+            EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
+            if (formatTypeFile == EnumFormatType.AUDIO) {
+                backdrop.setBackgroundResource(presenter.mainCategories.imageResource);
+            } else {
+                Glide.with(this)
+                        .load(storage.readFile(items.thumbnailPath))
+                        .apply(options)
+                        .into(backdrop);
+                imgIcon.setVisibility(View.INVISIBLE);
+
+            }
+        } else {
             backdrop.setBackgroundResource(presenter.mainCategories.imageResource);
             imgIcon.setBackgroundResource(presenter.mainCategories.icon);
         }
@@ -160,8 +168,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     presenter.getData();
                 }
             });
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -200,7 +207,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
             Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
             FabWithLabelView fabWithLabelView = mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
                     .fab_camera, drawable)
-                    .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,getTheme()))
+                    .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary, getTheme()))
                     .setLabelColor(Color.WHITE)
                     .setLabel(getString(R.string.camera))
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
@@ -252,7 +259,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     case R.id.fab_camera:
                         showToast(actionItem.getLabel(getApplicationContext()) + " Camera");
                         onAddPermissionCamera();
-                        return  false;
+                        return false;
                 }
                 return true; // To keep the Speed Dial open
             }
@@ -269,10 +276,9 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            Navigator.onMoveCamera(AlbumDetailActivity.this,presenter.mainCategories);
-                        }
-                        else{
-                            Log.d(TAG,"Permission is denied");
+                            Navigator.onMoveCamera(AlbumDetailActivity.this, presenter.mainCategories);
+                        } else {
+                            Log.d(TAG, "Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
@@ -280,6 +286,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                             Log.d(TAG, "request permission is failed");
                         }
                     }
+
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                         /* ... */
@@ -294,22 +301,21 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                 }).onSameThread().check();
     }
 
-    public void initRecycleView(LayoutInflater layoutInflater){
-        adapter = new AlbumDetailAdapter(layoutInflater,getApplicationContext(),this);
+    public void initRecycleView(LayoutInflater layoutInflater) {
+        adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3,4, true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onClickItem(int position) {
-        Utils.Log(TAG,"Position : "+ position);
+        Utils.Log(TAG, "Position : " + position);
         try {
-            Navigator.onPhotoSlider(this,presenter.mList.get(position),presenter.mList);
-        }
-        catch (Exception e){
+            Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -327,31 +333,29 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG,"Selected album :");
+        Log.d(TAG, "Selected album :");
 
 
-        switch (requestCode){
-            case Navigator.CAMERA_ACTION :{
+        switch (requestCode) {
+            case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
-                    Utils.Log(TAG,"reload data");
+                    Utils.Log(TAG, "reload data");
                     presenter.getData();
-                }
-                else{
-                    Utils.Log(TAG,"Nothing to do on Camera");
+                } else {
+                    Utils.Log(TAG, "Nothing to do on Camera");
                 }
                 break;
             }
-            case Navigator.PHOTO_SLIDE_SHOW:{
+            case Navigator.PHOTO_SLIDE_SHOW: {
                 if (resultCode == Activity.RESULT_OK) {
-                    Utils.Log(TAG,"reload data");
+                    Utils.Log(TAG, "reload data");
                     presenter.getData();
-                }
-                else{
-                    Utils.Log(TAG,"Nothing to do on Camera");
+                } else {
+                    Utils.Log(TAG, "Nothing to do on Camera");
                 }
                 break;
             }
-            case Constants.REQUEST_CODE :{
+            case Constants.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
                     for (int i = 0, l = images.size(); i < l; i++) {
@@ -363,31 +367,29 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                         Log.d(TAG, "name " + name);
                         Log.d(TAG, "path " + path);
                         String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG,"file extension "+ Utils.getFileExtension(path));
+                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
 
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             mimeTypeFile.name = name;
-                            if (presenter.mainCategories==null){
-                                Utils.onWriteLog("Main categories is null",EnumStatus.WRITE_FILE);
+                            if (presenter.mainCategories == null) {
+                                Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path,id,presenter.mainCategories);
+                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path, id, presenter.mainCategories);
                             isReload = true;
-                        }
-                        catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
                     }
-                }
-                else {
-                    Utils.Log(TAG,"Nothing to do on Gallery");
+                } else {
+                    Utils.Log(TAG, "Nothing to do on Gallery");
                 }
                 break;
             }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
+            default: {
+                Utils.Log(TAG, "Nothing to do");
                 break;
             }
         }
@@ -400,7 +402,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (isReload){
+        if (isReload) {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
     }

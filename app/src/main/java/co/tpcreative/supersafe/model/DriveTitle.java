@@ -6,7 +6,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class DriveTitle implements Serializable {
 
     private static DriveTitle instance;
-    public String globalName;
+    public String items_id;
     public int fileType;
     private static final String TAG = DriveTitle.class.getSimpleName();
 

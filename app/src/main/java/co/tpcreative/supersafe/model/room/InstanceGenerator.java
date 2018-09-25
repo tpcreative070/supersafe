@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 
@@ -63,6 +64,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
     public synchronized void onUpdate(Items cTalkManager){
         try {
             if (cTalkManager==null){
+                Utils.Log(TAG,"Null???? ");
                 return;
             }
             instance.itemsDao().update(cTalkManager);
@@ -71,6 +73,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             Log.d(TAG,e.getMessage());
         }
     }
+
 
     public final synchronized List<Items> getListItems(final String localId,boolean isDeleteLocal){
         try{

@@ -339,7 +339,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
             hashMap.put(getString(R.string.key_kind), getString(R.string.key_drive_file));
             DriveTitle contentTitle = new DriveTitle();
-            contentTitle.globalName = items.items_id;
+            contentTitle.items_id = items.items_id;
             String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
             hashMap.put(getString(R.string.key_name), hex);
         }
@@ -627,12 +627,12 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                 DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                 try {
                                     if (driveTitle != null) {
-                                        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.globalName,true);
+                                        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id,true);
                                         if (items==null){
-                                            hash.put(driveTitle.globalName,items);
+                                            hash.put(driveTitle.items_id,items);
                                         }
                                         else{
-                                            hash.remove(driveTitle.globalName);
+                                            hash.remove(driveTitle.items_id);
                                         }
                                     } else {
                                         view.onError("Drive title is null", EnumStatus.GET_LIST_FILE);
@@ -746,7 +746,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
                                         DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                         if (driveTitle != null) {
-                                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.globalName);
+                                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
                                             EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
                                             if (items == null) {
                                                 description.global_original_id = index.global_original_id;
@@ -877,7 +877,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
                                     DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                     if (driveTitle != null) {
-                                        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.globalName);
+                                        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
                                         EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
                                         EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
                                         if (items == null) {
@@ -903,7 +903,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                 }
                                             }
 
-                                            String message = "This item is new :" + description.globalName + " - " + index.id;
+                                            String message = "This item is new :" + description.items_id + " - " + index.id;
                                             Log.d(TAG, message);
                                             view.onSuccessful(message);
                                             onSaveItem(description);
@@ -920,11 +920,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                 }
                                             }
 
-                                            String message = "This item is existing:" + description.globalName + " - " + index.id;
-                                            if (description.globalName.equals("87cdfa94-5378-4a20-86a8-71bf22c26822")) {
+                                            String message = "This item is existing:" + description.items_id + " - " + index.id;
+                                            if (description.items_id.equals("87cdfa94-5378-4a20-86a8-71bf22c26822")) {
                                                 view.onSuccessful(message + " --- " + index.name);
                                             }
-                                            if (description.globalName.equals("0634714f-5687-4302-8cf9-e6ec39120119")) {
+                                            if (description.items_id.equals("0634714f-5687-4302-8cf9-e6ec39120119")) {
                                                 view.onSuccessful(message + " --- " + index.name);
                                             }
 
@@ -993,7 +993,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.title,
                 description.originalName,
                 description.thumbnailName,
-                description.globalName,
+                description.items_id,
                 description.originalPath,
                 description.thumbnailPath,
                 description.subFolderName,
@@ -1015,158 +1015,37 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
 
-    public void onUploadFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
-        Log.d(TAG, "Upload File To In App Folder !!!");
-        final User mUser = User.getInstance().getUserInfo();
-        MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
-        HashMap<String, Object> content = new HashMap<>();
-        final File file = new File(items.originalPath);
-
-        if (!storage.isFileExist(items.originalPath)) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
-            listener.onError("This original is not found", EnumStatus.UPLOAD);
-            return;
-        }
-
-        if (items.originalSync) {
-            listener.onError("This original already synced", EnumStatus.UPLOAD);
-            return;
-        }
 
 
-        DriveTitle contentTitle = new DriveTitle();
-        contentTitle.globalName = items.items_id;
-        contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
-        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
-        content.put(getString(R.string.key_name), hex);
-        content.put(getString(R.string.key_description), items.description);
-        List<String> list = new ArrayList<>();
-        list.add(getString(R.string.key_appDataFolder));
-        content.put(getString(R.string.key_parents), list);
-        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType, new Gson().toJson(content)));
-        Log.d(TAG, "parents: " + new Gson().toJson(content));
 
-        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
-            @Override
-            public void onProgressUpdate(int percentage) {
-                Utils.Log(TAG, "Progressing " + percentage + "%");
-                listener.onProgressUpdate(percentage);
-            }
-
-            @Override
-            public void onError() {
-                Utils.Log(TAG, "onError");
-                if (listener != null) {
-                    listener.onError("Error upload", EnumStatus.UPLOAD);
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                listener.onFinish();
-                Utils.Log(TAG, "onFinish");
-            }
-        });
-
-        fileBody.setContentType(items.mimeType);
-        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
-
-        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload), mUser.access_token, metaPart, dataPart, items.mimeType);
-        request.enqueue(new Callback<DriveResponse>() {
-            @Override
-            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
-                Utils.Log(TAG, "response successful :" + new Gson().toJson(response.body()));
-                listener.onResponseData(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<DriveResponse> call, Throwable t) {
-                Utils.Log(TAG, "response failed :" + t.getMessage());
-                if (listener != null) {
-                    listener.onError("Error upload" + t.getMessage(), EnumStatus.UPLOAD);
-                }
-            }
-        });
-    }
-
-
-    public void onUploadThumbnailFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
-        Log.d(TAG, "Upload File To In App Folder !!!");
-        final User mUser = User.getInstance().getUserInfo();
-        MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
-        HashMap<String, Object> content = new HashMap<>();
-        final File file = new File(items.thumbnailPath);
-
-        if (!storage.isFileExist(items.thumbnailPath)) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
-            listener.onError("This thumbnail is not found", EnumStatus.UPLOAD);
-            return;
-        }
-
-        if (items.thumbnailSync) {
-            listener.onError("This thumbnail already synced", EnumStatus.UPLOAD);
-            return;
-        }
-
-        DriveTitle contentTitle = new DriveTitle();
-        contentTitle.globalName = items.items_id;
-        contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
-        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
-        content.put(getString(R.string.key_name), hex);
-        content.put(getString(R.string.key_description), items.description);
-        List<String> list = new ArrayList<>();
-        list.add(getString(R.string.key_appDataFolder));
-        content.put(getString(R.string.key_parents), list);
-        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType, new Gson().toJson(content)));
-        Log.d(TAG, "parents: " + new Gson().toJson(content));
-
-
-        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
-            @Override
-            public void onProgressUpdate(int percentage) {
-                Utils.Log(TAG, "Progressing " + percentage + "%");
-                listener.onProgressUpdate(percentage);
-            }
-
-            @Override
-            public void onError() {
-                Utils.Log(TAG, "onError");
-                if (listener != null) {
-                    listener.onError("Error upload", EnumStatus.UPLOAD);
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                listener.onFinish();
-                Utils.Log(TAG, "onFinish");
-            }
-        });
-
-        fileBody.setContentType(items.mimeType);
-        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
-
-        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload), mUser.access_token, metaPart, dataPart, items.mimeType);
-        request.enqueue(new Callback<DriveResponse>() {
-            @Override
-            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
-                Utils.Log(TAG, "response successful :" + new Gson().toJson(response.body()));
-                listener.onResponseData(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<DriveResponse> call, Throwable t) {
-                Utils.Log(TAG, "response failed :" + t.getMessage());
-                if (listener != null) {
-                    listener.onError("Error upload" + t.getMessage(), EnumStatus.UPLOAD);
-                }
-            }
-        });
-    }
-
-
-    public void onDownloadFile(final DownloadFileRequest request, final ServiceManager.DownloadServiceListener listener) {
+    public void onDownloadFile(final Items items, final ServiceManager.DownloadServiceListener listener) {
         Utils.Log(TAG, "onDownloadFile !!!!");
+
+
+        final User mUser = User.getInstance().getUserInfo();
+
+        if (!mUser.driveConnected){
+            listener.onError("No Drive api connected",EnumStatus.DOWNLOAD);
+            return;
+        }
+
+        final DownloadFileRequest request = new DownloadFileRequest();
+        String id = "";
+        if (items.isOriginalGlobalId){
+            id = items.global_original_id;
+            request.file_name = items.originalName;
+        }
+        else{
+            id = items.global_thumbnail_id;
+            request.file_name = items.thumbnailName;
+        }
+        request.items = items;
+        request.api_name = String.format(getString(R.string.url_drive_download),id);
+        request.Authorization = mUser.access_token;
+        String path = SuperSafeApplication.getInstance().getSupersafePrivate();
+        String pathFolder = path + items.local_id + "/";
+        request.path_folder_output = pathFolder;
+
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override
             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
@@ -1236,74 +1115,83 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         downloadService.downloadDriveFileByGET(request);
     }
 
-    public void onDownloadThumbnailFile(final DownloadFileRequest request, final ServiceManager.DownloadServiceListener listener) {
-        downloadServiceThumbnail.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
+
+    public void onUploadFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
+        Log.d(TAG, "Upload File To In App Folder !!!");
+        final User mUser = User.getInstance().getUserInfo();
+        MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
+        HashMap<String, Object> content = new HashMap<>();
+
+
+
+
+        DriveTitle contentTitle = new DriveTitle();
+        File file = null;
+        if (items.isOriginalGlobalId){
+            contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
+            file = new File(items.originalPath);
+        }
+        else{
+            contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
+            file = new File(items.thumbnailPath);
+        }
+
+        if (!storage.isFileExist(file.getAbsolutePath())) {
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+            listener.onError("This path is not found", EnumStatus.UPLOAD);
+            return;
+        }
+
+        contentTitle.items_id = items.items_id;
+        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
+        content.put(getString(R.string.key_name), hex);
+        content.put(getString(R.string.key_description), items.description);
+        List<String> list = new ArrayList<>();
+        list.add(getString(R.string.key_appDataFolder));
+        content.put(getString(R.string.key_parents), list);
+        MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType, new Gson().toJson(content)));
+
+        ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
             @Override
-            public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
-                Utils.Log(TAG, "onDownLoadCompleted " + file_name.getAbsolutePath());
-                listener.onDownLoadCompleted(file_name, request);
+            public void onProgressUpdate(int percentage) {
+                Utils.Log(TAG, "Progressing " + percentage + "%");
+                listener.onProgressUpdate(percentage);
             }
 
             @Override
-            public void onDownLoadError(String error) {
-                Utils.Log(TAG, "onDownLoadError " + error);
+            public void onError() {
+                Utils.Log(TAG, "onError");
                 if (listener != null) {
-                    listener.onError("Error download " + error, EnumStatus.DOWNLOAD);
+                    listener.onError("Error upload", EnumStatus.UPLOAD);
                 }
             }
 
             @Override
-            public void onProgressingDownloading(int percent) {
-                listener.onProgressDownload(percent);
-                Utils.Log(TAG, "Progressing " + percent + "%");
+            public void onFinish() {
+                listener.onFinish();
+                Utils.Log(TAG, "onFinish");
+            }
+        });
+
+        fileBody.setContentType(items.mimeType);
+        MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
+
+        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload), mUser.access_token, metaPart, dataPart, items.mimeType);
+        request.enqueue(new Callback<DriveResponse>() {
+            @Override
+            public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
+                Utils.Log(TAG, "response successful :" + new Gson().toJson(response.body()));
+                listener.onResponseData(response.body());
             }
 
             @Override
-            public void onAttachmentElapsedTime(long elapsed) {
-
-            }
-
-            @Override
-            public void onAttachmentAllTimeForDownloading(long all) {
-
-            }
-
-            @Override
-            public void onAttachmentRemainingTime(long all) {
-
-            }
-
-            @Override
-            public void onAttachmentSpeedPerSecond(double all) {
-
-            }
-
-            @Override
-            public void onAttachmentTotalDownload(long totalByte, long totalByteDownloaded) {
-
-            }
-
-            @Override
-            public void onSavedCompleted() {
-                Utils.Log(TAG, "onSavedCompleted ");
-            }
-
-            @Override
-            public void onErrorSave(String name) {
-                Utils.Log(TAG, "onErrorSave");
+            public void onFailure(Call<DriveResponse> call, Throwable t) {
+                Utils.Log(TAG, "response failed :" + t.getMessage());
                 if (listener != null) {
-                    listener.onError("Error download save " + name, EnumStatus.DOWNLOAD);
+                    listener.onError("Error upload" + t.getMessage(), EnumStatus.UPLOAD);
                 }
             }
-
-            @Override
-            public void onCodeResponse(int code, DownloadFileRequest request) {
-
-            }
-        }, "https://www.googleapis.com/drive/v3/files/");
-        request.mapHeader = new HashMap<>();
-        request.mapObject = new HashMap<>();
-        downloadServiceThumbnail.downloadDriveFileByGET(request);
+        });
     }
 
 
