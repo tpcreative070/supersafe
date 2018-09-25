@@ -346,13 +346,13 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true,true);
 
-                        if (mListOwnCloud!=null){
-                            onDeleteOnOwnItems();
-                        }
-                        else if (mListCloud!=null){
-                            onDeleteCloud();
-                        }
-                        else if (items != null) {
+//                        if (mListOwnCloud!=null){
+//                            onDeleteOnOwnItems();
+//                        }
+//                        else if (mListCloud!=null){
+//                            onDeleteCloud();
+//                        }
+                         if (items != null) {
                             if (items.size() > 0) {
                                 Utils.Log(TAG, "Preparing downloading...");
                                 onDownloadFilesFromDriveStore();
@@ -588,6 +588,7 @@ public class ServiceManager implements SuperSafeServiceView {
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
         }
     }
+    
 
     public void onDownloadFilesFromDriveStore() {
         if (isDownloadData) {
