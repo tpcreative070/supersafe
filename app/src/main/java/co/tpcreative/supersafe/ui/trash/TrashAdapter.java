@@ -1,4 +1,5 @@
-package co.tpcreative.supersafe.ui.albumdetail;
+package co.tpcreative.supersafe.ui.trash;
+
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
@@ -6,16 +7,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.darsh.multipleimageselect.models.Image;
 import com.snatik.storage.Storage;
+
 import java.security.NoSuchAlgorithmException;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -28,7 +32,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 
-public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
+public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -40,9 +44,9 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private Encrypter encrypter;
     private Storage storage;
-    private String TAG = AlbumDetailAdapter.class.getSimpleName();
+    private String TAG = TrashAdapter.class.getSimpleName();
 
-    public AlbumDetailAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
+    public TrashAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
         storage = new Storage(context);
@@ -64,20 +68,9 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.album_detail_item, parent, false));
     }
 
-    private void showPopupMenu(View view, int position) {
-        PopupMenu popup = new PopupMenu(context, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_album_detail, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(position));
-        popup.show();
-    }
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
-
-        void onAddToFavoriteSelected(int position);
-
-        void onPlayNextSelected(int position);
     }
 
     public class ItemHolder extends BaseHolder<Items> {
@@ -107,8 +100,25 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         public void bind(Items data, int position) {
             super.bind(data, position);
             mPosition = position;
-            view_alpha.setVisibility(View.INVISIBLE);
-            imgSelect.setVisibility(View.INVISIBLE);
+
+            if (data.isChecked) {
+                view_alpha.setAlpha(0.5f);
+                imgSelect.setVisibility(View.VISIBLE);
+
+            } else {
+                view_alpha.setAlpha(0.0f);
+                imgSelect.setVisibility(View.INVISIBLE);
+            }
+
+//            if (data.isChecked){
+//                Utils.Log(TAG,"Selected....");
+//                imgSelected.setImageDrawable(context.getResources().getDrawable(com.darsh.multipleimageselect.R.drawable.ic_done_white));
+//            }
+//            else{
+//                Utils.Log(TAG,"Selected....???");
+//                imgSelected.setImageDrawable(null);
+//            }
+
             try {
                 String path = data.thumbnailPath;
                 storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
@@ -182,32 +192,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
             }
         }
 
-    }
-
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-        int position;
-
-        public MyMenuItemClickListener(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
-                    if (itemSelectedListener != null) {
-                        itemSelectedListener.onAddToFavoriteSelected(position);
-                    }
-                    return true;
-                case R.id.action_play_next:
-                    if (itemSelectedListener != null) {
-                        itemSelectedListener.onPlayNextSelected(position);
-                    }
-                    return true;
-                default:
-            }
-            return false;
-        }
     }
 
 }

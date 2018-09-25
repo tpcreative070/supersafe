@@ -12,8 +12,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -230,7 +228,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
 
-
     public void onGetFilesInfo(SuperSafeServiceView view){
             Utils.Log(TAG, "onGetListFolderInApp");
             if (view == null) {
@@ -304,7 +301,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         }
                         view.stopLoading();
                     }));
-
     }
 
 
@@ -390,8 +386,172 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     }
                     view.stopLoading();
                 }));
-
     }
+
+
+    public void onDeleteCloudItems(final Items items,final boolean isOriginalGlobalId,final SuperSafeServiceView view){
+        Utils.Log(TAG, "onGetListFolderInApp");
+        if (view == null) {
+            view.onError("no view", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user == null) {
+            view.onError("no user", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+            return;
+        }
+
+        if (!user.driveConnected){
+            view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
+            return;
+        }
+
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
+        Log.d(TAG, "access_token : " + access_token);
+
+
+        String id  = "";
+        if (isOriginalGlobalId){
+            id = items.global_original_id;
+        }
+        else{
+            id = items.global_thumbnail_id;
+        }
+
+        subscriptions.add(SuperSafeApplication.serverDriveApi.onDeleteCloudItem(access_token,id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (onResponse.code()==204){
+                        view.onSuccessful("Deleted Successful : code "+ onResponse.code() +" - ",EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                    }
+                    else if (onResponse.code()==404){
+                        final String value = onResponse.errorBody().string();
+                        final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
+                        view.onError("Not found file :" + new Gson().toJson(driveAbout.error)+" - ",EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                    }
+                    else{
+                        view.onError("Another cases : code "+ onResponse.code() +" - ",EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                    }
+                }, throwable -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            final String value = bodys.string();
+                            final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
+                            if (driveAbout!=null){
+                                if (driveAbout.error!=null){
+                                    view.onError(new Gson().toJson(driveAbout.error), EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                                }
+                            }
+                            else{
+                                view.onError("Error null 1 ",EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError("Exception " + e.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error 0:" + throwable.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+    public void onDeleteOwnSystem(final Items items,final SuperSafeServiceView view){
+        Utils.Log(TAG, "onGetListFolderInApp");
+        if (view == null) {
+            view.onError("no view", EnumStatus.DELETE_SYNC_OWN_DATA);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.DELETE_SYNC_OWN_DATA);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions", EnumStatus.DELETE_SYNC_OWN_DATA);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user == null) {
+            view.onError("no user", EnumStatus.DELETE_SYNC_OWN_DATA);
+            return;
+        }
+
+        if (!user.driveConnected){
+            view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
+            return;
+        }
+
+        final Map<String,Object> hashMap = Items.getInstance().objectToHashMap(items);
+
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
+        Log.d(TAG, "access_token : " + access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(hashMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    Utils.Log(TAG,"Response data from items "+new Gson().toJson(onResponse));
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        return;
+                    }
+                    if (onResponse.error){
+                        view.onError(onResponse.message,EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                    }else{
+                        view.onSuccessful(onResponse.message,EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                        items.isDeleteGlobal = true;
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                    }
+                    view.stopLoading();
+
+                }, throwable -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            final String value = bodys.string();
+                            final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
+                            if (driveAbout!=null){
+                                if (driveAbout.error!=null){
+                                    view.onError(new Gson().toJson(driveAbout.error), EnumStatus.DELETE_SYNC_OWN_DATA);
+                                }
+                            }
+                            else{
+                                view.onError("Error null ",EnumStatus.DELETE_SYNC_OWN_DATA);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError("Exception " + e.getMessage(), EnumStatus.DELETE_SYNC_OWN_DATA);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :" + throwable.getMessage(), EnumStatus.DELETE_SYNC_OWN_DATA);
+                    }
+                    view.stopLoading();
+                }));
+    }
+
 
     public void onCheckingMissData(String nextPage, SuperSafeServiceView view) {
         Utils.Log(TAG, "onGetListSync");
@@ -849,7 +1009,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.size,
                 description.statusProgress,
                 description.isDeleteLocal,
-                description.isDeleteGlobal);
+                description.isDeleteGlobal,
+                description.isWaitingSyncDeleteGlobal);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 

@@ -14,7 +14,9 @@ import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -38,12 +40,13 @@ public interface RootAPI{
     String CHECK_USER_ID = "/api/user/checkUser";
     String GET_LIST_FILES_SYNC = "/api/items/listFilesSync";
     String SYNC_DATA = "/api/items/syncData";
+    String DELETE_OWN_ITEMS = "/api/items/onDelete";
     String GET_DRIVE_ABOUT = "/drive/v2/about";
     String CREATE_FOLDER = "/drive/v3/files";
     String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
     String GET_LIST_FILE_IN_APP_FOLDER = "/drive/v3/files";
     String GET_FILES_INFO = "/drive/v3/files/{id}";
-
+    String DELETE_CLOUD_ITEM = "/drive/v3/files/{id}";
 
 
 
@@ -84,6 +87,10 @@ public interface RootAPI{
     @POST(SYNC_DATA)
     Observable<SyncResponse> onSyncData(@FieldMap Map<String,Object>request);
 
+    @FormUrlEncoded
+    @POST(DELETE_OWN_ITEMS)
+    Observable<SyncResponse> onDeleteOwnItems(@FieldMap Map<String,Object>request);
+
 
     @Headers({"Accept: application/json"})
     @GET(GET_DRIVE_ABOUT)
@@ -101,6 +108,10 @@ public interface RootAPI{
     @Headers({"Accept: application/json"})
     @GET(GET_FILES_INFO)
     Observable<DriveAbout> onGetFilesInfo(@Header("Authorization") String token, @Path("id") String id);
+
+    @Headers({"Accept: application/json"})
+    @DELETE(DELETE_CLOUD_ITEM)
+    Observable<Response<DriveAbout>> onDeleteCloudItem(@Header("Authorization") String token, @Path("id") String id);
 
     @Headers({"Accept: application/json"})
     @GET(CHECK_IN_APP_FOLDER_EXITING)

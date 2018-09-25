@@ -95,9 +95,19 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<Items> getDeleteLocalListItems(boolean isDeleteLocal){
+    public final synchronized List<Items> getDeleteLocalListItems(boolean isDeleteLocal,boolean isWaitingSyncDeleteGlobal){
         try{
-            return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal);
+            return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,isWaitingSyncDeleteGlobal);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getDeleteLocalAndGlobalListItems(boolean isDeleteLocal,boolean isDeleteGlobal){
+        try{
+            return instance.itemsDao().loadDeleteLocalAndGlobalDataItems(isDeleteLocal,isDeleteGlobal);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

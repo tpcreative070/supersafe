@@ -86,6 +86,10 @@
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+
     </style>
 
     <!--

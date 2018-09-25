@@ -42,13 +42,16 @@ public class Items implements Serializable {
     public int statusProgress;
     public boolean isDeleteLocal;
     public boolean isDeleteGlobal;
+    public boolean isWaitingSyncDeleteGlobal;
 
 
     @Ignore
-    private boolean isChecked;
+    public boolean isChecked;
     @Ignore
-    private boolean isDeleted;
+    public boolean isDeleted;
     @Ignore
+    public boolean isOriginalGlobalId;
+
     private static Items instance;
 
     @Ignore
@@ -59,7 +62,7 @@ public class Items implements Serializable {
         return instance;
     }
 
-    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String items_id,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus,String size,int statusProgress,boolean isDeleteLocal,boolean isDeleteGlobal){
+    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String items_id,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus,String size,int statusProgress,boolean isDeleteLocal,boolean isDeleteGlobal, boolean isWaitingSyncDeleteGlobal){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -86,6 +89,7 @@ public class Items implements Serializable {
         this.statusProgress = statusProgress;
         this.isDeleteLocal = isDeleteLocal ;
         this.isDeleteGlobal = isDeleteGlobal;
+        this.isWaitingSyncDeleteGlobal = isWaitingSyncDeleteGlobal;
     }
 
     public Items(){

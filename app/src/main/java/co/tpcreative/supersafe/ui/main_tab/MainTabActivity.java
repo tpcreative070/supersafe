@@ -54,7 +54,9 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -111,6 +113,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
         ServiceManager.getInstance().onCheckingMissData("0");
         //ServiceManager.getInstance().onGetFilesInfo();
+
 
     }
 

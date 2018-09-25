@@ -21,6 +21,24 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/image_background_audio_video" />
 
+
+
+            <View
+                android:id="@+id/view_alpha"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/multiple_image_select_imageSelectBackground"/>
+
+            <com.litao.android.lib.view.SquaredImageView
+                android:src="@drawable/ic_done_white"
+                android:scaleType="centerCrop"
+                android:id="@+id/imgSelect"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
+                android:layout_centerInParent="true"/>
+
+
+
             <TextView
                 android:textColor="@color/multiple_image_select_buttonText"
                 android:layout_margin="5dp"
