@@ -36,7 +36,7 @@ public class DriveDescription implements Serializable{
     public int statusProgress;
     public boolean isDeleteLocal;
     public boolean isDeleteGlobal;
-    public boolean isWaitingSyncDeleteGlobal;
+    public int deleteAction;
 
 
     private static DriveDescription instance;

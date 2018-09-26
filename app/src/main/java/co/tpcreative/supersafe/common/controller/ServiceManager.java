@@ -16,23 +16,17 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -43,6 +37,7 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveTitle;
+import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -237,7 +232,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 @Override
                 public void onSuccessful(String nextPage, EnumStatus status) {
                     if (status == EnumStatus.LOAD_MORE) {
-                        Utils.Log(TAG, "next page on CheckingMissData" + nextPage);
+                        Utils.Log(TAG, "next page on CheckingMissData " + nextPage);
                         onCheckingMissData(nextPage);
                     }
                 }
@@ -345,20 +340,23 @@ public class ServiceManager implements SuperSafeServiceView {
                         Utils.Log(TAG, "next page on onSyncDataOwnServer " + nextPage);
                         onSyncDataOwnServer(nextPage);
                     } else if (status == EnumStatus.SYNC_READY) {
+
                         isLoadingData = false;
                         final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
 
-                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, true);
+                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal());
 
                         final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
 
-//                        if (mListOwnCloud!=null){
-//                            onDeleteOnOwnItems();
-//                        }
-//                        else if (mListCloud!=null){
-//                            onDeleteCloud();
-//                        }
-                        if (items != null) {
+                        if (mListOwnCloud!=null && mListOwnCloud.size()>0){
+                            Utils.Log(TAG, "Preparing deleting on own cloud...");
+                            onDeleteOnOwnItems();
+                        }
+                        else if (mListCloud!=null && mListCloud.size()>0){
+                            Utils.Log(TAG, "Preparing deleting on cloud...");
+                            onDeleteCloud();
+                        }
+                        else if (items != null) {
                             if (items.size() > 0) {
                                 Utils.Log(TAG, "Preparing downloading...");
                                 onDownloadFilesFromDriveStore();
@@ -403,6 +401,97 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
+    public void onDeleteOnOwnItems() {
+        if (myService == null) {
+            Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
+            return;
+        }
+
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            Utils.Log(TAG, "Check network connection");
+            return;
+        }
+
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal());
+
+        if (mList==null){
+            Utils.Log(TAG, "No Found data to delete on own items!!!");
+            return;
+        }
+
+        countSyncData = 0;
+
+        isDeleteOwnCloud = true;
+        totalList = mList.size();
+        if (mList.size() == 0) {
+            Utils.Log(TAG, "Not Found own data id to delete");
+            isDeleteOwnCloud = false;
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            return;
+        }
+
+        subscriptions = Observable.fromIterable(mList)
+                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
+                .doOnNext(i -> {
+                    Utils.Log(TAG,"Starting deleting items on own cloud.......");
+                    final Items mItem = i;
+                    isDeleteOwnCloud = true;
+                    myService.onDeleteOwnSystem(mItem, new SuperSafeServiceView() {
+                        @Override
+                        public void onError(String message, EnumStatus status) {
+                            Utils.Log(TAG, message + "--" + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
+                        }
+
+                        @Override
+                        public void onSuccessful(String message) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status) {
+                            Utils.Log(TAG, message + " -- " + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
+
+                        }
+
+                        @Override
+                        public void onSuccessfulOnCheck(List<Items> lists) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(List<DriveResponse> lists) {
+
+                        }
+
+                        @Override
+                        public void onNetworkConnectionChanged(boolean isConnect) {
+
+                        }
+
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void startLoading() {
+
+                        }
+
+                        @Override
+                        public void stopLoading() {
+
+                        }
+                    });
+                })
+                .doOnComplete(() -> {
+                })
+                .subscribe();
+    }
+
+
     public void onDeleteCloud() {
 
         if (myService == null) {
@@ -415,7 +504,7 @@ public class ServiceManager implements SuperSafeServiceView {
         final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
 
         if (list == null) {
-            Utils.Log(TAG, "No Found data to delete on own items!!!");
+            Utils.Log(TAG, "No Found data to delete on cloud items!!!");
             return;
         }
 
@@ -450,7 +539,6 @@ public class ServiceManager implements SuperSafeServiceView {
             onDeleteOnLocal();
             isDeleteSyncCLoud = false;
             ServiceManager.getInstance().onSyncDataOwnServer("0");
-            onGetDriveAbout();
             Utils.Log(TAG, "Not Found cloud id to delete");
             return;
         }
@@ -458,7 +546,9 @@ public class ServiceManager implements SuperSafeServiceView {
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
+                    isDeleteSyncCLoud = true;
                     final Items mItem = i;
+                    Utils.Log(TAG,"Starting deleting items on cloud.......");
                     myService.onDeleteCloudItems(mItem, mItem.isOriginalGlobalId, new SuperSafeServiceView() {
                         @Override
                         public void onError(String message, EnumStatus status) {
@@ -515,88 +605,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
     }
 
-    public void onDeleteOnOwnItems() {
-        if (myService == null) {
-            Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
-            return;
-        }
-
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            Utils.Log(TAG, "Check network connection");
-            return;
-        }
-
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, true);
-        countSyncData = 0;
-
-
-        isDeleteOwnCloud = true;
-        totalList = mList.size();
-        if (mList == null) {
-            Utils.Log(TAG, "No Found data to delete on own items!!!");
-            isDeleteOwnCloud = false;
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
-            onGetDriveAbout();
-            return;
-        }
-
-        subscriptions = Observable.fromIterable(mList)
-                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
-                .doOnNext(i -> {
-                    final Items mItem = i;
-                    myService.onDeleteOwnSystem(mItem, new SuperSafeServiceView() {
-                        @Override
-                        public void onError(String message, EnumStatus status) {
-                            onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
-                            Utils.Log(TAG, message + "--" + status.name());
-                        }
-
-                        @Override
-                        public void onSuccessful(String message) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status) {
-                            onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
-                            Utils.Log(TAG, message + "--" + status.name());
-                        }
-
-                        @Override
-                        public void onSuccessfulOnCheck(List<Items> lists) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(List<DriveResponse> lists) {
-
-                        }
-
-                        @Override
-                        public void onNetworkConnectionChanged(boolean isConnect) {
-
-                        }
-
-                        @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void startLoading() {
-
-                        }
-
-                        @Override
-                        public void stopLoading() {
-
-                        }
-                    });
-                })
-                .doOnComplete(() -> {
-                })
-                .subscribe();
-    }
 
     public void onDeleteOnLocal() {
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
@@ -1130,7 +1138,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.statusProgress = EnumStatusProgress.NONE.ordinal();
                         description.isDeleteLocal = false;
                         description.isDeleteGlobal = false;
-                        description.isWaitingSyncDeleteGlobal = false;
+                        description.deleteAction = EnumDelete.NONE.ordinal();
+
 
                         items = new Items(false,
                                 description.originalSync,
@@ -1158,7 +1167,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.statusProgress,
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
-                                description.isWaitingSyncDeleteGlobal);
+                                description.deleteAction);
 
                         Utils.Log(TAG, "start compress");
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1232,7 +1241,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.statusProgress = EnumStatusProgress.NONE.ordinal();
                         description.isDeleteLocal = false;
                         description.isDeleteGlobal = false;
-                        description.isWaitingSyncDeleteGlobal = false;
+                        description.deleteAction = EnumDelete.NONE.ordinal();
 
 
                         items = new Items(false,
@@ -1261,7 +1270,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.statusProgress,
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
-                                description.isWaitingSyncDeleteGlobal);
+                                description.deleteAction);
 
 
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1328,7 +1337,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.statusProgress = EnumStatusProgress.NONE.ordinal();
                         description.isDeleteLocal = false;
                         description.isDeleteGlobal = false;
-                        description.isWaitingSyncDeleteGlobal = false;
+                        description.deleteAction = EnumDelete.NONE.ordinal();
+
 
 
                         items = new Items(false,
@@ -1357,7 +1367,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.statusProgress,
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
-                                description.isWaitingSyncDeleteGlobal);
+                                description.deleteAction);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
@@ -1466,7 +1476,8 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.statusProgress = EnumStatusProgress.NONE.ordinal();
                 description.isDeleteLocal = false;
                 description.isDeleteGlobal = false;
-                description.isWaitingSyncDeleteGlobal = false;
+                description.deleteAction = EnumDelete.NONE.ordinal();
+
 
                 Items items = new Items(false,
                         description.originalSync,
@@ -1494,7 +1505,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.statusProgress,
                         description.isDeleteLocal,
                         description.isDeleteGlobal,
-                        description.isWaitingSyncDeleteGlobal);
+                        description.deleteAction);
 
                 boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
                 boolean createdOriginal = storage.createFile(originalPath, data);
@@ -1553,6 +1564,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 if (countSyncData == totalList) {
                     SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
                     SingletonPrivateFragment.getInstance().onUpdateView();
+                    GalleryCameraMediaManager.getInstance().onUpdatedView();
                     isUploadData = false;
                     String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
                     String messageDone = "Completed upload sync data.......................^^...........^^.......^^........";
@@ -1577,6 +1589,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 if (countSyncData == totalList) {
                     SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
                     SingletonPrivateFragment.getInstance().onUpdateView();
+                    GalleryCameraMediaManager.getInstance().onUpdatedView();
                     isDownloadData = false;
                     String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
                     String messageDone = "Completed downloaded sync data.......................^^...........^^.......^^........";

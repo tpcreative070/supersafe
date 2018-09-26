@@ -14,7 +14,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 
-@Database(entities = {Items.class}, version = 2, exportSchema = false)
+@Database(entities = {Items.class}, version = 3, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
@@ -98,9 +98,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<Items> getDeleteLocalListItems(boolean isDeleteLocal,boolean isWaitingSyncDeleteGlobal){
+    public final synchronized List<Items> getDeleteLocalListItems(boolean isDeleteLocal,int deleteAction){
         try{
-            return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,isWaitingSyncDeleteGlobal);
+            return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,deleteAction);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

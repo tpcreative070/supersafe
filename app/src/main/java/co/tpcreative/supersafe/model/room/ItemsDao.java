@@ -31,8 +31,8 @@ public interface ItemsDao {
     List<Items> loadSyncDataItems(boolean isSync,boolean isDeleteLocal,int statusAction);
 
 
-    @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND isWaitingSyncDeleteGlobal = :isWaitingSyncDeleteGlobal")
-    List<Items> loadDeleteLocalDataItems(boolean isDeleteLocal,boolean isWaitingSyncDeleteGlobal);
+    @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND deleteAction = :deleteAction")
+    List<Items> loadDeleteLocalDataItems(boolean isDeleteLocal,int deleteAction);
 
 
     @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND isDeleteGlobal = :isDeleteGlobal")

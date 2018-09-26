@@ -4,15 +4,25 @@ import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+
+import com.snatik.storage.Storage;
+
+import java.util.List;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class SplashScreenActivity extends BaseActivity implements SensorOrientationChangeNotifier.Listener{
 
@@ -21,6 +31,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
     private String value = "" ;
     private boolean grant_access;
     private boolean isRunning;
+    private Storage storage;
     private static final String TAG = SplashScreenActivity.class.getSimpleName();
 
     @Override
@@ -28,6 +39,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        storage = new Storage(this);
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
         isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);
@@ -80,6 +92,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
 
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
+
     }
 
 

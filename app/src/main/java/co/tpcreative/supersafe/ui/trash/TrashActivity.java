@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.bumptech.glide.Glide;
 import com.ftinc.kit.util.SizeUtils;
 import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import com.r0adkll.slidr.Slidr;
@@ -28,7 +29,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 
 public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdapter.ItemSelectedListener{
 
@@ -144,7 +147,10 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
         }
         presenter.getData(this);
         btnTrash.setText(getString(R.string.key_empty_trash));
+
         SingletonPrivateFragment.getInstance().onUpdateView();
+        ServiceManager.getInstance().onSyncDataOwnServer("0");
+
     }
 
     @Override

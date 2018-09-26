@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.services;
 
+import android.arch.persistence.room.util.TableInfo;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -21,8 +22,10 @@ import java.util.Map;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
+import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
@@ -32,6 +35,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveTitle;
+import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -59,6 +63,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     private DownloadService downloadService;
     private DownloadService downloadServiceThumbnail;
     protected Storage storage;
+    private HashMap<String,String>hashMapGlobal = new HashMap<>();
     private static final String TAG = SuperSafeService.class.getSimpleName();
 
     public interface SupperSafeServiceListener {
@@ -499,7 +504,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
 
         final Map<String,Object> hashMap = Items.getInstance().objectToHashMap(items);
-
+        hashMap.put(getString(R.string.key_user_id),user.email);
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -518,6 +523,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     }else{
                         view.onSuccessful(onResponse.message,EnumStatus.DELETE_SYNC_CLOUD_DATA);
                         items.isDeleteGlobal = true;
+                        items.deleteAction = EnumDelete.DELETE_DONE.ordinal();
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                     }
                     view.stopLoading();
@@ -531,11 +537,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
                             final String value = bodys.string();
-                            final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
-                            if (driveAbout!=null){
-                                if (driveAbout.error!=null){
-                                    view.onError(new Gson().toJson(driveAbout.error), EnumStatus.DELETE_SYNC_OWN_DATA);
-                                }
+                            if (value!=null){
+                                view.onError("Error "+value,EnumStatus.DELETE_SYNC_OWN_DATA);
                             }
                             else{
                                 view.onError("Error null ",EnumStatus.DELETE_SYNC_OWN_DATA);
@@ -720,19 +723,20 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         return;
                     }
                     view.stopLoading();
+
                     if (onResponse.error) {
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
                         if (onResponse.nextPage == null) {
                             Log.d(TAG, "Ready for sync");
-                            view.onSuccessful(onResponse.nextPage, EnumStatus.SYNC_READY);
-                            view.onSuccessful(onResponse.message);
+                            onDeletePreviousSync(view,onResponse.nextPage);
                         } else {
                             try {
                                 Map<String, MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                                 final List<DriveResponse> driveResponse = onResponse.files;
                                 for (DriveResponse index : driveResponse) {
+                                    hashMapGlobal.put(index.items_id,index.items_id);
                                     final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                     if (description != null) {
                                         if (hash != null) {
@@ -783,6 +787,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                 e.printStackTrace();
                             }
                             Log.d(TAG, "Load more");
+                            view.onSuccessful(onResponse.message);
                             view.onSuccessful(onResponse.nextPage, EnumStatus.LOAD_MORE);
                         }
                     }
@@ -811,177 +816,26 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 }));
     }
 
-
-    public void onGetListOnlyFilesInApp(SuperSafeServiceView view) {
-        Utils.Log(TAG, "onGetListFolderInApp");
-        if (view == null) {
-            view.onError("no view", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
+    public void onDeletePreviousSync(final SuperSafeServiceView serviceView,final String message){
+        try{
+            final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
+            for (Items index : list){
+                String value = hashMapGlobal.get(index.items_id);
+                if (value==null){
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
+                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+index.items_id);
+                }
+            }
         }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
+        catch (Exception e){
+            e.getMessage();
         }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
+        finally {
+            serviceView.onSuccessful("Ready for sync");
+            serviceView.onSuccessful(message,EnumStatus.SYNC_READY);
+            hashMapGlobal.clear();
         }
-        final User user = User.getInstance().getUserInfo();
-        if (user == null) {
-            view.onError("no user", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-
-        if (user.access_token == null) {
-            view.onError("no access_token", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-
-        if (!user.driveConnected) {
-            view.onError("no driveConnected", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-
-        String access_token = user.access_token;
-        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
-        Log.d(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token, getString(R.string.key_mime_type_all_files), getString(R.string.key_appDataFolder), getString(R.string.key_specific_fields))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
-                .subscribe(onResponse -> {
-                    if (view == null) {
-                        Log.d(TAG, "View is null");
-                        return;
-                    }
-                    view.stopLoading();
-                    if (onResponse.error != null) {
-                        Log.d(TAG, "onError 1");
-                        view.onError(new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
-                    } else {
-                        try {
-                            Map<String, MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
-                            final List<DriveResponse> driveResponse = onResponse.files;
-                            for (DriveResponse index : driveResponse) {
-
-                                final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
-                                if (description != null) {
-                                    if (hash != null) {
-                                        final MainCategories result = hash.get(description.localCategories_Id);
-                                        if (result == null) {
-                                            view.onSuccessful("Add new categories name " + description.localCategories_Name);
-                                            MainCategories.getInstance().onAddCategories(description.localCategories_Id, description.localCategories_Name, description.localCategories_Count);
-                                            hash = MainCategories.getInstance().getMainCategoriesHashList();
-                                        }
-                                    }
-
-                                    DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
-                                    if (driveTitle != null) {
-                                        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
-                                        EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
-                                        EnumFileType enumTypeFile = EnumFileType.values()[driveTitle.fileType];
-                                        if (items == null) {
-                                            switch (enumTypeFile) {
-                                                case ORIGINAL: {
-                                                    description.global_original_id = index.id;
-                                                    break;
-                                                }
-                                                case THUMBNAIL: {
-                                                    description.global_thumbnail_id = index.id;
-                                                    break;
-                                                }
-                                            }
-
-                                            switch (formatTypeFile) {
-                                                case AUDIO: {
-                                                    description.thumbnailSync = true;
-                                                    break;
-                                                }
-                                                default: {
-                                                    description.thumbnailSync = false;
-                                                    break;
-                                                }
-                                            }
-
-                                            String message = "This item is new :" + description.items_id + " - " + index.id;
-                                            Log.d(TAG, message);
-                                            view.onSuccessful(message);
-                                            onSaveItem(description);
-//
-                                        } else {
-                                            switch (enumTypeFile) {
-                                                case ORIGINAL: {
-                                                    items.global_original_id = index.id;
-                                                    break;
-                                                }
-                                                case THUMBNAIL: {
-                                                    items.global_thumbnail_id = index.id;
-                                                    break;
-                                                }
-                                            }
-
-                                            String message = "This item is existing:" + description.items_id + " - " + index.id;
-                                            if (description.items_id.equals("87cdfa94-5378-4a20-86a8-71bf22c26822")) {
-                                                view.onSuccessful(message + " --- " + index.name);
-                                            }
-                                            if (description.items_id.equals("0634714f-5687-4302-8cf9-e6ec39120119")) {
-                                                view.onSuccessful(message + " --- " + index.name);
-                                            }
-
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
-                                            Log.d(TAG, "This item is existing");
-
-                                        }
-                                    } else {
-                                        view.onError("Can not convert item", EnumStatus.GET_LIST_FILES_IN_APP);
-                                        Log.d(TAG, "Can not convert item");
-                                    }
-                                } else {
-                                    view.onError("Description item is null", EnumStatus.GET_LIST_FILES_IN_APP);
-                                    Utils.Log(TAG, "Description item is null");
-                                }
-                            }
-
-                            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
-                            int count = 0;
-                            if (mList != null) {
-                                count = mList.size();
-                            } else {
-                                count = 0;
-                            }
-                            view.onSuccessful("-------------Sync data------------" + onResponse.files.size() + "/" + count);
-                            view.onSuccessful(onResponse.files);
-                        } catch (Exception e) {
-                            view.onError(e.getMessage(), EnumStatus.GET_LIST_FILES_IN_APP);
-                            e.printStackTrace();
-                        }
-                        ;
-                    }
-                    Log.d(TAG, "Body list only files : " + new Gson().toJson(onResponse.files));
-                }, throwable -> {
-                    if (view == null) {
-                        Log.d(TAG, "View is null");
-                        return;
-                    }
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        try {
-                            Log.d(TAG, "error" + bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError("" + msg, EnumStatus.GET_LIST_FILES_IN_APP);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError("" + e.getMessage(), EnumStatus.GET_LIST_FILES_IN_APP);
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :" + throwable.getMessage(), EnumStatus.GET_LIST_FILES_IN_APP);
-                    }
-                    view.stopLoading();
-                }));
     }
-
 
     public void onSaveItem(final DriveDescription description) {
         Items items = new Items(false,
@@ -1010,11 +864,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.statusProgress,
                 description.isDeleteLocal,
                 description.isDeleteGlobal,
-                description.isWaitingSyncDeleteGlobal);
+                description.deleteAction);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
-
-
 
 
 
@@ -1121,8 +973,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         final User mUser = User.getInstance().getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
         HashMap<String, Object> content = new HashMap<>();
-
-
 
 
         DriveTitle contentTitle = new DriveTitle();

@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
 
@@ -43,6 +44,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             .centerCrop()
             .override(400, 400)
             .placeholder(R.color.colorPrimary)
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .error(R.color.colorPrimary)
             .priority(Priority.HIGH);
 
@@ -53,6 +56,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         this.itemSelectedListener = itemSelectedListener;
     }
+
 
     @Override
     public int getItemCount() {
@@ -105,6 +109,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                                 imgIcon.setVisibility(View.INVISIBLE);
                             }
                             else{
+                                imgAlbum.setImageResource(0);
                                 imgAlbum.setBackgroundResource(data.imageResource);
                             }
                         } catch (Exception e) {
@@ -114,7 +119,9 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     }
                 }
             } else {
+                imgAlbum.setImageResource(0);
                 imgIcon.setBackgroundResource(data.icon);
+                imgIcon.setVisibility(View.VISIBLE);
                 imgAlbum.setBackgroundResource(data.imageResource);
             }
 

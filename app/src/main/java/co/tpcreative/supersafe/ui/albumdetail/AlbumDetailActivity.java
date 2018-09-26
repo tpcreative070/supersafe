@@ -152,7 +152,9 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
             }
         } else {
+            backdrop.setImageResource(0);
             backdrop.setBackgroundResource(presenter.mainCategories.imageResource);
+            imgIcon.setVisibility(View.VISIBLE);
             imgIcon.setBackgroundResource(presenter.mainCategories.icon);
         }
         GalleryCameraMediaManager.getInstance().setListener(this);

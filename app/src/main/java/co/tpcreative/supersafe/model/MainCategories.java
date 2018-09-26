@@ -61,7 +61,7 @@ public class MainCategories implements Serializable{
         }
 
 
-        final List<Items>list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,false);
+        final List<Items>list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal());
         if (list!=null){
             if (list.size()>0){
                 final MainCategories items = getTrashItem();
