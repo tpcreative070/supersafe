@@ -23,6 +23,7 @@ import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import co.tpcreative.supersafe.ui.signin.SignInActivity;
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
@@ -167,6 +168,14 @@ public class Navigator {
 
     public static void onMoveTrash(Context context){
         Intent intent = new Intent(context, TrashActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onAlbumSettings(Context context,MainCategories items){
+        Intent intent = new Intent(context, AlbumSettingsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(context.getString(R.string.key_main_categories),items);
+        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 

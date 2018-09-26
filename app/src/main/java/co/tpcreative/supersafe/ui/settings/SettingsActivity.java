@@ -61,7 +61,6 @@ public class SettingsActivity extends BaseActivity {
                 .build();
         Slidr.attach(this, mConfig);
 
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment == null) {
@@ -73,7 +72,6 @@ public class SettingsActivity extends BaseActivity {
         transaction.commit();
 
     }
-
 
 
     public static class SettingsFragment extends PreferenceFragmentCompat {

@@ -117,7 +117,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onSetting(int position) {
-
+        Navigator.onAlbumSettings(getActivity(),presenter.mList.get(position));
     }
 
     @Override

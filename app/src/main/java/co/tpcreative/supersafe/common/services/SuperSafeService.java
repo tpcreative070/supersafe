@@ -261,7 +261,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
                 return;
             }
-            
+
 
             String access_token = user.access_token;
             view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
