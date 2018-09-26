@@ -74,6 +74,10 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         void onMessageAction(String message);
     }
 
+    public HashMap<String, String> getHashMapGlobal() {
+        return hashMapGlobal;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -438,9 +442,20 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 .doOnSubscribe(__ -> view.startLoading())
                 .subscribe(onResponse -> {
                     if (onResponse.code()==204){
+
+                        final EnumDelete delete = EnumDelete.values()[items.deleteAction];
+                        if (delete==EnumDelete.DELETE_DONE){
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+                            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+items.items_id);
+                        }
                         view.onSuccessful("Deleted Successful : code "+ onResponse.code() +" - ",EnumStatus.DELETE_SYNC_CLOUD_DATA);
                     }
                     else if (onResponse.code()==404){
+                        final EnumDelete delete = EnumDelete.values()[items.deleteAction];
+                        if (delete==EnumDelete.DELETE_DONE){
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+                            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+items.items_id);
+                        }
                         final String value = onResponse.errorBody().string();
                         final DriveAbout driveAbout = new Gson().fromJson(value,DriveAbout.class);
                         view.onError("Not found file :" + new Gson().toJson(driveAbout.error)+" - ",EnumStatus.DELETE_SYNC_CLOUD_DATA);
@@ -730,9 +745,12 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     } else {
                         if (onResponse.nextPage == null) {
                             Log.d(TAG, "Ready for sync");
-                            onDeletePreviousSync(view,onResponse.nextPage);
+                            view.onSuccessful("Ready for sync");
+                            view.onSuccessful(onResponse.nextPage,EnumStatus.SYNC_READY);
+                            //onDeletePreviousSync(view,onResponse.nextPage);
                         } else {
                             try {
+                                hashMapGlobal.clear();
                                 Map<String, MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                                 final List<DriveResponse> driveResponse = onResponse.files;
                                 for (DriveResponse index : driveResponse) {
@@ -816,7 +834,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 }));
     }
 
-    public void onDeletePreviousSync(final SuperSafeServiceView serviceView,final String message){
+    public void onDeletePreviousSync(ServiceManager.DeleteServiceListener view){
         try{
             final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
             for (Items index : list){
@@ -831,8 +849,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             e.getMessage();
         }
         finally {
-            serviceView.onSuccessful("Ready for sync");
-            serviceView.onSuccessful(message,EnumStatus.SYNC_READY);
+            view.onDone();
             hashMapGlobal.clear();
         }
     }

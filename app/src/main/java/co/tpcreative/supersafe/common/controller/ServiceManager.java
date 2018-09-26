@@ -65,6 +65,17 @@ public class ServiceManager implements SuperSafeServiceView {
     private Storage mStorage = new Storage(SuperSafeApplication.getInstance());
     private Cipher mCiphers;
 
+
+    private boolean isDownloadData;
+    private boolean isLoadingData;
+    private boolean isDeleteSyncCLoud;
+    private boolean isDeleteOwnCloud;
+    private int countSyncData = 0;
+    private int totalList = 0;
+
+
+
+
     public boolean isDownloadData() {
         return isDownloadData;
     }
@@ -73,12 +84,21 @@ public class ServiceManager implements SuperSafeServiceView {
         isDownloadData = downloadData;
     }
 
-    private boolean isDownloadData;
-    private boolean isLoadingData;
-    private boolean isDeleteSyncCLoud;
-    private boolean isDeleteOwnCloud;
-    private int countSyncData = 0;
-    private int totalList = 0;
+    public boolean isDeleteSyncCLoud() {
+        return isDeleteSyncCLoud;
+    }
+
+    public void setDeleteSyncCLoud(boolean deleteSyncCLoud) {
+        isDeleteSyncCLoud = deleteSyncCLoud;
+    }
+
+    public boolean isDeleteOwnCloud() {
+        return isDeleteOwnCloud;
+    }
+
+    public void setDeleteOwnCloud(boolean deleteOwnCloud) {
+        isDeleteOwnCloud = deleteOwnCloud;
+    }
 
     public boolean isUploadData() {
         return isUploadData;
@@ -88,13 +108,6 @@ public class ServiceManager implements SuperSafeServiceView {
         isUploadData = uploadData;
     }
 
-    public int getCountSyncData() {
-        return countSyncData;
-    }
-
-    public void setCountSyncData(int countSyncData) {
-        this.countSyncData = countSyncData;
-    }
 
     public void onPickUpNewEmailNoTitle(Activity context, String account) {
         try {
@@ -348,6 +361,18 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
 
+                        final List<Items> mPreviousList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
+
+                        boolean isPreviousDelete = false;
+                        if (mPreviousList!=null && mPreviousList.size()>0){
+                            for (Items index : mPreviousList){
+                                String value = myService.getHashMapGlobal().get(index.items_id);
+                                if (value==null){
+                                    isPreviousDelete = true;
+                                }
+                            }
+                        }
+
                         if (mListOwnCloud!=null && mListOwnCloud.size()>0){
                             Utils.Log(TAG, "Preparing deleting on own cloud...");
                             onDeleteOnOwnItems();
@@ -355,6 +380,15 @@ public class ServiceManager implements SuperSafeServiceView {
                         else if (mListCloud!=null && mListCloud.size()>0){
                             Utils.Log(TAG, "Preparing deleting on cloud...");
                             onDeleteCloud();
+                        }
+                        else if (isPreviousDelete){
+                            Utils.Log(TAG, "Preparing deleting on previous...");
+                            myService.onDeletePreviousSync(new DeleteServiceListener() {
+                                @Override
+                                public void onDone() {
+                                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                                }
+                            });
                         }
                         else if (items != null) {
                             if (items.size() > 0) {
@@ -492,6 +526,7 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
+
     public void onDeleteCloud() {
 
         if (myService == null) {
@@ -536,7 +571,7 @@ public class ServiceManager implements SuperSafeServiceView {
         totalList = mList.size();
         isDeleteSyncCLoud = true;
         if (mList.size() == 0) {
-            onDeleteOnLocal();
+            //onDeleteOnLocal();
             isDeleteSyncCLoud = false;
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             Utils.Log(TAG, "Not Found cloud id to delete");
@@ -606,12 +641,12 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
-    public void onDeleteOnLocal() {
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
-        for (Items index : list) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-        }
-    }
+//    public void onDeleteOnLocal() {
+//        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
+//        for (Items index : list) {
+//            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
+//        }
+//    }
 
 
     public void onDownloadFilesFromDriveStore() {
@@ -1399,25 +1434,48 @@ public class ServiceManager implements SuperSafeServiceView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
-                    final Items items = (Items) response;
-                    if (items != null) {
-                        long mb;
-                        if (storage.isFileExist(items.originalPath)) {
-                            final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
-                            mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                            driveDescription.size = "" + mb;
-                            items.size = driveDescription.size;
-                            items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                    try {
+                        final Items items = (Items) response;
+                        if (items != null) {
+                            long mb;
+                            EnumFormatType enumFormatType = EnumFormatType.values()[items.formatType];
+                            switch (enumFormatType) {
+                                case AUDIO: {
+                                    if (storage.isFileExist(items.originalPath)) {
+                                        final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
+                                        mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
+                                        driveDescription.size = "" + mb;
+                                        items.size = driveDescription.size;
+                                        items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+                                    }
+                                    break;
+                                }
+                                default: {
+                                    if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
+                                        final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
+                                        mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
+                                        driveDescription.size = "" + mb;
+                                        items.size = driveDescription.size;
+                                        items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+                                    }
+                                    break;
+                                }
+                            }
+                            Utils.Log(TAG, "Write file successful ");
+                        } else {
+                            Utils.Log(TAG, "Write file Failed ");
                         }
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
-                        Utils.Log(TAG, "Write file successful ");
-                    } else {
-                        Utils.Log(TAG, "Write file Failed ");
                     }
-                    // Utils.Log(TAG, new Gson().toJson(items));
-                    GalleryCameraMediaManager.getInstance().onUpdatedView();
-                    SingletonPrivateFragment.getInstance().onUpdateView();
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    finally {
+                        GalleryCameraMediaManager.getInstance().onUpdatedView();
+                        SingletonPrivateFragment.getInstance().onUpdateView();
+                        ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    }
                 });
     }
 
@@ -1542,17 +1600,19 @@ public class ServiceManager implements SuperSafeServiceView {
                                 driveDescription.size = "" + mb;
                                 mItem.size = driveDescription.size;
                                 mItem.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
                             }
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
                         }
                         Utils.Log(TAG, "Insert Successful");
                         // Utils.Log(TAG, new Gson().toJson(mItem));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    GalleryCameraMediaManager.getInstance().setProgressing(false);
-                    SingletonPrivateFragment.getInstance().onUpdateView();
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    finally {
+                        GalleryCameraMediaManager.getInstance().setProgressing(false);
+                        SingletonPrivateFragment.getInstance().onUpdateView();
+                        ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    }
                 });
 
     }
@@ -1648,8 +1708,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, "Request cloud syn data on download.........");
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
-                    onDeleteOnLocal();
-
+                    //onDeleteOnLocal();
                 } else {
                     String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
                     onWriteLog(message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
@@ -1761,6 +1820,11 @@ public class ServiceManager implements SuperSafeServiceView {
         void onDownLoadCompleted(File file_name, DownloadFileRequest request);
 
         void onError(String message, EnumStatus status);
+    }
+
+
+    public interface DeleteServiceListener{
+        void onDone();
     }
 
 }
