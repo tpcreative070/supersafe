@@ -14,11 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 import com.snatik.storage.Storage;
-import com.snatik.storage.helpers.SizeUnit;
-
-import java.io.File;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -27,7 +23,6 @@ import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Album;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -87,7 +82,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             this.data = data;
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.localId,false);
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_id,false);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
@@ -110,7 +105,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                             }
                             else{
                                 imgAlbum.setImageResource(0);
-                                imgAlbum.setBackgroundResource(data.imageResource);
+                                imgAlbum.setBackgroundResource(data.image);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -122,10 +117,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                 imgAlbum.setImageResource(0);
                 imgIcon.setBackgroundResource(data.icon);
                 imgIcon.setVisibility(View.VISIBLE);
-                imgAlbum.setBackgroundResource(data.imageResource);
+                imgAlbum.setBackgroundResource(data.image);
             }
 
-            tvTitle.setText(data.name);
+            tvTitle.setText(data.categories_name);
             this.mPosition = position;
         }
 
@@ -138,10 +133,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
         @OnClick(R.id.overflow)
         public void onClickedOverFlow(View view) {
-            if (data.localId.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
+            if (data.categories_id.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
                 showPopupMenu(view, R.menu.menu_trash_album,mPosition);
             }
-            else if(data.localId.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
+            else if(data.categories_id.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
                 showPopupMenu(view, R.menu.menu_main_album,mPosition);
             }
             else{

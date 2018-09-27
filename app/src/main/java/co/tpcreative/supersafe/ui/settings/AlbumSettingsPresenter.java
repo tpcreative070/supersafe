@@ -31,7 +31,6 @@ public class AlbumSettingsPresenter extends Presenter<AlbumSettingsView> {
         catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
 }

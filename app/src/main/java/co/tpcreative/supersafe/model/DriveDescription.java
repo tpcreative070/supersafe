@@ -11,9 +11,9 @@ public class DriveDescription implements Serializable{
 
     private static String TAG = DriveDescription.class.getSimpleName();
 
-    public String localCategories_Name;
-    public String localCategories_Id;
-    public String localCategories_Count;
+    public String categories_name;
+    public String categories_id;
+    public String categories_max;
     public String fileExtension;
     public String thumbnailPath;
     public String originalPath;

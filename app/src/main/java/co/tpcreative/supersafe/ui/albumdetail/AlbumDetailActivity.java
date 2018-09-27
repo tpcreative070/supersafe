@@ -29,7 +29,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
 import com.ftinc.kit.util.SizeUtils;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -54,18 +53,13 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
@@ -136,13 +130,13 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle(presenter.mainCategories.name);
+        collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
 
-        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.localId, false);
+        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.categories_id, false);
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             if (formatTypeFile == EnumFormatType.AUDIO) {
-                backdrop.setBackgroundResource(presenter.mainCategories.imageResource);
+                backdrop.setBackgroundResource(presenter.mainCategories.image);
             } else {
                 Glide.with(this)
                         .load(storage.readFile(items.thumbnailPath))
@@ -153,7 +147,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
             }
         } else {
             backdrop.setImageResource(0);
-            backdrop.setBackgroundResource(presenter.mainCategories.imageResource);
+            backdrop.setBackgroundResource(presenter.mainCategories.image);
             imgIcon.setVisibility(View.VISIBLE);
             imgIcon.setBackgroundResource(presenter.mainCategories.icon);
         }

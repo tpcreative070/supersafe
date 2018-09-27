@@ -74,8 +74,6 @@ public class ServiceManager implements SuperSafeServiceView {
     private int totalList = 0;
 
 
-
-
     public boolean isDownloadData() {
         return isDownloadData;
     }
@@ -716,10 +714,10 @@ public class ServiceManager implements SuperSafeServiceView {
                         final Items itemObject = index;
                         boolean isWorking = true;
 
-                        if (itemObject.localCategories_Id == null) {
+                        if (itemObject.categories_id == null) {
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                             onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
-                            Utils.Log(TAG, "localCategories_Id is null at " + itemObject.id);
+                            Utils.Log(TAG, "categories_id is null at " + itemObject.id);
                             isWorking = false;
                         }
 
@@ -895,7 +893,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         final Items itemObject = index;
                         boolean isWorking = true;
 
-                        if (itemObject.localCategories_Id == null) {
+                        if (itemObject.categories_id == null) {
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                             isWorking = false;
                         }
@@ -1092,9 +1090,9 @@ public class ServiceManager implements SuperSafeServiceView {
             final String mVideo_id = id;
             final Items items;
             final MainCategories mMainCategories = mainCategories;
-            final String localCategories_Id = mMainCategories.localId;
-            final String localCategories_Name = mMainCategories.name;
-            final String localCategories_Count = "" + mMainCategories.localCategories_Count;
+            final String categories_id = mMainCategories.categories_id;
+            final String categories_name = mMainCategories.categories_name;
+            final String categories_max = "" + mMainCategories.categories_max;
 
             Utils.Log(TAG, "object " + new Gson().toJson(mMimeTypeFile));
             Bitmap thumbnail = null;
@@ -1152,9 +1150,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalPath = originalPath;
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
-                        description.localCategories_Id = localCategories_Id;
-                        description.localCategories_Name = localCategories_Name;
-                        description.localCategories_Count = localCategories_Count;
+                        description.categories_id = categories_id;
+                        description.categories_name = categories_name;
+                        description.categories_max = categories_max;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -1191,9 +1189,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.local_id,
                                 description.global_original_id,
                                 description.global_thumbnail_id,
-                                description.localCategories_Id,
-                                description.localCategories_Name,
-                                description.localCategories_Count,
+                                description.categories_id,
+                                description.categories_name,
+                                description.categories_max,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1256,9 +1254,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalPath = originalPath;
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
-                        description.localCategories_Id = localCategories_Id;
-                        description.localCategories_Name = localCategories_Name;
-                        description.localCategories_Count = localCategories_Count;
+                        description.categories_id = categories_id;
+                        description.categories_name = categories_name;
+                        description.categories_max = categories_max;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -1294,9 +1292,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.local_id,
                                 description.global_original_id,
                                 description.global_thumbnail_id,
-                                description.localCategories_Id,
-                                description.localCategories_Name,
-                                description.localCategories_Count,
+                                description.categories_id,
+                                description.categories_name,
+                                description.categories_max,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1333,12 +1331,9 @@ public class ServiceManager implements SuperSafeServiceView {
                     break;
                 }
 
-
                 case AUDIO: {
-
                     Utils.Log(TAG, "Start RXJava Video Progressing");
                     try {
-
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
                         String uuId = Utils.getUUId();
@@ -1346,15 +1341,14 @@ public class ServiceManager implements SuperSafeServiceView {
                         storage.createDirectory(pathContent);
                         String originalPath = pathContent + currentTime;
 
-
                         DriveDescription description = new DriveDescription();
                         description.fileExtension = mMimeTypeFile.extension;
                         description.originalPath = originalPath;
                         description.thumbnailPath = null;
                         description.subFolderName = uuId;
-                        description.localCategories_Id = localCategories_Id;
-                        description.localCategories_Name = localCategories_Name;
-                        description.localCategories_Count = localCategories_Count;
+                        description.categories_id = categories_id;
+                        description.categories_name = categories_name;
+                        description.categories_max = categories_max;
                         description.local_id = uuId;
                         description.mimeType = mMimeType;
                         description.items_id = uuId;
@@ -1375,7 +1369,6 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.deleteAction = EnumDelete.NONE.ordinal();
 
 
-
                         items = new Items(false,
                                 description.originalSync,
                                 description.thumbnailSync,
@@ -1391,9 +1384,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.local_id,
                                 description.global_original_id,
                                 description.global_thumbnail_id,
-                                description.localCategories_Id,
-                                description.localCategories_Name,
-                                description.localCategories_Count,
+                                description.categories_id,
+                                description.categories_name,
+                                description.categories_max,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1491,9 +1484,9 @@ public class ServiceManager implements SuperSafeServiceView {
         subscriptions = Observable.create(subscriber -> {
 
             final MainCategories mMainCategories = mainCategories;
-            final String localCategories_Id = mMainCategories.localId;
-            final String localCategories_Name = mMainCategories.name;
-            final String localCategories_Count = "" + mMainCategories.localCategories_Count;
+            final String categories_id = mMainCategories.categories_id;
+            final String categories_name = mMainCategories.categories_name;
+            final String categories_max = "" + mMainCategories.categories_max;
 
             File thumbnail = null;
             final byte[] data = mData;
@@ -1513,9 +1506,9 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.originalPath = originalPath;
                 description.thumbnailPath = thumbnailPath;
                 description.subFolderName = uuId;
-                description.localCategories_Id = localCategories_Id;
-                description.localCategories_Name = localCategories_Name;
-                description.localCategories_Count = localCategories_Count;
+                description.categories_id = categories_id;
+                description.categories_name = categories_name;
+                description.categories_max = categories_max;
                 description.local_id = uuId;
                 description.global_original_id = null;
                 description.mimeType = MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype();
@@ -1552,9 +1545,9 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.local_id,
                         description.global_original_id,
                         description.global_thumbnail_id,
-                        description.localCategories_Id,
-                        description.localCategories_Name,
-                        description.localCategories_Count,
+                        description.categories_id,
+                        description.categories_name,
+                        description.categories_max,
                         description.mimeType,
                         description.fileExtension,
                         DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),

@@ -18,14 +18,14 @@ public interface ItemsDao {
     @Delete
     void delete(Items... items);
 
-    @Query("Delete from items  WHERE localCategories_Id = :id")
-    void deleteAll(String id);
+    @Query("Delete from items  WHERE categories_id = :categories_id")
+    void deleteAll(String categories_id);
 
-    @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC")
-    List<Items> loadAll(String localCategories_Id,boolean isDeleteLocal);
+    @Query("Select * FROM items WHERE categories_id = :categories_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC")
+    List<Items> loadAll(String categories_id,boolean isDeleteLocal);
 
-    @Query("Select * FROM items WHERE localCategories_Id = :localCategories_Id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC LIMIT 1")
-    Items getLatestId(String localCategories_Id,boolean isDeleteLocal);
+    @Query("Select * FROM items WHERE categories_id = :categories_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC LIMIT 1")
+    Items getLatestId(String categories_id,boolean isDeleteLocal);
 
     @Query("Select * FROM items WHERE isSync = :isSync AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction ORDER BY id DESC LIMIT 3")
     List<Items> loadSyncDataItems(boolean isSync,boolean isDeleteLocal,int statusAction);

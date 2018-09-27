@@ -102,7 +102,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         Log.d(TAG,"Position :"+ position);
         try {
             String value  = Utils.getHexCode(getString(R.string.key_trash));
-            if (value.equals(presenter.mList.get(position).localId)){
+            if (value.equals(presenter.mList.get(position).categories_id)){
                 Navigator.onMoveTrash(getActivity());
             }
             else{
@@ -124,9 +124,9 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     public void onDeleteAlbum(int position) {
         final MainCategories object = presenter.mList.get(position);
         if (object!=null){
-            final boolean response = MainCategories.getInstance().onDeleteCategories(object.localId);
+            final boolean response = MainCategories.getInstance().onDeleteCategories(object.categories_id);
             if (response){
-                InstanceGenerator.getInstance(getActivity()).onDeleteAll(object.localId);
+                InstanceGenerator.getInstance(getActivity()).onDeleteAll(object.categories_id);
                 presenter.getData();
             }
         }

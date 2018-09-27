@@ -22,9 +22,9 @@ public class Items implements Serializable {
     public String global_original_id;
     public String global_thumbnail_id;
     public String local_id;
-    public String localCategories_Id;
-    public String localCategories_Name;
-    public String localCategories_Count;
+    public String categories_id;
+    public String categories_name;
+    public String categories_max;
     public int formatType;
     public String thumbnailPath;
     public String originalPath;
@@ -63,7 +63,7 @@ public class Items implements Serializable {
     }
 
 
-    public Items(boolean isSync,boolean originalSync,boolean thumbnailSync,int degrees,int fileType,int formatType,String title,String originalName,String thumbnailName,String items_id,String originalPath,String thumbnailPath,String local_id,String global_original_id,String global_thumbnail_id,String localCategories_Id ,String localCategories_Name,String localCategories_Count,String mimeType,String fileExtension,String driveDescription,EnumStatus enumStatus,String size,int statusProgress,boolean isDeleteLocal,boolean isDeleteGlobal, int deleteAction){
+    public Items(boolean isSync, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_name, String categories_max, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -77,9 +77,9 @@ public class Items implements Serializable {
         this.local_id = local_id;
         this.global_original_id = global_original_id;
         this.global_thumbnail_id = global_thumbnail_id;
-        this.localCategories_Id = localCategories_Id;
-        this.localCategories_Name = localCategories_Name;
-        this.localCategories_Count = localCategories_Count;
+        this.categories_id = categories_id;
+        this.categories_name = categories_name;
+        this.categories_max = categories_max;
         this.originalPath = originalPath;
         this.thumbnailPath = thumbnailPath;
         this.mimeType = mimeType;

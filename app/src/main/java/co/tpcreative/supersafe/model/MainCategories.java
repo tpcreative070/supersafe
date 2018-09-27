@@ -17,11 +17,11 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class MainCategories implements Serializable{
 
-    public int imageResource;
+    public int image;
     public int icon;
-    public long localCategories_Count;
-    public String localId;
-    public String name;
+    public long categories_max;
+    public String categories_id;
+    public String categories_name;
     public static MainCategories instance ;
 
     /*Send data to camera action*/
@@ -29,19 +29,19 @@ public class MainCategories implements Serializable{
 
     private static final String TAG = MainCategories.class.getSimpleName();
 
-    public MainCategories(String localId, String name, int imageResource,int icon,long localCategories_Count ) {
-        this.name = name;
-        this.imageResource = imageResource;
+    public MainCategories(String categories_id, String categories_name, int image, int icon, long categories_max) {
+        this.categories_name = categories_name;
+        this.image = image;
         this.icon = icon;
-        this.localId = localId;
-        this.localCategories_Count = localCategories_Count;
+        this.categories_id = categories_id;
+        this.categories_max = categories_max;
     }
 
     public MainCategories(){
-        this.imageResource = 0;
-        this.name = null;
-        this.localId = null;
-        this.localCategories_Count = 0;
+        this.image = 0;
+        this.categories_name = null;
+        this.categories_id = null;
+        this.categories_max = 0;
     }
 
     public List<MainCategories> getList(){
@@ -65,7 +65,7 @@ public class MainCategories implements Serializable{
         if (list!=null){
             if (list.size()>0){
                 final MainCategories items = getTrashItem();
-                items.localCategories_Count = mList.size()+1;
+                items.categories_max = mList.size()+1;
                 mList.add(items);
             }
         }
@@ -73,8 +73,8 @@ public class MainCategories implements Serializable{
         Collections.sort(mList, new Comparator<MainCategories>() {
             @Override
             public int compare(MainCategories lhs, MainCategories rhs) {
-                int count_1 = (int) lhs.localCategories_Count;
-                int count_2 = (int) rhs.localCategories_Count;
+                int count_1 = (int) lhs.categories_max;
+                int count_2 = (int) rhs.categories_max;
                 return count_1 - count_2;
             }
         });
@@ -143,7 +143,7 @@ public class MainCategories implements Serializable{
             if (map!=null){
                 final MainCategories object = map.get(id);
                 if (object!=null){
-                    map.remove(object.localId);
+                    map.remove(object.categories_id);
                     PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
                     Utils.Log(TAG," delete "+ new Gson().toJson(map));
                     return true;

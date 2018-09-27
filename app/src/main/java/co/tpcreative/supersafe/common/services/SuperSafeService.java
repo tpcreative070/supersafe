@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.services;
 
-import android.arch.persistence.room.util.TableInfo;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -22,10 +21,8 @@ import java.util.Map;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
@@ -759,10 +756,10 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                     final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                     if (description != null) {
                                         if (hash != null) {
-                                            final MainCategories result = hash.get(description.localCategories_Id);
+                                            final MainCategories result = hash.get(description.categories_id);
                                             if (result == null) {
-                                                view.onSuccessful("Add new categories name " + description.localCategories_Name);
-                                                MainCategories.getInstance().onAddCategories(description.localCategories_Id, description.localCategories_Name, description.localCategories_Count);
+                                                view.onSuccessful("Add new categories name " + description.categories_name);
+                                                MainCategories.getInstance().onAddCategories(description.categories_id, description.categories_name, description.categories_max);
                                                 hash = MainCategories.getInstance().getMainCategoriesHashList();
                                             }
                                         }
@@ -871,9 +868,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.subFolderName,
                 description.global_original_id,
                 description.global_thumbnail_id,
-                description.localCategories_Id,
-                description.localCategories_Name,
-                description.localCategories_Count,
+                description.categories_id,
+                description.categories_name,
+                description.categories_max,
                 description.mimeType,
                 description.fileExtension,
                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
