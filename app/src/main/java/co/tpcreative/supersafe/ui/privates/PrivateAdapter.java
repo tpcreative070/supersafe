@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.privates;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -105,7 +106,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                             }
                             else{
                                 imgAlbum.setImageResource(0);
-                                imgAlbum.setBackgroundResource(data.image);
+                                int myColor = Color.parseColor(data.image);
+                                imgAlbum.setBackgroundColor(myColor);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -115,9 +117,16 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                 }
             } else {
                 imgAlbum.setImageResource(0);
-                imgIcon.setBackgroundResource(data.icon);
+                imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context,data.icon));
                 imgIcon.setVisibility(View.VISIBLE);
-                imgAlbum.setBackgroundResource(data.image);
+
+                try {
+                    int myColor = Color.parseColor(data.image);
+                    imgAlbum.setBackgroundColor(myColor);
+                }
+                catch (Exception e){
+
+                }
             }
 
             tvTitle.setText(data.categories_name);

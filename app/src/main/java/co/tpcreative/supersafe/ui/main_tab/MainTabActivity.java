@@ -420,6 +420,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
+        ServiceManager.getInstance().onGetListCategoriesSync();
         onBackUp();
     }
 

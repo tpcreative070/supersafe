@@ -345,6 +345,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
         hashMap.put(getString(R.string.key_user_id), user.email);
+        hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
+        hashMap.put(getString(R.string.key_categories_max),mainCategories.categories_max+"");
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -421,6 +423,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
         hashMap.put(getString(R.string.key_user_id), user.email);
+        hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -496,7 +499,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
         Map<String, Object> hashMap = new HashMap<>();
         hashMap.put(getString(R.string.key_user_id), user.email);
-
+        hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -877,20 +880,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         } else {
                             try {
                                 hashMapGlobal.clear();
-                                Map<String, MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                                 final List<DriveResponse> driveResponse = onResponse.files;
                                 for (DriveResponse index : driveResponse) {
                                     hashMapGlobal.put(index.items_id,index.items_id);
                                     final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                     if (description != null) {
-                                        if (hash != null) {
-                                            final MainCategories result = hash.get(description.categories_id);
-                                            if (result == null) {
-                                                view.onSuccessful("Add new categories name " + description.categories_name);
-                                                MainCategories.getInstance().onAddCategories(description.categories_id, description.categories_name, description.categories_max);
-                                                hash = MainCategories.getInstance().getMainCategoriesHashList();
-                                            }
-                                        }
 
                                         DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                         if (driveTitle != null) {

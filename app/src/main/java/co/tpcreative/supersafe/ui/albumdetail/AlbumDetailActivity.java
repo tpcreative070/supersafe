@@ -59,6 +59,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
@@ -136,7 +137,14 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             if (formatTypeFile == EnumFormatType.AUDIO) {
-                backdrop.setBackgroundResource(presenter.mainCategories.image);
+
+                try {
+                    int myColor = Color.parseColor(presenter.mainCategories.image);
+                    backdrop.setBackgroundColor(myColor);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             } else {
                 Glide.with(this)
                         .load(storage.readFile(items.thumbnailPath))
@@ -147,9 +155,15 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
             }
         } else {
             backdrop.setImageResource(0);
-            backdrop.setBackgroundResource(presenter.mainCategories.image);
+            try {
+                int myColor = Color.parseColor(presenter.mainCategories.image);
+                backdrop.setBackgroundColor(myColor);
+            }
+            catch (Exception e){
+
+            }
             imgIcon.setVisibility(View.VISIBLE);
-            imgIcon.setBackgroundResource(presenter.mainCategories.icon);
+            imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(this,presenter.mainCategories.icon));
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
 

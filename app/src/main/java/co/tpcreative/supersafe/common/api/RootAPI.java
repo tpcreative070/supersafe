@@ -41,7 +41,7 @@ public interface RootAPI{
     String CHECK_USER_ID = "/api/user/checkUser";
     String GET_LIST_FILES_SYNC = "/api/items/listFilesSync";
     String GET_LIST_CATEGORIES_SYNC = "/api/category/listCategoriesSync";
-    String CATEGORIES_SYNC = "/api/category/listCategoriesSync";
+    String CATEGORIES_SYNC = "/api/category/syncCategories";
     String DELETE_CATEGORIES = "/api/category/onDelete";
     String SYNC_DATA = "/api/items/syncData";
     String DELETE_OWN_ITEMS = "/api/items/onDelete";

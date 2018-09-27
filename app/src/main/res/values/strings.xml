@@ -323,6 +323,7 @@
     <string name="key_album_lock">Album Lock</string>
     <string name="key_help_support">Help&amp;Support</string>
     <string name="key_about_SuperSafe">About Supersafe</string>
+    <string name="key_categories_max">categories_max</string>
 
 
 </resources>
