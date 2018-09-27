@@ -18,7 +18,8 @@ public class Items implements Serializable {
     public int id;
     public String originalName;
     public String thumbnailName;
-    public boolean isSync;
+    public boolean isSyncCloud;
+    public boolean isSyncOwnServer;
     public String global_original_id;
     public String global_thumbnail_id;
     public String local_id;
@@ -63,14 +64,15 @@ public class Items implements Serializable {
     }
 
 
-    public Items(boolean isSync, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_name, String categories_max, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction){
+    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_name, String categories_max, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
         this.fileType = fileType;
         this.formatType = formatType;
         this.title = title;
-        this.isSync = isSync;
+        this.isSyncCloud = isSyncCloud;
+        this.isSyncOwnServer = isSyncOwnServer;
         this.thumbnailSync = thumbnailSync;
         this.originalSync = originalSync;
         this.degrees = degrees;
@@ -95,7 +97,8 @@ public class Items implements Serializable {
 
     public Items(){
         this.thumbnailName = "";
-        this.isSync = false;
+        this.isSyncCloud = false;
+        this.isSyncOwnServer = false;
         this.isOriginalGlobalId = false;
     }
 

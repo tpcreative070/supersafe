@@ -178,9 +178,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized Items getItemId(String localId,boolean isSync){
+    public final synchronized Items getItemId(String localId,boolean isSyncCloud){
         try{
-            return instance.itemsDao().loadItemId(localId,isSync);
+            return instance.itemsDao().loadItemId(localId,isSyncCloud);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -189,9 +189,19 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<Items> getListItemId(boolean isSync){
+    public final synchronized List<Items> getListItemId(boolean isSyncCloud){
         try{
-            return instance.itemsDao().loadListItemId(isSync);
+            return instance.itemsDao().loadListItemId(isSyncCloud);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getListItemId(boolean isSyncCloud,boolean isSyncOwnServer){
+        try{
+            return instance.itemsDao().loadListItemId(isSyncCloud,isSyncOwnServer);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

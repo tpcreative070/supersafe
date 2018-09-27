@@ -11,4 +11,5 @@ public class DriveResponse implements Serializable{
     public String global_original_id ;
     public String global_thumbnail_id ;
     public String items_id;
+    public String categories_id;
 }

@@ -105,8 +105,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         //final User mUser = User.getInstance().getUserInfo();
         //Utils.Log(TAG,new Gson().toJson(mUser));
 
-        ServiceManager.getInstance().onCheckingMissData("0");
+
         //ServiceManager.getInstance().onGetFilesInfo();
+
+        ServiceManager.getInstance().onCheckingMissData();
 
 
     }

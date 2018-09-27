@@ -27,8 +27,8 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE categories_id = :categories_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC LIMIT 1")
     Items getLatestId(String categories_id,boolean isDeleteLocal);
 
-    @Query("Select * FROM items WHERE isSync = :isSync AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction ORDER BY id DESC LIMIT 3")
-    List<Items> loadSyncDataItems(boolean isSync,boolean isDeleteLocal,int statusAction);
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction ORDER BY id DESC LIMIT 3")
+    List<Items> loadSyncDataItems(boolean isSyncCloud,boolean isDeleteLocal,int statusAction);
 
 
     @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND deleteAction = :deleteAction")
@@ -41,11 +41,14 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE id = :id")
     Items loadItemId(int id);
 
-    @Query("Select * FROM items WHERE items_id = :globalName AND isSync = :isSync")
-    Items loadItemId(String globalName,boolean isSync);
+    @Query("Select * FROM items WHERE items_id = :globalName AND isSyncCloud = :isSyncCloud")
+    Items loadItemId(String globalName,boolean isSyncCloud);
 
-    @Query("Select * FROM items WHERE isSync = :isSync")
-    List<Items> loadListItemId(boolean isSync);
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isSyncOwnServer =:isSyncOwnServer")
+    List<Items> loadListItemId(boolean isSyncCloud,boolean isSyncOwnServer);
+
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud")
+    List<Items> loadListItemId(boolean isSyncCloud);
 
     @Query("Select * FROM items WHERE items_id = :items_id")
     Items loadItemId(String items_id);

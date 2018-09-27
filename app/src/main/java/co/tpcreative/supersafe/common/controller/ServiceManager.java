@@ -217,80 +217,28 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
-    public void onCheckingMissData(String nextPage) {
+    public void onCheckingMissData() {
         Utils.Log(TAG, "Preparing checking miss data ###########################");
-        if (myService != null) {
-            myService.onCheckingMissData(nextPage, new SuperSafeServiceView() {
-                @Override
-                public void onError(String message, EnumStatus status) {
-                    Utils.Log(TAG, "Error :" + message);
-                    if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
-                        SingletonManagerTab.getInstance().onRequestAccessToken();
-                        Utils.Log(TAG, "Request token on onCheckingMissData");
-                    }
-                }
-
-                @Override
-                public void onSuccessful(String message) {
-                    Utils.Log(TAG, "Response :" + message);
-                }
-
-                @Override
-                public void onSuccessful(List<DriveResponse> lists) {
-                    Utils.Log(TAG, "Response !!!:!!!" + new Gson().toJson(lists));
-                }
-
-                @Override
-                public void onSuccessful(String nextPage, EnumStatus status) {
-                    if (status == EnumStatus.LOAD_MORE) {
-                        Utils.Log(TAG, "next page on CheckingMissData " + nextPage);
-                        onCheckingMissData(nextPage);
-                    }
-                }
-
-                @Override
-                public void onNetworkConnectionChanged(boolean isConnect) {
-
-                }
-
-                @Override
-                public void onStart() {
-
-                }
-
-                @Override
-                public void startLoading() {
-
-                }
-
-                @Override
-                public void stopLoading() {
-
-                }
-
-                @Override
-                public void onSuccessfulOnCheck(List<Items> lists) {
-                    if (lists.size() > 0) {
-                        Utils.Log(TAG, "Found " + lists.size() + " miss");
-                        final List<Items> mList = lists;
-                        subscriptions = Observable.fromIterable(mList)
-                                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
-                                .doOnNext(i -> {
-                                    final Items items = i;
-                                    onAddItems(items);
-                                })
-                                .doOnComplete(() -> {
-                                    //Log.d(TAG, "Completed upload^^^^^^^^^^^^^^^^^^^^^666^^^^^^^^^^^^^^^^^^");
-                                })
-                                .subscribe();
-                    } else {
-                        Utils.Log(TAG, "No data miss");
-                    }
-                }
-            });
-        } else {
-            Utils.Log(TAG, "My service is null");
+        if (myService == null) {
+            return;
         }
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,false);
+        if (mList==null){
+            Utils.Log(TAG,"Not Found Miss Data");
+            return;
+        }
+        if (mList.size()==0){
+            Utils.Log(TAG,"----------------Not Found Miss Data---------------");
+            return;
+        }
+        subscriptions = Observable.fromIterable(mList)
+                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
+                .doOnNext(i -> {
+                    onAddItems(i);
+                })
+                .doOnComplete(() -> {
+                })
+                .subscribe();
     }
 
 
@@ -756,7 +704,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 public void onError(String message, EnumStatus status) {
                                     onWriteLog(message, EnumStatus.DOWNLOAD);
                                     onUpdateSyncDataStatus(EnumStatus.DOWNLOAD);
-                                    Utils.Log(TAG, "onError Download: !!! on");
+                                    Utils.Log(TAG, "onError Download: !!! on - "+ message);
                                 }
 
                                 @Override
@@ -777,10 +725,11 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     }
 
                                                     if (mItem.thumbnailSync && mItem.originalSync) {
-                                                        mItem.isSync = true;
+                                                        mItem.isSyncCloud = true;
+                                                        mItem.isSyncOwnServer = true;
                                                         mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                     } else {
-                                                        mItem.isSync = false;
+                                                        mItem.isSyncCloud = false;
                                                     }
                                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                                                 } else {
@@ -944,13 +893,13 @@ public class ServiceManager implements SuperSafeServiceView {
                                                     }
                                                     mItem.fileType = contentTitle.fileType;
                                                     if (mItem.thumbnailSync && mItem.originalSync) {
-                                                        mItem.isSync = true;
+                                                        mItem.isSyncCloud = true;
                                                         mItem.statusProgress = EnumStatusProgress.DONE.ordinal();
                                                     } else {
-                                                        mItem.isSync = false;
+                                                        mItem.isSyncCloud = false;
                                                     }
 
-                                                    if (mItem.isSync) {
+                                                    if (mItem.isSyncCloud) {
                                                         EnumFormatType formatTypeFile = EnumFormatType.values()[mItem.formatType];
                                                         switch (formatTypeFile) {
                                                             case AUDIO: {
@@ -1024,7 +973,6 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG, "My service is null");
             return;
         }
-
         Utils.Log(TAG, "Preparing insert  to own Server");
         myService.onAddItems(items, new SuperSafeServiceView() {
             @Override
@@ -1039,6 +987,8 @@ public class ServiceManager implements SuperSafeServiceView {
 
             @Override
             public void onSuccessful(String message, EnumStatus status) {
+                items.isSyncOwnServer = true;
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                 Utils.Log(TAG, message + " status " + status.name());
             }
 
@@ -1175,6 +1125,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
 
                         items = new Items(false,
+                                false,
                                 description.originalSync,
                                 description.thumbnailSync,
                                 description.degrees,
@@ -1278,6 +1229,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
 
                         items = new Items(false,
+                                false,
                                 description.originalSync,
                                 description.thumbnailSync,
                                 description.degrees,
@@ -1370,6 +1322,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
 
                         items = new Items(false,
+                                false,
                                 description.originalSync,
                                 description.thumbnailSync,
                                 description.degrees,
@@ -1531,6 +1484,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
 
                 Items items = new Items(false,
+                        false,
                         description.originalSync,
                         description.thumbnailSync,
                         description.degrees,
@@ -1766,6 +1720,7 @@ public class ServiceManager implements SuperSafeServiceView {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
         if (isConnect) {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
+            onCheckingMissData();
         }
     }
 

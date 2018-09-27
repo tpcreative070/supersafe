@@ -305,7 +305,7 @@
     <string name="key_global_original_id">global_original_id</string>
     <string name="key_global_thumbnail_id">global_thumbnail_id</string>
     <string name="key_mimeType">mimeType</string>
-    <string name="key_isSync">isSync</string>
+    <string name="key_isSyncCloud">isSyncCloud</string>
     <string name="key_thumbnailSync">thumbnailSync</string>
     <string name="key_originalSync">originalSync</string>
     <string name="key_drive_file">drive#file</string>
