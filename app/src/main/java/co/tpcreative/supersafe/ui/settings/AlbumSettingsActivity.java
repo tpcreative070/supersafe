@@ -22,7 +22,6 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
 
     private SlidrConfig mConfig;
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
-
     private AlbumSettingsPresenter presenter;
 
     @Override
@@ -54,7 +53,6 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                 .build();
         Slidr.attach(this, mConfig);
 
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment == null) {
@@ -64,9 +62,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
-
     }
-
 
     @Override
     public void startLoading() {
@@ -119,7 +115,6 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                     }
                     return true;
                 }
-
             };
         }
 
@@ -136,9 +131,6 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general_album_settings);
         }
-
     }
-
-
 
 }
