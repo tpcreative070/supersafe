@@ -1,4 +1,7 @@
 package co.tpcreative.supersafe.model;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
@@ -157,12 +160,38 @@ public class MainCategories implements Serializable{
     }
 
 
+    public Drawable getDrawable(Context mContext, String name) {
+        int resourceId = mContext.getResources().getIdentifier(name, "drawable", mContext.getPackageName());
+        return mContext.getResources().getDrawable(resourceId);
+    }
+
     public static MainCategories getInstance(){
         if (instance==null){
             instance = new MainCategories();
         }
         return instance;
     }
+
+    public Map<String,Object> objectToHashMap(final MainCategories items){
+        Type type = new TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
+        return myMap;
+    }
+
+
+    public boolean MainCategoriesSync(MainCategories mainCategories){
+        try {
+            final Map<String,MainCategories> map = getMainCategoriesHashList();
+            map.put(mainCategories.categories_id,mainCategories);
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
+            return true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 
 }

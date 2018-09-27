@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.request.DriveApiRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.response.SignInResponse;
+import co.tpcreative.supersafe.common.response.SyncCategoriesResponse;
 import co.tpcreative.supersafe.common.response.SyncResponse;
 import co.tpcreative.supersafe.common.response.UserCloudResponse;
 import co.tpcreative.supersafe.common.response.VerifyCodeResponse;
@@ -39,6 +40,9 @@ public interface RootAPI{
     String ADD_USER_CLOUD = "/api/usercloud/add/";
     String CHECK_USER_ID = "/api/user/checkUser";
     String GET_LIST_FILES_SYNC = "/api/items/listFilesSync";
+    String GET_LIST_CATEGORIES_SYNC = "/api/category/listCategoriesSync";
+    String CATEGORIES_SYNC = "/api/category/listCategoriesSync";
+    String DELETE_CATEGORIES = "/api/category/onDelete";
     String SYNC_DATA = "/api/items/syncData";
     String DELETE_OWN_ITEMS = "/api/items/onDelete";
     String GET_DRIVE_ABOUT = "/drive/v2/about";
@@ -90,6 +94,20 @@ public interface RootAPI{
     @FormUrlEncoded
     @POST(DELETE_OWN_ITEMS)
     Observable<SyncResponse> onDeleteOwnItems(@FieldMap Map<String,Object>request);
+
+    @FormUrlEncoded
+    @POST(CATEGORIES_SYNC)
+    Observable<SyncCategoriesResponse> onCategoriesSync(@FieldMap Map<String,Object>request);
+
+    @FormUrlEncoded
+    @POST(GET_LIST_CATEGORIES_SYNC)
+    Observable<SyncCategoriesResponse> onListCategoriesSync(@FieldMap Map<String,Object>request);
+
+    @FormUrlEncoded
+    @POST(DELETE_CATEGORIES)
+    Observable<SyncCategoriesResponse> onDeleteCategories(@FieldMap Map<String,Object>request);
+
+
 
 
     @Headers({"Accept: application/json"})

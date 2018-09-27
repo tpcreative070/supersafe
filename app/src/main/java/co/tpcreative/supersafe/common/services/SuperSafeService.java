@@ -311,6 +311,249 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
 
+
+
+    /*Create/Update for Categories*/
+
+
+    public void onCategoriesSync(MainCategories mainCategories, SuperSafeServiceView view) {
+        Utils.Log(TAG, "onGetListSync");
+        if (view == null) {
+            view.onError("no view", EnumStatus.CATEGORIES_SYNC);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.CATEGORIES_SYNC);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions", EnumStatus.CATEGORIES_SYNC);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user == null) {
+            view.onError("no user", EnumStatus.CATEGORIES_SYNC);
+            return;
+        }
+
+        if (user.access_token == null) {
+            view.onError("no access_token", EnumStatus.CATEGORIES_SYNC);
+            return;
+        }
+
+        Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
+        hashMap.put(getString(R.string.key_user_id), user.email);
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
+        Log.d(TAG, "access_token : " + access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(hashMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.CATEGORIES_SYNC);
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error) {
+                        Log.d(TAG, "onError 1");
+                        view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
+                    } else {
+                        view.onSuccessful(onResponse.message,EnumStatus.CATEGORIES_SYNC);
+                    }
+                }, throwable -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.CATEGORIES_SYNC);
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG, "error" + bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError("" + msg, EnumStatus.CATEGORIES_SYNC);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError("" + e.getMessage(), EnumStatus.CATEGORIES_SYNC);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :" + throwable.getMessage(), EnumStatus.CATEGORIES_SYNC);
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+
+    /*Date for Categories*/
+
+
+    public void onDeleteCategoriesSync(MainCategories mainCategories, SuperSafeServiceView view) {
+        Utils.Log(TAG, "onGetListSync");
+        if (view == null) {
+            view.onError("no view", EnumStatus.DELETE_CATEGORIES);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.DELETE_CATEGORIES);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions", EnumStatus.DELETE_CATEGORIES);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user == null) {
+            view.onError("no user", EnumStatus.DELETE_CATEGORIES);
+            return;
+        }
+
+        if (user.access_token == null) {
+            view.onError("no access_token", EnumStatus.DELETE_CATEGORIES);
+            return;
+        }
+
+        Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
+        hashMap.put(getString(R.string.key_user_id), user.email);
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
+        Log.d(TAG, "access_token : " + access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(hashMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.DELETE_CATEGORIES);
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error) {
+                        Log.d(TAG, "onError 1");
+                        view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES);
+                    } else {
+                        view.onSuccessful(onResponse.message,EnumStatus.DELETE_CATEGORIES);
+                    }
+                }, throwable -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.DELETE_CATEGORIES);
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG, "error" + bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError("" + msg, EnumStatus.DELETE_CATEGORIES);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError("" + e.getMessage(), EnumStatus.DELETE_CATEGORIES);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :" + throwable.getMessage(), EnumStatus.DELETE_CATEGORIES);
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+
+    /*Get List Categories*/
+
+    public void onGetListCategoriesSync(SuperSafeServiceView view) {
+        Utils.Log(TAG, "onGetListSync");
+        if (view == null) {
+            view.onError("no view", EnumStatus.LIST_CATEGORIES_SYNC);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            view.onError("no connection", EnumStatus.LIST_CATEGORIES_SYNC);
+            return;
+        }
+        if (subscriptions == null) {
+            view.onError("no subscriptions", EnumStatus.LIST_CATEGORIES_SYNC);
+            return;
+        }
+        final User user = User.getInstance().getUserInfo();
+        if (user == null) {
+            view.onError("no user", EnumStatus.LIST_CATEGORIES_SYNC);
+            return;
+        }
+
+        if (user.access_token == null) {
+            view.onError("no access_token", EnumStatus.LIST_CATEGORIES_SYNC);
+            return;
+        }
+
+        Map<String, Object> hashMap = new HashMap<>();
+        hashMap.put(getString(R.string.key_user_id), user.email);
+
+        String access_token = user.access_token;
+        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
+        Log.d(TAG, "access_token : " + access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(hashMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.startLoading())
+                .subscribe(onResponse -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
+                        return;
+                    }
+                    view.stopLoading();
+                    if (onResponse.error) {
+                        Log.d(TAG, "onError 1");
+                        view.onError(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
+                    } else {
+                        try {
+                            if (onResponse.files!=null){
+                                final Map<String,MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
+                                for (MainCategories index : onResponse.files){
+                                    MainCategories.getInstance().MainCategoriesSync(index);
+                                }
+                            }
+                        }
+                        catch (Exception e){
+                            view.onError("Error :"+ e.getMessage(),EnumStatus.LIST_CATEGORIES_SYNC);
+                        }
+                        finally {
+                            view.onSuccessful(onResponse.message,EnumStatus.LIST_CATEGORIES_SYNC);
+                        }
+                    }
+                }, throwable -> {
+                    if (view == null) {
+                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
+                        return;
+                    }
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG, "error" + bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                            view.onError("" + msg, EnumStatus.LIST_CATEGORIES_SYNC);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            view.onError("" + e.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        view.onError("Error :" + throwable.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
+                    }
+                    view.stopLoading();
+                }));
+    }
+
+
     public void onAddItems(final Items mItem, SuperSafeServiceView view) {
         final  Items items = mItem;
         Utils.Log(TAG, "onGetListFolderInApp");
