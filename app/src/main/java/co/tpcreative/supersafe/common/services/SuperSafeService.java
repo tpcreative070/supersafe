@@ -311,10 +311,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         view.stopLoading();
                     }));
     }
-
-
+    
     /*Create/Update for Categories*/
-
 
     public void onCategoriesSync(MainCategories mainCategories, SuperSafeServiceView view) {
         Utils.Log(TAG, "onGetListSync");

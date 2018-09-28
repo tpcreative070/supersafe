@@ -481,7 +481,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SuperSafeApplication.getInstance().getRequestQueue().getCache().clear();
         ServiceManager.getInstance().onDismissServices();
     }
 

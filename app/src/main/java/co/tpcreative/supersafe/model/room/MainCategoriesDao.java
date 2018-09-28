@@ -25,7 +25,7 @@ public interface MainCategoriesDao {
     @Query("Delete from maincategories  WHERE categories_local_id = :categories_local_id")
     void deleteAll(String categories_local_id);
 
-    @Query("Select * FROM items WHERE id = :id")
+    @Query("Select * FROM maincategories WHERE id = :id")
     MainCategories loadItemId(int id);
 
     @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name")
@@ -39,7 +39,6 @@ public interface MainCategoriesDao {
 
     @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id")
     List<MainCategories> loadListItemId(String categories_local_id);
-
 
     @Query("Select * FROM maincategories")
     List<MainCategories> loadAll();

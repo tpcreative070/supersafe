@@ -71,6 +71,7 @@ public class MainCategories implements Serializable{
         this.isChange = isChange;
     }
 
+    @Ignore
     public MainCategories(){
         this.image = null;
         this.categories_name = null;

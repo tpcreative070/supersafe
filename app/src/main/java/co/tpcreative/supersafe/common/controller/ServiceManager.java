@@ -64,7 +64,6 @@ public class ServiceManager implements SuperSafeServiceView {
     private Storage mStorage = new Storage(SuperSafeApplication.getInstance());
     private Cipher mCiphers;
 
-
     private boolean isDownloadData;
     private boolean isLoadingData;
     private boolean isDeleteSyncCLoud;
