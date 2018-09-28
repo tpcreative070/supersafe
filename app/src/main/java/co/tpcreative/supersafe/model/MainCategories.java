@@ -103,8 +103,7 @@ public class MainCategories implements Serializable{
 
         return mList;
     }
-
-
+    
     public List<MainCategories> getListOriginal(){
         List<MainCategories> mList = new ArrayList<>();
         final Map<String,MainCategories> hashMap = MainCategories.getInstance().getMainCategoriesHashList();
