@@ -183,7 +183,6 @@ dependencies {
     /*Image picker*/
     implementation project(':image-picker-library')
 
-
 }
 
 /*Resolved duplicated for Google api client*/

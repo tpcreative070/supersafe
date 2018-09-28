@@ -196,10 +196,10 @@ public class MainCategories implements Serializable{
         try {
             MainCategories response = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(mainCategories.categories_hex_name);
             if (response==null){
-               response.categories_hex_name = Utils.getHexCode(mainCategories.categories_hex_name);
-               response.isChange = true;
-               InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
-               return true;
+                response.categories_hex_name = Utils.getHexCode(mainCategories.categories_hex_name);
+                response.isChange = true;
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+                return true;
             }
         }
         catch (Exception e){
