@@ -11,9 +11,8 @@ public class DriveDescription implements Serializable{
 
     private static String TAG = DriveDescription.class.getSimpleName();
 
-    public String categories_name;
+    public String categories_local_id;
     public String categories_id;
-    public String categories_max;
     public String fileExtension;
     public String thumbnailPath;
     public String originalPath;
@@ -37,7 +36,6 @@ public class DriveDescription implements Serializable{
     public boolean isDeleteLocal;
     public boolean isDeleteGlobal;
     public int deleteAction;
-
 
     private static DriveDescription instance;
 

@@ -8,4 +8,5 @@ import co.tpcreative.supersafe.model.MainCategories;
 
 public class SyncCategoriesResponse extends BaseResponse implements Serializable {
     public List<MainCategories>files;
+    public MainCategories category;
 }

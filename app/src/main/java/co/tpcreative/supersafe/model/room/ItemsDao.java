@@ -18,14 +18,14 @@ public interface ItemsDao {
     @Delete
     void delete(Items... items);
 
-    @Query("Delete from items  WHERE categories_id = :categories_id")
-    void deleteAll(String categories_id);
+    @Query("Delete from items  WHERE categories_local_id = :categories_local_id")
+    void deleteAll(String categories_local_id);
 
-    @Query("Select * FROM items WHERE categories_id = :categories_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC")
-    List<Items> loadAll(String categories_id,boolean isDeleteLocal);
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC")
+    List<Items> loadAll(String categories_local_id,boolean isDeleteLocal);
 
-    @Query("Select * FROM items WHERE categories_id = :categories_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC LIMIT 1")
-    Items getLatestId(String categories_id,boolean isDeleteLocal);
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC LIMIT 1")
+    Items getLatestId(String categories_local_id,boolean isDeleteLocal);
 
     @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction ORDER BY id DESC LIMIT 3")
     List<Items> loadSyncDataItems(boolean isSyncCloud,boolean isDeleteLocal,int statusAction);
@@ -58,7 +58,6 @@ public interface ItemsDao {
 
     @Query("Select * FROM items WHERE local_id = :local_id")
     Items loadLocalId(String local_id);
-
 
     @Query("Select * FROM items")
     List<Items> loadAll();

@@ -83,7 +83,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             this.data = data;
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_id,false);
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
@@ -142,10 +142,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
         @OnClick(R.id.overflow)
         public void onClickedOverFlow(View view) {
-            if (data.categories_id.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
+            if (data.categories_local_id.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
                 showPopupMenu(view, R.menu.menu_trash_album,mPosition);
             }
-            else if(data.categories_id.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
+            else if(data.categories_local_id.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
                 showPopupMenu(view, R.menu.menu_main_album,mPosition);
             }
             else{
