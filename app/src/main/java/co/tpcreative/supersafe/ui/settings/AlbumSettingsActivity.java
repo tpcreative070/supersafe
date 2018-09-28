@@ -176,7 +176,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                             }
                             else{
                                 presenter.mMainCategories.categories_name = value;
-                                boolean response = true;
+                                boolean response = MainCategories.getInstance().onChangeCategories(presenter.mMainCategories);
                                 if (response){
                                     Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                     mName.setSummary(presenter.mMainCategories.categories_name);
