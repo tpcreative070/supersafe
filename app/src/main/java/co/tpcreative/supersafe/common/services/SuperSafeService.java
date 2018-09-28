@@ -520,7 +520,15 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                             if (onResponse.files!=null){
                                 final Map<String,MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                                 for (MainCategories index : onResponse.files){
-                                    MainCategories.getInstance().MainCategoriesSync(index);
+                                    final MainCategories main = hash.get(index.categories_id);
+                                    if (main!=null){
+                                        if (!main.isChange){
+                                            MainCategories.getInstance().MainCategoriesSync(index);
+                                        }
+                                    }
+                                    else {
+                                        MainCategories.getInstance().MainCategoriesSync(index);
+                                    }
                                 }
                             }
                         }

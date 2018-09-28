@@ -225,6 +225,7 @@
     <string name="progressing">Progressing...</string>
     <string name="done">Done</string>
     <string name="create_album">Create Album</string>
+    <string name="change_album">Change Album</string>
     <string name="photos_default">0 Photos</string>
     <string name="videos_default">0 Videos</string>
     <string name="audios_default">0 Audios</string>

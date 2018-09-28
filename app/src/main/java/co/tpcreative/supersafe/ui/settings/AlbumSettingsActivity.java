@@ -3,26 +3,36 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.InputType;
+import android.widget.Toast;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.ftinc.kit.util.SizeUtils;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreference;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import de.mrapp.android.preference.ListPreference;
 
 public class AlbumSettingsActivity extends BaseActivity implements AlbumSettingsView {
 
+    private static final String TAG = AlbumSettingsActivity.class.getSimpleName();
     private SlidrConfig mConfig;
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
-    private AlbumSettingsPresenter presenter;
+    private static AlbumSettingsPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +95,8 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
          * The {@link ListPreference}.
          */
 
+
+
         private MyPreference mName;
 
         /**
@@ -99,6 +111,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
             return new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(final Preference preference, final Object newValue) {
+
                     return true;
                 }
             };
@@ -109,8 +122,8 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (preference instanceof MyPreference){
-                        if (preference.getKey().equals(getString(R.string.key_account))){
-                            Log.d(TAG,"value : ");
+                        if (preference.getKey().equals(getString(R.string.key_name))){
+                            onShowChangeCategoriesNameDialog();
                         }
                     }
                     return true;
@@ -125,12 +138,57 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
             mName = (MyPreference)findPreference(getString(R.string.key_name));
             mName.setOnPreferenceChangeListener(createChangeListener());
             mName.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mName.setSummary(presenter.mMainCategories.categories_name);
         }
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general_album_settings);
         }
-    }
 
+        public void onShowChangeCategoriesNameDialog(){
+            MaterialDialog.Builder builder =  new MaterialDialog.Builder(getActivity())
+                    .title(getString(R.string.change_album))
+                    .theme(Theme.LIGHT)
+                    .titleColor(getResources().getColor(R.color.black))
+                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .negativeText(getString(R.string.cancel))
+                    .positiveText(getString(R.string.ok))
+                    .input(null, null, new MaterialDialog.InputCallback() {
+                        @Override
+                        public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                            Utils.Log(TAG,"Value");
+
+                            String value = input.toString();
+                            String base64Code = Utils.getHexCode(value);
+                            MainCategories item = MainCategories.getInstance().getTrashItem();
+                            String result = item.categories_id;
+
+                            if (presenter.mMainCategories==null){
+                                Toast.makeText(getContext(),"Can not change category name",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            else if (base64Code.equals(result)){
+                                Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            else{
+                                presenter.mMainCategories.categories_name = value;
+                                boolean response = MainCategories.getInstance().onChangeCategories(presenter.mMainCategories);
+                                if (response){
+                                    Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
+                                    mName.setSummary(presenter.mMainCategories.categories_name);
+                                    ServiceManager.getInstance().onGetListCategoriesSync();
+                                }
+                                else{
+                                    Toast.makeText(getContext(),"Album name already existing",Toast.LENGTH_SHORT).show();
+                                }
+                                SingletonPrivateFragment.getInstance().onUpdateView();
+                            }
+                        }
+                    });
+            builder.show();
+        }
+
+    }
 }

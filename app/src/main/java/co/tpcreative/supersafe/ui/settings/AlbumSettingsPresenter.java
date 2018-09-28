@@ -1,10 +1,7 @@
 package co.tpcreative.supersafe.ui.settings;
-
 import android.app.Activity;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.util.Utils;

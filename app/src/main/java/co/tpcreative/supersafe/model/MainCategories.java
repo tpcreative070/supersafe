@@ -142,7 +142,6 @@ public class MainCategories implements Serializable{
         return map;
     }
 
-
     public MainCategories getTrashItem(){
         return new MainCategories(Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false);
     }
@@ -208,7 +207,6 @@ public class MainCategories implements Serializable{
         return false;
     }
 
-
     public Drawable getDrawable(Context mContext, String name) {
         try {
             int resourceId = mContext.getResources().getIdentifier(name, "drawable", mContext.getPackageName());
@@ -233,7 +231,6 @@ public class MainCategories implements Serializable{
         return myMap;
     }
 
-
     public boolean MainCategoriesSync(MainCategories mainCategories){
         try {
             final Map<String,MainCategories> map = getMainCategoriesHashList();
@@ -246,7 +243,5 @@ public class MainCategories implements Serializable{
         }
         return false;
     }
-
-
 
 }
