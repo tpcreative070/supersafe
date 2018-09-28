@@ -11,11 +11,7 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.PermissionChecker;
-import android.text.TextUtils;
 import android.util.Log;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
@@ -24,7 +20,6 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,8 +52,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private static int started;
     private static int stopped;
     private static String url ;
-    /*Volley*/
-    private RequestQueue mRequestQueue;
     private int Orientation = 0;
 
     protected static Dependencies dependencies;
@@ -225,29 +218,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onActivityDestroyed(Activity activity) {
     }
 
-    public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-        }
-        return mRequestQueue;
-    }
-
-    public <T> void addToRequestQueue(Request<T> req, String tag) {
-        // set the default tag if tag is empty
-        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        getRequestQueue().add(req);
-    }
-
-    public <T> void addToRequestQueue(Request<T> req) {
-        req.setTag(TAG);
-        getRequestQueue().add(req);
-    }
-
-    public void cancelPendingRequests(Object tag) {
-        if (mRequestQueue != null) {
-            mRequestQueue.cancelAll(tag);
-        }
-    }
 
     public String getSuperSafe() {
         return supersafe;

@@ -1,13 +1,9 @@
 package co.tpcreative.supersafe.model;
-
 import com.google.gson.Gson;
-
 import java.io.Serializable;
-
 import co.tpcreative.supersafe.common.util.Utils;
 
 public class DriveDescription implements Serializable{
-
 
     private static String TAG = DriveDescription.class.getSimpleName();
 
@@ -46,22 +42,6 @@ public class DriveDescription implements Serializable{
         return instance;
     }
 
-    public DriveDescription getDriveDescription(final String value){
-        try {
-            String mValue = value;
-            mValue = mValue.replace("\"\\\"", "''");
-            mValue = mValue.replace("\\", "");
-            mValue = mValue.replace("\"{", "{");
-            mValue = mValue.replace("}\"", "}");
-            Utils.Log("response special", mValue);
-            DriveDescription description = new Gson().fromJson(mValue,DriveDescription.class);
-            return description;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public String convertToHex(final String value){
         try {
