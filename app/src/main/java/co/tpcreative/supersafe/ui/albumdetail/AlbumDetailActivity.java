@@ -133,7 +133,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
 
-        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.categories_id, false);
+        final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(presenter.mainCategories.categories_local_id, false);
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             if (formatTypeFile == EnumFormatType.AUDIO) {
@@ -413,7 +413,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     protected void onDestroy() {
         super.onDestroy();
         if (isReload) {
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onGetListCategoriesSync(true);
         }
     }
 }

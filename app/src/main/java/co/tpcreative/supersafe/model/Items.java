@@ -23,9 +23,8 @@ public class Items implements Serializable {
     public String global_original_id;
     public String global_thumbnail_id;
     public String local_id;
+    public String categories_local_id;
     public String categories_id;
-    public String categories_name;
-    public String categories_max;
     public int formatType;
     public String thumbnailPath;
     public String originalPath;
@@ -64,7 +63,7 @@ public class Items implements Serializable {
     }
 
 
-    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_name, String categories_max, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction){
+    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -80,8 +79,7 @@ public class Items implements Serializable {
         this.global_original_id = global_original_id;
         this.global_thumbnail_id = global_thumbnail_id;
         this.categories_id = categories_id;
-        this.categories_name = categories_name;
-        this.categories_max = categories_max;
+        this.categories_local_id = categories_local_id;
         this.originalPath = originalPath;
         this.thumbnailPath = thumbnailPath;
         this.mimeType = mimeType;

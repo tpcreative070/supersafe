@@ -13,8 +13,9 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 
-@Database(entities = {Items.class}, version = 3, exportSchema = false)
+@Database(entities = {Items.class, MainCategories.class}, version = 3, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
@@ -22,6 +23,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
     public abstract ItemsDao itemsDao();
+
+    @Ignore
+    public abstract MainCategoriesDao mainCategoriesDao();
 
     @Ignore
     public static final String TAG = InstanceGenerator.class.getSimpleName();
@@ -75,12 +79,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<Items> getListItems(final String localId,boolean isDeleteLocal){
+    public final synchronized List<Items> getListItems(final String categories_local_id,boolean isDeleteLocal){
         try{
-            if (localId==null){
+            if (categories_local_id==null){
                 return null;
             }
-            return instance.itemsDao().loadAll(localId,isDeleteLocal);
+            return instance.itemsDao().loadAll(categories_local_id,isDeleteLocal);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -148,9 +152,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized Items getLatestId(String id,boolean isDeleteLocal){
+    public final synchronized Items getLatestId(String categories_local_id,boolean isDeleteLocal){
         try{
-            return instance.itemsDao().getLatestId(id,isDeleteLocal);
+            return instance.itemsDao().getLatestId(categories_local_id,isDeleteLocal);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -232,9 +236,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return false;
     }
 
-    public final synchronized boolean onDeleteAll(String id){
+    public final synchronized boolean onDeleteAll(String categories_local_id){
         try{
-            instance.itemsDao().deleteAll(id);
+            instance.itemsDao().deleteAll(categories_local_id);
             return true;
         }
         catch (Exception e){
@@ -244,6 +248,77 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
+
+
+    /*Main categories*/
+
+
+
+    public synchronized void onInsert(MainCategories item){
+        try {
+            if (item==null){
+                return;
+            }
+            instance.mainCategoriesDao().insert(item);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public synchronized void onUpdate(MainCategories cTalkManager){
+        try {
+            if (cTalkManager==null){
+                Utils.Log(TAG,"Null???? ");
+                return;
+            }
+            instance.mainCategoriesDao().update(cTalkManager);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public final synchronized List<MainCategories> getListCategories(){
+        try{
+            return instance.mainCategoriesDao().loadAll();
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+    public final synchronized MainCategories getCategoriesItemId(String categories_hex_name){
+        try{
+            return instance.mainCategoriesDao().loadItemId(categories_hex_name);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized MainCategories getCategoriesLocalId(String categories_local_id){
+        try{
+            return instance.mainCategoriesDao().loadItemLocalId(categories_local_id);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized MainCategories getCategoriesId(String categories_id){
+        try{
+            return instance.mainCategoriesDao().loadItemLocalId(categories_id);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
 
 }
 

@@ -345,6 +345,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
         hashMap.put(getString(R.string.key_categories_max),mainCategories.categories_max+"");
+        hashMap.put(getString(R.string.key_categories_id),Utils.getUUId());
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -363,6 +364,22 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
                     } else {
+                        if (onResponse!=null){
+                            if (onResponse.category!=null){
+                                MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(onResponse.category.categories_hex_name);
+                                if (main!=null){
+                                    main.categories_id = onResponse.category.categories_id;
+                                    main.isChange = false;
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                }
+                                else{
+                                    main = onResponse.category;
+                                    main.isChange = false;
+                                    main.categories_local_id = Utils.getUUId();
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
+                                }
+                            }
+                        }
                         view.onSuccessful(onResponse.message,EnumStatus.CATEGORIES_SYNC);
                     }
                 }, throwable -> {
@@ -518,16 +535,17 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     } else {
                         try {
                             if (onResponse.files!=null){
-                                final Map<String,MainCategories> hash = MainCategories.getInstance().getMainCategoriesHashList();
                                 for (MainCategories index : onResponse.files){
-                                    final MainCategories main = hash.get(index.categories_id);
+                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name);
                                     if (main!=null){
                                         if (!main.isChange){
-                                            MainCategories.getInstance().MainCategoriesSync(index);
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                         }
                                     }
                                     else {
-                                        MainCategories.getInstance().MainCategoriesSync(index);
+                                        main = index;
+                                        main.categories_local_id = Utils.getUUId();
+                                       InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
                                     }
                                 }
                             }
@@ -891,7 +909,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                     hashMapGlobal.put(index.items_id,index.items_id);
                                     final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                     if (description != null) {
-
                                         DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                         if (driveTitle != null) {
                                             final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
@@ -910,7 +927,15 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                         break;
                                                     }
                                                 }
-                                                onSaveItem(description);
+
+                                                final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
+                                                if (main!=null){
+                                                    description.categories_local_id = main.categories_local_id;
+                                                    onSaveItem(description);
+                                                }
+                                                else{
+                                                    view.onSuccessful("..................categories_id is nul.............");
+                                                }
                                             } else {
                                                 items.global_original_id = index.global_original_id;
                                                 items.global_thumbnail_id = index.global_thumbnail_id;
@@ -1001,8 +1026,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.global_original_id,
                 description.global_thumbnail_id,
                 description.categories_id,
-                description.categories_name,
-                description.categories_max,
+                description.categories_local_id,
                 description.mimeType,
                 description.fileExtension,
                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1154,7 +1178,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         contentTitle.items_id = items.items_id;
         String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
         content.put(getString(R.string.key_name), hex);
-        content.put(getString(R.string.key_description), items.description);
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));
         content.put(getString(R.string.key_parents), list);

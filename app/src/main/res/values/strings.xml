@@ -281,6 +281,7 @@
     <string name="key_google_oauth">google_oauth</string>
     <string name="key_main_categories">main_categories</string>
     <string name="key_main_categories_hash_list">main_categories_hash_list</string>
+    <string name="key_categories_id">categories_id</string>
 
     /*Google Drive api*/
     <string name="key_parents">parents</string>

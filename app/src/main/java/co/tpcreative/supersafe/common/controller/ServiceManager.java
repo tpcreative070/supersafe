@@ -69,9 +69,20 @@ public class ServiceManager implements SuperSafeServiceView {
     private boolean isLoadingData;
     private boolean isDeleteSyncCLoud;
     private boolean isDeleteOwnCloud;
+
+
+    private boolean isGetListCategories;
     private int countSyncData = 0;
     private int totalList = 0;
 
+
+    public boolean isGetListCategories() {
+        return isGetListCategories;
+    }
+
+    public void setGetListCategories(boolean getListCategories) {
+        isGetListCategories = getListCategories;
+    }
 
     public boolean isDownloadData() {
         return isDownloadData;
@@ -216,15 +227,28 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
-    public void onGetListCategoriesSync() {
+    public void onGetListCategoriesSync(boolean isSyncData) {
         if (myService == null) {
             Utils.Log(TAG, "My services on categories sync is null");
             return;
         }
+
+        if (isGetListCategories){
+            Utils.Log(TAG,"Get List Categories is query...");
+            return;
+        }
+
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            Utils.Log(TAG, "Check network connection");
+            return;
+        }
+
+        isGetListCategories = true;
         myService.onGetListCategoriesSync(new SuperSafeServiceView() {
             @Override
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
+                isGetListCategories = false;
             }
 
             @Override
@@ -236,7 +260,13 @@ public class ServiceManager implements SuperSafeServiceView {
             public void onSuccessful(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
                 SingletonPrivateFragment.getInstance().onUpdateView();
-                onCategoriesSync();
+                if (isSyncData){
+                    onSyncDataOwnServer("0");
+                }
+                else{
+                    onCategoriesSync();
+                }
+                isGetListCategories = false;
             }
 
             @Override
@@ -285,7 +315,7 @@ public class ServiceManager implements SuperSafeServiceView {
         }
 
         subscriptions = Observable.fromIterable(mList)
-                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
+                .concatMap(i -> Observable.just(i).delay(500, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
                     myService.onCategoriesSync(i, new SuperSafeServiceView() {
                         @Override
@@ -453,7 +483,7 @@ public class ServiceManager implements SuperSafeServiceView {
                             myService.onDeletePreviousSync(new DeleteServiceListener() {
                                 @Override
                                 public void onDone() {
-                                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                                    ServiceManager.getInstance().onGetListCategoriesSync(true);
                                 }
                             });
                         } else if (items != null) {
@@ -468,6 +498,7 @@ public class ServiceManager implements SuperSafeServiceView {
                             Utils.Log(TAG, "Preparing uploading...");
                             onUploadDataToStore();
                         }
+
                     }
                 }
 
@@ -526,7 +557,7 @@ public class ServiceManager implements SuperSafeServiceView {
         if (mList.size() == 0) {
             Utils.Log(TAG, "Not Found own data id to delete");
             isDeleteOwnCloud = false;
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onGetListCategoriesSync(true);
             return;
         }
 
@@ -635,7 +666,7 @@ public class ServiceManager implements SuperSafeServiceView {
         if (mList.size() == 0) {
             //onDeleteOnLocal();
             isDeleteSyncCLoud = false;
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onGetListCategoriesSync(true);
             Utils.Log(TAG, "Not Found cloud id to delete");
             return;
         }
@@ -770,11 +801,23 @@ public class ServiceManager implements SuperSafeServiceView {
                         final Items itemObject = index;
                         boolean isWorking = true;
 
-                        if (itemObject.categories_id == null) {
+                        if (itemObject.categories_local_id == null) {
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                             onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
                             Utils.Log(TAG, "categories_id is null at " + itemObject.id);
                             isWorking = false;
+                        }
+                        else{
+                            isWorking = false;
+                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id);
+                            if (main!=null){
+                                if (main.categories_id!=null){
+                                    isWorking = true;
+                                }
+                                else{
+                                   isWorking = false;
+                                }
+                            }
                         }
 
                         EnumFormatType formatTypeFile = EnumFormatType.values()[itemObject.formatType];
@@ -950,9 +993,21 @@ public class ServiceManager implements SuperSafeServiceView {
                         final Items itemObject = index;
                         boolean isWorking = true;
 
-                        if (itemObject.categories_id == null) {
+                        if (itemObject.categories_local_id == null) {
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                             isWorking = false;
+                        }
+                        else{
+                            isWorking = false;
+                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id);
+                            if (main!=null){
+                                if (main.categories_id==null){
+                                    isWorking = false;
+                                }
+                                else{
+                                    isWorking = true;
+                                }
+                            }
                         }
 
                         if (myService == null) {
@@ -1150,8 +1205,7 @@ public class ServiceManager implements SuperSafeServiceView {
             final Items items;
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
-            final String categories_name = mMainCategories.categories_name;
-            final String categories_max = "" + mMainCategories.categories_max;
+            final String categories_local_id = mMainCategories.categories_local_id;
 
             Utils.Log(TAG, "object " + new Gson().toJson(mMimeTypeFile));
             Bitmap thumbnail = null;
@@ -1209,9 +1263,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.originalPath = originalPath;
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
+                        description.categories_local_id = categories_local_id;
                         description.categories_id = categories_id;
-                        description.categories_name = categories_name;
-                        description.categories_max = categories_max;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -1250,8 +1303,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_original_id,
                                 description.global_thumbnail_id,
                                 description.categories_id,
-                                description.categories_name,
-                                description.categories_max,
+                                description.categories_local_id,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1315,8 +1367,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.thumbnailPath = thumbnailPath;
                         description.subFolderName = uuId;
                         description.categories_id = categories_id;
-                        description.categories_name = categories_name;
-                        description.categories_max = categories_max;
+                        description.categories_local_id = categories_local_id;
                         description.local_id = uuId;
                         description.global_original_id = null;
                         description.mimeType = mMimeType;
@@ -1337,6 +1388,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.deleteAction = EnumDelete.NONE.ordinal();
 
 
+
                         items = new Items(false,
                                 false,
                                 description.originalSync,
@@ -1354,8 +1406,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_original_id,
                                 description.global_thumbnail_id,
                                 description.categories_id,
-                                description.categories_name,
-                                description.categories_max,
+                                description.categories_local_id,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1408,8 +1459,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.thumbnailPath = null;
                         description.subFolderName = uuId;
                         description.categories_id = categories_id;
-                        description.categories_name = categories_name;
-                        description.categories_max = categories_max;
+                        description.categories_local_id = categories_local_id;
                         description.local_id = uuId;
                         description.mimeType = mMimeType;
                         description.items_id = uuId;
@@ -1447,8 +1497,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.global_original_id,
                                 description.global_thumbnail_id,
                                 description.categories_id,
-                                description.categories_name,
-                                description.categories_max,
+                                description.categories_local_id,
                                 description.mimeType,
                                 description.fileExtension,
                                 DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1527,7 +1576,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     } finally {
                         GalleryCameraMediaManager.getInstance().onUpdatedView();
                         SingletonPrivateFragment.getInstance().onUpdateView();
-                        ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        ServiceManager.getInstance().onGetListCategoriesSync(true);
                     }
                 });
     }
@@ -1545,10 +1594,8 @@ public class ServiceManager implements SuperSafeServiceView {
 
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
-            final String categories_name = mMainCategories.categories_name;
-            final String categories_max = "" + mMainCategories.categories_max;
+            final String categories_local_id = mMainCategories.categories_local_id;
 
-            File thumbnail = null;
             final byte[] data = mData;
             final Bitmap mBitmap;
             try {
@@ -1567,8 +1614,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.thumbnailPath = thumbnailPath;
                 description.subFolderName = uuId;
                 description.categories_id = categories_id;
-                description.categories_name = categories_name;
-                description.categories_max = categories_max;
+                description.categories_local_id = categories_local_id;
                 description.local_id = uuId;
                 description.global_original_id = null;
                 description.mimeType = MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype();
@@ -1606,9 +1652,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.local_id,
                         description.global_original_id,
                         description.global_thumbnail_id,
-                        description.categories_id,
-                        description.categories_name,
-                        description.categories_max,
+                        description.categories_id = categories_id,
+                        description.categories_local_id,
                         description.mimeType,
                         description.fileExtension,
                         DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
@@ -1664,7 +1709,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     } finally {
                         GalleryCameraMediaManager.getInstance().setProgressing(false);
                         SingletonPrivateFragment.getInstance().onUpdateView();
-                        ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        ServiceManager.getInstance().onGetListCategoriesSync(true);
                     }
                 });
 
@@ -1687,7 +1732,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, messageDone);
                     Utils.Log(TAG, "Request syn data on upload.........");
                     onWriteLog("Request syn data on upload", EnumStatus.UPLOAD);
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    ServiceManager.getInstance().onGetListCategoriesSync(true);
                     onGetDriveAbout();
 
                 } else {
@@ -1713,7 +1758,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request syn data on download", EnumStatus.DOWNLOAD);
                     Utils.Log(TAG, "Request syn data on download.........");
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    ServiceManager.getInstance().onGetListCategoriesSync(true);
                     onGetDriveAbout();
 
                 } else {
@@ -1736,7 +1781,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request own syn data on download", EnumStatus.DELETE_SYNC_OWN_DATA);
                     Utils.Log(TAG, "Request own syn data on download.........");
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    ServiceManager.getInstance().onGetListCategoriesSync(true);
                     onGetDriveAbout();
 
                 } else {
@@ -1759,7 +1804,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request cloud syn data on download", EnumStatus.DELETE_SYNC_CLOUD_DATA);
                     Utils.Log(TAG, "Request cloud syn data on download.........");
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    ServiceManager.getInstance().onGetListCategoriesSync(true);
                     onGetDriveAbout();
                     //onDeleteOnLocal();
                 } else {
@@ -1825,8 +1870,7 @@ public class ServiceManager implements SuperSafeServiceView {
     public void onNetworkConnectionChanged(boolean isConnect) {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
         if (isConnect) {
-            ServiceManager.getInstance().onGetListCategoriesSync();
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onGetListCategoriesSync(true);
             onCheckingMissData();
         }
     }

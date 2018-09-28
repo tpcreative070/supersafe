@@ -19,6 +19,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -52,6 +53,7 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
         tvTitle.setText(getString(R.string.verify_title,presenter.user.email));
         edtCode.setOnEditorActionListener(this);
         edtCode.addTextChangedListener(mTextWatcher);
+        ServiceManager.getInstance().onGetListCategoriesSync(false);
     }
 
     @OnClick(R.id.imgBack)

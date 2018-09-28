@@ -22,8 +22,10 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreference;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import de.mrapp.android.preference.ListPreference;
 
@@ -162,7 +164,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                             String value = input.toString();
                             String base64Code = Utils.getHexCode(value);
                             MainCategories item = MainCategories.getInstance().getTrashItem();
-                            String result = item.categories_id;
+                            String result = item.categories_local_id;
 
                             if (presenter.mMainCategories==null){
                                 Toast.makeText(getContext(),"Can not change category name",Toast.LENGTH_SHORT).show();
@@ -178,7 +180,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                                 if (response){
                                     Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                     mName.setSummary(presenter.mMainCategories.categories_name);
-                                    ServiceManager.getInstance().onGetListCategoriesSync();
+                                    ServiceManager.getInstance().onGetListCategoriesSync(false);
                                 }
                                 else{
                                     Toast.makeText(getContext(),"Album name already existing",Toast.LENGTH_SHORT).show();

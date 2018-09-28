@@ -109,6 +109,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         //ServiceManager.getInstance().onGetFilesInfo();
 
         ServiceManager.getInstance().onCheckingMissData();
+        ServiceManager.getInstance().onGetListCategoriesSync(false);
 
 
     }
@@ -277,15 +278,15 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                          String base64Code = Utils.getHexCode(value);
 
                          MainCategories item = MainCategories.getInstance().getTrashItem();
-                         String result = item.categories_id;
+                         String result = item.categories_hex_name;
                          if (base64Code.equals(result)){
                              Toast.makeText(MainTabActivity.this,"This name already existing",Toast.LENGTH_SHORT).show();
                          }
                          else{
-                             boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,null);
+                             boolean response = MainCategories.getInstance().onAddCategories(base64Code,value);
                              if (response){
                                  Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
-                                 ServiceManager.getInstance().onGetListCategoriesSync();
+                                 ServiceManager.getInstance().onGetListCategoriesSync(false);
                              }
                              else{
                                  Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
@@ -421,7 +422,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
-        ServiceManager.getInstance().onGetListCategoriesSync();
         onBackUp();
     }
 

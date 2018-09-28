@@ -1,19 +1,14 @@
 package co.tpcreative.supersafe.model;
-
 import com.google.gson.Gson;
-
 import java.io.Serializable;
-
 import co.tpcreative.supersafe.common.util.Utils;
 
 public class DriveDescription implements Serializable{
 
-
     private static String TAG = DriveDescription.class.getSimpleName();
 
-    public String categories_name;
+    public String categories_local_id;
     public String categories_id;
-    public String categories_max;
     public String fileExtension;
     public String thumbnailPath;
     public String originalPath;
@@ -38,7 +33,6 @@ public class DriveDescription implements Serializable{
     public boolean isDeleteGlobal;
     public int deleteAction;
 
-
     private static DriveDescription instance;
 
     public static DriveDescription getInstance(){
@@ -48,22 +42,6 @@ public class DriveDescription implements Serializable{
         return instance;
     }
 
-    public DriveDescription getDriveDescription(final String value){
-        try {
-            String mValue = value;
-            mValue = mValue.replace("\"\\\"", "''");
-            mValue = mValue.replace("\\", "");
-            mValue = mValue.replace("\"{", "{");
-            mValue = mValue.replace("}\"", "}");
-            Utils.Log("response special", mValue);
-            DriveDescription description = new Gson().fromJson(mValue,DriveDescription.class);
-            return description;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     public String convertToHex(final String value){
         try {
