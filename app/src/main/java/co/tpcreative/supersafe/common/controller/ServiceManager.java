@@ -393,6 +393,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe();
     }
     
+
     public void onSyncDataOwnServer(String nextPage) {
         Utils.Log(TAG, "Preparing sync data ###########################");
         if (isDownloadData) {
