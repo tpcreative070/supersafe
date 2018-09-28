@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -16,21 +15,17 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -240,6 +235,7 @@ public class ServiceManager implements SuperSafeServiceView {
             @Override
             public void onSuccessful(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
+                SingletonPrivateFragment.getInstance().onUpdateView();
                 onCategoriesSync();
             }
 
@@ -273,8 +269,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
             }
         });
-
-
     }
 
 
@@ -597,14 +591,11 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe();
     }
 
-
     public void onDeleteCloud() {
-
         if (myService == null) {
             Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
             return;
         }
-
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
 
         final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
@@ -710,14 +701,6 @@ public class ServiceManager implements SuperSafeServiceView {
                 .subscribe();
 
     }
-
-
-//    public void onDeleteOnLocal() {
-//        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
-//        for (Items index : list) {
-//            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-//        }
-//    }
 
 
     public void onDownloadFilesFromDriveStore() {
@@ -1842,6 +1825,7 @@ public class ServiceManager implements SuperSafeServiceView {
     public void onNetworkConnectionChanged(boolean isConnect) {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
         if (isConnect) {
+            ServiceManager.getInstance().onGetListCategoriesSync();
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             onCheckingMissData();
         }

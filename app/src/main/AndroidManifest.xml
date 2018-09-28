@@ -109,7 +109,6 @@
             android:label="@string/key_trash"
             android:theme="@style/Theme.Slidr.Slidable" />
         <activity android:name=".ui.settings.AlbumSettingsActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.Slidr.Slidable"></activity>
     </application>
 

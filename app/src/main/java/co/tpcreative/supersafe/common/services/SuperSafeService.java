@@ -313,8 +313,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
 
-
-
     /*Create/Update for Categories*/
 
 
@@ -956,7 +954,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
     public void onDeletePreviousSync(ServiceManager.DeleteServiceListener view){
         try{
-            final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
+            final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true);
             for (Items index : list){
                 String value = hashMapGlobal.get(index.items_id);
                 if (value==null){

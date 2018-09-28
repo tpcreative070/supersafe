@@ -285,6 +285,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                              boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,null);
                              if (response){
                                  Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
+                                 ServiceManager.getInstance().onGetListCategoriesSync();
                              }
                              else{
                                  Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
