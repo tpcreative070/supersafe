@@ -53,7 +53,6 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
         tvTitle.setText(getString(R.string.verify_title,presenter.user.email));
         edtCode.setOnEditorActionListener(this);
         edtCode.addTextChangedListener(mTextWatcher);
-        ServiceManager.getInstance().onGetListCategoriesSync(false);
     }
 
     @OnClick(R.id.imgBack)

@@ -270,8 +270,8 @@ public abstract class InstanceGenerator extends RoomDatabase {
         try {
             if (cTalkManager==null){
                 Utils.Log(TAG,"Null???? ");
-                return;
             }
+            Utils.Log(TAG,"Updated :"+cTalkManager.categories_id);
             instance.mainCategoriesDao().update(cTalkManager);
         }
         catch (Exception e){
@@ -300,6 +300,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final synchronized List<MainCategories> loadListAllItemId(String categories_hex_name){
+        try{
+            return instance.mainCategoriesDao().loadListAllItemId(categories_hex_name);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
     public final synchronized MainCategories getCategoriesLocalId(String categories_local_id){
         try{
             return instance.mainCategoriesDao().loadItemLocalId(categories_local_id);
@@ -312,13 +322,45 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     public final synchronized MainCategories getCategoriesId(String categories_id){
         try{
-            return instance.mainCategoriesDao().loadItemLocalId(categories_id);
+            return instance.mainCategoriesDao().loadItemCategoriesId(categories_id);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
         }
         return null;
     }
+
+    public final synchronized MainCategories loadItemCategoriesSync(boolean isSyncOwnServer){
+        try{
+            return instance.mainCategoriesDao().loadItemCategoriesSync(isSyncOwnServer);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer){
+        try{
+            return instance.mainCategoriesDao().loadListItemCategoriesSync(isSyncOwnServer);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,int limit){
+        try{
+            return instance.mainCategoriesDao().loadListItemCategoriesSync(isSyncOwnServer,limit);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
 
 }
 

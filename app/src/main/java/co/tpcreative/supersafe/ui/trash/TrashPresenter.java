@@ -30,9 +30,9 @@ public class TrashPresenter extends Presenter<TrashView>{
         try {
             final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal());
             if (data!=null){
-                Utils.Log(TAG,new Gson().toJson(data));
                 mList = data;
             }
+            Utils.Log(TAG,new Gson().toJson(data));
             view.onReloadData();
         }
         catch (Exception e){

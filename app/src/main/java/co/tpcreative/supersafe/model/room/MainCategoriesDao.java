@@ -31,11 +31,23 @@ public interface MainCategoriesDao {
     @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name")
     MainCategories loadItemId(String categories_hex_name);
 
+    @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name")
+    List<MainCategories> loadListAllItemId(String categories_hex_name);
+
     @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id")
     MainCategories loadItemLocalId(String categories_local_id);
 
     @Query("Select * FROM maincategories WHERE categories_id = :categories_id")
     MainCategories loadItemCategoriesId(String categories_id);
+
+    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer")
+    MainCategories loadItemCategoriesSync(boolean isSyncOwnServer);
+
+    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer")
+    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer);
+
+    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer ORDER BY id DESC LIMIT :limit")
+    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,int limit);
 
     @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id")
     List<MainCategories> loadListItemId(String categories_local_id);

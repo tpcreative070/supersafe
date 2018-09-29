@@ -4,9 +4,13 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.snatik.storage.helpers.SizeUnit;
+
+import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -15,15 +19,26 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
 @Entity(tableName = "maincategories")
 public class MainCategories implements Serializable{
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     public int id;
     public String image;
     public String icon;
@@ -34,19 +49,20 @@ public class MainCategories implements Serializable{
     public String categories_name;
     public boolean isDelete ;
     public boolean isChange ;
+    public boolean isSyncOwnServer;
 
     @Ignore
-    public static MainCategories instance ;
+    private static MainCategories instance ;
 
     @Ignore
-    public String []ListIcon =new  String[]{"baseline_photo_white_48",
+    private transient String []ListIcon =new  String[]{"baseline_photo_white_48",
             "baseline_how_to_vote_white_48",
             "baseline_local_movies_white_48",
             "baseline_favorite_border_white_48",
             "baseline_delete_white_48"};
 
     @Ignore
-    public String []ListColor =new  String[]{"#34bdb7",
+    private transient String []ListColor =new  String[]{"#34bdb7",
             "#03A9F4",
             "#9E9D24",
             "#AA00FF",
@@ -59,7 +75,7 @@ public class MainCategories implements Serializable{
     private static final String TAG = MainCategories.class.getSimpleName();
 
 
-    public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange) {
+    public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer) {
         this.categories_name = categories_name;
         this.image = image;
         this.icon = icon;
@@ -71,7 +87,7 @@ public class MainCategories implements Serializable{
         this.isChange = isChange;
     }
 
-    @Ignore
+
     public MainCategories(){
         this.image = null;
         this.categories_name = null;
@@ -83,19 +99,23 @@ public class MainCategories implements Serializable{
         this.isChange = false;
     }
 
+    @Ignore
     public List<MainCategories> getList(){
         List<MainCategories> mList = new ArrayList<>();
         final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories();
-        if (list!=null){
+        if (list!=null && list.size()>0){
             mList.addAll(list);
+            Utils.Log(TAG,"Found data :"+ list.size());
         }
         else{
             final Map<String,MainCategories> map = MainCategories.getInstance().getMainCategoriesDefault();
+            Utils.Log(TAG,"No Data " + map.size());
             for (Map.Entry<String,MainCategories> index : map.entrySet()){
                 final MainCategories main = index.getValue();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
                 mList.add(main);
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
             }
+            //getObservable(mList);
         }
 
 
@@ -119,7 +139,7 @@ public class MainCategories implements Serializable{
         return mList;
     }
 
-
+    @Ignore
     public List<MainCategories> getListOriginal(){
         List<MainCategories> mList = new ArrayList<>();
         final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories();
@@ -130,9 +150,10 @@ public class MainCategories implements Serializable{
             final Map<String,MainCategories> map = MainCategories.getInstance().getMainCategoriesDefault();
             for (Map.Entry<String,MainCategories> index : map.entrySet()){
                 final MainCategories categories = index.getValue();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance());
                 mList.add(categories);
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(categories);
             }
+            //getObservable(mList);
         }
 
         Collections.sort(mList, new Comparator<MainCategories>() {
@@ -147,20 +168,23 @@ public class MainCategories implements Serializable{
 
     }
 
+    @Ignore
     public Map<String,MainCategories>getMainCategoriesDefault(){
         Map<String,MainCategories> map = new HashMap<>();
-        map.put(Utils.getUUId(),new MainCategories(null,Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],System.currentTimeMillis(),false,false));
-        map.put(Utils.getUUId(),new MainCategories(null,Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_card_ids)), SuperSafeApplication.getInstance().getString(R.string.key_card_ids), ListColor[1] ,ListIcon[1],System.currentTimeMillis()+1000,false,false));
-        map.put(Utils.getUUId(),new MainCategories(null,Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],System.currentTimeMillis()+1000,false,false));
-        map.put(Utils.getUUId(),new MainCategories(null,Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3],System.currentTimeMillis() +1000,false,false));
+        map.put(Utils.getHexCode("1234"),new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],System.currentTimeMillis(),false,false,false));
+        map.put(Utils.getHexCode("1235"),new MainCategories("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_card_ids)), SuperSafeApplication.getInstance().getString(R.string.key_card_ids), ListColor[1] ,ListIcon[1],System.currentTimeMillis()+1000,false,false,false));
+        map.put(Utils.getHexCode("1236"),new MainCategories("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],System.currentTimeMillis()+5000,false,false,false));
+        map.put(Utils.getHexCode("1237"),new MainCategories("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3],System.currentTimeMillis() +10000,false,false,false));
         return map;
     }
 
 
+    @Ignore
     public MainCategories getTrashItem(){
-        return new MainCategories(null,Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false,false);
+        return new MainCategories("null",Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false,false,false);
     }
 
+    @Ignore
     public Map<String,MainCategories>getMainCategoriesHashList(){
         try {
             String value  = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),null);
@@ -178,11 +202,12 @@ public class MainCategories implements Serializable{
         return null;
     }
 
+    @Ignore
     public boolean onAddCategories(String categories_hex_name,String name){
         try {
             final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(categories_hex_name);
             if (main==null){
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategories(null,Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],System.currentTimeMillis(),false,false));
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategories("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],System.currentTimeMillis(),false,true,false));
                 return true;
             }
         }
@@ -192,15 +217,20 @@ public class MainCategories implements Serializable{
         return false;
     }
 
+    @Ignore
     public boolean onChangeCategories(MainCategories mainCategories){
         try {
-            MainCategories response = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(mainCategories.categories_hex_name);
+            String hex_name = Utils.getHexCode(mainCategories.categories_name);
+            MainCategories response = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(hex_name);
             if (response==null){
-                response.categories_hex_name = Utils.getHexCode(mainCategories.categories_hex_name);
-                response.isChange = true;
+                mainCategories.categories_hex_name = hex_name;
+                mainCategories.isChange = true;
+                mainCategories.isSyncOwnServer = false;
                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
                 return true;
             }
+
+            Utils.Log(TAG,"value changed :"+ new Gson().toJson(response));
         }
         catch (Exception e){
             e.printStackTrace();
@@ -208,6 +238,7 @@ public class MainCategories implements Serializable{
         return false;
     }
 
+    @Ignore
     public boolean onDeleteCategories(String id){
         try {
             final Map<String,MainCategories> map = getMainCategoriesHashList();
@@ -227,6 +258,7 @@ public class MainCategories implements Serializable{
         return false;
     }
 
+    @Ignore
     public Drawable getDrawable(Context mContext, String name) {
         try {
             int resourceId = mContext.getResources().getIdentifier(name, "drawable", mContext.getPackageName());
@@ -238,6 +270,7 @@ public class MainCategories implements Serializable{
         return null;
     }
 
+    @Ignore
     public static MainCategories getInstance(){
         if (instance==null){
             instance = new MainCategories();
@@ -245,6 +278,7 @@ public class MainCategories implements Serializable{
         return instance;
     }
 
+    @Ignore
     public Map<String,Object> objectToHashMap(final MainCategories items){
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
@@ -252,6 +286,7 @@ public class MainCategories implements Serializable{
     }
 
 
+    @Ignore
     public boolean MainCategoriesSync(MainCategories mainCategories){
         try {
             final Map<String,MainCategories> map = getMainCategoriesHashList();

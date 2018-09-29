@@ -343,7 +343,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
         hashMap.put(getString(R.string.key_categories_max),mainCategories.categories_max+"");
-        hashMap.put(getString(R.string.key_categories_id),Utils.getUUId());
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -364,21 +363,18 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                     } else {
                         if (onResponse!=null){
                             if (onResponse.category!=null){
-                                MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(onResponse.category.categories_hex_name);
-                                if (main!=null){
-                                    main.categories_id = onResponse.category.categories_id;
-                                    main.isChange = false;
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                if (mainCategories.categories_hex_name.equals(onResponse.category.categories_hex_name)){
+                                    mainCategories.categories_id = onResponse.category.categories_id;
+                                    mainCategories.isSyncOwnServer = true;
+                                    mainCategories.isChange = false;
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+                                    view.onSuccessful(onResponse.message + " - "+ onResponse.category.categories_id+" - ",EnumStatus.CATEGORIES_SYNC);
                                 }
                                 else{
-                                    main = onResponse.category;
-                                    main.isChange = false;
-                                    main.categories_local_id = Utils.getUUId();
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
+                                    view.onSuccessful("Not found categories_hex_name - "+onResponse.category.categories_id);
                                 }
                             }
                         }
-                        view.onSuccessful(onResponse.message,EnumStatus.CATEGORIES_SYNC);
                     }
                 }, throwable -> {
                     if (view == null) {
@@ -534,16 +530,22 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         try {
                             if (onResponse.files!=null){
                                 for (MainCategories index : onResponse.files){
-                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name);
+                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
                                     if (main!=null){
                                         if (!main.isChange){
+                                            main.isSyncOwnServer = true;
+                                            main.isChange = false;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                         }
+                                        view.onSuccessful(onResponse.message);
                                     }
                                     else {
                                         main = index;
                                         main.categories_local_id = Utils.getUUId();
-                                       InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
+                                        main.isSyncOwnServer = true;
+                                        main.isChange = false;
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
+                                        view.onSuccessful(onResponse.message);
                                     }
                                 }
                             }
@@ -898,55 +900,81 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                             Log.d(TAG, "Ready for sync");
                             view.onSuccessful("Ready for sync");
                             view.onSuccessful(onResponse.nextPage,EnumStatus.SYNC_READY);
-                            //onDeletePreviousSync(view,onResponse.nextPage);
                         } else {
                             try {
                                 hashMapGlobal.clear();
                                 final List<DriveResponse> driveResponse = onResponse.files;
-                                for (DriveResponse index : driveResponse) {
-                                    hashMapGlobal.put(index.items_id,index.items_id);
-                                    final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
-                                    if (description != null) {
-                                        DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
-                                        if (driveTitle != null) {
-                                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
-                                            EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
-                                            if (items == null) {
-                                                description.global_original_id = index.global_original_id;
-                                                description.global_thumbnail_id = index.global_thumbnail_id;
-                                                switch (formatTypeFile) {
-                                                    case AUDIO: {
-                                                        description.thumbnailSync = true;
-                                                        break;
-                                                    }
-                                                    default: {
-                                                        description.originalSync = false;
-                                                        description.thumbnailSync = false;
-                                                        break;
-                                                    }
+                                final List<MainCategories>listCategories = onResponse.listCategories;
+                                try {
+                                    if (listCategories!=null){
+                                        for (MainCategories index : listCategories){
+                                            MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
+                                            if (main!=null){
+                                                if (!main.isChange){
+                                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                                    view.onSuccessful(onResponse.message,EnumStatus.GET_LIST_FILE);
                                                 }
+                                            }
+                                            else {
+                                                main = index;
+                                                main.isChange = false;
+                                                main.categories_local_id = Utils.getUUId();
+                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
+                                                view.onSuccessful(onResponse.message,EnumStatus.GET_LIST_FILE);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception e){
+                                    view.onError("Error :"+ e.getMessage(),EnumStatus.GET_LIST_FILE);
+                                }
+                                finally {
+                                    view.onSuccessful(onResponse.message,EnumStatus.GET_LIST_FILE);
+                                    for (DriveResponse index : driveResponse) {
+                                        hashMapGlobal.put(index.items_id,index.items_id);
+                                        final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
+                                        if (description != null) {
+                                            DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
+                                            if (driveTitle != null) {
+                                                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
+                                                EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
+                                                if (items == null) {
+                                                    description.global_original_id = index.global_original_id;
+                                                    description.global_thumbnail_id = index.global_thumbnail_id;
+                                                    switch (formatTypeFile) {
+                                                        case AUDIO: {
+                                                            description.thumbnailSync = true;
+                                                            break;
+                                                        }
+                                                        default: {
+                                                            description.originalSync = false;
+                                                            description.thumbnailSync = false;
+                                                            break;
+                                                        }
+                                                    }
 
-                                                final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
-                                                if (main!=null){
-                                                    description.categories_local_id = main.categories_local_id;
-                                                    onSaveItem(description);
-                                                }
-                                                else{
-                                                    view.onSuccessful("..................categories_id is nul.............");
+                                                    final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
+                                                    if (main!=null){
+                                                        description.categories_local_id = main.categories_local_id;
+                                                        onSaveItem(description);
+                                                    }
+                                                    else{
+                                                        view.onSuccessful("..................categories_id is nul.............");
+                                                    }
+                                                } else {
+                                                    items.global_original_id = index.global_original_id;
+                                                    items.global_thumbnail_id = index.global_thumbnail_id;
+                                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                                                    Log.d(TAG, "This item is existing");
                                                 }
                                             } else {
-                                                items.global_original_id = index.global_original_id;
-                                                items.global_thumbnail_id = index.global_thumbnail_id;
-                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
-                                                Log.d(TAG, "This item is existing");
+                                                view.onError("Can not convert item", EnumStatus.GET_LIST_FILE);
+                                                Log.d(TAG, "Can not convert item");
                                             }
                                         } else {
-                                            view.onError("Can not convert item", EnumStatus.GET_LIST_FILE);
-                                            Log.d(TAG, "Can not convert item");
+                                            view.onError("Description item is null", EnumStatus.GET_LIST_FILE);
+                                            Utils.Log(TAG, "Description item is null");
                                         }
-                                    } else {
-                                        view.onError("Description item is null", EnumStatus.GET_LIST_FILE);
-                                        Utils.Log(TAG, "Description item is null");
                                     }
                                 }
                             } catch (Exception e) {
@@ -1005,6 +1033,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             /*Note here*/
         }
     }
+
 
     public void onSaveItem(final DriveDescription description) {
         Items items = new Items(false,

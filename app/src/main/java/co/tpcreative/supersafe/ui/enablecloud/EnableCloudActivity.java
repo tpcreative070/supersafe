@@ -278,12 +278,12 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     @Override
     public void showError(String message) {
         Log.d(TAG,""+message);
-        onSopProgressDialog();
+        onStopProgressDialog();
     }
 
     @Override
     public void showSuccessful(String message) {
-        onSopProgressDialog();
+        onStopProgressDialog();
         presenter.mUser.cloud_id= message;
         presenter.mUser.driveConnected = true;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
@@ -302,7 +302,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
         progressDialog.show();
     }
 
-    public void onSopProgressDialog(){
+    public void onStopProgressDialog(){
         if (progressDialog!=null){
             progressDialog.dismiss();
         }
@@ -323,6 +323,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     @Override
     protected void onDriveError() {
         Log.d(TAG,"onDriveError");
+        onStopProgressDialog();
     }
 
     @Override

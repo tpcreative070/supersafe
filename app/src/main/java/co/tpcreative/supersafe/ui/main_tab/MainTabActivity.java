@@ -46,6 +46,7 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.RXJavaCollections;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
@@ -59,6 +60,7 @@ import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
@@ -101,17 +103,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.bindView(this);
         presenter.onGetUserInfo();
         storage = new Storage(this);
-
-        //final User mUser = User.getInstance().getUserInfo();
-        //Utils.Log(TAG,new Gson().toJson(mUser));
-
-
-        //ServiceManager.getInstance().onGetFilesInfo();
-
         ServiceManager.getInstance().onCheckingMissData();
-        ServiceManager.getInstance().onGetListCategoriesSync(false);
 
-
+        RXJavaCollections collections = new RXJavaCollections();
+        collections.getObservable();
     }
 
 
@@ -286,7 +281,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                              boolean response = MainCategories.getInstance().onAddCategories(base64Code,value);
                              if (response){
                                  Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
-                                 ServiceManager.getInstance().onGetListCategoriesSync(false);
+                                 ServiceManager.getInstance().onGetListCategoriesSync();
                              }
                              else{
                                  Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
@@ -423,6 +418,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         ServiceManager.getInstance().onGetDriveAbout();
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
         onBackUp();
+
     }
 
     @Override

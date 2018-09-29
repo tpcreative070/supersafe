@@ -149,7 +149,7 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
         btnTrash.setText(getString(R.string.key_empty_trash));
 
         SingletonPrivateFragment.getInstance().onUpdateView();
-        ServiceManager.getInstance().onGetListCategoriesSync(true);
+        ServiceManager.getInstance().onSyncDataOwnServer("0");
 
     }
 

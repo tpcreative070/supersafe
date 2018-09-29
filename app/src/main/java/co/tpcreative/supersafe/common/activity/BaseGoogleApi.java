@@ -188,6 +188,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                     // required and is fatal. For apps where sign-in is optional, handle
                     // appropriately
                     Log.e(TAG, "Sign-in failed.");
+                    onDriveError();
                     return;
                 }
                 Task<GoogleSignInAccount> getAccountTask =
@@ -196,6 +197,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                     Log.d(TAG,"sign in successful");
                     initializeDriveClient(getAccountTask.getResult());
                 } else {
+                    onDriveError();
                     Log.e(TAG, "Sign-in failed..");
                 }
                 break;
@@ -273,7 +275,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
                         @Override
                         public void onSuccessful(String message) {
-                            ServiceManager.getInstance().onGetListCategoriesSync(true);
+                            ServiceManager.getInstance().onSyncDataOwnServer("0");
                             Log.d(TAG,"successful :"+ message);
                         }
                         @Override

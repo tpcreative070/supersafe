@@ -14,15 +14,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.litao.android.lib.Utils.GridSpacingItemDecoration;
+import com.snatik.storage.Storage;
+
+import java.util.List;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumDelete;
+import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.trash.TrashView;
 
 public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener,SingletonPrivateFragment.SingletonPrivateFragmentListener{
 
@@ -30,6 +39,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     private RecyclerView recyclerView;
     private PrivatePresenter presenter;
     private PrivateAdapter adapter;
+    private Storage storage;
 
     public static PrivateFragment newInstance(int index) {
         PrivateFragment fragment = new PrivateFragment();
@@ -55,6 +65,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         recyclerView = view.findViewById(R.id.recyclerView);
         initRecycleView(inflater);
         SingletonPrivateFragment.getInstance().setListener(this);
+        storage = new Storage(SuperSafeApplication.getInstance());
         return view;
     }
 
@@ -102,11 +113,13 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         Log.d(TAG,"Position :"+ position);
         try {
             String value  = Utils.getHexCode(getString(R.string.key_trash));
-            if (value.equals(presenter.mList.get(position).categories_local_id)){
+
+            if (value.equals(presenter.mList.get(position).categories_hex_name)){
                 Navigator.onMoveTrash(getActivity());
             }
             else{
                 final MainCategories mainCategories = presenter.mList.get(position);
+
                 Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
             }
         }
@@ -122,14 +135,33 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onDeleteAlbum(int position) {
-        final MainCategories object = presenter.mList.get(position);
-        if (object!=null){
-//            final boolean response = MainCategories.getInstance().onDeleteCategories(object.categories_local_id);
-//            if (response){
-//                InstanceGenerator.getInstance(getActivity()).onDeleteAll(object.categories_local_id);
-//                presenter.getData();
-//            }
+        Utils.Log(TAG,"empty trash");
+    }
+
+    @Override
+    public void onEmptyTrash(int position) {
+        onEmptyTrash();
+    }
+
+    public void onEmptyTrash(){
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal());
+        for (int i = 0 ;i <mList.size();i++){
+            EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
+            if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+            }
+            else if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id == null){
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+            }
+            else{
+                mList.get(i).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                Utils.Log(TAG,"ServiceManager waiting for delete");
+            }
+            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).local_id);
         }
+        onUpdateView();
+        ServiceManager.getInstance().onSyncDataOwnServer("0");
     }
 
     @Override

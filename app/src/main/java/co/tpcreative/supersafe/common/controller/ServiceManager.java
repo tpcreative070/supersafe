@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.controller;
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -15,23 +16,28 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.Cipher;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeService;
 import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
+import co.tpcreative.supersafe.common.services.upload.UploadService;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
@@ -48,6 +54,7 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -62,18 +69,45 @@ public class ServiceManager implements SuperSafeServiceView {
     private Disposable subscriptions;
     private Storage storage = new Storage(SuperSafeApplication.getInstance());
     private Storage mStorage = new Storage(SuperSafeApplication.getInstance());
-    private Cipher mCiphers;
+    ServiceConnection myConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            Log.d(TAG, "connected");
+            myService = ((SuperSafeService.LocalBinder) binder).getService();
+            myService.bindView(ServiceManager.this);
+            storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+            mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+        }
 
+        //binder comes from server to communicate with method's of
+        public void onServiceDisconnected(ComponentName className) {
+            Log.d(TAG, "disconnected");
+            myService = null;
+        }
+    };
+    private Cipher mCiphers;
     private boolean isDownloadData;
     private boolean isLoadingData;
     private boolean isDeleteSyncCLoud;
     private boolean isDeleteOwnCloud;
-
-
     private boolean isGetListCategories;
+    private boolean isCategoriesSync;
     private int countSyncData = 0;
     private int totalList = 0;
 
+    public static ServiceManager getInstance() {
+        if (instance == null) {
+            instance = new ServiceManager();
+        }
+        return instance;
+    }
+
+    public boolean isCategoriesSync() {
+        return isCategoriesSync;
+    }
+
+    public void setCategoriesSync(boolean categoriesSync) {
+        isCategoriesSync = categoriesSync;
+    }
 
     public boolean isGetListCategories() {
         return isGetListCategories;
@@ -115,7 +149,6 @@ public class ServiceManager implements SuperSafeServiceView {
         isUploadData = uploadData;
     }
 
-
     public void onPickUpNewEmailNoTitle(Activity context, String account) {
         try {
             Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
@@ -154,33 +187,9 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
-
-    public static ServiceManager getInstance() {
-        if (instance == null) {
-            instance = new ServiceManager();
-        }
-        return instance;
-    }
-
     public void setContext(Context mContext) {
         this.mContext = mContext;
     }
-
-    ServiceConnection myConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder binder) {
-            Log.d(TAG, "connected");
-            myService = ((SuperSafeService.LocalBinder) binder).getService();
-            myService.bindView(ServiceManager.this);
-            storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-            mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-        }
-
-        //binder comes from server to communicate with method's of
-        public void onServiceDisconnected(ComponentName className) {
-            Log.d(TAG, "disconnected");
-            myService = null;
-        }
-    };
 
     private void doBindService() {
         Intent intent = null;
@@ -226,14 +235,10 @@ public class ServiceManager implements SuperSafeServiceView {
         }
     }
 
-    public void onGetListCategoriesSync(boolean isSyncData) {
+
+    public void onGetListCategoriesSync() {
         if (myService == null) {
             Utils.Log(TAG, "My services on categories sync is null");
-            return;
-        }
-
-        if (isGetListCategories){
-            Utils.Log(TAG,"Get List Categories is query...");
             return;
         }
 
@@ -242,7 +247,11 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        isGetListCategories = true;
+        if (isCategoriesSync) {
+            Utils.Log(TAG, "List categories is sync...!!!--------------*******************************-----------");
+            return;
+        }
+
         myService.onGetListCategoriesSync(new SuperSafeServiceView() {
             @Override
             public void onError(String message, EnumStatus status) {
@@ -259,13 +268,7 @@ public class ServiceManager implements SuperSafeServiceView {
             public void onSuccessful(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
                 SingletonPrivateFragment.getInstance().onUpdateView();
-                if (isSyncData){
-                    onSyncDataOwnServer("0");
-                }
-                else{
-                    onCategoriesSync();
-                }
-                isGetListCategories = false;
+                getObservable();
             }
 
             @Override
@@ -301,73 +304,121 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
 
-    public void onCategoriesSync() {
+    private Observable<MainCategories> getObservableItems(List<MainCategories> categories) {
+        return Observable.create(subscriber -> {
+            for (MainCategories index : categories) {
+                myService.onCategoriesSync(index, new SuperSafeServiceView() {
+                    @Override
+                    public void onError(String message, EnumStatus status) {
+                        Utils.Log(TAG, message + "--" + status.name());
+                        subscriber.onNext(index);
+                        subscriber.onComplete();
+                    }
+
+                    @Override
+                    public void onSuccessful(String message) {
+
+                    }
+
+                    @Override
+                    public void onSuccessful(String message, EnumStatus status) {
+                        Utils.Log(TAG, message + "--" + status.name());
+                        subscriber.onNext(index);
+                        subscriber.onComplete();
+                    }
+
+                    @Override
+                    public void onSuccessfulOnCheck(List<Items> lists) {
+
+                    }
+
+                    @Override
+                    public void onSuccessful(List<DriveResponse> lists) {
+
+                    }
+
+                    @Override
+                    public void onNetworkConnectionChanged(boolean isConnect) {
+
+                    }
+
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void startLoading() {
+
+                    }
+
+                    @Override
+                    public void stopLoading() {
+
+                    }
+                });
+            }
+        });
+    }
+
+    public void getObservable() {
         if (myService == null) {
             Utils.Log(TAG, "My services on categories sync is null");
             return;
         }
-        final List<MainCategories> mList = MainCategories.getInstance().getListOriginal();
 
-        if (mList == null || mList.size() == 0) {
-            Utils.Log(TAG, "Categories Sync is null");
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false,1);
+
+        if (mList == null) {
+            Utils.Log(TAG, "Categories already sync");
             return;
         }
 
-        subscriptions = Observable.fromIterable(mList)
-                .concatMap(i -> Observable.just(i).delay(500, TimeUnit.MILLISECONDS))
-                .doOnNext(i -> {
-                    myService.onCategoriesSync(i, new SuperSafeServiceView() {
-                        @Override
-                        public void onError(String message, EnumStatus status) {
-                            Utils.Log(TAG, message + "--" + status.name());
-                        }
+        if (isCategoriesSync) {
+            Utils.Log(TAG, "List categories is sync...--------------*******************************-----------");
+            return;
+        }
 
-                        @Override
-                        public void onSuccessful(String message) {
+        isCategoriesSync = true;
+        totalList = mList.size();
+        if (mList.size() == 0) {
+            Utils.Log(TAG, "Categories already sync");
+            isCategoriesSync = false;
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            SingletonPrivateFragment.getInstance().onUpdateView();
+            return;
+        }
 
-                        }
+        getObservableItems(mList).
+                subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).
+                subscribe(new Observer<MainCategories>() {
 
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status) {
-                            Utils.Log(TAG, message + "--" + status.name());
-                        }
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-                        @Override
-                        public void onSuccessfulOnCheck(List<Items> lists) {
+                    }
 
-                        }
+                    @Override
+                    public void onComplete() {
+                        Utils.Log(TAG, "complete");
+                        isCategoriesSync = false;
+                        getObservable();
+                    }
 
-                        @Override
-                        public void onSuccessful(List<DriveResponse> lists) {
+                    @Override
+                    public void onError(Throwable e) {
+                    }
 
-                        }
-
-                        @Override
-                        public void onNetworkConnectionChanged(boolean isConnect) {
-
-                        }
-
-                        @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void startLoading() {
-
-                        }
-
-                        @Override
-                        public void stopLoading() {
-
-                        }
-                    });
-
-                })
-                .doOnComplete(() -> {
-                })
-                .subscribe();
+                    @Override
+                    public void onNext(MainCategories pojoObject) {
+                        // Show Progress
+                        Utils.Log(TAG, "next");
+                    }
+                });
     }
+
+
 
     public void onCheckingMissData() {
         Utils.Log(TAG, "Preparing checking miss data ###########################");
@@ -392,10 +443,14 @@ public class ServiceManager implements SuperSafeServiceView {
                 })
                 .subscribe();
     }
-    
+
 
     public void onSyncDataOwnServer(String nextPage) {
         Utils.Log(TAG, "Preparing sync data ###########################");
+        if (isCategoriesSync) {
+            Utils.Log(TAG, "List categories is sync...--------------*******************************-----------");
+            return;
+        }
         if (isDownloadData) {
             SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
             Utils.Log(TAG, "List items is downloading...--------------*******************************-----------");
@@ -461,6 +516,9 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         final List<Items> mPreviousList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
 
+                        final List<MainCategories> mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false);
+
+
                         boolean isPreviousDelete = false;
                         if (mPreviousList != null && mPreviousList.size() > 0) {
                             for (Items index : mPreviousList) {
@@ -471,7 +529,11 @@ public class ServiceManager implements SuperSafeServiceView {
                             }
                         }
 
-                        if (mListOwnCloud != null && mListOwnCloud.size() > 0) {
+                        if (mainCategories != null && mainCategories.size() > 0) {
+                            //onCategoriesSync();
+                            getObservable();
+                            Utils.Log(TAG, "Preparing categories sync on own cloud...");
+                        } else if (mListOwnCloud != null && mListOwnCloud.size() > 0) {
                             Utils.Log(TAG, "Preparing deleting on own cloud...");
                             onDeleteOnOwnItems();
                         } else if (mListCloud != null && mListCloud.size() > 0) {
@@ -482,7 +544,7 @@ public class ServiceManager implements SuperSafeServiceView {
                             myService.onDeletePreviousSync(new DeleteServiceListener() {
                                 @Override
                                 public void onDone() {
-                                    ServiceManager.getInstance().onGetListCategoriesSync(true);
+                                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                                 }
                             });
                         } else if (items != null) {
@@ -556,7 +618,7 @@ public class ServiceManager implements SuperSafeServiceView {
         if (mList.size() == 0) {
             Utils.Log(TAG, "Not Found own data id to delete");
             isDeleteOwnCloud = false;
-            ServiceManager.getInstance().onGetListCategoriesSync(true);
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
             return;
         }
 
@@ -665,7 +727,7 @@ public class ServiceManager implements SuperSafeServiceView {
         if (mList.size() == 0) {
             //onDeleteOnLocal();
             isDeleteSyncCLoud = false;
-            ServiceManager.getInstance().onGetListCategoriesSync(true);
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
             Utils.Log(TAG, "Not Found cloud id to delete");
             return;
         }
@@ -805,16 +867,14 @@ public class ServiceManager implements SuperSafeServiceView {
                             onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
                             Utils.Log(TAG, "categories_id is null at " + itemObject.id);
                             isWorking = false;
-                        }
-                        else{
+                        } else {
                             isWorking = false;
                             final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id);
-                            if (main!=null){
-                                if (main.categories_id!=null){
+                            if (main != null) {
+                                if (main.categories_id != null) {
                                     isWorking = true;
-                                }
-                                else{
-                                   isWorking = false;
+                                } else {
+                                    isWorking = false;
                                 }
                             }
                         }
@@ -995,15 +1055,13 @@ public class ServiceManager implements SuperSafeServiceView {
                         if (itemObject.categories_local_id == null) {
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(itemObject);
                             isWorking = false;
-                        }
-                        else{
+                        } else {
                             isWorking = false;
                             final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id);
-                            if (main!=null){
-                                if (main.categories_id==null){
+                            if (main != null) {
+                                if (main.categories_id == null) {
                                     isWorking = false;
-                                }
-                                else{
+                                } else {
                                     isWorking = true;
                                 }
                             }
@@ -1387,7 +1445,6 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.deleteAction = EnumDelete.NONE.ordinal();
 
 
-
                         items = new Items(false,
                                 false,
                                 description.originalSync,
@@ -1575,7 +1632,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     } finally {
                         GalleryCameraMediaManager.getInstance().onUpdatedView();
                         SingletonPrivateFragment.getInstance().onUpdateView();
-                        ServiceManager.getInstance().onGetListCategoriesSync(true);
+                        ServiceManager.getInstance().onSyncDataOwnServer("0");
                     }
                 });
     }
@@ -1708,7 +1765,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     } finally {
                         GalleryCameraMediaManager.getInstance().setProgressing(false);
                         SingletonPrivateFragment.getInstance().onUpdateView();
-                        ServiceManager.getInstance().onGetListCategoriesSync(true);
+                        ServiceManager.getInstance().onSyncDataOwnServer("0");
                     }
                 });
 
@@ -1731,7 +1788,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, messageDone);
                     Utils.Log(TAG, "Request syn data on upload.........");
                     onWriteLog("Request syn data on upload", EnumStatus.UPLOAD);
-                    ServiceManager.getInstance().onGetListCategoriesSync(true);
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
 
                 } else {
@@ -1757,7 +1814,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request syn data on download", EnumStatus.DOWNLOAD);
                     Utils.Log(TAG, "Request syn data on download.........");
-                    ServiceManager.getInstance().onGetListCategoriesSync(true);
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
 
                 } else {
@@ -1780,7 +1837,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request own syn data on download", EnumStatus.DELETE_SYNC_OWN_DATA);
                     Utils.Log(TAG, "Request own syn data on download.........");
-                    ServiceManager.getInstance().onGetListCategoriesSync(true);
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
 
                 } else {
@@ -1803,7 +1860,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     onWriteLog("Request cloud syn data on download", EnumStatus.DELETE_SYNC_CLOUD_DATA);
                     Utils.Log(TAG, "Request cloud syn data on download.........");
-                    ServiceManager.getInstance().onGetListCategoriesSync(true);
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
                     //onDeleteOnLocal();
                 } else {
@@ -1869,7 +1926,7 @@ public class ServiceManager implements SuperSafeServiceView {
     public void onNetworkConnectionChanged(boolean isConnect) {
         GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
         if (isConnect) {
-            ServiceManager.getInstance().onGetListCategoriesSync(true);
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
             onCheckingMissData();
         }
     }

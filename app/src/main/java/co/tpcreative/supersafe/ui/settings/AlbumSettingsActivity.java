@@ -125,7 +125,11 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                 public boolean onPreferenceClick(Preference preference) {
                     if (preference instanceof MyPreference){
                         if (preference.getKey().equals(getString(R.string.key_name))){
-                            onShowChangeCategoriesNameDialog();
+                            String main = Utils.getHexCode(getString(R.string.key_main_album));
+                            String trash = Utils.getHexCode(getString(R.string.key_trash));
+                            if (!main.equals(presenter.mMainCategories.categories_hex_name) && !trash.equals(presenter.mMainCategories.categories_hex_name)){
+                                onShowChangeCategoriesNameDialog();
+                            }
                         }
                     }
                     return true;
@@ -164,7 +168,8 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                             String value = input.toString();
                             String base64Code = Utils.getHexCode(value);
                             MainCategories item = MainCategories.getInstance().getTrashItem();
-                            String result = item.categories_local_id;
+                            String result = item.categories_hex_name;
+                            String main = Utils.getHexCode(getString(R.string.key_main_album));
 
                             if (presenter.mMainCategories==null){
                                 Toast.makeText(getContext(),"Can not change category name",Toast.LENGTH_SHORT).show();
@@ -174,16 +179,20 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
                                 Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
                                 return;
                             }
+                            else if (base64Code.equals(main)){
+                                Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             else{
                                 presenter.mMainCategories.categories_name = value;
                                 boolean response = MainCategories.getInstance().onChangeCategories(presenter.mMainCategories);
                                 if (response){
                                     Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                     mName.setSummary(presenter.mMainCategories.categories_name);
-                                    ServiceManager.getInstance().onGetListCategoriesSync(false);
+                                    ServiceManager.getInstance().onGetListCategoriesSync();
                                 }
                                 else{
-                                    Toast.makeText(getContext(),"Album name already existing",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(),"Album name already existing.",Toast.LENGTH_SHORT).show();
                                 }
                                 SingletonPrivateFragment.getInstance().onUpdateView();
                             }

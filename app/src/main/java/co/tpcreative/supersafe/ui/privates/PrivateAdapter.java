@@ -142,10 +142,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
         @OnClick(R.id.overflow)
         public void onClickedOverFlow(View view) {
-            if (data.categories_local_id.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
+            if (data.categories_hex_name.equals(Utils.getHexCode(context.getString(R.string.key_trash)))){
                 showPopupMenu(view, R.menu.menu_trash_album,mPosition);
             }
-            else if(data.categories_local_id.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
+            else if(data.categories_hex_name.equals(Utils.getHexCode(context.getString(R.string.key_main_album)))){
                 showPopupMenu(view, R.menu.menu_main_album,mPosition);
             }
             else{
@@ -183,6 +183,12 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                         itemSelectedListener.onDeleteAlbum(position);
                     }
                     return true;
+                case R.id.action_empty_trash :
+                    if (itemSelectedListener!=null){
+                        itemSelectedListener.onEmptyTrash(position);
+                    }
+                     return true;
+
                 default:
             }
             return false;
@@ -195,6 +201,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         void onSetting(int position);
 
         void onDeleteAlbum(int position);
+
+        void onEmptyTrash(int position);
     }
 
 }
