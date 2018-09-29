@@ -136,6 +136,7 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     @Override
     public void onDeleteAlbum(int position) {
         Utils.Log(TAG,"empty trash");
+        presenter.onDeleteAlbum(position);
     }
 
     @Override

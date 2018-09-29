@@ -60,9 +60,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     private SupperSafeServiceListener listener;
     private SuperSafeReceiver androidReceiver;
     private DownloadService downloadService;
-    private DownloadService downloadServiceThumbnail;
     protected Storage storage;
     private HashMap<String,String>hashMapGlobal = new HashMap<>();
+    private HashMap<String,String>hashMapGlobalCategories = new HashMap<>();
     private static final String TAG = SuperSafeService.class.getSimpleName();
 
     public interface SupperSafeServiceListener {
@@ -77,12 +77,15 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         return hashMapGlobal;
     }
 
+    public HashMap<String, String> getHashMapGlobalCategories() {
+        return hashMapGlobalCategories;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
         downloadService = new DownloadService(this);
-        downloadServiceThumbnail = new DownloadService(this);
         storage = new Storage(this);
         onInitReceiver();
         SuperSafeApplication.getInstance().setConnectivityListener(this);
@@ -367,6 +370,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                     mainCategories.categories_id = onResponse.category.categories_id;
                                     mainCategories.isSyncOwnServer = true;
                                     mainCategories.isChange = false;
+                                    mainCategories.isDelete = false;
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
                                     view.onSuccessful(onResponse.message + " - "+ onResponse.category.categories_id+" - ",EnumStatus.CATEGORIES_SYNC);
                                 }
@@ -451,6 +455,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES);
                     } else {
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mainCategories);
                         view.onSuccessful(onResponse.message,EnumStatus.DELETE_CATEGORIES);
                     }
                 }, throwable -> {
@@ -532,9 +537,10 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                 for (MainCategories index : onResponse.files){
                                     MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
                                     if (main!=null){
-                                        if (!main.isChange){
+                                        if (!main.isChange && !main.isDelete){
                                             main.isSyncOwnServer = true;
                                             main.isChange = false;
+                                            main.isDelete = false;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                         }
                                         view.onSuccessful(onResponse.message);
@@ -544,6 +550,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                         main.categories_local_id = Utils.getUUId();
                                         main.isSyncOwnServer = true;
                                         main.isChange = false;
+                                        main.isDelete = false;
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
                                         view.onSuccessful(onResponse.message);
                                     }
@@ -871,6 +878,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             return;
         }
 
+        if (nextPage.equals("0")){
+            hashMapGlobalCategories.clear();
+            hashMapGlobal.clear();
+        }
+
         Map<String, Object> hashMap = new HashMap<>();
         hashMap.put(getString(R.string.key_cloud_id),user.cloud_id);
         hashMap.put(getString(R.string.key_user_id), user.email);
@@ -896,21 +908,24 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
+                        final List<MainCategories>listCategories = onResponse.listCategories;
+                        final List<DriveResponse> driveResponse = onResponse.files;
                         if (onResponse.nextPage == null) {
+                            Utils.Log(TAG,"Special data....."+new Gson().toJson(listCategories));
+                            for (MainCategories index : listCategories){
+                                hashMap.put(index.categories_id,index.categories_id);
+                            }
                             Log.d(TAG, "Ready for sync");
                             view.onSuccessful("Ready for sync");
                             view.onSuccessful(onResponse.nextPage,EnumStatus.SYNC_READY);
                         } else {
                             try {
-                                hashMapGlobal.clear();
-                                final List<DriveResponse> driveResponse = onResponse.files;
-                                final List<MainCategories>listCategories = onResponse.listCategories;
                                 try {
                                     if (listCategories!=null){
                                         for (MainCategories index : listCategories){
                                             MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
                                             if (main!=null){
-                                                if (!main.isChange){
+                                                if (!main.isChange && !main.isDelete){
                                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                                     view.onSuccessful(onResponse.message,EnumStatus.GET_LIST_FILE);
                                                 }
@@ -918,6 +933,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                             else {
                                                 main = index;
                                                 main.isChange = false;
+                                                main.isDelete = false;
                                                 main.categories_local_id = Utils.getUUId();
                                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
                                                 view.onSuccessful(onResponse.message,EnumStatus.GET_LIST_FILE);
@@ -1028,6 +1044,31 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         finally {
             view.onDone();
             hashMapGlobal.clear();
+            SingletonPrivateFragment.getInstance().onUpdateView();
+            GalleryCameraMediaManager.getInstance().onUpdatedView();
+            /*Note here*/
+        }
+    }
+
+    public void onDeletePreviousCategoriesSync(ServiceManager.DeleteServiceListener view){
+        try{
+            final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true);
+            for (MainCategories index : list){
+                String value = hashMapGlobal.get(index.categories_id);
+                if (value==null){
+                    final List<Items> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false);
+                    if (data==null || data.size()==0){
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            e.getMessage();
+        }
+        finally {
+            view.onDone();
+            hashMapGlobalCategories.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
             GalleryCameraMediaManager.getInstance().onUpdatedView();
             /*Note here*/

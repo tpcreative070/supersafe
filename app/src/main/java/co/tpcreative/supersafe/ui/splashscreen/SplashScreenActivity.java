@@ -92,6 +92,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
         ServiceManager.getInstance().setDeleteSyncCLoud(false);
         ServiceManager.getInstance().setGetListCategories(false);
         ServiceManager.getInstance().setCategoriesSync(false);
+        ServiceManager.getInstance().setDeleteAlbum(false);
 
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);

@@ -102,7 +102,7 @@ public class MainCategories implements Serializable{
     @Ignore
     public List<MainCategories> getList(){
         List<MainCategories> mList = new ArrayList<>();
-        final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories();
+        final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
         if (list!=null && list.size()>0){
             mList.addAll(list);
             Utils.Log(TAG,"Found data :"+ list.size());

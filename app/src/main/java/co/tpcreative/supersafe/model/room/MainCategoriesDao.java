@@ -52,6 +52,9 @@ public interface MainCategoriesDao {
     @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id")
     List<MainCategories> loadListItemId(String categories_local_id);
 
+    @Query("Select * FROM maincategories WHERE isDelete = :isDelete")
+    List<MainCategories> loadAll(boolean isDelete);
+
     @Query("Select * FROM maincategories")
     List<MainCategories> loadAll();
 

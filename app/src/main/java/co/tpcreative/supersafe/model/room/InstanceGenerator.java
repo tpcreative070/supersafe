@@ -92,6 +92,21 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+
+    public final synchronized List<Items> getListItems(final String categories_local_id){
+        try{
+            if (categories_local_id==null){
+                return null;
+            }
+            return instance.itemsDao().loadAll(categories_local_id);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
     public final synchronized List<Items> getListItems(){
         try{
             return instance.itemsDao().loadAll();
@@ -236,6 +251,17 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return false;
     }
 
+    public final synchronized boolean onDelete(MainCategories entity){
+        try{
+            instance.mainCategoriesDao().delete(entity);
+            return true;
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return false;
+    }
+
     public final synchronized boolean onDeleteAll(String categories_local_id){
         try{
             instance.itemsDao().deleteAll(categories_local_id);
@@ -282,6 +308,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     public final synchronized List<MainCategories> getListCategories(){
         try{
             return instance.mainCategoriesDao().loadAll();
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<MainCategories> getListCategories(boolean isDelete){
+        try{
+            return instance.mainCategoriesDao().loadAll(isDelete);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

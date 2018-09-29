@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.internal.GmsClientEventManager;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
@@ -84,6 +85,7 @@ public class ServiceManager implements SuperSafeServiceView {
             myService = null;
         }
     };
+
     private Cipher mCiphers;
     private boolean isDownloadData;
     private boolean isLoadingData;
@@ -91,6 +93,7 @@ public class ServiceManager implements SuperSafeServiceView {
     private boolean isDeleteOwnCloud;
     private boolean isGetListCategories;
     private boolean isCategoriesSync;
+    private boolean isDeleteAlbum;
     private int countSyncData = 0;
     private int totalList = 0;
 
@@ -99,6 +102,15 @@ public class ServiceManager implements SuperSafeServiceView {
             instance = new ServiceManager();
         }
         return instance;
+    }
+
+
+    public boolean isDeleteAlbum() {
+        return isDeleteAlbum;
+    }
+
+    public void setDeleteAlbum(boolean deleteAlbum) {
+        isDeleteAlbum = deleteAlbum;
     }
 
     public boolean isCategoriesSync() {
@@ -234,7 +246,6 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG, "My services is null");
         }
     }
-
 
     public void onGetListCategoriesSync() {
         if (myService == null) {
@@ -476,6 +487,11 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
+        if (isDeleteAlbum){
+            Utils.Log(TAG, "List categories is deleting...----------------*******************************-----------");
+            return;
+        }
+
         if (myService != null) {
             isLoadingData = true;
             myService.onGetListSync(nextPage, new SuperSafeServiceView() {
@@ -518,6 +534,24 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         final List<MainCategories> mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false);
 
+                        final List<MainCategories> mPreviousMainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true);
+
+                        final List<MainCategories> deleteAlbum = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true);
+
+
+                        boolean isDeleteAlbum = true;
+                        if (deleteAlbum !=null && deleteAlbum.size()>0){
+                            for (MainCategories index : deleteAlbum){
+                                final List<Items> mItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id);
+                                if (mItems!=null && mItems.size()>0){
+                                    isDeleteAlbum = false;
+                                }
+                            }
+                        }
+                        else {
+                            isDeleteAlbum = false;
+                        }
+
 
                         boolean isPreviousDelete = false;
                         if (mPreviousList != null && mPreviousList.size() > 0) {
@@ -529,8 +563,22 @@ public class ServiceManager implements SuperSafeServiceView {
                             }
                         }
 
+
+                        boolean isPreviousCategoriesDelete = false;
+                        if (mPreviousMainCategories !=null && mPreviousMainCategories.size()>0){
+                            if (myService.getHashMapGlobalCategories()!=null && myService.getHashMapGlobalCategories().size()>0 ){
+                                for (MainCategories index : mPreviousMainCategories){
+                                    String value = myService.getHashMapGlobalCategories().get(index.categories_id);
+                                    if (value==null){
+                                        isPreviousCategoriesDelete = true;
+                                    }
+                                }
+                            }
+                        }
+
+
+
                         if (mainCategories != null && mainCategories.size() > 0) {
-                            //onCategoriesSync();
                             getObservable();
                             Utils.Log(TAG, "Preparing categories sync on own cloud...");
                         } else if (mListOwnCloud != null && mListOwnCloud.size() > 0) {
@@ -539,7 +587,12 @@ public class ServiceManager implements SuperSafeServiceView {
                         } else if (mListCloud != null && mListCloud.size() > 0) {
                             Utils.Log(TAG, "Preparing deleting on cloud...");
                             onDeleteCloud();
-                        } else if (isPreviousDelete) {
+                        }
+                        else if (isDeleteAlbum){
+                            Utils.Log(TAG, "Preparing deleting on global album...");
+                            onDeleteAlbum();
+                        }
+                        else if (isPreviousDelete) {
                             Utils.Log(TAG, "Preparing deleting on previous...");
                             myService.onDeletePreviousSync(new DeleteServiceListener() {
                                 @Override
@@ -547,7 +600,17 @@ public class ServiceManager implements SuperSafeServiceView {
                                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                                 }
                             });
-                        } else if (items != null) {
+                        }
+                        else if (isPreviousCategoriesDelete){
+                            Utils.Log(TAG, "Preparing deleting on previous album on local...");
+                            myService.onDeletePreviousCategoriesSync(new DeleteServiceListener() {
+                                @Override
+                                public void onDone() {
+                                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                                }
+                            });
+                        }
+                        else if (items != null) {
                             if (items.size() > 0) {
                                 Utils.Log(TAG, "Preparing downloading...");
                                 onDownloadFilesFromDriveStore();
@@ -682,6 +745,98 @@ public class ServiceManager implements SuperSafeServiceView {
                 })
                 .subscribe();
     }
+
+    /*Delete album*/
+
+    public void onDeleteAlbum() {
+        if (myService == null) {
+            Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_CATEGORIES);
+            return;
+        }
+
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            Utils.Log(TAG, "Check network connection");
+            return;
+        }
+
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true);
+
+        if (mList == null) {
+            Utils.Log(TAG, "No Found data to delete on own items!!!");
+            return;
+        }
+
+        countSyncData = 0;
+        isDeleteAlbum = true;
+        totalList = mList.size();
+        if (mList.size() == 0) {
+            Utils.Log(TAG, "Not Found own data id to delete");
+            isDeleteAlbum = false;
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            return;
+        }
+
+        subscriptions = Observable.fromIterable(mList)
+                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
+                .doOnNext(i -> {
+                    Utils.Log(TAG, "Starting deleting items on own cloud.......");
+                    final MainCategories main = i;
+                    isDeleteAlbum = true;
+                    myService.onDeleteCategoriesSync(main, new SuperSafeServiceView() {
+                        @Override
+                        public void onError(String message, EnumStatus status) {
+                            Utils.Log(TAG, message + "--" + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.DELETE_CATEGORIES);
+                        }
+
+                        @Override
+                        public void onSuccessful(String message) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status) {
+                            Utils.Log(TAG, message + " -- " + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.DELETE_CATEGORIES);
+                        }
+
+                        @Override
+                        public void onSuccessfulOnCheck(List<Items> lists) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(List<DriveResponse> lists) {
+
+                        }
+
+                        @Override
+                        public void onNetworkConnectionChanged(boolean isConnect) {
+
+                        }
+
+                        @Override
+                        public void onStart() {
+
+                        }
+
+                        @Override
+                        public void startLoading() {
+
+                        }
+
+                        @Override
+                        public void stopLoading() {
+
+                        }
+                    });
+                })
+                .doOnComplete(() -> {
+                })
+                .subscribe();
+    }
+
+
 
     public void onDeleteCloud() {
         if (myService == null) {
@@ -1866,6 +2021,31 @@ public class ServiceManager implements SuperSafeServiceView {
                 } else {
                     String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
                     onWriteLog(message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                    Utils.Log(TAG, message);
+                }
+                break;
+            }
+            case DELETE_CATEGORIES: {
+                countSyncData += 1;
+                if (countSyncData == totalList) {
+                    isDeleteAlbum = false;
+                    String message = "Completed delete album...................deleted " + countSyncData + "/" + totalList;
+                    String messageDone = "Completed delete album data.......................^^...........^^.......^^........";
+                    onWriteLog(message, EnumStatus.DELETE_CATEGORIES);
+                    onWriteLog(messageDone, EnumStatus.DELETE_CATEGORIES);
+                    Utils.Log(TAG, message);
+                    Utils.Log(TAG, messageDone);
+
+                    onWriteLog("Request cloud syn data on album", EnumStatus.DELETE_CATEGORIES);
+                    Utils.Log(TAG, "Request cloud syn data on album.........");
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    SingletonPrivateFragment.getInstance().onUpdateView();
+                    GalleryCameraMediaManager.getInstance().onUpdatedView();
+                    onGetDriveAbout();
+                    //onDeleteOnLocal();
+                } else {
+                    String message = "Completed delete count album...................deleted " + countSyncData + "/" + totalList;
+                    onWriteLog(message, EnumStatus.DELETE_CATEGORIES);
                     Utils.Log(TAG, message);
                 }
                 break;

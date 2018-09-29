@@ -21,6 +21,9 @@ public interface ItemsDao {
     @Query("Delete from items  WHERE categories_local_id = :categories_local_id")
     void deleteAll(String categories_local_id);
 
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id")
+    List<Items> loadAll(String categories_local_id);
+
     @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal ORDER BY id DESC")
     List<Items> loadAll(String categories_local_id,boolean isDeleteLocal);
 
