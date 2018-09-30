@@ -17,9 +17,9 @@
 
         <ImageView
             android:layout_centerInParent="true"
-            android:src="@color/colorButton"
-            android:layout_width="60dp"
-            android:layout_height="60dp"/>
+            android:src="@drawable/ic_launcher"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
