@@ -141,29 +141,14 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onEmptyTrash(int position) {
-        onEmptyTrash();
+        try {
+            presenter.onEmptyTrash();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
-    public void onEmptyTrash(){
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal());
-        for (int i = 0 ;i <mList.size();i++){
-            EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
-            if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
-            }
-            else if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id == null){
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
-            }
-            else{
-                mList.get(i).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
-                Utils.Log(TAG,"ServiceManager waiting for delete");
-            }
-            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).local_id);
-        }
-        onUpdateView();
-        ServiceManager.getInstance().onSyncDataOwnServer("0");
-    }
 
     @Override
     public void onResume() {

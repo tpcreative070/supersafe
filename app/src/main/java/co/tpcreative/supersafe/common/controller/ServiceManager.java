@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -16,7 +15,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.internal.GmsClientEventManager;
@@ -24,14 +22,11 @@ import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.SizeUnit;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -564,18 +559,19 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
 
-                        boolean isPreviousCategoriesDelete = false;
+                        boolean isPreviousAlbumDelete = false;
                         if (mPreviousMainCategories !=null && mPreviousMainCategories.size()>0){
+                            Utils.Log(TAG,"Delete previous album...... size..." +myService.getHashMapGlobalCategories().size());
                             if (myService.getHashMapGlobalCategories()!=null && myService.getHashMapGlobalCategories().size()>0 ){
                                 for (MainCategories index : mPreviousMainCategories){
                                     String value = myService.getHashMapGlobalCategories().get(index.categories_id);
                                     if (value==null){
-                                        isPreviousCategoriesDelete = true;
+                                        isPreviousAlbumDelete = true;
+                                        Utils.Log(TAG,"Delete previous album......");
                                     }
                                 }
                             }
                         }
-
 
 
                         if (mainCategories != null && mainCategories.size() > 0) {
@@ -601,7 +597,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                 }
                             });
                         }
-                        else if (isPreviousCategoriesDelete){
+                        else if (isPreviousAlbumDelete){
                             Utils.Log(TAG, "Preparing deleting on previous album on local...");
                             myService.onDeletePreviousCategoriesSync(new DeleteServiceListener() {
                                 @Override
@@ -1187,6 +1183,7 @@ public class ServiceManager implements SuperSafeServiceView {
         isUploadData = true;
         SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
         if (mList.size() == 0) {
+            SingletonPrivateFragment.getInstance().onUpdateView();
             Utils.Log(TAG, "Data items already uploaded to Cloud !!!");
             SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
             isUploadData = false;

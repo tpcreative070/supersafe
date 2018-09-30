@@ -34,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -571,6 +572,35 @@ public class Utils {
 
     public static String getHexCode(String value){
         return Base64.encodeBase64String(value.toUpperCase().getBytes(Charsets.UTF_8));
+    }
+
+    public static void onBackUp(){
+        try {
+            String inFileName = SuperSafeApplication.getInstance().getDatabasePath(SuperSafeApplication.getInstance().getString(R.string.key_database)).getAbsolutePath();
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+            String outFileName = SuperSafeApplication.getInstance().getSupersafeBackup()+"supersafe-backup.db";
+
+            if (!SuperSafeApplication.getInstance().getStorage().isFileExist(inFileName)){
+                Utils.Log(TAG,"Path is not existing :" + SuperSafeApplication.getInstance().getPathDatabase());
+                return;
+            }
+            // Open the empty db as the output stream
+            OutputStream output = new FileOutputStream(outFileName);
+            // Transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer))>0){
+                output.write(buffer, 0, length);
+            }
+            // Close the streams
+            output.flush();
+            output.close();
+            fis.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void onWriteLargeFile(File input,File output){

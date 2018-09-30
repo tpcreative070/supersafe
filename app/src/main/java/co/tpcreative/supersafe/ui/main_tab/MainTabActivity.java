@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
@@ -34,15 +33,8 @@ import com.leinardi.android.speeddial.FabWithLabelView;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.snatik.storage.Storage;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -60,7 +52,7 @@ import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
@@ -108,8 +100,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         RXJavaCollections collections = new RXJavaCollections();
         collections.getObservable();
     }
-
-
 
     @Override
     public void onAction(EnumStatus enumStatus) {
@@ -171,7 +161,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -417,8 +406,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
-        onBackUp();
-
+        Utils.onBackUp();
     }
 
     @Override
@@ -433,36 +421,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         }
     }
 
-    public void onBackUp(){
-        try {
-            String inFileName = getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
-            File dbFile = new File(inFileName);
-            FileInputStream fis = new FileInputStream(dbFile);
-            String outFileName = SuperSafeApplication.getInstance().getSupersafeBackup()+"database_copy.db";
-
-            if (!storage.isFileExist(inFileName)){
-                Utils.Log(TAG,"Path is not existing :" + SuperSafeApplication.getInstance().getPathDatabase());
-                return;
-            }
-
-            // Open the empty db as the output stream
-            OutputStream output = new FileOutputStream(outFileName);
-            // Transfer bytes from the inputfile to the outputfile
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer))>0){
-                output.write(buffer, 0, length);
-            }
-            // Close the streams
-            output.flush();
-            output.close();
-            fis.close();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-    }
-
     /*GoogleDriveConnectionManagerListener*/
 
     @Override
@@ -472,7 +430,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             getAccessToken();
         }
     }
-
 
     @Override
     protected void onDestroy() {
