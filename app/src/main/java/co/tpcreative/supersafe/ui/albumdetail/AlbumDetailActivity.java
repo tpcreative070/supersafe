@@ -344,8 +344,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "Selected album :");
-
-
         switch (requestCode) {
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {

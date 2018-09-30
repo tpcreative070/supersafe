@@ -162,7 +162,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements UploadService
 
     @OnClick(R.id.btnPrintInAppFolder)
     public void onClickedPrintInAppFolder(View view){
-       Utils.Log(TAG,"Main categories : "+new Gson().toJson( MainCategories.getInstance().getMainCategoriesHashList()));
+
     }
 
     @Override

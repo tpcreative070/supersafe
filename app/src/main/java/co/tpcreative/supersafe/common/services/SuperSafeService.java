@@ -1026,7 +1026,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         try {
             final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true);
             for (MainCategories index : list) {
-                String value = hashMapGlobal.get(index.categories_id);
+                String value = hashMapGlobalCategories.get(index.categories_id);
                 if (value == null) {
                     final List<Items> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
                     if (data == null || data.size() == 0) {

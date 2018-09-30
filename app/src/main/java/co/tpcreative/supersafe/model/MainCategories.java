@@ -19,6 +19,11 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 @Entity(tableName = "maincategories")
 public class MainCategories implements Serializable{
@@ -88,6 +93,8 @@ public class MainCategories implements Serializable{
     public List<MainCategories> getList(){
         List<MainCategories> mList = new ArrayList<>();
         final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
+        final List<MainCategories> listM = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories();
+
         if (list!=null && list.size()>0){
             mList.addAll(list);
             Utils.Log(TAG,"Found data :"+ list.size());
@@ -95,6 +102,7 @@ public class MainCategories implements Serializable{
         else{
             final Map<String,MainCategories> map = MainCategories.getInstance().getMainCategoriesDefault();
             Utils.Log(TAG,"No Data " + map.size());
+            Utils.Log(TAG,"New special value :"+new Gson().toJson(listM));
             for (Map.Entry<String,MainCategories> index : map.entrySet()){
                 final MainCategories main = index.getValue();
                 mList.add(main);
@@ -125,35 +133,6 @@ public class MainCategories implements Serializable{
     }
 
     @Ignore
-    public List<MainCategories> getListOriginal(){
-        List<MainCategories> mList = new ArrayList<>();
-        final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories();
-        if (list!=null && list.size()>0){
-            mList.addAll(list);
-        }
-        else{
-            final Map<String,MainCategories> map = MainCategories.getInstance().getMainCategoriesDefault();
-            for (Map.Entry<String,MainCategories> index : map.entrySet()){
-                final MainCategories categories = index.getValue();
-                mList.add(categories);
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(categories);
-            }
-            //getObservable(mList);
-        }
-
-        Collections.sort(mList, new Comparator<MainCategories>() {
-            @Override
-            public int compare(MainCategories lhs, MainCategories rhs) {
-                int count_1 = (int) lhs.categories_max;
-                int count_2 = (int) rhs.categories_max;
-                return count_1 - count_2;
-            }
-        });
-        return mList;
-
-    }
-
-    @Ignore
     public Map<String,MainCategories>getMainCategoriesDefault(){
         Map<String,MainCategories> map = new HashMap<>();
         map.put(Utils.getHexCode("1234"),new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],1000,false,false,false));
@@ -167,24 +146,6 @@ public class MainCategories implements Serializable{
     @Ignore
     public MainCategories getTrashItem(){
         return new MainCategories("null",Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false,false,false);
-    }
-
-    @Ignore
-    public Map<String,MainCategories>getMainCategoriesHashList(){
-        try {
-            String value  = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),null);
-            if (value!=null){
-                Type type = new TypeToken<Map<String, MainCategories>>(){}.getType();
-                final Map<String,MainCategories> object  = new Gson().fromJson(value,type);
-                if (object!=null){
-                    return object;
-                }
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
     }
 
     @Ignore
@@ -223,25 +184,6 @@ public class MainCategories implements Serializable{
         return false;
     }
 
-    @Ignore
-    public boolean onDeleteCategories(String id){
-        try {
-            final Map<String,MainCategories> map = getMainCategoriesHashList();
-            if (map!=null){
-                final MainCategories object = map.get(id);
-                if (object!=null){
-                    map.remove(object.categories_local_id);
-                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
-                    Utils.Log(TAG," delete "+ new Gson().toJson(map));
-                    return true;
-                }
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     @Ignore
     public Drawable getDrawable(Context mContext, String name) {
@@ -270,19 +212,5 @@ public class MainCategories implements Serializable{
         return myMap;
     }
 
-
-    @Ignore
-    public boolean MainCategoriesSync(MainCategories mainCategories){
-        try {
-            final Map<String,MainCategories> map = getMainCategoriesHashList();
-            map.put(mainCategories.categories_local_id,mainCategories);
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_main_categories_hash_list),new Gson().toJson(map));
-            return true;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
 
 }

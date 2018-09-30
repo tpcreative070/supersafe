@@ -51,7 +51,9 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
@@ -329,55 +331,65 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG,"Selected album :");
-        switch (requestCode){
-            case Navigator.CAMERA_ACTION :{
+
+        Log.d(TAG, "Selected album :");
+        switch (requestCode) {
+            case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
-                }
-                else{
-                    Utils.Log(TAG,"Nothing to do on Camera");
+                    Utils.Log(TAG, "reload data");
+                    SingletonPrivateFragment.getInstance().onUpdateView();
+                } else {
+                    Utils.Log(TAG, "Nothing to do on Camera");
                 }
                 break;
             }
-            case Navigator.PHOTO_SLIDE_SHOW:{
+            case Navigator.PHOTO_SLIDE_SHOW: {
+                if (resultCode == Activity.RESULT_OK) {
+                    Utils.Log(TAG, "reload data");
+                    SingletonPrivateFragment.getInstance().onUpdateView();
+                } else {
+                    Utils.Log(TAG, "Nothing to do on Camera");
+                }
                 break;
             }
-            case Constants.REQUEST_CODE :{
+            case Constants.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
+                        String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
                         Log.d(TAG, "mimeType " + mimeType);
+                        Log.d(TAG, "name " + name);
                         Log.d(TAG, "path " + path);
-                        if (mimeType.equals(getString(R.string.key_mime_type_sdcard_jpg)) || mimeType.equals(getString(R.string.key_mime_type_sdcard_png))) {
-                            //onUploadFileRXJava(EnumTypeFile.IMAGE, path, mimeType, id);
-                        } else {
-                           // onUploadFileRXJava(EnumTypeFile.VIDEO, path, mimeType, id);
+                        String fileExtension = Utils.getFileExtension(path);
+                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
+
+                        try {
+                            final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                            mimeTypeFile.name = name;
+                            MainCategories mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(Utils.getHexCode(getString(R.string.key_main_album)));
+                            if (mainCategories == null) {
+                                Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
+                                return;
+                            }
+                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path, id, mainCategories);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                }
-                else {
-                    Utils.Log(TAG,"Nothing to do on Gallery");
+                } else {
+                    Utils.Log(TAG, "Nothing to do on Gallery");
                 }
                 break;
             }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
+            default: {
+                Utils.Log(TAG, "Nothing to do");
                 break;
             }
         }
 
-
-        if (requestCode == Constants.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
-            StringBuffer stringBuffer = new StringBuffer();
-            for (int i = 0, l = images.size(); i < l; i++) {
-                stringBuffer.append(images.get(i).path + "\n");
-            }
-            Log.d(TAG,"Selected album :" + stringBuffer.toString());
-        }
     }
 
     @Override
