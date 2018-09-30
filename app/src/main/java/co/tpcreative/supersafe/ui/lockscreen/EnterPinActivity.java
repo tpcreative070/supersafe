@@ -10,6 +10,7 @@ import android.widget.TextView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 
 public class EnterPinActivity extends BaseActivity {
@@ -114,8 +115,8 @@ public class EnterPinActivity extends BaseActivity {
         mPinLockView.setPinLength(PIN_LENGTH);
 
         mIndicatorDots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION);
-
         checkForFont();
+
     }
 
     private void checkForFont() {

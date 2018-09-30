@@ -258,6 +258,11 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
+        if (isGetListCategories){
+            Utils.Log(TAG, "Setting list categories is sync...--------------*******************************-----------");
+            return;
+        }
+
         myService.onGetListCategoriesSync(new SuperSafeServiceView() {
             @Override
             public void onError(String message, EnumStatus status) {
@@ -274,6 +279,7 @@ public class ServiceManager implements SuperSafeServiceView {
             public void onSuccessful(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
                 SingletonPrivateFragment.getInstance().onUpdateView();
+                isGetListCategories = false;
                 getObservable();
             }
 
@@ -386,7 +392,6 @@ public class ServiceManager implements SuperSafeServiceView {
         }
 
         isCategoriesSync = true;
-        totalList = mList.size();
         if (mList.size() == 0) {
             Utils.Log(TAG, "Categories already sync");
             isCategoriesSync = false;
@@ -423,7 +428,6 @@ public class ServiceManager implements SuperSafeServiceView {
                     }
                 });
     }
-
 
 
     public void onCheckingMissData() {
@@ -484,6 +488,10 @@ public class ServiceManager implements SuperSafeServiceView {
 
         if (isDeleteAlbum){
             Utils.Log(TAG, "List categories is deleting...----------------*******************************-----------");
+            return;
+        }
+        if (isGetListCategories){
+            Utils.Log(TAG, "Getting list categories...----------------*******************************-----------");
             return;
         }
 
@@ -561,7 +569,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         boolean isPreviousAlbumDelete = false;
                         if (mPreviousMainCategories !=null && mPreviousMainCategories.size()>0){
-                            Utils.Log(TAG,"Delete previous album...... size..." +myService.getHashMapGlobalCategories().size());
                             if (myService.getHashMapGlobalCategories()!=null && myService.getHashMapGlobalCategories().size()>0 ){
                                 for (MainCategories index : mPreviousMainCategories){
                                     String value = myService.getHashMapGlobalCategories().get(index.categories_id);
@@ -831,7 +838,6 @@ public class ServiceManager implements SuperSafeServiceView {
                 })
                 .subscribe();
     }
-
 
 
     public void onDeleteCloud() {
