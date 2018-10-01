@@ -2,45 +2,70 @@ package co.tpcreative.supersafe.ui.lockscreen;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.ftinc.kit.util.SizeUtils;
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrInterface;
+import com.r0adkll.slidr.model.SlidrListener;
+import com.r0adkll.slidr.model.SlidrPosition;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
+import co.tpcreative.supersafe.ui.settings.SettingsActivity;
+import de.mrapp.android.preference.ListPreference;
 
 
-public class EnterPinActivity extends BaseActivity {
+public class EnterPinActivity extends BaseActivity implements LockScreenView {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
+    private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     public static final String EXTRA_SET_PIN = "set_pin";
     public static final String EXTRA_SIGN_UP = "sign_up";
     public static final String EXTRA_FONT_TEXT = "textFont";
     public static final String EXTRA_FONT_NUM = "numFont";
-
     private static final int PIN_LENGTH = 20;
 
-    private static final String PREFERENCES = "com.amirarcane.lockscreen";
-
-
-    private PinLockView mPinLockView;
-    private IndicatorDots mIndicatorDots;
-    private TextView mTextTitle;
-    private TextView mTextAttempts;
-
-    private EnumPinAction mPinAction;
-    private boolean mSignUp = false;
-    private String mFirstPin = "";
-
+    @BindView(R.id.pinlockView)
+    PinLockView mPinLockView;
+    @BindView(R.id.indicator_dots)
+    IndicatorDots mIndicatorDots;
+    @BindView(R.id.title)
+    TextView mTextTitle;
+    @BindView(R.id.attempts)
+    TextView mTextAttempts;
     @BindView(R.id.imgLauncher)
     ImageView imgLauncher;
+    @BindView(R.id.rlLockScreen)
+    RelativeLayout rlLockScreen;
+    @BindView(R.id.rlPreference)
+    RelativeLayout rlPreference;
+
+    private static EnumPinAction mPinAction;
+    private boolean mSignUp = false;
+    private String mFirstPin = "";
+    private static LockScreenPresenter presenter;
 
 
     public static Intent getIntent(Context context, int action,boolean isSignUp) {
@@ -64,52 +89,91 @@ public class EnterPinActivity extends BaseActivity {
         return intent;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enterpin);
-        mTextAttempts = (TextView) findViewById(R.id.attempts);
-        mTextTitle = (TextView) findViewById(R.id.title);
-        mIndicatorDots = (IndicatorDots) findViewById(R.id.indicator_dots);
+        presenter = new LockScreenPresenter();
+        presenter.bindView(this);
+
 
         int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
         mPinAction = EnumPinAction.values()[result];
         mSignUp = getIntent().getBooleanExtra(EXTRA_SIGN_UP,false);
 
-        if (mPinAction ==EnumPinAction.SET) {
-            changeLayoutForSetPin();
-        } else if (mPinAction == EnumPinAction.VERIFY){
-            String pin = getPinFromSharedPreferences();
-            if (pin.equals("")) {
+        switch (mPinAction){
+            case SET:{
+                onDisplayView();
                 changeLayoutForSetPin();
-                mPinAction = EnumPinAction.SET;
+                break;
             }
-            else{
-                imgLauncher.setVisibility(View.VISIBLE);
-                mTextTitle.setVisibility(View.INVISIBLE);
+            case VERIFY:{
+                onDisplayView();
+                String pin = getPinFromSharedPreferences();
+                if (pin.equals("")) {
+                    changeLayoutForSetPin();
+                    mPinAction = EnumPinAction.SET;
+                }
+                else{
+                    onDisplayText();
+                }
+                break;
             }
-        }
-        else if (mPinAction == EnumPinAction.RESET){
-
-        }
-        else{
-            Utils.Log(TAG,"Nothing action");
+            case SCREEN_OFF:{
+                onDisplayView();
+                String pin = getPinFromSharedPreferences();
+                if (pin.equals("")) {
+                    changeLayoutForSetPin();
+                    mPinAction = EnumPinAction.SET;
+                }
+                else{
+                    onDisplayText();
+                }
+                break;
+            }
+            case CHANGE:{
+                initActionBar(true);
+                onDisplayText();
+                onDisplayView();
+                onLauncherPreferences();
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Noting to do");
+                break;
+            }
         }
 
         final PinLockListener pinLockListener = new PinLockListener() {
             @Override
             public void onComplete(String pin) {
-                if (mPinAction == EnumPinAction.SET) {
-                    setPin(pin);
-                }
-                else if (mPinAction ==EnumPinAction.VERIFY){
-                    checkPin(pin);
-                }
-                else if (mPinAction ==EnumPinAction.RESET){
-                    Utils.Log(TAG,"Reset");
-                }
-                else{
-                    Utils.Log(TAG,"Nothing action");
+                switch (mPinAction){
+                    case SET:{
+                        setPin(pin);
+                        break;
+                    }
+                    case VERIFY:{
+                        checkPin(pin);
+                        break;
+                    }
+                    case VERIFY_TO_CHANGE:{
+                        checkChangePin(pin);
+                        break;
+                    }
+                    case SCREEN_OFF:{
+                        checkScreenOff(pin);
+                        break;
+                    }
+
+                    case CREATE:{
+                        setCreatePin(pin);
+                        break;
+                    }
+                    default:{
+                        Utils.Log(TAG,"Nothing working");
+                        break;
+                    }
                 }
             }
 
@@ -121,24 +185,51 @@ public class EnterPinActivity extends BaseActivity {
             @Override
             public void onPinChange(int pinLength, String intermediatePin) {
                 String pinResult = getPinFromSharedPreferences();
-                if (mPinAction == EnumPinAction.VERIFY){
-                    if (pinResult.equals(intermediatePin)){
-                        setResult(RESULT_OK);
-                        Navigator.onMoveToMainTab(EnterPinActivity.this);
+                switch (mPinAction){
+                    case VERIFY:{
+                        if (pinResult.equals(intermediatePin)){
+                            setResult(RESULT_OK);
+                            Navigator.onMoveToMainTab(EnterPinActivity.this);
+                        }
+                        if (pinLength>pinResult.length()){
+                            shake();
+                            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                            mPinLockView.resetPinLockView();
+                        }
+                        break;
                     }
-                    if (pinLength>pinResult.length()){
-                        shake();
-                        mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
-                        mPinLockView.resetPinLockView();
+                    case SCREEN_OFF:{
+                        if (pinResult.equals(intermediatePin)){
+                          presenter.onChangeStatus(EnumPinAction.SCREEN_OFF);
+                        }
+                        if (pinLength>pinResult.length()){
+                            shake();
+                            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                            mPinLockView.resetPinLockView();
+                        }
+                        break;
+                    }
+                    case VERIFY_TO_CHANGE:{
+                        if (pinResult.equals(intermediatePin)){
+                            presenter.onChangeStatus(EnumPinAction.CREATE);
+                        }
+                        if (pinLength>pinResult.length()){
+                            shake();
+                            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                            mPinLockView.resetPinLockView();
+                        }
+                        break;
+                    }
+                    default:{
+                        Utils.Log(TAG,"Nothing working!!!");
+                        break;
                     }
                 }
+
                 Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
             }
 
         };
-
-        mPinLockView = (PinLockView) findViewById(R.id.pinlockView);
-        mIndicatorDots = (IndicatorDots) findViewById(R.id.indicator_dots);
 
         mPinLockView.attachIndicatorDots(mIndicatorDots);
         mPinLockView.setPinLockListener(pinLockListener);
@@ -225,10 +316,48 @@ public class EnterPinActivity extends BaseActivity {
         }
     }
 
+    private void setCreatePin(String pin) {
+        if (mFirstPin.equals("")) {
+            mFirstPin = pin;
+            mTextTitle.setText(getString(R.string.pinlock_secondPin));
+            mPinLockView.resetPinLockView();
+        } else {
+            if (pin.equals(mFirstPin)) {
+                writePinToSharedPreferences(pin);
+                presenter.onChangeStatus(EnumPinAction.CREATE_DONE);
+            } else {
+                shake();
+                mTextTitle.setText(getString(R.string.pinlock_tryagain));
+                mPinLockView.resetPinLockView();
+                mFirstPin = "";
+            }
+        }
+    }
+
+    private void checkChangePin(String pin) {
+        if (pin.equals(getPinFromSharedPreferences())) {
+            presenter.onChangeStatus(EnumPinAction.CREATE);
+        } else {
+            shake();
+            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+            mPinLockView.resetPinLockView();
+        }
+    }
+
     private void checkPin(String pin) {
         if (pin.equals(getPinFromSharedPreferences())) {
             setResult(RESULT_OK);
             Navigator.onMoveToMainTab(this);
+        } else {
+            shake();
+            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+            mPinLockView.resetPinLockView();
+        }
+    }
+
+    private void checkScreenOff(String pin) {
+        if (pin.equals(getPinFromSharedPreferences())) {
+            presenter.onChangeStatus(EnumPinAction.SCREEN_OFF);
         } else {
             shake();
             mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
@@ -249,9 +378,219 @@ public class EnterPinActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (mPinAction==EnumPinAction.VERIFY){
-            finish();
+        Utils.Log(TAG,mPinAction.name());
+        switch (mPinAction){
+            case VERIFY:{
+                finish();
+                break;
+            }
+            case CHANGE:{
+                super.onBackPressed();
+                break;
+            }
+            case CREATE_DONE:{
+                super.onBackPressed();
+                break;
+            }
+            case VERIFY_TO_CHANGE:{
+                super.onBackPressed();
+                break;
+            }
+            case CREATE:{
+                super.onBackPressed();
+                break;
+            }
+            case SCREEN_OFF:{
+                super.onBackPressed();
+                break;
+            }
         }
     }
+
+    public void onDisplayView(){
+        switch (mPinAction){
+            case SET:{
+                rlLockScreen.setVisibility(View.VISIBLE);
+                rlPreference.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case VERIFY:{
+                rlLockScreen.setVisibility(View.VISIBLE);
+                rlPreference.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case CHANGE:{
+                rlLockScreen.setVisibility(View.INVISIBLE);
+                rlPreference.setVisibility(View.VISIBLE);
+                break;
+            }
+            case VERIFY_TO_CHANGE:{
+                rlLockScreen.setVisibility(View.VISIBLE);
+                rlPreference.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case CREATE:{
+                rlLockScreen.setVisibility(View.VISIBLE);
+                rlPreference.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case SCREEN_OFF:{
+                rlLockScreen.setVisibility(View.VISIBLE);
+                rlPreference.setVisibility(View.INVISIBLE);
+                break;
+            }
+        }
+    }
+
+
+    public void onDisplayText(){
+        switch (mPinAction){
+            case VERIFY:{
+                mTextTitle.setVisibility(View.INVISIBLE);
+                imgLauncher.setVisibility(View.VISIBLE);
+                break;
+            }
+            case CHANGE:{
+                mTextTitle.setText(getString(R.string.pinlock_confirm_your_pin));
+                mTextTitle.setVisibility(View.VISIBLE);
+                imgLauncher.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case VERIFY_TO_CHANGE:{
+                mTextTitle.setText(getString(R.string.pinlock_confirm_your_pin));
+                mTextTitle.setVisibility(View.VISIBLE);
+                imgLauncher.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case CREATE:{
+                mTextTitle.setText(getString(R.string.pinlock_confirm_create));
+                mTextTitle.setVisibility(View.VISIBLE);
+                imgLauncher.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case SCREEN_OFF:{
+                mTextTitle.setVisibility(View.INVISIBLE);
+                imgLauncher.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onChangeStatus(EnumPinAction action) {
+        Utils.Log(TAG,"Result here");
+        mPinAction = action;
+        switch (action){
+            case VERIFY_TO_CHANGE:{
+                initActionBar(false);
+                onDisplayText();
+                onDisplayView();
+                break;
+            }
+            case CREATE:{
+                mPinLockView.resetPinLockView();
+                onDisplayText();
+                onDisplayView();
+                break;
+            }
+            case CREATE_DONE:{
+                onBackPressed();
+                break;
+            }
+            case SCREEN_OFF:{
+                onBackPressed();
+                break;
+            }
+        }
+    }
+
+    public void initActionBar(boolean isInit){
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(isInit);
+    }
+
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void stopLoading() {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    /*Settings preference*/
+
+    public static class SettingsFragment extends PreferenceFragmentCompat {
+
+        /**
+         * The {@link ListPreference}.
+         */
+
+        private MyPreference mChangePin;
+
+        /**
+         * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
+         * corresponding preference has been changed.
+         *
+         * @return The listener, which has been created, as an instance of the type {@link
+         * Preference.OnPreferenceChangeListener}
+         */
+
+        private Preference.OnPreferenceChangeListener createChangeListener() {
+            return new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(final Preference preference, final Object newValue) {
+                    return true;
+                }
+            };
+        }
+
+        private Preference.OnPreferenceClickListener createActionPreferenceClickListener() {
+            return new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (preference instanceof MyPreference){
+                        if (preference.getKey().equals(getString(R.string.key_change_pin))){
+                            Utils.Log(TAG,"Action here!!!");
+                            presenter.onChangeStatus(EnumPinAction.VERIFY_TO_CHANGE);
+                        }
+                    }
+                    return true;
+                }
+            };
+        }
+
+        @Override
+        public final void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            /*Changing pin*/
+            mChangePin = (MyPreference)findPreference(getString(R.string.key_change_pin));
+            mChangePin.setOnPreferenceChangeListener(createChangeListener());
+            mChangePin.setOnPreferenceClickListener(createActionPreferenceClickListener());
+        }
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            addPreferencesFromResource(R.xml.pref_general_lock_screen);
+        }
+    }
+
+    public void onLauncherPreferences(){
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (fragment == null) {
+            fragment = Fragment.instantiate(this, EnterPinActivity.SettingsFragment.class.getName());
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.commit();
+    }
+
 
 }

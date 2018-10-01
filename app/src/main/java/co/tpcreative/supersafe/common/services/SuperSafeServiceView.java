@@ -13,6 +13,7 @@ public interface SuperSafeServiceView {
     void onSuccessfulOnCheck(List<Items> lists);
     void onSuccessful(List<DriveResponse> lists);
     void onNetworkConnectionChanged(boolean isConnect);
+    void onActionScreenOff();
     void onStart();
     void startLoading();
     void stopLoading();

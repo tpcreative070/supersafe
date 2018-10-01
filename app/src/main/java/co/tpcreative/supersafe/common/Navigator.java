@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.common;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
@@ -83,6 +84,23 @@ public class Navigator {
     public static void onMoveToVerifyPin(Context context,boolean isSignUp){
         Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.VERIFY.ordinal(),isSignUp);
         context.startActivity(intent);
+    }
+
+    public static void onMoveToChangePin(Context context,boolean isSignUp){
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.CHANGE.ordinal(),isSignUp);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveToVerifyScreenOff(Context context,boolean isSignUp){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.SCREEN_OFF.ordinal(),isSignUp);
+            context.startActivity(intent);
+        }
+        else {
+            Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.SCREEN_OFF.ordinal(),isSignUp);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
     }
 
     public static void onMoveToSignUp(Context context){

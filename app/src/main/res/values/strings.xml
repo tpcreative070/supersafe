@@ -139,6 +139,8 @@
     <string name="pinlock_secondPin">Enter Pin Code Again</string>
     <string name="pinlock_tryagain">Pin Codes Are Not The Same</string>
     <string name="pinlock_fingerprint">Use Fingerprint</string>
+    <string name="pinlock_confirm_your_pin">Please confirm your pin to continue</string>
+    <string name="pinlock_confirm_create">Create a PIN to lock your vault</string>
 
 
     /*Material Design*/
@@ -326,6 +328,9 @@
     <string name="key_help_support">Help&amp;Support</string>
     <string name="key_about_SuperSafe">About Supersafe</string>
     <string name="key_categories_max">categories_max</string>
+    <string name="key_change">Change</string>
+    <string name="key_change_pin">Change PIN</string>
+
 
 
 </resources>

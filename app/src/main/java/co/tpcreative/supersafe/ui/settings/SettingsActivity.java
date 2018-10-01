@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.settings;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,19 +28,24 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.preference.MyPreference;
+import co.tpcreative.supersafe.common.util.Utils;
 import de.mrapp.android.dialog.MaterialDialog;
 import de.mrapp.android.preference.ListPreference;
 import de.mrapp.android.validation.Validators;
 
 public class SettingsActivity extends BaseActivity {
 
+    private static final String TAG = SettingsActivity.class.getSimpleName();
+
     private SlidrConfig mConfig;
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
 
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -83,6 +89,8 @@ public class SettingsActivity extends BaseActivity {
 
         private MyPreference mAccount;
 
+        private MyPreference mLockScreen;
+
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
          * corresponding preference has been changed.
@@ -109,20 +117,27 @@ public class SettingsActivity extends BaseActivity {
                             Log.d(TAG,"value : ");
                             Navigator.onManagerAccount(getContext());
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_lock_screen))){
+                            Navigator.onMoveToChangePin(getContext(),false);
+                            Utils.Log(TAG,"Action here");
+                        }
                     }
                     return true;
                 }
-
             };
         }
 
         @Override
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            /*Help*/
+            /*Account*/
             mAccount = (MyPreference)findPreference(getString(R.string.key_account));
             mAccount.setOnPreferenceChangeListener(createChangeListener());
             mAccount.setOnPreferenceClickListener(createActionPreferenceClickListener());
+
+            mLockScreen = (MyPreference) findPreference(getString(R.string.key_lock_screen));
+            mLockScreen.setOnPreferenceChangeListener(createChangeListener());
+            mLockScreen.setOnPreferenceClickListener(createActionPreferenceClickListener());
         }
 
         @Override

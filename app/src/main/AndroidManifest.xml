@@ -36,6 +36,7 @@
 
         <receiver android:name=".common.services.SuperSafeReceiver">
             <intent-filter>
+                <action android:name="android.intent.action.SCREEN_OFF"/>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
@@ -46,8 +47,9 @@
 
         <!-- Enter pin code -->
         <activity
+            android:label="@string/key_change"
             android:name=".ui.lockscreen.EnterPinActivity"
-            android:screenOrientation="portrait" />
+            />
         <activity
             android:name=".ui.main_tab.MainTabActivity"
             android:screenOrientation="portrait" />

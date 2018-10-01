@@ -310,6 +310,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                         public void onSuccessfulOnCheck(List<Items> lists) {
 
                         }
+
+                        @Override
+                        public void onActionScreenOff() {
+
+                        }
                     });
                 }
             }

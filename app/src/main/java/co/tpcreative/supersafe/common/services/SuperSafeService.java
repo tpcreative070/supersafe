@@ -88,13 +88,12 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
     public void onInitReceiver() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-            androidReceiver = new SuperSafeReceiver();
-            registerReceiver(androidReceiver, intentFilter);
-            SuperSafeApplication.getInstance().setConnectivityListener(this);
-        }
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        androidReceiver = new SuperSafeReceiver();
+        registerReceiver(androidReceiver, intentFilter);
+        SuperSafeApplication.getInstance().setConnectivityListener(this);
     }
 
     @Override
@@ -112,6 +111,15 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         SuperSafeServiceView view = view();
         if (view != null) {
             view.onNetworkConnectionChanged(isConnected);
+        }
+    }
+
+
+    @Override
+    public void onActionScreenOff() {
+        SuperSafeServiceView view = view();
+        if (view != null) {
+            view.onActionScreenOff();
         }
     }
 

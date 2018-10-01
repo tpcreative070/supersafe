@@ -97,8 +97,6 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
          * The {@link ListPreference}.
          */
 
-
-
         private MyPreference mName;
 
         /**
@@ -202,4 +200,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
         }
 
     }
+
+
+
 }

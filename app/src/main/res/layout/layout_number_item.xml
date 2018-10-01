@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <Button
+        android:textStyle="bold"
         android:layout_margin="20dp"
         android:layout_gravity="center"
         android:id="@+id/button"

@@ -26,6 +26,13 @@ public class SuperSafeReceiver extends BroadcastReceiver {
                 connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
             }
         }
+
+        if (action.equalsIgnoreCase(Intent.ACTION_SCREEN_OFF)){
+            if (connectivityReceiverListener !=null){
+                connectivityReceiverListener.onActionScreenOff();
+            }
+        }
+
     }
 
     public static boolean isConnected() {
@@ -39,6 +46,7 @@ public class SuperSafeReceiver extends BroadcastReceiver {
 
     public interface ConnectivityReceiverListener {
         void onNetworkConnectionChanged(boolean isConnected);
+        void onActionScreenOff();
     }
 
 

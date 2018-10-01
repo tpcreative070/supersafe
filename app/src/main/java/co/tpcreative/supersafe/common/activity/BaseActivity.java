@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.activity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.ActionBar;
@@ -20,6 +21,7 @@ public class BaseActivity extends AppCompatActivity {
     int onStartCount = 0;
     private Toast mToast;
     public static final String TAG = BaseActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,5 +124,10 @@ public class BaseActivity extends AppCompatActivity {
             onStartCount++;
         }
     }
+
+    public void onLockScreen(){
+
+    }
+
 
 }

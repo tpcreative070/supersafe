@@ -55,6 +55,13 @@
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
 
+
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+
     </style>
 
 
@@ -89,6 +96,7 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
 
     </style>
 

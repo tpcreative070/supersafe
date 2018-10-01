@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.Cipher;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -312,6 +313,11 @@ public class ServiceManager implements SuperSafeServiceView {
             public void stopLoading() {
 
             }
+
+            @Override
+            public void onActionScreenOff() {
+
+            }
         });
     }
 
@@ -366,6 +372,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     @Override
                     public void stopLoading() {
+
+                    }
+
+                    @Override
+                    public void onActionScreenOff() {
 
                     }
                 });
@@ -426,6 +437,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         // Show Progress
                         Utils.Log(TAG, "next");
                     }
+
                 });
     }
 
@@ -653,6 +665,11 @@ public class ServiceManager implements SuperSafeServiceView {
                 public void onSuccessfulOnCheck(List<Items> lists) {
 
                 }
+
+                @Override
+                public void onActionScreenOff() {
+
+                }
             });
         } else {
             Utils.Log(TAG, "My service is null");
@@ -740,6 +757,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         @Override
                         public void stopLoading() {
+
+                        }
+
+                        @Override
+                        public void onActionScreenOff() {
 
                         }
                     });
@@ -830,6 +852,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         @Override
                         public void stopLoading() {
+
+                        }
+
+                        @Override
+                        public void onActionScreenOff() {
 
                         }
                     });
@@ -940,6 +967,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         @Override
                         public void stopLoading() {
+
+                        }
+
+                        @Override
+                        public void onActionScreenOff() {
 
                         }
                     });
@@ -1398,6 +1430,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
             @Override
             public void onSuccessfulOnCheck(List<Items> lists) {
+
+            }
+
+            @Override
+            public void onActionScreenOff() {
 
             }
         });
@@ -2112,6 +2149,12 @@ public class ServiceManager implements SuperSafeServiceView {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             onCheckingMissData();
         }
+    }
+
+    @Override
+    public void onActionScreenOff() {
+        Utils.Log(TAG,"Screen off");
+        Navigator.onMoveToVerifyScreenOff(SuperSafeApplication.getInstance(),false); ;
     }
 
     @Override
