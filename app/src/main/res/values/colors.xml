@@ -215,6 +215,7 @@
     <color name="gplus_color_3">#427fed</color>
     <color name="gplus_color_4">#b23424</color>
 
+    <color name="color_blue_dark">#0277BD</color>
     <color name="holo_blue_dark">#0099cc</color>
     <color name="holo_yellow_dark">#ff8800</color>
     <color name="holo_green_dark">#669900</color>

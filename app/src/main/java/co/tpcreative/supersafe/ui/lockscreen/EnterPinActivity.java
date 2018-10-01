@@ -13,6 +13,9 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
+
 
 public class EnterPinActivity extends BaseActivity {
 
@@ -32,7 +35,7 @@ public class EnterPinActivity extends BaseActivity {
     private TextView mTextTitle;
     private TextView mTextAttempts;
 
-    private boolean mSetPin = false;
+    private EnumPinAction mPinAction;
     private boolean mSignUp = false;
     private String mFirstPin = "";
 
@@ -40,25 +43,24 @@ public class EnterPinActivity extends BaseActivity {
     ImageView imgLauncher;
 
 
-    public static Intent getIntent(Context context, boolean setPin,boolean isSignUp) {
+    public static Intent getIntent(Context context, int action,boolean isSignUp) {
         Intent intent = new Intent(context, EnterPinActivity.class);
-        intent.putExtra(EXTRA_SET_PIN, setPin);
+        intent.putExtra(EXTRA_SET_PIN, action);
         intent.putExtra(EXTRA_SIGN_UP,isSignUp);
         return intent;
     }
 
     public static Intent getIntent(Context context, String fontText, String fontNum) {
         Intent intent = new Intent(context, EnterPinActivity.class);
-
         intent.putExtra(EXTRA_FONT_TEXT, fontText);
         intent.putExtra(EXTRA_FONT_NUM, fontNum);
 
         return intent;
     }
 
-    public static Intent getIntent(Context context, boolean setPin, String fontText, String fontNum) {
+    public static Intent getIntent(Context context, int action, String fontText, String fontNum) {
         Intent intent = getIntent(context, fontText, fontNum);
-        intent.putExtra(EXTRA_SET_PIN, setPin);
+        intent.putExtra(EXTRA_SET_PIN, action);
         return intent;
     }
 
@@ -70,31 +72,44 @@ public class EnterPinActivity extends BaseActivity {
         mTextTitle = (TextView) findViewById(R.id.title);
         mIndicatorDots = (IndicatorDots) findViewById(R.id.indicator_dots);
 
-        mSetPin = getIntent().getBooleanExtra(EXTRA_SET_PIN, false);
+        int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
+        mPinAction = EnumPinAction.values()[result];
         mSignUp = getIntent().getBooleanExtra(EXTRA_SIGN_UP,false);
 
-        if (mSetPin) {
+        if (mPinAction ==EnumPinAction.SET) {
             changeLayoutForSetPin();
-        } else {
+        } else if (mPinAction == EnumPinAction.VERIFY){
             String pin = getPinFromSharedPreferences();
             if (pin.equals("")) {
                 changeLayoutForSetPin();
-                mSetPin = true;
+                mPinAction = EnumPinAction.SET;
             }
             else{
                 imgLauncher.setVisibility(View.VISIBLE);
                 mTextTitle.setVisibility(View.INVISIBLE);
             }
         }
+        else if (mPinAction == EnumPinAction.RESET){
 
+        }
+        else{
+            Utils.Log(TAG,"Nothing action");
+        }
 
         final PinLockListener pinLockListener = new PinLockListener() {
             @Override
             public void onComplete(String pin) {
-                if (mSetPin) {
+                if (mPinAction == EnumPinAction.SET) {
                     setPin(pin);
-                } else {
+                }
+                else if (mPinAction ==EnumPinAction.VERIFY){
                     checkPin(pin);
+                }
+                else if (mPinAction ==EnumPinAction.RESET){
+                    Utils.Log(TAG,"Reset");
+                }
+                else{
+                    Utils.Log(TAG,"Nothing action");
                 }
             }
 
@@ -105,9 +120,8 @@ public class EnterPinActivity extends BaseActivity {
 
             @Override
             public void onPinChange(int pinLength, String intermediatePin) {
-
                 String pinResult = getPinFromSharedPreferences();
-                if (!mSetPin){
+                if (mPinAction == EnumPinAction.VERIFY){
                     if (pinResult.equals(intermediatePin)){
                         setResult(RESULT_OK);
                         Navigator.onMoveToMainTab(EnterPinActivity.this);
@@ -235,7 +249,7 @@ public class EnterPinActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (!mSetPin){
+        if (mPinAction==EnumPinAction.VERIFY){
             finish();
         }
     }

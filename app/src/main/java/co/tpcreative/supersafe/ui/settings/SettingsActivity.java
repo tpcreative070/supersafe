@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.preference.MyPreference;
 import de.mrapp.android.dialog.MaterialDialog;
@@ -106,6 +107,7 @@ public class SettingsActivity extends BaseActivity {
                     if (preference instanceof MyPreference){
                         if (preference.getKey().equals(getString(R.string.key_account))){
                             Log.d(TAG,"value : ");
+                            Navigator.onManagerAccount(getContext());
                         }
                     }
                     return true;

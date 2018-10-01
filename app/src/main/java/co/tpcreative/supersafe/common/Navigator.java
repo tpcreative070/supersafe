@@ -8,6 +8,7 @@ import com.darsh.multipleimageselect.helpers.Constants;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -75,12 +76,12 @@ public class Navigator {
     }
 
     public static void onMoveSetPin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,true,isSignUp);
+        Intent intent = EnterPinActivity.getIntent(context, EnumPinAction.SET.ordinal(),isSignUp);
         context.startActivity(intent);
     }
 
     public static void onMoveToVerifyPin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,false,isSignUp);
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.VERIFY.ordinal(),isSignUp);
         context.startActivity(intent);
     }
 
