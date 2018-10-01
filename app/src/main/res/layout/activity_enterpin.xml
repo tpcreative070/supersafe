@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
-    android:fillViewport="true">
+    android:background="@color/colorBackground">
 
     <android.support.constraint.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -15,79 +15,94 @@
 
 
         <RelativeLayout
-            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <TextView
-            android:layout_centerInParent="true"
-            android:layout_alignParentTop="true"
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:gravity="center"
-            android:text="@string/pinlock_title"
-            android:textColor="@color/text_title"
-            android:textSize="@dimen/textsize_title"/>
-
-
-        <co.tpcreative.supersafe.ui.lockscreen.IndicatorDots
-            android:layout_centerInParent="true"
-            android:layout_below="@+id/title"
-            android:id="@+id/indicator_dots"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="60dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="40dp"/>
-
-        <RelativeLayout
-            android:layout_marginTop="15dp"
-            android:onClick="onDelete"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/title"
-            android:layout_width="@dimen/default_button_size"
-            android:layout_height="@dimen/default_button_size">
-            <ImageView
-                android:layout_centerInParent="true"
-                android:src="@drawable/ic_backspace"
-                android:layout_width="30dp"
-                android:layout_height="30dp"/>
-        </RelativeLayout>
-
-
-        <TextView
-            android:layout_centerInParent="true"
-            android:layout_below="@id/indicator_dots"
-            android:id="@+id/attempts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/attempts_margintop"
-            android:layout_marginBottom="@dimen/attempts_marginbottom"
-            android:textColor="@color/text_attempts"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/indicator_dots" />
+            app:layout_constraintTop_toTopOf="parent">
 
-
-        <RelativeLayout
-            android:layout_below="@id/attempts"
-            android:layout_margin="@dimen/lockview_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <co.tpcreative.supersafe.ui.lockscreen.PinLockView
-                android:layout_centerInParent="true"
-                android:id="@+id/pinlockView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/lockview_margin"/>
-        </RelativeLayout>
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_marginTop="50dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_centerInParent="true"
+                        android:id="@+id/imgLauncher"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_launcher"
+                        android:visibility="invisible" />
+                    <TextView
+                        android:layout_centerInParent="true"
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/pinlock_title"
+                        android:textColor="@color/text_title"
+                        android:textSize="@dimen/textsize_title" />
+                </RelativeLayout>
+
+
+
+                <RelativeLayout
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <co.tpcreative.supersafe.ui.lockscreen.IndicatorDots
+                        android:id="@+id/indicator_dots"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="60dp"
+                        android:layout_marginRight="60dp" />
+                    <RelativeLayout
+                        android:layout_width="@dimen/default_button_size"
+                        android:layout_height="@dimen/default_button_size"
+                        android:layout_alignParentRight="true"
+                        android:onClick="onDelete">
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_backspace" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/attempts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/attempts_marginbottom"
+                    android:layout_marginTop="@dimen/attempts_margintop"
+                    android:textColor="@color/text_attempts"/>
+
+                <RelativeLayout
+                    android:id="@+id/rlButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="0dp">
+                    <co.tpcreative.supersafe.ui.lockscreen.PinLockView
+                        android:scrollbars="none"
+                        android:id="@+id/pinlockView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="@dimen/lockview_margin" />
+                </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
     </android.support.constraint.ConstraintLayout>
-</ScrollView>
+</android.support.constraint.ConstraintLayout>

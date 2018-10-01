@@ -70,6 +70,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                 else{
                     Navigator.onMoveGrantAccess(SplashScreenActivity.this);
                 }
+                finish();
             }
         },TIMER);
 

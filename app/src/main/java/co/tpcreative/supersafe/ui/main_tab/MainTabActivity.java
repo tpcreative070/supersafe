@@ -73,6 +73,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private Storage storage;
     AnimationsContainer.FramesSequenceAnimation animation;
     private MenuItem menuItem;
+    private EnumStatus previousStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,12 +106,16 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     public void onAction(EnumStatus enumStatus) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onAnimationIcon(enumStatus);
-            }
-        });
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    onAnimationIcon(enumStatus);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -369,12 +374,12 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             mimeTypeFile.name = name;
-                            MainCategories mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(Utils.getHexCode(getString(R.string.key_main_album)));
-                            if (mainCategories == null) {
+                            final List<MainCategories> list = MainCategories.getInstance().getList();
+                            if (list==null){
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path, id, mainCategories);
+                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path, id, list.get(0));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -449,16 +454,31 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         ServiceManager.getInstance().onDismissServices();
     }
 
-    public void onAnimationIcon(EnumStatus status){
+    public void onAnimationIcon(final EnumStatus status){
+        Utils.Log(TAG,"value : "+ status.name());
         if (getMenuItem()==null){
             return;
         }
+
+        if ((previousStatus == status) && (status == EnumStatus.DOWNLOAD)){
+            Utils.Log(TAG,"Action here 1");
+            return;
+        }
+
+        if ((previousStatus == status) && (status ==EnumStatus.UPLOAD)){
+            Utils.Log(TAG,"Action here 2");
+            return;
+        }
+
         MenuItem item = getMenuItem();
         if (animation!=null){
             animation.stop();
         }
+        Utils.Log(TAG,"Create new ");
+        previousStatus = status;
         animation = AnimationsContainer.getInstance().createSplashAnim(item, status);
         animation.start();
+
     }
 
     /*MainTab View*/

@@ -13,6 +13,7 @@ import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import com.bumptech.glide.request.target.ViewTarget;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
@@ -20,6 +21,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +70,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         mInstance = this;
         ViewTarget.setTagId(R.id.fab_glide_tag);
 

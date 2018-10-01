@@ -6,19 +6,17 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 
 public class EnterPinActivity extends BaseActivity {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
-
-    public static final int RESULT_BACK_PRESSED = RESULT_FIRST_USER;
-    //    public static final int RESULT_TOO_MANY_TRIES = RESULT_FIRST_USER + 1;
     public static final String EXTRA_SET_PIN = "set_pin";
     public static final String EXTRA_SIGN_UP = "sign_up";
     public static final String EXTRA_FONT_TEXT = "textFont";
@@ -37,7 +35,10 @@ public class EnterPinActivity extends BaseActivity {
     private boolean mSetPin = false;
     private boolean mSignUp = false;
     private String mFirstPin = "";
-    //    private int mTryCount = 0;
+
+    @BindView(R.id.imgLauncher)
+    ImageView imgLauncher;
+
 
     public static Intent getIntent(Context context, boolean setPin,boolean isSignUp) {
         Intent intent = new Intent(context, EnterPinActivity.class);
@@ -61,7 +62,6 @@ public class EnterPinActivity extends BaseActivity {
         return intent;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,10 +81,14 @@ public class EnterPinActivity extends BaseActivity {
                 changeLayoutForSetPin();
                 mSetPin = true;
             }
+            else{
+                imgLauncher.setVisibility(View.VISIBLE);
+                mTextTitle.setVisibility(View.INVISIBLE);
+            }
         }
 
-        final PinLockListener pinLockListener = new PinLockListener() {
 
+        final PinLockListener pinLockListener = new PinLockListener() {
             @Override
             public void onComplete(String pin) {
                 if (mSetPin) {
@@ -101,6 +105,19 @@ public class EnterPinActivity extends BaseActivity {
 
             @Override
             public void onPinChange(int pinLength, String intermediatePin) {
+
+                String pinResult = getPinFromSharedPreferences();
+                if (!mSetPin){
+                    if (pinResult.equals(intermediatePin)){
+                        setResult(RESULT_OK);
+                        Navigator.onMoveToMainTab(EnterPinActivity.this);
+                    }
+                    if (pinLength>pinResult.length()){
+                        shake();
+                        mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                        mPinLockView.resetPinLockView();
+                    }
+                }
                 Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
             }
 
@@ -218,8 +235,9 @@ public class EnterPinActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_BACK_PRESSED);
-        super.onBackPressed();
+        if (!mSetPin){
+            finish();
+        }
     }
 
 }

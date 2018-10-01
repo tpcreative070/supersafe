@@ -34,8 +34,8 @@
     <dimen name="dot_margintop">25dp</dimen>
 
     //attempts
-    <dimen name="attempts_margintop">15dp</dimen>
-    <dimen name="attempts_marginbottom">15dp</dimen>
+    <dimen name="attempts_margintop">5dp</dimen>
+    <dimen name="attempts_marginbottom">10dp</dimen>
     <dimen name="textsize_attempts">13sp</dimen>
 
     <dimen name="lockview_margin">10dp</dimen>

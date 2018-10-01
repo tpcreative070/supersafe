@@ -997,13 +997,13 @@ public class ServiceManager implements SuperSafeServiceView {
 
         totalList = mList.size();
         isDownloadData = true;
-        SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
         if (mList.size() == 0) {
             Utils.Log(TAG, "Data items already downloaded from Cloud !!!");
             SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
             isDownloadData = false;
             return;
         } else {
+            SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
             String message = "Preparing download " + totalList + " items from Cloud";
             Utils.Log(TAG, message);
             onWriteLog(message, EnumStatus.DOWNLOAD);
@@ -1187,7 +1187,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
         totalList = mList.size();
         isUploadData = true;
-        SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
         if (mList.size() == 0) {
             SingletonPrivateFragment.getInstance().onUpdateView();
             Utils.Log(TAG, "Data items already uploaded to Cloud !!!");
@@ -1195,6 +1194,7 @@ public class ServiceManager implements SuperSafeServiceView {
             isUploadData = false;
             return;
         } else {
+            SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
             String message = "Preparing upload " + totalList + " items to Cloud";
             Utils.Log(TAG, message);
             onWriteLog(message, EnumStatus.UPLOAD);

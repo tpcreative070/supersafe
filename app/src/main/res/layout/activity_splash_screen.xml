@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.splashscreen.SplashScreenActivity">
-
     <RelativeLayout
         android:background="@color/colorBackground"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -14,12 +13,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <ImageView
             android:layout_centerInParent="true"
             android:src="@drawable/ic_launcher"
-            android:layout_width="100dp"
-            android:layout_height="100dp"/>
-
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

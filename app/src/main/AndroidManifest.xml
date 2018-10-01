@@ -109,6 +109,9 @@
             android:theme="@style/Theme.Slidr.Slidable" />
         <activity android:name=".ui.settings.AlbumSettingsActivity"
             android:theme="@style/Theme.Slidr.Slidable"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="15db64b7a0d9e4cba1e5852f23b0305152060773" />
     </application>
 
 </manifest>
