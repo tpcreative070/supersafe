@@ -522,4 +522,24 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     }
 
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

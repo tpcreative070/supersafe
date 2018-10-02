@@ -28,6 +28,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -203,5 +204,26 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
         catch (Exception e){
             e.getMessage();
         }
+    }
+
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
     }
 }

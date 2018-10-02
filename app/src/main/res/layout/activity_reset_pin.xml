@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textColor="@color/material_gray_800"
+                android:textColor="@color/colorButton"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/forgot_your_pin"
                 android:layout_width="match_parent"
@@ -68,14 +68,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <Button
-                android:textColor="@color/white"
-                android:text="@string/send_verification_code"
+
+            <RelativeLayout
                 android:layout_marginTop="20dp"
-                android:padding="10dp"
-                android:background="@drawable/bg_button_rounded"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/button_high" />
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:layout_centerInParent="true"
+                    android:id="@+id/btnSendRequest"
+                    android:textColor="@color/white"
+                    android:text="@string/send_verification_code"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_button_rounded"
+                    android:layout_width="200dp"
+                    android:layout_height="@dimen/button_high" />
+
+                <fr.castorflex.android.circularprogressbar.CircularProgressBar
+                    android:visibility="invisible"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/progressbar_circular"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:indeterminate="true"
+                    android:indeterminateOnly="false"/>
+            </RelativeLayout>
+
+
 
             <TextView
                 android:textSize="@dimen/text_size_normal"
@@ -92,25 +115,28 @@
                 android:text="@string/request_enter_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-            
+
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:layout_marginTop="20dp"
-                android:id="@+id/edtAccessCode"
-                android:textSize="@dimen/text_size_normal"
-                android:hint="@string/access_code"
-                android:singleLine="true"
-                android:inputType="text"
-                android:imeOptions="actionNext"
+                android:id="@+id/edtCode"
                 style="@style/RegularTextView"
-                app:met_floatingLabel="highlight"
-                app:met_baseColor="@color/material_gray_700"
-                app:met_primaryColor="@color/colorButton"
-                app:met_textColorHint="@color/colorButton"
-                app:met_textColor="@color/material_gray_700"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:hint="@string/code"
+                android:imeOptions="actionDone"
+                android:inputType="text|textCapCharacters"
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_normal"
+                app:met_baseColor="@color/colorButton"
+                app:met_floatingLabel="highlight"
+                app:met_primaryColor="@color/colorButton"
+                app:met_textColor="@color/material_gray_700"
+                app:met_textColorHint="@color/colorButton" />
+
+
 
             <Button
+                android:id="@+id/btnReset"
                 android:enabled="false"
                 android:textColor="@color/white"
                 android:text="@string/reset_pin"
@@ -120,5 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_high"/>
         </LinearLayout>
+
+
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -24,6 +24,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
@@ -202,5 +203,23 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
     }
 
 
+    @Override
+    public void onError(String message, EnumStatus status) {
 
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

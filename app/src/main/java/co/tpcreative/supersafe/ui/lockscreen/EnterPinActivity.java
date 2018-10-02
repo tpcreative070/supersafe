@@ -35,6 +35,7 @@ import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import de.mrapp.android.preference.ListPreference;
 
@@ -142,6 +143,11 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
                 onLauncherPreferences();
                 break;
             }
+            case RESET:{
+                onDisplayView();
+                changeLayoutForSetPin();
+                break;
+            }
             default:{
                 Utils.Log(TAG,"Noting to do");
                 break;
@@ -172,6 +178,9 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
                     case CREATE:{
                         setCreatePin(pin);
                         break;
+                    }
+                    case RESET:{
+                        resetPin(pin);
                     }
                     default:{
                         Utils.Log(TAG,"Nothing working");
@@ -339,6 +348,24 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         }
     }
 
+    private void resetPin(String pin) {
+        if (mFirstPin.equals("")) {
+            mFirstPin = pin;
+            mTextTitle.setText(getString(R.string.pinlock_secondPin));
+            mPinLockView.resetPinLockView();
+        } else {
+            if (pin.equals(mFirstPin)) {
+                writePinToSharedPreferences(pin);
+                Navigator.onMoveToMainTab(this);
+            } else {
+                shake();
+                mTextTitle.setText(getString(R.string.pinlock_tryagain));
+                mPinLockView.resetPinLockView();
+                mFirstPin = "";
+            }
+        }
+    }
+
     private void setCreatePin(String pin) {
         if (mFirstPin.equals("")) {
             mFirstPin = pin;
@@ -431,6 +458,9 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
             }
             case SCREEN_OFF:{
                 super.onBackPressed();
+                break;
+            }
+            case RESET:{
                 break;
             }
         }
@@ -621,4 +651,23 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         transaction.commit();
     }
 
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

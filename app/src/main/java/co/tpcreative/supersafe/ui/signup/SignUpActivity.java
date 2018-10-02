@@ -21,6 +21,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
 public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener, SignUpView{
@@ -185,4 +186,24 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         presenter.unbindView();
     }
 
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

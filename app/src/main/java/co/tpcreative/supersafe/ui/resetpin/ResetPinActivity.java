@@ -1,18 +1,47 @@
 package co.tpcreative.supersafe.ui.resetpin;
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import butterknife.BindView;
-import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.model.User;
+import android.widget.Toast;
 
-public class ResetPinActivity extends BaseActivity {
+import butterknife.BindView;
+import butterknife.OnClick;
+import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.verify.VerifyActivity;
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
+
+public class ResetPinActivity extends BaseActivity implements ResetPinView, TextView.OnEditorActionListener{
     @BindView(R.id.tvStep1)
     TextView tvStep1;
-    @BindView(R.id.edtAccessCode)
-    EditText edtAccessCode;
+    @BindView(R.id.edtCode)
+    EditText edtCode;
+    @BindView(R.id.btnSendRequest)
+    Button btnSendRequest;
+    @BindView(R.id.btnReset)
+    Button btnReset;
+    @BindView(R.id.progressbar_circular)
+    CircularProgressBar mCircularProgressBar;
+    private ResetPinPresenter presenter;
+    private boolean isNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +50,184 @@ public class ResetPinActivity extends BaseActivity {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        presenter = new ResetPinPresenter();
+        presenter.bindView(this);
 
-        final User mUser = User.getInstance().getUserInfo();
-        if (mUser!=null){
-            String result = String.format(getString(R.string.request_an_access_code),mUser.email);
-            tvStep1.setText(result);
+        if (presenter.mUser!=null){
+            String email = presenter.mUser.email;
+            if (email!=null){
+                String result = String.format(getString(R.string.request_an_access_code),"<font color='#0091EA'>" + email +"</font>");
+                tvStep1.setText(Html.fromHtml(result));
+            }
+        }
+        edtCode.addTextChangedListener(mTextWatcher);
+        edtCode.setOnEditorActionListener(this);
+    }
+
+    public void setProgressValue(){
+        CircularProgressDrawable circularProgressDrawable;
+        CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
+                .colors(getResources().getIntArray(R.array.gplus_colors))
+                .sweepSpeed(2)
+                .rotationSpeed(2)
+                .strokeWidth(Utils.dpToPx(3))
+                .style(CircularProgressDrawable.STYLE_ROUNDED);
+        mCircularProgressBar.setIndeterminateDrawable(circularProgressDrawable = b.build());
+        // /!\ Terrible hack, do not do this at home!
+        circularProgressDrawable.setBounds(0,
+                0,
+                mCircularProgressBar.getWidth(),
+                mCircularProgressBar.getHeight());
+        mCircularProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private TextWatcher mTextWatcher = new TextWatcher() {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String value = s.toString().trim();
+            if (Utils.isValid(value)){
+                btnReset.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
+                btnReset.setTextColor(getResources().getColor(R.color.white));
+                isNext = true;
+            }
+            else{
+                btnReset.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
+                btnReset.setTextColor(getResources().getColor(R.color.colorDisableText));
+                isNext = false;
+            }
+        }
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    public void onVerifyCode(){
+        if (isNext){
+            String code = edtCode.getText().toString().trim();
+            final VerifyCodeRequest request = new VerifyCodeRequest();
+            request.code = code;
+            request.email = presenter.mUser.email;
+            presenter.onVerifyCode(request);
         }
     }
+
+    @Override
+    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (!SuperSafeReceiver.isConnected()){
+                Utils.showDialog(this,getString(R.string.internet));
+                return false;
+            }
+            if (isNext){
+                onVerifyCode();
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    @OnClick(R.id.btnReset)
+    public void onSendReset(View view){
+       onVerifyCode();
+    }
+
+    @OnClick(R.id.btnSendRequest)
+    public void onSentRequest(){
+        btnSendRequest.setEnabled(false);
+        btnSendRequest.setText("");
+        startLoading();
+        if (presenter.mUser!=null){
+            if (presenter.mUser.email!=null){
+                final VerifyCodeRequest request = new VerifyCodeRequest();
+                request.email = presenter.mUser.email;
+                presenter.onRequestCode(request);
+            }
+            else{
+                Toast.makeText(this,"Email is null",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+        else{
+            Toast.makeText(this,"Email is null",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void startLoading() {
+        setProgressValue();
+    }
+
+    @Override
+    public void stopLoading() {
+        mCircularProgressBar.progressiveStop();
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+        stopLoading();
+        switch (status){
+            case REQUEST_CODE_ERROR:{
+                btnSendRequest.setText(getString(R.string.send_verification_code));
+                btnSendRequest.setEnabled(true);
+                Toast.makeText(this,"Request code error !!!",Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case SEND_EMAIL_ERROR:{
+                Toast.makeText(this,"Sent email email error !!!",Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case VERIFIED_ERROR:{
+                Toast.makeText(this,"Verify failed",Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case REQUEST_CODE_SUCCESSFUL:{
+                btnSendRequest.setEnabled(false);
+                break;
+            }
+            case SEND_EMAIL_SUCCESSFUL:{
+                stopLoading();
+                btnSendRequest.setText(getString(R.string.send_verification_code));
+                Toast.makeText(this,"Sent the code to your email. Please check it",Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case VERIFIED_SUCCESSFUL:{
+                Navigator.onMoveToResetPin(this,false);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
 
 }

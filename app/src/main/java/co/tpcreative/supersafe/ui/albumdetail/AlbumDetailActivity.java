@@ -414,4 +414,24 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
     }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

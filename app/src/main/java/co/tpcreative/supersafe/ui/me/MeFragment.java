@@ -18,6 +18,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class MeFragment extends BaseFragment implements MeView{
 
@@ -194,4 +195,24 @@ public class MeFragment extends BaseFragment implements MeView{
         return super.getContext();
     }
 
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

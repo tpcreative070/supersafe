@@ -23,6 +23,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class VerifyActivity extends BaseActivity implements VerifyView, TextView.OnEditorActionListener{
 
@@ -174,5 +175,25 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     @Override
     public void showSuccessful(String message) {
         Navigator.onMoveSetPin(this,false);
+    }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
     }
 }

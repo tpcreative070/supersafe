@@ -27,6 +27,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 
 public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemView{
@@ -281,6 +282,23 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
 
     }
 
+    @Override
+    public void onError(String message, EnumStatus status) {
 
+    }
 
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

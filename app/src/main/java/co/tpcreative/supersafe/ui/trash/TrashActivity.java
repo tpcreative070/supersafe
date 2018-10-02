@@ -32,6 +32,7 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdapter.ItemSelectedListener{
 
@@ -280,4 +281,24 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
         }
     }
 
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

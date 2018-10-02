@@ -7,5 +7,6 @@ public enum EnumPinAction {
     VERIFY_TO_CHANGE,
     CREATE,
     CREATE_DONE,
-    SCREEN_OFF
+    SCREEN_OFF,
+    RESET
 }

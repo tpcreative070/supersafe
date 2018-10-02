@@ -28,6 +28,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class PlayerActivity extends BaseActivity implements PlayerViews{
 
@@ -122,4 +123,23 @@ public class PlayerActivity extends BaseActivity implements PlayerViews{
        playVideo();
     }
 
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
 }

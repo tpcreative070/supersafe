@@ -26,5 +26,11 @@ public enum EnumStatus {
         DELETE_CATEGORIES,
         ADD_ITEMS,
         LOAD_MORE,
-        SYNC_READY
+        SYNC_READY,
+        VERIFIED_SUCCESSFUL,
+        VERIFIED_ERROR,
+        SEND_EMAIL_SUCCESSFUL,
+        SEND_EMAIL_ERROR,
+        REQUEST_CODE_SUCCESSFUL,
+        REQUEST_CODE_ERROR
 }

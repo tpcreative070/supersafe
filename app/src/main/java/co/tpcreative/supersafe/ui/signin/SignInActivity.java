@@ -22,6 +22,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
 public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener, SignInView{
@@ -147,5 +148,27 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         super.onDestroy();
         presenter.unbindView();
     }
+
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
 
 }

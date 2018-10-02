@@ -92,6 +92,13 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    public static void onMoveToResetPin(Context context,boolean isSignUp){
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.RESET.ordinal(),isSignUp);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
     public static void onMoveToVerifyScreenOff(Context context,boolean isSignUp){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.SCREEN_OFF.ordinal(),isSignUp);
