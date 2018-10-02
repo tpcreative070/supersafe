@@ -14,6 +14,7 @@
     <dimen name="margin_left">40dp</dimen>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="image_size">40dp</dimen>
+    <dimen name="icon_size">20dp</dimen>
     <dimen name="image_size_custom">70dp</dimen>
     <dimen name="image_size_video_cam">20dp</dimen>
 

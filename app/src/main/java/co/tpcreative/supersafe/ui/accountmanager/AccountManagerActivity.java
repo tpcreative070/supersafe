@@ -1,12 +1,20 @@
 package co.tpcreative.supersafe.ui.accountmanager;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.ftinc.kit.util.SizeUtils;
 import com.google.gson.Gson;
 import com.r0adkll.slidr.Slidr;
@@ -23,7 +31,7 @@ import co.tpcreative.supersafe.model.User;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
-public class AccountManagerActivity extends BaseGoogleApi {
+public class AccountManagerActivity extends BaseGoogleApi implements AccountManagerView{
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
     private SlidrConfig mConfig;
@@ -37,11 +45,17 @@ public class AccountManagerActivity extends BaseGoogleApi {
     CircularProgressBar mCircularProgressBar;
     @BindView(R.id.btnSignOut)
     Button btnSignOut;
+    @BindView(R.id.tvStatusAccount)
+    TextView tvStatusAccount;
+    private AccountManagerPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_manager);
+        presenter = new AccountManagerPresenter();
+        presenter.bindView(this);
+
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -65,12 +79,18 @@ public class AccountManagerActivity extends BaseGoogleApi {
 
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
-            if (mUser.verified){
-                tvStatus.setText("Verified");
-            }
             tvEmail.setText(mUser.email);
+            if (mUser.verified){
+               tvStatusAccount.setTextColor(getResources().getColor(R.color.ColorBlueV1));
+               tvStatusAccount.setText(getString(R.string.verified));
+            }
+            else{
+                tvStatusAccount.setTextColor(getResources().getColor(R.color.red));
+                tvStatusAccount.setText(getString(R.string.unverified));
+            }
         }
         setProgressValue();
+        Utils.Log(TAG,"account: "+ new Gson().toJson(mUser));
     }
 
     public void setProgressValue(){
@@ -96,17 +116,16 @@ public class AccountManagerActivity extends BaseGoogleApi {
         Log.d(TAG,"sign out");
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
-            mUser.verified = false;
-            mUser.driveConnected = false;
-            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
             signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                 @Override
                 public void onCompleted() {
+                    mUser.verified = false;
+                    mUser.driveConnected = false;
+                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                     onBackPressed();
                 }
                 @Override
                 public void onError() {
-                    onBackPressed();
                 }
 
                 @Override
@@ -117,6 +136,7 @@ public class AccountManagerActivity extends BaseGoogleApi {
         }
     }
 
+
     @Override
     protected void onDriveClientReady() {
 
@@ -126,7 +146,6 @@ public class AccountManagerActivity extends BaseGoogleApi {
     protected void onDriveSuccessful() {
         Log.d(TAG,"onDriveSuccessful");
         btnSignOut.setVisibility(View.VISIBLE);
-
     }
 
     @Override
@@ -143,5 +162,31 @@ public class AccountManagerActivity extends BaseGoogleApi {
     protected void onDriveRevokeAccess() {
         Log.d(TAG,"onDriveRevokeAccess");
     }
+
+
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void stopLoading() {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public void showError(String message) {
+
+    }
+
+    @Override
+    public void showSuccessful(String message) {
+    }
+
 
 }

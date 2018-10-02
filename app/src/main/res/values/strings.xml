@@ -164,7 +164,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.102:8081</string>
+    <string name="url_developer">http://192.168.2.117:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -179,6 +179,8 @@
     <string name="enable_now">ENABLE NOW</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
     <string name="verify">Verify</string>
+    <string name="verified">Verified</string>
+    <string name="unverified">Unverified</string>
     <string name="your_email">Your Email</string>
     <string name="send_verification_code">SEND VERIFICATION CODE</string>
     <string name="or">OR</string>
@@ -228,6 +230,7 @@
     <string name="done">Done</string>
     <string name="create_album">Create Album</string>
     <string name="change_album">Change Album</string>
+    <string name="add_other_email">Add Other Email</string>
     <string name="photos_default">0 Photos</string>
     <string name="videos_default">0 Videos</string>
     <string name="audios_default">0 Audios</string>
@@ -240,11 +243,20 @@
     <string name="key_restore">Restore</string>
     <string name="empty_all_trash">Are you sure to delete all items? You can not undo this!</string>
     <string name="restore">These items will be restored!</string>
+    <string name="forgot_your_pin">Forgot your pin? No problem. Here\'s how to reset it</string>
+    <string name="step_1">Step 1:</string>
+    <string name="step_2">Step 2:</string>
+    <string name="request_an_access_code">Request an account code. We\'ll send it to your primary email address: %1$s</string>
+    <string name="request_enter_code">Enter the access code below. We\'ll begin the reset process so you can create a new PIN</string>
+    <string name="access_code">Access code</string>
+    <string name="reset_pin">Reset PIN</string>
 
     <string name="key_user">user</string>
     <string name="key_items">items</string>
     <string name="key_list_items">list_items</string>
     <string name="key_email">email</string>
+    <string name="key_other_email">other_email</string>
+    <string name="other_email_address">Other email addresses</string>
     <string name="key_user_id">user_id</string>
     <string name="key_password">password</string>
     <string name="key_password_default">tpcreative.co</string>
@@ -330,7 +342,13 @@
     <string name="key_categories_max">categories_max</string>
     <string name="key_change">Change</string>
     <string name="key_change_pin">Change PIN</string>
-
+    <string name="key_primary_email_address">Primary email address</string>
+    <string name="key_primary_email_address_detail">We will send all email, Including PIN resets to your primary email. or You can also use other email addresses add below.</string>
+    <string name="key_account_type">Account type</string>
+    <string name="key_add_an_email">Add an email</string>
+    <string name="key_not_updated">Not updated</string>
+    <string name="key_updated">Updated</string>
+    <string name="key_forgot_pin">FORGOT PIN</string>
 
 
 </resources>

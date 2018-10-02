@@ -42,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+
             <LinearLayout
                 android:paddingTop="50dp"
                 android:paddingLeft="20dp"
@@ -50,60 +51,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
+                    android:inputType="textCapCharacters"
                     android:textColor="@color/colorButton"
                     android:textSize="@dimen/text_size_normal"
                     android:textAllCaps="true"
-                    android:text="@string/account"
+                    android:text="@string/key_account_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
 
             <LinearLayout
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="20dp"
-                android:paddingBottom="10dp"
                 android:background="@color/white"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:text="@string/account"
-                    android:textSize="@dimen/text_size_normal"
-                    android:layout_weight="0.7"
-                    android:id="@+id/tvEmail"
-                    android:gravity="left"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:text="@string/verify"
-                    android:gravity="right"
-                    android:textSize="@dimen/text_size_normal"
-                    android:id="@+id/tvStatus"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.3"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:background="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <View
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@color/colorButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="0.5dp"></View>
-            </LinearLayout>
-
-            <LinearLayout
-                android:background="@color/white"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:layout_weight="1"
@@ -128,6 +89,89 @@
             </LinearLayout>
 
             <LinearLayout
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:background="@color/grey_light"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"></View>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:inputType="textCapCharacters"
+                    android:textColor="@color/colorButton"
+                    android:textSize="@dimen/text_size_normal"
+                    android:textAllCaps="true"
+                    android:text="@string/key_primary_email_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textStyle="bold"
+                        android:inputType="textCapCharacters"
+                        android:text="@string/account"
+                        android:textSize="@dimen/text_size_normal"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.7"
+                        android:id="@+id/tvEmail"
+                        android:gravity="left"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:textColor="@color/ColorBlueV1"
+                        android:id="@+id/tvStatusAccount"
+                        android:text="@string/verify"
+                        android:gravity="right"
+                        android:layout_gravity="center"
+                        android:layout_weight="0.3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:paddingBottom="20dp"
+                    android:paddingTop="20dp"
+                    android:text="@string/key_primary_email_address_detail"
+                    android:gravity="left"
+                    android:textSize="@dimen/text_size_normal"
+                    android:id="@+id/tvStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+
+            <!-- Action button -->
+
+
+            <LinearLayout
                 android:layout_marginTop="20dp"
                 android:background="@color/white"
                 android:padding="15dp"
@@ -135,6 +179,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <Button
+                    android:layout_marginRight="30dp"
+                    android:layout_marginLeft="30dp"
                     android:id="@+id/btnSignOut"
                     android:padding="10dp"
                     android:layout_gravity="center"
@@ -142,7 +188,7 @@
                     android:textColor="@color/white"
                     android:background="@drawable/bg_button_rounded"
                     android:textSize="@dimen/text_size_normal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/button_high" />
             </LinearLayout>
 

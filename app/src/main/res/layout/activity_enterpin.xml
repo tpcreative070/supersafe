@@ -40,6 +40,33 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <LinearLayout
+            android:visibility="invisible"
+            android:id="@+id/llForgotPin"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginRight="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="@string/key_forgot_pin"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/baseline_help_outline_white_48"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size" />
+        </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +75,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp">
+                android:layout_marginTop="80dp">
 
                 <ImageView
                     android:id="@+id/imgLauncher"
@@ -117,7 +144,7 @@
                 android:id="@+id/rlButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="0dp">
                 <co.tpcreative.supersafe.ui.lockscreen.PinLockView
                     android:id="@+id/pinlockView"

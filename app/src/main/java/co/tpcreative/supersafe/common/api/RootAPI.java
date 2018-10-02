@@ -32,10 +32,11 @@ import retrofit2.http.Url;
 
 public interface RootAPI{
 
-    String SIGN_UP = "/api/signup";
-    String SIGN_IN = "/api/signin";
-    String VERIFY_CODE = "api/verifycode";
-    String RESEND_CODE = "api/resendcode";
+    String SIGN_UP = "/api/user/signup";
+    String SIGN_IN = "/api/user/signin";
+    String UPDATE = "/api/user/update";
+    String VERIFY_CODE = "api/user/verifycode";
+    String RESEND_CODE = "api/user/resendcode";
     String CHECK_USER_CLOUD = "/api/usercloud/check";
     String ADD_USER_CLOUD = "/api/usercloud/add/";
     String CHECK_USER_ID = "/api/user/checkUser";
@@ -78,6 +79,10 @@ public interface RootAPI{
     @FormUrlEncoded
     @POST(ADD_USER_CLOUD)
     Observable<UserCloudResponse> onAddUserCloud(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(UPDATE)
+    Observable<BaseResponse> onUpdateUser(@FieldMap Map<String,String>request);
 
     @FormUrlEncoded
     @POST(CHECK_USER_ID)

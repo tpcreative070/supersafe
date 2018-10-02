@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ import com.r0adkll.slidr.model.SlidrListener;
 import com.r0adkll.slidr.model.SlidrPosition;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
@@ -62,6 +64,9 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
     @BindView(R.id.rlPreference)
     RelativeLayout rlPreference;
 
+    @BindView(R.id.llForgotPin)
+    LinearLayout llForgotPin;
+
     private static EnumPinAction mPinAction;
     private boolean mSignUp = false;
     private String mFirstPin = "";
@@ -79,7 +84,6 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         Intent intent = new Intent(context, EnterPinActivity.class);
         intent.putExtra(EXTRA_FONT_TEXT, fontText);
         intent.putExtra(EXTRA_FONT_NUM, fontNum);
-
         return intent;
     }
 
@@ -96,7 +100,6 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         setContentView(R.layout.activity_enterpin);
         presenter = new LockScreenPresenter();
         presenter.bindView(this);
-
 
         int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
         mPinAction = EnumPinAction.values()[result];
@@ -282,6 +285,26 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         }
     }
 
+    /*Forgot pin*/
+    @OnClick(R.id.llForgotPin)
+    public void onForgotPin(View view){
+        Navigator.onMoveToForgotPin(this);
+    }
+
+    public void onSetVisitableForgotPin(int value){
+        llForgotPin.setVisibility(value);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPinLockView!=null){
+            mPinLockView.resetPinLockView();
+        }
+        onSetVisitableForgotPin(View.GONE);
+        mTextAttempts.setText("");
+    }
+
     private void writePinToSharedPreferences(String pin) {
         //PrefsController.putString(getString(R.string.key_pin),Utils.sha256(pin));
         SuperSafeApplication.getInstance().writeKey(pin);
@@ -369,6 +392,12 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         ObjectAnimator objectAnimator = new ObjectAnimator().ofFloat(mPinLockView, "translationX",
                 0, 25, -25, 25, -25, 15, -15, 6, -6, 0).setDuration(1000);
         objectAnimator.start();
+        switch (mPinAction){
+            case VERIFY:{
+                onSetVisitableForgotPin(View.VISIBLE);
+                break;
+            }
+        }
     }
 
     private void changeLayoutForSetPin() {
@@ -591,6 +620,5 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
     }
-
 
 }

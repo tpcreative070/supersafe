@@ -49,6 +49,8 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         presenter = new SignUpPresenter();
         presenter.bindView(this);
         Log.d(TAG,"onCreate");
+        isName = true;
+        edtName.setText(getString(R.string.free));
     }
 
     @Override

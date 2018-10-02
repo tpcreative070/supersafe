@@ -25,6 +25,7 @@ import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import co.tpcreative.supersafe.ui.signin.SignInActivity;
@@ -195,6 +196,11 @@ public class Navigator {
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_main_categories),items);
         intent.putExtras(bundle);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveToForgotPin(Context context){
+        Intent intent = new Intent(context, ResetPinActivity.class);
         context.startActivity(intent);
     }
 
