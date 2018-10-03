@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.common.activity;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.ActionBar;
@@ -13,6 +15,10 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.HomeWatcher;
+import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -20,6 +26,7 @@ public class BaseActivity extends AppCompatActivity {
     protected ActionBar actionBar ;
     int onStartCount = 0;
     private Toast mToast;
+    private HomeWatcher mHomeWatcher;
     public static final String TAG = BaseActivity.class.getSimpleName();
 
 
@@ -28,15 +35,15 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         actionBar = getSupportActionBar();
         onStartCount = 1;
-        if (savedInstanceState == null) // 1st time
-        {
+        if (savedInstanceState == null) {
             this.overridePendingTransition(R.animator.anim_slide_in_left,
                     R.animator.anim_slide_out_left);
-        } else // already created so reverse animation
-        {
+        } else {
             onStartCount = 2;
         }
+        onRegisterHomeWatcher();
     }
+
 
     protected float getRandom(float range, float startsfrom) {
         return (float) (Math.random() * range) + startsfrom;
@@ -51,10 +58,53 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (mHomeWatcher!=null){
+            mHomeWatcher.stopWatch();
+        }
+
         if (unbinder != null)
             unbinder.unbind();
         super.onDestroy();
     }
+
+
+    @Override
+    protected void onResume() {
+        if (mHomeWatcher!=null){
+            if (!mHomeWatcher.isRegistered){
+                onRegisterHomeWatcher();
+            }
+        }
+        super.onResume();
+    }
+
+
+    public void onRegisterHomeWatcher(){
+        /*Home action*/
+        mHomeWatcher = new HomeWatcher(this);
+        mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
+            @Override
+            public void onHomePressed() {
+                int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+                EnumPinAction action = EnumPinAction.values()[value];
+                switch (action){
+                    case NONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                        break;
+                    }
+                    default:{
+                        Utils.Log(TAG,"Nothing to do");
+                    }
+                }
+                mHomeWatcher.stopWatch();
+            }
+            @Override
+            public void onHomeLongPressed() {
+            }
+        });
+        mHomeWatcher.startWatch();
+    }
+
 
     @Override
     public void onBackPressed() {

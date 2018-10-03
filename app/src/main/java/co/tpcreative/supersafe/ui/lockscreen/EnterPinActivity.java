@@ -31,6 +31,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -437,7 +438,7 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         Utils.Log(TAG,mPinAction.name());
         switch (mPinAction){
             case VERIFY:{
-                finish();
+                super.onBackPressed();
                 break;
             }
             case CHANGE:{
@@ -457,7 +458,6 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
                 break;
             }
             case SCREEN_OFF:{
-                super.onBackPressed();
                 break;
             }
             case RESET:{
@@ -557,7 +557,8 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
                 break;
             }
             case SCREEN_OFF:{
-                onBackPressed();
+                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                finish();
                 break;
             }
         }

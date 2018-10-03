@@ -47,11 +47,12 @@
 
         <!-- Enter pin code -->
         <activity
+            android:screenOrientation="portrait"
             android:name=".ui.lockscreen.EnterPinActivity"
-            android:label="@string/key_change" />
+            android:label="@string/key_change"/>
         <activity
-            android:name=".ui.main_tab.MainTabActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:name=".ui.main_tab.MainTabActivity"/>
         <activity
             android:name=".ui.signin.SignInActivity"
             android:screenOrientation="portrait" />
@@ -77,11 +78,13 @@
             android:name=".ui.albumdetail.AlbumDetailActivity"
             android:label=""
             android:theme="@style/Theme.Slidr.Slidable" />
-        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity" />
+        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity"/>
+
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:label="@string/settings"
-            android:theme="@style/Theme.Slidr.Slidable" />
+            android:theme="@style/Theme.Slidr.Slidable"
+            android:label="@string/settings"/>
+
         <activity
             android:name=".ui.help.HelpActivity"
             android:label="@string/help"

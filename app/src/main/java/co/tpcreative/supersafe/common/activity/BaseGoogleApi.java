@@ -2,7 +2,9 @@
 package co.tpcreative.supersafe.common.activity;
 import android.accounts.Account;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -31,12 +33,14 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
@@ -64,23 +68,40 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
     Unbinder unbinder;
     protected ActionBar actionBar ;
-    int onStartCount = 0;
+    private HomeWatcher mHomeWatcher;
+    private int onStartCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         actionBar = getSupportActionBar();
         onStartCount = 1;
-        if (savedInstanceState == null) // 1st time
-        {
+        if (savedInstanceState == null) {
             this.overridePendingTransition(R.animator.anim_slide_in_left,
                     R.animator.anim_slide_out_left);
-        } else // already created so reverse animation
-        {
+        } else {
             onStartCount = 2;
         }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
         mUser = User.getInstance().getUserInfo();
+
+        /*Home action*/
+        onRegisterHomeWatcher();
+    }
+
+    protected void onDrawsSystemBarBackgrounds(){
+        getWindow().setBackgroundDrawableResource(R.color.transparent);
+        if (Build.VERSION.SDK_INT>=19){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(getResources().getColor(android.R.color.transparent));
+        }
     }
 
     protected float getRandom(float range, float startsfrom) {
@@ -96,9 +117,49 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
     @Override
     protected void onDestroy() {
+        if (mHomeWatcher!=null){
+            mHomeWatcher.stopWatch();
+        }
+
         if (unbinder != null)
             unbinder.unbind();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        if (mHomeWatcher!=null){
+            if (!mHomeWatcher.isRegistered){
+                onRegisterHomeWatcher();
+            }
+        }
+        super.onResume();
+    }
+
+    public void onRegisterHomeWatcher(){
+        /*Home action*/
+        mHomeWatcher = new HomeWatcher(this);
+        mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
+            @Override
+            public void onHomePressed() {
+                int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+                EnumPinAction action = EnumPinAction.values()[value];
+                switch (action){
+                    case NONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                        break;
+                    }
+                    default:{
+                        Utils.Log(TAG,"Nothing to do");
+                    }
+                }
+                mHomeWatcher.stopWatch();
+            }
+            @Override
+            public void onHomeLongPressed() {
+            }
+        });
+        mHomeWatcher.startWatch();
     }
 
     @Override
@@ -167,11 +228,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
             onDriveError();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     /**

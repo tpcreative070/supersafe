@@ -1,37 +1,24 @@
 package co.tpcreative.supersafe.ui.settings;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-
 import com.ftinc.kit.util.SizeUtils;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.util.Utils;
-import de.mrapp.android.dialog.MaterialDialog;
 import de.mrapp.android.preference.ListPreference;
-import de.mrapp.android.validation.Validators;
+
 
 public class SettingsActivity extends BaseActivity {
 
@@ -45,7 +32,6 @@ public class SettingsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
 
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -77,6 +63,7 @@ public class SettingsActivity extends BaseActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
+
 
     }
 

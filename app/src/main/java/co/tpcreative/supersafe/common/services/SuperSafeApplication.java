@@ -21,6 +21,13 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
+
+import org.polaric.colorful.Colorful;
+
+import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
@@ -70,6 +77,14 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
+        Colorful.defaults()
+                .primaryColor(Colorful.ThemeColor.RED)
+                .accentColor(Colorful.ThemeColor.BLUE)
+                .translucent(false)
+                .dark(true);
+        Colorful.init(this);
+
+
         Fabric.with(this, new Crashlytics());
         mInstance = this;
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -94,6 +109,8 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .setPrefsName(getPackageName())
                 .setUseDefaultSharedPreference(true)
                 .build();
+
+        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
 
         /*Storage Config*/
         String IVX = "abcdefghijklmnop"; // 16 lenght - not secret
@@ -185,6 +202,24 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityResumed(Activity activity) {
+        if (activity instanceof EnterPinActivity){
+            Utils.Log(TAG,"Exception");
+            Utils.Log(TAG,"Resume exception");
+        }
+        else {
+            int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+            EnumPinAction action = EnumPinAction.values()[value];
+            switch (action){
+                case SCREEN_PRESS_HOME:{
+                    Navigator.onMoveToVerifyScreenOff(getInstance(),false);
+                    PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                    break;
+                }
+                default:{
+                    Utils.Log(TAG,"Nothing to do");
+                }
+            }
+        }
         ++resumed;
     }
 
@@ -197,6 +232,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityStarted(Activity activity) {
         ++started;
+        Utils.Log(TAG,"onActivityStarted");
     }
 
     @Override
