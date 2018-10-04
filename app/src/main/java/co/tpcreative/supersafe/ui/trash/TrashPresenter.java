@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -13,10 +14,9 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class TrashPresenter extends Presenter<TrashView>{
+public class TrashPresenter extends Presenter<BaseView>{
 
     private static final String TAG = TrashPresenter.class.getSimpleName();
-
     protected List<Items> mList;
     protected Storage storage;
     public TrashPresenter(){
@@ -25,7 +25,7 @@ public class TrashPresenter extends Presenter<TrashView>{
     }
 
     public void  getData(Activity activity){
-        TrashView view = view();
+        BaseView view = view();
         mList.clear();
         try {
             final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal());
@@ -33,7 +33,7 @@ public class TrashPresenter extends Presenter<TrashView>{
                 mList = data;
             }
             Utils.Log(TAG,new Gson().toJson(data));
-            view.onReloadData();
+            view.onSuccessful("successful",EnumStatus.RELOAD);
         }
         catch (Exception e){
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
@@ -41,7 +41,7 @@ public class TrashPresenter extends Presenter<TrashView>{
     }
 
     public void onDeleteAll(boolean isEmpty){
-        TrashView view = view();
+        BaseView view = view();
         for (int i = 0 ;i <mList.size();i++){
             if (isEmpty){
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
@@ -63,7 +63,7 @@ public class TrashPresenter extends Presenter<TrashView>{
                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
             }
         }
-        view.onDone();
+        view.onSuccessful("Done",EnumStatus.DONE);
     }
 
 }

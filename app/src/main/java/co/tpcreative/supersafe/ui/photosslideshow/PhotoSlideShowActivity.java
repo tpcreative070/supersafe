@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.photosslideshow;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -322,12 +323,12 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     /*ViewPresenter*/
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -518,5 +519,10 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     @Override
     public void onSuccessful(String message, EnumStatus status) {
 
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
     }
 }

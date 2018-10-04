@@ -19,6 +19,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.gson.Gson;
+
+import java.util.List;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -50,7 +53,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         presenter = new CheckSystemPresenter();
         presenter.bindView(this);
         presenter.getIntent(this);
-        startLoading();
+        onStartLoading(EnumStatus.OTHER);
 
         if (presenter.googleOauth!=null){
             presenter.onCheckUser(presenter.googleOauth.email);
@@ -90,12 +93,12 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.GONE);
     }
 
@@ -141,7 +144,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     @Override
     public void onShowUserCloud(boolean error, String message) {
         Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
-        stopLoading();
+        onStopLoading(EnumStatus.OTHER);
         if (!error){
            onBackPressed();
         }
@@ -162,7 +165,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     @Override
     public void onSignUpFailed(String message) {
         Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-        stopLoading();
+        onStopLoading(EnumStatus.OTHER);
     }
 
 
@@ -175,7 +178,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
 
     @Override
     public void onSignInFailed(String message) {
-        stopLoading();
+        onStopLoading(EnumStatus.OTHER);
         Toast.makeText(this,""+message,Toast.LENGTH_SHORT).show();
         onBackPressed();
     }
@@ -188,13 +191,13 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
                signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                    @Override
                    public void onCompleted() {
-                       startLoading();
+                       onStartLoading(EnumStatus.OTHER);
                        signIn(presenter.mUser.email);
                    }
 
                    @Override
                    public void onError() {
-                       startLoading();
+                       onStartLoading(EnumStatus.OTHER);
                        signIn(presenter.mUser.email);
                    }
 
@@ -205,7 +208,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
                });
            }
            else{
-               stopLoading();
+               onStopLoading(EnumStatus.OTHER);
                onBackPressed();
            }
        }
@@ -245,7 +248,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
         dialog.onNegative(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                stopLoading();
+                onStopLoading(EnumStatus.OTHER);
                 onBackPressed();
             }
         });
@@ -299,6 +302,16 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

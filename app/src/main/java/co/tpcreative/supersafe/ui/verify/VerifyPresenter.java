@@ -10,17 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-public class VerifyPresenter extends Presenter<VerifyView>{
+public class VerifyPresenter extends Presenter<BaseView>{
 
     protected User user;
     private static final String TAG = VerifyPresenter.class.getSimpleName();
@@ -30,7 +32,7 @@ public class VerifyPresenter extends Presenter<VerifyView>{
     }
 
     public void getIntent(Activity activity){
-        VerifyView view = view();
+        BaseView view = view();
         Bundle bundle = activity.getIntent().getExtras();
         final User result = (User) bundle.get(activity.getString(R.string.key_data));
         if (result!=null){
@@ -40,7 +42,7 @@ public class VerifyPresenter extends Presenter<VerifyView>{
 
     public void onVerifyCode(VerifyCodeRequest request){
         Log.d(TAG,"info");
-        VerifyView view = view();
+        BaseView view = view();
         if (view == null) {
             return;
         }
@@ -58,14 +60,14 @@ public class VerifyPresenter extends Presenter<VerifyView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY_CODE))
                 .subscribe(onResponse -> {
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.VERIFY_CODE);
                     if (onResponse.error){
-                        view.showError(onResponse.message);
+                        view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
                     else{
-                        view.showSuccessful(onResponse.message);
+                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
@@ -86,13 +88,13 @@ public class VerifyPresenter extends Presenter<VerifyView>{
                     } else {
                         Log.d(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.VERIFY_CODE);
                 }));
     }
 
     public void onResendCode(VerifyCodeRequest request){
         Log.d(TAG,"info");
-        VerifyView view = view();
+        BaseView view = view();
         if (view == null) {
             return;
         }
@@ -109,15 +111,15 @@ public class VerifyPresenter extends Presenter<VerifyView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.RESEND_CODE))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.showError(onResponse.message);
+                        view.onError(onResponse.message,EnumStatus.RESEND_CODE);
                     }
                     else{
                         onSendGmail(user.email,onResponse.code);
                     }
-                    view.onFinishing();
+                    view.onStopLoading(EnumStatus.RESEND_CODE);
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -132,20 +134,20 @@ public class VerifyPresenter extends Presenter<VerifyView>{
                     } else {
                         Log.d(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.onFinishing();
+                    view.onStopLoading(EnumStatus.RESEND_CODE);
                 }));
     }
 
 
     private String getString(int res){
-        VerifyView view = view();
+        BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }
 
 
     public void onSendGmail(String email,String code){
-        VerifyView view = view();
+        BaseView view = view();
         String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())

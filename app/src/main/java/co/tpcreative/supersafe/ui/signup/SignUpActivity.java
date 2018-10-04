@@ -13,18 +13,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
-public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener, SignUpView{
+public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener, BaseView<User>{
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
     @BindView(R.id.edtName)
@@ -52,17 +56,6 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         Log.d(TAG,"onCreate");
         isName = true;
         edtName.setText(getString(R.string.free));
-    }
-
-    @Override
-    public void showError(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSuccessful(String message, User user) {
-        Navigator.onMoveToMainTab(this);
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -169,13 +162,13 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
         btnFinish.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
         btnFinish.setVisibility(View.VISIBLE);
     }
@@ -189,7 +182,12 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
 
     @Override
     public void onError(String message, EnumStatus status) {
-
+        switch (status){
+            case SIGN_UP:{
+                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
     }
 
     @Override
@@ -204,6 +202,22 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, User object) {
+        switch (status){
+            case SIGN_UP:{
+                Navigator.onMoveToMainTab(this);
+                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+            }
+            break;
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List<User> list) {
 
     }
 }

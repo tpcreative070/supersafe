@@ -18,6 +18,9 @@ import com.ftinc.kit.util.SizeUtils;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
+
+import java.util.List;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -69,12 +72,12 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -211,6 +214,21 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

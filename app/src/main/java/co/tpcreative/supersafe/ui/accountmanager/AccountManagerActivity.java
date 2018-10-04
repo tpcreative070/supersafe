@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.accountmanager;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -20,6 +21,9 @@ import com.google.gson.Gson;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -152,12 +156,12 @@ public class AccountManagerActivity extends BaseGoogleApi implements AccountMana
 
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -193,6 +197,21 @@ public class AccountManagerActivity extends BaseGoogleApi implements AccountMana
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

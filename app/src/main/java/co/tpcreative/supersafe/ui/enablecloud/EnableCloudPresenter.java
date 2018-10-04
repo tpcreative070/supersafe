@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -63,7 +64,7 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
@@ -72,7 +73,7 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
                     else{
                         view.showSuccessful(mUser.cloud_id);
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -86,7 +87,7 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
                     } else {
                         Log.d(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
 
     }

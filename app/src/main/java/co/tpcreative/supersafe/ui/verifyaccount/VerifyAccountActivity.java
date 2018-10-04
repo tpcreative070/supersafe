@@ -28,12 +28,16 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -41,7 +45,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 
-public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,VerifyAccountView{
+public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
     @BindView(R.id.imgEdit)
     ImageView imgEdit;
@@ -226,22 +230,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         }
     }
 
-
-    @Override
-    public void showUserExisting(String user_id, boolean isExisting) {
-
-    }
-
-    @Override
-    public void onSignUpFailed(String message) {
-
-    }
-
-    @Override
-    public void onSignInFailed(String message) {
-
-    }
-
     public void onChangedEmail(){
         final String email = edtEmail.getText().toString().trim();
         tvEmail.setText(email);
@@ -252,10 +240,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         Utils.hideKeyboard(edtEmail);
     }
 
-    @Override
-    public void onChangeEmailSuccessful() {
-      onShowView(llAction);
-    }
 
     @OnClick(R.id.btnReSend)
     public void onClickedResend(){
@@ -400,54 +384,12 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     @Override
-    public void showError(String message) {
-
-    }
-
-    @Override
-    public void showSuccessful(String message) {
-        onShowView(btnSendVerifyCode);
-    }
-
-    @Override
-    public void showSuccessfulVerificationCode() {
-        Log.d(TAG,"successful");
-        edtCode.setText("");
-        onShowDialogEnableSync();
-    }
-
-    @Override
     public Activity getActivity() {
         return this;
     }
 
-    @Override
-    public void startLoading() {
-        progressBarCircularIndeterminateVerifyCode.setVisibility(View.VISIBLE);
-        btnSendVerifyCode.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
-        btnSendVerifyCode.setText("");
-    }
 
-    @Override
-    public void stopLoading() {
-        progressBarCircularIndeterminateVerifyCode.setVisibility(View.INVISIBLE);
-        btnSendVerifyCode.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
-        btnSendVerifyCode.setText(getString(R.string.send_verification_code));
-    }
 
-    @Override
-    public void onLoading() {
-        progressBarCircularIndeterminateReSend.setVisibility(View.VISIBLE);
-        btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
-        btnSignIn.setText("");
-    }
-
-    @Override
-    public void onFinishing() {
-        progressBarCircularIndeterminateReSend.setVisibility(View.INVISIBLE);
-        btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
-        btnSignIn.setText(getString(R.string.login_action));
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -486,6 +428,43 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         presenter.unbindView();
     }
 
+
+    @Override
+    public void onStartLoading(EnumStatus status) {
+        switch (status){
+            case RESEND_CODE:{
+                progressBarCircularIndeterminateReSend.setVisibility(View.VISIBLE);
+                btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
+                btnSignIn.setText("");
+                break;
+            }
+            case VERIFY_CODE:{
+                progressBarCircularIndeterminateVerifyCode.setVisibility(View.VISIBLE);
+                btnSendVerifyCode.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
+                btnSendVerifyCode.setText("");
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onStopLoading(EnumStatus status) {
+        switch (status){
+            case RESEND_CODE:{
+                progressBarCircularIndeterminateReSend.setVisibility(View.INVISIBLE);
+                btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
+                btnSignIn.setText(getString(R.string.login_action));
+                break;
+            }
+            case VERIFY_CODE:{
+                progressBarCircularIndeterminateVerifyCode.setVisibility(View.INVISIBLE);
+                btnSendVerifyCode.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
+                btnSendVerifyCode.setText(getString(R.string.send_verification_code));
+                break;
+            }
+        }
+    }
+
     @Override
     public void onError(String message, EnumStatus status) {
 
@@ -503,6 +482,31 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case CHANGE_EMAIL:{
+                onShowView(llAction);
+                break;
+            }
+            case SEND_EMAIL:{
+                onShowView(btnSendVerifyCode);
+                break;
+            }
+            case VERIFY_CODE:{
+                edtCode.setText("");
+                onShowDialogEnableSync();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
 
     }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
+    }
+
 }

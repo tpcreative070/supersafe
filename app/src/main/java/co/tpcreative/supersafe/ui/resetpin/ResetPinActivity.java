@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -14,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,8 +25,6 @@ import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -141,7 +140,7 @@ public class ResetPinActivity extends BaseActivity implements ResetPinView, Text
     public void onSentRequest(){
         btnSendRequest.setEnabled(false);
         btnSendRequest.setText("");
-        startLoading();
+        onStartLoading(EnumStatus.OTHER);
         if (presenter.mUser!=null){
             if (presenter.mUser.email!=null){
                 final VerifyCodeRequest request = new VerifyCodeRequest();
@@ -159,12 +158,12 @@ public class ResetPinActivity extends BaseActivity implements ResetPinView, Text
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
         setProgressValue();
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
         mCircularProgressBar.progressiveStop();
     }
 
@@ -180,7 +179,7 @@ public class ResetPinActivity extends BaseActivity implements ResetPinView, Text
 
     @Override
     public void onError(String message, EnumStatus status) {
-        stopLoading();
+        onStopLoading(EnumStatus.OTHER);
         switch (status){
             case REQUEST_CODE_ERROR:{
                 btnSendRequest.setText(getString(R.string.send_verification_code));
@@ -212,7 +211,7 @@ public class ResetPinActivity extends BaseActivity implements ResetPinView, Text
                 break;
             }
             case SEND_EMAIL_SUCCESSFUL:{
-                stopLoading();
+                onStopLoading(EnumStatus.OTHER);
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 Toast.makeText(this,"Sent the code to your email. Please check it",Toast.LENGTH_SHORT).show();
                 break;
@@ -229,5 +228,13 @@ public class ResetPinActivity extends BaseActivity implements ResetPinView, Text
 
     }
 
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
 
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
+    }
 }

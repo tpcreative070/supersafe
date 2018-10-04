@@ -16,6 +16,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.gson.Gson;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -192,12 +194,12 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -355,6 +357,21 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

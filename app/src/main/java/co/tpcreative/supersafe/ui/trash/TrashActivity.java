@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.trash;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -25,16 +26,20 @@ import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 
-public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdapter.ItemSelectedListener{
+public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapter.ItemSelectedListener{
 
     private static final String TAG = TrashActivity.class.getSimpleName();
     @BindView(R.id.tv_Audios)
@@ -119,24 +124,6 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
     }
 
     @Override
-    public void onDone() {
-        if (actionMode!=null){
-            actionMode.finish();
-        }
-        presenter.getData(this);
-        btnTrash.setText(getString(R.string.key_empty_trash));
-
-        SingletonPrivateFragment.getInstance().onUpdateView();
-        ServiceManager.getInstance().onSyncDataOwnServer("0");
-
-    }
-
-    @Override
-    public void onReloadData() {
-        adapter.setDataSource(presenter.mList);
-    }
-
-    @Override
     protected void onDriveClientReady() {
 
     }
@@ -163,12 +150,12 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
 
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -177,6 +164,10 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
         return getApplicationContext();
     }
 
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
 
     /*Action mode*/
 
@@ -276,6 +267,32 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case RELOAD:{
+                adapter.setDataSource(presenter.mList);
+                break;
+            }
+            case DONE:{
+                if (actionMode!=null){
+                    actionMode.finish();
+                }
+                presenter.getData(this);
+                btnTrash.setText(getString(R.string.key_empty_trash));
+
+                SingletonPrivateFragment.getInstance().onUpdateView();
+                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

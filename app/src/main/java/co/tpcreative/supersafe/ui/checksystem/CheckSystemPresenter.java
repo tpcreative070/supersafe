@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -70,7 +71,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckUserId(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
@@ -99,7 +100,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call check user" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
@@ -128,7 +129,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.onSignInFailed(onResponse.message);
@@ -152,7 +153,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call sign in" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
@@ -182,7 +183,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.onSignUpFailed(onResponse.message);
@@ -209,7 +210,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call sign up" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
@@ -234,7 +235,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.showFailedVerificationCode();
@@ -261,7 +262,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call verify code" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
@@ -284,11 +285,11 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.showError(onResponse.message);
-                        view.stopLoading();
+                        view.onStopLoading(EnumStatus.OTHER);
                     }
                     else{
                         onSendGmail(googleOauth.email,onResponse.code);
@@ -307,7 +308,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
@@ -339,7 +340,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                         //do some magic
                         Log.d(TAG,"Failed");
                         if (view!=null){
-                            view.stopLoading();
+                            view.onStopLoading(EnumStatus.OTHER);
                         }
                     }
                 })
@@ -368,7 +369,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (!onResponse.error){
@@ -390,7 +391,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call add user cloud" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
 
     }
@@ -417,7 +418,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
@@ -426,7 +427,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     else{
                         view.showSuccessful(onResponse.cloud_id);
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -440,7 +441,7 @@ public class CheckSystemPresenter extends Presenter<CheckSystemView>{
                     } else {
                         Log.d(TAG, "Can not call check user cloud " + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 

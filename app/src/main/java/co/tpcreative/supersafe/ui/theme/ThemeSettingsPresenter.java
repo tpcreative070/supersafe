@@ -5,11 +5,13 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
-public class ThemeSettingsPresenter extends Presenter<ThemeSettingsView>{
+public class ThemeSettingsPresenter extends Presenter<BaseView>{
 
     protected List<Theme>mList;
     protected Theme mTheme;
@@ -20,7 +22,7 @@ public class ThemeSettingsPresenter extends Presenter<ThemeSettingsView>{
     }
 
     public void getData(){
-        ThemeSettingsView view = view();
+        BaseView view = view();
         mList = Theme.getInstance().getList();
         mTheme = Theme.getInstance().getThemeInfo();
         if (mTheme!=null){
@@ -34,7 +36,7 @@ public class ThemeSettingsPresenter extends Presenter<ThemeSettingsView>{
             }
         }
         Utils.Log(TAG,"Value :" + new Gson().toJson(mList));
-        view.onShowUI();
+        view.onSuccessful("Successful", EnumStatus.SHOW_DATA);
     }
 
 }

@@ -138,6 +138,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
         return (float) (Math.random() * range) + startsfrom;
     }
 
+
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);

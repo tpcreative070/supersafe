@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.player;
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.File;
+import java.util.List;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -98,12 +101,12 @@ public class PlayerActivity extends BaseActivity implements PlayerViews{
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -140,6 +143,21 @@ public class PlayerActivity extends BaseActivity implements PlayerViews{
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

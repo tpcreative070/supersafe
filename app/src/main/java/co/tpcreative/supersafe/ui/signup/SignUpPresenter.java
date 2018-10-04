@@ -6,16 +6,19 @@ import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-public class SignUpPresenter extends Presenter<SignUpView>{
+public class SignUpPresenter extends Presenter<BaseView<User>>{
 
     private static String TAG = SignUpPresenter.class.getSimpleName();
 
@@ -25,7 +28,7 @@ public class SignUpPresenter extends Presenter<SignUpView>{
 
     public void onSignUp(SignUpRequest request){
         Log.d(TAG,"info onSignUp");
-        SignUpView view = view();
+        BaseView view = view();
         if (view == null) {
             return;
         }
@@ -49,14 +52,14 @@ public class SignUpPresenter extends Presenter<SignUpView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_UP))
                 .subscribe(onResponse -> {
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.SIGN_UP);
                     if (onResponse.error){
-                        view.showError(onResponse.message);
+                        view.onError(onResponse.message,EnumStatus.SIGN_UP);
                     }
                     else{
-                        view.showSuccessful(onResponse.message,onResponse.user);
+                        view.onSuccessful(onResponse.message,EnumStatus.SIGN_UP,onResponse.user);
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
@@ -73,12 +76,12 @@ public class SignUpPresenter extends Presenter<SignUpView>{
                     } else {
                         Log.d(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
     private String getString(int res){
-        SignUpView view = view();
+        BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }

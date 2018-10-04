@@ -12,7 +12,6 @@ include ':app',
         'photoview',
         'library-progress-dialog',
         'compressorlibrary',
-        'image-picker-library',
-        'colorfullibrary'
+        'image-picker-library'
 
 

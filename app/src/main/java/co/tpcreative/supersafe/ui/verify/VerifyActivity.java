@@ -14,18 +14,22 @@ import android.widget.Toast;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 
-public class VerifyActivity extends BaseActivity implements VerifyView, TextView.OnEditorActionListener{
+public class VerifyActivity extends BaseActivity implements BaseView, TextView.OnEditorActionListener{
 
     private static final String TAG = VerifyActivity.class.getSimpleName();
     @BindView(R.id.tvTitle)
@@ -134,27 +138,36 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
 
 
     @Override
-    public void startLoading() {
-        progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
-        btnLogin.setVisibility(View.INVISIBLE);
+    public void onStartLoading(EnumStatus status) {
+        switch (status){
+            case RESEND_CODE:{
+                progressBarCircularIndeterminateReSend.setVisibility(View.VISIBLE);
+                btnResend.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case VERIFY_CODE:{
+                progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
+                btnLogin.setVisibility(View.INVISIBLE);
+                break;
+            }
+        }
+
     }
 
     @Override
-    public void stopLoading() {
-        progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
-        btnLogin.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onLoading() {
-        progressBarCircularIndeterminateReSend.setVisibility(View.VISIBLE);
-        btnResend.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void onFinishing() {
-        progressBarCircularIndeterminateReSend.setVisibility(View.INVISIBLE);
-        btnResend.setVisibility(View.VISIBLE);
+    public void onStopLoading(EnumStatus status) {
+        switch (status){
+            case RESEND_CODE:{
+                progressBarCircularIndeterminateReSend.setVisibility(View.INVISIBLE);
+                btnResend.setVisibility(View.VISIBLE);
+                break;
+            }
+            case VERIFY_CODE:{
+                progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
+                btnLogin.setVisibility(View.VISIBLE);
+                break;
+            }
+        }
     }
 
     @Override
@@ -168,18 +181,13 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
     }
 
     @Override
-    public void showError(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSuccessful(String message) {
-        Navigator.onMoveSetPin(this,false);
-    }
-
-    @Override
     public void onError(String message, EnumStatus status) {
-
+        switch (status){
+            case VERIFY_CODE:{
+                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
     }
 
     @Override
@@ -194,6 +202,22 @@ public class VerifyActivity extends BaseActivity implements VerifyView, TextView
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case VERIFY_CODE:{
+                Navigator.onMoveSetPin(this,false);
+                break;
+            }
+        }
+    }
+
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

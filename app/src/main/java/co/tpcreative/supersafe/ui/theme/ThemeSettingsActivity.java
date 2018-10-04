@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.theme;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,15 +13,19 @@ import android.view.MenuItem;
 
 import com.google.gson.Gson;
 import com.litao.android.lib.Utils.GridSpacingItemDecoration;
+
+import java.util.List;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
-public class ThemeSettingsActivity extends BaseActivity implements ThemeSettingsView, ThemeSettingsAdapter.ItemSelectedListener{
+public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
 
     private ThemeSettingsAdapter adapter;
     @BindView(R.id.recyclerView)
@@ -53,45 +58,8 @@ public class ThemeSettingsActivity extends BaseActivity implements ThemeSettings
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
-    public void onShowUI() {
-        adapter.setDataSource(presenter.mList);
-    }
 
-    @Override
-    public void startLoading() {
 
-    }
-
-    @Override
-    public void stopLoading() {
-
-    }
-
-    @Override
-    public void onError(String message, EnumStatus status) {
-
-    }
-
-    @Override
-    public void onError(String message) {
-
-    }
-
-    @Override
-    public void onSuccessful(String message) {
-
-    }
-
-    @Override
-    public void onSuccessful(String message, EnumStatus status) {
-
-    }
-
-    @Override
-    public Context getContext() {
-        return getApplicationContext();
-    }
 
     @Override
     public void onClickItem(int position) {
@@ -136,5 +104,64 @@ public class ThemeSettingsActivity extends BaseActivity implements ThemeSettings
     protected void onDestroy() {
         super.onDestroy();
         recreate();
+    }
+
+
+
+
+    @Override
+    public void onStartLoading(EnumStatus status) {
+
+    }
+
+    @Override
+    public void onStopLoading(EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case SHOW_DATA:{
+                adapter.setDataSource(presenter.mList);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
     }
 }

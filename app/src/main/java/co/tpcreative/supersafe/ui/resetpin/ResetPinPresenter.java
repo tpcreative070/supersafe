@@ -53,7 +53,7 @@ public class ResetPinPresenter extends Presenter<ResetPinView> {
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.VERIFIED_ERROR);
@@ -135,7 +135,7 @@ public class ResetPinPresenter extends Presenter<ResetPinView> {
         subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ ->view.startLoading() )
+                .doOnSubscribe(__ ->view.onStartLoading(EnumStatus.OTHER) )
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.REQUEST_CODE_ERROR);

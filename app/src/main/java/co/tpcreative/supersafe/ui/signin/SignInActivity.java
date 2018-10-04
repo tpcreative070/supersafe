@@ -14,18 +14,22 @@ import android.widget.Toast;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
-public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener, SignInView{
+public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener, BaseView<User>{
 
     private static final String TAG = SignInActivity.class.getSimpleName();
     @BindView(R.id.edtEmail)
@@ -47,18 +51,6 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
         presenter.bindView(this);
     }
 
-    @Override
-    public void showError(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSuccessful(String message,User user) {
-        Log.d(TAG,"user : " + new Gson().toJson(user));
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-        Navigator.onMoveToVerify(this,user);
-        presenter.onSendGmail(user.email,user.code);
-    }
 
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -132,13 +124,13 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
         btnNext.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
         btnNext.setVisibility(View.VISIBLE);
     }
@@ -152,7 +144,12 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
 
     @Override
     public void onError(String message, EnumStatus status) {
-
+        switch (status){
+            case SIGN_IN:{
+                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
     }
 
     @Override
@@ -170,5 +167,21 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
 
     }
 
+    @Override
+    public void onSuccessful(String message, EnumStatus status, User object) {
+        switch (status){
+            case SIGN_IN:{
+                Log.d(TAG,"user : " + new Gson().toJson(object));
+                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                Navigator.onMoveToVerify(this,object);
+                presenter.onSendGmail(object.email,object.code);
+                break;
+            }
+        }
+    }
 
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List<User> list) {
+
+    }
 }

@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.albumdetail;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -171,12 +170,12 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     }
 
     @Override
-    public void startLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void stopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
@@ -426,6 +425,21 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
 }

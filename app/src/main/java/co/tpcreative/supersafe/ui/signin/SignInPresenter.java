@@ -10,22 +10,25 @@ import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-public class SignInPresenter extends Presenter<SignInView>{
+public class SignInPresenter extends Presenter<BaseView<User>>{
 
     private static final String TAG = SignInPresenter.class.getSimpleName();
 
     public void onSignIn(SignInRequest request){
-        Log.d(TAG,"info");
-        SignInView view = view();
+        Log.d(TAG,"onSignIn");
+        BaseView view = view();
         if (view == null) {
             return;
         }
@@ -48,14 +51,14 @@ public class SignInPresenter extends Presenter<SignInView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.startLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_IN))
                 .subscribe(onResponse -> {
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.SIGN_IN);
                     if (onResponse.error){
-                        view.showError(onResponse.message);
+                        view.onError(onResponse.message,EnumStatus.SIGN_IN);
                     }
                     else{
-                        view.showSuccessful(onResponse.message,onResponse.user);
+                        view.onSuccessful(onResponse.message,EnumStatus.SIGN_IN,onResponse.user);
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
@@ -72,18 +75,18 @@ public class SignInPresenter extends Presenter<SignInView>{
                     } else {
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                     }
-                    view.stopLoading();
+                    view.onStopLoading(EnumStatus.OTHER);
                 }));
     }
 
     private String getString(int res){
-        SignInView view = view();
+        BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }
 
     public void onSendGmail(String email,String code){
-        SignInView view = view();
+        BaseView view = view();
         String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
