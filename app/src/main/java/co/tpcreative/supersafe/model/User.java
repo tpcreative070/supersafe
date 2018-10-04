@@ -23,6 +23,7 @@ public class User extends BaseResponse implements Serializable{
     public boolean isDownLoad;
     public boolean isUpload;
     public boolean isRequestSync;
+    public boolean isUpdateView;
     private static User instance ;
 
     public static User getInstance(){

@@ -156,6 +156,7 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         }
 
         final PinLockListener pinLockListener = new PinLockListener() {
+            String pinResult = getPinFromSharedPreferences();
             @Override
             public void onComplete(String pin) {
                 switch (mPinAction){
@@ -197,11 +198,11 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
 
             @Override
             public void onPinChange(int pinLength, String intermediatePin) {
-                String pinResult = getPinFromSharedPreferences();
                 switch (mPinAction){
                     case VERIFY:{
                         if (pinResult.equals(intermediatePin)){
-                            setResult(RESULT_OK);
+                            mPinLockView.setStop(true);
+                            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
                             Navigator.onMoveToMainTab(EnterPinActivity.this);
                         }
                         if (pinLength>pinResult.length()){
@@ -213,7 +214,7 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
                     }
                     case SCREEN_OFF:{
                         if (pinResult.equals(intermediatePin)){
-                          presenter.onChangeStatus(EnumPinAction.SCREEN_OFF);
+                            presenter.onChangeStatus(EnumPinAction.SCREEN_OFF);
                         }
                         if (pinLength>pinResult.length()){
                             shake();
@@ -238,7 +239,6 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
                         break;
                     }
                 }
-
                 Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
             }
 
@@ -398,6 +398,7 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
     private void checkPin(String pin) {
         if (pin.equals(getPinFromSharedPreferences())) {
             setResult(RESULT_OK);
+            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
             Navigator.onMoveToMainTab(this);
         } else {
             shake();

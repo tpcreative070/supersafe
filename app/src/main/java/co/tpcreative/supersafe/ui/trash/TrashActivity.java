@@ -37,7 +37,6 @@ import co.tpcreative.supersafe.model.EnumStatus;
 public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdapter.ItemSelectedListener{
 
     private static final String TAG = TrashActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
     @BindView(R.id.tv_Audios)
     TextView tv_Audios;
     @BindView(R.id.tv_Videos)
@@ -62,31 +61,9 @@ public class TrashActivity extends BaseGoogleApi implements TrashView ,TrashAdap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trash);
-
-        //android O fix bug orientation
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        int primary = getResources().getColor(R.color.colorPrimary);
-        int secondary = getResources().getColor(R.color.colorPrimaryDark);
-
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(primary)
-                .secondaryColor(secondary)
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(this, mConfig);
-        initRecycleView(getLayoutInflater());
-        presenter = new TrashPresenter();
-        presenter.bindView(this);
-        presenter.getData(this);
-
+        onDrawOverLay(this);
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){

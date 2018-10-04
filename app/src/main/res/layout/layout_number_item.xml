@@ -8,12 +8,12 @@
     android:orientation="vertical">
 
     <Button
-        android:textStyle="bold"
-        android:layout_margin="20dp"
+        android:textSize="60dp"
+        android:text="9"
         android:layout_gravity="center"
         android:id="@+id/button"
-        android:layout_width="@dimen/default_button_size"
-        android:layout_height="@dimen/default_button_size"
+        android:layout_width="@dimen/item_button_size"
+        android:layout_height="@dimen/item_button_size"
         android:background="@drawable/circlebutton_selector"/>
 
 </LinearLayout>

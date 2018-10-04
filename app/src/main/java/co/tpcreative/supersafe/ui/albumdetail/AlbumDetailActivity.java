@@ -84,7 +84,6 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     TextView tvAudios;
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
-    private SlidrConfig mConfig;
     private boolean isReload;
     private Storage storage;
 
@@ -106,21 +105,8 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
         initRecycleView(getLayoutInflater());
         initSpeedDial(true);
 
-        //android O fix bug orientation
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        int primary = getResources().getColor(R.color.colorPrimary);
-        int secondary = getResources().getColor(R.color.colorPrimaryDark);
+        onDrawOverLay(this);
 
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(primary)
-                .secondaryColor(secondary)
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(this, mConfig);
 
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
@@ -213,30 +199,27 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
     /*Init Floating View*/
 
     private void initSpeedDial(boolean addActionItems) {
+        final co.tpcreative.supersafe.model.Theme mTheme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
         if (addActionItems) {
             Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
-            FabWithLabelView fabWithLabelView = mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
+            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
                     .fab_camera, drawable)
-                    .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary, getTheme()))
-                    .setLabelColor(Color.WHITE)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                            getTheme()))
                     .setLabel(getString(R.string.camera))
+                    .setLabelColor(Color.WHITE)
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                             getTheme()))
                     .create());
-            if (fabWithLabelView != null) {
-                fabWithLabelView.setSpeedDialActionItem(fabWithLabelView.getSpeedDialActionItemBuilder()
-                        .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_white_1000,
-                                getTheme()))
-                        .create());
-            }
 
             drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_green_500,
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
                             getTheme()))
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
-                    .setLabelBackgroundColor(getResources().getColor(R.color.colorBlue))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
+                            getTheme()))
                     .create());
             mSpeedDialView.setMainFabAnimationRotateAngle(180);
         }
@@ -253,6 +236,7 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
                 Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
+
 
         //Set option fabs clicklisteners.
         mSpeedDialView.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
@@ -275,6 +259,16 @@ public class AlbumDetailActivity extends BaseActivity implements AlbumDetailView
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mSpeedDialView.isOpen()){
+            mSpeedDialView.close();
+        }else {
+            super.onBackPressed();
+        }
+    }
+
 
     /*Init grant permission*/
 

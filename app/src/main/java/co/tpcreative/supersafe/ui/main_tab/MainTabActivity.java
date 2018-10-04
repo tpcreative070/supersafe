@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -32,13 +33,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.FabWithLabelView;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.RXJavaCollections;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
@@ -53,10 +52,9 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
-public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,SensorOrientationChangeNotifier.Listener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
+public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,MainTabView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
@@ -70,7 +68,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private Toast mToast;
     private MainViewPagerAdapter adapter;
     private MainTabPresenter presenter;
-    private Storage storage;
     AnimationsContainer.FramesSequenceAnimation animation;
     private MenuItem menuItem;
     private EnumStatus previousStatus;
@@ -88,18 +85,9 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
         initSpeedDial(true);
-
-        ServiceManager.getInstance().onStartService();
-
-
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
-        storage = new Storage(this);
-        ServiceManager.getInstance().onCheckingMissData();
-
-        RXJavaCollections collections = new RXJavaCollections();
-        collections.getObservable();
     }
 
     @Override
@@ -181,36 +169,38 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
 
     private void initSpeedDial(boolean addActionItems) {
+        final co.tpcreative.supersafe.model.Theme mTheme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
         if (addActionItems) {
             Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
-            FabWithLabelView fabWithLabelView = mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
+            mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
                     .fab_camera, drawable)
-                    .setFabImageTintColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,getTheme()))
-                    .setLabelColor(Color.WHITE)
+                   .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                           getTheme()))
+
                     .setLabel(getString(R.string.camera))
+                   .setLabelColor(Color.WHITE)
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                            getTheme()))
                     .create());
-            if (fabWithLabelView != null) {
-                fabWithLabelView.setSpeedDialActionItem(fabWithLabelView.getSpeedDialActionItemBuilder()
-                        .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_white_1000,
-                               getTheme()))
-                        .create());
-            }
 
             drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.material_green_500,
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
                            getTheme()))
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
-                    .setLabelBackgroundColor(getResources().getColor(R.color.colorBlue))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
+                            getTheme()))
                     .create());
 
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_album, R.drawable
                     .baseline_add_to_photos_white_36)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                            getTheme()))
                     .setLabel(getString(R.string.album))
-                    .setTheme(R.style.AppTheme_Purple)
+                    .setLabelColor(getResources().getColor(R.color.white))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
+                            getTheme()))
                     .create());
             mSpeedDialView.setMainFabAnimationRotateAngle(180);
         }
@@ -408,31 +398,41 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         return menuItem;
     }
 
-    @Override
-    public void onOrientationChange(int orientation) {
-        Log.d(TAG,"displayOrientation " + orientation);
-        SuperSafeApplication.getInstance().setOrientation(orientation);
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SensorOrientationChangeNotifier.getInstance().addListener(this);
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
         Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
         Utils.onBackUp();
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.isUpdateView){
+                mUser.isUpdateView = false;
+                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                recreate();
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SensorOrientationChangeNotifier.getInstance().remove(this);
         final User user = User.getInstance().getUserInfo();
         if (user!=null){
             if (!user.driveConnected){
                 onAnimationIcon(EnumStatus.SYNC_ERROR);
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mSpeedDialView.isOpen()){
+            mSpeedDialView.close();
+        }else {
+            super.onBackPressed();
         }
     }
 
@@ -449,6 +449,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
         ServiceManager.getInstance().onDismissServices();
     }
 

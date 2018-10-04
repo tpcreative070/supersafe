@@ -32,6 +32,7 @@ import co.tpcreative.supersafe.ui.signin.SignInActivity;
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import co.tpcreative.supersafe.ui.signup.SignUpActivity;
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity;
+import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity;
 import co.tpcreative.supersafe.ui.trash.TrashActivity;
 import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
@@ -41,6 +42,7 @@ public class Navigator {
     public static final int PHOTO_SLIDE_SHOW = 100;
     public static final int CAMERA_ACTION = 1001;
     public static final int ALBUM_DETAIL = 1002;
+    public static final int THEME_SETTINGS = 1003;
 
 
     public static void onMoveToMainTab(Context context){
@@ -209,6 +211,11 @@ public class Navigator {
     public static void onMoveToForgotPin(Context context){
         Intent intent = new Intent(context, ResetPinActivity.class);
         context.startActivity(intent);
+    }
+
+    public static void onMoveThemeSettings(Activity context){
+        Intent intent = new Intent(context, ThemeSettingsActivity.class);
+        context.startActivityForResult(intent,THEME_SETTINGS);
     }
 
 }

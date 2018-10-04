@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.User;
 
 public class MyPreferenceCategory extends PreferenceCategory {
 
@@ -27,6 +29,10 @@ public class MyPreferenceCategory extends PreferenceCategory {
         super.onBindViewHolder(view);
         TextView titleView = (TextView) view.findViewById(android.R.id.title);
         titleView.setTextColor(getContext().getResources().getColor(R.color.color_blue_dark));
+        final Theme mTheme = Theme.getInstance().getThemeInfo();
+        if (mTheme!=null){
+            titleView.setTextColor(getContext().getResources().getColor(mTheme.getAccentColor()));
+        }
         titleView.setTypeface(Typeface.DEFAULT_BOLD);
         titleView.setAllCaps(false);
         titleView.setTextSize(17);

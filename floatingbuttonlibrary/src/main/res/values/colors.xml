@@ -18,4 +18,5 @@
 <resources>
     <color name="sd_label_text_color">#757575</color>
     <color name="sd_overlay_color">#aaffffff</color>
+    <color name="sd_overlay_new_color">#cc3F51B5</color>
 </resources>

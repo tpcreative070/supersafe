@@ -35,7 +35,6 @@ import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 public class AccountManagerActivity extends BaseGoogleApi implements AccountManagerView{
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
     @BindView(R.id.tvEmail)
     TextView tvEmail;
     @BindView(R.id.tvStatus)
@@ -57,26 +56,13 @@ public class AccountManagerActivity extends BaseGoogleApi implements AccountMana
         presenter = new AccountManagerPresenter();
         presenter.bindView(this);
 
-        //android O fix bug orientation
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        int primary = getResources().getColor(R.color.colorPrimary);
-        int secondary = getResources().getColor(R.color.colorPrimaryDark);
+        onDrawOverLay(this);
 
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(primary)
-                .secondaryColor(secondary)
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(this, mConfig);
 
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){

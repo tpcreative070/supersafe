@@ -4,11 +4,15 @@ import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.snatik.storage.Storage;
 
 import java.util.List;
 
+import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
@@ -32,15 +36,15 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
     private String value = "" ;
     private boolean grant_access;
     private boolean isRunning;
-    private Storage storage;
     private static final String TAG = SplashScreenActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        storage = new Storage(this);
+
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
         isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);
@@ -57,6 +61,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                 if (grant_access){
                     if (isRunning){
                         if(!"".equals(value)){
+                            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SPLASH_SCREEN.ordinal());
                             Navigator.onMoveToVerifyPin(SplashScreenActivity.this,false);
                         }
                         else{

@@ -9,22 +9,20 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="10dp"
         android:id="@+id/button"
         android:textStyle="bold"
-        android:layout_width="@dimen/default_button_size"
-        android:layout_height="@dimen/default_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/rectanglebutton_selector"
         android:clickable="true"
         android:gravity="center">
 
         <ImageView
+            android:padding="3dp"
+            android:layout_gravity="center"
             android:id="@+id/buttonImage"
-            android:layout_width="@dimen/default_delete_button_size_width"
-            android:layout_height="@dimen/default_delete_button_size_height"
+            android:layout_width="@dimen/default_verify_button_size_height"
+            android:layout_height="@dimen/default_verify_button_size_height"
             android:adjustViewBounds="true"
             android:clickable="false"
             android:focusable="false"

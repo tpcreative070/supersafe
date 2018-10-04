@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.me;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Theme;
 
 public class MeFragment extends BaseFragment implements MeView{
 
@@ -85,8 +87,11 @@ public class MeFragment extends BaseFragment implements MeView{
             }
         });
 
-        imgSettings.setColorFilter(getContext().getResources().getColor(R.color.colorBackground), PorterDuff.Mode.SRC_ATOP);
-        imgPro.setColorFilter(getContext().getResources().getColor(R.color.colorBackground), PorterDuff.Mode.SRC_ATOP);
+        final Theme mTheme = Theme.getInstance().getThemeInfo();
+        if (mTheme!=null){
+            imgSettings.setColorFilter(getContext().getResources().getColor(mTheme.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
+            imgPro.setColorFilter(getContext().getResources().getColor(mTheme.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
+        }
 
         presenter = new MePresenter();
         presenter.bindView(this);

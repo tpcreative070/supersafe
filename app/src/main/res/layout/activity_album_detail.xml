@@ -126,9 +126,7 @@
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:clickable_overlay="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
+        app:clickable_overlay="true"/>
 
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/speedDial"

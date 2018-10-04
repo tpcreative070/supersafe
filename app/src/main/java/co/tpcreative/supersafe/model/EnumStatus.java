@@ -32,5 +32,6 @@ public enum EnumStatus {
         SEND_EMAIL_SUCCESSFUL,
         SEND_EMAIL_ERROR,
         REQUEST_CODE_SUCCESSFUL,
-        REQUEST_CODE_ERROR
+        REQUEST_CODE_ERROR,
+        UPDATE_THEME
 }

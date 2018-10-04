@@ -23,17 +23,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.ftinc.kit.util.SizeUtils;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -48,9 +42,7 @@ import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,VerifyAccountView{
-
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
     @BindView(R.id.imgEdit)
     ImageView imgEdit;
     @BindView(R.id.tvTitle)
@@ -108,27 +100,11 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        int primary = getResources().getColor(R.color.colorPrimary);
-        int secondary = getResources().getColor(R.color.colorPrimaryDark);
-
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(primary)
-                .secondaryColor(secondary)
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(this, mConfig);
+        onDrawOverLay(this);
         imgEdit.setColorFilter(getResources().getColor(R.color.colorBackground), PorterDuff.Mode.SRC_ATOP);
-
-       // tvTitle.setText(getString(R.string.verify_title,"tpcreative.co@gmail.com"));
-
-
 
         edtCode.addTextChangedListener(mTextWatcher);
         edtEmail.addTextChangedListener(mTextWatcher);

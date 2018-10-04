@@ -20,6 +20,16 @@ public class CustomizationOptionsBundle {
     private boolean showVerifyButton;
     private int verifyButtonPressesColor;
 
+    public int getVerifyButtonNormalColor() {
+        return verifyButtonNormalColor;
+    }
+
+    public void setVerifyButtonNormalColor(int verifyButtonNormalColor) {
+        this.verifyButtonNormalColor = verifyButtonNormalColor;
+    }
+
+    private int verifyButtonNormalColor;
+
     public CustomizationOptionsBundle() {
     }
 

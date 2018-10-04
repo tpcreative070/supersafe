@@ -1,13 +1,16 @@
 
 package co.tpcreative.supersafe.common.activity;
 import android.accounts.Account;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +18,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import com.ftinc.kit.util.SizeUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -27,6 +32,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.gson.Gson;
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrPosition;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -39,10 +48,12 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
+import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 
 
@@ -63,13 +74,12 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
      * */
 
     private GoogleSignInClient mGoogleSignInClient;
-
     private User mUser;
-
     Unbinder unbinder;
     protected ActionBar actionBar ;
     private HomeWatcher mHomeWatcher;
     private int onStartCount = 0;
+    private SlidrConfig mConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,21 +97,41 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
         /*Home action*/
         onRegisterHomeWatcher();
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
-    protected void onDrawsSystemBarBackgrounds(){
-        getWindow().setBackgroundDrawableResource(R.color.transparent);
-        if (Build.VERSION.SDK_INT>=19){
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
 
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        final Theme result = Theme.getInstance().getThemeInfo();
+        if (result!=null){
+            theme.applyStyle(ThemeUtil.getThemeId(result.getId()), true);
+        }
+        return theme;
+    }
+
+    protected void setStatusBarColored(Activity context, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
+            Window window = context.getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(android.R.color.transparent));
+            window.setStatusBarColor(ContextCompat.getColor(context,color));
         }
+    }
+
+    protected void onDrawOverLay(Activity activity){
+        final Theme theme = Theme.getInstance().getThemeInfo();
+        mConfig = new SlidrConfig.Builder()
+                .primaryColor(theme.getPrimaryColor())
+                .secondaryColor(theme.getPrimaryDarkColor())
+                .position(SlidrPosition.LEFT)
+                .velocityThreshold(2400)
+                .touchSize(SizeUtils.dpToPx(this, 32))
+                .build();
+        Slidr.attach(activity, mConfig);
     }
 
     protected float getRandom(float range, float startsfrom) {
@@ -120,7 +150,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
-
         if (unbinder != null)
             unbinder.unbind();
         super.onDestroy();

@@ -12,5 +12,6 @@ public enum EnumPinAction {
     RESET,
     SCREEN_PRESS_HOME,
     SCREEN_LOCK,
-    SCREEN_UNLOCK
+    SCREEN_UNLOCK,
+    SPLASH_SCREEN
 }

@@ -42,6 +42,7 @@ import co.tpcreative.supersafe.model.DriveTitle;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
@@ -73,6 +74,7 @@ public class ServiceManager implements SuperSafeServiceView {
             myService.bindView(ServiceManager.this);
             storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+            ServiceManager.getInstance().onCheckingMissData();
         }
 
         //binder comes from server to communicate with method's of

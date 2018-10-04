@@ -31,7 +31,7 @@
 
 
     <RelativeLayout
-        android:background="@color/colorBackground"
+        android:background="?attr/colorPrimary"
         android:id="@+id/rlLockScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

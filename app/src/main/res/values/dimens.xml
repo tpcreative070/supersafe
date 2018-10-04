@@ -15,6 +15,7 @@
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="image_size">40dp</dimen>
     <dimen name="icon_size">20dp</dimen>
+    <dimen name="icon_size_30">30dp</dimen>
     <dimen name="image_size_custom">70dp</dimen>
     <dimen name="image_size_video_cam">20dp</dimen>
 
@@ -22,12 +23,14 @@
     // default
     <dimen name="default_delete_button_size_width">39dp</dimen>
     <dimen name="default_delete_button_size_height">27dp</dimen>
+    <dimen name="default_verify_button_size_height">40dp</dimen>
     <dimen name="default_horizontal_spacing">40dp</dimen>
     <dimen name="default_vertical_spacing">18dp</dimen>
 
     // text size
     <dimen name="default_text_size">25sp</dimen>
     <dimen name="default_button_size">60dp</dimen>
+    <dimen name="item_button_size">80dp</dimen>
 
     // dots
     <dimen name="dot_diameter">12dp</dimen>

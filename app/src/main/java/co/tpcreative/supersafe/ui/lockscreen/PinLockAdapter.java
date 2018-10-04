@@ -99,6 +99,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         mCustomizationOptionsBundle.getButtonSize(),
                         mCustomizationOptionsBundle.getButtonSize());
+                holder.mNumberButton.setTextSize(40);
                 holder.mNumberButton.setLayoutParams(params);
             }
         }
@@ -117,6 +118,9 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         mCustomizationOptionsBundle.getVerifyButtonWidthSize(),
                         mCustomizationOptionsBundle.getVerifyButtonHeightSize());
                 holder.mButtonImage.setLayoutParams(params);
+            }
+            else{
+                holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getVerifyButtonNormalColor(),PorterDuff.Mode.SRC_ATOP);
             }
         }
     }
@@ -187,6 +191,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnNumberClickListener {
         void onNumberClicked(int keyValue);
+        boolean onIsStop();
     }
 
     public interface OnVerifyClickListener{
@@ -208,7 +213,12 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
                     if (mOnNumberClickListener != null) {
-                        mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
+                        if (!mOnNumberClickListener.onIsStop()){
+                            mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
+                        }
+                        else{
+                            mNumberButton.setEnabled(false);
+                        }
                     }
                 }
             });
@@ -220,7 +230,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         mNumberButton.startAnimation(scale());
                     }
-
                     return false;
                 }
             });

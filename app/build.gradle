@@ -202,11 +202,6 @@ dependencies {
         transitive = true;
     }
 
-
-    /*ColorFul*/
-
-    implementation project(':colorfullibrary')
-
 }
 
 /*Resolved duplicated for Google api client*/

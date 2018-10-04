@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.settings;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -33,9 +34,9 @@ import de.mrapp.android.preference.ListPreference;
 public class AlbumSettingsActivity extends BaseActivity implements AlbumSettingsView {
 
     private static final String TAG = AlbumSettingsActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     private static AlbumSettingsPresenter presenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +55,7 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        int primary = getResources().getColor(R.color.colorPrimary);
-        int secondary = getResources().getColor(R.color.colorPrimaryDark);
-
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(primary)
-                .secondaryColor(secondary)
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(this, mConfig);
+        onDrawOverLay(this);
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 

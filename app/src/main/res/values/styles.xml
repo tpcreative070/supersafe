@@ -2,16 +2,466 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorButton</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/white</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
+    <!-- Start Custom theme -->
+    <style name="AppTheme.RED" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorRed</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorRed</item>
+        <item name="colorAccent">@color/secondaryColorRed</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.PINK" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorPink</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorPink</item>
+        <item name="colorAccent">@color/secondaryColorPink</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.PURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorPurple</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorPurple</item>
+        <item name="colorAccent">@color/secondaryColorPurple</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.DEEPPURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorDeepPurple</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
+        <item name="colorAccent">@color/secondaryColorDeepPurple</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.INDIGO" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorIndigo</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorIndigo</item>
+        <item name="colorAccent">@color/secondaryColorIndigo</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.BLUE" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorBlue</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorBlue</item>
+        <item name="colorAccent">@color/secondaryColorBlue</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.LIGHTBLUE" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorLightBlue</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorLightBlue</item>
+        <item name="colorAccent">@color/secondaryColorLightBlue</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.CYAN" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorCyan</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
+        <item name="colorAccent">@color/secondaryColorCyan</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.TEAL" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorTeal</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorTeal</item>
+        <item name="colorAccent">@color/secondaryColorTeal</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.GREEN" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorGreen</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorGreen</item>
+        <item name="colorAccent">@color/secondaryColorGreen</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.LIGHTGREEN" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorLightGreen</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorLightGreen</item>
+        <item name="colorAccent">@color/secondaryColorLightGreen</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.LIME" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorLime</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
+        <item name="colorAccent">@color/secondaryColorLime</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.YELLOW" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorYellow</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorYellow</item>
+        <item name="colorAccent">@color/secondaryColorYellow</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.AMBER" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorAmber</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorAmber</item>
+        <item name="colorAccent">@color/secondaryColorAmber</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.ORANGE" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorOrange</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorOrange</item>
+        <item name="colorAccent">@color/secondaryColorOrange</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.DEEPORANGE" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorDeepOrange</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorDeepOrange</item>
+        <item name="colorAccent">@color/secondaryColorDeepOrange</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.BROWN" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorBrown</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
+        <item name="colorAccent">@color/secondaryColorBrown</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.GRAY" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorGray</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorGray</item>
+        <item name="colorAccent">@color/secondaryColorGray</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.BLUEGRAY" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColorBlueGray</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorBlueGray</item>
+        <item name="colorAccent">@color/secondaryColorBlueGray</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!-- These values must be set for this mechanism to work -->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <!-- End Custom theme -->
 
 
+    <!--Change menu item for text color -->
+    <style name="menu_item_color">
+        <item name="android:textColor">@color/material_gray_800</item>
+    </style>
+
+    <!-- ProgressBar for color -->
+    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--Menu item for text color -->
+    <style name="PopupMenuLight" parent="@android:style/Widget.PopupMenu">
+        <item name="android:textColor">@color/material_gray_200</item>
+    </style>
+
+    <style name="PopupMenuDark" parent="@android:style/Widget.PopupMenu">
+        <item name="android:textColor">@color/material_gray_800</item>
+    </style>
 
 
     <!--White color added font-->
@@ -31,130 +481,12 @@
     </style>
 
 
-    <!-- Activity with no Title -->
-    <style name="ThemeOverlay.MyNoTitleActivity" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <!-- Dark Buttons -->
-    <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">@color/blue_grey_500</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorButton</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
-    <!--Slibr-->
-    <style name="Theme.Slidr.Slidable" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">@color/colorAccent</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-        <item name="android:divider">@color/colorButton</item>
-
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
-
-    <!--Change menu item for text color -->
-    <style name="menu_item_color">
-        <item name="android:textColor">@color/material_gray_800</item>
-    </style>
-
-
-    <!--
-
-    <style name="PreferenceThemeOverlay.v14">
-        <item name="android:textColor">@color/material_gray_700</item>
-        <item name="android:textColorSecondary">@color/colorPrimary</item>
-    </style>
-
-    -->
-
-    <!-- ProgressBar for color -->
-    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <!--Menu item for text color -->
-    <style name="PopupMenuLight" parent="@android:style/Widget.PopupMenu">
-        <item name="android:textColor">@color/material_gray_200</item>
-    </style>
-
-    <style name="PopupMenuDark" parent="@android:style/Widget.PopupMenu">
-        <item name="android:textColor">@color/material_gray_800</item>
-    </style>
-
-
-
-    <!--Splash screen -->
-
-    <style name="Theme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorButton</item>
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/white</item>
-    </style>
-
-
-    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="Theme.Base">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style>
-
-
-    <style name="AppTheme.Inbox" parent="AppTheme">
-        <item name="colorPrimary">@color/inbox_primary</item>
-        <item name="colorPrimaryDark">@color/inbox_primary_dark</item>
-        <item name="colorAccent">@color/inbox_accent</item>
-    </style>
-
+    <!--Floating button -->
     <style name="AppTheme.Purple" parent="AppTheme">
         <item name="colorPrimary">@color/material_purple_500</item>
         <item name="colorPrimaryDark">@color/material_purple_700</item>
         <item name="colorAccent">@color/material_purple_a700</item>
         <item name="colorControlHighlight">@color/material_purple_200</item>
-    </style>
-
-    <!-- Material Design -->
-
-    <style name="Widget.CardContent" parent="android:Widget">
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:paddingTop">24dp</item>
-        <item name="android:paddingBottom">24dp</item>
-        <item name="android:orientation">vertical</item>
     </style>
 
 

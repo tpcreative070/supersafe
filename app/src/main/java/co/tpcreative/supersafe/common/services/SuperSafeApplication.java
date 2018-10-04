@@ -21,9 +21,6 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
-
-import org.polaric.colorful.Colorful;
-
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -77,14 +74,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
-        Colorful.defaults()
-                .primaryColor(Colorful.ThemeColor.RED)
-                .accentColor(Colorful.ThemeColor.BLUE)
-                .translucent(false)
-                .dark(true);
-        Colorful.init(this);
-
-
         Fabric.with(this, new Crashlytics());
         mInstance = this;
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -109,7 +98,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .setPrefsName(getPackageName())
                 .setUseDefaultSharedPreference(true)
                 .build();
-
         PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
 
         /*Storage Config*/
@@ -202,7 +190,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof EnterPinActivity){
+        if (activity instanceof EnterPinActivity || activity instanceof SplashScreenActivity){
             Utils.Log(TAG,"Exception");
             Utils.Log(TAG,"Resume exception");
         }
@@ -211,6 +199,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             EnumPinAction action = EnumPinAction.values()[value];
             switch (action){
                 case SCREEN_PRESS_HOME:{
+                    Utils.Log(TAG,"Start screen off.................:"+activity.getClass().getSimpleName());
                     Navigator.onMoveToVerifyScreenOff(getInstance(),false);
                     PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                     break;
