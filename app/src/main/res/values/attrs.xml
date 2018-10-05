@@ -25,4 +25,9 @@
 
     </declare-styleable>
 
+
+    <attr name="preference_title" format="reference"/>
+    <attr name="preference_summary" format="reference"/>
+    <attr name="preference_icon" format="reference"/>
+
 </resources>

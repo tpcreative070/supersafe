@@ -9,6 +9,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -32,6 +37,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -54,6 +64,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -76,6 +91,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -98,6 +118,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -120,6 +145,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -142,6 +172,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -164,6 +199,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -186,6 +226,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -208,6 +253,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -230,6 +280,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -252,6 +308,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -274,6 +336,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -296,6 +364,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -318,6 +392,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -340,6 +420,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -362,6 +448,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -384,6 +476,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -406,6 +504,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>
@@ -428,6 +532,12 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_600</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+
+
         <item name="android:divider">@color/colorButton</item>
         <!-- These values must be set for this mechanism to work -->
         <item name="android:windowIsTranslucent">true</item>

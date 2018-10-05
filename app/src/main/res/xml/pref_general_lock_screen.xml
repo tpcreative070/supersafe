@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
-    <co.tpcreative.supersafe.common.preference.MyPreferenceCategory android:title="@string/key_lock_screen">
-        <co.tpcreative.supersafe.common.preference.MyPreference
-            android:layout="@layout/custom_preferences_item_album_settings"
+    <PreferenceCategory android:title="@string/key_lock_screen"
+        android:layout="@layout/preference_category_layout">
+        <Preference
+            android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_account_circle_white_36"
             android:key="@string/key_change_pin"
             android:title="@string/key_change_pin"/>
-    </co.tpcreative.supersafe.common.preference.MyPreferenceCategory>
-</android.support.v7.preference.PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

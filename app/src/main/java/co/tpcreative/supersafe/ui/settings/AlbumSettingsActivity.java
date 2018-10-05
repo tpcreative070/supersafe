@@ -14,10 +14,6 @@ import android.text.InputType;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 
 import java.util.List;
 
@@ -25,15 +21,11 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
-import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
-import de.mrapp.android.preference.ListPreference;
+
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
@@ -93,7 +85,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
          * The {@link ListPreference}.
          */
 
-        private MyPreference mName;
+        private Preference mName;
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -117,7 +109,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             return new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    if (preference instanceof MyPreference){
+                    if (preference instanceof Preference){
                         if (preference.getKey().equals(getString(R.string.key_name))){
                             String main = Utils.getHexCode(getString(R.string.key_main_album));
                             String trash = Utils.getHexCode(getString(R.string.key_trash));
@@ -135,7 +127,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             /*Help*/
-            mName = (MyPreference)findPreference(getString(R.string.key_name));
+            mName = findPreference(getString(R.string.key_name));
             mName.setOnPreferenceChangeListener(createChangeListener());
             mName.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mName.setSummary(presenter.mMainCategories.categories_name);
@@ -194,7 +186,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     });
             builder.show();
         }
-
     }
 
 

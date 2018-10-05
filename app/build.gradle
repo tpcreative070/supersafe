@@ -103,9 +103,6 @@ dependencies {
     /*Material Design Dialog*/
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
 
-    /* Dialog and Share preference*/
-    implementation(name: 'library-release', ext: 'aar')
-
     /*Gson*/
     implementation 'com.google.code.gson:gson:2.8.5'
 
@@ -150,9 +147,6 @@ dependencies {
     /*Swipe activity*/
     implementation project(':slibrlibrary')
     implementation 'com.52inc:52Kit-core:0.5.1'
-
-    /*api project(':library')*/
-    implementation(name: 'library-release', ext: 'aar')
 
     /*Material Dialog*/
     implementation project(':materialstyledialoglibrary')

@@ -14,13 +14,11 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.ftinc.kit.util.SizeUtils;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;

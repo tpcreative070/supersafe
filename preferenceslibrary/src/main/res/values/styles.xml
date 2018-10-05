@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Copyright 2014 - 2018 Michael Rapp
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is
+distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+implied. See the License for the specific language governing permissions and limitations under the
+License.
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ActionPreferenceText">
+        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:textSize">@dimen/action_preference_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="MaterialDialog.Light" parent="Theme.AppCompat.Light.Dialog.Alert">
+
+        <!-- No status bar -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="materialDialogBackground">@color/dialog_background_light</item>
+        <item name="materialDialogDividerColor">@color/divider_color_light</item>
+        <item name="materialDialogDisabledButtonTextColor">
+            @color/dialog_button_disabled_text_color_light
+        </item>
+    </style>
+
+    <style name="MaterialDialog.Light.Fullscreen.CenterInside" parent="MaterialDialog.Light">
+        <item name="materialDialogFullscreen">true</item>
+    </style>
+
+    <style name="MaterialDialog.Light.Fullscreen.CenterInside.Translucent" parent="MaterialDialog.Light.Fullscreen.CenterInside"/>
+
+    <style name="MaterialDialog.Light.Fullscreen" parent="MaterialDialog.Light.Fullscreen.CenterInside">
+        <item name="materialDialogWidth">match_parent</item>
+        <item name="materialDialogHeight">match_parent</item>
+        <item name="materialDialogMarginLeft">0dp</item>
+        <item name="materialDialogMarginTop">0dp</item>
+        <item name="materialDialogMarginRight">0dp</item>
+        <item name="materialDialogMarginBottom">0dp</item>
+        <item name="materialDialogMaxWidth">none</item>
+        <item name="materialDialogMaxHeight">none</item>
+        <item name="materialDialogGravity">top</item>
+    </style>
+
+    <style name="MaterialDialog.Light.Fullscreen.Translucent" parent="MaterialDialog.Light.Fullscreen"/>
+
+    <style name="MaterialDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <!-- No status bar -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="materialDialogBackground">@color/dialog_background_dark</item>
+        <item name="materialDialogDividerColor">@color/divider_color_dark</item>
+        <item name="materialDialogDisabledButtonTextColor">
+            @color/dialog_button_disabled_text_color_dark
+        </item>
+    </style>
+
+    <style name="MaterialDialog.Fullscreen.CenterInside" parent="MaterialDialog">
+        <item name="materialDialogFullscreen">true</item>
+    </style>
+
+    <style name="MaterialDialog.Fullscreen.CenterInside.Translucent" parent="MaterialDialog.Fullscreen.CenterInside"/>
+
+    <style name="MaterialDialog.Fullscreen" parent="MaterialDialog.Fullscreen.CenterInside">
+        <item name="materialDialogWidth">match_parent</item>
+        <item name="materialDialogHeight">match_parent</item>
+        <item name="materialDialogMarginLeft">0dp</item>
+        <item name="materialDialogMarginTop">0dp</item>
+        <item name="materialDialogMarginRight">0dp</item>
+        <item name="materialDialogMarginBottom">0dp</item>
+        <item name="materialDialogMaxWidth">none</item>
+        <item name="materialDialogMaxHeight">none</item>
+        <item name="materialDialogGravity">top</item>
+    </style>
+
+    <style name="MaterialDialog.Fullscreen.Translucent" parent="MaterialDialog.Fullscreen"/>
+
+    <style name="MaterialDialog.Title">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:textSize">@dimen/dialog_title_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MaterialDialog.Button" parent="Base.Widget.AppCompat.Button.Borderless">
+        <item name="android:minHeight">@dimen/dialog_button_min_height</item>
+        <item name="android:minWidth">@dimen/dialog_button_min_width</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:textSize">@dimen/dialog_button_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Chip" parent="@style/Theme.AppCompat">
+        <item name="android:textColor">@color/chip_text_color_dark</item>
+        <item name="android:color">@color/chip_color_dark</item>
+        <item name="closeButtonIcon">@drawable/chip_close_button_dark</item>
+    </style>
+
+    <style name="Chip.Light" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@color/chip_text_color_light</item>
+        <item name="android:color">@color/chip_color_light</item>
+        <item name="closeButtonIcon">@drawable/chip_close_button_light</item>
+    </style>
+
+
+</resources>

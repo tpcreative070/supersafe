@@ -3,10 +3,7 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -19,30 +16,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrInterface;
-import com.r0adkll.slidr.model.SlidrListener;
-import com.r0adkll.slidr.model.SlidrPosition;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
-import de.mrapp.android.preference.ListPreference;
 
 
 public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAction> {
@@ -69,7 +55,6 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
     RelativeLayout rlLockScreen;
     @BindView(R.id.rlPreference)
     RelativeLayout rlPreference;
-
     @BindView(R.id.llForgotPin)
     LinearLayout llForgotPin;
 
@@ -569,7 +554,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
          * The {@link ListPreference}.
          */
 
-        private MyPreference mChangePin;
+        private Preference mChangePin;
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -592,7 +577,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
             return new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    if (preference instanceof MyPreference){
+                    if (preference instanceof Preference){
                         if (preference.getKey().equals(getString(R.string.key_change_pin))){
                             Utils.Log(TAG,"Action here!!!");
                             presenter.onChangeStatus(EnumPinAction.VERIFY_TO_CHANGE);
@@ -607,7 +592,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             /*Changing pin*/
-            mChangePin = (MyPreference)findPreference(getString(R.string.key_change_pin));
+            mChangePin = findPreference(getString(R.string.key_change_pin));
             mChangePin.setOnPreferenceChangeListener(createChangeListener());
             mChangePin.setOnPreferenceClickListener(createActionPreferenceClickListener());
         }

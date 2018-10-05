@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
 import org.apache.commons.io.FilenameUtils;
@@ -53,8 +54,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import de.mrapp.android.dialog.MaterialDialog;
-
 
 /**
  * Created by pc on 07/16/2017.
@@ -109,15 +108,9 @@ public class Utils {
 
     public static void showDialog(Activity activity,String message){
         MaterialDialog.Builder builder = new MaterialDialog.Builder(activity);
-        builder.setTitle(activity.getString(R.string.confirm));
-        builder.setMessage(message);
-        builder.setPositiveButton(activity.getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        builder.show();
+        builder.title(R.string.confirm);
+        builder.content(message);
+        builder .show();
     }
 
     public static boolean mCreateAndSaveFileOverride(String fileName,String path_folder_name,String responseJson, boolean append) {
