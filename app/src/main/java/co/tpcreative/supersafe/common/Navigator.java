@@ -43,12 +43,11 @@ public class Navigator {
     public static final int CAMERA_ACTION = 1001;
     public static final int ALBUM_DETAIL = 1002;
     public static final int THEME_SETTINGS = 1003;
+    public static final int VERIFY_PIN = 1004;
 
 
     public static void onMoveToMainTab(Context context){
         Intent intent = new Intent(context, MainTabActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -84,13 +83,16 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveToVerifyPin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.VERIFY.ordinal(),isSignUp);
-        context.startActivity(intent);
+    public static void onMoveToVerifyPin(Activity activity,boolean isSignUp){
+        Intent intent = EnterPinActivity.getIntent(activity,EnumPinAction.VERIFY.ordinal(),isSignUp);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        activity.startActivityForResult(intent,VERIFY_PIN);
     }
 
     public static void onMoveToChangePin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.CHANGE.ordinal(),isSignUp);
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.INIT_PREFERENCE.ordinal(),isSignUp);
         context.startActivity(intent);
     }
 
@@ -99,18 +101,6 @@ public class Navigator {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
-    }
-
-    public static void onMoveToVerifyScreenOff(Context context,boolean isSignUp){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.SCREEN_OFF.ordinal(),isSignUp);
-            context.startActivity(intent);
-        }
-        else {
-            Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.SCREEN_OFF.ordinal(),isSignUp);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-        }
     }
 
     public static void onMoveToSignUp(Context context){

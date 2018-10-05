@@ -125,8 +125,20 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                tvTitle.setText(Html.fromHtml(sourceString));
            }
         }
-
     }
+
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
 
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {

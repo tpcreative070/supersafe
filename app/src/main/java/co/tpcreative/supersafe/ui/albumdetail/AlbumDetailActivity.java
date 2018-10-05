@@ -95,9 +95,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         initRecycleView(getLayoutInflater());
         initSpeedDial(true);
 
-        onDrawOverLay(this);
-
-
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         presenter.getData(this);
@@ -143,6 +140,17 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
 
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class DashBoardActivity extends BaseActivity {
 
@@ -24,5 +25,15 @@ public class DashBoardActivity extends BaseActivity {
         Navigator.onMoveSetPin(this,true);
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
 
 }

@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -13,40 +15,46 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class SettingsActivity extends BaseActivity {
-
     private static final String TAG = SettingsActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     private static Activity activity;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         activity = this;
-
-
-
+        onDrawOverLay(this);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        onDrawOverLay(this);
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment == null) {
             fragment = Fragment.instantiate(this, SettingsFragment.class.getName());
         }
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
-
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -54,13 +62,18 @@ public class SettingsActivity extends BaseActivity {
         switch (requestCode){
             case Navigator.THEME_SETTINGS :{
                 if (resultCode==RESULT_OK){
-                    recreate();
+                    Utils.Log(TAG,"recreate........................");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recreate();
+                        }
+                    });
                 }
                 break;
             }
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -80,10 +93,6 @@ public class SettingsActivity extends BaseActivity {
 
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
-
-        /**
-         * The {@link ListPreference}.
-         */
 
         private Preference mAccount;
 

@@ -14,9 +14,7 @@ import android.text.InputType;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -51,8 +49,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        onDrawOverLay(this);
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment == null) {
@@ -62,6 +58,23 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        onDrawOverLay(this);
+        super.onResume();
     }
 
     @Override

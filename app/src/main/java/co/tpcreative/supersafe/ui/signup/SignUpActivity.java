@@ -59,6 +59,17 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
+    @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
             if (!SuperSafeReceiver.isConnected()){

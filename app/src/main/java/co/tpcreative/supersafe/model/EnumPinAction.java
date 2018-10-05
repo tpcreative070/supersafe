@@ -5,13 +5,14 @@ public enum EnumPinAction {
     SET,
     VERIFY,
     CHANGE,
+    INIT_PREFERENCE,
     VERIFY_TO_CHANGE,
     CREATE,
-    CREATE_DONE,
-    SCREEN_OFF,
+    DONE,
     RESET,
     SCREEN_PRESS_HOME,
     SCREEN_LOCK,
     SCREEN_UNLOCK,
-    SPLASH_SCREEN
+    STILL_SCREEN_LOCK,
+    SPLASH_SCREEN,
 }

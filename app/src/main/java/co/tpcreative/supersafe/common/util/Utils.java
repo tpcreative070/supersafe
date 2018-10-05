@@ -110,6 +110,7 @@ public class Utils {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(activity);
         builder.title(R.string.confirm);
         builder.content(message);
+        builder.positiveText(R.string.ok);
         builder .show();
     }
 

@@ -10,6 +10,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.model.EnumStatus;
 
 public class CloudManagerActivity extends BaseGoogleApi{
 
@@ -32,6 +33,17 @@ public class CloudManagerActivity extends BaseGoogleApi{
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
     }
 
     @OnClick(R.id.btnSignIn)

@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.activity;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
@@ -23,14 +24,17 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -58,12 +62,11 @@ public class BaseActivity extends AppCompatActivity {
         storage = new Storage(this);
     }
 
-
     protected void onDrawOverLay(Activity activity){
         final Theme theme = Theme.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
-                .primaryColor(theme.getPrimaryColor())
-                .secondaryColor(theme.getPrimaryDarkColor())
+                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
                 .position(SlidrPosition.LEFT)
                 .velocityThreshold(2400)
                 .touchSize(SizeUtils.dpToPx(this, 32))
@@ -83,13 +86,35 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onStillScreenLock(EnumStatus status) {
+        Utils.Log(TAG,"onStillScreenLock");
+    }
+
+
+
+    @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
         final Theme result = Theme.getInstance().getThemeInfo();
         if (result!=null){
-            theme.applyStyle(ThemeUtil.getThemeId(result.getId()), true);
+            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }
         return theme;
+    }
+
+    public void onCallLockScreen(){
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action){
+            case SPLASH_SCREEN:{
+                Navigator.onMoveToVerifyPin(this,false);
+                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do");
+            }
+        }
     }
 
     protected float getRandom(float range, float startsfrom) {
@@ -108,15 +133,15 @@ public class BaseActivity extends AppCompatActivity {
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
-
         if (unbinder != null)
             unbinder.unbind();
         super.onDestroy();
     }
 
-
     @Override
     protected void onResume() {
+        Utils.Log(TAG,"Action here........onResume");
+        SingletonBaseActivity.getInstance().setListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();
@@ -124,7 +149,6 @@ public class BaseActivity extends AppCompatActivity {
         }
         super.onResume();
     }
-
 
     public void onRegisterHomeWatcher(){
         /*Home action*/

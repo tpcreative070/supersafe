@@ -20,6 +20,7 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -35,6 +36,7 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     private boolean isUpdated;
     private ThemeSettingsPresenter presenter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,18 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         presenter = new ThemeSettingsPresenter();
         presenter.bindView(this);
         presenter.getData();
+
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
@@ -57,8 +71,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
     }
-
-
 
 
     @Override
@@ -79,11 +91,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     public void onBackPressed() {
         Intent intent = getIntent();
         if (isUpdated){
-            final User mUser = User.getInstance().getUserInfo();
-            if (mUser!=null){
-                mUser.isUpdateView = true;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            }
             setResult(RESULT_OK,intent);
         }
         super.onBackPressed();
@@ -103,10 +110,10 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        recreate();
+        if (isUpdated){
+            SingletonBaseApiActivity.getInstance().onStillScreenLock(EnumStatus.RECREATE);
+        }
     }
-
-
 
 
     @Override

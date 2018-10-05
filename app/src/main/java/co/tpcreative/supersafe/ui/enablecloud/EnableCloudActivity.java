@@ -59,6 +59,17 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     }
 
     @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         Intent intent = new Intent();
         setResult(RESULT_OK,intent);

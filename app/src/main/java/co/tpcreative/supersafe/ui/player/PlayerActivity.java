@@ -70,6 +70,16 @@ public class PlayerActivity extends BaseActivity implements BaseView{
 
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
 
     public void playVideo() {
         final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();

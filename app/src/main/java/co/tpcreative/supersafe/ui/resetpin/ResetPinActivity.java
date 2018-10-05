@@ -64,6 +64,17 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         edtCode.setOnEditorActionListener(this);
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
     public void setProgressValue(){
         CircularProgressDrawable circularProgressDrawable;
         CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
@@ -165,7 +176,9 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
 
     @Override
     public void onStopLoading(EnumStatus status) {
-        mCircularProgressBar.progressiveStop();
+        if (mCircularProgressBar!=null){
+            mCircularProgressBar.progressiveStop();
+        }
     }
 
     @Override

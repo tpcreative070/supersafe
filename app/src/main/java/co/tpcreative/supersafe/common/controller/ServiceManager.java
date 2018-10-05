@@ -2156,7 +2156,7 @@ public class ServiceManager implements SuperSafeServiceView {
     @Override
     public void onActionScreenOff() {
         Utils.Log(TAG,"Screen off");
-        Navigator.onMoveToVerifyScreenOff(SuperSafeApplication.getInstance(),false); ;
+        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
     }
 
     @Override

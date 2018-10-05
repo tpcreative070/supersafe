@@ -69,7 +69,25 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
+        initRecycleView(getLayoutInflater());
+        presenter = new TrashPresenter();
+        presenter.bindView(this);
+        presenter.getData(this);
+
+
     }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
 
     public void initRecycleView(LayoutInflater layoutInflater){
         adapter = new TrashAdapter(layoutInflater,getApplicationContext(),this);

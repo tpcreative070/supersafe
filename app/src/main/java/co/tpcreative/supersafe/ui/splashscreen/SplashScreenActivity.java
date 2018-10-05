@@ -62,7 +62,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                     if (isRunning){
                         if(!"".equals(value)){
                             PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SPLASH_SCREEN.ordinal());
-                            Navigator.onMoveToVerifyPin(SplashScreenActivity.this,false);
+                            Navigator.onMoveToMainTab(SplashScreenActivity.this);
                         }
                         else{
                             Navigator.onMoveSetPin(SplashScreenActivity.this,false);
@@ -104,6 +104,17 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
 
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
     }
 
 

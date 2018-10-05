@@ -60,6 +60,18 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
         edtCode.addTextChangedListener(mTextWatcher);
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
+
     @OnClick(R.id.imgBack)
     public void onClickedBack(){
         onBackPressed();

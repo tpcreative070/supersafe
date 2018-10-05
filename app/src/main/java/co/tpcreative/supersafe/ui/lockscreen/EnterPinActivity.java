@@ -23,6 +23,8 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -84,14 +86,12 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
         return intent;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enterpin);
         presenter = new LockScreenPresenter();
         presenter.bindView(this);
-
         int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
         mPinAction = EnumPinAction.values()[result];
         mSignUp = getIntent().getBooleanExtra(EXTRA_SIGN_UP,false);
@@ -114,19 +114,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                 }
                 break;
             }
-            case SCREEN_OFF:{
-                onDisplayView();
-                String pin = getPinFromSharedPreferences();
-                if (pin.equals("")) {
-                    changeLayoutForSetPin();
-                    mPinAction = EnumPinAction.SET;
-                }
-                else{
-                    onDisplayText();
-                }
-                break;
-            }
-            case CHANGE:{
+            case INIT_PREFERENCE:{
                 initActionBar(true);
                 onDisplayText();
                 onDisplayView();
@@ -161,12 +149,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                         checkChangePin(pin);
                         break;
                     }
-                    case SCREEN_OFF:{
-                        checkScreenOff(pin);
-                        break;
-                    }
-
-                    case CREATE:{
+                    case CHANGE:{
                         setCreatePin(pin);
                         break;
                     }
@@ -190,20 +173,8 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                 switch (mPinAction){
                     case VERIFY:{
                         if (pinResult.equals(intermediatePin)){
-                            mPinLockView.setStop(true);
                             PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-                            Navigator.onMoveToMainTab(EnterPinActivity.this);
-                        }
-                        if (pinLength>pinResult.length()){
-                            shake();
-                            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
-                            mPinLockView.resetPinLockView();
-                        }
-                        break;
-                    }
-                    case SCREEN_OFF:{
-                        if (pinResult.equals(intermediatePin)){
-                            presenter.onChangeStatus(EnumPinAction.SCREEN_OFF);
+                            presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.DONE);
                         }
                         if (pinLength>pinResult.length()){
                             shake();
@@ -214,7 +185,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                     }
                     case VERIFY_TO_CHANGE:{
                         if (pinResult.equals(intermediatePin)){
-                            presenter.onChangeStatus(EnumPinAction.CREATE);
+                            presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.CHANGE);
                         }
                         if (pinLength>pinResult.length()){
                             shake();
@@ -241,6 +212,17 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
         mIndicatorDots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION);
         checkForFont();
 
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
     }
 
     private void checkForFont() {
@@ -322,12 +304,12 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
         } else {
             if (pin.equals(mFirstPin)) {
                 writePinToSharedPreferences(pin);
-                setResult(RESULT_OK);
                 if (mSignUp){
                     Navigator.onMoveToSignUp(this);
                 }
                 else{
                     Navigator.onMoveToMainTab(this);
+                    presenter.onChangeStatus(EnumStatus.SET,EnumPinAction.DONE);
                 }
             } else {
                 shake();
@@ -347,6 +329,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
             if (pin.equals(mFirstPin)) {
                 writePinToSharedPreferences(pin);
                 Navigator.onMoveToMainTab(this);
+                presenter.onChangeStatus(EnumStatus.RESET,EnumPinAction.DONE);
             } else {
                 shake();
                 mTextTitle.setText(getString(R.string.pinlock_tryagain));
@@ -364,7 +347,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
         } else {
             if (pin.equals(mFirstPin)) {
                 writePinToSharedPreferences(pin);
-                presenter.onChangeStatus(EnumPinAction.CREATE_DONE);
+                presenter.onChangeStatus(EnumStatus.CHANGE,EnumPinAction.DONE);
             } else {
                 shake();
                 mTextTitle.setText(getString(R.string.pinlock_tryagain));
@@ -376,7 +359,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
 
     private void checkChangePin(String pin) {
         if (pin.equals(getPinFromSharedPreferences())) {
-            presenter.onChangeStatus(EnumPinAction.CREATE);
+            presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.CHANGE);
         } else {
             shake();
             mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
@@ -386,19 +369,8 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
 
     private void checkPin(String pin) {
         if (pin.equals(getPinFromSharedPreferences())) {
-            setResult(RESULT_OK);
             PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-            Navigator.onMoveToMainTab(this);
-        } else {
-            shake();
-            mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
-            mPinLockView.resetPinLockView();
-        }
-    }
-
-    private void checkScreenOff(String pin) {
-        if (pin.equals(getPinFromSharedPreferences())) {
-            presenter.onChangeStatus(EnumPinAction.SCREEN_OFF);
+            presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.DONE);
         } else {
             shake();
             mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
@@ -424,10 +396,89 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
     }
 
     @Override
+    public void onSuccessful(String message, EnumStatus status, EnumPinAction action) {
+        Utils.Log(TAG,"EnumPinAction 1:...."+action.name());
+        switch (status){
+            case VERIFY:{
+                Utils.Log(TAG,"Result here");
+                mPinAction = action;
+                switch (action){
+                    case VERIFY_TO_CHANGE:{
+                        initActionBar(false);
+                        onDisplayText();
+                        onDisplayView();
+                        break;
+                    }
+                    case CHANGE:{
+                        mPinLockView.resetPinLockView();
+                        onDisplayText();
+                        onDisplayView();
+                        break;
+                    }
+                    case DONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                        finish();
+                        break;
+                    }
+                    case VERIFY:{
+                        finish();
+                        break;
+                    }
+                }
+                break;
+            }
+            case SET:{
+                mPinAction = action;
+                switch (action){
+                    case DONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                        finish();
+                        break;
+                    }
+                }
+                break;
+            }
+            case CHANGE:{
+                mPinAction = action;
+                switch (action){
+                    case DONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                        finish();
+                        break;
+                    }
+                }
+                break;
+            }
+            case RESET:{
+                mPinAction = action;
+                switch (action){
+                    case DONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                        finish();
+                        break;
+                    }
+                }
+                break;
+            }
+
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         Utils.Log(TAG,mPinAction.name());
         switch (mPinAction){
             case VERIFY:{
+                int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+                EnumPinAction action = EnumPinAction.values()[value];
+                switch (action){
+                    case SCREEN_LOCK:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.STILL_SCREEN_LOCK.ordinal());
+                        SingletonBaseActivity.getInstance().onStillScreenLock(EnumStatus.FINISH);
+                        SingletonBaseApiActivity.getInstance().onStillScreenLock(EnumStatus.FINISH);
+                        Utils.Log(TAG,"onStillScreenLock");
+                    }
+                }
                 super.onBackPressed();
                 break;
             }
@@ -435,19 +486,12 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                 super.onBackPressed();
                 break;
             }
-            case CREATE_DONE:{
+            case DONE:{
                 super.onBackPressed();
                 break;
             }
             case VERIFY_TO_CHANGE:{
                 super.onBackPressed();
-                break;
-            }
-            case CREATE:{
-                super.onBackPressed();
-                break;
-            }
-            case SCREEN_OFF:{
                 break;
             }
             case RESET:{
@@ -457,6 +501,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
     }
 
     public void onDisplayView(){
+        Utils.Log(TAG,"EnumPinAction 2:...."+mPinAction.name());
         switch (mPinAction){
             case SET:{
                 rlLockScreen.setVisibility(View.VISIBLE);
@@ -468,24 +513,19 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                 rlPreference.setVisibility(View.INVISIBLE);
                 break;
             }
-            case CHANGE:{
-                rlLockScreen.setVisibility(View.INVISIBLE);
-                rlPreference.setVisibility(View.VISIBLE);
-                break;
-            }
             case VERIFY_TO_CHANGE:{
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
                 break;
             }
-            case CREATE:{
+            case CHANGE:{
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
                 break;
             }
-            case SCREEN_OFF:{
-                rlLockScreen.setVisibility(View.VISIBLE);
-                rlPreference.setVisibility(View.INVISIBLE);
+            case INIT_PREFERENCE:{
+                rlLockScreen.setVisibility(View.INVISIBLE);
+                rlPreference.setVisibility(View.VISIBLE);
                 break;
             }
         }
@@ -493,16 +533,11 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
 
 
     public void onDisplayText(){
+        Utils.Log(TAG,"EnumPinAction 3:...."+mPinAction.name());
         switch (mPinAction){
             case VERIFY:{
                 mTextTitle.setVisibility(View.INVISIBLE);
                 imgLauncher.setVisibility(View.VISIBLE);
-                break;
-            }
-            case CHANGE:{
-                mTextTitle.setText(getString(R.string.pinlock_confirm_your_pin));
-                mTextTitle.setVisibility(View.VISIBLE);
-                imgLauncher.setVisibility(View.INVISIBLE);
                 break;
             }
             case VERIFY_TO_CHANGE:{
@@ -511,15 +546,16 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                 imgLauncher.setVisibility(View.INVISIBLE);
                 break;
             }
-            case CREATE:{
+            case CHANGE:{
                 mTextTitle.setText(getString(R.string.pinlock_confirm_create));
                 mTextTitle.setVisibility(View.VISIBLE);
                 imgLauncher.setVisibility(View.INVISIBLE);
                 break;
             }
-            case SCREEN_OFF:{
-                mTextTitle.setVisibility(View.INVISIBLE);
-                imgLauncher.setVisibility(View.VISIBLE);
+            case INIT_PREFERENCE:{
+                mTextTitle.setText(getString(R.string.pinlock_confirm_your_pin));
+                mTextTitle.setVisibility(View.VISIBLE);
+                imgLauncher.setVisibility(View.INVISIBLE);
                 break;
             }
         }
@@ -549,11 +585,6 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
     /*Settings preference*/
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
-
-        /**
-         * The {@link ListPreference}.
-         */
-
         private Preference mChangePin;
 
         /**
@@ -580,7 +611,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                     if (preference instanceof Preference){
                         if (preference.getKey().equals(getString(R.string.key_change_pin))){
                             Utils.Log(TAG,"Action here!!!");
-                            presenter.onChangeStatus(EnumPinAction.VERIFY_TO_CHANGE);
+                            presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.VERIFY_TO_CHANGE);
                         }
                     }
                     return true;
@@ -636,40 +667,6 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
     @Override
     public Activity getActivity() {
         return this;
-    }
-
-    @Override
-    public void onSuccessful(String message, EnumStatus status, EnumPinAction action) {
-        switch (status){
-            case CHANGE:{
-                Utils.Log(TAG,"Result here");
-                mPinAction = action;
-                switch (action){
-                    case VERIFY_TO_CHANGE:{
-                        initActionBar(false);
-                        onDisplayText();
-                        onDisplayView();
-                        break;
-                    }
-                    case CREATE:{
-                        mPinLockView.resetPinLockView();
-                        onDisplayText();
-                        onDisplayView();
-                        break;
-                    }
-                    case CREATE_DONE:{
-                        onBackPressed();
-                        break;
-                    }
-                    case SCREEN_OFF:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-                        finish();
-                        break;
-                    }
-                }
-                break;
-            }
-        }
     }
 
     @Override

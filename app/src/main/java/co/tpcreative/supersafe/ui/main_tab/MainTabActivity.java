@@ -38,7 +38,6 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -89,6 +88,23 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
+        onCallLockScreen();
+    }
+
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+            case RECREATE:{
+                Utils.Log(TAG,"ReCreate............");
+                recreate();
+                break;
+            }
+        }
     }
 
     @Override
@@ -325,7 +341,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         Log.d(TAG, "Selected album :");
         switch (requestCode) {
             case Navigator.CAMERA_ACTION: {
@@ -405,16 +420,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
-        Utils.Log(TAG,"path database :" + SuperSafeApplication.getInstance().getPathDatabase());
         Utils.onBackUp();
-        final User mUser = User.getInstance().getUserInfo();
-        if (mUser!=null){
-            if (mUser.isUpdateView){
-                mUser.isUpdateView = false;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                recreate();
-            }
-        }
     }
 
     @Override

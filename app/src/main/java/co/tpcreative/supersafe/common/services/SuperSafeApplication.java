@@ -200,7 +200,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             switch (action){
                 case SCREEN_PRESS_HOME:{
                     Utils.Log(TAG,"Start screen off.................:"+activity.getClass().getSimpleName());
-                    Navigator.onMoveToVerifyScreenOff(getInstance(),false);
+                    Navigator.onMoveToVerifyPin(activity,false);
                     PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                     break;
                 }

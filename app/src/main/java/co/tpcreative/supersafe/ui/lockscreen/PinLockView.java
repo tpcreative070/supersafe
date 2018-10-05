@@ -39,17 +39,6 @@ public class PinLockView extends RecyclerView {
     private Drawable mButtonBackgroundDrawable;
     private Drawable mVerifyButtonDrawable;
     private boolean mShowVerifyButton;
-
-    public boolean isStop() {
-        return isStop;
-    }
-
-    public void setStop(boolean stop) {
-        isStop = stop;
-    }
-
-    private boolean isStop;
-
     private IndicatorDots mIndicatorDots;
     private PinLockAdapter mAdapter;
     private PinLockListener mPinLockListener;
@@ -60,13 +49,8 @@ public class PinLockView extends RecyclerView {
             = new PinLockAdapter.OnNumberClickListener() {
 
         @Override
-        public boolean onIsStop() {
-            return isStop;
-        }
-
-        @Override
         public void onNumberClicked(int keyValue) {
-            if (!isStop) {
+
                 if (mPin.length() < getPinLength()) {
                     mPin = mPin.concat(String.valueOf(keyValue));
 
@@ -104,7 +88,6 @@ public class PinLockView extends RecyclerView {
                             mPinLockListener.onComplete(mPin);
                         }
                     }
-                }
             }
         }
     };

@@ -124,6 +124,16 @@ public class CameraActivity extends BaseActivity implements
 
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
 
     @Override
     protected void onResume() {

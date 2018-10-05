@@ -191,7 +191,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnNumberClickListener {
         void onNumberClicked(int keyValue);
-        boolean onIsStop();
     }
 
     public interface OnVerifyClickListener{
@@ -213,12 +212,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
                     if (mOnNumberClickListener != null) {
-                        if (!mOnNumberClickListener.onIsStop()){
-                            mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
-                        }
-                        else{
-                            mNumberButton.setEnabled(false);
-                        }
+                        mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
                     }
                 }
             });

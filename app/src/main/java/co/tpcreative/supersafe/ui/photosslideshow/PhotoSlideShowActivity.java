@@ -114,6 +114,17 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         imgRotate.setOnClickListener(this);
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        super.onStillScreenLock(status);
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
     class SamplePagerAdapter extends PagerAdapter {
         private Context context;
         SamplePagerAdapter(Context context){

@@ -10,10 +10,9 @@ public class LockScreenPresenter extends Presenter<BaseView<EnumPinAction>>{
 
     }
 
-    public void onChangeStatus(EnumPinAction action){
+    public void onChangeStatus(EnumStatus status,EnumPinAction action){
         BaseView view = view();
-        view.onSuccessful("Successful", EnumStatus.CHANGE,action);
+        view.onSuccessful("Successful",status,action);
     }
-
 
 }

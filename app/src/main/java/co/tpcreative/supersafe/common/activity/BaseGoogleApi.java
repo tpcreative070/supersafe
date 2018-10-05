@@ -43,8 +43,11 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
@@ -57,7 +60,7 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 
 
-public abstract class BaseGoogleApi extends AppCompatActivity{
+public abstract class BaseGoogleApi extends AppCompatActivity implements SingletonBaseApiActivity.SingletonBaseApiActivityListener{
 
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
 
@@ -102,16 +105,38 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
         }
     }
 
+    @Override
+    public void onStillScreenLock(EnumStatus status) {
+        Utils.Log(TAG,"onStillScreenLock");
+    }
 
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
         final Theme result = Theme.getInstance().getThemeInfo();
         if (result!=null){
-            theme.applyStyle(ThemeUtil.getThemeId(result.getId()), true);
+            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }
         return theme;
     }
+
+
+    public void onCallLockScreen(){
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action){
+            case SPLASH_SCREEN:{
+                Navigator.onMoveToVerifyPin(this,false);
+                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do");
+            }
+        }
+    }
+
+
 
     protected void setStatusBarColored(Activity context, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -125,8 +150,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
     protected void onDrawOverLay(Activity activity){
         final Theme theme = Theme.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
-                .primaryColor(theme.getPrimaryColor())
-                .secondaryColor(theme.getPrimaryDarkColor())
+                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
                 .position(SlidrPosition.LEFT)
                 .velocityThreshold(2400)
                 .touchSize(SizeUtils.dpToPx(this, 32))
@@ -158,12 +183,13 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
 
     @Override
     protected void onResume() {
-        if (mHomeWatcher!=null){
-            if (!mHomeWatcher.isRegistered){
-                onRegisterHomeWatcher();
-            }
-        }
-        super.onResume();
+       SingletonBaseApiActivity.getInstance().setListener(this);
+       if (mHomeWatcher!=null){
+           if (!mHomeWatcher.isRegistered){
+               onRegisterHomeWatcher();
+           }
+       }
+       super.onResume();
     }
 
     public void onRegisterHomeWatcher(){
@@ -267,8 +293,9 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Utils.Log(TAG,"Action here........????");
         switch (requestCode) {
-            case REQUEST_CODE_SIGN_IN:
+            case REQUEST_CODE_SIGN_IN: {
                 if (resultCode != RESULT_OK) {
                     // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
                     // required and is fatal. For apps where sign-in is optional, handle
@@ -280,13 +307,14 @@ public abstract class BaseGoogleApi extends AppCompatActivity{
                 Task<GoogleSignInAccount> getAccountTask =
                         GoogleSignIn.getSignedInAccountFromIntent(data);
                 if (getAccountTask.isSuccessful()) {
-                    Log.d(TAG,"sign in successful");
+                    Log.d(TAG, "sign in successful");
                     initializeDriveClient(getAccountTask.getResult());
                 } else {
                     onDriveError();
                     Log.e(TAG, "Sign-in failed..");
                 }
                 break;
+            }
         }
     }
 
