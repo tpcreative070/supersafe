@@ -10,16 +10,18 @@ import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class PrivatePresenter extends Presenter<PrivateView> {
+public class PrivatePresenter extends Presenter<BaseView> {
     protected List<MainCategories> mList;
     protected Storage storage;
     private static final String TAG = PrivatePresenter.class.getSimpleName();
@@ -28,16 +30,16 @@ public class PrivatePresenter extends Presenter<PrivateView> {
     }
 
     public void  getData(){
-        PrivateView view = view();
+        BaseView view = view();
         mList = MainCategories.getInstance().getList();
         storage = new Storage(SuperSafeApplication.getInstance());
-        view.onReload();
+        view.onSuccessful("Successful", EnumStatus.RELOAD);
         Utils.Log(TAG,new Gson().toJson(mList));
     }
 
 
     public void onDeleteAlbum(int position){
-        PrivateView view = view();
+        BaseView view = view();
         try {
             final MainCategories main = mList.get(position);
             if (main!=null){
@@ -61,7 +63,7 @@ public class PrivatePresenter extends Presenter<PrivateView> {
 
 
     public void onEmptyTrash(){
-        PrivateView view = view();
+        BaseView view = view();
         try {
             final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.NONE.ordinal());
             for (int i = 0 ;i <mList.size();i++){

@@ -29,6 +29,8 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import java.io.File;
+import java.util.List;
+
 import javax.crypto.Cipher;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
@@ -36,6 +38,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -48,7 +51,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class PhotoSlideShowActivity extends BaseActivity implements View.OnClickListener ,PhotoSlideShowView{
+public class PhotoSlideShowActivity extends BaseActivity implements View.OnClickListener ,BaseView{
 
     private static final String TAG = PhotoSlideShowActivity.class.getSimpleName();
     private RequestOptions options = new RequestOptions()
@@ -347,14 +350,6 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         return getApplicationContext();
     }
 
-    @Override
-    public void onDeleteSuccessful() {
-        isReload = true;
-        adapter.notifyDataSetChanged();
-        if (presenter.mList.size()==0){
-            onBackPressed();
-        }
-    }
 
     @Override
     protected void onDestroy() {
@@ -518,11 +513,31 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-
+        switch (status){
+            case DELETE:{
+                isReload = true;
+                adapter.notifyDataSetChanged();
+                if (presenter.mList.size()==0){
+                    onBackPressed();
+                }
+                break;
+            }
+        }
     }
 
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
     }
 }

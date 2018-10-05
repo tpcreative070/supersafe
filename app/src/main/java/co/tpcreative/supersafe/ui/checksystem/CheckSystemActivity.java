@@ -13,27 +13,25 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.gson.Gson;
-
 import java.util.List;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 
-public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemView{
+public class CheckSystemActivity extends BaseGoogleApi implements BaseView{
 
     private static final String TAG = CheckSystemActivity.class.getSimpleName();
 
@@ -70,36 +68,10 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     }
 
     @Override
-    public void showError(String message) {
-        Log.d(TAG,message);
-        Navigator.onEnableCloud(this);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         //ServiceManager.getInstance().onInitMainCategories();
         presenter.unbindView();
-    }
-
-    @Override
-    public void showSuccessful(String cloud_id) {
-        Log.d(TAG,cloud_id);
-        if (presenter.mUser!=null){
-            presenter.mUser.cloud_id = cloud_id;
-            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
-        }
-        Navigator.onEnableCloud(this);
-    }
-
-    @Override
-    public void onStartLoading(EnumStatus status) {
-        progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onStopLoading(EnumStatus status) {
-        progressBarCircularIndeterminate.setVisibility(View.GONE);
     }
 
     @Override
@@ -142,88 +114,11 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     }
 
     @Override
-    public void onShowUserCloud(boolean error, String message) {
-        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
-        onStopLoading(EnumStatus.OTHER);
-        if (!error){
-           onBackPressed();
-        }
-    }
-
-    @Override
     public Activity getActivity() {
         return this;
     }
 
-    @Override
-    public void sendEmailSuccessful() {
-        if (presenter.googleOauth!=null){
-            onVerifyInputCode(presenter.googleOauth.email);
-        }
-    }
 
-    @Override
-    public void onSignUpFailed(String message) {
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
-        onStopLoading(EnumStatus.OTHER);
-    }
-
-
-    @Override
-    public void showUserExisting(String userId,boolean isExisting) {
-        Log.d(TAG,""+isExisting);
-        //signIn(userId);
-        Toast.makeText(this,userId +" is existing  :" + isExisting,Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onSignInFailed(String message) {
-        onStopLoading(EnumStatus.OTHER);
-        Toast.makeText(this,""+message,Toast.LENGTH_SHORT).show();
-        onBackPressed();
-    }
-
-    @Override
-    public void showSuccessfulVerificationCode() {
-       if (presenter.googleOauth!=null){
-           if (presenter.googleOauth.isEnableSync){
-               Log.d(TAG,"Syn google drive");
-               signOut(new ServiceManager.ServiceManagerSyncDataListener() {
-                   @Override
-                   public void onCompleted() {
-                       onStartLoading(EnumStatus.OTHER);
-                       signIn(presenter.mUser.email);
-                   }
-
-                   @Override
-                   public void onError() {
-                       onStartLoading(EnumStatus.OTHER);
-                       signIn(presenter.mUser.email);
-                   }
-
-                   @Override
-                   public void onCancel() {
-
-                   }
-               });
-           }
-           else{
-               onStopLoading(EnumStatus.OTHER);
-               onBackPressed();
-           }
-       }
-       else{
-           Toast.makeText(this,"Oauth is null",Toast.LENGTH_SHORT).show();
-       }
-    }
-
-    @Override
-    public void showFailedVerificationCode() {
-        Toast.makeText(this,"Failed verify code",Toast.LENGTH_SHORT).show();
-        if (presenter.mUser!=null){
-            onVerifyInputCode(presenter.mUser.email);
-        }
-    }
 
     public void onVerifyInputCode(String email){
         MaterialDialog.Builder dialog =  new MaterialDialog.Builder(this);
@@ -286,8 +181,13 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
     }
 
     @Override
-    public void onError(String message, EnumStatus status) {
+    public void onStartLoading(EnumStatus status) {
+        progressBarCircularIndeterminate.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void onStopLoading(EnumStatus status) {
+        progressBarCircularIndeterminate.setVisibility(View.GONE);
     }
 
     @Override
@@ -302,8 +202,102 @@ public class CheckSystemActivity extends BaseGoogleApi implements CheckSystemVie
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case RESEND_CODE:{
+                Navigator.onEnableCloud(this);
+                break;
+            }
+            case CLOUD_ID_EXISTING:{
+                if (presenter.mUser!=null){
+                    presenter.mUser.cloud_id = message;
+                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
+                }
+                Navigator.onEnableCloud(this);
+                break;
+            }
+            case CREATE:{
+                onBackPressed();
+                break;
+            }
+            case SEND_EMAIL:{
+                if (presenter.googleOauth!=null){
+                    onVerifyInputCode(presenter.googleOauth.email);
+                }
+                break;
+            }
+            case USER_ID_EXISTING:{
+                Log.d(TAG,""+message);
+                Toast.makeText(this,message +" is existing :",Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case VERIFY_CODE:{
+                if (presenter.googleOauth!=null){
+                    if (presenter.googleOauth.isEnableSync){
+                        Log.d(TAG,"Syn google drive");
+                        signOut(new ServiceManager.ServiceManagerSyncDataListener() {
+                            @Override
+                            public void onCompleted() {
+                                onStartLoading(status);
+                                signIn(presenter.mUser.email);
+                            }
 
+                            @Override
+                            public void onError() {
+                                onStartLoading(status);
+                                signIn(presenter.mUser.email);
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
+                    }
+                    else{
+                        onStopLoading(status);
+                        onBackPressed();
+                    }
+                }
+                else{
+                    Toast.makeText(this,"Oauth is null",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
     }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+        switch (status){
+            case RESEND_CODE:{
+                break;
+            }
+            case CREATE:{
+                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+                onStopLoading(status);
+                break;
+            }
+            case SIGN_UP:{
+                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                onStopLoading(status);
+                break;
+            }
+            case SIGN_IN:{
+                onStopLoading(status);
+                Toast.makeText(this,""+message,Toast.LENGTH_SHORT).show();
+                onBackPressed();
+                break;
+            }
+            case VERIFY_CODE:{
+                Toast.makeText(this,"Failed verify code",Toast.LENGTH_SHORT).show();
+                if (presenter.mUser!=null){
+                    onVerifyInputCode(presenter.mUser.email);
+                }
+                break;
+            }
+        }
+    }
+
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {

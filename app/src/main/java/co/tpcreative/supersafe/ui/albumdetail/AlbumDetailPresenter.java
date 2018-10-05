@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -15,7 +16,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
+public class AlbumDetailPresenter extends Presenter<BaseView> {
 
     protected List<Items> mList;
     protected MainCategories mainCategories;
@@ -24,7 +25,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
     }
 
     public void  getData(Activity activity){
-        AlbumDetailView view = view();
+        BaseView view = view();
         mList.clear();
         try {
             Bundle bundle = activity.getIntent().getExtras();
@@ -34,7 +35,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
                 if (data!=null){
                     mList = data;
                 }
-                view.onReloadData();
+                view.onSuccessful("Successful",EnumStatus.RELOAD);
             }
             else{
                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
@@ -47,7 +48,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
 
 
     public void  getData(){
-        AlbumDetailView view = view();
+        BaseView view = view();
         mList.clear();
         try {
             if (mainCategories!=null){
@@ -55,7 +56,7 @@ public class AlbumDetailPresenter extends Presenter<AlbumDetailView> {
                 if (data!=null){
                     mList = data;
                 }
-                view.onReloadData();
+                view.onSuccessful("Successful",EnumStatus.RELOAD);
             }
             else{
                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);

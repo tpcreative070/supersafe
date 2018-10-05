@@ -22,10 +22,11 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
-public class MeFragment extends BaseFragment implements MeView{
+public class MeFragment extends BaseFragment implements BaseView{
 
     private static final String TAG = MeFragment.class.getSimpleName();
     @BindView(R.id.nsv)

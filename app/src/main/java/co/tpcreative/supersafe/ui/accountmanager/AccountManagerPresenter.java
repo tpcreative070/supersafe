@@ -1,7 +1,8 @@
 package co.tpcreative.supersafe.ui.accountmanager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 
-public class AccountManagerPresenter extends Presenter<AccountManagerView>{
+public class AccountManagerPresenter extends Presenter<BaseView>{
     private static final String TAG = AccountManagerPresenter.class.getSimpleName();
 
     public AccountManagerPresenter(){
@@ -9,7 +10,7 @@ public class AccountManagerPresenter extends Presenter<AccountManagerView>{
     }
 
     private String getString(int res){
-        AccountManagerView view = view();
+        BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }

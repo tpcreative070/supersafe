@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreference;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -34,7 +35,7 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import de.mrapp.android.preference.ListPreference;
 
-public class AlbumSettingsActivity extends BaseActivity implements AlbumSettingsView {
+public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
     private static final String TAG = AlbumSettingsActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -231,4 +232,6 @@ public class AlbumSettingsActivity extends BaseActivity implements AlbumSettings
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+
 }

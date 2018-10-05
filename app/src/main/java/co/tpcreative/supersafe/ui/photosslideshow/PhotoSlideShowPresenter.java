@@ -9,13 +9,15 @@ import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class PhotoSlideShowPresenter extends Presenter<PhotoSlideShowView>{
+public class PhotoSlideShowPresenter extends Presenter<BaseView>{
 
     private final String TAG = PhotoSlideShowPresenter.class.getSimpleName();
     protected Items items;
@@ -48,7 +50,7 @@ public class PhotoSlideShowPresenter extends Presenter<PhotoSlideShowView>{
 
     public void onDelete(int position){
         try {
-            PhotoSlideShowView view = view();
+            BaseView view = view();
             final Items items = mList.get(position);
             final Items mItem = InstanceGenerator.getInstance(view.getContext()).getLocalId(items.local_id);
             if (mItem!=null){
@@ -56,7 +58,7 @@ public class PhotoSlideShowPresenter extends Presenter<PhotoSlideShowView>{
                 InstanceGenerator.getInstance(view.getContext()).onUpdate(mItem);
                 //storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.local_id);
                 mList.remove(position);
-                view.onDeleteSuccessful();
+                view.onSuccessful("Delete Successful", EnumStatus.DELETE);
             }
             else{
                 Utils.Log(TAG,"Not found");

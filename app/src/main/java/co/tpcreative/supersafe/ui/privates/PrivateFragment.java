@@ -14,22 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import com.snatik.storage.Storage;
-
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-
 import co.tpcreative.supersafe.model.MainCategories;
 
 
-public class PrivateFragment extends BaseFragment implements PrivateView,PrivateAdapter.ItemSelectedListener,SingletonPrivateFragment.SingletonPrivateFragmentListener{
+public class PrivateFragment extends BaseFragment implements BaseView,PrivateAdapter.ItemSelectedListener,SingletonPrivateFragment.SingletonPrivateFragmentListener{
 
     private static final String TAG = PrivateFragment.class.getSimpleName();
     private RecyclerView recyclerView;
@@ -185,24 +183,6 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
     }
 
     @Override
-    public void onReload() {
-        try {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (adapter!=null){
-                        adapter.setDataSource(presenter.mList);
-                    }
-                }
-            });
-        }
-        catch (Exception e){
-            e.getMessage();
-        }
-    }
-
-
-    @Override
     public void onError(String message, EnumStatus status) {
 
     }
@@ -219,7 +199,24 @@ public class PrivateFragment extends BaseFragment implements PrivateView,Private
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-
+        switch (status){
+            case RELOAD:{
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (adapter!=null){
+                                adapter.setDataSource(presenter.mList);
+                            }
+                        }
+                    });
+                }
+                catch (Exception e){
+                    e.getMessage();
+                }
+                break;
+            }
+        }
     }
 
     @Override

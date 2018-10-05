@@ -21,7 +21,6 @@ import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.File;
 import java.util.List;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -29,11 +28,12 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 
-public class PlayerActivity extends BaseActivity implements PlayerViews{
+public class PlayerActivity extends BaseActivity implements BaseView{
 
     private static final String TAG = PlayerActivity.class.getSimpleName();
     @BindView(R.id.simpleexoplayerview)
@@ -116,17 +116,6 @@ public class PlayerActivity extends BaseActivity implements PlayerViews{
     }
 
     @Override
-    public void onPlay() {
-       mEncryptedFile = new File(presenter.mItems.originalPath);
-       Utils.Log(TAG,mEncryptedFile.getAbsolutePath());
-       if (mCipher==null){
-           Utils.Log(TAG," mcipher is null");
-           return;
-       }
-       playVideo();
-    }
-
-    @Override
     public void onError(String message, EnumStatus status) {
 
     }
@@ -143,7 +132,18 @@ public class PlayerActivity extends BaseActivity implements PlayerViews{
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-
+        switch (status){
+            case PLAY:{
+                mEncryptedFile = new File(presenter.mItems.originalPath);
+                Utils.Log(TAG,mEncryptedFile.getAbsolutePath());
+                if (mCipher==null){
+                    Utils.Log(TAG," mcipher is null");
+                    return;
+                }
+                playVideo();
+                break;
+            }
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -18,7 +19,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-public class ResetPinPresenter extends Presenter<ResetPinView> {
+public class ResetPinPresenter extends Presenter<BaseView> {
 
     private static final String TAG = ResetPinPresenter.class.getSimpleName();
     protected User mUser ;
@@ -33,7 +34,7 @@ public class ResetPinPresenter extends Presenter<ResetPinView> {
 
     public void onVerifyCode(VerifyCodeRequest request){
         Log.d(TAG,"info");
-        ResetPinView view = view();
+        BaseView view = view();
         if (view == null) {
             view.onError("View is null", EnumStatus.VERIFIED_ERROR);
             return;
@@ -84,7 +85,7 @@ public class ResetPinPresenter extends Presenter<ResetPinView> {
     }
 
     public void onSendGmail(String email,String code){
-        ResetPinView view = view();
+        BaseView view = view();
         String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
@@ -115,7 +116,7 @@ public class ResetPinPresenter extends Presenter<ResetPinView> {
 
     public void onRequestCode(VerifyCodeRequest request){
         Log.d(TAG,"info");
-        ResetPinView view = view();
+        BaseView view = view();
         if (view == null) {
             view.onError("View is null", EnumStatus.REQUEST_CODE_ERROR);
             return;
@@ -162,7 +163,7 @@ public class ResetPinPresenter extends Presenter<ResetPinView> {
     }
 
     private String getString(int res){
-        ResetPinView view = view();
+        BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }

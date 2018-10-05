@@ -3,11 +3,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import com.google.gson.Gson;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.MainCategories;
 
-public class AlbumSettingsPresenter extends Presenter<AlbumSettingsView> {
+public class AlbumSettingsPresenter extends Presenter<BaseView> {
 
     protected MainCategories mMainCategories;
     private static final String TAG = AlbumSettingsPresenter.class.getSimpleName();

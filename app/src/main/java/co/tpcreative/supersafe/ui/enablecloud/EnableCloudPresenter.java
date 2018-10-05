@@ -9,6 +9,7 @@ import java.util.Map;
 
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -20,7 +21,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-public class EnableCloudPresenter extends Presenter<EnableCloudView>{
+public class EnableCloudPresenter extends Presenter<BaseView>{
 
     private static final String TAG = EnableCloudPresenter.class.getSimpleName();
 
@@ -38,7 +39,7 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
     }
 
     private String getString(int res){
-        EnableCloudView view = view();
+        BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }
@@ -46,7 +47,7 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
 
     public void onAddUserCloud(UserCloudRequest cloudRequest){
         Log.d(TAG,"info");
-        EnableCloudView view = view();
+        BaseView view = view();
         if (view == null) {
             return;
         }
@@ -64,16 +65,16 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
         subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
-                        view.showError(onResponse.message);
+                        view.onError(onResponse.message,EnumStatus.CREATE);
                     }
                     else{
-                        view.showSuccessful(mUser.cloud_id);
+                        view.onSuccessful(mUser.cloud_id,EnumStatus.CREATE);
                     }
-                    view.onStopLoading(EnumStatus.OTHER);
+                    view.onStopLoading(EnumStatus.CREATE);
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -87,7 +88,7 @@ public class EnableCloudPresenter extends Presenter<EnableCloudView>{
                     } else {
                         Log.d(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.onStopLoading(EnumStatus.OTHER);
+                    view.onStopLoading(EnumStatus.CREATE);
                 }));
 
     }

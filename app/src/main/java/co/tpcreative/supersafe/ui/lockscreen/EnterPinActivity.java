@@ -36,6 +36,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.preference.MyPreference;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -44,7 +45,7 @@ import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import de.mrapp.android.preference.ListPreference;
 
 
-public class EnterPinActivity extends BaseActivity implements LockScreenView {
+public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAction> {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -539,35 +540,6 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         }
     }
 
-    @Override
-    public void onChangeStatus(EnumPinAction action) {
-        Utils.Log(TAG,"Result here");
-        mPinAction = action;
-        switch (action){
-            case VERIFY_TO_CHANGE:{
-                initActionBar(false);
-                onDisplayText();
-                onDisplayView();
-                break;
-            }
-            case CREATE:{
-                mPinLockView.resetPinLockView();
-                onDisplayText();
-                onDisplayView();
-                break;
-            }
-            case CREATE_DONE:{
-                onBackPressed();
-                break;
-            }
-            case SCREEN_OFF:{
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-                finish();
-                break;
-            }
-        }
-    }
-
     public void initActionBar(boolean isInit){
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -681,14 +653,42 @@ public class EnterPinActivity extends BaseActivity implements LockScreenView {
         return this;
     }
 
-
     @Override
-    public void onSuccessful(String message, EnumStatus status, Object object) {
-
+    public void onSuccessful(String message, EnumStatus status, EnumPinAction action) {
+        switch (status){
+            case CHANGE:{
+                Utils.Log(TAG,"Result here");
+                mPinAction = action;
+                switch (action){
+                    case VERIFY_TO_CHANGE:{
+                        initActionBar(false);
+                        onDisplayText();
+                        onDisplayView();
+                        break;
+                    }
+                    case CREATE:{
+                        mPinLockView.resetPinLockView();
+                        onDisplayText();
+                        onDisplayView();
+                        break;
+                    }
+                    case CREATE_DONE:{
+                        onBackPressed();
+                        break;
+                    }
+                    case SCREEN_OFF:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                        finish();
+                        break;
+                    }
+                }
+                break;
+            }
+        }
     }
 
     @Override
-    public void onSuccessful(String message, EnumStatus status, List list) {
+    public void onSuccessful(String message, EnumStatus status, List<EnumPinAction> list) {
 
     }
 }

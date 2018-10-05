@@ -24,12 +24,13 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 
 
-public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudView {
+public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     private static final String TAG = EnableCloudActivity.class.getSimpleName();
 
@@ -278,21 +279,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
                 .show();
     }
 
-    @Override
-    public void showError(String message) {
-        Log.d(TAG,""+message);
-        onStopProgressDialog();
-    }
-
-    @Override
-    public void showSuccessful(String message) {
-        onStopProgressDialog();
-        presenter.mUser.cloud_id= message;
-        presenter.mUser.driveConnected = true;
-        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
-        onBackPressed();
-    }
-
     public void onShowProgressDialog(){
         if (progressDialog!=null){
             if (progressDialog.isShowing()){
@@ -339,12 +325,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
         Log.d(TAG,"onDriveRevokeAccess");
     }
 
-
-    @Override
-    public void onError(String message, EnumStatus status) {
-
-    }
-
     @Override
     public void onError(String message) {
 
@@ -356,8 +336,19 @@ public class EnableCloudActivity extends BaseGoogleApi implements EnableCloudVie
     }
 
     @Override
-    public void onSuccessful(String message, EnumStatus status) {
+    public void onError(String message, EnumStatus status) {
+        Log.d(TAG,""+message);
+        onStopProgressDialog();
+    }
 
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+        onStopProgressDialog();
+        presenter.mUser.cloud_id= message;
+        presenter.mUser.driveConnected = true;
+        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
+        onBackPressed();
     }
 
     @Override
