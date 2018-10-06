@@ -139,7 +139,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
             imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(this,presenter.mainCategories.icon));
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
-
     }
 
     @Override
@@ -187,6 +186,7 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     protected void onResume() {
         super.onResume();
         GalleryCameraMediaManager.getInstance().setListener(this);
+        onRegisterHomeWatcher();
     }
 
 

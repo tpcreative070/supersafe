@@ -14,18 +14,22 @@ import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity;
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity;
 import co.tpcreative.supersafe.ui.camera.CameraActivity;
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity;
 import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
-import co.tpcreative.supersafe.ui.help.HelpActivity;
+import co.tpcreative.supersafe.ui.fakepin.FakePinActivity;
+import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import co.tpcreative.supersafe.ui.signin.SignInActivity;
@@ -48,6 +52,8 @@ public class Navigator {
 
     public static void onMoveToMainTab(Context context){
         Intent intent = new Intent(context, MainTabActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -58,8 +64,6 @@ public class Navigator {
 
     public static void onMoveToDashBoard(Context context){
         Intent intent = new Intent(context, DashBoardActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -144,11 +148,6 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onHelp(Context context){
-        Intent intent = new Intent(context, HelpActivity.class);
-        context.startActivity(intent);
-    }
-
     public static void onVerifyAccount(Context context){
         Intent intent = new Intent(context,VerifyAccountActivity.class);
         context.startActivity(intent);
@@ -206,6 +205,31 @@ public class Navigator {
     public static void onMoveThemeSettings(Activity context){
         Intent intent = new Intent(context, ThemeSettingsActivity.class);
         context.startActivityForResult(intent,THEME_SETTINGS);
+    }
+
+    public static void onMoveBreakInAlerts(Context context){
+        Intent intent = new Intent(context, BreakInAlertsActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveFakePin(Context context){
+        Intent intent = new Intent(context, FakePinActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveSecretDoor(Context context){
+        Intent intent = new Intent(context, SecretDoorActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveHelpSupport(Context context){
+        Intent intent = new Intent(context, HelpAndSupportActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveAboutSuperSafe(Context context){
+        Intent intent = new Intent(context, AboutSuperSafeActivity.class);
+        context.startActivity(intent);
     }
 
 }

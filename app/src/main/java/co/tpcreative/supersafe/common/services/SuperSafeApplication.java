@@ -24,7 +24,12 @@ import com.snatik.storage.Storage;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
+import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
+import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
+import co.tpcreative.supersafe.ui.signin.SignInActivity;
+import co.tpcreative.supersafe.ui.signup.SignUpActivity;
+import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
@@ -190,7 +195,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof EnterPinActivity || activity instanceof SplashScreenActivity){
+        if (activity instanceof EnterPinActivity || activity instanceof SplashScreenActivity || activity instanceof SignInActivity ||
+                activity instanceof SignUpActivity ||
+                activity instanceof AskPermissionActivity ||
+                activity instanceof DashBoardActivity ||
+                activity instanceof VerifyActivity){
             Utils.Log(TAG,"Exception");
             Utils.Log(TAG,"Resume exception");
         }

@@ -58,6 +58,13 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         presenter.onUserInfo();
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
+
     @Override
     public void onStillScreenLock(EnumStatus status) {
         super.onStillScreenLock(status);

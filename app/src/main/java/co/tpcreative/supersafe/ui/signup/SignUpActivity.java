@@ -150,6 +150,10 @@ public class SignUpActivity extends BaseActivity implements TextView.OnEditorAct
         }
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
 
     public void onSignUp(){
         String email = edtEmail.getText().toString().trim();

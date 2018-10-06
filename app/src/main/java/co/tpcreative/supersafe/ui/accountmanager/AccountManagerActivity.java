@@ -96,6 +96,12 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView{
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
+
     public void setProgressValue(){
         CircularProgressDrawable circularProgressDrawable;
         CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)

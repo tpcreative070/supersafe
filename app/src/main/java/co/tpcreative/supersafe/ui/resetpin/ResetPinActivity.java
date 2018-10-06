@@ -65,6 +65,12 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
+
+    @Override
     public void onStillScreenLock(EnumStatus status) {
         super.onStillScreenLock(status);
         switch (status){

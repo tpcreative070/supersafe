@@ -140,6 +140,7 @@ public class CameraActivity extends BaseActivity implements
         super.onResume();
         mCameraView.start();
         GalleryCameraMediaManager.getInstance().setProgressing(false);
+        onRegisterHomeWatcher();
         Utils.Log(TAG,"onResume");
     }
 

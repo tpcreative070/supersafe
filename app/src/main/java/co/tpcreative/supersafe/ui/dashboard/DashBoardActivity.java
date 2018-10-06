@@ -5,9 +5,12 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class DashBoardActivity extends BaseActivity {
+
+    private static String TAG = DashBoardActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,11 @@ public class DashBoardActivity extends BaseActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Utils.Log(TAG,"onBackPressed");
     }
 
 }

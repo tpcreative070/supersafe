@@ -164,7 +164,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.101:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -250,6 +250,12 @@
     <string name="request_enter_code">Enter the access code below. We\'ll begin the reset process so you can create a new PIN</string>
     <string name="access_code">Access code</string>
     <string name="reset_pin">Reset PIN</string>
+    <string name="premium_feature">Premium feature</string>
+    <string name="break_in_alerts">Whenever someone enters an incorrect PIN, We will log the date time and snap a secret photo</string>
+    <string name="disabled">Disabled</string>
+    <string name="enabled">Enabled</string>
+    <string name="fake_pin">Create a second PIN or pattern that opens to a decoy Supersafe</string>
+    <string name="secret_door">Disguise Supersafe as a different app. Simply press and hold on the Supersafe logo to bring up the lock screen.</string>
 
     <string name="key_user">user</string>
     <string name="key_items">items</string>

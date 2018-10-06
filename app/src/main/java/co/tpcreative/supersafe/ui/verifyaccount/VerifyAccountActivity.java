@@ -91,7 +91,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 2001;
 
 
-
     private boolean isBack = true;
     private boolean isSync  = true;
 
@@ -126,6 +125,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
            }
         }
     }
+
 
 
     @Override
@@ -432,6 +432,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     protected void onResume() {
         super.onResume();
         isSync = true;
+        onRegisterHomeWatcher();
     }
 
     @Override

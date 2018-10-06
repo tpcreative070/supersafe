@@ -49,7 +49,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         presenter = new ThemeSettingsPresenter();
         presenter.bindView(this);
         presenter.getData();
-
     }
 
     @Override
@@ -62,6 +61,7 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
             }
         }
     }
+
 
     public void initRecycleView(LayoutInflater layoutInflater) {
         adapter = new ThemeSettingsAdapter(layoutInflater, getApplicationContext(), this);
@@ -85,6 +85,7 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     @Override
     protected void onResume() {
         super.onResume();
+        onRegisterHomeWatcher();
     }
 
     @Override

@@ -55,7 +55,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
         } else {
             onStartCount = 2;
         }
-        onRegisterHomeWatcher();
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -89,7 +88,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
     public void onStillScreenLock(EnumStatus status) {
         Utils.Log(TAG,"onStillScreenLock");
     }
-
 
 
     @Override
@@ -150,8 +148,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
         super.onResume();
     }
 
-    public void onRegisterHomeWatcher(){
+    protected void onRegisterHomeWatcher(){
         /*Home action*/
+        if (mHomeWatcher!=null){
+            if (mHomeWatcher.isRegistered){
+                return;
+            }
+        }
+
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override

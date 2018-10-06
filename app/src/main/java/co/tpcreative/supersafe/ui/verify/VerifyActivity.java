@@ -145,7 +145,7 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
     }
 
 
@@ -217,11 +217,11 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
         switch (status){
             case VERIFY_CODE:{
                 Navigator.onMoveSetPin(this,false);
+                finish();
                 break;
             }
         }
     }
-
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {

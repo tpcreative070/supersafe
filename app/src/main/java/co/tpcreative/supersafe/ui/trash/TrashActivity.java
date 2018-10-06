@@ -73,8 +73,6 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         presenter = new TrashPresenter();
         presenter.bindView(this);
         presenter.getData(this);
-
-
     }
 
     @Override
@@ -88,6 +86,11 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
 
     public void initRecycleView(LayoutInflater layoutInflater){
         adapter = new TrashAdapter(layoutInflater,getApplicationContext(),this);

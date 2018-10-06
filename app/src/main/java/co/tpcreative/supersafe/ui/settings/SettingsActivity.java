@@ -100,6 +100,16 @@ public class SettingsActivity extends BaseActivity {
 
         private Preference mTheme;
 
+        private Preference mBreakInAlerts;
+
+        private Preference mFakePin;
+
+        private Preference mSecretDoor;
+
+        private Preference mHelpSupport;
+
+        private Preference mAboutSuperSafe;
+
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
          * corresponding preference has been changed.
@@ -133,6 +143,21 @@ public class SettingsActivity extends BaseActivity {
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
                             Navigator.onMoveThemeSettings(activity);
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
+                            Navigator.onMoveBreakInAlerts(getContext());
+                        }
+                        else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
+                            Navigator.onMoveFakePin(getContext());
+                        }
+                        else if (preference.getKey().equals(getString(R.string.key_secret_door))){
+                            Navigator.onMoveSecretDoor(getContext());
+                        }
+                        else if (preference.getKey().equals(getString(R.string.key_help_support))){
+                            Navigator.onMoveHelpSupport(getContext());
+                        }
+                        else if (preference.getKey().equals(getString(R.string.key_about_SuperSafe))){
+                            Navigator.onMoveAboutSuperSafe(getContext());
+                        }
                     }
                     return true;
                 }
@@ -156,6 +181,31 @@ public class SettingsActivity extends BaseActivity {
             mTheme = findPreference(getString(R.string.key_theme));
             mTheme.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mTheme.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Break-In-Alerts*/
+            mBreakInAlerts = findPreference(getString(R.string.key_break_in_alert));
+            mBreakInAlerts.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mBreakInAlerts.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Fake-Pin*/
+            mFakePin = findPreference(getString(R.string.key_fake_pin));
+            mFakePin.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mFakePin.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Secret door*/
+            mSecretDoor = findPreference(getString(R.string.key_secret_door));
+            mSecretDoor.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mSecretDoor.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Help And support*/
+            mHelpSupport = findPreference(getString(R.string.key_help_support));
+            mHelpSupport.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mHelpSupport.setOnPreferenceChangeListener(createChangeListener());
+
+            /*About SuperSafe*/
+            mAboutSuperSafe = findPreference(getString(R.string.key_about_SuperSafe));
+            mAboutSuperSafe.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mAboutSuperSafe.setOnPreferenceChangeListener(createChangeListener());
 
         }
 

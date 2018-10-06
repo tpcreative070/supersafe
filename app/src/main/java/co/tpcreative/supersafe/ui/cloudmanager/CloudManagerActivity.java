@@ -46,6 +46,12 @@ public class CloudManagerActivity extends BaseGoogleApi{
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
+
     @OnClick(R.id.btnSignIn)
     public void onClickedSignIn(View view) {
         signIn("butlerichotel@gmail.com");

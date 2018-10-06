@@ -222,6 +222,12 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
+
     public void onAskDelete(){
         new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))

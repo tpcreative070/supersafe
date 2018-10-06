@@ -497,6 +497,9 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
             case RESET:{
                 break;
             }
+            case SET:{
+                break;
+            }
         }
     }
 

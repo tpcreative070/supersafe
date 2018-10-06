@@ -107,7 +107,12 @@ public class PlayerActivity extends BaseActivity implements BaseView{
         if (player!=null){
             player.stop();
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
     }
 
     @Override

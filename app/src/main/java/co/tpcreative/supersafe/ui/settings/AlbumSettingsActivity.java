@@ -75,6 +75,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
     protected void onResume() {
         onDrawOverLay(this);
         super.onResume();
+        onRegisterHomeWatcher();
     }
 
     @Override

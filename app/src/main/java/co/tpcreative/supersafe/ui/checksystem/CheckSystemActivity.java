@@ -169,6 +169,11 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView{
         editText.setFocusable(false);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
+    }
 
     @Override
     protected void onDriveSuccessful() {

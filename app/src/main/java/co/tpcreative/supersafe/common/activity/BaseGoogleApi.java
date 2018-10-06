@@ -98,8 +98,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
         mUser = User.getInstance().getUserInfo();
 
-        /*Home action*/
-        onRegisterHomeWatcher();
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -174,6 +172,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
     @Override
     protected void onDestroy() {
         if (mHomeWatcher!=null){
+            Utils.Log(TAG,"Stop home watcher....");
             mHomeWatcher.stopWatch();
         }
         if (unbinder != null)
@@ -184,16 +183,18 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
     @Override
     protected void onResume() {
        SingletonBaseApiActivity.getInstance().setListener(this);
-       if (mHomeWatcher!=null){
-           if (!mHomeWatcher.isRegistered){
-               onRegisterHomeWatcher();
-           }
-       }
        super.onResume();
     }
 
     public void onRegisterHomeWatcher(){
+        Utils.Log(TAG,"Register");
         /*Home action*/
+        if (mHomeWatcher!=null){
+            if (mHomeWatcher.isRegistered){
+                return;
+            }
+        }
+
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
