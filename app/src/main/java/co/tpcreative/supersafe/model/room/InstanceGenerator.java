@@ -11,11 +11,12 @@ import java.util.UUID;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 
-@Database(entities = {Items.class, MainCategories.class}, version = 3, exportSchema = false)
+@Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 3, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
@@ -26,6 +27,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
     public abstract MainCategoriesDao mainCategoriesDao();
+
+    @Ignore
+    public abstract BreakInAlertsDao breakInAlertsDao();
 
     @Ignore
     public static final String TAG = InstanceGenerator.class.getSimpleName();
@@ -397,6 +401,58 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
+
+    /*Break In Alerts*/
+
+    /*Items action*/
+
+    public synchronized void onInsert(BreakInAlerts cTalkManager){
+        try {
+            if (cTalkManager==null){
+                return;
+            }
+            instance.breakInAlertsDao().insert(cTalkManager);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public synchronized void onUpdate(BreakInAlerts cTalkManager){
+        try {
+            if (cTalkManager==null){
+                Utils.Log(TAG,"Null???? ");
+                return;
+            }
+            instance.breakInAlertsDao().update(cTalkManager);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public synchronized void onDelete(BreakInAlerts cTalkManager){
+        try {
+            if (cTalkManager==null){
+                Utils.Log(TAG,"Null???? ");
+                return;
+            }
+            instance.breakInAlertsDao().delete(cTalkManager);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+    }
+
+    public final synchronized List<BreakInAlerts> getList(){
+        try{
+            return instance.breakInAlertsDao().loadAll();
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
 
 }
 

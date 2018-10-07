@@ -1,10 +1,14 @@
 package co.tpcreative.supersafe.ui.lockscreen;
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
@@ -16,24 +20,37 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
+import co.tpcreative.supersafe.common.hiddencamera.CameraError;
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraFocus;
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraResolution;
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraRotation;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
 
-public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAction> {
+public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction> {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -64,6 +81,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
     private boolean mSignUp = false;
     private String mFirstPin = "";
     private static LockScreenPresenter presenter;
+    private CameraConfig mCameraConfig;
 
 
     public static Intent getIntent(Context context, int action,boolean isSignUp) {
@@ -177,6 +195,7 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
                             presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.DONE);
                         }
                         if (pinLength>pinResult.length()){
+                            onTakePicture(intermediatePin);
                             shake();
                             mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
                             mPinLockView.resetPinLockView();
@@ -211,6 +230,8 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
 
         mIndicatorDots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION);
         checkForFont();
+
+        onInitHiddenCamera();
 
     }
 
@@ -674,6 +695,75 @@ public class EnterPinActivity extends BaseActivity implements BaseView<EnumPinAc
 
     @Override
     public void onSuccessful(String message, EnumStatus status, List<EnumPinAction> list) {
-
     }
+
+    @Override
+    public void onImageCapture(@NonNull File imageFile, @NonNull String pin) {
+        super.onImageCapture(imageFile, pin);
+        showMessage(imageFile.getAbsolutePath());
+        BreakInAlerts inAlerts = new BreakInAlerts();
+        inAlerts.fileName = imageFile.getAbsolutePath();
+        inAlerts.pin = pin;
+        inAlerts.time = System.currentTimeMillis();
+        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(inAlerts);
+    }
+
+    @Override
+    public void onCameraError(int errorCode) {
+        super.onCameraError(errorCode);
+        switch (errorCode) {
+            case CameraError.ERROR_CAMERA_OPEN_FAILED:
+                //Camera open failed. Probably because another application
+                //is using the camera
+                showMessage(getString(R.string.error_cannot_open));
+                break;
+            case CameraError.ERROR_IMAGE_WRITE_FAILED:
+                //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
+                showMessage(getString(R.string.error_cannot_write));
+                break;
+            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
+                //camera permission is not available
+                //Ask for the camera permission before initializing it.
+                showMessage(getString(R.string.error_cannot_get_permission));
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
+                showMessage(getString(R.string.error_not_having_camera));
+                break;
+        }
+    }
+
+    public void onInitHiddenCamera(){
+        final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert),false);
+        if (!value){
+            showMessage("Permission denied");
+            return;
+        }
+        mCameraConfig = new CameraConfig()
+                .getBuilder(this)
+                .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+                .setCameraResolution(CameraResolution.HIGH_RESOLUTION)
+                .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+                .setImageRotation(CameraRotation.ROTATION_270)
+                .setCameraFocus(CameraFocus.AUTO)
+                .build();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            //Start camera preview
+            startCamera(mCameraConfig);
+        }
+    }
+
+    public void onTakePicture(String pin){
+        final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert),false);
+        if (!value){
+            showMessage("Permission denied");
+            return;
+        }
+        mCameraConfig.getBuilder(SuperSafeApplication.getInstance())
+                .setPin(pin);
+        mCameraConfig.getBuilder(SuperSafeApplication.getInstance()).
+                setImageFile(SuperSafeApplication.getInstance().getDefaultStorageFile(CameraImageFormat.FORMAT_JPEG));
+        takePicture();
+    }
+
 }

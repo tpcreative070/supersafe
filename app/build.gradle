@@ -196,6 +196,9 @@ dependencies {
         transitive = true;
     }
 
+    /*Time ago*/
+    implementation project(':time_ago_library')
+
 }
 
 /*Resolved duplicated for Google api client*/

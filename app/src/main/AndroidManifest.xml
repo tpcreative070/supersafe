@@ -98,11 +98,16 @@
         <activity
             android:name=".ui.theme.ThemeSettingsActivity"
             android:label="@string/key_update_theme" />
-        <activity android:name=".ui.breakinalerts.BreakInAlertsActivity" />
-        <activity android:name=".ui.fakepin.FakePinActivity"
-            android:label="@string/key_fake_pin"/>
+        <activity
+            android:name=".ui.breakinalerts.BreakInAlertsActivity"
+            android:label="@string/key_break_in_alert" />
+        <activity
+            android:name=".ui.fakepin.FakePinActivity"
+            android:label="@string/key_fake_pin" />
         <activity android:name=".ui.secretdoor.SecretDoorActivity" />
-        <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity"></activity>
+        <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity" />
+        <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
+        <activity android:name=".ui.fakepin.FakePinDetailActivity"></activity>
     </application>
 
 </manifest>

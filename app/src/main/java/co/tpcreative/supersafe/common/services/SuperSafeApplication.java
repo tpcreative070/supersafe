@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
@@ -53,6 +54,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private String supersafe;
     private String supersafePrivate;
     private String supersafeBackup;
+    private String supersafeBreakInAlerts;
     private String supersafeLog;
     private String key;
     private Storage storage;
@@ -127,7 +129,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         supersafePrivate = supersafe+"private/";
         supersafeBackup = supersafe+"backup/";
         supersafeLog = supersafe+"log/";
-
+        supersafeBreakInAlerts  = supersafe+"break_in_alerts/";
 
         registerActivityLifecycleCallbacks(this);
         Log.d(TAG,supersafe);
@@ -272,14 +274,19 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return supersafeLog;
     }
 
+    public String getSupersafeBreakInAlerts() {
+        return supersafeBreakInAlerts;
+    }
+
     public void initFolder() {
-        if (storage.isDirectoryExists(supersafe) & storage.isDirectoryExists(supersafePrivate) & storage.isDirectoryExists(supersafeBackup) & storage.isDirectoryExists(supersafeLog)) {
+        if (storage.isDirectoryExists(supersafe) & storage.isDirectoryExists(supersafePrivate) & storage.isDirectoryExists(supersafeBackup) & storage.isDirectoryExists(supersafeLog) & storage.isDirectoryExists(supersafeBreakInAlerts)) {
             Log.d(TAG, "SuperSafe is existing");
         } else {
             storage.createDirectory(supersafe);
             storage.createDirectory(supersafePrivate);
             storage.createDirectory(supersafeBackup);
             storage.createDirectory(supersafeLog);
+            storage.createDirectory(supersafeBreakInAlerts);
             Log.d(TAG, "SuperSafe was created");
         }
     }
@@ -441,6 +448,13 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public File getPackageFolderPath(Context context){
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());
         return file;
+    }
+
+    public File getDefaultStorageFile(int mImageFormat) {
+        return new File(SuperSafeApplication.getInstance().getSupersafeBreakInAlerts()
+                + File.separator
+                + "IMG_" + System.currentTimeMillis()   //IMG_214515184113123.png
+                + (mImageFormat == CameraImageFormat.FORMAT_JPEG ? ".jpeg" : ".png"));
     }
 
 }

@@ -1,5 +1,6 @@
 
 package co.tpcreative.supersafe.common.activity;
+import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.Intent;
@@ -32,6 +33,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
@@ -56,8 +64,10 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SingletonBaseApiActivity.SingletonBaseApiActivityListener{
@@ -133,7 +143,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
             }
         }
     }
-
 
 
     protected void setStatusBarColored(Activity context, int color) {

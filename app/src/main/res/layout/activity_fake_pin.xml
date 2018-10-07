@@ -92,5 +92,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <TextView
+            android:textStyle="bold"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textColor="?attr/colorPrimaryDark"
+            android:textSize="@dimen/text_size_normal"
+            android:text="@string/create_fake_pin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:tint="?attr/colorPrimaryDark"
+                android:src="@drawable/baseline_remove_red_eye_white_48"
+                android:layout_width="@dimen/image_size_custom_40"
+                android:layout_height="@dimen/image_size_custom_40"/>
+        </LinearLayout>
+
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

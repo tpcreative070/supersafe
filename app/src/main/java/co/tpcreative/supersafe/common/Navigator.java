@@ -9,6 +9,7 @@ import com.darsh.multipleimageselect.helpers.Constants;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Items;
@@ -18,6 +19,7 @@ import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity;
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity;
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsDetailActivity;
 import co.tpcreative.supersafe.ui.camera.CameraActivity;
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity;
 import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
@@ -209,6 +211,14 @@ public class Navigator {
 
     public static void onMoveBreakInAlerts(Context context){
         Intent intent = new Intent(context, BreakInAlertsActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveBreakInAlertsDetail(Context context, BreakInAlerts inAlerts){
+        Intent intent = new Intent(context, BreakInAlertsDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(context.getString(R.string.key_break_in_alert),inAlerts);
+        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 

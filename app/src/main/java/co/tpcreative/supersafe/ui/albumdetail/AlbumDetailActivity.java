@@ -139,6 +139,7 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
             imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(this,presenter.mainCategories.icon));
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
+        onDrawOverLay(this);
     }
 
     @Override
