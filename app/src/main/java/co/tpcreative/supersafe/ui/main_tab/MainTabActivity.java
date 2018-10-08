@@ -60,7 +60,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     Toolbar toolbar;
     @BindView(R.id.tabs)
     TabLayout tabLayout;
-    private Toast mToast;
     private MainViewPagerAdapter adapter;
     private MainTabPresenter presenter;
     AnimationsContainer.FramesSequenceAnimation animation;
@@ -239,11 +238,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         onShowDialog();
                         return false; // false will close it without animation
                     case R.id.fab_photo:
-                        showToast(actionItem.getLabel(getApplicationContext()) + " Photo");
+                        showMessage(actionItem.getLabel(getApplicationContext()) + " Photo");
                         Navigator.onMoveToAlbum(MainTabActivity.this);
                         return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
                     case R.id.fab_camera:
-                        showToast(actionItem.getLabel(getApplicationContext()) + " Camera");
+                        showMessage(actionItem.getLabel(getApplicationContext()) + " Camera");
                         onAddPermissionCamera();
                         return  false;
                 }
@@ -323,14 +322,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         Log.d(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
-    }
-
-    protected void showToast(String text) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-        mToast.show();
     }
 
     @Override

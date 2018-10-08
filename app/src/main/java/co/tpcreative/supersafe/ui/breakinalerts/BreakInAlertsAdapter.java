@@ -68,7 +68,7 @@ public class BreakInAlertsAdapter extends BaseAdapter<BreakInAlerts, BaseHolder>
             Locale locale = new Locale("en");
             Locale.setDefault(locale);
             TimeAgoMessages messages = new TimeAgoMessages.Builder().withLocale(locale).build();
-            
+
             tvTime.setText(TimeAgo.using(data.time,messages));
             tvPin.setText(data.pin);
             Glide.with(myActivity)

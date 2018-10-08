@@ -51,6 +51,8 @@ public enum EnumStatus {
         RECREATE,
         PLAY,
         CREATE,
+        FAKE_PIN,
+        CREATE_FAKE_PIN,
         DELETE,
         CHANGE,
         UPDATE,

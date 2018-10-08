@@ -6,6 +6,8 @@ public enum EnumPinAction {
     VERIFY,
     CHANGE,
     INIT_PREFERENCE,
+    VERIFY_TO_CHANGE_FAKE_PIN,
+    FAKE_PIN,
     VERIFY_TO_CHANGE,
     CREATE,
     DONE,

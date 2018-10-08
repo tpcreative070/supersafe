@@ -107,7 +107,8 @@
         <activity android:name=".ui.secretdoor.SecretDoorActivity" />
         <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity" />
         <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
-        <activity android:name=".ui.fakepin.FakePinDetailActivity"></activity>
+        <activity android:name=".ui.fakepin.FakePinComponentActivity"
+            android:label="@string/app_name"></activity>
     </application>
 
 </manifest>

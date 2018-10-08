@@ -1,11 +1,8 @@
 package co.tpcreative.supersafe.ui.albumdetail;
-
 import android.app.Activity;
 import android.os.Bundle;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
@@ -45,7 +42,6 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
         }
     }
-
 
     public void  getData(){
         BaseView view = view();

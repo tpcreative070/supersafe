@@ -25,6 +25,7 @@ import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity;
 import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 import co.tpcreative.supersafe.ui.fakepin.FakePinActivity;
+import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
@@ -99,6 +100,11 @@ public class Navigator {
 
     public static void onMoveToChangePin(Context context,boolean isSignUp){
         Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.INIT_PREFERENCE.ordinal(),isSignUp);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveToFakePin(Context context,boolean isSignUp){
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal(),isSignUp);
         context.startActivity(intent);
     }
 
@@ -224,6 +230,13 @@ public class Navigator {
 
     public static void onMoveFakePin(Context context){
         Intent intent = new Intent(context, FakePinActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveFakePinComponent(Context context){
+        Intent intent = new Intent(context, FakePinComponentActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

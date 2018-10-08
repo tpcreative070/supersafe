@@ -57,6 +57,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private String supersafeBreakInAlerts;
     private String supersafeLog;
     private String key;
+    private String fake_key;
     private Storage storage;
     private EncryptConfiguration configuration;
     private EncryptConfiguration configurationFile;
@@ -71,7 +72,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public static RootAPI serverAPI ;
     public static RootAPI serverDriveApi;
     private String authorization = null ;
-    private Activity activity;
+
 
     private GoogleSignInOptions.Builder options;
     private Set<Scope> requiredScopes;
@@ -126,6 +127,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         storage = new Storage(getApplicationContext());
         supersafe = storage.getExternalStorageDirectory() + "/SuperSafe_DoNot_Delete/";
         key = ".encrypt_key";
+        fake_key = ".encrypt_fake_key";
         supersafePrivate = supersafe+"private/";
         supersafeBackup = supersafe+"backup/";
         supersafeLog = supersafe+"log/";
@@ -190,9 +192,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-        if (activity instanceof SplashScreenActivity){
-            this.activity = activity;
-        }
+
     }
 
     @Override
@@ -310,6 +310,31 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         boolean isFile = storage.isFileExist(getSuperSafe() + key);
         if (isFile) {
             String value = storage.readTextFile(getSuperSafe() + key);
+            Log.d(TAG, "Key value is : " + value);
+            return value;
+        }
+        return "";
+    }
+
+    public void writeFakeKey(String value) {
+        if (!isPermissionWrite()) {
+            Log.d(TAG, "Please grant access permission");
+            return;
+        }
+        storage.setEncryptConfiguration(configuration);
+        storage.createFile(getSuperSafe() + fake_key, value);
+        Log.d(TAG, "Created key :" + value);
+    }
+
+    public String readFakeKey() {
+        if (!isPermissionRead()) {
+            Log.d(TAG, "Please grant access permission");
+            return "";
+        }
+        storage.setEncryptConfiguration(configuration);
+        boolean isFile = storage.isFileExist(getSuperSafe() + fake_key);
+        if (isFile) {
+            String value = storage.readTextFile(getSuperSafe() + fake_key);
             Log.d(TAG, "Key value is : " + value);
             return value;
         }
