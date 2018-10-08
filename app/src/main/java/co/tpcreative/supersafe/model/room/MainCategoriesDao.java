@@ -22,40 +22,40 @@ public interface MainCategoriesDao {
     @Delete
     void delete(MainCategories... items);
 
-    @Query("Delete from maincategories  WHERE categories_local_id = :categories_local_id")
-    void deleteAll(String categories_local_id);
+    @Query("Delete from maincategories  WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
+    void deleteAll(String categories_local_id,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE id = :id")
-    MainCategories loadItemId(int id);
+    @Query("Select * FROM maincategories WHERE id = :id AND isFakePin =:isFakePin")
+    MainCategories loadItemId(int id,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name")
-    MainCategories loadItemId(String categories_hex_name);
+    @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name AND isFakePin =:isFakePin")
+    MainCategories loadItemId(String categories_hex_name,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name")
-    List<MainCategories> loadListAllItemId(String categories_hex_name);
+    @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name AND isFakePin =:isFakePin")
+    List<MainCategories> loadListAllItemId(String categories_hex_name,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id")
-    MainCategories loadItemLocalId(String categories_local_id);
+    @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
+    MainCategories loadItemLocalId(String categories_local_id,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE categories_id = :categories_id")
-    MainCategories loadItemCategoriesId(String categories_id);
+    @Query("Select * FROM maincategories WHERE categories_id = :categories_id AND isFakePin =:isFakePin")
+    MainCategories loadItemCategoriesId(String categories_id,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer")
-    MainCategories loadItemCategoriesSync(boolean isSyncOwnServer);
+    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer AND isFakePin =:isFakePin")
+    MainCategories loadItemCategoriesSync(boolean isSyncOwnServer,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer")
-    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer);
+    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer AND isFakePin =:isFakePin")
+    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer ORDER BY id DESC LIMIT :limit")
-    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,int limit);
+    @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer AND isFakePin =:isFakePin ORDER BY id DESC LIMIT :limit")
+    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,int limit,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id")
-    List<MainCategories> loadListItemId(String categories_local_id);
+    @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id AND isFakePin=:isFakePin")
+    List<MainCategories> loadListItemId(String categories_local_id,boolean isFakePin);
 
-    @Query("Select * FROM maincategories WHERE isDelete = :isDelete")
-    List<MainCategories> loadAll(boolean isDelete);
+    @Query("Select * FROM maincategories WHERE isDelete = :isDelete AND isFakePin =:isFakePin")
+    List<MainCategories> loadAll(boolean isDelete,boolean isFakePin);
 
-    @Query("Select * FROM maincategories")
-    List<MainCategories> loadAll();
+    @Query("Select * FROM maincategories WHERE isFakePin =:isFakePin")
+    List<MainCategories> loadAll(boolean isFakePin);
 
 }

@@ -392,7 +392,7 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false,1);
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false,false);
 
         if (mList == null) {
             Utils.Log(TAG, "Categories already sync");
@@ -541,17 +541,17 @@ public class ServiceManager implements SuperSafeServiceView {
                     } else if (status == EnumStatus.SYNC_READY) {
 
                         isLoadingData = false;
-                        final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
+                        final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
 
-                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal());
+                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal(),false);
 
-                        final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
+                        final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true,false);
 
-                        final List<Items> mPreviousList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true);
+                        final List<Items> mPreviousList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,false);
 
-                        final List<MainCategories> mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false);
+                        final List<MainCategories> mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false,false);
 
-                        final List<MainCategories> mPreviousMainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true);
+                        final List<MainCategories> mPreviousMainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
 
                         final List<MainCategories> deleteAlbum = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true);
 
@@ -559,7 +559,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         boolean isDeleteAlbum = true;
                         if (deleteAlbum !=null && deleteAlbum.size()>0){
                             for (MainCategories index : deleteAlbum){
-                                final List<Items> mItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id);
+                                final List<Items> mItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false);
                                 if (mItems!=null && mItems.size()>0){
                                     isDeleteAlbum = false;
                                 }
@@ -689,7 +689,7 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal());
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal(),false);
 
         if (mList == null) {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
@@ -874,9 +874,9 @@ public class ServiceManager implements SuperSafeServiceView {
             Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
             return;
         }
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
+        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true,false);
 
-        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true);
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true,false);
 
         if (list == null) {
             Utils.Log(TAG, "No Found data to delete on cloud items!!!");
@@ -997,8 +997,8 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
-        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems();
+        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
 
         if (list == null) {
             Utils.Log(TAG, "No Found data from Cloud!!!");
@@ -1060,7 +1060,7 @@ public class ServiceManager implements SuperSafeServiceView {
                             isWorking = false;
                         } else {
                             isWorking = false;
-                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id);
+                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id,false);
                             if (main != null) {
                                 if (main.categories_id != null) {
                                     isWorking = true;
@@ -1114,7 +1114,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                         if (request != null) {
                                             final Items itemsRequest = request.items;
                                             if (itemsRequest != null) {
-                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id);
+                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id,false);
                                                 if (mItem != null) {
                                                     mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                     if (itemsRequest.isOriginalGlobalId) {
@@ -1191,8 +1191,8 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
-        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems();
+        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems(false);
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems(false);
         if (list == null) {
             Utils.Log(TAG, "No Found data from device !!!");
             return;
@@ -1249,7 +1249,7 @@ public class ServiceManager implements SuperSafeServiceView {
                             isWorking = false;
                         } else {
                             isWorking = false;
-                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id);
+                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id,false);
                             if (main != null) {
                                 if (main.categories_id == null) {
                                     isWorking = false;
@@ -1291,7 +1291,7 @@ public class ServiceManager implements SuperSafeServiceView {
                                         if (response != null) {
                                             if (response.id != null) {
                                                 DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
-                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.items_id);
+                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.items_id,false);
                                                 if (mItem != null && contentTitle != null) {
                                                     EnumFileType type = EnumFileType.values()[contentTitle.fileType];
                                                     if (type == EnumFileType.ORIGINAL) {
@@ -1445,12 +1445,7 @@ public class ServiceManager implements SuperSafeServiceView {
     /*Gallery action*/
 
     public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id, MainCategories mainCategories) {
-        if (myService == null) {
-            Utils.Log(TAG, "Service is null");
-            return;
-        }
         subscriptions = Observable.create(subscriber -> {
-
             final MimeTypeFile mMimeTypeFile = mimeTypeFile;
             final EnumFormatType enumTypeFile = mMimeTypeFile.formatType;
             final String mPath = path;
@@ -1460,6 +1455,7 @@ public class ServiceManager implements SuperSafeServiceView {
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
             final String categories_local_id = mMainCategories.categories_local_id;
+            final boolean isFakePin = mainCategories.isFakePin;
 
             Utils.Log(TAG, "object " + new Gson().toJson(mMimeTypeFile));
             Bitmap thumbnail = null;
@@ -1538,6 +1534,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.isDeleteLocal = false;
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
+                        description.isFakePin = isFakePin;
 
 
                         items = new Items(false,
@@ -1566,7 +1563,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.statusProgress,
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
-                                description.deleteAction);
+                                description.deleteAction,
+                                description.isFakePin);
 
                         Utils.Log(TAG, "start compress");
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1640,6 +1638,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.isDeleteLocal = false;
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
+                        description.isFakePin = isFakePin;
 
 
                         items = new Items(false,
@@ -1668,7 +1667,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.statusProgress,
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
-                                description.deleteAction);
+                                description.deleteAction,
+                                description.isFakePin);
 
 
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1731,6 +1731,7 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.isDeleteLocal = false;
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
+                        description.isFakePin = isFakePin;
 
 
                         items = new Items(false,
@@ -1759,7 +1760,8 @@ public class ServiceManager implements SuperSafeServiceView {
                                 description.statusProgress,
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
-                                description.deleteAction);
+                                description.deleteAction,
+                                description.isFakePin);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
@@ -1791,8 +1793,8 @@ public class ServiceManager implements SuperSafeServiceView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
+                    final Items items = (Items) response;
                     try {
-                        final Items items = (Items) response;
                         if (items != null) {
                             long mb;
                             EnumFormatType enumFormatType = EnumFormatType.values()[items.formatType];
@@ -1827,9 +1829,14 @@ public class ServiceManager implements SuperSafeServiceView {
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        GalleryCameraMediaManager.getInstance().onUpdatedView();
-                        SingletonPrivateFragment.getInstance().onUpdateView();
-                        ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        GalleryCameraMediaManager.getInstance().setProgressing(false);
+                        if (items.isFakePin){
+                            SingletonFakePinComponent.getInstance().onUpdateView();
+                        }
+                        else{
+                            SingletonPrivateFragment.getInstance().onUpdateView();
+                            ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        }
                     }
                 });
     }
@@ -1838,16 +1845,11 @@ public class ServiceManager implements SuperSafeServiceView {
     /*--------------Camera action-----------------*/
 
     public void onSaveDataOnCamera(final byte[] mData, final MainCategories mainCategories) {
-
-        if (myService == null) {
-            GalleryCameraMediaManager.getInstance().setProgressing(false);
-            Utils.Log(TAG, "Service is null");
-        }
         subscriptions = Observable.create(subscriber -> {
-
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
             final String categories_local_id = mMainCategories.categories_local_id;
+            final boolean isFakePin = mainCategories.isFakePin;
 
             final byte[] data = mData;
             final Bitmap mBitmap;
@@ -1887,6 +1889,7 @@ public class ServiceManager implements SuperSafeServiceView {
                 description.isDeleteLocal = false;
                 description.isDeleteGlobal = false;
                 description.deleteAction = EnumDelete.NONE.ordinal();
+                description.isFakePin = isFakePin;
 
 
                 Items items = new Items(false,
@@ -1915,7 +1918,8 @@ public class ServiceManager implements SuperSafeServiceView {
                         description.statusProgress,
                         description.isDeleteLocal,
                         description.isDeleteGlobal,
-                        description.deleteAction);
+                        description.deleteAction,
+                        description.isFakePin);
 
                 boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
                 boolean createdOriginal = storage.createFile(originalPath, data);
@@ -1942,8 +1946,8 @@ public class ServiceManager implements SuperSafeServiceView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
+                    final Items mItem = (Items) response;
                     try {
-                        final Items mItem = (Items) response;
                         if (mItem != null) {
                             long mb;
                             if (storage.isFileExist(mItem.originalPath)) {
@@ -1961,8 +1965,13 @@ public class ServiceManager implements SuperSafeServiceView {
                         e.printStackTrace();
                     } finally {
                         GalleryCameraMediaManager.getInstance().setProgressing(false);
-                        SingletonPrivateFragment.getInstance().onUpdateView();
-                        ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        if (mItem.isFakePin){
+                           SingletonFakePinComponent.getInstance().onUpdateView();
+                        }
+                        else{
+                            SingletonPrivateFragment.getInstance().onUpdateView();
+                            ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        }
                     }
                 });
 

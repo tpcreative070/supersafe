@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.fakepin;
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -8,9 +9,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
 import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.darsh.multipleimageselect.helpers.Constants;
@@ -24,6 +29,7 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -31,7 +37,9 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -39,10 +47,15 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public class FakePinComponentActivity extends BaseActivity {
+public class FakePinComponentActivity extends BaseActivity implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
 
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+    private FakePinComponentAdapter adapter;
+    private FakePinComponentPresenter presenter;
+    private static final String TAG = FakePinComponentActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +65,19 @@ public class FakePinComponentActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         initSpeedDial();
+        initRecycleView(getLayoutInflater());
+        presenter = new FakePinComponentPresenter();
+        presenter.bindView(this);
+        presenter.getData();
+    }
+
+    public void initRecycleView(LayoutInflater layoutInflater){
+        adapter = new FakePinComponentAdapter(layoutInflater,this,this);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
     }
 
     private void initSpeedDial() {
@@ -139,20 +165,18 @@ public class FakePinComponentActivity extends BaseActivity {
                         Utils.Log(TAG, "Value");
                         String value = input.toString();
                         String base64Code = Utils.getHexCode(value);
-
                         MainCategories item = MainCategories.getInstance().getTrashItem();
                         String result = item.categories_hex_name;
                         if (base64Code.equals(result)) {
                             Toast.makeText(FakePinComponentActivity.this, "This name already existing", Toast.LENGTH_SHORT).show();
                         } else {
-                            boolean response = MainCategories.getInstance().onAddCategories(base64Code, value);
+                            boolean response = MainCategories.getInstance().onAddFakePinCategories(base64Code, value,true);
                             if (response) {
                                 Toast.makeText(FakePinComponentActivity.this, "Created album successful", Toast.LENGTH_SHORT).show();
-                                ServiceManager.getInstance().onGetListCategoriesSync();
                             } else {
                                 Toast.makeText(FakePinComponentActivity.this, "Album name already existing", Toast.LENGTH_SHORT).show();
                             }
-                            SingletonPrivateFragment.getInstance().onUpdateView();
+                            presenter.getData();
                         }
                     }
                 });
@@ -167,7 +191,7 @@ public class FakePinComponentActivity extends BaseActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            final List<MainCategories> list = MainCategories.getInstance().getList();
+                            final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
                             if (list != null) {
                                 Navigator.onMoveCamera(FakePinComponentActivity.this, list.get(0));
                             }
@@ -204,16 +228,7 @@ public class FakePinComponentActivity extends BaseActivity {
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data");
-                    SingletonPrivateFragment.getInstance().onUpdateView();
-                } else {
-                    Utils.Log(TAG, "Nothing to do on Camera");
-                }
-                break;
-            }
-            case Navigator.PHOTO_SLIDE_SHOW: {
-                if (resultCode == Activity.RESULT_OK) {
-                    Utils.Log(TAG, "reload data");
-                    SingletonPrivateFragment.getInstance().onUpdateView();
+                    SingletonFakePinComponent.getInstance().onUpdateView();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera");
                 }
@@ -236,7 +251,7 @@ public class FakePinComponentActivity extends BaseActivity {
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             mimeTypeFile.name = name;
-                            final List<MainCategories> list = MainCategories.getInstance().getList();
+                            final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
                             if (list == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
@@ -256,6 +271,111 @@ public class FakePinComponentActivity extends BaseActivity {
                 break;
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SingletonFakePinComponent.getInstance().setListener(this);
+    }
+
+    @Override
+    public void onUpdateView() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                presenter.getData();
+            }
+        });
+    }
+
+    @Override
+    public void onStartLoading(EnumStatus status) {
+
+    }
+
+    @Override
+    public void onStopLoading(EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case RELOAD:{
+                adapter.setDataSource(presenter.mList);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public void onClickItem(int position) {
+        Log.d(TAG,"Position :"+ position);
+        try {
+            String value  = Utils.getHexCode(getString(R.string.key_trash));
+            if (value.equals(presenter.mList.get(position).categories_hex_name)){
+                Navigator.onMoveTrash(getActivity());
+            }
+            else{
+                final MainCategories mainCategories = presenter.mList.get(position);
+                Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void onSetting(int position) {
+        Navigator.onAlbumSettings(getActivity(),presenter.mList.get(position));
+    }
+
+    @Override
+    public void onDeleteAlbum(int position) {
+        presenter.onDeleteAlbum(position);
+    }
+
+    @Override
+    public void onEmptyTrash(int position) {
+
     }
 
     @Override

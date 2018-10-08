@@ -65,7 +65,7 @@ public class PrivatePresenter extends Presenter<BaseView> {
     public void onEmptyTrash(){
         BaseView view = view();
         try {
-            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.NONE.ordinal());
+            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.NONE.ordinal(),false);
             for (int i = 0 ;i <mList.size();i++){
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
                 if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){

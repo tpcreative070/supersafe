@@ -36,6 +36,7 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -308,7 +309,8 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
                     if (isProgressing){
                         return;
                     }
-                    final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id);
+
+                    final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     if (formatTypeFile!=EnumFormatType.AUDIO){
                         if (items!=null) {
@@ -356,6 +358,7 @@ public class PhotoSlideShowActivity extends BaseActivity implements View.OnClick
     public void onBackPressed() {
         if (isReload){
             SingletonPrivateFragment.getInstance().onUpdateView();
+            SingletonFakePinComponent.getInstance().onUpdateView();
             Intent intent = new Intent();
             setResult(RESULT_OK,intent);
         }

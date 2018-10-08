@@ -28,7 +28,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
             Bundle bundle = activity.getIntent().getExtras();
             mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             if (mainCategories!=null){
-                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false);
+                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,mainCategories.isFakePin);
                 if (data!=null){
                     mList = data;
                 }
@@ -48,7 +48,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
         mList.clear();
         try {
             if (mainCategories!=null){
-                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false);
+                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,mainCategories.isFakePin);
                 if (data!=null){
                     mList = data;
                 }

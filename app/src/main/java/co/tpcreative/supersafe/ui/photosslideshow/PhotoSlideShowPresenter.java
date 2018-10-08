@@ -52,11 +52,16 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
         try {
             BaseView view = view();
             final Items items = mList.get(position);
-            final Items mItem = InstanceGenerator.getInstance(view.getContext()).getLocalId(items.local_id);
+            final Items mItem = InstanceGenerator.getInstance(view.getContext()).getLocalId(items.local_id,items.isFakePin);
             if (mItem!=null){
-                mItem.isDeleteLocal = true;
-                InstanceGenerator.getInstance(view.getContext()).onUpdate(mItem);
-                //storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.local_id);
+                if (mItem.isFakePin){
+                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.local_id);
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mItem);
+                }
+                else{
+                    mItem.isDeleteLocal = true;
+                    InstanceGenerator.getInstance(view.getContext()).onUpdate(mItem);
+                }
                 mList.remove(position);
                 view.onSuccessful("Delete Successful", EnumStatus.DELETE);
             }

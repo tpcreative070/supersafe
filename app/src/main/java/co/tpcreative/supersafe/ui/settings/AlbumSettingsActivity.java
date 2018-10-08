@@ -189,12 +189,18 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                 if (response){
                                     Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                     mName.setSummary(presenter.mMainCategories.categories_name);
-                                    ServiceManager.getInstance().onGetListCategoriesSync();
+
+                                    if (!presenter.mMainCategories.isFakePin){
+                                        ServiceManager.getInstance().onGetListCategoriesSync();
+                                    }
                                 }
                                 else{
                                     Toast.makeText(getContext(),"Album name already existing.",Toast.LENGTH_SHORT).show();
                                 }
-                                SingletonPrivateFragment.getInstance().onUpdateView();
+
+                                if (!presenter.mMainCategories.isFakePin){
+                                    SingletonPrivateFragment.getInstance().onUpdateView();
+                                }
                             }
                         }
                     });

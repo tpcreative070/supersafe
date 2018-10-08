@@ -1,6 +1,5 @@
-package co.tpcreative.supersafe.ui.privates;
-
-import android.content.Context;
+package co.tpcreative.supersafe.ui.fakepin;
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
@@ -10,13 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -29,12 +26,12 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
+public class FakePinComponentAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
-    private Context context;
+    private Activity context;
     private Storage storage;
     private ItemSelectedListener itemSelectedListener;
-    private String TAG = PrivateAdapter.class.getSimpleName();
+    private String TAG = FakePinComponentAdapter.class.getSimpleName();
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -45,7 +42,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             .error(R.color.colorPrimary)
             .priority(Priority.HIGH);
 
-    public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
+    public FakePinComponentAdapter(LayoutInflater inflater, Activity context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
         storage = new Storage(context);
@@ -61,7 +58,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     @Override
     public BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ItemHolder(inflater.inflate(R.layout.private_item, parent, false));
+        return new ItemHolder(inflater.inflate(R.layout.fake_pin_item, parent, false));
     }
 
     public class ItemHolder extends BaseHolder<MainCategories> {
@@ -83,7 +80,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             this.data = data;
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false,false);
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false,true);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
@@ -119,7 +116,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                 imgAlbum.setImageResource(0);
                 imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context,data.icon));
                 imgIcon.setVisibility(View.VISIBLE);
-
                 try {
                     int myColor = Color.parseColor(data.image);
                     imgAlbum.setBackgroundColor(myColor);

@@ -28,7 +28,7 @@ public class TrashPresenter extends Presenter<BaseView>{
         BaseView view = view();
         mList.clear();
         try {
-            final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal());
+            final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal(),false);
             if (data!=null){
                 mList = data;
             }

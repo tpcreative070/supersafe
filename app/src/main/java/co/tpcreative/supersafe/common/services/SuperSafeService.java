@@ -504,7 +504,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         try {
                             if (onResponse.files != null) {
                                 for (MainCategories index : onResponse.files) {
-                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
+                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                     if (main != null) {
                                         if (!main.isChange && !main.isDelete) {
                                             main.isSyncOwnServer = true;
@@ -512,7 +512,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                         }
                                         view.onSuccessful(onResponse.message);
                                     } else {
-                                        MainCategories mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name);
+                                        MainCategories mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
                                         if (mMain != null) {
                                             if (!mMain.isChange && !mMain.isDelete) {
                                                 mMain.isSyncOwnServer = true;
@@ -888,7 +888,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                 Utils.Log(TAG,"Special values "+new Gson().toJson(listCategories));
                                 for (MainCategories index : listCategories) {
                                     hashMapGlobalCategories.put(index.categories_id, index.categories_id);
-                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
+                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                     if (main != null) {
                                         if (!main.isChange && !main.isDelete) {
                                             main.isSyncOwnServer = true;
@@ -896,7 +896,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                         }
                                         view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
                                     } else {
-                                        MainCategories mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name);
+                                        MainCategories mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
                                         if (mMain != null) {
                                             if (!mMain.isDelete && !mMain.isChange) {
                                                 mMain.isSyncOwnServer = true;
@@ -936,7 +936,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                     if (description != null) {
                                         DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
                                         if (driveTitle != null) {
-                                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id);
+                                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id,false);
                                             EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
                                             if (items == null) {
                                                 description.global_original_id = index.global_original_id;
@@ -952,7 +952,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                                         break;
                                                     }
                                                 }
-                                                final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id);
+                                                final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                                 if (main != null) {
                                                     description.categories_local_id = main.categories_local_id;
                                                     onSaveItem(description);
@@ -1032,7 +1032,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
 
     public void onDeletePreviousCategoriesSync(ServiceManager.DeleteServiceListener view) {
         try {
-            final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true);
+            final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
             for (MainCategories index : list) {
                 String value = hashMapGlobalCategories.get(index.categories_id);
                 if (value == null) {
@@ -1080,7 +1080,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                 description.statusProgress,
                 description.isDeleteLocal,
                 description.isDeleteGlobal,
-                description.deleteAction);
+                description.deleteAction,
+                description.isFakePin);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 

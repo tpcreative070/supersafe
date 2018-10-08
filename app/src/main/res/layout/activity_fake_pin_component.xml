@@ -31,6 +31,19 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
+
+    <RelativeLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:background="@color/material_gray_200"
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
         android:id="@+id/overlay"
         android:layout_width="match_parent"
@@ -49,5 +62,7 @@
         app:sdMainFabClosedSrc="@drawable/baseline_add_white_24"
         app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
         app:sdOverlayLayout="@id/overlay" />
+
+
 
 </android.support.design.widget.CoordinatorLayout>

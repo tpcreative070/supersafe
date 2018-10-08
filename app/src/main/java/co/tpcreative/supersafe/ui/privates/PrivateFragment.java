@@ -107,13 +107,11 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
         Log.d(TAG,"Position :"+ position);
         try {
             String value  = Utils.getHexCode(getString(R.string.key_trash));
-
             if (value.equals(presenter.mList.get(position).categories_hex_name)){
                 Navigator.onMoveTrash(getActivity());
             }
             else{
                 final MainCategories mainCategories = presenter.mList.get(position);
-
                 Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
             }
         }
