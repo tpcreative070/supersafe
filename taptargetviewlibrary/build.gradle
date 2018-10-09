@@ -1,0 +1,18 @@
+apply plugin: 'com.android.library'
+android {
+    compileSdkVersion appCompileSdkVersion
+    buildToolsVersion appBuildToolsVersion
+
+    defaultConfig {
+        minSdkVersion appMinSdkVersion
+        targetSdkVersion appTargetSdkVersion
+        versionCode 1
+        versionName "1.11.0"
+    }
+}
+
+dependencies {
+    implementation "com.android.support:support-annotations:"+appSupportVersion
+    implementation "com.android.support:support-compat:"+appSupportVersion
+    implementation "com.android.support:appcompat-v7:"+appSupportVersion
+}

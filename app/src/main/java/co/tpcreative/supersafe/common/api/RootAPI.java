@@ -142,7 +142,7 @@ public interface RootAPI{
 
     @Headers({"Accept: application/json"})
     @GET(GET_LIST_FILE_IN_APP_FOLDER)
-    Observable<DriveAbout> onGetListFileInAppFolder(@Header("Authorization") String token, @Query("q") String title,@Query("spaces")String value,@Query("fields")String fields);
+    Observable<DriveAbout> onGetListFileInAppFolder(@Header("Authorization") String token,@Query("spaces")String value);
 
     @POST()
     @Multipart

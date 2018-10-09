@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:padding="5dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@color/sd_overlay_new_color"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:textSize="@dimen/text_size_large_x_x"
+                android:textColor="?attr/colorAccent"
+                android:gravity="center"
+                android:text="@string/successful_percent"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="20dp"
+                android:textSize="@dimen/text_size_xlarge_20"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:text="@string/system_scan_complete"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/grey_400"
+                android:gravity="center"
+                android:text="@string/threats_detected"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="20dp"
+                android:textSize="@dimen/text_size_normal"
+                android:textColor="@color/grey_400"
+                android:gravity="center"
+                android:text="@string/status_ok"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <Button
+            android:textSize="@dimen/text_size_title"
+            android:textStyle="bold"
+            android:id="@+id/btnDone"
+            android:textColor="@color/white"
+            android:text="@string/done"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_button_rounded"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_high" />
+    </LinearLayout>
+</RelativeLayout>

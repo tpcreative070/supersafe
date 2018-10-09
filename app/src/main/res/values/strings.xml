@@ -279,6 +279,29 @@
     <string name="error_not_having_camera">Your device does not have front camera.</string>
     <string name="error_camera_permission_denied">Camera permission denied.</string>
     <string name="btn_tittle_capture_image">Capture image</string>
+    <string name="try_it_now">Try it now</string>
+    <string name="long_press_the_log">Long press the logo ti active Secret Door.</string>
+    <string name="enable_secret_door">Enable Secret Door?</string>
+    <string name="enable_secret_door_detail">Supersafe will look like a different app when you open it. All you need to do is find and long-press the Supersafe logo to reveal the PIN pad.</string>
+    <string name="successful_percent">100 %</string>
+    <string name="system_scan_complete">System scan complete</string>
+    <string name="threats_detected">0 threats detected</string>
+    <string name="status_ok">status: OK</string>
+    <string name="secret_door_app">Secret Door App</string>
+    <string name="virus_scanner">Virus scanner</string>
+    <string name="sync_completed">Sync Completed</string>
+    <string name="monthly_usage">MONTHLY USAGE</string>
+    <string name="uploaded">Updated %1$s</string>
+    <string name="left">Left %1$s</string>
+    <string name="quota_available">100 quota will be available next month</string>
+    <string name="remove_quota_limit">REMOVE QUOTA LIMIT</string>
+    <string name="supersafe_used_space">%1$s       Supersafe Used Space</string>
+    <string name="other_used_space">%1$s       Other Used Space</string>
+    <string name="free_space">%1$s       Free Space</string>
+    <string name="pause_cloud_sync">Pause Cloud Sync</string>
+    <string name="cloud_sync_only_wifi">Cloud Sync Only In Wifi</string>
+    <string name="calculating">Calculating</string>
+
 
     <string name="key_user">user</string>
     <string name="key_items">items</string>
@@ -382,6 +405,8 @@
     <string name="key_update_theme">Update Theme</string>
     <string name="key_theme_object">theme_object</string>
     <string name="key_theme_list">theme_list</string>
+    <string name="key_pause_cloud_sync">pause_cloud_sync</string>
+    <string name="key_cloud_sync_only_wifi">cloud_sync_only_wifi</string>
 
 
 </resources>

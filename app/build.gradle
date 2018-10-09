@@ -26,6 +26,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
+
     }
     buildTypes {
         release {
@@ -198,6 +199,12 @@ dependencies {
 
     /*Time ago*/
     implementation project(':time_ago_library')
+
+    /*Tap Target tap*/
+    implementation project(':taptargetviewlibrary')
+
+    /*CircleImageView*/
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
 }
 

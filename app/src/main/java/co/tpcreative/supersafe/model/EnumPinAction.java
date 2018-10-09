@@ -12,6 +12,7 @@ public enum EnumPinAction {
     CREATE,
     DONE,
     RESET,
+    SECRET_DOOR,
     SCREEN_PRESS_HOME,
     SCREEN_LOCK,
     SCREEN_UNLOCK,

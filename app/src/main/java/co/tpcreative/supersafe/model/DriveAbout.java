@@ -7,10 +7,10 @@ import co.tpcreative.supersafe.common.response.DriveResponse;
 
 public class DriveAbout extends BaseResponseDrive implements Serializable{
     public String name;
-    public String quotaBytesTotal;
-    public String quotaBytesUsed;
-    public String quotaBytesUsedAggregate;
-    public String quotaBytesUsedInTrash;
+    public long quotaBytesTotal;
+    public long quotaBytesUsed;
+    public long quotaBytesUsedAggregate;
+    public long quotaBytesUsedInTrash;
     public String quotaType;
     public DriveUser user;
 

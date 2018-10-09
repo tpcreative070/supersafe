@@ -14,6 +14,7 @@ include ':app',
         'compressorlibrary',
         'image-picker-library',
         'preferenceslibrary',
-        'time_ago_library'
+        'time_ago_library',
+        'taptargetviewlibrary'
 
 

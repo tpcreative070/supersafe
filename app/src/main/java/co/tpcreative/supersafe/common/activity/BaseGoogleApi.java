@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import com.ftinc.kit.util.SizeUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -33,20 +32,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.gson.Gson;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.DexterError;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.PermissionRequestErrorListener;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
-
 import java.io.IOException;
 import java.util.List;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
@@ -54,7 +44,6 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -63,11 +52,8 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SingletonBaseApiActivity.SingletonBaseApiActivityListener{
@@ -404,19 +390,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
                             Log.d(TAG,"successful :"+ message);
                         }
                         @Override
-                        public void onStart() {
+                        public void onStartLoading() {
 
                         }
                         @Override
-                        public void startLoading() {
-
-                        }
-                        @Override
-                        public void stopLoading() {
-
-                        }
-                        @Override
-                        public void onNetworkConnectionChanged(boolean isConnect) {
+                        public void onStopLoading() {
 
                         }
 
@@ -430,15 +408,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
 
                         }
 
-                        @Override
-                        public void onSuccessfulOnCheck(List<Items> lists) {
-
-                        }
-
-                        @Override
-                        public void onActionScreenOff() {
-
-                        }
                     });
                 }
             }

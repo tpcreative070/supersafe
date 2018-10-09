@@ -82,6 +82,12 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
         Navigator.onMoveToFakePin(this,false);
     }
 
+    @OnClick(R.id.imgView)
+    public void onViewComponent(View view){
+        Navigator.onMoveFakePinComponent(this);
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();

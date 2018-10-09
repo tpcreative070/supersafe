@@ -103,6 +103,7 @@
 
 
             <RelativeLayout
+                android:id="@+id/rlDots"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
@@ -155,6 +156,14 @@
                     android:scrollbars="none" />
             </RelativeLayout>
         </LinearLayout>
+
+        <include
+            android:visibility="invisible"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/includeLayout"
+            layout="@layout/footer_layout"/>
     </RelativeLayout>
 
     <RelativeLayout

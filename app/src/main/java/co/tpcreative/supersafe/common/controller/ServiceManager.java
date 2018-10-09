@@ -287,39 +287,20 @@ public class ServiceManager implements SuperSafeServiceView {
             }
 
             @Override
-            public void onSuccessfulOnCheck(List<Items> lists) {
-
-            }
-
-            @Override
             public void onSuccessful(List<DriveResponse> lists) {
 
             }
 
             @Override
-            public void onNetworkConnectionChanged(boolean isConnect) {
+            public void onStartLoading() {
 
             }
 
             @Override
-            public void onStart() {
+            public void onStopLoading() {
 
             }
 
-            @Override
-            public void startLoading() {
-
-            }
-
-            @Override
-            public void stopLoading() {
-
-            }
-
-            @Override
-            public void onActionScreenOff() {
-
-            }
         });
     }
 
@@ -348,39 +329,20 @@ public class ServiceManager implements SuperSafeServiceView {
                     }
 
                     @Override
-                    public void onSuccessfulOnCheck(List<Items> lists) {
-
-                    }
-
-                    @Override
                     public void onSuccessful(List<DriveResponse> lists) {
 
                     }
 
                     @Override
-                    public void onNetworkConnectionChanged(boolean isConnect) {
+                    public void onStartLoading() {
 
                     }
 
                     @Override
-                    public void onStart() {
+                    public void onStopLoading() {
 
                     }
 
-                    @Override
-                    public void startLoading() {
-
-                    }
-
-                    @Override
-                    public void stopLoading() {
-
-                    }
-
-                    @Override
-                    public void onActionScreenOff() {
-
-                    }
                 });
             }
         });
@@ -644,34 +606,15 @@ public class ServiceManager implements SuperSafeServiceView {
                 }
 
                 @Override
-                public void onNetworkConnectionChanged(boolean isConnect) {
+                public void onStartLoading() {
 
                 }
 
                 @Override
-                public void onStart() {
+                public void onStopLoading() {
 
                 }
 
-                @Override
-                public void startLoading() {
-
-                }
-
-                @Override
-                public void stopLoading() {
-
-                }
-
-                @Override
-                public void onSuccessfulOnCheck(List<Items> lists) {
-
-                }
-
-                @Override
-                public void onActionScreenOff() {
-
-                }
             });
         } else {
             Utils.Log(TAG, "My service is null");
@@ -733,37 +676,17 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
                         @Override
-                        public void onSuccessfulOnCheck(List<Items> lists) {
-
-                        }
-
-                        @Override
                         public void onSuccessful(List<DriveResponse> lists) {
 
                         }
 
                         @Override
-                        public void onNetworkConnectionChanged(boolean isConnect) {
+                        public void onStartLoading() {
 
                         }
 
                         @Override
-                        public void onStart() {
-
-                        }
-
-                        @Override
-                        public void startLoading() {
-
-                        }
-
-                        @Override
-                        public void stopLoading() {
-
-                        }
-
-                        @Override
-                        public void onActionScreenOff() {
+                        public void onStopLoading() {
 
                         }
                     });
@@ -828,39 +751,20 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
                         @Override
-                        public void onSuccessfulOnCheck(List<Items> lists) {
-
-                        }
-
-                        @Override
                         public void onSuccessful(List<DriveResponse> lists) {
 
                         }
 
                         @Override
-                        public void onNetworkConnectionChanged(boolean isConnect) {
+                        public void onStartLoading() {
 
                         }
 
                         @Override
-                        public void onStart() {
+                        public void onStopLoading() {
 
                         }
 
-                        @Override
-                        public void startLoading() {
-
-                        }
-
-                        @Override
-                        public void stopLoading() {
-
-                        }
-
-                        @Override
-                        public void onActionScreenOff() {
-
-                        }
                     });
                 })
                 .doOnComplete(() -> {
@@ -943,39 +847,20 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
                         @Override
-                        public void onSuccessfulOnCheck(List<Items> lists) {
-
-                        }
-
-                        @Override
                         public void onSuccessful(List<DriveResponse> lists) {
 
                         }
 
                         @Override
-                        public void onNetworkConnectionChanged(boolean isConnect) {
+                        public void onStartLoading() {
 
                         }
 
                         @Override
-                        public void onStart() {
+                        public void onStopLoading() {
 
                         }
 
-                        @Override
-                        public void startLoading() {
-
-                        }
-
-                        @Override
-                        public void stopLoading() {
-
-                        }
-
-                        @Override
-                        public void onActionScreenOff() {
-
-                        }
                     });
 
                 })
@@ -1411,34 +1296,15 @@ public class ServiceManager implements SuperSafeServiceView {
             }
 
             @Override
-            public void onNetworkConnectionChanged(boolean isConnect) {
+            public void onStartLoading() {
 
             }
 
             @Override
-            public void onStart() {
+            public void onStopLoading() {
 
             }
 
-            @Override
-            public void startLoading() {
-
-            }
-
-            @Override
-            public void stopLoading() {
-
-            }
-
-            @Override
-            public void onSuccessfulOnCheck(List<Items> lists) {
-
-            }
-
-            @Override
-            public void onActionScreenOff() {
-
-            }
         });
     }
 
@@ -2126,7 +1992,7 @@ public class ServiceManager implements SuperSafeServiceView {
 
     @Override
     public void onError(String message, EnumStatus status) {
-        Log.d(TAG, "onError response :" + message);
+        Log.d(TAG, "onError response :" + message +" - " +status.name());
         if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
             SingletonManagerTab.getInstance().onRequestAccessToken();
             Utils.Log(TAG, "Request token on global");
@@ -2139,33 +2005,13 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
     @Override
-    public void onStart() {
+    public void onStartLoading() {
 
     }
 
     @Override
-    public void startLoading() {
+    public void onStopLoading() {
 
-    }
-
-    @Override
-    public void stopLoading() {
-
-    }
-
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnect) {
-        GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(isConnect);
-        if (isConnect) {
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
-            onCheckingMissData();
-        }
-    }
-
-    @Override
-    public void onActionScreenOff() {
-        Utils.Log(TAG,"Screen off");
-        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
     }
 
     @Override
@@ -2175,21 +2021,28 @@ public class ServiceManager implements SuperSafeServiceView {
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        if (status == EnumStatus.GET_DRIVE_ABOUT) {
-            Utils.Log(TAG, "drive about :" + message);
+        switch (status){
+            case SCREEN_OFF:{
+                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                break;
+            }
+            case GET_DRIVE_ABOUT:{
+                Utils.Log(TAG, "drive about :" + message);
+                break;
+            }
+            case CONNECTED:{
+                GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(true);
+                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                onCheckingMissData();
+                break;
+            }
         }
-    }
-
-    @Override
-    public void onSuccessfulOnCheck(List<Items> lists) {
-
     }
 
     public interface ServiceManagerSyncDataListener {
         void onCompleted();
 
         void onError();
-
         void onCancel();
     }
 

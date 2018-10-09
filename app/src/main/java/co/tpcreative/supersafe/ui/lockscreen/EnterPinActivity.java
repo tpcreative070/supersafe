@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -16,19 +17,17 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.File;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
@@ -76,6 +75,15 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     RelativeLayout rlPreference;
     @BindView(R.id.llForgotPin)
     LinearLayout llForgotPin;
+    @BindView(R.id.rlButton)
+    RelativeLayout rlButton;
+    @BindView(R.id.rlDots)
+    RelativeLayout rlDots;
+    @BindView(R.id.includeLayout)
+    RelativeLayout includeLayout;
+    @BindView(R.id.btnDone)
+    Button btnDone;
+
 
     private static EnumPinAction mPinAction;
     private boolean mSignUp = false;
@@ -116,18 +124,25 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         switch (mPinAction){
             case SET:{
                 onDisplayView();
-                changeLayoutForSetPin();
+                onDisplayText();
                 break;
             }
             case VERIFY:{
-                onDisplayView();
                 String pin = getPinFromSharedPreferences();
                 if (pin.equals("")) {
-                    changeLayoutForSetPin();
                     mPinAction = EnumPinAction.SET;
+                    onDisplayView();
+                    onDisplayText();
                 }
                 else{
-                    onDisplayText();
+                    final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door),false);
+                    if (value){
+                        changeLayoutSecretDoor(true);
+                    }
+                    else{
+                        onDisplayView();
+                        onDisplayText();
+                    }
                 }
                 break;
             }
@@ -140,7 +155,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             }
             case RESET:{
                 onDisplayView();
-                changeLayoutForSetPin();
+                onDisplayText();
                 break;
             }
             case VERIFY_TO_CHANGE_FAKE_PIN:{
@@ -233,6 +248,14 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
         onInitHiddenCamera();
 
+        imgLauncher.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                changeLayoutSecretDoor(false);
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -244,6 +267,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
         }
+    }
+
+    @OnClick(R.id.btnDone)
+    public void onClickedDone(){
+        onBackPressed();
     }
 
     private void checkForFont() {
@@ -517,9 +545,23 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-    private void changeLayoutForSetPin() {
-        mTextAttempts.setVisibility(View.GONE);
-        mTextTitle.setText(getString(R.string.pinlock_settitle));
+    private void changeLayoutSecretDoor(boolean isVisit){
+        if (isVisit){
+            mTextTitle.setVisibility(View.INVISIBLE);
+            rlButton.setVisibility(View.INVISIBLE);
+            rlDots.setVisibility(View.INVISIBLE);
+            mTextAttempts.setVisibility(View.INVISIBLE);
+            imgLauncher.setVisibility(View.VISIBLE);
+            includeLayout.setVisibility(View.VISIBLE);
+        }
+       else{
+            mTextTitle.setVisibility(View.VISIBLE);
+            rlButton.setVisibility(View.VISIBLE);
+            rlDots.setVisibility(View.VISIBLE);
+            mTextAttempts.setVisibility(View.INVISIBLE);
+            imgLauncher.setVisibility(View.INVISIBLE);
+            includeLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -718,6 +760,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             case VERIFY:{
                 mTextTitle.setVisibility(View.INVISIBLE);
                 imgLauncher.setVisibility(View.VISIBLE);
+                imgLauncher.setEnabled(false);
                 break;
             }
             case VERIFY_TO_CHANGE:{
@@ -750,8 +793,25 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 imgLauncher.setVisibility(View.INVISIBLE);
                 break;
             }
+            case SET:{
+                mTextTitle.setText(getString(R.string.pinlock_settitle));
+                mTextTitle.setVisibility(View.VISIBLE);
+                mTextAttempts.setVisibility(View.INVISIBLE);
+                imgLauncher.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case RESET:{
+                mTextTitle.setText(getString(R.string.pinlock_settitle));
+                mTextTitle.setVisibility(View.VISIBLE);
+                mTextAttempts.setVisibility(View.INVISIBLE);
+                imgLauncher.setVisibility(View.INVISIBLE);
+                break;
+            }
         }
     }
+
+
+
 
     public void initActionBar(boolean isInit){
         final Toolbar toolbar = findViewById(R.id.toolbar);

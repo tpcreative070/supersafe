@@ -33,6 +33,7 @@ import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity;
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import co.tpcreative.supersafe.ui.signin.SignInActivity;
@@ -51,6 +52,7 @@ public class Navigator {
     public static final int ALBUM_DETAIL = 1002;
     public static final int THEME_SETTINGS = 1003;
     public static final int VERIFY_PIN = 1004;
+    public static final int SECRET_DOOR_SUET_UP = 1005;
 
 
     public static void onMoveToMainTab(Context context){
@@ -243,6 +245,11 @@ public class Navigator {
     public static void onMoveSecretDoor(Context context){
         Intent intent = new Intent(context, SecretDoorActivity.class);
         context.startActivity(intent);
+    }
+
+    public static void onMoveSecretDoorSetUp(Activity context){
+        Intent intent = new Intent(context, SecretDoorSetUpActivity.class);
+        context.startActivityForResult(intent,Navigator.SECRET_DOOR_SUET_UP);
     }
 
     public static void onMoveHelpSupport(Context context){

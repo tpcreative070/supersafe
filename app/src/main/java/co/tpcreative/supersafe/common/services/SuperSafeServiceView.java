@@ -10,11 +10,18 @@ public interface SuperSafeServiceView {
     void onError(String message, EnumStatus status);
     void onSuccessful(String message);
     void onSuccessful(String message,EnumStatus status);
-    void onSuccessfulOnCheck(List<Items> lists);
     void onSuccessful(List<DriveResponse> lists);
-    void onNetworkConnectionChanged(boolean isConnect);
-    void onActionScreenOff();
-    void onStart();
-    void startLoading();
-    void stopLoading();
+    void onStartLoading();
+    void onStopLoading();
+
+
+//    void onStartLoading(EnumStatus status);
+//    void onStopLoading(EnumStatus status);
+//    void onError(String message);
+//    void onError(String message, EnumStatus status);
+//    void onSuccessful(String message);
+//    void onSuccessful(String message,EnumStatus status);
+//    void onSuccessful(String message,EnumStatus status,T object);
+//    void onSuccessful(String message,EnumStatus status,List<T> list);
+
 }

@@ -16,6 +16,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 
 public class SettingsActivity extends BaseActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
@@ -91,7 +92,6 @@ public class SettingsActivity extends BaseActivity {
         return false;
     }
 
-
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
         private Preference mAccount;
@@ -109,6 +109,8 @@ public class SettingsActivity extends BaseActivity {
         private Preference mHelpSupport;
 
         private Preference mAboutSuperSafe;
+
+        private Preference mPrivateCloud;
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -158,6 +160,22 @@ public class SettingsActivity extends BaseActivity {
                         else if (preference.getKey().equals(getString(R.string.key_about_SuperSafe))){
                             Navigator.onMoveAboutSuperSafe(getContext());
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_private_cloud))){
+                            final User mUser = User.getInstance().getUserInfo();
+                            if (mUser!=null){
+                                if (mUser.verified){
+                                    if (!mUser.driveConnected){
+                                        Navigator.onCheckSystem(getActivity(),null);
+                                    }
+                                    else{
+                                        Navigator.onManagerCloud(getContext());
+                                    }
+                                }
+                                else{
+                                    Navigator.onVerifyAccount(getContext());
+                                }
+                            }
+                        }
                     }
                     return true;
                 }
@@ -196,6 +214,11 @@ public class SettingsActivity extends BaseActivity {
             mSecretDoor = findPreference(getString(R.string.key_secret_door));
             mSecretDoor.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mSecretDoor.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Private Cloud*/
+            mPrivateCloud = findPreference(getString(R.string.key_private_cloud));
+            mPrivateCloud.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mPrivateCloud.setOnPreferenceChangeListener(createChangeListener());
 
             /*Help And support*/
             mHelpSupport = findPreference(getString(R.string.key_help_support));
