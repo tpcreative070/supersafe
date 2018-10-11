@@ -27,9 +27,10 @@
                 android:id="@+id/view_alpha"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/multiple_image_select_imageSelectBackground"/>
+                android:background="@color/colorButton"/>
 
             <com.litao.android.lib.view.SquaredImageView
+                android:padding="5dp"
                 android:src="@drawable/ic_done_white"
                 android:scaleType="centerCrop"
                 android:id="@+id/imgSelect"

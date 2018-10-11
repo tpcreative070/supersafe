@@ -11,6 +11,8 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -78,6 +80,8 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         onRegisterHomeWatcher();
     }
 
+
+
     @Override
     public void onStartLoading(EnumStatus status) {
 
@@ -95,9 +99,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        /**
-         * The {@link ListPreference}.
-         */
 
         private Preference mName;
 

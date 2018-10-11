@@ -23,8 +23,15 @@ public class SingletonPrivateFragment {
         }
     }
 
+//    public void onPremiumTimer(int days,int months,int minutes,int seconds){
+//        if (ls!=null){
+//            ls.onPremiumTimer(days,months,minutes,seconds);
+//        }
+//    }
+
     public interface SingletonPrivateFragmentListener{
         void onUpdateView();
+        //void onPremiumTimer(int days,int months,int minutes,int seconds);
     }
 
 }

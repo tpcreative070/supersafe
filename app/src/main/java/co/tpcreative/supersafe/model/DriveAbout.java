@@ -9,6 +9,7 @@ public class DriveAbout extends BaseResponseDrive implements Serializable{
     public String name;
     public long quotaBytesTotal;
     public long quotaBytesUsed;
+    public long inAppUsed;
     public long quotaBytesUsedAggregate;
     public long quotaBytesUsedInTrash;
     public String quotaType;

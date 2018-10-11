@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.res.ResourcesCompat;
@@ -15,10 +16,18 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
@@ -38,6 +47,7 @@ import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
@@ -71,11 +81,18 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     @BindView(R.id.tv_Videos)
     TextView tv_Videos;
     @BindView(R.id.tv_Audios)
-    TextView tvAudios;
+    TextView tv_Audios;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.llBottom)
+    LinearLayout llBottom;
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
     private boolean isReload;
     private Storage storage;
+    private ActionMode actionMode;
+    private int countSelected;
+    private boolean isSelectAll = false;
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -99,7 +116,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         presenter.bindView(this);
         presenter.getData(this);
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -124,7 +140,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
                         .apply(options)
                         .into(backdrop);
                 imgIcon.setVisibility(View.INVISIBLE);
-
             }
         } else {
             backdrop.setImageResource(0);
@@ -140,6 +155,7 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
         onDrawOverLay(this);
+        llBottom.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -154,6 +170,57 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_album_detail, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_album_settings:{
+                Navigator.onAlbumSettings(this,presenter.mainCategories);
+                return true;
+            }
+            case R.id.action_select_items :{
+                if (actionMode == null) {
+                    actionMode = toolbar.startActionMode(callback);
+                }
+                countSelected = 0;
+                actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+                Utils.Log(TAG,"Action here");
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClickItem(int position) {
+        if (actionMode!=null){
+            toggleSelection(position);
+            actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+        }
+        else{
+            try {
+                Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @Override
+    public void onLongClickItem(int position) {
+        if (actionMode == null) {
+            actionMode = toolbar.startActionMode(callback);
+        }
+        toggleSelection(position);
+        actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+    }
+
+    @Override
     public void onUpdatedView() {
         try {
             this.runOnUiThread(new Runnable() {
@@ -165,7 +232,13 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    @OnClick(R.id.llDelete)
+    public void onClickedDelete(View view){
+       if (countSelected>0){
+           onShowDialog();
+       }
     }
 
     @Override
@@ -189,7 +262,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         GalleryCameraMediaManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
     }
-
 
     /*Init Floating View*/
 
@@ -231,7 +303,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
                 Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
-
 
         //Set option fabs clicklisteners.
         mSpeedDialView.setOnActionSelectedListener(new SpeedDialView.OnActionSelectedListener() {
@@ -309,25 +380,26 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
-    public void onClickItem(int position) {
-        Utils.Log(TAG, "Position : " + position);
-        try {
-            Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+    public void onShowDialog(){
+        MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
+                .title(getString(R.string.confirm))
+                .theme(Theme.LIGHT)
+                .content(String.format(getString(R.string.move_items_to_trash),""+countSelected))
+                .titleColor(getResources().getColor(R.color.black))
+                .negativeText(getString(R.string.cancel))
+                .positiveText(getString(R.string.ok))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                       presenter.onDelete();
+                       actionMode.finish();
+                       isReload = true;
+                    }
+                });
+        builder.show();
     }
 
-    @Override
-    public void onAddToFavoriteSelected(int position) {
-
-    }
-
-    @Override
-    public void onPlayNextSelected(int position) {
-
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -423,6 +495,16 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
+
+                String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
+                tv_Photos.setText(photos);
+
+                String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
+                tv_Videos.setText(videos);
+
+                String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
+                tv_Audios.setText(audios);
+
                 adapter.setDataSource(presenter.mList);
                 break;
             }
@@ -443,4 +525,87 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+    /*Action mode*/
+
+    private ActionMode.Callback callback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater menuInflater = mode.getMenuInflater();
+            menuInflater.inflate(R.menu.menu_select, menu);
+            actionMode = mode;
+            countSelected = 0;
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            int i = item.getItemId();
+            if (i == R.id.menu_item_select_all) {
+                isSelectAll = !isSelectAll;
+                selectAll();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            if (countSelected > 0) {
+                deselectAll();
+            }
+            actionMode = null;
+        }
+    };
+
+    private void toggleSelection(int position) {
+        presenter.mList.get(position).isChecked = !presenter.mList.get(position).isChecked;
+        if (presenter.mList.get(position).isChecked) {
+            countSelected++;
+        } else {
+            countSelected--;
+        }
+        onShowUI();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void deselectAll() {
+        for (int i = 0, l = presenter.mList.size(); i < l; i++) {
+            presenter.mList.get(i).isChecked = false;
+        }
+        countSelected = 0;
+        onShowUI();
+        adapter.notifyDataSetChanged();
+    }
+
+    public void selectAll(){
+        int countSelect = 0 ;
+        for (int i =0;i<presenter.mList.size();i++){
+            presenter.mList.get(i).isChecked = isSelectAll;
+            if (presenter.mList.get(i).isChecked) {
+                countSelect++;
+            }
+        }
+        countSelected = countSelect;
+        onShowUI();
+        adapter.notifyDataSetChanged();
+        actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+    }
+
+    public void onShowUI(){
+        if (countSelected==0){
+            llBottom.setVisibility(View.INVISIBLE);
+            mSpeedDialView.setVisibility(View.VISIBLE);
+        }
+        else{
+            llBottom.setVisibility(View.VISIBLE);
+            mSpeedDialView.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }

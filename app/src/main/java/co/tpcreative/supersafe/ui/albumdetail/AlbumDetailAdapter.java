@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
@@ -74,10 +75,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
-
-        void onAddToFavoriteSelected(int position);
-
-        void onPlayNextSelected(int position);
+        void onLongClickItem(int position);
     }
 
     public class ItemHolder extends BaseHolder<Items> {
@@ -97,6 +95,8 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         @BindView(R.id.imgSelect)
         ImageView imgSelect;
         int mPosition;
+        @BindView(R.id.rlHome)
+        RelativeLayout rlHome;
 
 
         public ItemHolder(View itemView) {
@@ -107,8 +107,16 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         public void bind(Items data, int position) {
             super.bind(data, position);
             mPosition = position;
-            view_alpha.setVisibility(View.INVISIBLE);
-            imgSelect.setVisibility(View.INVISIBLE);
+
+            if (data.isChecked) {
+                view_alpha.setAlpha(0.5f);
+                imgSelect.setVisibility(View.VISIBLE);
+
+            } else {
+                view_alpha.setAlpha(0.0f);
+                imgSelect.setVisibility(View.INVISIBLE);
+            }
+
             try {
                 String path = data.thumbnailPath;
                 storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
@@ -173,6 +181,19 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
+            rlHome.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (itemSelectedListener!=null){
+                        itemSelectedListener.onLongClickItem(position);
+                    }
+                    return false;
+                }
+            });
+
+
         }
 
         @OnClick(R.id.rlHome)
@@ -181,6 +202,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                 itemSelectedListener.onClickItem(mPosition);
             }
         }
+
 
     }
 
@@ -193,19 +215,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
-                    if (itemSelectedListener != null) {
-                        itemSelectedListener.onAddToFavoriteSelected(position);
-                    }
-                    return true;
-                case R.id.action_play_next:
-                    if (itemSelectedListener != null) {
-                        itemSelectedListener.onPlayNextSelected(position);
-                    }
-                    return true;
-                default:
-            }
             return false;
         }
     }

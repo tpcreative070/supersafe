@@ -11,12 +11,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;

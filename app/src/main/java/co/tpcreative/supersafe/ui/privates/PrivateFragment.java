@@ -127,7 +127,7 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
 
     @Override
     public void onDeleteAlbum(int position) {
-        Utils.Log(TAG,"empty trash");
+        Utils.Log(TAG,"Delete album");
         presenter.onDeleteAlbum(position);
     }
 

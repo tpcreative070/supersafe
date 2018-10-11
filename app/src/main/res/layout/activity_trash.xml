@@ -159,6 +159,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <Button
+                android:textSize="@dimen/text_size_normal"
+                android:textStyle="bold"
                 android:id="@+id/btnUpgradeVersion"
                 android:paddingRight="20dp"
                 android:paddingLeft="20dp"
@@ -179,6 +181,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
+            android:textSize="@dimen/text_size_normal"
+            android:textStyle="bold"
             android:id="@+id/btnTrash"
             android:layout_centerInParent="true"
             android:layout_gravity="center"

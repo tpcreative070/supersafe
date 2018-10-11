@@ -21,6 +21,7 @@
     <dimen name="icon_size">20dp</dimen>
     <dimen name="icon_size_15">15dp</dimen>
     <dimen name="icon_size_30">30dp</dimen>
+    <dimen name="icon_size_60">60dp</dimen>
     <dimen name="image_size_custom">70dp</dimen>
     <dimen name="image_size_custom_40">40dp</dimen>
     <dimen name="image_size_video_cam">20dp</dimen>

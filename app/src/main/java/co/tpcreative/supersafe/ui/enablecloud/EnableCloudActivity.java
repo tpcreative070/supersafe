@@ -21,6 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -33,8 +34,6 @@ import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     private static final String TAG = EnableCloudActivity.class.getSimpleName();
-
-    public static final int ENABLE_CLOUD = 100;
 
     private EnableCloudPresenter presenter;
 
@@ -121,12 +120,12 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         btnUserAnotherAccount.setEnabled(true);
         btnLinkGoogleDrive.setEnabled(true);
         switch (requestCode){
-            case EnableCloudActivity.ENABLE_CLOUD :
+            case Navigator.ENABLE_CLOUD :
                 if (resultCode == Activity.RESULT_OK) {
                     finish();
                 }
                 break;
-            case VerifyAccountActivity.REQUEST_CODE_EMAIL :
+            case Navigator.REQUEST_CODE_EMAIL :
                 if (resultCode == Activity.RESULT_OK) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     Log.d(TAG,"accountName : " + accountName);
@@ -182,7 +181,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                     }
                 }
                 break;
-              case VerifyAccountActivity.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT:
+              case Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT:
                   if (resultCode == Activity.RESULT_OK) {
                       String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                       Log.d(TAG,"accountName : " + accountName);

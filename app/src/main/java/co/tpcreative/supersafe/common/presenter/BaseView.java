@@ -1,10 +1,7 @@
 package co.tpcreative.supersafe.common.presenter;
-
 import android.app.Activity;
 import android.content.Context;
-
 import java.util.List;
-
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public interface BaseView <T> {

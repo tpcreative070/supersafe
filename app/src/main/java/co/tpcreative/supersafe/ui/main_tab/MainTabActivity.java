@@ -41,6 +41,7 @@ import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -83,6 +84,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.bindView(this);
         presenter.onGetUserInfo();
         onCallLockScreen();
+        SingletonPremiumTimer.getInstance().onStartTimer();
     }
 
     @Override
@@ -445,6 +447,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
         ServiceManager.getInstance().onDismissServices();
+        SingletonPremiumTimer.getInstance().onStop();
     }
 
     public void onAnimationIcon(final EnumStatus status){

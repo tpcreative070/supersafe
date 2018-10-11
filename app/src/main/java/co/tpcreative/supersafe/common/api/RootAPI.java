@@ -113,8 +113,6 @@ public interface RootAPI{
     Observable<SyncCategoriesResponse> onDeleteCategories(@FieldMap Map<String,Object>request);
 
 
-
-
     @Headers({"Accept: application/json"})
     @GET(GET_DRIVE_ABOUT)
     Observable<DriveAbout> onGetDriveAbout(@Header("Authorization") String token);
@@ -164,4 +162,5 @@ public interface RootAPI{
     Call<DriveResponse> uploadFileMutil(@Url String url,
                                         @Header("Authorization") String authToken,
                                         @Body RequestBody requestBody);
+
 }

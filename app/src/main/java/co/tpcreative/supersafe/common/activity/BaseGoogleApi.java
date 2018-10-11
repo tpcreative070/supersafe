@@ -3,6 +3,7 @@ package co.tpcreative.supersafe.common.activity;
 import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
@@ -45,9 +46,9 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -376,7 +377,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
                         return;
                     }
                     Log.d(TAG,"Call DriveAbout");
-                    ServiceManager.getInstance().getMyService().getDriveAbout(new SuperSafeServiceView() {
+                    ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Log.d(TAG,"error :"+ message);
@@ -387,20 +388,47 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
                         public void onSuccessful(String message) {
                             //ServiceManager.getInstance().onSyncDataOwnServer("0");
                             ServiceManager.getInstance().onGetListCategoriesSync();
+                            final User mUser = User.getInstance().getUserInfo();
+                            if (mUser!=null){
+                                if (mUser.driveAbout==null){
+                                    ServiceManager.getInstance().onGetDriveAbout();
+                                }
+                            }
                             Log.d(TAG,"successful :"+ message);
                         }
                         @Override
-                        public void onStartLoading() {
-
-                        }
-                        @Override
-                        public void onStopLoading() {
+                        public void onStartLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onSuccessful(List<DriveResponse> lists) {
+                        public void onStopLoading(EnumStatus status) {
 
+                        }
+
+                        @Override
+                        public void onError(String message) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, Object object) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, List list) {
+
+                        }
+
+                        @Override
+                        public Context getContext() {
+                            return null;
+                        }
+
+                        @Override
+                        public Activity getActivity() {
+                            return null;
                         }
 
                         @Override

@@ -139,7 +139,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
          options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.server_client_id))
                         .requestScopes(Drive.SCOPE_FILE)
-                        .requestProfile()
                         .requestScopes(Drive.SCOPE_APPFOLDER);
 
 

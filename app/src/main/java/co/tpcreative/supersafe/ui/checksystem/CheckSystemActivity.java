@@ -100,7 +100,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
-            case EnableCloudActivity.ENABLE_CLOUD :
+            case Navigator.ENABLE_CLOUD :
                 if (resultCode == Activity.RESULT_OK) {
                    onBackPressed();
                 }
@@ -310,9 +310,12 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView{
                 }
                 break;
             }
+            case CLOUD_ID_EXISTING:{
+                Navigator.onEnableCloud(this);
+                break;
+            }
         }
     }
-
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {

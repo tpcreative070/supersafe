@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -16,6 +18,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -38,10 +41,18 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     TextView tvOtherSpace;
     @BindView(R.id.tvFreeSpace)
     TextView tvFreeSpace;
+
+    @BindView(R.id.tvValueSupersafeSpace)
+    TextView tvValueSupersafeSpace;
+    @BindView(R.id.tvValueOtherSpace)
+    TextView tvValueOtherSpace;
+    @BindView(R.id.tvValueFreeSpace)
+    TextView tvValueFreeSpace;
+
     @BindView(R.id.btnSwitchPauseSync)
     SwitchCompat btnSwitchPauseSync;
     @BindView(R.id.btnSwitchSyncWithWifi)
-    Button btnSwitchSyncWithWifi;
+    SwitchCompat btnSwitchSyncWithWifi;
 
     private CloudManagerPresenter presenter;
 
@@ -56,37 +67,112 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
-        presenter.onGetList();
+        btnSwitchPauseSync.setOnCheckedChangeListener(this);
+        btnSwitchSyncWithWifi.setOnCheckedChangeListener(this);
 
+        String lefFiles = String.format(getString(R.string.left),"100");
+        tvLeft.setText(lefFiles);
+
+        String updated = String.format(getString(R.string.left),"0");
+        tvUploaded.setText(updated);
+
+        onShowUI();
+    }
+
+    public void onShowUI(){
+        tvSupersafeSpace.setVisibility(View.VISIBLE);
+        tvOtherSpace.setVisibility(View.VISIBLE);
+        tvFreeSpace.setVisibility(View.VISIBLE);
         final User mUser = User.getInstance().getUserInfo();
+        Utils.Log(TAG,"user :"+ new Gson().toJson(mUser));
+        boolean isThrow = false;
         if (mUser!=null){
             DriveAbout driveAbout = mUser.driveAbout;
-            //Utils.Log(TAG,"Response :" + new Gson().toJson(driveAbout));
             try {
-                String superSafeSpace = String.format(getString(R.string.supersafe_used_space), ConvertUtils.byte2FitMemorySize(driveAbout.quotaBytesUsed));
-                tvSupersafeSpace.setText(superSafeSpace);
+                String superSafeSpace = ConvertUtils.byte2FitMemorySize(driveAbout.inAppUsed);
+                tvValueSupersafeSpace.setText(superSafeSpace);
             }
             catch (Exception e){
-                tvSupersafeSpace.setText(getString(R.string.calculating));
+                tvValueOtherSpace.setText(getString(R.string.calculating));
+                isThrow = true;
             }
             try {
-                String superSafeSpace = String.format(getString(R.string.other_used_space), ConvertUtils.byte2FitMemorySize(driveAbout.quotaBytesUsedAggregate));
-                tvOtherSpace.setText(superSafeSpace);
+                String superSafeSpace = ConvertUtils.byte2FitMemorySize(driveAbout.quotaBytesUsedAggregate);
+                tvValueOtherSpace.setText(superSafeSpace);
             }
             catch (Exception e){
-                tvOtherSpace.setText(getString(R.string.calculating));
+                tvValueOtherSpace.setText(getString(R.string.calculating));
+                isThrow = true;
             }
-
             try {
                 final  long result = driveAbout.quotaBytesTotal - driveAbout.quotaBytesUsedAggregate;
-                String superSafeSpace = String.format(getString(R.string.free_space), ConvertUtils.byte2FitMemorySize(result));
-                tvFreeSpace.setText(superSafeSpace);
+                String superSafeSpace = ConvertUtils.byte2FitMemorySize(result);
+                tvValueFreeSpace.setText(superSafeSpace);
             }
             catch (Exception e){
-                tvFreeSpace.setText(getString(R.string.calculating));
+                tvValueFreeSpace.setText(getString(R.string.calculating));
+                isThrow = true;
             }
 
+            try {
+                if (mUser.syncData!=null){
+                    String lefFiles = String.format(getString(R.string.left),""+mUser.syncData.left);
+                    tvLeft.setText(lefFiles);
+                }
+            }
+            catch (Exception e){
+                String lefFiles = String.format(getString(R.string.left),"100");
+                tvLeft.setText(lefFiles);
+                isThrow = true;
+            }
+
+            try {
+                if (mUser.syncData!=null){
+                    String uploadedFiles = String.format(getString(R.string.uploaded),""+(100 - mUser.syncData.left));
+                    tvUploaded.setText(uploadedFiles);
+                }
+            }
+            catch (Exception e){
+                String uploadedFiles = String.format(getString(R.string.uploaded),"0");
+                tvUploaded.setText(uploadedFiles);
+                isThrow = true;
+            }
+
+            if (isThrow){
+                tvSupersafeSpace.setVisibility(View.INVISIBLE);
+                tvOtherSpace.setVisibility(View.INVISIBLE);
+                tvFreeSpace.setVisibility(View.INVISIBLE);
+            }
         }
+    }
+
+    public void onShowSwitch(){
+        final boolean pause_cloud_sync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync),false);
+        btnSwitchPauseSync.setChecked(pause_cloud_sync);
+
+        final boolean only_wifi = PrefsController.getBoolean(getString(R.string.key_cloud_sync_only_wifi),false);
+        btnSwitchSyncWithWifi.setChecked(only_wifi);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_cloud_manager, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.menu_item_refresh:{
+                presenter.onGetDriveAbout();
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -126,7 +212,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        Utils.Log(TAG,"Successful response "+ message);
+        switch (status){
+            case GET_LIST_FILES_IN_APP:{
+                onShowUI();
+                break;
+            }
+        }
     }
 
     @Override
@@ -153,9 +244,11 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()){
             case R.id.btnSwitchPauseSync :{
+                PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync),b);
                 break;
             }
             case R.id.btnSwitchSyncWithWifi :{
+                PrefsController.putBoolean(getString(R.string.key_cloud_sync_only_wifi),b);
                 break;
             }
         }
@@ -181,6 +274,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        presenter.onGetDriveAbout();
+        onShowSwitch();
     }
 
     @Override

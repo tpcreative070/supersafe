@@ -72,6 +72,11 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
+
+                            if (onResponse.premium!=null){
+                                mUser.premium = onResponse.premium;
+                            }
+
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         }
                     }
@@ -339,13 +344,10 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                 .send();
     }
 
-
     private String getString(int res){
         BaseView view = view();
         String value = view.getContext().getString(res);
         return value;
     }
-
-
 
 }

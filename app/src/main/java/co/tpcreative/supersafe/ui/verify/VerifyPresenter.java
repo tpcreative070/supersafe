@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.ui.verify;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -71,6 +70,9 @@ public class VerifyPresenter extends Presenter<BaseView>{
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
+                            if (onResponse.premium!=null){
+                                mUser.premium = onResponse.premium;
+                            }
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         }
                     }

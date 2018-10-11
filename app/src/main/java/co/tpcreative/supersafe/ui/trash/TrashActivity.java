@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.ui.trash;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -20,15 +18,8 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.bumptech.glide.Glide;
-import com.ftinc.kit.util.SizeUtils;
 import com.litao.android.lib.Utils.GridSpacingItemDecoration;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -36,7 +27,6 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapter.ItemSelectedListener{
@@ -45,7 +35,7 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     @BindView(R.id.tv_Audios)
     TextView tv_Audios;
     @BindView(R.id.tv_Videos)
-    TextView tvVideos;
+    TextView tv_Videos;
     @BindView(R.id.tv_Photos)
     TextView tv_Photos;
     @BindView(R.id.btnUpgradeVersion)
@@ -169,7 +159,6 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
 
     }
 
-
     @Override
     public void onStartLoading(EnumStatus status) {
 
@@ -191,7 +180,6 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     }
 
     /*Action mode*/
-
 
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
@@ -270,7 +258,6 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         }
     }
 
-
     @Override
     public void onError(String message, EnumStatus status) {
 
@@ -290,6 +277,17 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
+
+                String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
+                tv_Photos.setText(photos);
+
+                String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
+                tv_Videos.setText(videos);
+
+                String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
+                tv_Audios.setText(audios);
+
+
                 adapter.setDataSource(presenter.mList);
                 break;
             }

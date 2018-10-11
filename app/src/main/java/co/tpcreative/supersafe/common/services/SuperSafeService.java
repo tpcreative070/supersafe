@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.services;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -7,23 +6,21 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
@@ -52,13 +49,12 @@ import retrofit2.Callback;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-public class SuperSafeService extends PresenterService<SuperSafeServiceView> implements SuperSafeReceiver.ConnectivityReceiverListener {
+public class SuperSafeService extends PresenterService<BaseView> implements SuperSafeReceiver.ConnectivityReceiverListener {
 
     private static final String TAG = SuperSafeService.class.getSimpleName();
     private final IBinder mBinder = new LocalBinder(); // Binder given to clients
     protected Storage storage;
     private Intent mIntent;
-    private SupperSafeServiceListener listener;
     private SuperSafeReceiver androidReceiver;
     private DownloadService downloadService;
     private HashMap<String, String> hashMapGlobal = new HashMap<>();
@@ -107,7 +103,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         Utils.Log(TAG, "Connected :" + isConnected);
-        SuperSafeServiceView view = view();
+        BaseView view = view();
         if (view != null) {
             if (isConnected){
                 view.onSuccessful("Connected network",EnumStatus.CONNECTED);
@@ -118,10 +114,9 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
     }
 
-
     @Override
     public void onActionScreenOff() {
-        SuperSafeServiceView view = view();
+        BaseView view = view();
         if (view != null) {
             view.onSuccessful("Screen Off",EnumStatus.SCREEN_OFF);
         }
@@ -146,7 +141,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
     }
 
     public void getDriveAbout() {
-        SuperSafeServiceView view = view();
+        BaseView view = view();
         if (view == null) {
             return;
         }
@@ -171,13 +166,13 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_DRIVE_ABOUT))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                     if (onResponse.error != null) {
                         Log.d(TAG, "onError 1");
                         view.onError("Error " + new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
@@ -215,11 +210,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error ^^:" + throwable.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                 }));
     }
 
-    public void onGetListFileInApp(SuperSafeServiceView view) {
+    public void onGetListFileInApp(BaseView<Integer> view) {
         Utils.Log(TAG, "onGetListFolderInApp");
         if (view == null) {
             view.onError("no view", EnumStatus.GET_LIST_FILES_IN_APP);
@@ -245,26 +240,25 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         }
 
         String access_token = user.access_token;
-        view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_LIST_FILES_IN_APP))
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Response data from items " + new Gson().toJson(onResponse));
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_LIST_FILES_IN_APP);
                     if (onResponse.error != null) {
                         Log.d(TAG, "onError:" + new Gson().toJson(onResponse));
                         view.onError("Not found this id.... :" + new Gson().toJson(onResponse.error), EnumStatus.GET_LIST_FILES_IN_APP);
                     } else {
                         final int count = onResponse.files.size();
                         Utils.Log(TAG,"Total count request :" + count);
-                        view.onSuccessful(""+count, EnumStatus.GET_LIST_FILES_IN_APP);
+                        view.onSuccessful("Successful", EnumStatus.GET_LIST_FILES_IN_APP,count);
                     }
                 }, throwable -> {
                     if (view == null) {
@@ -291,13 +285,13 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error ^^:" + throwable.getMessage(), EnumStatus.GET_LIST_FILES_IN_APP);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_LIST_FILES_IN_APP);
                 }));
     }
 
     /*Network request*/
 
-    public void onCategoriesSync(MainCategories mainCategories, SuperSafeServiceView view) {
+    public void onCategoriesSync(MainCategories mainCategories, BaseView view) {
         Utils.Log(TAG, "onCategoriesSync");
         if (view == null) {
             view.onError("no view", EnumStatus.CATEGORIES_SYNC);
@@ -332,14 +326,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CATEGORIES_SYNC))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         view.onError("View is null", EnumStatus.CATEGORIES_SYNC);
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.CATEGORIES_SYNC);
                     if (onResponse.error) {
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
@@ -380,11 +374,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.CATEGORIES_SYNC);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.CATEGORIES_SYNC);
                 }));
     }
 
-    public void onDeleteCategoriesSync(MainCategories mainCategories, SuperSafeServiceView view) {
+    public void onDeleteCategoriesSync(MainCategories mainCategories, BaseView view) {
         Utils.Log(TAG, "onDeleteCategoriesSync");
         if (view == null) {
             view.onError("no view", EnumStatus.DELETE_CATEGORIES);
@@ -418,14 +412,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.DELETE_CATEGORIES))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         view.onError("View is null", EnumStatus.DELETE_CATEGORIES);
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.DELETE_CATEGORIES);
                     if (onResponse.error) {
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES);
@@ -454,13 +448,13 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.DELETE_CATEGORIES);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.DELETE_CATEGORIES);
                 }));
     }
 
     /*Create/Update for Categories*/
 
-    public void onGetListCategoriesSync(SuperSafeServiceView view) {
+    public void onGetListCategoriesSync(BaseView view) {
         Utils.Log(TAG, "onGetListCategoriesSync");
         if (view == null) {
             view.onError("no view", EnumStatus.LIST_CATEGORIES_SYNC);
@@ -494,14 +488,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.LIST_CATEGORIES_SYNC))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.LIST_CATEGORIES_SYNC);
                     if (onResponse.error) {
                         Log.d(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
@@ -566,14 +560,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.LIST_CATEGORIES_SYNC);
                 }));
     }
 
 
     /*Date for Categories*/
 
-    public void onAddItems(final Items mItem, SuperSafeServiceView view) {
+    public void onAddItems(final Items mItem, BaseView view) {
         final Items items = mItem;
         Utils.Log(TAG, "onAddItems");
         if (view == null) {
@@ -599,7 +593,6 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             return;
         }
 
-
         // Map<String, Object> hashMap = new HashMap<>();
 
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
@@ -613,20 +606,19 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             hashMap.put(getString(R.string.key_name), hex);
         }
 
-
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.ADD_ITEMS))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.ADD_ITEMS);
                     if (onResponse.error) {
                         Log.d(TAG, "onError:" + new Gson().toJson(onResponse));
                         view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.ADD_ITEMS);
@@ -653,14 +645,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.ADD_ITEMS);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.ADD_ITEMS);
                 }));
     }
 
 
     /*Get List Categories*/
 
-    public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final SuperSafeServiceView view) {
+    public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final BaseView view) {
         Utils.Log(TAG, "onDeleteCloudItems");
         if (view == null) {
             view.onError("no view", EnumStatus.DELETE_SYNC_CLOUD_DATA);
@@ -700,7 +692,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverDriveApi.onDeleteCloudItem(access_token, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.DELETE_SYNC_CLOUD_DATA))
                 .subscribe(onResponse -> {
                     if (onResponse.code() == 204) {
                         final EnumDelete delete = EnumDelete.values()[items.deleteAction];
@@ -746,11 +738,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error 0:" + throwable.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.DELETE_SYNC_CLOUD_DATA);
                 }));
     }
 
-    public void onDeleteOwnSystem(final Items items, final SuperSafeServiceView view) {
+    public void onDeleteOwnSystem(final Items items, final BaseView view) {
         Utils.Log(TAG, "onDeleteOwnSystem");
         if (view == null) {
             view.onError("no view", EnumStatus.DELETE_SYNC_OWN_DATA);
@@ -783,7 +775,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.DELETE_SYNC_OWN_DATA))
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Response data from items " + new Gson().toJson(onResponse));
                     if (view == null) {
@@ -798,7 +790,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         items.deleteAction = EnumDelete.DELETE_DONE.ordinal();
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.DELETE_SYNC_CLOUD_DATA);
 
                 }, throwable -> {
                     if (view == null) {
@@ -822,11 +814,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.DELETE_SYNC_OWN_DATA);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.DELETE_SYNC_OWN_DATA);
                 }));
     }
 
-    public void onGetListSync(String nextPage, SuperSafeServiceView view) {
+    public void onGetListSync(String nextPage, BaseView view) {
         Utils.Log(TAG, "onGetListSync");
         if (view == null) {
             view.onError("no view", EnumStatus.GET_LIST_FILE);
@@ -873,14 +865,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverAPI.onListFilesSync(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_LIST_FILE))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         view.onError("View is null", EnumStatus.GET_LIST_FILE);
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_LIST_FILE);
 
                     if (onResponse.error) {
                         Log.d(TAG, "onError 1");
@@ -928,6 +920,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                                 e.printStackTrace();
                             }
                             finally {
+                                final User mUser = User.getInstance().getUserInfo();
+                                if (mUser!=null){
+                                    mUser.syncData = onResponse.syncData;
+                                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                }
                                 Log.d(TAG, "Ready for sync");
                                 view.onSuccessful("Ready for sync");
                                 view.onSuccessful(onResponse.nextPage, EnumStatus.SYNC_READY);
@@ -1010,14 +1007,14 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.GET_LIST_FILE);
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_LIST_FILE);
                 }));
     }
 
     public void onDeletePreviousSync(ServiceManager.DeleteServiceListener view) {
         Utils.Log(TAG, "onDeletePreviousSync");
         try {
-            final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, true);
+            final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true, false);
             for (Items index : list) {
                 String value = hashMapGlobal.get(index.items_id);
                 if (value == null) {
@@ -1028,10 +1025,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         } catch (Exception e) {
             e.getMessage();
         } finally {
-            view.onDone();
+            Utils.Log(TAG,"Delete everytime..............");
             hashMapGlobal.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
             GalleryCameraMediaManager.getInstance().onUpdatedView();
+            view.onDone();
             /*Note here*/
         }
     }
@@ -1273,7 +1271,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         });
     }
 
-    public void getDriveAbout(SuperSafeServiceView view) {
+    public void getDriveAbout(BaseView view) {
         Log.d(TAG, "getDriveAbout");
         if (view == null) {
             return;
@@ -1302,13 +1300,13 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_DRIVE_ABOUT))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
                         return;
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                     if (onResponse.error != null) {
                         view.onError(new Gson().toJson(onResponse.error), EnumStatus.GET_DRIVE_ABOUT);
                         final User mUser = User.getInstance().getUserInfo();
@@ -1322,6 +1320,7 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                         if (mUser != null) {
                             user.driveConnected = true;
                             PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                            view.onSuccessful("Successful",EnumStatus.GET_DRIVE_ABOUT);
                         }
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
@@ -1361,18 +1360,11 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
                             PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                         }
                     }
-                    view.onStopLoading();
+                    view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                 }));
     }
 
 
-    public interface SupperSafeServiceListener {
-        void onResponse(String message);
-
-        void onConnectionChanged(boolean isChanged);
-
-        void onMessageAction(String message);
-    }
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -1384,13 +1376,8 @@ public class SuperSafeService extends PresenterService<SuperSafeServiceView> imp
             // Return this instance of SignalRService so clients can call public methods
             return SuperSafeService.this;
         }
-
         public void setIntent(Intent intent) {
             mIntent = intent;
-        }
-
-        public void setListener(SupperSafeServiceListener mListener) {
-            listener = mListener;
         }
     }
 

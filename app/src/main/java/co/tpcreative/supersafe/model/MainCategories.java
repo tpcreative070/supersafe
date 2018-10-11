@@ -95,8 +95,7 @@ public class MainCategories implements Serializable{
     @Ignore
     public List<MainCategories> getList(){
         List<MainCategories> mList = new ArrayList<>();
-        final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
-        final List<MainCategories> listM = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
+        final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false,false);
 
         if (list!=null && list.size()>0){
             mList.addAll(list);
@@ -105,7 +104,6 @@ public class MainCategories implements Serializable{
         else{
             final Map<String,MainCategories> map = MainCategories.getInstance().getMainCategoriesDefault();
             Utils.Log(TAG,"No Data " + map.size());
-            Utils.Log(TAG,"New special value :"+new Gson().toJson(listM));
             for (Map.Entry<String,MainCategories> index : map.entrySet()){
                 final MainCategories main = index.getValue();
                 mList.add(main);

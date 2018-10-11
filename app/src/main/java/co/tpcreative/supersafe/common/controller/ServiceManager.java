@@ -30,11 +30,10 @@ import javax.crypto.Cipher;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeService;
-import co.tpcreative.supersafe.common.services.SuperSafeServiceView;
-import co.tpcreative.supersafe.common.services.upload.UploadService;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
@@ -57,7 +56,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class ServiceManager implements SuperSafeServiceView {
+public class ServiceManager implements BaseView {
 
     private static final String TAG = ServiceManager.class.getSimpleName();
     private static ServiceManager instance;
@@ -166,7 +165,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
             intent.putExtra("overrideTheme", 1);
             //  intent.putExtra("selectedAccount",account);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT);
+            context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
@@ -179,7 +178,7 @@ public class ServiceManager implements SuperSafeServiceView {
             Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
             intent.putExtra("overrideTheme", 1);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
+            context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
@@ -191,7 +190,7 @@ public class ServiceManager implements SuperSafeServiceView {
             Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
             intent.putExtra("overrideTheme", 1);
-            context.startActivityForResult(intent, VerifyAccountActivity.REQUEST_CODE_EMAIL);
+            context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
         }
@@ -266,7 +265,7 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        myService.onGetListCategoriesSync(new SuperSafeServiceView() {
+        myService.onGetListCategoriesSync(new BaseView() {
             @Override
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
@@ -286,21 +285,41 @@ public class ServiceManager implements SuperSafeServiceView {
                 getObservable();
             }
 
+
             @Override
-            public void onSuccessful(List<DriveResponse> lists) {
+            public void onStartLoading(EnumStatus status) {
 
             }
 
             @Override
-            public void onStartLoading() {
+            public void onStopLoading(EnumStatus status) {
 
             }
 
             @Override
-            public void onStopLoading() {
+            public void onError(String message) {
 
             }
 
+            @Override
+            public void onSuccessful(String message, EnumStatus status, Object object) {
+
+            }
+
+            @Override
+            public void onSuccessful(String message, EnumStatus status, List list) {
+
+            }
+
+            @Override
+            public Context getContext() {
+                return null;
+            }
+
+            @Override
+            public Activity getActivity() {
+                return null;
+            }
         });
     }
 
@@ -308,7 +327,7 @@ public class ServiceManager implements SuperSafeServiceView {
     private Observable<MainCategories> getObservableItems(List<MainCategories> categories) {
         return Observable.create(subscriber -> {
             for (MainCategories index : categories) {
-                myService.onCategoriesSync(index, new SuperSafeServiceView() {
+                myService.onCategoriesSync(index, new BaseView() {
                     @Override
                     public void onError(String message, EnumStatus status) {
                         Utils.Log(TAG, message + "--" + status.name());
@@ -329,18 +348,38 @@ public class ServiceManager implements SuperSafeServiceView {
                     }
 
                     @Override
-                    public void onSuccessful(List<DriveResponse> lists) {
+                    public void onStartLoading(EnumStatus status) {
 
                     }
 
                     @Override
-                    public void onStartLoading() {
+                    public void onStopLoading(EnumStatus status) {
 
                     }
 
                     @Override
-                    public void onStopLoading() {
+                    public void onError(String message) {
 
+                    }
+
+                    @Override
+                    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+                    }
+
+                    @Override
+                    public void onSuccessful(String message, EnumStatus status, List list) {
+
+                    }
+
+                    @Override
+                    public Context getContext() {
+                        return null;
+                    }
+
+                    @Override
+                    public Activity getActivity() {
+                        return null;
                     }
 
                 });
@@ -411,7 +450,7 @@ public class ServiceManager implements SuperSafeServiceView {
         if (myService == null) {
             return;
         }
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false);
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,false, false);
         if (mList == null) {
             Utils.Log(TAG, "Not Found Miss Data");
             return;
@@ -423,6 +462,7 @@ public class ServiceManager implements SuperSafeServiceView {
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
+                    Utils.Log(TAG, ".................Working on onCheckingMissData..............");
                     onAddItems(i);
                 })
                 .doOnComplete(() -> {
@@ -473,7 +513,44 @@ public class ServiceManager implements SuperSafeServiceView {
 
         if (myService != null) {
             isLoadingData = true;
-            myService.onGetListSync(nextPage, new SuperSafeServiceView() {
+            myService.onGetListSync(nextPage, new BaseView() {
+
+                @Override
+                public void onStartLoading(EnumStatus status) {
+
+                }
+
+                @Override
+                public void onStopLoading(EnumStatus status) {
+
+                }
+
+                @Override
+                public void onError(String message) {
+
+                }
+
+                @Override
+                public void onSuccessful(String message, EnumStatus status, Object object) {
+
+                }
+
+                @Override
+                public void onSuccessful(String message, EnumStatus status, List list) {
+
+                }
+
+                @Override
+                public Context getContext() {
+                    return null;
+                }
+
+                @Override
+                public Activity getActivity() {
+                    return null;
+                }
+
+
                 @Override
                 public void onError(String message, EnumStatus status) {
                     if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
@@ -487,11 +564,6 @@ public class ServiceManager implements SuperSafeServiceView {
                 @Override
                 public void onSuccessful(String message) {
                     Utils.Log(TAG, "Response :" + message);
-                }
-
-                @Override
-                public void onSuccessful(List<DriveResponse> lists) {
-                    Utils.Log(TAG, "Response !!!:!!!" + new Gson().toJson(lists));
                 }
 
                 @Override
@@ -515,11 +587,11 @@ public class ServiceManager implements SuperSafeServiceView {
 
                         final List<MainCategories> mPreviousMainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
 
-                        final List<MainCategories> deleteAlbum = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true);
-
+                        final List<MainCategories> deleteAlbum = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true,false);
 
                         boolean isDeleteAlbum = true;
                         if (deleteAlbum !=null && deleteAlbum.size()>0){
+                            Utils.Log(TAG,"new main categories "+ new Gson().toJson(deleteAlbum));
                             for (MainCategories index : deleteAlbum){
                                 final List<Items> mItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false);
                                 if (mItems!=null && mItems.size()>0){
@@ -528,16 +600,19 @@ public class ServiceManager implements SuperSafeServiceView {
                             }
                         }
                         else {
+                            Utils.Log(TAG,"new main categories  not found");
                             isDeleteAlbum = false;
                         }
 
 
                         boolean isPreviousDelete = false;
                         if (mPreviousList != null && mPreviousList.size() > 0) {
-                            for (Items index : mPreviousList) {
-                                String value = myService.getHashMapGlobal().get(index.items_id);
-                                if (value == null) {
-                                    isPreviousDelete = true;
+                            if (myService.getHashMapGlobal()!=null){
+                                for (Items index : mPreviousList) {
+                                    String value = myService.getHashMapGlobal().get(index.items_id);
+                                    if (value == null) {
+                                        isPreviousDelete = true;
+                                    }
                                 }
                             }
                         }
@@ -604,17 +679,6 @@ public class ServiceManager implements SuperSafeServiceView {
 
                     }
                 }
-
-                @Override
-                public void onStartLoading() {
-
-                }
-
-                @Override
-                public void onStopLoading() {
-
-                }
-
             });
         } else {
             Utils.Log(TAG, "My service is null");
@@ -656,7 +720,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, "Starting deleting items on own cloud.......");
                     final Items mItem = i;
                     isDeleteOwnCloud = true;
-                    myService.onDeleteOwnSystem(mItem, new SuperSafeServiceView() {
+                    myService.onDeleteOwnSystem(mItem, new BaseView() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "--" + status.name());
@@ -676,19 +740,40 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
                         @Override
-                        public void onSuccessful(List<DriveResponse> lists) {
+                        public void onStartLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onStartLoading() {
+                        public void onStopLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onStopLoading() {
+                        public void onError(String message) {
 
                         }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, Object object) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, List list) {
+
+                        }
+
+                        @Override
+                        public Context getContext() {
+                            return null;
+                        }
+
+                        @Override
+                        public Activity getActivity() {
+                            return null;
+                        }
+
                     });
                 })
                 .doOnComplete(() -> {
@@ -709,7 +794,7 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
 
-        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true);
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true,false);
 
         if (mList == null) {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
@@ -732,7 +817,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     Utils.Log(TAG, "Starting deleting items on own cloud.......");
                     final MainCategories main = i;
                     isDeleteAlbum = true;
-                    myService.onDeleteCategoriesSync(main, new SuperSafeServiceView() {
+                    myService.onDeleteCategoriesSync(main, new BaseView() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "--" + status.name());
@@ -751,18 +836,38 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
                         @Override
-                        public void onSuccessful(List<DriveResponse> lists) {
+                        public void onStartLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onStartLoading() {
+                        public void onStopLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onStopLoading() {
+                        public void onError(String message) {
 
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, Object object) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, List list) {
+
+                        }
+
+                        @Override
+                        public Context getContext() {
+                            return null;
+                        }
+
+                        @Override
+                        public Activity getActivity() {
+                            return null;
                         }
 
                     });
@@ -828,7 +933,7 @@ public class ServiceManager implements SuperSafeServiceView {
                     isDeleteSyncCLoud = true;
                     final Items mItem = i;
                     Utils.Log(TAG, "Starting deleting items on cloud.......");
-                    myService.onDeleteCloudItems(mItem, mItem.isOriginalGlobalId, new SuperSafeServiceView() {
+                    myService.onDeleteCloudItems(mItem, mItem.isOriginalGlobalId, new BaseView() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "- " + status.name());
@@ -847,18 +952,38 @@ public class ServiceManager implements SuperSafeServiceView {
                         }
 
                         @Override
-                        public void onSuccessful(List<DriveResponse> lists) {
+                        public void onStartLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onStartLoading() {
+                        public void onStopLoading(EnumStatus status) {
 
                         }
 
                         @Override
-                        public void onStopLoading() {
+                        public void onError(String message) {
 
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, Object object) {
+
+                        }
+
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status, List list) {
+
+                        }
+
+                        @Override
+                        public Context getContext() {
+                            return null;
+                        }
+
+                        @Override
+                        public Activity getActivity() {
+                            return null;
                         }
 
                     });
@@ -1272,7 +1397,7 @@ public class ServiceManager implements SuperSafeServiceView {
             return;
         }
         Utils.Log(TAG, "Preparing insert  to own Server");
-        myService.onAddItems(items, new SuperSafeServiceView() {
+        myService.onAddItems(items, new BaseView() {
             @Override
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + " status " + status.name());
@@ -1291,18 +1416,38 @@ public class ServiceManager implements SuperSafeServiceView {
             }
 
             @Override
-            public void onSuccessful(List<DriveResponse> lists) {
+            public void onStartLoading(EnumStatus status) {
 
             }
 
             @Override
-            public void onStartLoading() {
+            public void onStopLoading(EnumStatus status) {
 
             }
 
             @Override
-            public void onStopLoading() {
+            public void onError(String message) {
 
+            }
+
+            @Override
+            public void onSuccessful(String message, EnumStatus status, Object object) {
+
+            }
+
+            @Override
+            public void onSuccessful(String message, EnumStatus status, List list) {
+
+            }
+
+            @Override
+            public Context getContext() {
+                return null;
+            }
+
+            @Override
+            public Activity getActivity() {
+                return null;
             }
 
         });
@@ -1680,6 +1825,9 @@ public class ServiceManager implements SuperSafeServiceView {
                                     if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
                                         final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
                                         mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
+                                        if (storage.isFileExist(items.thumbnailPath)){
+                                            mb += (long) +storage.getSize(new File(items.thumbnailPath), SizeUnit.B);
+                                        }
                                         driveDescription.size = "" + mb;
                                         items.size = driveDescription.size;
                                         items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
@@ -1819,6 +1967,9 @@ public class ServiceManager implements SuperSafeServiceView {
                             if (storage.isFileExist(mItem.originalPath)) {
                                 final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
                                 mb = (long) +storage.getSize(new File(mItem.originalPath), SizeUnit.B);
+                                if (storage.isFileExist(mItem.thumbnailPath)){
+                                    mb += (long) +storage.getSize(new File(mItem.thumbnailPath), SizeUnit.B);
+                                }
                                 driveDescription.size = "" + mb;
                                 mItem.size = driveDescription.size;
                                 mItem.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
@@ -2005,19 +2156,41 @@ public class ServiceManager implements SuperSafeServiceView {
     }
 
     @Override
-    public void onStartLoading() {
+    public void onStartLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void onStopLoading() {
+    public void onStopLoading(EnumStatus status) {
 
     }
 
     @Override
-    public void onSuccessful(List<DriveResponse> lists) {
+    public void onError(String message) {
 
     }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return null;
+    }
+
+    @Override
+    public Activity getActivity() {
+        return null;
+    }
+
+
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {

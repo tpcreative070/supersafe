@@ -19,6 +19,11 @@ public class TrashPresenter extends Presenter<BaseView>{
     private static final String TAG = TrashPresenter.class.getSimpleName();
     protected List<Items> mList;
     protected Storage storage;
+    protected int videos = 0;
+    protected int photos = 0;
+    protected int audios = 0;
+
+
     public TrashPresenter(){
         mList = new ArrayList<>();
         storage = new Storage(SuperSafeApplication.getInstance());
@@ -31,12 +36,36 @@ public class TrashPresenter extends Presenter<BaseView>{
             final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal(),false);
             if (data!=null){
                 mList = data;
+                onCalculate();
             }
             Utils.Log(TAG,new Gson().toJson(data));
             view.onSuccessful("successful",EnumStatus.RELOAD);
         }
         catch (Exception e){
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
+        }
+    }
+
+    public void onCalculate(){
+        photos = 0;
+        videos = 0;
+        audios = 0;
+        for (Items index : mList){
+            final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
+            switch (enumTypeFile){
+                case IMAGE:{
+                    photos+=1;
+                    break;
+                }
+                case VIDEO:{
+                    videos+=1;
+                    break;
+                }
+                case AUDIO:{
+                    audios+=1;
+                    break;
+                }
+            }
         }
     }
 

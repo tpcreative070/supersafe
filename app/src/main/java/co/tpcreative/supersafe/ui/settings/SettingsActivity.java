@@ -14,9 +14,11 @@ import android.view.MenuItem;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+
 
 public class SettingsActivity extends BaseActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
@@ -70,6 +72,26 @@ public class SettingsActivity extends BaseActivity {
                             recreate();
                         }
                     });
+                }
+                break;
+            }
+            case Navigator.ENABLE_CLOUD:{
+                Utils.Log(TAG,"onResultResponse :" + resultCode);
+                if (resultCode==RESULT_OK){
+                    final User mUser = User.getInstance().getUserInfo();
+                    if (mUser!=null){
+                        if (mUser.verified){
+                            if (!mUser.driveConnected){
+                                Navigator.onCheckSystem(this,null);
+                            }
+                            else{
+                                Navigator.onManagerCloud(this);
+                            }
+                        }
+                        else{
+                            Navigator.onVerifyAccount(this);
+                        }
+                    }
                 }
                 break;
             }

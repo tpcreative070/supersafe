@@ -28,7 +28,6 @@ public class SingletonManagerTab {
         }
     }
 
-
     public void onRequestAccessToken(){
         if (listener!=null){
             listener.onRequestAccessToken();

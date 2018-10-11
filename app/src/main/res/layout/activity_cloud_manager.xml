@@ -142,33 +142,45 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <RelativeLayout
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <ImageView
+                            android:layout_gravity="center"
                             android:id="@+id/imgSuperSafeSpace"
                             android:background="@drawable/dot_supersafe_space"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerInParent="true"
                             android:layout_width="@dimen/icon_size_15"
                             android:layout_height="@dimen/icon_size_15"/>
 
                         <TextView
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="@dimen/text_size_normal"
+                            android:text="@string/calculating"
+                            android:id="@+id/tvValueSupersafeSpace"
+                            android:singleLine="true"
+                            android:paddingLeft="10dp"
+                            android:layout_gravity="center"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:visibility="invisible"
                             android:id="@+id/tvSupersafeSpace"
                             android:textSize="@dimen/text_size_normal"
                             android:text="@string/supersafe_used_space"
                             android:paddingLeft="10dp"
-                            android:layout_toRightOf="@+id/imgSuperSafeSpace"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
-                    </RelativeLayout>
+                    </LinearLayout>
 
 
-                    <RelativeLayout
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
@@ -176,24 +188,35 @@
                         <ImageView
                             android:id="@+id/imgOtherSpace"
                             android:background="@drawable/dot_other_space"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:layout_width="@dimen/icon_size_15"
                             android:layout_height="@dimen/icon_size_15"/>
 
                         <TextView
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="@dimen/text_size_normal"
+                            android:text="@string/calculating"
+                            android:id="@+id/tvValueOtherSpace"
+                            android:singleLine="true"
+                            android:paddingLeft="10dp"
+                            android:layout_gravity="center"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:visibility="invisible"
                             android:id="@+id/tvOtherSpace"
                             android:textSize="@dimen/text_size_normal"
                             android:text="@string/other_used_space"
                             android:paddingLeft="10dp"
-                            android:layout_toRightOf="@+id/imgOtherSpace"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
-                    </RelativeLayout>
+                    </LinearLayout>
 
-                    <RelativeLayout
+                    <LinearLayout
+                        android:orientation="horizontal"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_width="match_parent"
@@ -201,21 +224,30 @@
                         <ImageView
                             android:id="@+id/imgFreeSpace"
                             android:background="@drawable/dot_free_space"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:layout_width="@dimen/icon_size_15"
                             android:layout_height="@dimen/icon_size_15"/>
 
                         <TextView
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="@dimen/text_size_normal"
+                            android:text="@string/calculating"
+                            android:id="@+id/tvValueFreeSpace"
+                            android:singleLine="true"
+                            android:paddingLeft="10dp"
+                            android:layout_gravity="center"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:visibility="invisible"
                             android:id="@+id/tvFreeSpace"
                             android:textSize="@dimen/text_size_normal"
                             android:text="@string/free_space"
                             android:paddingLeft="10dp"
-                            android:layout_toRightOf="@+id/imgFreeSpace"
-                            android:layout_centerInParent="true"
+                            android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
-                    </RelativeLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
 

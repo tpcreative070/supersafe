@@ -53,6 +53,10 @@ public class Navigator {
     public static final int THEME_SETTINGS = 1003;
     public static final int VERIFY_PIN = 1004;
     public static final int SECRET_DOOR_SUET_UP = 1005;
+    public static final int ENABLE_CLOUD = 1006;
+    public static final int REQUEST_CODE_EMAIL = 1007;
+    public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008;
+
 
 
     public static void onMoveToMainTab(Context context){
@@ -170,7 +174,7 @@ public class Navigator {
 
     public static void onEnableCloud(Activity context){
         Intent intent = new Intent(context, EnableCloudActivity.class);
-        context.startActivityForResult(intent,EnableCloudActivity.ENABLE_CLOUD);
+        context.startActivityForResult(intent,ENABLE_CLOUD);
     }
 
     public static void onManagerCloud(Context context){
@@ -183,7 +187,7 @@ public class Navigator {
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_google_oauth),googleOauth);
         intent.putExtras(bundle);
-        context.startActivityForResult(intent,EnableCloudActivity.ENABLE_CLOUD);
+        context.startActivityForResult(intent,ENABLE_CLOUD);
     }
 
     public static void onPlayer(Context context,final Items items){

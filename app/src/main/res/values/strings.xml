@@ -160,6 +160,7 @@
     <string name="help">Help</string>
     <string name="albumSettings">Album settings</string>
     <string name="deleteAlbum">Delete album</string>
+    <string name="select_items">Select Items</string>
     <string name="action_settings">Settings</string>
     <string name="action_add_favourite">Add to Favourites</string>
     <string name="action_play_next">Play Next</string>
@@ -179,6 +180,7 @@
     <string name="message_prompt">All your files will be sync to cloud. They will never lost.</string>
     <string name="enable_now">ENABLE NOW</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
+    <string name="upgrade_to_premium">Upgrade to Premium</string>
     <string name="verify">Verify</string>
     <string name="verified">Verified</string>
     <string name="unverified">Unverified</string>
@@ -196,6 +198,7 @@
     <string name="photos">Photos</string>
     <string name="videos">Videos</string>
     <string name="others">Others</string>
+    <string name="audio">Audios</string>
     <string name="account">Account</string>
     <string name="license_status">License Status</string>
     <string name="free">Free</string>
@@ -205,7 +208,7 @@
     <string name="link_google_drive">LINK GOOGLE DRIVE</string>
     <string name="user_another_google_drive">USE ANOTHER GOOGLE DRIVE</string>
     <string name="cloud_manager">Cloud Manager</string>
-    <string name="monthly_used">Monthly Usage %1$s/%2$s</string>
+    <string name="monthly_used">Monthly Usage: %1$s/%2$s</string>
     <string name="choose_an_account">Please select %1$s to link to Google Drive</string>
     <string name="choose_an_new_account">Please select or add your Google account to sign in with SupperSafe</string>
     <string name="not_the_same_account">Not the same account</string>
@@ -232,15 +235,16 @@
     <string name="create_album">Create Album</string>
     <string name="change_album">Change Album</string>
     <string name="add_other_email">Add Other Email</string>
-    <string name="photos_default">0 Photos</string>
-    <string name="videos_default">0 Videos</string>
-    <string name="audios_default">0 Audios</string>
+    <string name="photos_default">%1$s Photos</string>
+    <string name="videos_default">%1$s Videos</string>
+    <string name="audios_default">%1$s Audios</string>
     <string name="premium_features">Premium features</string>
     <string name="what_trash">What is trash ?</string>
     <string name="what_trash_info">It\'s temporary storage for stuffs you\'ve deleted. Everything in Trash still take up space on your device.</string>
     <string name="upgrade_to_recover">UPGRADE TO RECOVER</string>
     <string name="empty_trash">EMPTY TRASH</string>
     <string name="select_all">Select All</string>
+    <string name="refresh">Refresh</string>
     <string name="key_restore">Restore</string>
     <string name="empty_all_trash">Are you sure to delete all items? You can not undo this!</string>
     <string name="restore">These items will be restored!</string>
@@ -295,13 +299,15 @@
     <string name="left">Left %1$s</string>
     <string name="quota_available">100 quota will be available next month</string>
     <string name="remove_quota_limit">REMOVE QUOTA LIMIT</string>
-    <string name="supersafe_used_space">%1$s       Supersafe Used Space</string>
-    <string name="other_used_space">%1$s       Other Used Space</string>
-    <string name="free_space">%1$s       Free Space</string>
+    <string name="supersafe_used_space">Supersafe Used Space</string>
+    <string name="other_used_space">Other Used Space</string>
+    <string name="free_space">Free Space</string>
     <string name="pause_cloud_sync">Pause Cloud Sync</string>
     <string name="cloud_sync_only_wifi">Cloud Sync Only In Wifi</string>
     <string name="calculating">Calculating</string>
-
+    <string name="supersafe_premium">Supersafe Premium</string>
+    <string name="premium_left">You have %1$s days of complimentary Premium remaining</string>
+    <string name="move_items_to_trash">Move %1$s item to trash?</string>
 
     <string name="key_user">user</string>
     <string name="key_items">items</string>

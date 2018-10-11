@@ -87,8 +87,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     private VerifyAccountPresenter presenter;
 
-    public static final int REQUEST_CODE_EMAIL = 2000;
-    public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 2001;
 
 
     private boolean isBack = true;
@@ -407,12 +405,12 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
-            case EnableCloudActivity.ENABLE_CLOUD :
+            case Navigator.ENABLE_CLOUD :
                 if (resultCode == Activity.RESULT_OK) {
                     finish();
                 }
                 break;
-            case REQUEST_CODE_EMAIL :
+            case Navigator.REQUEST_CODE_EMAIL :
                 if (resultCode == Activity.RESULT_OK) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     Log.d(TAG,"accountName : " + accountName);

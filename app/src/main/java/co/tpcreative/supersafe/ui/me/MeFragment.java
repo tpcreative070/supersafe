@@ -22,11 +22,13 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.Theme;
 
-public class MeFragment extends BaseFragment implements BaseView{
+public class MeFragment extends BaseFragment implements BaseView,SingletonPremiumTimer.SingletonPremiumTimerListener{
 
     private static final String TAG = MeFragment.class.getSimpleName();
     @BindView(R.id.nsv)
@@ -43,8 +45,17 @@ public class MeFragment extends BaseFragment implements BaseView{
     TextView tvEnableCloud;
     @BindView(R.id.llAboutLocal)
     LinearLayout llAboutLocal;
-
     private MePresenter presenter;
+    @BindView(R.id.tvPremiumLeft)
+    TextView tvPremiumLeft;
+
+    @BindView(R.id.tvAudios)
+    TextView tvAudios;
+    @BindView(R.id.tvPhotos)
+    TextView tvPhotos;
+    @BindView(R.id.tvVideos)
+    TextView tvVideos;
+
 
     public static MeFragment newInstance(int index) {
         MeFragment fragment = new MeFragment();
@@ -94,7 +105,7 @@ public class MeFragment extends BaseFragment implements BaseView{
         final Theme mTheme = Theme.getInstance().getThemeInfo();
         if (mTheme!=null){
             imgSettings.setColorFilter(getContext().getResources().getColor(mTheme.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
-            imgPro.setColorFilter(getContext().getResources().getColor(mTheme.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
+            //imgPro.setColorFilter(getContext().getResources().getColor(R.color.holo_blue_dark), PorterDuff.Mode.SRC_ATOP);
         }
 
         presenter = new MePresenter();
@@ -110,7 +121,25 @@ public class MeFragment extends BaseFragment implements BaseView{
             }
            tvEmail.setText(presenter.mUser.email);
         }
+        String value = String.format(getString(R.string.premium_left),"30");
+        tvPremiumLeft.setText(value);
         Log.d(TAG,"work");
+    }
+
+    @Override
+    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String value = String.format(getString(R.string.premium_left),days);
+                    tvPremiumLeft.setText(value);
+                }
+            });
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -125,6 +154,10 @@ public class MeFragment extends BaseFragment implements BaseView{
         Log.d(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.INVISIBLE);
+            SingletonPremiumTimer.getInstance().setListener(this);
+        }
+        else{
+            SingletonPremiumTimer.getInstance().setListener(null);
         }
     }
 
@@ -133,22 +166,31 @@ public class MeFragment extends BaseFragment implements BaseView{
         super.onResume();
         Log.d(TAG,"onResume");
         presenter.onShowUserInfo();
-        if (presenter.mUser!=null){
-            if (presenter.mUser.verified){
-                tvStatus.setText(getString(R.string.view_change));
+        try {
+            if (presenter.mUser != null) {
+                if (presenter.mUser.verified) {
+                    tvStatus.setText(getString(R.string.view_change));
+                } else {
+                    tvStatus.setText(getString(R.string.verify_change));
+                }
+                tvEmail.setText(presenter.mUser.email);
             }
-            else{
-                tvStatus.setText(getString(R.string.verify_change));
+            if (presenter.mUser.driveConnected) {
+                String value;
+                final SyncData syncData = presenter.mUser.syncData;
+                if (syncData != null) {
+                    int result = 100 - syncData.left;
+                    value = String.format(getString(R.string.monthly_used), result + "", "100");
+                } else {
+                    value = String.format(getString(R.string.monthly_used), "0", "100");
+                }
+                tvEnableCloud.setText(value);
+            } else {
+                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
-            tvEmail.setText(presenter.mUser.email);
         }
-
-        if (presenter.mUser.driveConnected){
-            String value = String.format(getString(R.string.monthly_used),"100","100");
-            tvEnableCloud.setText(value);
-        }
-        else{
-            tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
+        catch (Exception e){
+            e.printStackTrace();
         }
         Log.d(TAG,"OnResume");
     }
