@@ -56,6 +56,7 @@ public class Navigator {
     public static final int ENABLE_CLOUD = 1006;
     public static final int REQUEST_CODE_EMAIL = 1007;
     public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008;
+    public static final int SHARE = 1009;
 
 
 
@@ -148,11 +149,12 @@ public class Navigator {
         context.startActivityForResult(intent,ALBUM_DETAIL);
     }
 
-    public static void onPhotoSlider(Activity context, final Items items, final List<Items> mList){
+    public static void onPhotoSlider(Activity context, final Items items, final List<Items> mList, MainCategories mainCategories){
         Intent intent = new Intent(context, PhotoSlideShowActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_items),items);
         bundle.putSerializable(context.getString(R.string.key_list_items),(ArrayList)mList);
+        bundle.putSerializable(context.getString(R.string.key_main_categories),mainCategories);
         intent.putExtras(bundle);
         context.startActivityForResult(intent,PHOTO_SLIDE_SHOW);
     }

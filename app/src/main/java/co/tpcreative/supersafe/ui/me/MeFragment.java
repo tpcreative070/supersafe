@@ -24,7 +24,9 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.Theme;
 
@@ -48,14 +50,12 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     private MePresenter presenter;
     @BindView(R.id.tvPremiumLeft)
     TextView tvPremiumLeft;
-
     @BindView(R.id.tvAudios)
     TextView tvAudios;
     @BindView(R.id.tvPhotos)
     TextView tvPhotos;
     @BindView(R.id.tvVideos)
     TextView tvVideos;
-
 
     public static MeFragment newInstance(int index) {
         MeFragment fragment = new MeFragment();
@@ -165,6 +165,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     public void onResume() {
         super.onResume();
         Log.d(TAG,"onResume");
+        presenter.onCalculate();
         presenter.onShowUserInfo();
         try {
             if (presenter.mUser != null) {
@@ -264,9 +265,20 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
+        switch (status) {
+            case RELOAD: {
+                String photos = String.format(getString(R.string.photos_default), "" + presenter.photos);
+                tvPhotos.setText(photos);
 
+                String videos = String.format(getString(R.string.videos_default), "" + presenter.videos);
+                tvVideos.setText(videos);
+
+                String audios = String.format(getString(R.string.audios_default), "" + presenter.audios);
+                tvAudios.setText(audios);
+                break;
+            }
+        }
     }
-
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {
@@ -277,4 +289,5 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
 }

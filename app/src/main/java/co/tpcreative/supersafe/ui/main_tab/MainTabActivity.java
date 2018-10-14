@@ -84,7 +84,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.bindView(this);
         presenter.onGetUserInfo();
         onCallLockScreen();
-        SingletonPremiumTimer.getInstance().onStartTimer();
     }
 
     @Override
@@ -447,7 +446,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
         ServiceManager.getInstance().onDismissServices();
-        SingletonPremiumTimer.getInstance().onStop();
     }
 
     public void onAnimationIcon(final EnumStatus status){

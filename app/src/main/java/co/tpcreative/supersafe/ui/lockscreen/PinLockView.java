@@ -10,10 +10,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
-
-import com.litao.android.lib.Utils.GridSpacingItemDecoration;
-
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 
 /**
  * Represents a numeric lock view which can used to taken numbers as input.

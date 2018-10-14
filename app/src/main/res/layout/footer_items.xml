@@ -59,6 +59,7 @@
                 android:layout_height="@dimen/image_size" />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/llRotate"
             android:gravity="center"
             android:layout_weight="1"
             android:layout_width="0dp"

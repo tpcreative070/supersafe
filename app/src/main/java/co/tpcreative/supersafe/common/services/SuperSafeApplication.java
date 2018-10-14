@@ -56,6 +56,8 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private String supersafeBackup;
     private String supersafeBreakInAlerts;
     private String supersafeLog;
+    private String supersafeShare ;
+    private String supersafePicture;
     private String key;
     private String fake_key;
     private Storage storage;
@@ -132,6 +134,9 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         supersafeBackup = supersafe+"backup/";
         supersafeLog = supersafe+"log/";
         supersafeBreakInAlerts  = supersafe+"break_in_alerts/";
+        supersafeShare = supersafe+"share/";
+
+        supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES)+"/SuperSafeExport/";
 
         registerActivityLifecycleCallbacks(this);
         Log.d(TAG,supersafe);
@@ -275,6 +280,14 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public String getSupersafeBreakInAlerts() {
         return supersafeBreakInAlerts;
+    }
+
+    public String getSupersafeShare() {
+        return supersafeShare;
+    }
+
+    public String getSupersafePicture() {
+        return supersafePicture;
     }
 
     public void initFolder() {

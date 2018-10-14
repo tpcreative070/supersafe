@@ -62,7 +62,11 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE local_id = :local_id AND isFakePin =:isFakePin")
     Items loadLocalId(String local_id,boolean isFakePin);
 
-    @Query("Select * FROM items")
-    List<Items> loadAll();
+    @Query("Select * FROM items WHERE isFakePin =:isFakePin ")
+    List<Items> loadAll(boolean isFakePin);
+
+    @Query("Select * FROM items WHERE isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ")
+    List<Items> loadAll(boolean isDeleteLocal,boolean isFakePin);
+
 
 }

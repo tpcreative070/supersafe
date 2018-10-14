@@ -2,11 +2,14 @@ package co.tpcreative.supersafe.common.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -14,10 +17,12 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.media.ExifInterface;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -44,12 +49,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -795,5 +803,62 @@ public class Utils {
         }
     }
 
+    public static void shareMultiple(List<File> files, Activity context){
+        ArrayList<Uri> uris = new ArrayList<>();
+        for(File file: files){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+                uris.add(uri);
+            }
+            else{
+                uris.add(Uri.fromFile(file));
+            }
+        }
+        final Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        intent.setType("*/*");
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        context.startActivityForResult(Intent.createChooser(intent, context.getString(R.string.share)),Navigator.SHARE);
+    }
+
+
+
+    private static Point getScreenSize(Context activity) {
+        Display display = ((Activity) activity).getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
+    public static int getScreenWidth(Context activity) {
+        return getScreenSize(activity).x;
+    }
+
+    public static int getScreenHeight(Context activity) {
+        return getScreenSize(activity).y;
+    }
+
+    public static File createTmpFile(Context context) {
+
+        String state = Environment.getExternalStorageState();
+        if (state.equals(Environment.MEDIA_MOUNTED)) {
+            File pic = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+            String fileName = UUID.randomUUID().toString();
+            return new File(pic, fileName + ".jpg");
+        } else {
+            File cacheDir = context.getCacheDir();
+            String fileName = UUID.randomUUID().toString();
+            return new File(cacheDir, fileName + ".jpg");
+        }
+
+    }
+
+    public static void addMediaToGallery(Context context,Uri uri) {
+        if (uri == null) {
+            return;
+        }
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(uri);
+        context.sendBroadcast(mediaScanIntent);
+    }
 
 }

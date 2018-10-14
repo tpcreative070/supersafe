@@ -87,6 +87,8 @@
     <string name="init_failed">Unable to initialize activity.</string>
     <string name="file_not_selected">No file selected, can not continue.</string>
     <string name="folder_not_selected">No folder selected, can not continue.</string>
+    <string name="move_to_album">Move to album</string>
+    <string name="new_album">New Album</string>
 
     <string name="me">ME</string>
     <string name="privates">PRIVATE</string>
@@ -166,7 +168,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.101:8081</string>
+    <string name="url_developer">http://192.168.0.103:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -308,6 +310,8 @@
     <string name="supersafe_premium">Supersafe Premium</string>
     <string name="premium_left">You have %1$s days of complimentary Premium remaining</string>
     <string name="move_items_to_trash">Move %1$s item to trash?</string>
+    <string name="share_items">Share %1$s items...</string>
+    <string name="export_items">Export %1$s items...</string>
 
     <string name="key_user">user</string>
     <string name="key_items">items</string>

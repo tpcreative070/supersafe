@@ -60,6 +60,10 @@ public enum EnumStatus {
         DELETE,
         CHANGE,
         UPDATE,
+        EXPORT,
+        SHARE,
+        MOVE,
+        SELECT,
         SHOW_DATA,
         USER_CLOUD,
         USER,
@@ -73,6 +77,7 @@ public enum EnumStatus {
         SIGN_UP,
         SIGN_UP_SUCCESSFUL,
         SIGN_UP_ERROR,
+        USER_INFO,
         OTHER
 
 }

@@ -19,9 +19,11 @@ import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
+import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
@@ -36,6 +38,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -138,6 +141,74 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             Log.d("service", "onBind with extra");
         }
         return mBinder;
+    }
+
+    public void onGetUserInfo(){
+        Log.d(TAG,"onGetUserInfo");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            final User mUser = User.getInstance().getUserInfo();
+            if (mUser!=null){
+                final Premium premium = mUser.premium;
+                if (mUser.premium!=null){
+                    long currentDatetime = System.currentTimeMillis();
+                    long device_milliseconds = premium.device_milliseconds;
+                    if (device_milliseconds>0){
+                        long result  = currentDatetime - device_milliseconds;
+                        mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        SingletonPremiumTimer.getInstance().onStartTimer();
+                    }
+                }
+            }
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser==null){
+            return;
+        }
+        String email = mUser.email;
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_user_id),email);
+        subscriptions.add(SuperSafeApplication.serverAPI.onUserInfo(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.USER_INFO))
+                .subscribe(onResponse -> {
+                    view.onStopLoading(EnumStatus.USER_INFO);
+                    if (onResponse.error){
+                        view.onError(onResponse.message,EnumStatus.USER_INFO);
+                    }
+                    else{
+                        if (onResponse.premium!=null){
+                            mUser.premium = onResponse.premium;
+                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            view.onSuccessful("Successful",EnumStatus.USER_INFO);
+                        }
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                    view.onStopLoading(EnumStatus.USER_INFO);
+                }));
     }
 
     public void getDriveAbout() {

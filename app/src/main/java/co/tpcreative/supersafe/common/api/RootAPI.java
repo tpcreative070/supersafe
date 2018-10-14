@@ -40,6 +40,7 @@ public interface RootAPI{
     String CHECK_USER_CLOUD = "/api/usercloud/check";
     String ADD_USER_CLOUD = "/api/usercloud/add/";
     String CHECK_USER_ID = "/api/user/checkUser";
+    String USER_INFO = "/api/user/userInfo";
     String GET_LIST_FILES_SYNC = "/api/items/listFilesSync";
     String GET_LIST_CATEGORIES_SYNC = "/api/category/listCategoriesSync";
     String CATEGORIES_SYNC = "/api/category/syncCategories";
@@ -87,6 +88,10 @@ public interface RootAPI{
     @FormUrlEncoded
     @POST(CHECK_USER_ID)
     Observable<VerifyCodeResponse> onCheckUserId(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(USER_INFO)
+    Observable<BaseResponse> onUserInfo(@FieldMap Map<String,String>request);
 
     @FormUrlEncoded
     @POST(GET_LIST_FILES_SYNC)

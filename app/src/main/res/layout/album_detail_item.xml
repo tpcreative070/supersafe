@@ -13,7 +13,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.litao.android.lib.view.SquaredImageView
+            <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:scaleType="centerCrop"
                 android:id="@+id/imgAlbum"
                 android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/colorButton"/>
 
-            <com.litao.android.lib.view.SquaredImageView
+            <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:padding="5dp"
                 android:src="@drawable/ic_done_white"
                 android:scaleType="centerCrop"

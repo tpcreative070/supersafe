@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.activity;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
@@ -43,6 +44,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
     public static final String TAG = BaseActivity.class.getSimpleName();
     private SlidrConfig mConfig;
     protected Storage storage;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

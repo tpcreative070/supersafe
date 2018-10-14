@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -25,6 +26,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -42,29 +45,32 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import com.snatik.storage.Storage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.common.util.Configuration;
+import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import dmax.dialog.SpotsDialog;
 
 
-public class AlbumDetailActivity extends BaseActivity implements BaseView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener {
+public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -93,6 +99,8 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     private ActionMode actionMode;
     private int countSelected;
     private boolean isSelectAll = false;
+    private AlertDialog dialog;
+
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -135,6 +143,7 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
                     e.printStackTrace();
                 }
             } else {
+                backdrop.setRotation(items.degrees);
                 Glide.with(this)
                         .load(storage.readFile(items.thumbnailPath))
                         .apply(options)
@@ -156,6 +165,10 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         GalleryCameraMediaManager.getInstance().setListener(this);
         onDrawOverLay(this);
         llBottom.setVisibility(View.INVISIBLE);
+
+
+        /*Root Fragment*/
+        attachFragment(R.id.gallery_root);
     }
 
     @Override
@@ -203,13 +216,12 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         }
         else{
             try {
-                Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList);
+                Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList,presenter.mainCategories);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
 
     @Override
     public void onLongClickItem(int position) {
@@ -234,12 +246,117 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         }
     }
 
-    @OnClick(R.id.llDelete)
+    @OnClick(R.id.imgShare)
+    public void onClickedShare(View view){
+        if (countSelected>0){
+            storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
+            presenter.status = EnumStatus.SHARE;
+            onShowDialog(presenter.status);
+        }
+    }
+
+    @OnClick(R.id.imgExport)
+    public void onClickedExport(){
+        storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
+        presenter.status = EnumStatus.EXPORT;
+        onShowDialog(presenter.status);
+    }
+
+    @OnClick(R.id.imgDelete)
     public void onClickedDelete(View view){
        if (countSelected>0){
-           onShowDialog();
+           presenter.status = EnumStatus.DELETE;
+           onShowDialog(presenter.status);
        }
     }
+
+    @OnClick(R.id.imgMove)
+    public void onClickedMove(View view){
+        openAlbum();
+    }
+
+    /*Exporting....*/
+    @Override
+    public void onStartProgress() {
+        onStartProgressing();
+    }
+
+    /*Exporting*/
+    @Override
+    public void onStopProgress() {
+        try {
+            if (presenter.mListExportShare.size()==0){
+                Utils.Log(TAG,"onStopProgress");
+                onStopProgressing();
+                switch (presenter.status){
+                    case SHARE:{
+                        if (presenter.mListShare!=null){
+                            if (presenter.mListShare.size()>0){
+                                Utils.shareMultiple(presenter.mListShare,this);
+                            }
+                        }
+                        break;
+                    }
+                    case EXPORT:{
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(AlbumDetailActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+    }
+
+    private void onStartProgressing(){
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dialog==null){
+                        dialog = new SpotsDialog.Builder()
+                                .setContext(AlbumDetailActivity.this)
+                                .setMessage(getString(R.string.progressing))
+                                .setCancelable(true)
+                                .build();
+                    }
+                    if (!dialog.isShowing()){
+                        dialog.show();
+                        Utils.Log(TAG,"Showing dialog...");
+                    }
+                }
+            });
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void onStopProgressing(){
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dialog!=null){
+                        dialog.dismiss();
+                        if (actionMode!=null){
+                            actionMode.finish();
+                        }
+                    }
+                }
+            });
+        }
+        catch (Exception e){
+           Utils.Log(TAG,e.getMessage());
+        }
+    }
+
 
     @Override
     public void onStartLoading(EnumStatus status) {
@@ -330,11 +447,12 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     public void onBackPressed() {
         if (mSpeedDialView.isOpen()){
             mSpeedDialView.close();
-        }else {
+        }else if (actionMode!=null){
+            actionMode.finish();
+        } else {
             super.onBackPressed();
         }
     }
-
 
     /*Init grant permission*/
 
@@ -381,20 +499,130 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     }
 
 
-    public void onShowDialog(){
+    public void onShowDialog(EnumStatus status){
+        String content = "";
+        switch (status){
+            case EXPORT:{
+                content = String.format(getString(R.string.export_items),""+countSelected);
+                break;
+            }
+            case SHARE:{
+                content = String.format(getString(R.string.share_items),""+countSelected);
+                break;
+            }
+            case DELETE:{
+                content = String.format(getString(R.string.move_items_to_trash),""+countSelected);
+                break;
+            }
+            case MOVE:{
+                break;
+            }
+        }
+
+
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))
                 .theme(Theme.LIGHT)
-                .content(String.format(getString(R.string.move_items_to_trash),""+countSelected))
+                .content(content)
                 .titleColor(getResources().getColor(R.color.black))
                 .negativeText(getString(R.string.cancel))
                 .positiveText(getString(R.string.ok))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                       presenter.onDelete();
-                       actionMode.finish();
-                       isReload = true;
+
+                        switch (status){
+                            case SHARE:{
+                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                presenter.mListExportShare.clear();
+                                presenter.mListShare.clear();
+                                for (Items index : presenter.mList){
+                                    if (index.isChecked){
+                                        presenter.mListExportShare.add(index.id);
+                                        EnumFormatType formatType = EnumFormatType.values()[index.formatType];
+                                        switch (formatType){
+                                            case AUDIO:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                            case VIDEO:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                            default:{
+                                                File input = new File(index.thumbnailPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            case EXPORT:{
+                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                presenter.mListExportShare.clear();
+                                presenter.mListShare.clear();
+                                for (Items index : presenter.mList){
+                                    if (index.isChecked){
+                                        presenter.mListExportShare.add(index.id);
+                                        EnumFormatType formatType = EnumFormatType.values()[index.formatType];
+                                        switch (formatType){
+                                            case AUDIO:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                            case VIDEO:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                            default:{
+                                                File input = new File(index.thumbnailPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            case DELETE:{
+                                presenter.onDelete();
+                                if (actionMode!=null){
+                                    actionMode.finish();
+                                }
+                                isReload = true;
+                                break;
+                            }
+                        }
                     }
                 });
         builder.show();
@@ -457,6 +685,13 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
                 }
                 break;
             }
+            case Navigator.SHARE :{
+                if (actionMode!=null){
+                    actionMode.finish();
+                }
+                Utils.Log(TAG,"share action");
+                break;
+            }
             default: {
                 Utils.Log(TAG, "Nothing to do");
                 break;
@@ -474,6 +709,7 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
         if (isReload) {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
+        storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
     }
 
     @Override
@@ -495,7 +731,6 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
-
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
 
@@ -504,8 +739,14 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
 
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 adapter.setDataSource(presenter.mList);
+
+                if (actionMode!=null){
+                    countSelected = 0;
+                    actionMode.finish();
+                    llBottom.setVisibility(View.INVISIBLE);
+                    isReload = true;
+                }
                 break;
             }
         }
@@ -598,14 +839,61 @@ public class AlbumDetailActivity extends BaseActivity implements BaseView, Album
     }
 
     public void onShowUI(){
-        if (countSelected==0){
-            llBottom.setVisibility(View.INVISIBLE);
-            mSpeedDialView.setVisibility(View.VISIBLE);
+        try{
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (countSelected==0){
+                        llBottom.setVisibility(View.INVISIBLE);
+                        mSpeedDialView.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        llBottom.setVisibility(View.VISIBLE);
+                        mSpeedDialView.setVisibility(View.INVISIBLE);
+                    }
+                }
+            });
         }
-        else{
-            llBottom.setVisibility(View.VISIBLE);
-            mSpeedDialView.setVisibility(View.INVISIBLE);
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
+
+
+    /*Gallery action*/
+
+
+    @Override
+    public Configuration getConfiguration() {
+        //default configuration
+        Configuration cfg=new Configuration.Builder()
+                .hasCamera(true)
+                .hasShade(true)
+                .hasPreview(true)
+                .setSpaceSize(4)
+                .setPhotoMaxWidth(120)
+                .setLocalCategoriesId(presenter.mainCategories.categories_local_id)
+                .setCheckBoxColor(0xFF3F51B5)
+                .setDialogHeight(Configuration.DIALOG_HALF)
+                .setDialogMode(Configuration.DIALOG_LIST)
+                .setMaximum(9)
+                .setTip(null)
+                .setAblumsTitle(null)
+                .build();
+        return cfg;
+    }
+
+
+    @Override
+    public void onMoveAlbumSuccessful() {
+
+    }
+
+    @Override
+    public List<Items> getListItems() {
+        return presenter.mList;
+    }
+
+
 
 }

@@ -189,8 +189,9 @@ dependencies {
     /*Adding detect extension files*/
     implementation 'commons-io:commons-io:2.6'
 
-    /*Image picker*/
+    /*Image picker
     implementation project(':image-picker-library')
+    */
 
     /*Fabric*/
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
@@ -205,6 +206,9 @@ dependencies {
 
     /*CircleImageView*/
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    /*Animation player music*/
+    implementation project(':vusikviewlibrary')
 
 }
 

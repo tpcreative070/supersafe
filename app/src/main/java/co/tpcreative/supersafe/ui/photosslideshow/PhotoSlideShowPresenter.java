@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
@@ -15,6 +16,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class PhotoSlideShowPresenter extends Presenter<BaseView>{
@@ -22,7 +24,11 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
     private final String TAG = PhotoSlideShowPresenter.class.getSimpleName();
     protected Items items;
     protected List<Items> mList;
+    protected List<Integer> mListExportShare = new ArrayList<>();
+    protected List<File> mListShare = new ArrayList<>();
+    protected EnumStatus status = EnumStatus.OTHER;
     protected Storage storage ;
+    protected MainCategories mainCategories;
 
     public PhotoSlideShowPresenter(){
         mList = new ArrayList<>();
@@ -35,6 +41,7 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
             Bundle bundle = context.getIntent().getExtras();
             items = (Items) bundle.get(context.getString(R.string.key_items));
             List<Items> list = (ArrayList<Items>)bundle.get(context.getString(R.string.key_list_items));
+            mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             for (Items index : list){
                 if (!index.local_id.equals(items.local_id)){
                     mList.add(index);
@@ -73,6 +80,5 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
             e.printStackTrace();
         }
     }
-
 
 }

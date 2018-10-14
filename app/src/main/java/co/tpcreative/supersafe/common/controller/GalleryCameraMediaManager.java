@@ -24,7 +24,22 @@ public class GalleryCameraMediaManager {
 
     public interface AlbumDetailManagerListener{
         void onUpdatedView();
+        void onStartProgress();
+        void onStopProgress();
     }
+
+    public void onStartProgress(){
+        if (listener!=null){
+            listener.onStartProgress();
+        }
+    }
+
+    public void onStopProgress(){
+        if (listener!=null){
+            listener.onStopProgress();
+        }
+    }
+
 
     public void setListener(AlbumDetailManagerListener ls){
         this.listener = ls;

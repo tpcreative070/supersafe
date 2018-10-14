@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.controller;
+
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -11,22 +12,28 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.internal.GmsClientEventManager;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
+import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.crypto.Cipher;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
@@ -49,7 +56,6 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -74,6 +80,7 @@ public class ServiceManager implements BaseView {
             storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             ServiceManager.getInstance().onCheckingMissData();
+            ServiceManager.getInstance().onGetUserInfo();
         }
 
         //binder comes from server to communicate with method's of
@@ -234,6 +241,17 @@ public class ServiceManager implements BaseView {
         return value;
     }
 
+
+    /*User info*/
+    public void onGetUserInfo() {
+        if (myService != null) {
+            myService.onGetUserInfo();
+        } else {
+            Utils.Log(TAG, "My services is null");
+        }
+    }
+
+
     /*Response Network*/
 
     public void onGetDriveAbout() {
@@ -260,7 +278,7 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-        if (isGetListCategories){
+        if (isGetListCategories) {
             Utils.Log(TAG, "Setting list categories is sync...--------------*******************************-----------");
             return;
         }
@@ -393,7 +411,7 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false,false);
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false, false);
 
         if (mList == null) {
             Utils.Log(TAG, "Categories already sync");
@@ -450,7 +468,7 @@ public class ServiceManager implements BaseView {
         if (myService == null) {
             return;
         }
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,false, false);
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false, false);
         if (mList == null) {
             Utils.Log(TAG, "Not Found Miss Data");
             return;
@@ -502,11 +520,11 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-        if (isDeleteAlbum){
+        if (isDeleteAlbum) {
             Utils.Log(TAG, "List categories is deleting...----------------*******************************-----------");
             return;
         }
-        if (isGetListCategories){
+        if (isGetListCategories) {
             Utils.Log(TAG, "Getting list categories...----------------*******************************-----------");
             return;
         }
@@ -577,37 +595,36 @@ public class ServiceManager implements BaseView {
                         isLoadingData = false;
                         final List<Items> items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
 
-                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal(),false);
+                        final List<Items> mListOwnCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal(), false);
 
-                        final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true,false);
+                        final List<Items> mListCloud = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true, false);
 
-                        final List<Items> mPreviousList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,false);
+                        final List<Items> mPreviousList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false);
 
-                        final List<MainCategories> mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false,false);
+                        final List<MainCategories> mainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false, false);
 
-                        final List<MainCategories> mPreviousMainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
+                        final List<MainCategories> mPreviousMainCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true, false);
 
-                        final List<MainCategories> deleteAlbum = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true,false);
+                        final List<MainCategories> deleteAlbum = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true, false);
 
                         boolean isDeleteAlbum = true;
-                        if (deleteAlbum !=null && deleteAlbum.size()>0){
-                            Utils.Log(TAG,"new main categories "+ new Gson().toJson(deleteAlbum));
-                            for (MainCategories index : deleteAlbum){
-                                final List<Items> mItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false);
-                                if (mItems!=null && mItems.size()>0){
+                        if (deleteAlbum != null && deleteAlbum.size() > 0) {
+                            Utils.Log(TAG, "new main categories " + new Gson().toJson(deleteAlbum));
+                            for (MainCategories index : deleteAlbum) {
+                                final List<Items> mItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
+                                if (mItems != null && mItems.size() > 0) {
                                     isDeleteAlbum = false;
                                 }
                             }
-                        }
-                        else {
-                            Utils.Log(TAG,"new main categories  not found");
+                        } else {
+                            Utils.Log(TAG, "new main categories  not found");
                             isDeleteAlbum = false;
                         }
 
 
                         boolean isPreviousDelete = false;
                         if (mPreviousList != null && mPreviousList.size() > 0) {
-                            if (myService.getHashMapGlobal()!=null){
+                            if (myService.getHashMapGlobal() != null) {
                                 for (Items index : mPreviousList) {
                                     String value = myService.getHashMapGlobal().get(index.items_id);
                                     if (value == null) {
@@ -619,13 +636,13 @@ public class ServiceManager implements BaseView {
 
 
                         boolean isPreviousAlbumDelete = false;
-                        if (mPreviousMainCategories !=null && mPreviousMainCategories.size()>0){
-                            if (myService.getHashMapGlobalCategories()!=null && myService.getHashMapGlobalCategories().size()>0 ){
-                                for (MainCategories index : mPreviousMainCategories){
+                        if (mPreviousMainCategories != null && mPreviousMainCategories.size() > 0) {
+                            if (myService.getHashMapGlobalCategories() != null && myService.getHashMapGlobalCategories().size() > 0) {
+                                for (MainCategories index : mPreviousMainCategories) {
                                     String value = myService.getHashMapGlobalCategories().get(index.categories_id);
-                                    if (value==null){
+                                    if (value == null) {
                                         isPreviousAlbumDelete = true;
-                                        Utils.Log(TAG,"Delete previous album......");
+                                        Utils.Log(TAG, "Delete previous album......");
                                     }
                                 }
                             }
@@ -641,12 +658,10 @@ public class ServiceManager implements BaseView {
                         } else if (mListCloud != null && mListCloud.size() > 0) {
                             Utils.Log(TAG, "Preparing deleting on cloud...");
                             onDeleteCloud();
-                        }
-                        else if (isDeleteAlbum){
+                        } else if (isDeleteAlbum) {
                             Utils.Log(TAG, "Preparing deleting on global album...");
                             onDeleteAlbum();
-                        }
-                        else if (isPreviousDelete) {
+                        } else if (isPreviousDelete) {
                             Utils.Log(TAG, "Preparing deleting on previous...");
                             myService.onDeletePreviousSync(new DeleteServiceListener() {
                                 @Override
@@ -654,8 +669,7 @@ public class ServiceManager implements BaseView {
                                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                                 }
                             });
-                        }
-                        else if (isPreviousAlbumDelete){
+                        } else if (isPreviousAlbumDelete) {
                             Utils.Log(TAG, "Preparing deleting on previous album on local...");
                             myService.onDeletePreviousCategoriesSync(new DeleteServiceListener() {
                                 @Override
@@ -663,8 +677,7 @@ public class ServiceManager implements BaseView {
                                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                                 }
                             });
-                        }
-                        else if (items != null) {
+                        } else if (items != null) {
                             if (items.size() > 0) {
                                 Utils.Log(TAG, "Preparing downloading...");
                                 onDownloadFilesFromDriveStore();
@@ -696,7 +709,7 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal(),false);
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal(), false);
 
         if (mList == null) {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
@@ -794,7 +807,7 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true,false);
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true, false);
 
         if (mList == null) {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
@@ -883,9 +896,9 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
             return;
         }
-        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true,false);
+        final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true, false);
 
-        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true,false);
+        final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalAndGlobalListItems(true, true, false);
 
         if (list == null) {
             Utils.Log(TAG, "No Found data to delete on cloud items!!!");
@@ -1070,7 +1083,7 @@ public class ServiceManager implements BaseView {
                             isWorking = false;
                         } else {
                             isWorking = false;
-                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id,false);
+                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id, false);
                             if (main != null) {
                                 if (main.categories_id != null) {
                                     isWorking = true;
@@ -1124,7 +1137,7 @@ public class ServiceManager implements BaseView {
                                         if (request != null) {
                                             final Items itemsRequest = request.items;
                                             if (itemsRequest != null) {
-                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id,false);
+                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(request.items.items_id, false);
                                                 if (mItem != null) {
                                                     mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                     if (itemsRequest.isOriginalGlobalId) {
@@ -1259,7 +1272,7 @@ public class ServiceManager implements BaseView {
                             isWorking = false;
                         } else {
                             isWorking = false;
-                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id,false);
+                            final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(itemObject.categories_local_id, false);
                             if (main != null) {
                                 if (main.categories_id == null) {
                                     isWorking = false;
@@ -1301,7 +1314,7 @@ public class ServiceManager implements BaseView {
                                         if (response != null) {
                                             if (response.id != null) {
                                                 DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
-                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.items_id,false);
+                                                final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.items_id, false);
                                                 if (mItem != null && contentTitle != null) {
                                                     EnumFileType type = EnumFileType.values()[contentTitle.fileType];
                                                     if (type == EnumFileType.ORIGINAL) {
@@ -1825,7 +1838,7 @@ public class ServiceManager implements BaseView {
                                     if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
                                         final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
                                         mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                                        if (storage.isFileExist(items.thumbnailPath)){
+                                        if (storage.isFileExist(items.thumbnailPath)) {
                                             mb += (long) +storage.getSize(new File(items.thumbnailPath), SizeUnit.B);
                                         }
                                         driveDescription.size = "" + mb;
@@ -1844,10 +1857,10 @@ public class ServiceManager implements BaseView {
                         e.printStackTrace();
                     } finally {
                         GalleryCameraMediaManager.getInstance().setProgressing(false);
-                        if (items.isFakePin){
+                        GalleryCameraMediaManager.getInstance().onUpdatedView();
+                        if (items.isFakePin) {
                             SingletonFakePinComponent.getInstance().onUpdateView();
-                        }
-                        else{
+                        } else {
                             SingletonPrivateFragment.getInstance().onUpdateView();
                             ServiceManager.getInstance().onSyncDataOwnServer("0");
                         }
@@ -1967,7 +1980,7 @@ public class ServiceManager implements BaseView {
                             if (storage.isFileExist(mItem.originalPath)) {
                                 final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
                                 mb = (long) +storage.getSize(new File(mItem.originalPath), SizeUnit.B);
-                                if (storage.isFileExist(mItem.thumbnailPath)){
+                                if (storage.isFileExist(mItem.thumbnailPath)) {
                                     mb += (long) +storage.getSize(new File(mItem.thumbnailPath), SizeUnit.B);
                                 }
                                 driveDescription.size = "" + mb;
@@ -1982,16 +1995,56 @@ public class ServiceManager implements BaseView {
                         e.printStackTrace();
                     } finally {
                         GalleryCameraMediaManager.getInstance().setProgressing(false);
-                        if (mItem.isFakePin){
-                           SingletonFakePinComponent.getInstance().onUpdateView();
-                        }
-                        else{
+                        GalleryCameraMediaManager.getInstance().onUpdatedView();
+                        if (mItem.isFakePin) {
+                            SingletonFakePinComponent.getInstance().onUpdateView();
+                        } else {
                             SingletonPrivateFragment.getInstance().onUpdateView();
                             ServiceManager.getInstance().onSyncDataOwnServer("0");
                         }
                     }
                 });
 
+    }
+
+    public void onExportFiles(final File input, final File output, final List<Integer>mListExport) {
+        subscriptions = Observable.create(subscriber -> {
+            final File mInput = input;
+            final File mOutPut = output;
+            try {
+                storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+                final Cipher mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
+                storage.createLargeFile(mOutPut,mInput,mCipher, new OnStorageListener() {
+                    @Override
+                    public void onSuccessful() {
+                        Utils.Log(TAG,"Exporting successful");
+                        subscriber.onNext(true);
+                        subscriber.onComplete();
+                    }
+                    @Override
+                    public void onFailed() {
+                        subscriber.onNext(false);
+                        subscriber.onComplete();
+                        Utils.Log(TAG,"Exporting failed");
+                    }
+                });
+            } catch (Exception e) {
+                subscriber.onNext(false);
+                subscriber.onComplete();
+                Log.w(TAG, "Cannot write to " + e);
+            } finally {
+                Utils.Log(TAG, "Finally");
+            }
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+                    if (mListExport.size()>0){
+                        mListExport.remove(0);
+                    }
+                    GalleryCameraMediaManager.getInstance().onStopProgress();
+                });
     }
 
     public void onUpdateSyncDataStatus(EnumStatus enumStatus) {
@@ -2131,6 +2184,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Progress upload is :" + isUploadData);
         } else {
             onStopService();
+            SingletonPremiumTimer.getInstance().onStop();
             if (myService != null) {
                 myService.unbindView();
             }
@@ -2143,7 +2197,7 @@ public class ServiceManager implements BaseView {
 
     @Override
     public void onError(String message, EnumStatus status) {
-        Log.d(TAG, "onError response :" + message +" - " +status.name());
+        Log.d(TAG, "onError response :" + message + " - " + status.name());
         if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
             SingletonManagerTab.getInstance().onRequestAccessToken();
             Utils.Log(TAG, "Request token on global");
@@ -2191,22 +2245,34 @@ public class ServiceManager implements BaseView {
     }
 
 
-
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        switch (status){
-            case SCREEN_OFF:{
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+        switch (status) {
+            case SCREEN_OFF: {
+                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_PRESS_HOME.ordinal());
                 break;
             }
-            case GET_DRIVE_ABOUT:{
+            case GET_DRIVE_ABOUT: {
                 Utils.Log(TAG, "drive about :" + message);
                 break;
             }
-            case CONNECTED:{
+            case CONNECTED: {
                 GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(true);
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
-                onCheckingMissData();
+                ServiceManager.getInstance().onCheckingMissData();
+                ServiceManager.getInstance().onGetUserInfo();
+                break;
+            }
+            case USER_INFO: {
+                SingletonPremiumTimer.getInstance().onStop();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SingletonPremiumTimer.getInstance().onStartTimer();
+                    }
+                }, 5000);
+                Utils.Log(TAG, "Get info successful");
                 break;
             }
         }
@@ -2216,6 +2282,7 @@ public class ServiceManager implements BaseView {
         void onCompleted();
 
         void onError();
+
         void onCancel();
     }
 

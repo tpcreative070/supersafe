@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.Theme;
 
 public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
@@ -128,8 +130,10 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         tvTitle.setVisibility(View.VISIBLE);
                         tvTitle.setText(data.title);
                         //imgAlbum.setImageDrawable(context.getResources().getDrawable(R.drawable.image_background_audio_video));
+                        Theme theme = Theme.getInstance().getThemeInfo();
+                        Drawable note1 = context.getResources().getDrawable( theme.getPrimaryColor());
                         Glide.with(context)
-                                .load(R.drawable.ic_video_audio_v3)
+                                .load(note1)
                                 .apply(options).into(imgAlbum);
                         Utils.Log(TAG,"audio");
                         break;
@@ -139,6 +143,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_videocam_white_36));
                         tvTitle.setVisibility(View.INVISIBLE);
                         if (storage.isFileExist(path)){
+                            imgAlbum.setRotation(data.degrees);
                             Glide.with(context)
                                     .load(storage.readFile(path))
                                     .apply(options).into(imgAlbum);
@@ -149,6 +154,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         tvTitle.setVisibility(View.INVISIBLE);
                         imgVideoCam.setVisibility(View.INVISIBLE);
                         if (storage.isFileExist(path)){
+                            imgAlbum.setRotation(data.degrees);
                             Glide.with(context)
                                     .load(storage.readFile(path))
                                     .apply(options).into(imgAlbum);

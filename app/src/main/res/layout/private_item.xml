@@ -18,12 +18,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.litao.android.lib.view.SquaredImageView
+                <co.tpcreative.supersafe.common.views.SquaredImageView
                     android:id="@+id/imgAlbum"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
-                <com.litao.android.lib.view.SquaredImageView
+                <co.tpcreative.supersafe.common.views.SquaredImageView
                     android:clickable="false"
                     android:layout_centerInParent="true"
                     android:id="@+id/imgIcon"
@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <ImageView
-                    android:tint="@color/material_gray_700"
+                    android:tint="@color/material_gray_500"
                     android:padding="3dp"
                     android:layout_centerInParent="true"
                     android:layout_alignParentRight="true"

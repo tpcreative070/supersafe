@@ -1,7 +1,10 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.app.Activity;
 import android.os.Bundle;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -21,10 +24,16 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
     protected int videos = 0;
     protected int photos = 0;
     protected int audios = 0;
+    protected List<Integer> mListExportShare = new ArrayList<>();
+    protected List<File> mListShare = new ArrayList<>();
+    protected EnumStatus status = EnumStatus.OTHER;
+
 
 
     public AlbumDetailPresenter(){
         mList = new ArrayList<>();
+        mListExportShare = new ArrayList<>();
+        mListShare = new ArrayList<>();
     }
 
     public void  getData(Activity activity){

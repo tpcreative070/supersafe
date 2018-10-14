@@ -1,6 +1,9 @@
 package co.tpcreative.supersafe.common.controller;
 import android.os.CountDownTimer;
 import com.google.gson.Gson;
+
+import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.User;
 
@@ -29,6 +32,11 @@ public class SingletonPremiumTimer {
     }
 
     public void onStartTimer(){
+
+        if (mCountDownTimer!=null){
+            Utils.Log(TAG,"Running............");
+            return;
+        }
         Utils.Log(TAG,"Start");
         try {
             final User mUser = User.getInstance().getUserInfo();
@@ -43,7 +51,8 @@ public class SingletonPremiumTimer {
             }
             current_milliseconds =  mUser.premium.current_milliseconds ;
             end_milliseconds = mUser.premium.past_milliseconds;
-            Utils.Log(TAG,new Gson().toJson(mUser));
+
+            Utils.Log(TAG,"Device milliseconds :"+ mUser.premium.device_milliseconds +" current milliseconds "+ mUser.premium.current_milliseconds);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,7 +70,7 @@ public class SingletonPremiumTimer {
                 if (ls!=null){
                     ls.onPremiumTimer(daysLeft,hoursLeft,minutesLeft,secondsLeft);
                 }
-                //Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
+                Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
             }
             @Override
             public void onFinish() {
@@ -73,6 +82,15 @@ public class SingletonPremiumTimer {
     public void onStop(){
         if (mCountDownTimer!=null){
             mCountDownTimer.cancel();
+            mCountDownTimer.onFinish();
+            mCountDownTimer = null;
+            final User user = User.getInstance().getUserInfo();
+            if (user!=null){
+                if (user.premium!=null){
+                    user.premium.device_milliseconds = System.currentTimeMillis();
+                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
+                }
+            }
         }
     }
 

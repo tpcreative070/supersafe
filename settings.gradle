@@ -15,6 +15,7 @@ include ':app',
         'image-picker-library',
         'preferenceslibrary',
         'time_ago_library',
-        'taptargetviewlibrary'
+        'taptargetviewlibrary',
+        'vusikviewlibrary'
 
 

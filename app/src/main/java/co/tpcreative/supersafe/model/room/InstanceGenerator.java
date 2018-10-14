@@ -111,9 +111,19 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<Items> getListItems(){
+    public final synchronized List<Items> getListAllItems(boolean isFakePin){
         try{
-            return instance.itemsDao().loadAll();
+            return instance.itemsDao().loadAll(isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getListAllItems(boolean isDeleteLocal,boolean isFakePin){
+        try{
+            return instance.itemsDao().loadAll(isDeleteLocal,isFakePin);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());
@@ -222,6 +232,8 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+
+
     public final synchronized List<Items> getListItemId(boolean isSyncCloud,boolean isSyncOwnServer,boolean isFakePin){
         try{
             return instance.itemsDao().loadListItemId(isSyncCloud,isSyncOwnServer,isFakePin);
@@ -312,6 +324,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     public final synchronized List<MainCategories> getListCategories(boolean isFakePin){
         try{
             return instance.mainCategoriesDao().loadAll(isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<MainCategories> getListCategories(String categories_local_id ,boolean isDelete ,boolean isFakePin){
+        try{
+            return instance.mainCategoriesDao().loadAll(categories_local_id,isDelete,isFakePin);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

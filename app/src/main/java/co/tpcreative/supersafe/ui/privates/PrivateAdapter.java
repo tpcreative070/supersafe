@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.privates;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -27,6 +28,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
@@ -88,16 +90,19 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
                     case AUDIO: {
+                        Theme theme = Theme.getInstance().getThemeInfo();
+                        Drawable note1 = context.getResources().getDrawable( theme.getPrimaryColor());
                         Glide.with(context)
-                                .load(R.drawable.bg_button_rounded)
+                                .load(note1)
                                 .apply(options)
                                 .into(imgAlbum);
-                        imgIcon.setVisibility(View.INVISIBLE);
+                        imgIcon.setBackground(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                         break;
                     }
                     default: {
                         try {
                             if (storage.isFileExist(""+items.thumbnailPath)){
+                                imgAlbum.setRotation(items.degrees);
                                 Glide.with(context)
                                         .load(storage.readFile(items.thumbnailPath))
                                         .apply(options)
