@@ -14,17 +14,23 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import java.util.List;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
@@ -74,6 +80,12 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
     }
 
     @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
+
+    @Override
     protected void onResume() {
         onDrawOverLay(this);
         super.onResume();
@@ -101,6 +113,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
 
         private Preference mName;
+        private Preference mLockAlbum;
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -129,8 +142,11 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                             String main = Utils.getHexCode(getString(R.string.key_main_album));
                             String trash = Utils.getHexCode(getString(R.string.key_trash));
                             if (!main.equals(presenter.mMainCategories.categories_hex_name) && !trash.equals(presenter.mMainCategories.categories_hex_name)){
-                                onShowChangeCategoriesNameDialog();
+                                onShowChangeCategoriesNameDialog(EnumStatus.CHANGE);
                             }
+                        }
+                        else if (preference.getKey().equals(getString(R.string.key_album_lock))){
+                            onShowChangeCategoriesNameDialog(EnumStatus.SET);
                         }
                     }
                     return true;
@@ -141,11 +157,24 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         @Override
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            /*Help*/
+            /*change categories name*/
             mName = findPreference(getString(R.string.key_name));
             mName.setOnPreferenceChangeListener(createChangeListener());
             mName.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mName.setSummary(presenter.mMainCategories.categories_name);
+
+            mLockAlbum = findPreference(getString(R.string.key_album_lock));
+            mLockAlbum.setOnPreferenceChangeListener(createChangeListener());
+            mLockAlbum.setOnPreferenceClickListener(createActionPreferenceClickListener());
+
+            final String isPin = presenter.mMainCategories.pin;
+            if (isPin.equals("")){
+                mLockAlbum.setSummary(getString(R.string.unlocked));
+            }
+            else {
+                mLockAlbum.setSummary(getString(R.string.locked));
+            }
+
         }
 
         @Override
@@ -153,54 +182,118 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             addPreferencesFromResource(R.xml.pref_general_album_settings);
         }
 
-        public void onShowChangeCategoriesNameDialog(){
+        public void onShowChangeCategoriesNameDialog(EnumStatus enumStatus){
+            String title = "";
+            String content = "";
+            String positiveAction = "";
+            final String isPin = presenter.mMainCategories.pin;
+            int inputType = 0;
+            switch (enumStatus){
+                case CHANGE:{
+                    title = getString(R.string.change_album);
+                    content = "";
+                    positiveAction = getString(R.string.ok);
+                    inputType = InputType.TYPE_CLASS_TEXT;
+                    break;
+                }
+                case SET:{
+                    if (!isPin.equals("")){
+                        title = getString(R.string.remove_password);
+                        content = getString(R.string.enter_a_password_for_this_album);
+                        positiveAction = getString(R.string.unlock);
+                        inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD;
+                    }
+                    else{
+                        title = getString(R.string.lock_album);
+                        content = getString(R.string.enter_a_password_for_this_album);
+                        positiveAction = getString(R.string.lock);
+                        inputType = InputType.TYPE_CLASS_TEXT;
+                    }
+                    break;
+                }
+            }
+
             MaterialDialog.Builder builder =  new MaterialDialog.Builder(getActivity())
-                    .title(getString(R.string.change_album))
+                    .title(title)
+                    .content(content)
                     .theme(Theme.LIGHT)
                     .titleColor(getResources().getColor(R.color.black))
-                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .inputType(inputType)
+                    .autoDismiss(false)
                     .negativeText(getString(R.string.cancel))
-                    .positiveText(getString(R.string.ok))
+                    .positiveText(positiveAction)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
                     .input(null, null, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                            Utils.Log(TAG,"Value");
+                            switch (enumStatus){
+                                case CHANGE:{
+                                    Utils.Log(TAG,"Value");
+                                    String value = input.toString();
+                                    String base64Code = Utils.getHexCode(value);
+                                    MainCategories item = MainCategories.getInstance().getTrashItem();
+                                    String result = item.categories_hex_name;
+                                    String main = Utils.getHexCode(getString(R.string.key_main_album));
 
-                            String value = input.toString();
-                            String base64Code = Utils.getHexCode(value);
-                            MainCategories item = MainCategories.getInstance().getTrashItem();
-                            String result = item.categories_hex_name;
-                            String main = Utils.getHexCode(getString(R.string.key_main_album));
-
-                            if (presenter.mMainCategories==null){
-                                Toast.makeText(getContext(),"Can not change category name",Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            else if (base64Code.equals(result)){
-                                Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            else if (base64Code.equals(main)){
-                                Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            else{
-                                presenter.mMainCategories.categories_name = value;
-                                boolean response = MainCategories.getInstance().onChangeCategories(presenter.mMainCategories);
-                                if (response){
-                                    Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
-                                    mName.setSummary(presenter.mMainCategories.categories_name);
-
-                                    if (!presenter.mMainCategories.isFakePin){
-                                        ServiceManager.getInstance().onGetListCategoriesSync();
+                                    if (presenter.mMainCategories==null){
+                                        Toast.makeText(getContext(),"Can not change category name",Toast.LENGTH_SHORT).show();
+                                        return;
                                     }
-                                }
-                                else{
-                                    Toast.makeText(getContext(),"Album name already existing.",Toast.LENGTH_SHORT).show();
-                                }
+                                    else if (base64Code.equals(result)){
+                                        Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    else if (base64Code.equals(main)){
+                                        Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    else{
+                                        presenter.mMainCategories.categories_name = value;
+                                        boolean response = MainCategories.getInstance().onChangeCategories(presenter.mMainCategories);
+                                        if (response){
+                                            Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
+                                            mName.setSummary(presenter.mMainCategories.categories_name);
+                                            if (!presenter.mMainCategories.isFakePin){
+                                                ServiceManager.getInstance().onGetListCategoriesSync();
+                                            }
+                                        }
+                                        else{
+                                            Toast.makeText(getContext(),"Album name already existing.",Toast.LENGTH_SHORT).show();
+                                        }
 
-                                if (!presenter.mMainCategories.isFakePin){
-                                    SingletonPrivateFragment.getInstance().onUpdateView();
+                                        if (!presenter.mMainCategories.isFakePin){
+                                            SingletonPrivateFragment.getInstance().onUpdateView();
+                                        }
+                                    }
+                                    break;
+                                }
+                                case SET:{
+                                    if (!isPin.equals("")){
+                                        if (isPin.equals(input.toString())){
+                                            presenter.mMainCategories.pin = "";
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mMainCategories);
+                                            mLockAlbum.setSummary(getString(R.string.unlocked));
+                                            SingletonPrivateFragment.getInstance().onUpdateView();
+                                            dialog.dismiss();
+                                        }
+                                        else{
+                                            Utils.showInfoSnackbar(getView(),R.string.wrong_password,true);
+                                            dialog.getInputEditText().setText("");
+                                        }
+                                    }
+                                    else{
+                                        presenter.mMainCategories.pin = input.toString();
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mMainCategories);
+                                        mLockAlbum.setSummary(getString(R.string.locked));
+                                        SingletonPrivateFragment.getInstance().onUpdateView();
+                                        dialog.dismiss();
+                                    }
+                                    break;
                                 }
                             }
                         }

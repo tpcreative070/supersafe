@@ -8,6 +8,15 @@
             android:icon="@drawable/baseline_account_circle_white_36"
             android:key="@string/key_name"
             android:summary="@string/key_name"
-            android:title="@string/key_name"/>
+            android:title="@string/name"/>
+
+        <Preference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_https_white_48"
+            android:key="@string/key_album_lock"
+            android:summary="@string/album_lock"
+            android:defaultValue="false"
+            android:title="@string/album_lock"/>
+
     </PreferenceCategory>
 </PreferenceScreen>

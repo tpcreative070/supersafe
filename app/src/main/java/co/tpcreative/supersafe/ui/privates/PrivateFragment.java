@@ -1,22 +1,33 @@
 package co.tpcreative.supersafe.ui.privates;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.snatik.storage.Storage;
+
 import java.util.List;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -25,9 +36,10 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
-public class PrivateFragment extends BaseFragment implements BaseView,PrivateAdapter.ItemSelectedListener,SingletonPrivateFragment.SingletonPrivateFragmentListener{
+public class PrivateFragment extends BaseFragment implements BaseView, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
 
     private static final String TAG = PrivateFragment.class.getSimpleName();
     private RecyclerView recyclerView;
@@ -93,8 +105,8 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
         return super.getContext();
     }
 
-    public void initRecycleView(LayoutInflater layoutInflater){
-        adapter = new PrivateAdapter(layoutInflater,getContext(),this);
+    public void initRecycleView(LayoutInflater layoutInflater) {
+        adapter = new PrivateAdapter(layoutInflater, getContext(), this);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
@@ -104,30 +116,33 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
 
     @Override
     public void onClickItem(int position) {
-        Log.d(TAG,"Position :"+ position);
+        Log.d(TAG, "Position :" + position);
         try {
-            String value  = Utils.getHexCode(getString(R.string.key_trash));
-            if (value.equals(presenter.mList.get(position).categories_hex_name)){
+            String value = Utils.getHexCode(getString(R.string.key_trash));
+            if (value.equals(presenter.mList.get(position).categories_hex_name)) {
                 Navigator.onMoveTrash(getActivity());
-            }
-            else{
+            } else {
                 final MainCategories mainCategories = presenter.mList.get(position);
-                Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
+                final String pin = mainCategories.pin;
+                if (pin.equals("")) {
+                    Navigator.onMoveAlbumDetail(getActivity(), mainCategories);
+                } else {
+                    onShowChangeCategoriesNameDialog(mainCategories);
+                }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void onSetting(int position) {
-        Navigator.onAlbumSettings(getActivity(),presenter.mList.get(position));
+        Navigator.onAlbumSettings(getActivity(), presenter.mList.get(position));
     }
 
     @Override
     public void onDeleteAlbum(int position) {
-        Utils.Log(TAG,"Delete album");
+        Utils.Log(TAG, "Delete album");
         presenter.onDeleteAlbum(position);
     }
 
@@ -135,8 +150,7 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
     public void onEmptyTrash(int position) {
         try {
             presenter.onEmptyTrash();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -149,7 +163,7 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
 
     @Override
     public void onUpdateView() {
-        if (presenter!=null){
+        if (presenter != null) {
             presenter.getData();
         }
     }
@@ -171,10 +185,10 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.d(TAG,"visit :"+isVisibleToUser);
+        Log.d(TAG, "visit :" + isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
-            if (presenter!=null){
+            if (presenter != null) {
                 presenter.getData();
             }
         }
@@ -197,19 +211,18 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        switch (status){
-            case RELOAD:{
+        switch (status) {
+            case RELOAD: {
                 try {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (adapter!=null){
+                            if (adapter != null) {
                                 adapter.setDataSource(presenter.mList);
                             }
                         }
                     });
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.getMessage();
                 }
                 break;
@@ -226,4 +239,40 @@ public class PrivateFragment extends BaseFragment implements BaseView,PrivateAda
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+
+    public void onShowChangeCategoriesNameDialog(final MainCategories mainCategories) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
+                .title(getString(R.string.album_is_locked))
+                .content(getString(R.string.enter_a_password_for_this_album))
+                .theme(Theme.LIGHT)
+                .titleColor(getResources().getColor(R.color.black))
+                .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                .negativeText(getString(R.string.cancel))
+                .autoDismiss(false)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .positiveText(getString(R.string.open))
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        if (mainCategories.pin.equals(input.toString())) {
+                            mainCategories.pin = "";
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+                            SingletonPrivateFragment.getInstance().onUpdateView();
+                            dialog.dismiss();
+                        } else {
+                            Utils.showInfoSnackbar(getView(), R.string.wrong_password,true);
+                            dialog.getInputEditText().setText("");
+                        }
+                    }
+                });
+        builder.show();
+    }
+
+
 }

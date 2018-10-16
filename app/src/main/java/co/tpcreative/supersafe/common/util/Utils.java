@@ -58,6 +58,7 @@ import java.util.UUID;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -669,6 +670,24 @@ public class Utils {
                                     @Override
                                     public void onClick(View view) {
 
+                                    }
+                                })
+                ).show();
+            }
+        }, 200);
+    }
+
+    public static void showGotItSnackbar(final View view, final @StringRes int text, ServiceManager.ServiceManagerSyncDataListener ls) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                multilineSnackbar(
+                        Snackbar.make(
+                                view, text, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                .setAction(R.string.got_it, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        ls.onCompleted();
                                     }
                                 })
                 ).show();

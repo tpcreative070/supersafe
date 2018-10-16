@@ -24,6 +24,10 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
     List<Items> loadAll(String categories_local_id,boolean isFakePin);
 
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND formatType =:formatType AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC")
+    List<Items> loadAll(String categories_local_id,int formatType,boolean isDeleteLocal,boolean isFakePin);
+
+
     @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC")
     List<Items> loadAll(String categories_local_id,boolean isDeleteLocal,boolean isFakePin);
 

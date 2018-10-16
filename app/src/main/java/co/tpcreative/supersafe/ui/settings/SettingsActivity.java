@@ -11,8 +11,11 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -55,8 +58,19 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        onRegisterHomeWatcher();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override
@@ -134,6 +148,8 @@ public class SettingsActivity extends BaseActivity {
 
         private Preference mPrivateCloud;
 
+        private Preference mAlbumLock ;
+
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
          * corresponding preference has been changed.
@@ -198,6 +214,9 @@ public class SettingsActivity extends BaseActivity {
                                 }
                             }
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_album_lock))){
+                            Navigator.onMoveUnlockAllAlbums(getContext());
+                        }
                     }
                     return true;
                 }
@@ -251,6 +270,11 @@ public class SettingsActivity extends BaseActivity {
             mAboutSuperSafe = findPreference(getString(R.string.key_about_SuperSafe));
             mAboutSuperSafe.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mAboutSuperSafe.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Album Lock*/
+            mAlbumLock = findPreference(getString(R.string.key_album_lock));
+            mAlbumLock.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mAlbumLock.setOnPreferenceChangeListener(createChangeListener());
 
         }
 

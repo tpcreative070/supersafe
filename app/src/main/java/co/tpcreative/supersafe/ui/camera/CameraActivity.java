@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
@@ -136,6 +137,11 @@ public class CameraActivity extends BaseActivity implements
     }
 
     @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         mCameraView.start();
@@ -143,6 +149,9 @@ public class CameraActivity extends BaseActivity implements
         onRegisterHomeWatcher();
         Utils.Log(TAG,"onResume");
     }
+
+
+
 
     @Override
     protected void onPause() {

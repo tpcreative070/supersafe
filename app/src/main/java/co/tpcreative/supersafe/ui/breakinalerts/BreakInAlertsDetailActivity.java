@@ -49,4 +49,8 @@ public class BreakInAlertsDetailActivity extends BaseActivity{
         }
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
 }

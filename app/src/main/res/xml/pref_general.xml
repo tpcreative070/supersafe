@@ -57,8 +57,8 @@
         <Preference
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_lock_white_48"
-            android:key="@string/key_album_lock"
-            android:title="@string/key_album_lock"/>
+            android:key="@string/key_album_all_lock"
+            android:title="@string/key_album_all_lock"/>
 
     </PreferenceCategory>
 

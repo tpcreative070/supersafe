@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.aboutsupersafe;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.model.EnumStatus;
 
@@ -29,8 +30,15 @@ public class AboutSuperSafeActivity extends BaseActivity {
     }
 
     @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
     }
+
+
 }

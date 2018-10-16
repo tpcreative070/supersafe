@@ -210,6 +210,9 @@ dependencies {
     /*Animation player music*/
     implementation project(':vusikviewlibrary')
 
+    /*simplerecyclerviewlibrary*/
+    implementation project(':simplerecyclerviewlibrary')
+
 }
 
 /*Resolved duplicated for Google api client*/

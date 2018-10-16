@@ -34,6 +34,7 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
@@ -277,6 +278,11 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
     protected void onResume() {
         super.onResume();
         SingletonFakePinComponent.getInstance().setListener(this);
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        //onFaceDown(isFaceDown);
     }
 
     @Override

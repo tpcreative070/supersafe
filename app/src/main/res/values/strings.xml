@@ -168,7 +168,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.103:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -233,6 +233,7 @@
     <string name="slide_show">Slideshow</string>
     <string name="ask_delete">Are you sure you want to delete this item ?</string>
     <string name="progressing">Progressing...</string>
+    <string name="Sending">Sending</string>
     <string name="done">Done</string>
     <string name="create_album">Create Album</string>
     <string name="change_album">Change Album</string>
@@ -251,6 +252,9 @@
     <string name="empty_all_trash">Are you sure to delete all items? You can not undo this!</string>
     <string name="restore">These items will be restored!</string>
     <string name="forgot_your_pin">Forgot your pin? No problem. Here\'s how to reset it</string>
+    <string name="unlock_all_album_title">Lock your albums with individual passwords through each albums\'s menu. You can unlock them all at once here.</string>
+    <string name="unlock_all_albums">Unlock all albums</string>
+    <string name="enter_access_code_to_unlock_all_albums">Enter the access code below. We\'ll unlock all of the albums on this device</string>
     <string name="step_1">Step 1:</string>
     <string name="step_2">Step 2:</string>
     <string name="request_an_access_code">Request an account code. We\'ll send it to your primary email address: %1$s</string>
@@ -329,6 +333,9 @@
         Didn’t request an access code? Then you can ignore this email. \n\n
         Your Friends, \n
         The SupperSafe Team</string>
+
+    <string name="support_help_email">We have a request was sent from User %1$s \n\n Content:  %2$s </string>
+    <string name="support_help_title">SuperSafe Support &#38; Help</string>
     <string name="send_code_title">SuperSafe Photo Vault Access Code: %1$s</string>
     <string name="key_device_id">device_id</string>
     <string name="key_device_type">device_type</string>
@@ -399,7 +406,8 @@
     <string name="key_fake_pin">Fake PIN</string>
     <string name="key_secret_door">Secret Door</string>
     <string name="key_album_lock">Album Lock</string>
-    <string name="key_help_support">Help&amp;Support</string>
+    <string name="key_album_all_lock">Album Lock</string>
+    <string name="key_help_support">Help &amp; Support</string>
     <string name="key_about_SuperSafe">About Supersafe</string>
     <string name="key_categories_max">categories_max</string>
     <string name="key_change">Change</string>
@@ -417,6 +425,46 @@
     <string name="key_theme_list">theme_list</string>
     <string name="key_pause_cloud_sync">pause_cloud_sync</string>
     <string name="key_cloud_sync_only_wifi">cloud_sync_only_wifi</string>
+    <string name="key_face_down_lock">Face down lock</string>
+    <string name="key_face_down_lock_detail">When you place your phone face down, Supersafe will automatically close and lock itself.</string>
+    <string name="locked">Locked</string>
+    <string name="unlocked">Unlocked</string>
+    <string name="album_lock">Album Lock</string>
+    <string name="lock_album">Lock Album</string>
+    <string name="enter_a_password_for_this_album">Enter a password for this album.</string>
+    <string name="remove_password">Remove password</string>
+    <string name="unlock">Unlock</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="album_is_locked">Album is locked</string>
+    <string name="lock">Lock</string>
+    <string name="open">Open</string>
+    <string name="unlocked_successful">Unlocked successful</string>
+
+    <!--Help and Support -->
+    <string name="faq">FAQ</string>
+    <string name="Support">Support</string>
+
+    <string name="i_have_a_new_phone">I have a new phone</string>
+    <string name="i_have_a_new_phone_content">file:///android_asset/new_phone.html</string>
+
+    <string name="how_do_export_my_files">How do I export my files?</string>
+    <string name="how_do_export_my_files_content">file:///android_asset/export_files.html</string>
+
+    <string name="how_do_i_recover_items_from_trash">How do I recover files from Trash?</string>
+    <string name="how_do_i_recover_items_from_trash_content">file:///android_asset/recover_files.html</string>
+
+    <string name="i_forgot_the_password_how_to_unlock_my_albums">I forgot the Password How to unlock my albums</string>
+    <string name="i_forgot_the_password_how_to_unlock_my_albums_content">file:///android_asset/unlock_albums.html</string>
+
+    <string name="what_is_the_fake_pin_and_how_do_i_use_it">What\'s the fake PIN and how do i use it?</string>
+    <string name="what_is_the_fake_pin_and_how_do_i_use_it_content">file:///android_asset/fake_pin.html</string>
+
+    <string name="contact_support">Contact support</string>
+    <string name="contact_support_content">Contact support</string>
+    <string name="from">From</string>
+    <string name="how_we_can_help_you">How We can help you</string>
+    <string name="thank_you">You thank for sending the info. We will response as soon as possible.</string>
+    <string name="send_email_failed">Sending email was failed. Please try again.</string>
 
 
 </resources>

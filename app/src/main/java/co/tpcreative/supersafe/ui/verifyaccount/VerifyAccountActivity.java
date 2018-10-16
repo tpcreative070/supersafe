@@ -35,6 +35,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -135,6 +136,12 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 break;
             }
         }
+    }
+
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
     }
 
 

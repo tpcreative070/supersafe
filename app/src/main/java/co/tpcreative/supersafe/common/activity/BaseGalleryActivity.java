@@ -28,8 +28,11 @@ import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -38,7 +41,7 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment;
 
 
-public abstract class BaseGalleryActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener, MoveGalleryFragment.OnGalleryAttachedListener{
+public abstract class BaseGalleryActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener, MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -141,8 +144,17 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements S
         unbinder = ButterKnife.bind(this);
     }
 
+    protected void onFaceDown(final boolean isFaceDown){
+        if (isFaceDown){
+            final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
+            if (result){
+                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -154,6 +166,7 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements S
     @Override
     protected void onResume() {
         Utils.Log(TAG,"Action here........onResume");
+        SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         SingletonBaseActivity.getInstance().setListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){

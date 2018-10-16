@@ -29,10 +29,8 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class SplashScreenActivity extends BaseActivity implements SensorOrientationChangeNotifier.Listener{
+public class SplashScreenActivity extends BaseActivity {
 
-    private Handler handler = new Handler();
-    private final int TIMER = 1000;
     private String value = "" ;
     private boolean grant_access;
     private boolean isRunning;
@@ -55,9 +53,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
             grant_access = false;
         }
         SuperSafeApplication.getInstance().initFolder();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+
                 if (grant_access){
                     if (isRunning){
                         if(!"".equals(value)){
@@ -77,8 +73,7 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
                     Navigator.onMoveGrantAccess(SplashScreenActivity.this);
                 }
                 finish();
-            }
-        },TIMER);
+
 
         Log.d(TAG,"" + SuperSafeApplication.getInstance().getDeviceId());
 
@@ -125,23 +120,19 @@ public class SplashScreenActivity extends BaseActivity implements SensorOrientat
         return true;
     }
 
-
     @Override
-    public void onOrientationChange(int orientation) {
-        Log.d(TAG,"displayOrientation " + orientation);
-        SuperSafeApplication.getInstance().setOrientation(orientation);
+    public void onOrientationChange(boolean isFaceDown) {
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SensorOrientationChangeNotifier.getInstance().addListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        SensorOrientationChangeNotifier.getInstance().remove(this);
     }
 
 }

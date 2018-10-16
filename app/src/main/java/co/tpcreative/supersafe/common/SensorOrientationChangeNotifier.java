@@ -12,40 +12,40 @@ import java.util.ArrayList;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 
 public class SensorOrientationChangeNotifier {
-        private static SensorOrientationChangeNotifier mInstance;
-        public final String TAG = getClass().getSimpleName();
-        private ArrayList<WeakReference<Listener>> mListeners = new ArrayList<WeakReference<Listener>>(3);
-        private int mOrientation = 0;
-        private SensorEventListener mSensorEventListener;
-        private SensorManager mSensorManager;
+    private static SensorOrientationChangeNotifier mInstance;
+    public final String TAG = getClass().getSimpleName();
+    private ArrayList<WeakReference<Listener>> mListeners = new ArrayList<WeakReference<Listener>>(3);
+    private int mOrientation = 0;
+    private SensorEventListener mSensorEventListener;
+    private SensorManager mSensorManager;
 
-        private SensorOrientationChangeNotifier() {
-            mSensorEventListener = new NotifierSensorEventListener();
-            Context applicationContext = SuperSafeApplication.getInstance().getApplicationContext();
-            mSensorManager = (SensorManager) applicationContext.getSystemService(Context.SENSOR_SERVICE);
+    private SensorOrientationChangeNotifier() {
+        mSensorEventListener = new NotifierSensorEventListener();
+        Context applicationContext = SuperSafeApplication.getInstance().getApplicationContext();
+        mSensorManager = (SensorManager) applicationContext.getSystemService(Context.SENSOR_SERVICE);
 
-        }
+    }
 
-        public static SensorOrientationChangeNotifier getInstance() {
-            if (mInstance == null)
-                mInstance = new SensorOrientationChangeNotifier();
+    public static SensorOrientationChangeNotifier getInstance() {
+        if (mInstance == null)
+            mInstance = new SensorOrientationChangeNotifier();
 
-            return mInstance;
-        }
+        return mInstance;
+    }
 
-        /**
-         * Call on activity reset()
-         */
-        private void onResume() {
-            mSensorManager.registerListener(mSensorEventListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        }
+    /**
+     * Call on activity reset()
+     */
+    private void onResume() {
+        mSensorManager.registerListener(mSensorEventListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-        /**
-         * Call on activity onPause()
-         */
-        private void onPause() {
-            mSensorManager.unregisterListener(mSensorEventListener);
-        }
+    /**
+     * Call on activity onPause()
+     */
+    private void onPause() {
+        mSensorManager.unregisterListener(mSensorEventListener);
+    }
 
     public int getOrientation() {
         return mOrientation;
@@ -97,46 +97,46 @@ public class SensorOrientationChangeNotifier {
         }
     }
 
-    public boolean isPortrait(){
+    public boolean isPortrait() {
         return mOrientation == 0 || mOrientation == 180;
     }
 
-    public boolean isLandscape(){
+    public boolean isLandscape() {
         return !isPortrait();
     }
 
-public interface Listener {
-    void onOrientationChange(int orientation);
-}
+    public interface Listener {
+        void onOrientationChange(int orientation);
+    }
 
-private class NotifierSensorEventListener implements SensorEventListener {
+    private class NotifierSensorEventListener implements SensorEventListener {
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        float x = event.values[0];
-        float y = event.values[1];
-        int newOrientation = mOrientation;
-        if (x < 5 && x > -5 && y > 5)
-            newOrientation = 0;
-        else if (x < -5 && y < 5 && y > -5)
-            newOrientation = 90;
-        else if (x < 5 && x > -5 && y < -5)
-            newOrientation = 180;
-        else if (x > 5 && y < 5 && y > -5)
-            newOrientation = 270;
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            int newOrientation = mOrientation;
+            if (x < 5 && x > -5 && y > 5)
+                newOrientation = 0;
+            else if (x < -5 && y < 5 && y > -5)
+                newOrientation = 90;
+            else if (x < 5 && x > -5 && y < -5)
+                newOrientation = 180;
+            else if (x > 5 && y < 5 && y > -5)
+                newOrientation = 270;
 
-        //Log.e(TAG,"mOrientation="+mOrientation+"   ["+event.values[0]+","+event.values[1]+","+event.values[2]+"]");
-        if (mOrientation != newOrientation){
-            mOrientation = newOrientation;
-            notifyListeners();
+            //Log.e(TAG,"mOrientation="+mOrientation+"   ["+event.values[0]+","+event.values[1]+","+event.values[2]+"]");
+            if (mOrientation != newOrientation) {
+                mOrientation = newOrientation;
+                notifyListeners();
+            }
+
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
         }
 
     }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-}
 }

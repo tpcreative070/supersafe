@@ -40,6 +40,11 @@ public class DashBoardActivity extends BaseActivity {
     }
 
     @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
+    @Override
     public void onBackPressed() {
         Utils.Log(TAG,"onBackPressed");
     }

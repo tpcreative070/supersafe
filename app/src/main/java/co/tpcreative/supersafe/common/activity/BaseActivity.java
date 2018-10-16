@@ -26,8 +26,11 @@ import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -35,7 +38,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public abstract class BaseActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener{
+public abstract class BaseActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener, SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -118,6 +121,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
         }
     }
 
+    protected void onFaceDown(final boolean isFaceDown){
+        if (isFaceDown){
+            final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
+            if (result){
+               Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
+            }
+        }
+    }
+
     protected float getRandom(float range, float startsfrom) {
         return (float) (Math.random() * range) + startsfrom;
     }
@@ -131,18 +143,22 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
 
     @Override
     protected void onDestroy() {
+        Utils.Log(TAG,"onDestroy....");
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
-        if (unbinder != null)
+        if (unbinder != null){
             unbinder.unbind();
+        }
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-        Utils.Log(TAG,"Action here........onResume");
+        Utils.Log(TAG,"onResume....");
         SingletonBaseActivity.getInstance().setListener(this);
+        SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();

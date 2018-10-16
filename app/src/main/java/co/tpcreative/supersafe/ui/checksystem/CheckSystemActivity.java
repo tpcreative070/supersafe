@@ -22,6 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -76,6 +77,12 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView{
             }
         }
     }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
 
     @Override
     protected void onDestroy() {

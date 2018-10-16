@@ -16,6 +16,7 @@ include ':app',
         'preferenceslibrary',
         'time_ago_library',
         'taptargetviewlibrary',
-        'vusikviewlibrary'
+        'vusikviewlibrary',
+        'simplerecyclerviewlibrary'
 
 

@@ -22,6 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
@@ -74,6 +75,11 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
                 break;
             }
         }
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override

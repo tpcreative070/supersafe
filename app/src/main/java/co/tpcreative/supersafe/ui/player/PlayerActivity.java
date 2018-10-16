@@ -5,6 +5,12 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +25,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
@@ -44,16 +51,20 @@ import javax.crypto.spec.SecretKeySpec;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.ui.privates.PrivateAdapter;
 import dyanamitechetan.vusikview.VusikView;
 
-public class PlayerActivity extends BaseActivity implements BaseView {
+public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdapter.ItemSelectedListener{
 
     private static final String TAG = PlayerActivity.class.getSimpleName();
     @BindView(R.id.simpleexoplayerview)
@@ -64,6 +75,8 @@ public class PlayerActivity extends BaseActivity implements BaseView {
     TextView tvTitle;
     @BindView(R.id.rlTop)
     RelativeLayout rlTop;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
     private Cipher mCipher;
     private SecretKeySpec mSecretKeySpec;
     private IvParameterSpec mIvParameterSpec;
@@ -71,12 +84,14 @@ public class PlayerActivity extends BaseActivity implements BaseView {
     private Storage storage;
     private PlayerPresenter presenter;
     private SimpleExoPlayer player;
+    private PlayerAdapter adapter;
+    int lastWindowIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         presenter = new PlayerPresenter();
@@ -94,6 +109,7 @@ public class PlayerActivity extends BaseActivity implements BaseView {
         }
 
         if (mCipher!=null){
+            initRecycleView(getLayoutInflater());
             presenter.onGetIntent(this);
         }
 
@@ -104,15 +120,42 @@ public class PlayerActivity extends BaseActivity implements BaseView {
         Drawable[]  myImageList = new Drawable[]{note1,note2,note3,note4};
         animationPlayer.setImages(myImageList).start();
 
-
         playerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
                 tvTitle.setVisibility(visibility);
                 rlTop.setVisibility(visibility);
+                recyclerView.setVisibility(visibility);
             }
         });
+    }
 
+    public void initRecycleView(LayoutInflater layoutInflater){
+        adapter = new PlayerAdapter(layoutInflater,this,this);
+        RecyclerView.LayoutManager mLayoutManager =  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClickGalleryItem(int position) {
+        Utils.Log(TAG,"Position :"+ position);
+        onUpdatedUI(position);
+        player.seekToDefaultPosition(position);
+
+    }
+
+    public void onUpdatedUI(int position){
+        for (int i = 0 ; i < presenter.mList.size();i++){
+            if (i==position){
+                presenter.mList.get(i).isChecked = true;
+            }else{
+                presenter.mList.get(i).isChecked = false;
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -126,6 +169,11 @@ public class PlayerActivity extends BaseActivity implements BaseView {
         }
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
     public void playVideo() {
         final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
@@ -136,58 +184,80 @@ public class PlayerActivity extends BaseActivity implements BaseView {
         DataSource.Factory dataSourceFactory = new EncryptedFileDataSourceFactory(mCipher, mSecretKeySpec, mIvParameterSpec, bandwidthMeter);
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
 
-        Uri uri = Uri.fromFile(mEncryptedFile);
+        //Uri uri = Uri.fromFile(mEncryptedFile);
         try {
-            MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri);
-            player.prepare(videoSource);
+            //MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri);
+            presenter.mListSource.clear();
+            for (Items index : presenter.mList){
+                mEncryptedFile = new File(index.originalPath);
+                Uri uri = Uri.fromFile(mEncryptedFile);
+                presenter.mListSource.add(new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri));
+            }
+            ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource(
+                    presenter.mListSource.toArray(new MediaSource[presenter.mListSource.size()]));
+            player.prepare(concatenatedSource);
             player.setPlayWhenReady(true);
             player.setRepeatMode(Player.REPEAT_MODE_OFF);
             playerView.getPlayer().setRepeatMode(Player.REPEAT_MODE_OFF);
+            playerView.setControllerAutoShow(false);
 
-            videoSource.addEventListener(null, new MediaSourceEventListener() {
+
+
+            player.addListener(new Player.EventListener() {
                 @Override
-                public void onMediaPeriodCreated(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-
+                public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
+                    Utils.Log(TAG,"1");
                 }
 
                 @Override
-                public void onMediaPeriodReleased(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-
+                public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+                    Utils.Log(TAG,"2");
                 }
 
                 @Override
-                public void onLoadStarted(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
-
+                public void onLoadingChanged(boolean isLoading) {
+                    Utils.Log(TAG,"3");
                 }
 
                 @Override
-                public void onLoadCompleted(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
-                    player.stop();
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                    Utils.Log(TAG,"4");
                 }
 
                 @Override
-                public void onLoadCanceled(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
-
+                public void onRepeatModeChanged(int repeatMode) {
+                    Utils.Log(TAG,"5");
                 }
 
                 @Override
-                public void onLoadError(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId, LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData, IOException error, boolean wasCanceled) {
-
+                public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+                    Utils.Log(TAG,"6");
                 }
 
                 @Override
-                public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
-
+                public void onPlayerError(ExoPlaybackException error) {
+                    Utils.Log(TAG,"7");
                 }
 
                 @Override
-                public void onUpstreamDiscarded(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId, MediaLoadData mediaLoadData) {
-
+                public void onPositionDiscontinuity(int reason) {
+                    int latestWindowIndex = player.getCurrentWindowIndex();
+                    if (latestWindowIndex != lastWindowIndex) {
+                        lastWindowIndex = latestWindowIndex;
+                    }
+                    tvTitle.setText(presenter.mList.get(lastWindowIndex).title);
+                    onUpdatedUI(lastWindowIndex);
+                    Utils.Log(TAG,"position ???????"+ lastWindowIndex);
                 }
 
                 @Override
-                public void onDownstreamFormatChanged(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId, MediaLoadData mediaLoadData) {
+                public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+                    Utils.Log(TAG,"9");
+                }
 
+                @Override
+                public void onSeekProcessed() {
+                    Utils.Log(TAG,"10");
                 }
             });
 
@@ -243,7 +313,7 @@ public class PlayerActivity extends BaseActivity implements BaseView {
 
     }
 
-    @OnClick(R.id.rlTop)
+    @OnClick(R.id.imgArrowBack)
     public void onClickedBack(View view){
         finish();
     }
@@ -258,7 +328,6 @@ public class PlayerActivity extends BaseActivity implements BaseView {
                     Utils.Log(TAG," mcipher is null");
                     return;
                 }
-
                 EnumFormatType formatType = EnumFormatType.values()[presenter.mItems.formatType];
                 switch (formatType){
                     case AUDIO:{
@@ -266,8 +335,14 @@ public class PlayerActivity extends BaseActivity implements BaseView {
                         animationPlayer.setVisibility(View.VISIBLE);
                         break;
                     }
+                    case VIDEO:{
+                        playerView.setBackgroundColor(getResources().getColor(R.color.black));
+                        break;
+                    }
                 }
+
                 tvTitle.setText(presenter.mItems.title);
+                adapter.setDataSource(presenter.mList);
                 playVideo();
                 break;
             }

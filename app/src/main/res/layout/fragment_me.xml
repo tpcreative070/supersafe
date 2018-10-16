@@ -269,9 +269,7 @@
                             android:gravity="center"
                             android:text="@string/settings" />
                     </LinearLayout>
-
                 </RelativeLayout>
-
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </RelativeLayout>

@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
@@ -59,6 +60,10 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         }
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
         adapter = new ThemeSettingsAdapter(layoutInflater, getApplicationContext(), this);

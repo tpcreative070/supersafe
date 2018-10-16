@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
@@ -64,11 +65,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         edtCode.setOnEditorActionListener(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-    }
+
 
     @Override
     public void onStillScreenLock(EnumStatus status) {
@@ -79,6 +76,18 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
                 break;
             }
         }
+    }
+
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onRegisterHomeWatcher();
     }
 
     public void setProgressValue(){
@@ -105,11 +114,13 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
             if (Utils.isValid(value)){
                 btnReset.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
                 btnReset.setTextColor(getResources().getColor(R.color.white));
+                btnReset.setEnabled(true);
                 isNext = true;
             }
             else{
                 btnReset.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
                 btnReset.setTextColor(getResources().getColor(R.color.colorDisableText));
+                btnReset.setEnabled(false);
                 isNext = false;
             }
         }

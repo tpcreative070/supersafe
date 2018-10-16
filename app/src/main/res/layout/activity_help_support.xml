@@ -35,6 +35,19 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <com.jaychang.srv.SimpleRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srv_dividerColor="@color/colorDark"
+            app:srv_dividerOrientation="both"
+            app:srv_dividerPaddingBottom="5dp"
+            app:srv_dividerPaddingLeft="5dp"
+            app:srv_dividerPaddingRight="5dp"
+            app:srv_dividerPaddingTop="5dp"
+            app:srv_layoutMode="linearVertical"
+            app:srv_showDivider="true"
+            app:srv_showLastDivider="true" />
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

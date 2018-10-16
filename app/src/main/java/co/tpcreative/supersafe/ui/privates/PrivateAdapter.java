@@ -85,55 +85,66 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             this.data = data;
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false,false);
-            if (items != null) {
-                EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
-                switch (formatTypeFile) {
-                    case AUDIO: {
-                        Theme theme = Theme.getInstance().getThemeInfo();
-                        Drawable note1 = context.getResources().getDrawable( theme.getPrimaryColor());
-                        Glide.with(context)
-                                .load(note1)
-                                .apply(options)
-                                .into(imgAlbum);
-                        imgIcon.setBackground(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
-                        break;
-                    }
-                    default: {
-                        try {
-                            if (storage.isFileExist(""+items.thumbnailPath)){
-                                imgAlbum.setRotation(items.degrees);
-                                Glide.with(context)
-                                        .load(storage.readFile(items.thumbnailPath))
-                                        .apply(options)
-                                        .into(imgAlbum);
-                                imgIcon.setVisibility(View.INVISIBLE);
-                            }
-                            else{
-                                imgAlbum.setImageResource(0);
-                                int myColor = Color.parseColor(data.image);
-                                imgAlbum.setBackgroundColor(myColor);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+            if (data.pin.equals("")) {
+                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id, false, false);
+                if (items != null) {
+                    EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
+                    switch (formatTypeFile) {
+                        case AUDIO: {
+                            Theme theme = Theme.getInstance().getThemeInfo();
+                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                            Glide.with(context)
+                                    .load(note1)
+                                    .apply(options)
+                                    .into(imgAlbum);
+                            imgIcon.setBackground(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
+                            break;
                         }
-                        break;
+                        default: {
+                            try {
+                                if (storage.isFileExist("" + items.thumbnailPath)) {
+                                    imgAlbum.setRotation(items.degrees);
+                                    Glide.with(context)
+                                            .load(storage.readFile(items.thumbnailPath))
+                                            .apply(options)
+                                            .into(imgAlbum);
+                                    imgIcon.setVisibility(View.INVISIBLE);
+                                } else {
+                                    imgAlbum.setImageResource(0);
+                                    int myColor = Color.parseColor(data.image);
+                                    imgAlbum.setBackgroundColor(myColor);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    imgAlbum.setImageResource(0);
+                    imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
+                    imgIcon.setVisibility(View.VISIBLE);
+
+                    try {
+                        int myColor = Color.parseColor(data.image);
+                        imgAlbum.setBackgroundColor(myColor);
+                    } catch (Exception e) {
+
                     }
                 }
-            } else {
+            }
+            else{
                 imgAlbum.setImageResource(0);
-                imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context,data.icon));
+                imgIcon.setImageResource(R.drawable.baseline_https_white_48);
                 imgIcon.setVisibility(View.VISIBLE);
-
                 try {
                     int myColor = Color.parseColor(data.image);
                     imgAlbum.setBackgroundColor(myColor);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
 
                 }
             }
-
             tvTitle.setText(data.categories_name);
             this.mPosition = position;
         }
@@ -154,7 +165,12 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                 showPopupMenu(view, R.menu.menu_main_album,mPosition);
             }
             else{
-                showPopupMenu(view, R.menu.menu_album,mPosition);
+                if (data.pin.equals("")){
+                    showPopupMenu(view, R.menu.menu_album,mPosition);
+                }
+                else{
+                    showPopupMenu(view, R.menu.menu_main_album,mPosition);
+                }
             }
         }
     }
@@ -192,7 +208,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     if (itemSelectedListener!=null){
                         itemSelectedListener.onEmptyTrash(position);
                     }
-                     return true;
+                    return true;
 
                 default:
             }

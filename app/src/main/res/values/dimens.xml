@@ -26,9 +26,9 @@
     <dimen name="image_size_custom">70dp</dimen>
     <dimen name="image_size_custom_40">40dp</dimen>
     <dimen name="image_size_video_cam">20dp</dimen>
-    <dimen name="text_size_preference_categories_title">17sp</dimen>
+    <dimen name="text_size_preference_categories_title">18sp</dimen>
     <dimen name="text_size_preference_categories_summary">16sp</dimen>
-    <dimen name="text_size_preference_item_title">16sp</dimen>
+    <dimen name="text_size_preference_item_title">17sp</dimen>
     <dimen name="text_size_preference_item_summary">15sp</dimen>
 
     // default

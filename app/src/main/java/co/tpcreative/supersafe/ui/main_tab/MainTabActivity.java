@@ -36,6 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -100,6 +101,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 break;
             }
         }
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override
@@ -407,7 +413,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
-        Utils.onBackUp();
+        //Utils.onBackUp();
         onRegisterHomeWatcher();
     }
 
@@ -553,4 +559,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+
 }

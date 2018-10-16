@@ -63,6 +63,11 @@ public class SignInActivity extends BaseActivity implements TextView.OnEditorAct
     }
 
     @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
+    @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
             if (!SuperSafeReceiver.isConnected()){

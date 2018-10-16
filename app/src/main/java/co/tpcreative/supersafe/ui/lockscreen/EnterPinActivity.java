@@ -9,11 +9,14 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +42,8 @@ import co.tpcreative.supersafe.common.hiddencamera.config.CameraFocus;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraResolution;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraRotation;
+import co.tpcreative.supersafe.common.preference.MyPreference;
+import co.tpcreative.supersafe.common.preference.MySwitchPreference;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -47,6 +52,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
+import co.tpcreative.supersafe.ui.theme.ThemeSettingsPresenter;
 
 
 public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction> {
@@ -268,6 +274,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             }
         }
     }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
+
 
     @OnClick(R.id.btnDone)
     public void onClickedDone(){
@@ -837,7 +850,10 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     /*Settings preference*/
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
-        private Preference mChangePin;
+        private MyPreference mChangePin;
+        private MySwitchPreference mFaceDown ;
+
+
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -851,6 +867,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             return new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(final Preference preference, final Object newValue) {
+                    Utils.Log(TAG,"change "+ newValue);
                     return true;
                 }
             };
@@ -865,19 +882,38 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             Utils.Log(TAG,"Action here!!!");
                             presenter.onChangeStatus(EnumStatus.VERIFY,EnumPinAction.VERIFY_TO_CHANGE);
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_face_down_lock))){
+//                            boolean switchFaceDown = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
+//                            preference.setDefaultValue(!switchFaceDown);
+//                            mFaceDown.setChecked(switchFaceDown);
+//                            Utils.Log(TAG,":"+switchFaceDown);
+                        }
                     }
                     return true;
                 }
             };
         }
 
+
+
         @Override
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             /*Changing pin*/
-            mChangePin = findPreference(getString(R.string.key_change_pin));
+            mChangePin = (MyPreference) findPreference(getString(R.string.key_change_pin));
             mChangePin.setOnPreferenceChangeListener(createChangeListener());
             mChangePin.setOnPreferenceClickListener(createActionPreferenceClickListener());
+
+
+            /*Face down*/
+
+            mFaceDown = (MySwitchPreference) findPreference(getString(R.string.key_face_down_lock));
+            boolean switchFaceDown = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
+            mFaceDown.setOnPreferenceChangeListener(createChangeListener());
+            mFaceDown.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mFaceDown.setDefaultValue(switchFaceDown);
+            Utils.Log(TAG,"default "+switchFaceDown );
+
         }
 
         @Override

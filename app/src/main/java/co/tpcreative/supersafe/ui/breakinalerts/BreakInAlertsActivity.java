@@ -23,6 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration;
 import co.tpcreative.supersafe.common.controller.PrefsController;
@@ -67,6 +68,12 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
                 break;
             }
         }
+    }
+
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override

@@ -42,6 +42,7 @@ import javax.crypto.Cipher;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -209,6 +210,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
     /*BaseGallery*/
 
     @Override
@@ -289,7 +295,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 @Override
                 public void onClick(View view) {
                     final Items items = presenter.mList.get(viewPager.getCurrentItem());
-                    Navigator.onPlayer(PhotoSlideShowActivity.this,items);
+                    Navigator.onPlayer(PhotoSlideShowActivity.this,items,presenter.mainCategories);
                 }
             });
 

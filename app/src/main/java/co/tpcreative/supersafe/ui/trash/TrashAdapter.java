@@ -134,7 +134,7 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                         //imgAlbum.setImageDrawable(context.getResources().getDrawable(R.drawable.image_background_audio_video));
 
                         Theme theme = Theme.getInstance().getThemeInfo();
-                        Drawable note1 = context.getResources().getDrawable( theme.getPrimaryColor());
+                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options).into(imgAlbum);

@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.GoogleOauth;
+import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
@@ -24,9 +25,11 @@ import co.tpcreative.supersafe.ui.camera.CameraActivity;
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity;
 import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
+import co.tpcreative.supersafe.ui.facedown.FaceDownActivity;
 import co.tpcreative.supersafe.ui.fakepin.FakePinActivity;
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity;
+import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
@@ -42,6 +45,7 @@ import co.tpcreative.supersafe.ui.signup.SignUpActivity;
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity;
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity;
 import co.tpcreative.supersafe.ui.trash.TrashActivity;
+import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 
@@ -62,6 +66,13 @@ public class Navigator {
 
     public static void onMoveToMainTab(Context context){
         Intent intent = new Intent(context, MainTabActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveToFaceDown(Context context){
+        Intent intent = new Intent(context, FaceDownActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
@@ -192,10 +203,11 @@ public class Navigator {
         context.startActivityForResult(intent,ENABLE_CLOUD);
     }
 
-    public static void onPlayer(Context context,final Items items){
+    public static void onPlayer(Context context,final Items items,final MainCategories main){
         Intent intent = new Intent(context, PlayerActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_items),items);
+        bundle.putSerializable(context.getString(R.string.key_main_categories),main);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }
@@ -265,6 +277,19 @@ public class Navigator {
 
     public static void onMoveAboutSuperSafe(Context context){
         Intent intent = new Intent(context, AboutSuperSafeActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveUnlockAllAlbums(Context context){
+        Intent intent = new Intent(context, UnlockAllAlbumActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveHelpAndSupportContent(Context context, HelpAndSupport helpAndSupport){
+        Intent intent = new Intent(context, HelpAndSupportContentActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(HelpAndSupport.class.getSimpleName(),helpAndSupport);
+        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 

@@ -43,6 +43,8 @@ import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
@@ -57,7 +59,7 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 
 
-public abstract class BaseGoogleApi extends AppCompatActivity implements SingletonBaseApiActivity.SingletonBaseApiActivityListener{
+public abstract class BaseGoogleApi extends AppCompatActivity implements SingletonBaseApiActivity.SingletonBaseApiActivityListener, SensorFaceUpDownChangeNotifier.Listener{
 
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
 
@@ -153,6 +155,15 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
         Slidr.attach(activity, mConfig);
     }
 
+    protected void onFaceDown(final boolean isFaceDown){
+        if (isFaceDown){
+            final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
+            if (result){
+                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
+            }
+        }
+    }
+
     protected float getRandom(float range, float startsfrom) {
         return (float) (Math.random() * range) + startsfrom;
     }
@@ -167,6 +178,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
 
     @Override
     protected void onDestroy() {
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
         if (mHomeWatcher!=null){
             Utils.Log(TAG,"Stop home watcher....");
             mHomeWatcher.stopWatch();
@@ -178,6 +190,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
 
     @Override
     protected void onResume() {
+        SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
        SingletonBaseApiActivity.getInstance().setListener(this);
        super.onResume();
     }

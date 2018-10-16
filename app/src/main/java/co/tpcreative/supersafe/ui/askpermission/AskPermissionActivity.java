@@ -39,6 +39,11 @@ public class AskPermissionActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
     public void onAddPermission() {
         Dexter.withActivity(this)
                 .withPermissions(

@@ -68,6 +68,10 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
         }
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
 
     @OnClick(R.id.imgBack)
     public void onClickedBack(){

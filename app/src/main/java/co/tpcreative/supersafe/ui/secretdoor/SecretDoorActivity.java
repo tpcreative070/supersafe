@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -62,6 +63,11 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
                 break;
             }
         }
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override

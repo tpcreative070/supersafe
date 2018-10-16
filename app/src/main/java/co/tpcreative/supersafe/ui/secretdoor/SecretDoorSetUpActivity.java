@@ -68,6 +68,11 @@ public class SecretDoorSetUpActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
     public void onShowDialog(){
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.enable_secret_door))

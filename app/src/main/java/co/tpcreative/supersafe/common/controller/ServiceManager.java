@@ -2249,7 +2249,17 @@ public class ServiceManager implements BaseView {
     public void onSuccessful(String message, EnumStatus status) {
         switch (status) {
             case SCREEN_OFF: {
-                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                EnumPinAction action = EnumPinAction.values()[value];
+                switch (action){
+                    case NONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                        break;
+                    }
+                    default:{
+                        Utils.Log(TAG,"Nothing to do");
+                    }
+                }
                 break;
             }
             case GET_DRIVE_ABOUT: {
