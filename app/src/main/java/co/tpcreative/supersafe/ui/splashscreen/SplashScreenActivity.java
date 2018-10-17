@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class SplashScreenActivity extends BaseActivity {
@@ -98,6 +100,9 @@ public class SplashScreenActivity extends BaseActivity {
 
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
+
+        final int count  = InstanceGenerator.getInstance(this).getLatestItem();
+        Utils.Log(TAG,"Max "+count);
 
     }
 

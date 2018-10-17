@@ -123,7 +123,17 @@
         <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity" />
         <activity android:name=".ui.facedown.FaceDownActivity" />
         <activity android:name=".ui.unlockalbum.UnlockAllAlbumActivity" />
-        <activity android:name=".ui.help.HelpAndSupportContentActivity"></activity>
-    </application>
+        <activity android:name=".ui.help.HelpAndSupportContentActivity" />
 
+        <activity android:name=".ui.sharefiles.ShareFilesActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+
+        </activity>
+    </application>
 </manifest>

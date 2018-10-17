@@ -238,6 +238,7 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
             case Constants.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+                    List<Integer> mListFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -257,7 +258,8 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, path, id, list.get(0));
+                            mListFiles.add(i);
+                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFiles, path, list.get(0));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

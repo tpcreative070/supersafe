@@ -597,7 +597,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                             mMain.isSyncOwnServer = true;
                                             mMain.isChange = false;
                                             mMain.isDelete = false;
-                                            mMain.categories_max = System.currentTimeMillis();
+                                            final int count  = InstanceGenerator.getInstance(this).getLatestItem();
+                                            mMain.categories_max = count;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
                                         }
                                         view.onSuccessful(onResponse.message);
@@ -979,7 +980,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                             mMain.isSyncOwnServer = true;
                                             mMain.isChange = false;
                                             mMain.isDelete = false;
-                                            mMain.categories_max = System.currentTimeMillis();
+                                            final int count  = InstanceGenerator.getInstance(this).getLatestItem();
+                                            mMain.categories_max = count;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
                                         }
                                         view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);

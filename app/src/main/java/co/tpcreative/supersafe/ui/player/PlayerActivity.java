@@ -333,6 +333,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
                     case AUDIO:{
                         animationPlayer.startNotesFall();
                         animationPlayer.setVisibility(View.VISIBLE);
+                        playerView.setBackgroundResource(R.color.yellow_700);
                         break;
                     }
                     case VIDEO:{

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -85,6 +86,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             this.data = data;
+            Utils.Log(TAG,"name :" + data.categories_name +" - "+ data.categories_max);
 
             if (data.pin.equals("")) {
                 final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id, false, false);
@@ -98,7 +100,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                                     .load(note1)
                                     .apply(options)
                                     .into(imgAlbum);
-                            imgIcon.setBackground(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
+                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                             break;
                         }
                         default: {

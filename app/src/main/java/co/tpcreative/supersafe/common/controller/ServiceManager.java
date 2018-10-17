@@ -54,6 +54,7 @@ import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.ResponseRXJava;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.Observable;
@@ -1468,13 +1469,12 @@ public class ServiceManager implements BaseView {
 
     /*Gallery action*/
 
-    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final String path, String id, MainCategories mainCategories) {
+    public void onSaveDataOnGallery(final MimeTypeFile mimeTypeFile, final List<Integer>mListFiles ,final String path, MainCategories mainCategories) {
         subscriptions = Observable.create(subscriber -> {
             final MimeTypeFile mMimeTypeFile = mimeTypeFile;
             final EnumFormatType enumTypeFile = mMimeTypeFile.formatType;
             final String mPath = path;
             final String mMimeType = mMimeTypeFile.mimeType;
-            final String mVideo_id = id;
             final Items items;
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
@@ -1521,6 +1521,8 @@ public class ServiceManager implements BaseView {
                             matrix.postRotate(270);
                         }
                         thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
+
+
 
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1596,12 +1598,18 @@ public class ServiceManager implements BaseView {
                         Utils.Log(TAG, "start end");
 
 
+
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.items = items;
+
                         if (createdThumbnail && createdOriginal) {
-                            subscriber.onNext(items);
+                            response.isWorking = true;
+                            subscriber.onNext(response);
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile successful");
                         } else {
-                            subscriber.onNext(null);
+                            response.isWorking = false;
+                            subscriber.onNext(response);
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile failed");
                         }
@@ -1609,7 +1617,9 @@ public class ServiceManager implements BaseView {
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
                         onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        subscriber.onNext(false);
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.isWorking = false;
+                        subscriber.onNext(response);
                         subscriber.onComplete();
                     } finally {
                         Utils.Log(TAG, "Finally");
@@ -1620,13 +1630,22 @@ public class ServiceManager implements BaseView {
                 case VIDEO: {
                     Utils.Log(TAG, "Start RXJava Video Progressing");
                     try {
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inDither = false;
-                        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                        thumbnail = MediaStore.Video.Thumbnails.getThumbnail(SuperSafeApplication.getInstance().getContentResolver(),
-                                Long.parseLong(mVideo_id),
-                                MediaStore.Images.Thumbnails.MINI_KIND,
-                                options);
+
+                        thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
+                                MediaStore.Video.Thumbnails.MINI_KIND);
+                        ExifInterface exifInterface = new ExifInterface(mPath);
+                        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                        Log.d("EXIF", "Exif: " + orientation);
+                        Matrix matrix = new Matrix();
+                        if (orientation == 6) {
+                            matrix.postRotate(90);
+                        } else if (orientation == 3) {
+                            matrix.postRotate(180);
+                        } else if (orientation == 8) {
+                            matrix.postRotate(270);
+                        }
+                        thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
+
 
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1699,12 +1718,18 @@ public class ServiceManager implements BaseView {
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
+
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.items = items;
+
                         if (createdThumbnail && createdOriginal) {
-                            subscriber.onNext(items);
+                            response.isWorking = true;
+                            subscriber.onNext(response);
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile successful");
                         } else {
-                            subscriber.onNext(null);
+                            response.isWorking = false;
+                            subscriber.onNext(response);
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile failed");
                         }
@@ -1712,7 +1737,9 @@ public class ServiceManager implements BaseView {
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
                         onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        subscriber.onNext(null);
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.isWorking = false;
+                        subscriber.onNext(response);
                         subscriber.onComplete();
                     } finally {
                         Utils.Log(TAG, "Finally");
@@ -1790,12 +1817,18 @@ public class ServiceManager implements BaseView {
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
+
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.items = items;
+
                         if (createdOriginal) {
-                            subscriber.onNext(items);
+                            response.isWorking = true;
+                            subscriber.onNext(response);
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile successful");
                         } else {
-                            subscriber.onNext(null);
+                            response.isWorking = false;
+                            subscriber.onNext(response);
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile failed");
                         }
@@ -1803,7 +1836,9 @@ public class ServiceManager implements BaseView {
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
                         onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        subscriber.onNext(null);
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.isWorking = false;
+                        subscriber.onNext(response);
                         subscriber.onComplete();
                     } finally {
                         Utils.Log(TAG, "Finally");
@@ -1817,9 +1852,10 @@ public class ServiceManager implements BaseView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
-                    final Items items = (Items) response;
+                    final ResponseRXJava mResponse = (ResponseRXJava) response;
                     try {
-                        if (items != null) {
+                        if (mResponse.isWorking) {
+                            final Items items = mResponse.items;
                             long mb;
                             EnumFormatType enumFormatType = EnumFormatType.values()[items.formatType];
                             switch (enumFormatType) {
@@ -1856,14 +1892,21 @@ public class ServiceManager implements BaseView {
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        GalleryCameraMediaManager.getInstance().setProgressing(false);
-                        GalleryCameraMediaManager.getInstance().onUpdatedView();
-                        if (items.isFakePin) {
-                            SingletonFakePinComponent.getInstance().onUpdateView();
-                        } else {
-                            SingletonPrivateFragment.getInstance().onUpdateView();
-                            ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        if (mResponse.isWorking){
+                            final Items items = mResponse.items;
+                            GalleryCameraMediaManager.getInstance().setProgressing(false);
+                            GalleryCameraMediaManager.getInstance().onUpdatedView();
+                            if (items.isFakePin) {
+                                SingletonFakePinComponent.getInstance().onUpdateView();
+                            } else {
+                                SingletonPrivateFragment.getInstance().onUpdateView();
+                                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                            }
                         }
+                        if (mListFiles.size()>0){
+                            mListFiles.remove(0);
+                        }
+                        GalleryCameraMediaManager.getInstance().onStopProgress();
                     }
                 });
     }
@@ -1950,18 +1993,27 @@ public class ServiceManager implements BaseView {
 
                 boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
                 boolean createdOriginal = storage.createFile(originalPath, data);
+
+
+                final ResponseRXJava response = new ResponseRXJava();
+                response.items = items;
+
                 if (createdThumbnail && createdOriginal) {
-                    subscriber.onNext(items);
+                    response.isWorking = true;
+                    subscriber.onNext(response);
                     subscriber.onComplete();
                     Utils.Log(TAG, "CreatedFile successful");
                 } else {
-                    subscriber.onNext(null);
+                    response.isWorking = false;
+                    subscriber.onNext(response);
                     subscriber.onComplete();
                     Utils.Log(TAG, "CreatedFile failed");
                 }
 
             } catch (Exception e) {
-                subscriber.onNext(null);
+                final ResponseRXJava response = new ResponseRXJava();
+                response.isWorking = false;
+                subscriber.onNext(response);
                 subscriber.onComplete();
                 onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                 Log.w(TAG, "Cannot write to " + e);
@@ -1973,9 +2025,10 @@ public class ServiceManager implements BaseView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
-                    final Items mItem = (Items) response;
+                    final ResponseRXJava mResponse = (ResponseRXJava) response;
                     try {
-                        if (mItem != null) {
+                        if (mResponse.isWorking) {
+                            final Items mItem = mResponse.items;
                             long mb;
                             if (storage.isFileExist(mItem.originalPath)) {
                                 final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
@@ -1994,13 +2047,16 @@ public class ServiceManager implements BaseView {
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
-                        GalleryCameraMediaManager.getInstance().setProgressing(false);
-                        GalleryCameraMediaManager.getInstance().onUpdatedView();
-                        if (mItem.isFakePin) {
-                            SingletonFakePinComponent.getInstance().onUpdateView();
-                        } else {
-                            SingletonPrivateFragment.getInstance().onUpdateView();
-                            ServiceManager.getInstance().onSyncDataOwnServer("0");
+                        if (mResponse.isWorking){
+                            final Items mItem = mResponse.items;
+                            GalleryCameraMediaManager.getInstance().setProgressing(false);
+                            GalleryCameraMediaManager.getInstance().onUpdatedView();
+                            if (mItem.isFakePin) {
+                                SingletonFakePinComponent.getInstance().onUpdateView();
+                            } else {
+                                SingletonPrivateFragment.getInstance().onUpdateView();
+                                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                            }
                         }
                     }
                 });

@@ -375,6 +375,24 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+
+    public final synchronized int getLatestItem(){
+        try{
+            MainCategories categories =   instance.mainCategoriesDao().loadLatestItem(1);
+            int count = 0;
+            if (categories!=null){
+                count +=categories.id +1;
+                return count;
+            }
+            return 0;
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return 0;
+    }
+
+
     public final synchronized List<MainCategories> loadListAllItemId(String categories_hex_name,boolean isFakePin){
         try{
             return instance.mainCategoriesDao().loadListAllItemId(categories_hex_name,isFakePin);

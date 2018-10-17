@@ -61,4 +61,7 @@ public interface MainCategoriesDao {
     @Query("Select * FROM maincategories WHERE isFakePin =:isFakePin")
     List<MainCategories> loadAll(boolean isFakePin);
 
+    @Query("Select * FROM maincategories  ORDER BY id DESC LIMIT :limit")
+    MainCategories loadLatestItem(int limit);
+
 }

@@ -36,30 +36,34 @@ public class MePresenter extends Presenter<BaseView>{
     }
 
     public void onCalculate(){
-        BaseView view = view();
-        photos = 0;
-        videos = 0;
-        audios = 0;
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(false,false);
-
-        for (Items index : mList){
-            final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
-            switch (enumTypeFile){
-                case IMAGE:{
-                    photos+=1;
-                    break;
-                }
-                case VIDEO:{
-                    videos+=1;
-                    break;
-                }
-                case AUDIO:{
-                    audios+=1;
-                    break;
+        try {
+            BaseView view = view();
+            photos = 0;
+            videos = 0;
+            audios = 0;
+            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(false,false);
+            for (Items index : mList){
+                final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
+                switch (enumTypeFile){
+                    case IMAGE:{
+                        photos+=1;
+                        break;
+                    }
+                    case VIDEO:{
+                        videos+=1;
+                        break;
+                    }
+                    case AUDIO:{
+                        audios+=1;
+                        break;
+                    }
                 }
             }
+            view.onSuccessful("Successful", EnumStatus.RELOAD);
         }
-        view.onSuccessful("Successful", EnumStatus.RELOAD);
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
