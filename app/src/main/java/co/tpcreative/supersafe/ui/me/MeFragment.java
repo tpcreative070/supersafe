@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.me;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,9 +23,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.Theme;
 
@@ -229,6 +226,11 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                 Navigator.onVerifyAccount(getActivity());
             }
         }
+    }
+
+    @OnClick(R.id.llPremium)
+    public void onClickedPremium(View view){
+        Navigator.onMoveToPremium(getContext());
     }
 
     @Override

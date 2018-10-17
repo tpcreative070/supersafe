@@ -34,6 +34,7 @@ import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
+import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity;
@@ -292,5 +293,11 @@ public class Navigator {
         intent.putExtras(bundle);
         context.startActivity(intent);
     }
+
+    public static void onMoveToPremium(Context context){
+        Intent intent = new Intent(context, PremiumActivity.class);
+        context.startActivity(intent);
+    }
+
 
 }
