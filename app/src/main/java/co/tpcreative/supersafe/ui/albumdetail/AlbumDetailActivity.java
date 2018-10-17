@@ -590,7 +590,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                         switch (formatType){
                                             case AUDIO:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
+                                                Utils.Log(TAG,"Name :"+index.originalName);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
                                                     ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
@@ -599,7 +600,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             }
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
                                                     ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
@@ -607,8 +608,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 break;
                                             }
                                             default:{
-                                                File input = new File(index.thumbnailPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
                                                     ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
