@@ -74,8 +74,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         setContentView(R.layout.activity_main_tab);
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.mipmap.ic_launcher);
-        ab.setDisplayHomeAsUpEnabled(false);
+        ab.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24);
+        ab.setDisplayHomeAsUpEnabled(true);
         SingletonManagerTab.getInstance().setListener(this);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
@@ -143,6 +143,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         switch (item.getItemId()) {
             case android.R.id.home:{
                 Log.d(TAG,"Home action");
+                Navigator.onManagerAccount(this);
                 return true;
             }
             case R.id.action_sync :{

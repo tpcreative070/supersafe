@@ -27,10 +27,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -38,7 +40,7 @@ import co.tpcreative.supersafe.model.User;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
-public class AccountManagerActivity extends BaseGoogleApi implements BaseView{
+public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,SingletonPremiumTimer.SingletonPremiumTimerListener{
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
     @BindView(R.id.tvEmail)
@@ -53,6 +55,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView{
     Button btnSignOut;
     @BindView(R.id.tvStatusAccount)
     TextView tvStatusAccount;
+    @BindView(R.id.tvPremiumLeft)
+    TextView tvPremiumLeft;
     private AccountManagerPresenter presenter;
 
     @Override
@@ -84,6 +88,9 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView{
         }
         setProgressValue();
         Utils.Log(TAG,"account: "+ new Gson().toJson(mUser));
+
+        String value = String.format(getString(R.string.your_complimentary_premium),"30");
+        tvPremiumLeft.setText(value);
     }
 
     @Override
@@ -97,6 +104,29 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView{
         }
     }
 
+
+    @Override
+    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String value = String.format(getString(R.string.your_complimentary_premium_remaining),days);
+                    tvPremiumLeft.setText(value);
+                }
+            });
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @OnClick(R.id.btnUpgrade)
+    public void onClickedUpgrade(View view){
+        Navigator.onMoveToPremium(this);
+    }
+
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
@@ -106,6 +136,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView{
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SingletonPremiumTimer.getInstance().setListener(this);
     }
 
     public void setProgressValue(){

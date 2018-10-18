@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/key_features"
+        android:layout="@layout/preference_category_layout">
+        <Preference
+            android:layout="@layout/custom_preferences_item_premium"
+            android:icon="@drawable/baseline_stars_white_48"
+            android:key="@string/use_every_feature"
+            android:summary="@string/it_top_shelf_supersafe"
+            android:title="@string/use_every_feature"/>
+
+        <Preference
+            android:layout="@layout/custom_preferences_item_premium"
+            android:icon="@drawable/baseline_wb_cloudy_white_48"
+            android:key="@string/key_private_cloud"
+            android:summary="@string/never_lost_files"
+            android:title="@string/key_private_cloud"/>
+
+        <Preference
+            android:layout="@layout/custom_preferences_item_premium"
+            android:icon="@drawable/baseline_delete_white_48"
+            android:key="@string/trash_recovery"
+            android:summary="@string/trash_recovery_detail"
+            android:title="@string/trash_recovery"/>
+
+        <Preference
+            android:layout="@layout/custom_preferences_item_premium"
+            android:icon="@drawable/baseline_not_interested_white_48"
+            android:key="@string/no_advertisement"
+            android:summary="@string/get_rid_of_those_ugly_ads"
+            android:title="@string/no_advertisement"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

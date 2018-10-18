@@ -134,7 +134,8 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.premium.PremiumActivity"></activity>
+        <activity android:name=".ui.premium.PremiumActivity"
+            android:label="@string/premium"></activity>
     </application>
 
 </manifest>

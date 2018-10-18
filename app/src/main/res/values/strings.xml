@@ -182,6 +182,7 @@
     <string name="message_prompt">All your files will be sync to cloud. They will never lost.</string>
     <string name="enable_now">ENABLE NOW</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
+    <string name="upgrade">UPGRADE</string>
     <string name="upgrade_to_premium">Upgrade to Premium</string>
     <string name="verify">Verify</string>
     <string name="verified">Verified</string>
@@ -262,6 +263,7 @@
     <string name="access_code">Access code</string>
     <string name="reset_pin">Reset PIN</string>
     <string name="premium_feature">Premium feature</string>
+    <string name="premium">Premium</string>
     <string name="break_in_alerts">Whenever someone enters an incorrect PIN, We will log the date time and snap a secret photo</string>
     <string name="disabled">Disabled</string>
     <string name="enabled">Enabled</string>
@@ -395,6 +397,7 @@
     <string name="key_originalSync">originalSync</string>
     <string name="key_drive_file">drive#file</string>
     <string name="key_general">General</string>
+    <string name="key_features">Features</string>
     <string name="key_advanced">Advanced</string>
     <string name="key_info">Info</string>
     <string name="key_account">Account</string>
@@ -465,6 +468,26 @@
     <string name="how_we_can_help_you">How We can help you</string>
     <string name="thank_you">You thank for sending the info. We will response as soon as possible.</string>
     <string name="send_email_failed">Sending email was failed. Please try again.</string>
+    <string name="your_premium_expires_soon">Your premium expires soon</string>
+    <string name="your_complimentary_premium_remaining">You have %1$s more days of complimentary Premium remaining. Upgrade now to keep using Premium without interruption.</string>
+    <string name="your_complimentary_premium">You have %1$s more days of complimentary Premium remaining.</string>
+    <string name="monthly">Monthly</string>
+    <string name="per_month">per month</string>
+    <string name="per_year">per year</string>
+    <string name="most_popular">MOST POPULAR</string>
+    <string name="yearly">Yearly</string>
+    <string name="life_time">Lifetime</string>
+    <string name="use_every_feature">Use every feature</string>
+    <string name="it_top_shelf_supersafe">It\'s top-shelf SuperSafe</string>
+    <string name="never_lost_files">Never lost files</string>
+    <string name="trash_recovery">Trash recovery</string>
+    <string name="trash_recovery_detail">Get deleted items back.</string>
+    <string name="no_advertisement">No advertisements</string>
+    <string name="get_rid_of_those_ugly_ads">Get rid of those ugly ads!</string>
+    <string name="what_if_i_do_not_want_premium">What if I don\'t want Premium</string>
+    <string name="what_if_i_do_not_want_premium_detail">That\'s file. When your complimentary Premium expires, You can switch to Basic</string>
+    <string name="what_is_basic">What\'s basic?</string>
+    <string name="what_is_basic_detail">It\'s free version of SuperSafe. It still protects your important files behind a lock screen and gives you good privacy features.</string>
 
 
 </resources>

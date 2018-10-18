@@ -7,11 +7,26 @@
     <dimen name="relative_high">60dp</dimen>
     <dimen name="linear_high">90dp</dimen>
     <dimen name="text_size_xlarge">22sp</dimen>
-    <dimen name="text_size_18">18sp</dimen>
     <dimen name="text_size_xlarge_20">20sp</dimen>
     <dimen name="text_size_large_x">30sp</dimen>
     <dimen name="text_size_large_x_x">45sp</dimen>
     <dimen name="text_size_large">16sp</dimen>
+    <dimen name="text_size_17">17sp</dimen>
+    <dimen name="text_size_18">18sp</dimen>
+    <dimen name="text_size_19">19sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
+    <dimen name="text_size_21">21sp</dimen>
+    <dimen name="text_size_22">22sp</dimen>
+    <dimen name="text_size_23">23sp</dimen>
+    <dimen name="text_size_24">24sp</dimen>
+    <dimen name="text_size_25">25sp</dimen>
+    <dimen name="text_size_26">26sp</dimen>
+    <dimen name="text_size_27">27sp</dimen>
+    <dimen name="text_size_28">28sp</dimen>
+    <dimen name="text_size_29">29sp</dimen>
+    <dimen name="text_size_30">30sp</dimen>
+
+
     <dimen name="text_size_title">16.5sp</dimen>
     <dimen name="text_size_normal">15sp</dimen>
     <dimen name="margin_right">40dp</dimen>
