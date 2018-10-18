@@ -15,8 +15,10 @@ import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class FakePinActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
 
@@ -84,7 +86,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
 
     @OnClick(R.id.tvCreatePin)
     public void onCreatePin(View view){
-        Navigator.onMoveToFakePin(this,false);
+        Navigator.onMoveToFakePin(this, EnumPinAction.NONE);
     }
 
     @OnClick(R.id.imgView)
@@ -97,6 +99,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinActivity.class.getSimpleName());
     }
 
 }

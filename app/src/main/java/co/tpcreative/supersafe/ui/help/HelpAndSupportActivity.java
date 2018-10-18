@@ -17,9 +17,11 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.HelpAndSupport;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class HelpAndSupportActivity extends BaseActivity implements BaseView,HelpAndSupportCell.ItemSelectedListener{
 
@@ -105,6 +107,7 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportActivity.class.getSimpleName());
     }
 
     @Override

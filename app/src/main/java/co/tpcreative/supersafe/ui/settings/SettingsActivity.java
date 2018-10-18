@@ -19,6 +19,7 @@ import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
@@ -177,7 +178,7 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onManagerAccount(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_lock_screen))){
-                            Navigator.onMoveToChangePin(getContext(),false);
+                            Navigator.onMoveToChangePin(getContext(), EnumPinAction.NONE);
                             Utils.Log(TAG,"Action here");
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){

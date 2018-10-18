@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.resetpin;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -24,9 +25,12 @@ import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -43,6 +47,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     CircularProgressBar mCircularProgressBar;
     private ResetPinPresenter presenter;
     private boolean isNext;
+    private Boolean isRestoreFiles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,14 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         }
         edtCode.addTextChangedListener(mTextWatcher);
         edtCode.setOnEditorActionListener(this);
+
+        try {
+            Bundle bundle = getIntent().getExtras();
+            isRestoreFiles = (boolean)bundle.get(ResetPinActivity.class.getSimpleName());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -88,6 +101,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
     }
 
     public void setProgressValue(){
@@ -248,7 +262,12 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
                 break;
             }
             case VERIFIED_SUCCESSFUL:{
-                Navigator.onMoveToResetPin(this,false);
+                if (isRestoreFiles){
+                    Navigator.onMoveToResetPin(this, EnumPinAction.RESTORE);
+                }
+                else {
+                    Navigator.onMoveToResetPin(this,EnumPinAction.NONE);
+                }
                 break;
             }
         }

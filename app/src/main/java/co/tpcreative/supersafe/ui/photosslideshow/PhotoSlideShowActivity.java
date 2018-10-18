@@ -56,6 +56,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dmax.dialog.SpotsDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -353,6 +354,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(PhotoSlideShowActivity.class.getSimpleName());
     }
 
 

@@ -62,6 +62,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.ui.privates.PrivateAdapter;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dyanamitechetan.vusikview.VusikView;
 
 public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdapter.ItemSelectedListener{
@@ -281,6 +282,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(PlayerActivity.class.getSimpleName());
     }
 
     @Override

@@ -40,11 +40,14 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
+import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
@@ -438,6 +441,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         super.onResume();
         isSync = true;
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(VerifyAccountActivity.class.getSimpleName());
     }
 
     @Override

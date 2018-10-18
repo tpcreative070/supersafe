@@ -20,12 +20,14 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AdvancedWebView;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dmax.dialog.SpotsDialog;
 
 public class HelpAndSupportContentActivity extends BaseActivity implements BaseView ,TextView.OnEditorActionListener{
@@ -211,6 +213,7 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     protected void onResume() {
         super.onResume();
         Utils.hideSoftKeyboard(this);
+        SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportContentActivity.class.getSimpleName());
     }
 
     @Override

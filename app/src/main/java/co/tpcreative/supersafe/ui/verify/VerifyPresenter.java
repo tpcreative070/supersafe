@@ -73,6 +73,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
                             if (onResponse.premium!=null){
                                 mUser.premium = onResponse.premium;
                             }
+                            SuperSafeApplication.getInstance().writeUserSecret(mUser);
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         }
                     }

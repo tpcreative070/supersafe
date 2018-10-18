@@ -22,8 +22,10 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class VerifyActivity extends BaseActivity implements BaseView, TextView.OnEditorActionListener{
@@ -217,7 +219,7 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case VERIFY_CODE:{
-                Navigator.onMoveSetPin(this,false);
+                Navigator.onMoveSetPin(this, EnumPinAction.NONE);
                 finish();
                 break;
             }

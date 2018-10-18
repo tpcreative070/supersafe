@@ -50,6 +50,7 @@ public enum EnumStatus {
         CONNECTED,
         SET,
         RESET,
+        RESTORE,
         RELOAD,
         UNLOCK_ALBUMS,
         FINISH,

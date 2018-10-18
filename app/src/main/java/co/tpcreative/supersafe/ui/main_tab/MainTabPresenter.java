@@ -7,11 +7,12 @@ import co.tpcreative.supersafe.model.User;
 
 public class MainTabPresenter extends Presenter<BaseView> {
     private static final String TAG = MainTabPresenter.class.getSimpleName();
+    protected User mUser ;
     public MainTabPresenter(){
 
     }
     public void onGetUserInfo(){
-        Log.d(TAG,new Gson().toJson(User.getInstance().getUserInfo()));
+        mUser = User.getInstance().getUserInfo();
     }
 
 }

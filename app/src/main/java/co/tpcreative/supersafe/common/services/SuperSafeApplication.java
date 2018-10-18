@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.services;
+
 import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
@@ -12,6 +13,7 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
+
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -21,6 +23,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
+
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -28,16 +31,20 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
+import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import co.tpcreative.supersafe.ui.signin.SignInActivity;
 import co.tpcreative.supersafe.ui.signup.SignUpActivity;
 import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import io.fabric.sdk.android.Fabric;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
@@ -56,10 +63,12 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private String supersafeBackup;
     private String supersafeBreakInAlerts;
     private String supersafeLog;
-    private String supersafeShare ;
+    private String supersafeShare;
     private String supersafePicture;
+    private String supersafeDataBaseFolder;
     private String key;
     private String fake_key;
+    private String userSecret;
     private Storage storage;
     private EncryptConfiguration configuration;
     private EncryptConfiguration configurationFile;
@@ -67,14 +76,13 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private static int paused;
     private static int started;
     private static int stopped;
-    private static String url ;
+    private static String url;
     private int Orientation = 0;
 
     protected static Dependencies dependencies;
-    public static RootAPI serverAPI ;
+    public static RootAPI serverAPI;
     public static RootAPI serverDriveApi;
-    private String authorization = null ;
-
+    private String authorization = null;
 
     private GoogleSignInOptions.Builder options;
     private Set<Scope> requiredScopes;
@@ -90,7 +98,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
         /*Init own service api*/
 
-        dependencies = Dependencies.getsInstance(getApplicationContext(),getUrl());
+        dependencies = Dependencies.getsInstance(getApplicationContext(), getUrl());
         dependencies.dependenciesListener(this);
         dependencies.init();
         serverAPI = (RootAPI) Dependencies.serverAPI;
@@ -108,7 +116,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .setPrefsName(getPackageName())
                 .setUseDefaultSharedPreference(true)
                 .build();
-        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
 
         /*Storage Config*/
         String IVX = "abcdefghijklmnop"; // 16 lenght - not secret
@@ -130,36 +138,38 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         supersafe = storage.getExternalStorageDirectory() + "/SuperSafe_DoNot_Delete/";
         key = ".encrypt_key";
         fake_key = ".encrypt_fake_key";
-        supersafePrivate = supersafe+"private/";
-        supersafeBackup = supersafe+"backup/";
-        supersafeLog = supersafe+"log/";
-        supersafeBreakInAlerts  = supersafe+"break_in_alerts/";
-        supersafeShare = supersafe+"share/";
+        userSecret = ".userSecret";
+        supersafePrivate = supersafe + "private/";
+        supersafeBackup = supersafe + "backup/";
+        supersafeLog = supersafe + "log/";
+        supersafeBreakInAlerts = supersafe + "break_in_alerts/";
+        supersafeShare = supersafe + "share/";
+        supersafeDataBaseFolder = "/data/data/"+SuperSafeApplication.getInstance().getPackageName()+"/databases/";
 
-        supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES)+"/SuperSafeExport/";
 
+        supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/";
         registerActivityLifecycleCallbacks(this);
-        Log.d(TAG,supersafe);
+        Log.d(TAG, supersafe);
 
-         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(getString(R.string.server_client_id))
-                        .requestScopes(Drive.SCOPE_FILE)
-                        .requestScopes(Drive.SCOPE_APPFOLDER);
+        options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestScopes(Drive.SCOPE_FILE)
+                .requestScopes(Drive.SCOPE_APPFOLDER);
 
 
-         requiredScopes = new HashSet<>(2);
-         requiredScopes.add(Drive.SCOPE_FILE);
-         requiredScopes.add(Drive.SCOPE_APPFOLDER);
+        requiredScopes = new HashSet<>(2);
+        requiredScopes.add(Drive.SCOPE_FILE);
+        requiredScopes.add(Drive.SCOPE_APPFOLDER);
 
-         requiredScopesString = new ArrayList<>();
-         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
-         requiredScopesString.add(DriveScopes.DRIVE_FILE);
+        requiredScopesString = new ArrayList<>();
+        requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
+        requiredScopesString.add(DriveScopes.DRIVE_FILE);
 
     }
 
-    public GoogleSignInOptions getGoogleSignInOptions(final Account account){
-        if (options!=null){
-            if (account!=null){
+    public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
+        if (options != null) {
+            if (account != null) {
                 options.setAccount(account);
             }
             return options.build();
@@ -172,11 +182,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     }
 
 
-    public List<String> getRequiredScopesString(){
+    public List<String> getRequiredScopesString() {
         return requiredScopesString;
     }
 
-    public Set<Scope> getRequiredScopes(){
+    public Set<Scope> getRequiredScopes() {
         return requiredScopes;
     }
 
@@ -201,28 +211,25 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof EnterPinActivity || activity instanceof SplashScreenActivity || activity instanceof SignInActivity ||
-                activity instanceof SignUpActivity ||
-                activity instanceof AskPermissionActivity ||
-                activity instanceof DashBoardActivity ||
-                activity instanceof VerifyActivity){
-            Utils.Log(TAG,"Exception");
-            Utils.Log(TAG,"Resume exception");
-        }
-        else {
-            int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+        String currentActivity = activity.getClass().getSimpleName();
+        String hashValue = getKeyHomePressed().get(currentActivity);
+
+        if (hashValue != null && hashValue.equals(currentActivity)) {
+            int value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
             EnumPinAction action = EnumPinAction.values()[value];
-            switch (action){
-                case SCREEN_PRESS_HOME:{
-                    Utils.Log(TAG,"Start screen off.................:"+activity.getClass().getSimpleName());
-                    Navigator.onMoveToVerifyPin(activity,false);
-                    PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+            switch (action) {
+                case SCREEN_PRESS_HOME: {
+                    Utils.Log(TAG, "Start screen off.................:" + activity.getClass().getSimpleName());
+                    Navigator.onMoveToVerifyPin(activity, EnumPinAction.NONE);
+                    PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal());
                     break;
                 }
-                default:{
-                    Utils.Log(TAG,"Nothing to do");
+                default: {
+                    Utils.Log(TAG, "Nothing to do");
                 }
             }
+        } else {
+            Utils.Log(TAG, "Exception activity " + currentActivity);
         }
         ++resumed;
     }
@@ -236,7 +243,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityStarted(Activity activity) {
         ++started;
-        Utils.Log(TAG,"onActivityStarted");
+        Utils.Log(TAG, "onActivityStarted");
     }
 
     @Override
@@ -290,6 +297,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return supersafePicture;
     }
 
+    public String getSupersafeDataBaseFolder() {
+        return supersafeDataBaseFolder;
+    }
+
     public void initFolder() {
         if (storage.isDirectoryExists(supersafe) & storage.isDirectoryExists(supersafePrivate) & storage.isDirectoryExists(supersafeBackup) & storage.isDirectoryExists(supersafeLog) & storage.isDirectoryExists(supersafeBreakInAlerts)) {
             Log.d(TAG, "SuperSafe is existing");
@@ -301,6 +312,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             storage.createDirectory(supersafeBreakInAlerts);
             Log.d(TAG, "SuperSafe was created");
         }
+    }
+
+    public void deleteFolder() {
+        storage.deleteDirectory(supersafe);
     }
 
     public void writeKey(String value) {
@@ -328,6 +343,36 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return "";
     }
 
+    public void writeUserSecret(final User user) {
+        if (!isPermissionWrite()) {
+            Log.d(TAG, "Please grant access permission");
+            return;
+        }
+        storage.setEncryptConfiguration(configuration);
+        storage.createFile(getSuperSafe() + userSecret, new Gson().toJson(user));
+    }
+
+    public User readUseSecret() {
+        if (!isPermissionRead()) {
+            Log.d(TAG, "Please grant access permission");
+            return null;
+        }
+        storage.setEncryptConfiguration(configuration);
+        boolean isFile = storage.isFileExist(getSuperSafe() + userSecret);
+        if (isFile) {
+            String value = storage.readTextFile(getSuperSafe() + userSecret);
+            if (value!=null){
+                final User mUser = new Gson().fromJson(value,User.class);
+                if (mUser!=null){
+                    return mUser;
+                }
+            }
+            return null;
+        }
+        return null;
+    }
+
+
     public void writeFakeKey(String value) {
         if (!isPermissionWrite()) {
             Log.d(TAG, "Please grant access permission");
@@ -353,14 +398,14 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return "";
     }
 
-    public void onDeleteKey(){
+    public void onDeleteKey() {
         if (!isPermissionRead()) {
             Log.d(TAG, "Please grant access permission");
-            return ;
+            return;
         }
         boolean isFile = storage.isFileExist(getSuperSafe() + key);
-        if (isFile){
-            storage.deleteFile(getSuperSafe()+key);
+        if (isFile) {
+            storage.deleteFile(getSuperSafe() + key);
         }
     }
 
@@ -380,11 +425,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return false;
     }
 
-    public boolean isGrantAccess(){
-       if (isPermissionWrite() && isPermissionRead()){
-           return true;
-       }
-       return false;
+    public boolean isGrantAccess() {
+        if (isPermissionWrite() && isPermissionRead()) {
+            return true;
+        }
+        return false;
     }
 
     public int getOrientation() {
@@ -399,19 +444,18 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return storage;
     }
 
-    public String getUrl(){
-        if (BuildConfig.DEBUG){
+    public String getUrl() {
+        if (BuildConfig.DEBUG) {
             url = getString(R.string.url_developer);
-        }
-        else{
+        } else {
             url = getString(R.string.url_live);
         }
         return url;
     }
 
 
-    public String getPathDatabase(){
-        String currentDBPath=getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
+    public String getPathDatabase() {
+        String currentDBPath = getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
         return currentDBPath;
     }
 
@@ -424,25 +468,28 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public String onAuthorToken() {
-        try{
-            String value = PrefsController.getString(getString(R.string.key_user),"");
-            final User user = new Gson().fromJson(value,User.class);
-            if (user!=null){
+        try {
+            String value = PrefsController.getString(getString(R.string.key_user), "");
+            User user = new Gson().fromJson(value, User.class);
+            if (user != null) {
+                authorization = user.author.session_token;
+            }
+            else{
+                user = readUseSecret();
                 authorization = user.author.session_token;
             }
             return authorization;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
         }
         return null;
     }
 
     @Override
     public HashMap<String, String> onCustomHeader() {
-        HashMap<String,String>hashMap = new HashMap<>();
-        hashMap.put("Content-Type","application/json");
-        if (authorization!=null){
-            hashMap.put("Authorization",authorization);
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("Content-Type", "application/json");
+        if (authorization != null) {
+            hashMap.put("Authorization", authorization);
         }
         return hashMap;
     }
@@ -452,37 +499,37 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return false;
     }
 
-    public String getDeviceId(){
+    public String getDeviceId() {
         return Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public String getManufacturer(){
+    public String getManufacturer() {
         String manufacturer = Build.MANUFACTURER;
         return manufacturer;
     }
 
-    public String getModel(){
+    public String getModel() {
         String model = Build.MODEL;
         return model;
     }
 
-    public int getVersion(){
+    public int getVersion() {
         int version = Build.VERSION.SDK_INT;
         return version;
     }
 
-    public String getVersionRelease(){
+    public String getVersionRelease() {
         String versionRelease = Build.VERSION.RELEASE;
         return versionRelease;
     }
 
-    public File getPackagePath(Context context){
+    public File getPackagePath(Context context) {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 ".temporary.jpg");
         return file;
     }
 
-    public File getPackageFolderPath(Context context){
+    public File getPackageFolderPath(Context context) {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());
         return file;
     }
@@ -492,6 +539,31 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 + File.separator
                 + "IMG_" + System.currentTimeMillis()   //IMG_214515184113123.png
                 + (mImageFormat == CameraImageFormat.FORMAT_JPEG ? ".jpeg" : ".png"));
+    }
+
+    public Map<String, String> getKeyHomePressed() {
+        try {
+            String value = PrefsController.getString(getString(R.string.key_home_pressed), null);
+            if (value != null) {
+                Map<String, String> map = new HashMap<String, String>();
+                map = new Gson().fromJson(value, map.getClass());
+                return map;
+            }
+            return new HashMap<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new HashMap<>();
+    }
+
+    public void writeKeyHomePressed(String value) {
+        try {
+            Map<String, String> map = getKeyHomePressed();
+            map.put(value, value);
+            PrefsController.putString(getString(R.string.key_home_pressed), new Gson().toJson(map));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

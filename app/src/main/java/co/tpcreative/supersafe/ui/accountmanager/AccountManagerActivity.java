@@ -34,9 +34,11 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -137,6 +139,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         super.onResume();
         onRegisterHomeWatcher();
         SingletonPremiumTimer.getInstance().setListener(this);
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
     }
 
     public void setProgressValue(){

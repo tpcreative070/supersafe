@@ -30,6 +30,9 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         if (user!=null){
             this.mUser = user;
         }
+        else{
+            this.mUser = SuperSafeApplication.getInstance().readUseSecret();
+        }
     }
 
     public void onVerifyCode(VerifyCodeRequest request){

@@ -68,6 +68,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dmax.dialog.SpotsDialog;
 
 
@@ -384,6 +385,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         super.onResume();
         GalleryCameraMediaManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumDetailActivity.class.getSimpleName());
     }
 
     /*Init Floating View*/

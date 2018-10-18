@@ -21,11 +21,13 @@ import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener,BaseView<Long>{
 
@@ -280,6 +282,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(CloudManagerActivity.class.getSimpleName());
         presenter.onGetDriveAbout();
         onShowSwitch();
     }

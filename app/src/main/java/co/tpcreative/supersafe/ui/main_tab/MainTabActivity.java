@@ -31,20 +31,23 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.snatik.storage.Storage;
+import com.snatik.storage.helpers.SizeUnit;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -68,6 +71,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private MenuItem menuItem;
     private EnumStatus previousStatus;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +89,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.bindView(this);
         presenter.onGetUserInfo();
         onCallLockScreen();
+
     }
 
     @Override
@@ -143,7 +148,14 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         switch (item.getItemId()) {
             case android.R.id.home:{
                 Log.d(TAG,"Home action");
-                Navigator.onManagerAccount(this);
+                if (presenter!=null){
+                    if (presenter.mUser.verified){
+                        Navigator.onManagerAccount(getActivity());
+                    }
+                    else{
+                        Navigator.onVerifyAccount(getActivity());
+                    }
+                }
                 return true;
             }
             case R.id.action_sync :{
@@ -417,8 +429,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onResume();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
-        //Utils.onBackUp();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
     }
 
     @Override
@@ -456,6 +468,21 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
         ServiceManager.getInstance().onDismissServices();
+        Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), new ServiceManager.ServiceManagerSyncDataListener() {
+            @Override
+            public void onCompleted() {
+                Utils.Log(TAG,"Exporting successful");
+            }
+            @Override
+            public void onError() {
+                Utils.Log(TAG,"Exporting error");
+            }
+            @Override
+            public void onCancel() {
+
+            }
+        });
+        SuperSafeApplication.getInstance().writeUserSecret(presenter.mUser);
     }
 
     public void onAnimationIcon(final EnumStatus status){

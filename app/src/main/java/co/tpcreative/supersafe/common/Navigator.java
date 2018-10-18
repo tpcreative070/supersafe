@@ -36,6 +36,7 @@ import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
 import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
+import co.tpcreative.supersafe.ui.restore.RestoreActivity;
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity;
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
@@ -104,31 +105,31 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveSetPin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context, EnumPinAction.SET.ordinal(),isSignUp);
+    public static void onMoveSetPin(Context context,EnumPinAction action){
+        Intent intent = EnterPinActivity.getIntent(context, EnumPinAction.SET.ordinal(),action.ordinal());
         context.startActivity(intent);
     }
 
-    public static void onMoveToVerifyPin(Activity activity,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(activity,EnumPinAction.VERIFY.ordinal(),isSignUp);
+    public static void onMoveToVerifyPin(Activity activity,EnumPinAction action){
+        Intent intent = EnterPinActivity.getIntent(activity,EnumPinAction.VERIFY.ordinal(),action.ordinal());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         activity.startActivityForResult(intent,VERIFY_PIN);
     }
 
-    public static void onMoveToChangePin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.INIT_PREFERENCE.ordinal(),isSignUp);
+    public static void onMoveToChangePin(Context context,EnumPinAction action){
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.INIT_PREFERENCE.ordinal(),action.ordinal());
         context.startActivity(intent);
     }
 
-    public static void onMoveToFakePin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal(),isSignUp);
+    public static void onMoveToFakePin(Context context,EnumPinAction action){
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal(),action.ordinal());
         context.startActivity(intent);
     }
 
-    public static void onMoveToResetPin(Context context,boolean isSignUp){
-        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.RESET.ordinal(),isSignUp);
+    public static void onMoveToResetPin(Context context,EnumPinAction action){
+        Intent intent = EnterPinActivity.getIntent(context,EnumPinAction.RESET.ordinal(),action.ordinal());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
@@ -226,8 +227,11 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveToForgotPin(Context context){
+    public static void onMoveToForgotPin(Context context,boolean isRestoreFile){
         Intent intent = new Intent(context, ResetPinActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ResetPinActivity.class.getSimpleName(),isRestoreFile);
+        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 
@@ -296,6 +300,11 @@ public class Navigator {
 
     public static void onMoveToPremium(Context context){
         Intent intent = new Intent(context, PremiumActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void onMoveRestore(Context context){
+        Intent intent = new Intent(context, RestoreActivity.class);
         context.startActivity(intent);
     }
 

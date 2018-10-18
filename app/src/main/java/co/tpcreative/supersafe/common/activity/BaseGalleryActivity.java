@@ -123,7 +123,7 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements S
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,false);
+                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
                 PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                 break;
             }

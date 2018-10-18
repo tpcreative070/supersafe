@@ -11,8 +11,10 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 public class SecretDoorActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
 
@@ -74,6 +76,7 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorActivity.class.getSimpleName());
         final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door),false);
         if (value){
             rlScanner.setVisibility(View.VISIBLE);

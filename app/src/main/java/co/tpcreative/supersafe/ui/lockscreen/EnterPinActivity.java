@@ -25,6 +25,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.util.List;
 import butterknife.BindView;
@@ -33,6 +36,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
@@ -50,7 +54,9 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.restore.RestoreActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsPresenter;
 
@@ -63,6 +69,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public static final String EXTRA_SIGN_UP = "sign_up";
     public static final String EXTRA_FONT_TEXT = "textFont";
     public static final String EXTRA_FONT_NUM = "numFont";
+    public static final String EXTRA_ENUM_ACTION= "ENUM_ACTION";
     private static final int PIN_LENGTH = 20;
 
     @BindView(R.id.pinlockView)
@@ -92,31 +99,20 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
 
     private static EnumPinAction mPinAction;
-    private boolean mSignUp = false;
+    private static EnumPinAction mPinActionNext;
     private String mFirstPin = "";
     private static LockScreenPresenter presenter;
     private CameraConfig mCameraConfig;
 
 
-    public static Intent getIntent(Context context, int action,boolean isSignUp) {
+    public static Intent getIntent(Context context, int action,int actionNext) {
         Intent intent = new Intent(context, EnterPinActivity.class);
         intent.putExtra(EXTRA_SET_PIN, action);
-        intent.putExtra(EXTRA_SIGN_UP,isSignUp);
+        intent.putExtra(EXTRA_ENUM_ACTION,actionNext);
         return intent;
     }
 
-    public static Intent getIntent(Context context, String fontText, String fontNum) {
-        Intent intent = new Intent(context, EnterPinActivity.class);
-        intent.putExtra(EXTRA_FONT_TEXT, fontText);
-        intent.putExtra(EXTRA_FONT_NUM, fontNum);
-        return intent;
-    }
 
-    public static Intent getIntent(Context context, int action, String fontText, String fontNum) {
-        Intent intent = getIntent(context, fontText, fontNum);
-        intent.putExtra(EXTRA_SET_PIN, action);
-        return intent;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +122,10 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         presenter.bindView(this);
         int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
         mPinAction = EnumPinAction.values()[result];
-        mSignUp = getIntent().getBooleanExtra(EXTRA_SIGN_UP,false);
+        int resultNext = getIntent().getIntExtra(EXTRA_ENUM_ACTION,0);
+        mPinActionNext = EnumPinAction.values()[resultNext];
+
+
         switch (mPinAction){
             case SET:{
                 onDisplayView();
@@ -331,7 +330,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     /*Forgot pin*/
     @OnClick(R.id.llForgotPin)
     public void onForgotPin(View view){
-        Navigator.onMoveToForgotPin(this);
+        Navigator.onMoveToForgotPin(this,false);
     }
 
     public void onSetVisitableForgotPin(int value){
@@ -395,12 +394,16 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 } else {
                     if (pin.equals(mFirstPin)) {
                         writePinToSharedPreferences(pin);
-                        if (mSignUp){
-                            Navigator.onMoveToSignUp(this);
-                        }
-                        else{
-                            Navigator.onMoveToMainTab(this);
-                            presenter.onChangeStatus(EnumStatus.SET,EnumPinAction.DONE);
+                        switch (mPinActionNext){
+                            case SIGN_UP:{
+                                Navigator.onMoveToSignUp(this);
+                                break;
+                            }
+                            default:{
+                                Navigator.onMoveToMainTab(this);
+                                presenter.onChangeStatus(EnumStatus.SET,EnumPinAction.DONE);
+                                break;
+                            }
                         }
                     } else {
                        onAlertWarning(getString(R.string.pinlock_tryagain));
@@ -454,9 +457,19 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             onAlertWarning(getString(R.string.pin_lock_replace));
                         }
                         else{
-                            writePinToSharedPreferences(pin);
-                            Navigator.onMoveToMainTab(this);
-                            presenter.onChangeStatus(EnumStatus.RESET,EnumPinAction.DONE);
+                            switch (mPinActionNext){
+                                case RESTORE:{
+                                    writePinToSharedPreferences(pin);
+                                    onRestore();
+                                    break;
+                                }
+                                default:{
+                                    writePinToSharedPreferences(pin);
+                                    Navigator.onMoveToMainTab(this);
+                                    presenter.onChangeStatus(EnumStatus.RESET,EnumPinAction.DONE);
+                                    break;
+                                }
+                            }
                         }
                     } else {
                        onAlertWarning(getString(R.string.pinlock_tryagain));
@@ -467,6 +480,28 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
+    public void onRestore(){
+        Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeBackup(), SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), new ServiceManager.ServiceManagerSyncDataListener() {
+            @Override
+            public void onCompleted() {
+                Utils.Log(TAG,"Exporting successful");
+                final User mUser = SuperSafeApplication.getInstance().readUseSecret();
+                if (mUser!=null){
+                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                    Navigator.onMoveToMainTab(EnterPinActivity.this);
+                    presenter.onChangeStatus(EnumStatus.RESTORE,EnumPinAction.DONE);
+                }
+            }
+            @Override
+            public void onError() {
+                Utils.Log(TAG,"Exporting error");
+            }
+            @Override
+            public void onCancel() {
+
+            }
+        });
+    }
 
     private void checkPin(String pin) {
         final boolean isFakePinEnabled = PrefsController.getBoolean(getString(R.string.key_fake_pin),false);
@@ -604,6 +639,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         break;
                     }
                     case DONE:{
+                        Utils.Log(TAG,"Action ...................done");
                         PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
                         finish();
                         break;
@@ -638,6 +674,17 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
             case RESET:{
+                mPinAction = action;
+                switch (action){
+                    case DONE:{
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+                        finish();
+                        break;
+                    }
+                }
+                break;
+            }
+            case RESTORE:{
                 mPinAction = action;
                 switch (action){
                     case DONE:{

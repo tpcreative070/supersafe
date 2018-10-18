@@ -40,12 +40,14 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 
 public class FakePinComponentActivity extends BaseActivity implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
@@ -280,6 +282,8 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
     protected void onResume() {
         super.onResume();
         SingletonFakePinComponent.getInstance().setListener(this);
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinComponentActivity.class.getSimpleName());
     }
 
     @Override

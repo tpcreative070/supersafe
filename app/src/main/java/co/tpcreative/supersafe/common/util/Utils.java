@@ -32,6 +32,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
+import com.snatik.storage.Storage;
+import com.snatik.storage.helpers.OnStorageListener;
+
 import org.apache.commons.io.FilenameUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,6 +48,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -577,12 +581,36 @@ public class Utils {
         return Base64.encodeBase64String(value.toUpperCase().getBytes(Charsets.UTF_8));
     }
 
+    public static void exportDB() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            if (sd.canWrite()) {
+                String currentDBPath = SuperSafeApplication.getInstance().getDatabasePath(SuperSafeApplication.getInstance().getString(R.string.key_database)).getAbsolutePath();
+                String backupDBPath = SuperSafeApplication.getInstance().getSupersafeBackup()+SuperSafeApplication.getInstance().getString(R.string.key_database_backup);
+                File currentDB = new File(currentDBPath);
+                File backupDB = new File(backupDBPath);
+
+                FileChannel src = new FileInputStream(currentDB).getChannel();
+                FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                dst.transferFrom(src, 0, src.size());
+                src.close();
+                dst.close();
+                Toast.makeText(SuperSafeApplication.getInstance(), "Backup Successful!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(SuperSafeApplication.getInstance(), "Backup Failed!", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
     public static void onBackUp(){
         try {
             String inFileName = SuperSafeApplication.getInstance().getDatabasePath(SuperSafeApplication.getInstance().getString(R.string.key_database)).getAbsolutePath();
             File dbFile = new File(inFileName);
             FileInputStream fis = new FileInputStream(dbFile);
-            String outFileName = SuperSafeApplication.getInstance().getSupersafeBackup()+"supersafe-backup.db";
+            String outFileName = SuperSafeApplication.getInstance().getSupersafeBackup()+SuperSafeApplication.getInstance().getString(R.string.key_database_backup);
 
             if (!SuperSafeApplication.getInstance().getStorage().isFileExist(inFileName)){
                 Utils.Log(TAG,"Path is not existing :" + SuperSafeApplication.getInstance().getPathDatabase());
@@ -603,6 +631,73 @@ public class Utils {
         }
         catch (IOException e){
             e.printStackTrace();
+        }
+        finally {
+            Utils.Log(TAG,"Backup done");
+        }
+    }
+
+    public static void onExportAndImportFile(String input,String output,ServiceManager.ServiceManagerSyncDataListener ls){
+        final Storage storage = new Storage(SuperSafeApplication.getInstance());
+        final List<File> mFile = storage.getFiles(input);
+        try {
+        for (File index : mFile){
+            if (storage.isFileExist(index.getAbsolutePath())){
+                storage.createFile(new File(output+index.getName()), new File(index.getAbsolutePath()), new OnStorageListener() {
+                    @Override
+                    public void onSuccessful() {
+
+                    }
+
+                    @Override
+                    public void onFailed() {
+                        ls.onError();
+                    }
+                });
+            }
+        }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            ls.onCompleted();
+        }
+    }
+
+
+    public static void onRestore(ServiceManager.ServiceManagerSyncDataListener ls){
+        try {
+            String inFileName = SuperSafeApplication.getInstance().getSupersafeBackup()+SuperSafeApplication.getInstance().getString(R.string.key_database_backup);
+            File dbFile = new File(inFileName);
+            if (dbFile.isFile() && dbFile.exists()){
+                Utils.Log(TAG,"File is existing");
+            }
+            Utils.Log(TAG,inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+            String outFileName = SuperSafeApplication.getInstance().getDatabasePath(SuperSafeApplication.getInstance().getString(R.string.key_database)).getAbsolutePath();
+            if (!SuperSafeApplication.getInstance().getStorage().isFileExist(inFileName)){
+                Utils.Log(TAG,"Path is not existing :" + SuperSafeApplication.getInstance().getPathDatabase());
+                return;
+            }
+            // Open the empty db as the output stream
+            OutputStream output = new FileOutputStream(outFileName);
+            // Transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer))>0){
+                Utils.Log(TAG,"Length :"+length);
+                output.write(buffer, 0, length);
+            }
+            output.flush();
+            output.close();
+            fis.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        finally {
+            ls.onCompleted();
         }
     }
 

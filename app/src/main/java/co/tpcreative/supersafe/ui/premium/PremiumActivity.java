@@ -11,7 +11,9 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
 public class PremiumActivity extends BaseActivity implements SingletonPremiumTimer.SingletonPremiumTimerListener{
@@ -85,6 +87,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(PremiumActivity.class.getSimpleName());
         SingletonPremiumTimer.getInstance().setListener(this);
     }
 

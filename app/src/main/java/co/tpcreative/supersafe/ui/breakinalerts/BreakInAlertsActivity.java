@@ -29,7 +29,9 @@ import co.tpcreative.supersafe.common.adapter.DividerItemDecoration;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.hiddencamera.HiddenCameraUtils;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class BreakInAlertsActivity extends BaseActivity implements BaseView, CompoundButton.OnCheckedChangeListener,BreakInAlertsAdapter.ItemSelectedListener{
 
@@ -114,6 +116,7 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(BreakInAlertsActivity.class.getSimpleName());
     }
 
     public void initRecycleView(){

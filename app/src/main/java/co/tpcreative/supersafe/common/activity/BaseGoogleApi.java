@@ -123,7 +123,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,false);
+                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
                 PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                 break;
             }
@@ -290,9 +290,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
             onDriveSuccessful();
         } else {
             final User mUser = User.getInstance().getUserInfo();
-            mUser.driveConnected = false;
-            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            onDriveError();
+            if (mUser!=null){
+                mUser.driveConnected = false;
+                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                onDriveError();
+            }
         }
     }
 

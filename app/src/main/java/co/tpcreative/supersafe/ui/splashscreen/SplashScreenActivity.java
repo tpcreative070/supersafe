@@ -55,7 +55,6 @@ public class SplashScreenActivity extends BaseActivity {
             grant_access = false;
         }
         SuperSafeApplication.getInstance().initFolder();
-
                 if (grant_access){
                     if (isRunning){
                         if(!"".equals(value)){
@@ -63,8 +62,7 @@ public class SplashScreenActivity extends BaseActivity {
                             Navigator.onMoveToMainTab(SplashScreenActivity.this);
                         }
                         else{
-                            Navigator.onMoveSetPin(SplashScreenActivity.this,false);
-
+                            Navigator.onMoveSetPin(SplashScreenActivity.this,EnumPinAction.NONE);
                         }
                     }
                     else{

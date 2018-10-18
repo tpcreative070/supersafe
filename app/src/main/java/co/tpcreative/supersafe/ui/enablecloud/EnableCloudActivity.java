@@ -28,7 +28,9 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 
 
@@ -63,6 +65,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(EnableCloudActivity.class.getSimpleName());
     }
 
     @Override

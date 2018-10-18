@@ -250,8 +250,13 @@
     <string name="select_all">Select All</string>
     <string name="refresh">Refresh</string>
     <string name="key_restore">Restore</string>
+    <string name="key_delete">Delete</string>
+    <string name="restore_detail">Previous data was found in your device. Would you like to restore them?</string>
     <string name="empty_all_trash">Are you sure to delete all items? You can not undo this!</string>
     <string name="restore">These items will be restored!</string>
+    <string name="restore_now">Restore Now</string>
+
+    <string name="pin_was_wrong">PIN was incorrect</string>
     <string name="forgot_your_pin">Forgot your pin? No problem. Here\'s how to reset it</string>
     <string name="unlock_all_album_title">Lock your albums with individual passwords through each albums\'s menu. You can unlock them all at once here.</string>
     <string name="unlock_all_albums">Unlock all albums</string>
@@ -367,6 +372,7 @@
     <string name="key_main_categories">main_categories</string>
     <string name="key_main_categories_hash_list">main_categories_hash_list</string>
     <string name="key_categories_id">categories_id</string>
+    <string name="key_home_pressed">home_pressed</string>
 
     /*Google Drive api*/
     <string name="key_parents">parents</string>
@@ -386,6 +392,9 @@
     <string name="key_mime_type_sdcard_jpg">image/jpeg</string>
     <string name="key_mime_type_sdcard_png">image/png</string>
     <string name="key_database">db-super-safe.db</string>
+    <string name="key_database_shm">db-super-safe.db-shm</string>
+    <string name="key_database_wal">db-super-safe.db-wal</string>
+    <string name="key_database_backup">supersafe-backup.db</string>
     <string name="key_next_page">nextPage</string>
     <string name="key_kind">kind</string>
     <string name="key_items_id">items_id</string>
@@ -466,6 +475,7 @@
     <string name="contact_support_content">Contact support</string>
     <string name="from">From</string>
     <string name="how_we_can_help_you">How We can help you</string>
+    <string name="enter_previous_pin_to_restore">Enter previous PIN to restore</string>
     <string name="thank_you">You thank for sending the info. We will response as soon as possible.</string>
     <string name="send_email_failed">Sending email was failed. Please try again.</string>
     <string name="your_premium_expires_soon">Your premium expires soon</string>
@@ -488,6 +498,5 @@
     <string name="what_if_i_do_not_want_premium_detail">That\'s file. When your complimentary Premium expires, You can switch to Basic</string>
     <string name="what_is_basic">What\'s basic?</string>
     <string name="what_is_basic_detail">It\'s free version of SuperSafe. It still protects your important files behind a lock screen and gives you good privacy features.</string>
-
 
 </resources>

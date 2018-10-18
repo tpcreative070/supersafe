@@ -31,6 +31,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinPresenter;
+import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -94,6 +95,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(UnlockAllAlbumActivity.class.getSimpleName());
     }
 
     public void setProgressValue(EnumStatus status){

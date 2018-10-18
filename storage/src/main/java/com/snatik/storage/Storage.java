@@ -206,6 +206,36 @@ public class Storage {
         }
     }
 
+    public void createFile(File output, File input, OnStorageListener listener){
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(input);
+            int length = 0;
+            FileOutputStream fOutputStream = new FileOutputStream(
+                    output);
+            //note the following line
+            byte[] buffer = new byte[1024*1024];
+            while ((length = inputStream.read(buffer)) > 0) {
+                fOutputStream.write(buffer, 0, length);
+            }
+            fOutputStream.flush();
+            fOutputStream.close();
+            inputStream.close();
+            listener.onSuccessful();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            listener.onFailed();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {}
+            }
+        }
+    }
+
+
     public void createLargeFile(File output, File input, Cipher mCipher,int count){
 
         if (mConfiguration == null || !mConfiguration.isEncrypted()) {

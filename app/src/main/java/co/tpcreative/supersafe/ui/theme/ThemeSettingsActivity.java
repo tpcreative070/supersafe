@@ -20,9 +20,11 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.trash.TrashActivity;
 
 public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
 
@@ -88,6 +90,7 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(ThemeSettingsActivity.class.getSimpleName());
     }
 
     @Override

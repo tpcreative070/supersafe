@@ -31,6 +31,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.trash.TrashActivity;
 
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
@@ -87,11 +88,10 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
     @Override
     protected void onResume() {
-        onDrawOverLay(this);
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
     }
-
 
 
     @Override

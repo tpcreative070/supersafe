@@ -27,8 +27,10 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 
 public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapter.ItemSelectedListener{
 
@@ -86,6 +88,7 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(TrashActivity.class.getSimpleName());
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){

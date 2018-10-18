@@ -111,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,false);
+                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
                 PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                 break;
             }
