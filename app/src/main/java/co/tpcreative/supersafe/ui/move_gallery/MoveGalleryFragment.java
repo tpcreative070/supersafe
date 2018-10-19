@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
@@ -10,22 +11,31 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.google.gson.Gson;
 
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.common.views.VerticalSpaceItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 
 public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.ItemSelectedListener ,MoveGalleryView{
 
@@ -38,6 +48,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     private BottomSheetDialog dialog;
 
     private BottomSheetBehavior mBehavior;
+
 
     private OnGalleryAttachedListener mListener;
     private MoveGalleryPresenter presenter;
@@ -59,7 +70,9 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
         mAdapterAlbumGrid = new MoveGalleryAdapter(getActivity().getLayoutInflater(),getActivity(),this);
         presenter = new MoveGalleryPresenter();
         presenter.bindView(this);
-        presenter.getData(mConfig.localCategoriesId);
+
+        Utils.Log(TAG,new Gson().toJson(mConfig));
+        presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
     }
 
     @Nullable
@@ -102,6 +115,14 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, screenHeight);
         view.setLayoutParams(lp);
         RecyclerView mGalleryView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        LinearLayout llCreateAlbum = view.findViewById(R.id.llCreateAlbum);
+
+        llCreateAlbum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onShowDialog();
+            }
+        });
 
         if (mConfig.dialogMode >= Configuration.DIALOG_GRID) {
             mGalleryView.setLayoutManager(new GridLayoutManager(getActivity(), mAlbumColumnNumber));
@@ -127,6 +148,40 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
             mBehavior.setPeekHeight(mConfig.dialogHeight >= screenHeight ? screenHeight : mConfig.dialogHeight);
         }
         dialog.show();
+    }
+
+    public void onShowDialog(){
+        MaterialDialog.Builder builder =  new MaterialDialog.Builder(getActivity())
+                .title(getString(R.string.create_album))
+                .theme(Theme.LIGHT)
+                .titleColor(getResources().getColor(R.color.black))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .negativeText(getString(R.string.cancel))
+                .positiveText(getString(R.string.ok))
+                .input(null, null, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        String value = input.toString();
+                        String base64Code = Utils.getHexCode(value);
+
+                        MainCategories item = MainCategories.getInstance().getTrashItem();
+                        String result = item.categories_hex_name;
+                        if (base64Code.equals(result)){
+                            Toast.makeText(getActivity(),"This name already existing",Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,mConfig.isFakePIN);
+                            if (response){
+                                Toast.makeText(getActivity(),"Created album successful",Toast.LENGTH_SHORT).show();
+                                presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
+                            }
+                            else{
+                                Toast.makeText(getActivity(),"Album name already existing",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+        builder.show();
     }
 
     private int dp2px(float dp) {
@@ -171,6 +226,9 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
+                if (mAdapterAlbumGrid!=null){
+                    mAdapterAlbumGrid.setDataSource(presenter.mList);
+                }
                 break;
             }
             case MOVE:{

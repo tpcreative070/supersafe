@@ -25,13 +25,13 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
         mList = new ArrayList<>();
     }
 
-    public void  getData(String categories_local_id){
+    public void  getData(String categories_local_id,boolean isFakePIN){
         mList.clear();
         MoveGalleryView view = view();
-        final List<MainCategories> list = MainCategories.getInstance().getListMoveGallery(categories_local_id);
+        final List<MainCategories> list = MainCategories.getInstance().getListMoveGallery(categories_local_id,isFakePIN);
         if (list!=null){
             for (MainCategories index : list){
-                final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false,false);
+                final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false,isFakePIN);
                 photos = 0;
                 videos = 0;
                 audios = 0;

@@ -83,6 +83,8 @@ public class Configuration {
 
     public String localCategoriesId;
 
+    public boolean isFakePIN;
+
     private Configuration(final Builder builder) {
         this.hasCamera = builder.hasCamera;
         this.spaceSize = builder.spaceSize;
@@ -96,6 +98,7 @@ public class Configuration {
         this.dialogMode = builder.dialogMode;
         this.hasPreview = builder.hasPreview;
         this.localCategoriesId = builder.localCategoriesId;
+        this.isFakePIN = builder.isFakePIN;
     }
 
     public static class Builder {
@@ -124,6 +127,8 @@ public class Configuration {
 
         private String localCategoriesId;
 
+        private boolean isFakePIN;
+
         public Builder() {
             hasCamera = true;
             hasShade = true;
@@ -137,6 +142,7 @@ public class Configuration {
             tip = null;
             ablumsTitle = null;
             localCategoriesId = null;
+            isFakePIN = false;
         }
 
         public Builder(final Configuration cfg) {
@@ -152,6 +158,7 @@ public class Configuration {
             tip = cfg.tip;
             ablumsTitle = cfg.ablumsTitle;
             localCategoriesId = cfg.localCategoriesId;
+            isFakePIN = cfg.isFakePIN;
 
         }
 
@@ -217,6 +224,10 @@ public class Configuration {
             return this;
         }
 
+        public Builder setFakePIN(boolean fakePIN) {
+            this.isFakePIN = fakePIN;
+            return this;
+        }
 
         public Configuration build() {
             return new Configuration(this);

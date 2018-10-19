@@ -565,6 +565,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 }
                 break;
             }
+            case VERIFY_TO_CHANGE:{
+                count+=1;
+                if (count>=4){
+                    onSetVisitableForgotPin(View.VISIBLE);
+                }
+                break;
+            }
         }
     }
 
@@ -767,6 +774,15 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
             case SET:{
+                switch (mPinActionNext){
+                    case SIGN_UP:{
+                        super.onBackPressed();
+                        break;
+                    }
+                    default:{
+                        break;
+                    }
+                }
                 break;
             }
             case FAKE_PIN:{

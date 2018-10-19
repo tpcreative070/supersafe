@@ -71,7 +71,6 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
         initRecycleView(getLayoutInflater());
         presenter = new FakePinComponentPresenter();
         presenter.bindView(this);
-        presenter.getData();
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){
@@ -281,6 +280,7 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
     @Override
     protected void onResume() {
         super.onResume();
+        presenter.getData();
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinComponentActivity.class.getSimpleName());

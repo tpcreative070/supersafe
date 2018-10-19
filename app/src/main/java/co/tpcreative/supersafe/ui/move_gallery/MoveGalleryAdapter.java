@@ -87,7 +87,7 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
         public void bind(GalleryAlbum mData, int position) {
             super.bind(mData, position);
             this.data = mData;
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.main.categories_local_id,false,false);
+            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.main.categories_local_id,false,data.main.isFakePin);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {

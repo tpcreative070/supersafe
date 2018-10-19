@@ -67,6 +67,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.Theme;
 
 /**
  * Created by pc on 07/16/2017.
@@ -973,6 +974,12 @@ public class Utils {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaScanIntent.setData(uri);
         context.sendBroadcast(mediaScanIntent);
+    }
+
+    public static String getFontString(final int color,String value){
+        Theme theme = Theme.getInstance().getThemeInfo();
+        String sourceString = SuperSafeApplication.getInstance().getString(color, "<font color='"+theme.getAccentColor()+"'>" + value +"</font>");
+        return sourceString;
     }
 
 }

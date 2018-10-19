@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -44,8 +45,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
 
-        String value = String.format(getString(R.string.your_complimentary_premium_remaining),"30");
-        tvPremiumLeft.setText(value);
+        String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,"30");
+        tvPremiumLeft.setText(Html.fromHtml(value));
         onDrawOverLay(this);
     }
 
@@ -55,8 +56,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String value = String.format(getString(R.string.your_complimentary_premium_remaining),days);
-                    tvPremiumLeft.setText(value);
+                    String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,days);
+                    tvPremiumLeft.setText(Html.fromHtml(value));
                 }
             });
         }

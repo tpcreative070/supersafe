@@ -262,8 +262,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @OnClick(R.id.imgShare)
     public void onClickedShare(View view){
-        if (countSelected>0){
-            storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
+       if (countSelected>0){
+            storage.createDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
             presenter.status = EnumStatus.SHARE;
             onShowDialog(presenter.status);
         }
@@ -271,9 +271,11 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @OnClick(R.id.imgExport)
     public void onClickedExport(){
-        storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
-        presenter.status = EnumStatus.EXPORT;
-        onShowDialog(presenter.status);
+        if (countSelected>0){
+            storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
+            presenter.status = EnumStatus.EXPORT;
+            onShowDialog(presenter.status);
+        }
     }
 
     @OnClick(R.id.imgDelete)
@@ -886,6 +888,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 .setPhotoMaxWidth(120)
                 .setLocalCategoriesId(presenter.mainCategories.categories_local_id)
                 .setCheckBoxColor(0xFF3F51B5)
+                .setFakePIN(presenter.mainCategories.isFakePin)
                 .setDialogHeight(Configuration.DIALOG_HALF)
                 .setDialogMode(Configuration.DIALOG_LIST)
                 .setMaximum(9)

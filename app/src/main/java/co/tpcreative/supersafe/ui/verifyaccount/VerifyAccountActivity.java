@@ -28,14 +28,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing;
@@ -46,9 +43,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
-import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
-import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
-import co.tpcreative.supersafe.ui.verify.VerifyActivity;
+
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
@@ -264,8 +259,17 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @OnClick(R.id.btnReSend)
     public void onClickedResend(){
-        Utils.hideSoftKeyboard(this);
-        Log.d(TAG,"onResend");
+        try{
+            SingletonManagerProcessing.getInstance().onStartProgressing(this);
+            Utils.hideSoftKeyboard(this);
+            VerifyCodeRequest request = new VerifyCodeRequest();
+            request.email = presenter.mUser.email;
+            presenter.onResendCode(request);
+            Log.d(TAG,"onResend");
+        }catch (Exception e){
+
+        }
+
     }
 
     @OnClick(R.id.btnSignIn)
@@ -454,9 +458,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onStartLoading(EnumStatus status) {
         switch (status){
             case RESEND_CODE:{
-                progressBarCircularIndeterminateReSend.setVisibility(View.VISIBLE);
-                btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_disable_rounded));
-                btnSignIn.setText("");
                 break;
             }
             case VERIFY_CODE:{
@@ -472,9 +473,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onStopLoading(EnumStatus status) {
         switch (status){
             case RESEND_CODE:{
-                progressBarCircularIndeterminateReSend.setVisibility(View.INVISIBLE);
-                btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
-                btnSignIn.setText(getString(R.string.login_action));
                 break;
             }
             case VERIFY_CODE:{
@@ -498,7 +496,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @Override

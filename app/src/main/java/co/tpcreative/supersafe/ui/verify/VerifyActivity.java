@@ -202,12 +202,10 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
 
     @Override
     public void onError(String message) {
-
     }
 
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @Override
@@ -223,11 +221,10 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {
-
     }
 
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-
     }
+
 }

@@ -151,6 +151,8 @@ public class SettingsActivity extends BaseActivity {
 
         private Preference mAlbumLock ;
 
+        private Preference mUpgrade;
+
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
          * corresponding preference has been changed.
@@ -218,6 +220,9 @@ public class SettingsActivity extends BaseActivity {
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
                             Navigator.onMoveUnlockAllAlbums(getContext());
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_upgrade))){
+                            Navigator.onMoveToPremium(getContext());
+                        }
                     }
                     return true;
                 }
@@ -276,6 +281,11 @@ public class SettingsActivity extends BaseActivity {
             mAlbumLock = findPreference(getString(R.string.key_album_lock));
             mAlbumLock.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mAlbumLock.setOnPreferenceChangeListener(createChangeListener());
+
+            /*Upgrade*/
+            mUpgrade = findPreference(getString(R.string.key_upgrade));
+            mUpgrade.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mUpgrade.setOnPreferenceChangeListener(createChangeListener());
 
         }
 

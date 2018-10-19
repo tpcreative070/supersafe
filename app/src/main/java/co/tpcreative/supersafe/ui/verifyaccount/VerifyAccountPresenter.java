@@ -14,6 +14,7 @@ import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -37,7 +38,10 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         if (mUser!=null){
             mUser.email = email;
             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-            view.onSuccessful("Changed email successful",EnumStatus.CHANGE_EMAIL_SUCCESSFUL);
+            view.onSuccessful("Changed email successful",EnumStatus.CHANGE_EMAIL);
+        }
+        else{
+            Utils.Log(TAG,"User is null");
         }
     }
 
@@ -121,7 +125,6 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.RESEND_CODE);
-                        view.onStopLoading(EnumStatus.RESEND_CODE);
                     }
                     else{
                         onSendGmail(mUser.email,onResponse.code);
@@ -146,7 +149,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
 
 
     public void onCheckUser(final String email){
-        Log.d(TAG,"info onCheckUser");
+        Log.d(TAG,"info onCheckUser :"+email);
         BaseView view = view();
         if (view == null) {
             return;
@@ -157,7 +160,6 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         if (subscriptions == null) {
             return;
         }
-
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),email);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
@@ -197,7 +199,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
     }
 
     public void onSignIn(SignInRequest request){
-        Log.d(TAG,"info");
+        Log.d(TAG,"onSignIn.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -305,7 +307,6 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                     view.onStopLoading(EnumStatus.SIGN_UP);
                 }));
     }
-
 
 
     public void onSendGmail(String email,String code){

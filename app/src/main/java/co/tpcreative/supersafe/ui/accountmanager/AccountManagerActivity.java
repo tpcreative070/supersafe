@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -69,7 +70,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
         setProgressValue();
         Utils.Log(TAG,"account: "+ new Gson().toJson(mUser));
-        String value = String.format(getString(R.string.your_complimentary_premium),"30");
         if (mUser.premium.status){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
             tvLicenseStatus.setText(getString(R.string.premium));
@@ -77,7 +77,10 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         else {
             tvLicenseStatus.setText(getString(R.string.free));
         }
-        tvPremiumLeft.setText(value);
+
+        String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,"30");
+        tvPremiumLeft.setText(Html.fromHtml(value));
+
     }
 
     @Override
@@ -97,8 +100,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String value = String.format(getString(R.string.your_complimentary_premium_remaining),days);
-                    tvPremiumLeft.setText(value);
+                    String value =Utils.getFontString(R.string.your_complimentary_premium_remaining,days);
+                    tvPremiumLeft.setText(Html.fromHtml(value));
                 }
             });
         }

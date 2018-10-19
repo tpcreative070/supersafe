@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textColor="?attr/colorAccent"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/unlock_all_album_title"
                 android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                 android:layout_marginBottom="30dp"
                 android:hint="@string/code"
                 android:imeOptions="actionDone"
-                android:inputType="text|textCapCharacters"
+                android:inputType="number"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size_normal"
                 app:met_baseColor="@color/colorButton"

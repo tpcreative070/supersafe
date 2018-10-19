@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.NestedScrollView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.Theme;
@@ -118,9 +120,10 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             }
            tvEmail.setText(presenter.mUser.email);
         }
-        String value = String.format(getString(R.string.premium_left),"30");
-        tvPremiumLeft.setText(value);
-        Log.d(TAG,"work");
+
+        String sourceString = Utils.getFontString(R.string.premium_left,"30");
+        tvPremiumLeft.setText(Html.fromHtml(sourceString));
+
     }
 
     @Override
@@ -129,8 +132,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String value = String.format(getString(R.string.premium_left),days);
-                    tvPremiumLeft.setText(value);
+                    String sourceString = Utils.getFontString(R.string.premium_left,days);
+                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
                 }
             });
         }

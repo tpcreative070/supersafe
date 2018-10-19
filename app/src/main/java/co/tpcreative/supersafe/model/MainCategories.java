@@ -138,8 +138,8 @@ public class MainCategories implements Serializable{
 
 
     @Ignore
-    public List<MainCategories> getListMoveGallery(String categories_local_id){
-        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(categories_local_id,false,false);
+    public List<MainCategories> getListMoveGallery(String categories_local_id,boolean isFakePin){
+        final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(categories_local_id,false,isFakePin);
         Collections.sort(mList, new Comparator<MainCategories>() {
             @Override
             public int compare(MainCategories lhs, MainCategories rhs) {

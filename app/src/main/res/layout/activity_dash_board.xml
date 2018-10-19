@@ -63,7 +63,7 @@
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:layout_marginBottom="10dp"
                 android:id="@+id/btnSignUp"
                 android:textSize="@dimen/text_size_normal"
@@ -73,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high"/>
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btnLogin"
                 android:textSize="@dimen/text_size_normal"
                 android:textColor="@color/colorButtonDark"
