@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -17,7 +16,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
@@ -25,15 +23,12 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
@@ -527,6 +522,12 @@ public class ServiceManager implements BaseView {
         }
         if (isGetListCategories) {
             Utils.Log(TAG, "Getting list categories...----------------*******************************-----------");
+            return;
+        }
+
+        final boolean isPauseCloudSync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync),false);
+        if (isPauseCloudSync){
+            Utils.Log(TAG, "Pause Cloud Sync is Enabled...----------------*******************************-----------");
             return;
         }
 

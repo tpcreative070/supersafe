@@ -21,8 +21,6 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/image_background_audio_video" />
 
-
-
             <View
                 android:id="@+id/view_alpha"
                 android:layout_width="match_parent"
@@ -37,9 +35,6 @@
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"
                 android:layout_centerInParent="true"/>
-
-
-
             <TextView
                 android:textColor="@color/multiple_image_select_buttonText"
                 android:layout_margin="5dp"
@@ -82,7 +77,5 @@
                     android:layout_width="@dimen/image_size_video_cam"
                     android:layout_height="@dimen/image_size_video_cam"/>
             </RelativeLayout>
-
-
         </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

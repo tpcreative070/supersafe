@@ -19,10 +19,8 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -43,7 +41,6 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
     ProgressBarCircularIndeterminate progressBarCircularIndeterminate;
     @BindView(R.id.progressBarCircularIndeterminateReSend)
     ProgressBarCircularIndeterminate progressBarCircularIndeterminateReSend;
-
     private boolean isNext ;
     private VerifyPresenter presenter;
 
@@ -151,7 +148,6 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
 
     }
 
-
     @Override
     public void onStartLoading(EnumStatus status) {
         switch (status){
@@ -166,7 +162,6 @@ public class VerifyActivity extends BaseActivity implements BaseView, TextView.O
                 break;
             }
         }
-
     }
 
     @Override

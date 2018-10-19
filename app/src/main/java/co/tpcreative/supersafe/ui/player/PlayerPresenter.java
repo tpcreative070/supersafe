@@ -1,16 +1,12 @@
 package co.tpcreative.supersafe.ui.player;
 import android.app.Activity;
 import android.os.Bundle;
-
 import com.google.android.exoplayer2.source.MediaSource;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
-import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;

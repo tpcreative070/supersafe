@@ -17,9 +17,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
@@ -27,7 +28,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
+
 
 public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener,BaseView<Long>{
 
@@ -54,10 +55,10 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @BindView(R.id.btnSwitchPauseSync)
     SwitchCompat btnSwitchPauseSync;
-    @BindView(R.id.btnSwitchSyncWithWifi)
-    SwitchCompat btnSwitchSyncWithWifi;
-
+    @BindView(R.id.tvDriveAccount)
+    TextView tvDriveAccount;
     private CloudManagerPresenter presenter;
+    private boolean isPauseCloudSync = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +72,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
         btnSwitchPauseSync.setOnCheckedChangeListener(this);
-        btnSwitchSyncWithWifi.setOnCheckedChangeListener(this);
 
         String lefFiles = String.format(getString(R.string.left),"100");
         tvLeft.setText(lefFiles);
 
         String updated = String.format(getString(R.string.left),"0");
         tvUploaded.setText(updated);
-
         onShowUI();
     }
 
@@ -91,6 +90,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         boolean isThrow = false;
         if (mUser!=null){
             DriveAbout driveAbout = mUser.driveAbout;
+            tvDriveAccount.setText(mUser.cloud_id);
             try {
                 String superSafeSpace = ConvertUtils.byte2FitMemorySize(driveAbout.inAppUsed);
                 tvValueSupersafeSpace.setText(superSafeSpace);
@@ -152,9 +152,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onShowSwitch(){
         final boolean pause_cloud_sync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync),false);
         btnSwitchPauseSync.setChecked(pause_cloud_sync);
-
-        final boolean only_wifi = PrefsController.getBoolean(getString(R.string.key_cloud_sync_only_wifi),false);
-        btnSwitchSyncWithWifi.setChecked(only_wifi);
     }
 
 
@@ -165,10 +162,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()){
             case R.id.menu_item_refresh:{
                 presenter.onGetDriveAbout();
@@ -247,11 +242,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()){
             case R.id.btnSwitchPauseSync :{
+                isPauseCloudSync = b;
                 PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync),b);
-                break;
-            }
-            case R.id.btnSwitchSyncWithWifi :{
-                PrefsController.putBoolean(getString(R.string.key_cloud_sync_only_wifi),b);
                 break;
             }
         }
@@ -275,7 +267,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @OnClick(R.id.btnRemoveLimit)
     public void onRemoveLimit(View view){
-
+        Navigator.onMoveToPremium(this);
     }
 
     @Override
@@ -317,4 +309,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!isPauseCloudSync){
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+        }
+    }
 }

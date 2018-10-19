@@ -29,6 +29,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
@@ -58,8 +59,8 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         presenter = new EnableCloudPresenter();
         presenter.bindView(this);
         presenter.onUserInfo();
+        Utils.Log(TAG,"Enable cloud...........");
     }
-
 
     @Override
     protected void onResume() {
@@ -374,6 +375,9 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         presenter.mUser.cloud_id= message;
         presenter.mUser.driveConnected = true;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
+        Utils.Log(TAG,"Fish enable cloud.........................");
+        ServiceManager.getInstance().onSyncDataOwnServer("0");
+        ServiceManager.getInstance().onGetUserInfo();
         onBackPressed();
     }
 

@@ -38,6 +38,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -126,8 +127,8 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                tvTitle.setText(Html.fromHtml(sourceString));
            }
         }
-    }
 
+    }
 
 
     @Override
@@ -146,7 +147,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onOrientationChange(boolean isFaceDown) {
 
     }
-
 
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -231,6 +231,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @OnClick(R.id.btnSendVerifyCode)
     public void onClickedSendVerifyCode(View view){
         Log.d(TAG,"Verify code");
+        SingletonManagerProcessing.getInstance().onStartProgressing(this);
         presenter.onCheckUser(presenter.mUser.email);
     }
 
@@ -409,8 +410,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -511,6 +510,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             }
             case SEND_EMAIL:{
                 onShowView(btnSendVerifyCode);
+                SingletonManagerProcessing.getInstance().onStopProgressing(VerifyAccountActivity.this);
                 break;
             }
             case VERIFY_CODE:{

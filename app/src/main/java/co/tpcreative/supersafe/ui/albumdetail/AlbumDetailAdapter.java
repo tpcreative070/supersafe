@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.darsh.multipleimageselect.models.Image;
 import com.snatik.storage.Storage;
 import java.security.NoSuchAlgorithmException;
 import butterknife.BindView;
@@ -25,7 +24,6 @@ import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
@@ -100,7 +98,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         @BindView(R.id.rlHome)
         RelativeLayout rlHome;
 
-
         public ItemHolder(View itemView) {
             super(itemView);
         }
@@ -129,13 +126,11 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                         tvTitle.setVisibility(View.VISIBLE);
                         tvTitle.setText(data.title);
-                        //imgAlbum.setImageDrawable(context.getResources().getDrawable(R.drawable.image_background_audio_video));
                         Theme theme = Theme.getInstance().getThemeInfo();
                         Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options).into(imgAlbum);
-                        Utils.Log(TAG,"audio");
                         break;
                     }
                     case VIDEO: {
@@ -166,7 +161,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                 progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.colorAccent),
                         PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
-                Utils.Log(TAG,""+progress.name());
                 switch (progress){
                     case PROGRESSING:{
                         imgCheck.setVisibility(View.INVISIBLE);
@@ -184,10 +178,10 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         break;
                     }
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
             rlHome.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -198,8 +192,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                     return false;
                 }
             });
-
-
         }
 
         @OnClick(R.id.rlHome)
@@ -209,16 +201,13 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
             }
         }
 
-
     }
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
         int position;
-
         public MyMenuItemClickListener(int position) {
             this.position = position;
         }
-
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             return false;

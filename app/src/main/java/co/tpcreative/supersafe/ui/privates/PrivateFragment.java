@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.privates;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -15,19 +14,14 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.snatik.storage.Storage;
-
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -155,7 +149,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -173,10 +166,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         super.onDestroy();
     }
 
-    /**
-     * Converting dp to pixel
-     */
-
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
@@ -188,9 +177,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         Log.d(TAG, "visit :" + isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
-            if (presenter != null) {
-                presenter.getData();
-            }
         }
     }
 
@@ -240,7 +226,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
 
     }
 
-
     public void onShowChangeCategoriesNameDialog(final MainCategories mainCategories) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
                 .title(getString(R.string.album_is_locked))
@@ -273,6 +258,4 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
                 });
         builder.show();
     }
-
-
 }

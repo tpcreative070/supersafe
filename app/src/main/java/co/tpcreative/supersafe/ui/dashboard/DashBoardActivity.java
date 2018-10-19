@@ -68,14 +68,8 @@ public class DashBoardActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Utils.Log(TAG,"onBackPressed");
-        final User mUser = SuperSafeApplication.getInstance().readUseSecret();
-        Log.d(TAG,new Gson().toJson(mUser));
-        if (mUser!=null){
-            finish();
-        }
+        super.onBackPressed();
     }
-
 
     public void onShowDialog(){
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)

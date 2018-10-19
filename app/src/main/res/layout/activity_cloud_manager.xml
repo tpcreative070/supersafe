@@ -124,7 +124,7 @@
                     <Button
                         android:id="@+id/btnRemoveLimit"
                         android:text="@string/remove_quota_limit"
-                        android:background="?attr/colorPrimary"
+                        android:background="@drawable/bg_button_rounded"
                         android:textColor="@color/white"
                         android:layout_marginTop="20dp"
                         android:layout_gravity="center"
@@ -132,6 +132,34 @@
                         android:layout_height="@dimen/button_high"/>
 
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="6dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imgGoogleDrive"
+                        android:src="@drawable/ic_google_drive"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerInParent="true"
+                        android:layout_width="@dimen/icon_size_30"
+                        android:layout_height="@dimen/icon_size_30"/>
+
+                    <TextView
+                        android:textColor="?attr/colorAccent"
+                        android:id="@+id/tvDriveAccount"
+                        android:textSize="@dimen/text_size_normal"
+                        android:paddingRight="20dp"
+                        android:paddingLeft="20dp"
+                        android:layout_centerInParent="true"
+                        android:layout_toRightOf="@+id/imgGoogleDrive"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
 
 
                 <LinearLayout
@@ -274,34 +302,6 @@
 
                         <android.support.v7.widget.SwitchCompat
                             android:id="@+id/btnSwitchPauseSync"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerInParent="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@color/material_gray_200"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"/>
-
-                    <RelativeLayout
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:text="@string/cloud_sync_only_wifi"
-                            android:textSize="@dimen/text_size_normal"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerInParent="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <android.support.v7.widget.SwitchCompat
-                            android:id="@+id/btnSwitchSyncWithWifi"
                             android:layout_alignParentRight="true"
                             android:layout_centerInParent="true"
                             android:layout_width="wrap_content"

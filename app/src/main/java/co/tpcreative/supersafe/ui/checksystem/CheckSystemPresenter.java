@@ -373,7 +373,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Log.d(TAG, "Body ???: " + new Gson().toJson(onResponse));
                     if (!onResponse.error){
                         mUser.verified = true;
                         mUser.cloud_id = onResponse.cloud_id;

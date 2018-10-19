@@ -23,7 +23,6 @@ import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
-import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
@@ -62,11 +61,9 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     private DownloadService downloadService;
     private HashMap<String, String> hashMapGlobal = new HashMap<>();
     private HashMap<String, String> hashMapGlobalCategories = new HashMap<>();
-
     public HashMap<String, String> getHashMapGlobal() {
         return hashMapGlobal;
     }
-
     public HashMap<String, String> getHashMapGlobalCategories() {
         return hashMapGlobalCategories;
     }
@@ -166,6 +163,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             }
             return;
         }
+
         if (subscriptions == null) {
             return;
         }
@@ -174,6 +172,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (mUser==null){
             return;
         }
+
         String email = mUser.email;
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),email);
@@ -1195,7 +1194,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 Utils.Log(TAG, "onDownLoadCompleted " + file_name.getAbsolutePath());
                 listener.onDownLoadCompleted(file_name, request);
             }
-
             @Override
             public void onDownLoadError(String error) {
                 Utils.Log(TAG, "onDownLoadError " + error);

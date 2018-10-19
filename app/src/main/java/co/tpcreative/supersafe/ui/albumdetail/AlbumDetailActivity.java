@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -53,7 +52,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -68,7 +66,6 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dmax.dialog.SpotsDialog;
 
 
@@ -168,9 +165,19 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         onDrawOverLay(this);
         llBottom.setVisibility(View.INVISIBLE);
 
-
         /*Root Fragment*/
         attachFragment(R.id.gallery_root);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                Utils.Log(TAG,"Scrolling change listener");
+                if (actionMode!=null){
+                    mSpeedDialView.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -364,7 +371,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     @Override
     public void onStartLoading(EnumStatus status) {
 
@@ -506,7 +512,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         recyclerView.setAdapter(adapter);
     }
 
-
     public void onShowDialog(EnumStatus status){
         String content = "";
         switch (status){
@@ -526,7 +531,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 break;
             }
         }
-
 
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))
@@ -636,7 +640,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 });
         builder.show();
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -870,9 +873,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     /*Gallery action*/
-
 
     @Override
     public Configuration getConfiguration() {
@@ -894,7 +895,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         return cfg;
     }
 
-
     @Override
     public void onMoveAlbumSuccessful() {
 
@@ -904,7 +904,5 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     public List<Items> getListItems() {
         return presenter.mList;
     }
-
-
 
 }

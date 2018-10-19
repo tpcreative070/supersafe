@@ -31,10 +31,6 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.snatik.storage.Storage;
-import com.snatik.storage.helpers.SizeUnit;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -89,7 +85,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.bindView(this);
         presenter.onGetUserInfo();
         onCallLockScreen();
-
+        ServiceManager.getInstance().onGetUserInfo();
     }
 
     @Override
@@ -407,7 +403,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 break;
             }
         }
-
     }
 
     @Override
@@ -418,11 +413,9 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         return true;
     }
 
-
     public MenuItem getMenuItem() {
         return menuItem;
     }
-
 
     @Override
     protected void onResume() {
@@ -431,6 +424,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         ServiceManager.getInstance().onGetDriveAbout();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
+        presenter.onGetUserInfo();
     }
 
     @Override
