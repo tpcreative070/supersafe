@@ -1,34 +1,18 @@
 package co.tpcreative.supersafe.ui.accountmanager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
-import com.ftinc.kit.util.SizeUtils;
 import com.google.gson.Gson;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -38,7 +22,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -67,14 +50,10 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         setContentView(R.layout.activity_account_manager);
         presenter = new AccountManagerPresenter();
         presenter.bindView(this);
-
-
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         onDrawOverLay(this);
-
 
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
@@ -90,8 +69,14 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
         setProgressValue();
         Utils.Log(TAG,"account: "+ new Gson().toJson(mUser));
-
         String value = String.format(getString(R.string.your_complimentary_premium),"30");
+        if (mUser.premium.status){
+            tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
+            tvLicenseStatus.setText(getString(R.string.premium));
+        }
+        else {
+            tvLicenseStatus.setText(getString(R.string.free));
+        }
         tvPremiumLeft.setText(value);
     }
 
@@ -105,7 +90,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             }
         }
     }
-
 
     @Override
     public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
@@ -185,7 +169,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
     }
 
-
     @Override
     protected void onDriveClientReady() {
 
@@ -212,7 +195,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         Log.d(TAG,"onDriveRevokeAccess");
     }
 
-
     @Override
     public void onStartLoading(EnumStatus status) {
 
@@ -227,7 +209,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     public Context getContext() {
         return getApplicationContext();
     }
-
 
     @Override
     public void onError(String message, EnumStatus status) {

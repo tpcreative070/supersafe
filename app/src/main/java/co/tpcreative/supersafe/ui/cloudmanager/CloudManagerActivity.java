@@ -309,7 +309,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

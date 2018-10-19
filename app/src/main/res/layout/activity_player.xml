@@ -29,18 +29,6 @@
             app:fallCount="40"
             app:fallSpeed="0.1"/>
 
-        <TextView
-            android:gravity="left"
-            android:paddingRight="20dp"
-            android:paddingLeft="27dp"
-            android:textSize="@dimen/text_size_xlarge_20"
-            android:textColor="?attr/colorAccent"
-            android:id="@+id/tvTitle"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="100dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <RelativeLayout
             android:id="@+id/rlTop"
             android:layout_width="match_parent"
@@ -55,6 +43,19 @@
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"/>
 
+            <TextView
+                android:singleLine="true"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/imgArrowBack"
+                android:gravity="left"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:textSize="@dimen/abc_text_size_title_material"
+                android:textColor="?attr/colorAccent"
+                android:id="@+id/tvTitle"
+                android:layout_marginBottom="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
 

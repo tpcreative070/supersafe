@@ -26,8 +26,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AdvancedWebView;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dmax.dialog.SpotsDialog;
 
 public class HelpAndSupportContentActivity extends BaseActivity implements BaseView ,TextView.OnEditorActionListener{
@@ -47,6 +45,7 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     private boolean isNext ;
     private User mUser;
     private AlertDialog dialog;
+    private MenuItem menuItem;
 
 
     @Override
@@ -66,6 +65,7 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
 
         edtEmail.addTextChangedListener(mTextWatcher);
         edtEmail.setOnEditorActionListener(this);
+
     }
 
     @Override
@@ -87,7 +87,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
 
     @Override
     public void onStartLoading(EnumStatus status) {
-
 
     }
 
@@ -144,7 +143,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
                 break;
             }
         }
-
     }
 
     @Override
@@ -220,6 +218,17 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_help_support, menu);
+        menuItem = menu.findItem(R.id.menu_item_send);
+        if (presenter!=null){
+            if (presenter.content.content.equals(getString(R.string.contact_support_content))){
+                menuItem.setVisible(true);
+            }
+            else{
+                menuItem.setVisible(false);
+            }
+        }
+
+        Utils.Log(TAG,"Menu.............");
         return true;
     }
 

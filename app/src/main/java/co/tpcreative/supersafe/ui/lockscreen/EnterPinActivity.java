@@ -96,6 +96,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     RelativeLayout includeLayout;
     @BindView(R.id.btnDone)
     Button btnDone;
+    private int count = 0;
 
 
     private static EnumPinAction mPinAction;
@@ -279,7 +280,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ServiceManager.getInstance().onStartService();
+    }
 
     @OnClick(R.id.btnDone)
     public void onClickedDone(){
@@ -554,7 +559,10 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         objectAnimator.start();
         switch (mPinAction){
             case VERIFY:{
-                onSetVisitableForgotPin(View.VISIBLE);
+                count+=1;
+                if (count>=4){
+                    onSetVisitableForgotPin(View.VISIBLE);
+                }
                 break;
             }
         }

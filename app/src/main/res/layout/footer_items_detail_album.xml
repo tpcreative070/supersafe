@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/llBottom"
-        android:background="#7F000000"
+        android:background="@color/material_gray_800"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:orientation="horizontal"

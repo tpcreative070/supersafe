@@ -8,9 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RelativeLayout
-
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_gravity="center"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -23,7 +21,7 @@
                 android:layout_centerInParent="true"
                 android:gravity="left"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_xlarge_20"
+                android:textSize="@dimen/text_size_17"
                 android:id="@+id/tvTitle"
                 android:text="@string/audio"
                 android:layout_width="match_parent"
@@ -38,9 +36,8 @@
                     android:layout_centerInParent="true"
                     android:layout_gravity="center|right"
                     android:src="@drawable/baseline_play_circle_outline_white_36"
-                    android:layout_width="@dimen/image_size"
-                    android:layout_height="@dimen/image_size" />
-
+                    android:layout_width="@dimen/image_size_50"
+                    android:layout_height="@dimen/image_size_50" />
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

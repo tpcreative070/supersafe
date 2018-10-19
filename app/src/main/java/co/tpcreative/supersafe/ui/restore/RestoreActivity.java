@@ -127,7 +127,7 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
                     shake();
                     Utils.hideKeyboard(getCurrentFocus());
                     count+=1;
-                    if (count>=5){
+                    if (count>=4){
                         btnForgotPin.setVisibility(View.VISIBLE);
                     }
                 }
@@ -151,7 +151,7 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
             shake();
             Utils.hideKeyboard(getCurrentFocus());
             count+=1;
-            if (count>=5){
+            if (count>=4){
                 btnForgotPin.setVisibility(View.VISIBLE);
             }
         }

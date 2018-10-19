@@ -5,21 +5,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
 public class PremiumActivity extends BaseActivity implements SingletonPremiumTimer.SingletonPremiumTimerListener{
 
+    private static final String TAG = PremiumActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
-
     @BindView(R.id.scrollView)
     ScrollView scrollView;
     @BindView(R.id.tvPremiumLeft)
@@ -44,9 +46,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
         String value = String.format(getString(R.string.your_complimentary_premium_remaining),"30");
         tvPremiumLeft.setText(value);
-
         onDrawOverLay(this);
-
     }
 
     @Override
@@ -63,6 +63,21 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @OnClick(R.id.llMonths)
+    public void onClickedMonths(View view){
+        Utils.Log(TAG,"Months");
+    }
+
+    @OnClick(R.id.llYears)
+    public void onClickedYears(View view){
+        Utils.Log(TAG,"Years");
+    }
+
+    @OnClick(R.id.llLifeTime)
+    public void onClickedLifeTime(View view){
+        Utils.Log(TAG,"LifeTime");
     }
 
 
@@ -91,6 +106,11 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         SingletonPremiumTimer.getInstance().setListener(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SingletonPremiumTimer.getInstance().setListener(null);
+    }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 

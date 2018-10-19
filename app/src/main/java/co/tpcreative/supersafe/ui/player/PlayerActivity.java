@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -28,7 +26,6 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -43,7 +40,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -51,18 +47,14 @@ import javax.crypto.spec.SecretKeySpec;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.ui.privates.PrivateAdapter;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import dyanamitechetan.vusikview.VusikView;
 
 public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdapter.ItemSelectedListener{
@@ -87,7 +79,6 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     private SimpleExoPlayer player;
     private PlayerAdapter adapter;
     int lastWindowIndex = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +120,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
                 recyclerView.setVisibility(visibility);
             }
         });
+
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){
@@ -201,7 +193,6 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
             player.setRepeatMode(Player.REPEAT_MODE_OFF);
             playerView.getPlayer().setRepeatMode(Player.REPEAT_MODE_OFF);
             playerView.setControllerAutoShow(false);
-
 
 
             player.addListener(new Player.EventListener() {
@@ -292,7 +283,6 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
 
     @Override
     public void onStopLoading(EnumStatus status) {
-
     }
 
     @Override

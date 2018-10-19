@@ -96,12 +96,11 @@
     </android.support.design.widget.AppBarLayout>
 
 
-
     <RelativeLayout
+        android:layout_marginBottom="@dimen/button_high_trash"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
@@ -120,7 +119,6 @@
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <ImageView
                 android:src="@drawable/ic_premium_icon"
                 android:layout_width="@dimen/image_size"
@@ -173,10 +171,9 @@
         </LinearLayout>
     </LinearLayout>
 
-
     <RelativeLayout
-        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
-        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:background="@color/white"
         android:layout_gravity="bottom|end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

@@ -204,6 +204,10 @@ public class ServiceManager implements BaseView {
     }
 
     private void doBindService() {
+       if (myService!=null){
+           return;
+       }
+
         Intent intent = null;
         intent = new Intent(mContext, SuperSafeService.class);
         intent.putExtra(TAG, "Message");

@@ -92,6 +92,7 @@
                         android:layout_height="wrap_content">
 
                         <LinearLayout
+                            android:id="@+id/llMonths"
                             android:layout_marginRight="5dp"
                             android:layout_marginLeft="5dp"
                             android:background="@drawable/bg_button_rounded_shadow"
@@ -127,6 +128,7 @@
 
 
                         <LinearLayout
+                            android:id="@+id/llYears"
                             android:layout_marginRight="5dp"
                             android:layout_marginLeft="5dp"
                             android:background="@drawable/bg_button_rounded_shadow"
@@ -161,6 +163,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/llLifeTime"
                             android:layout_marginRight="5dp"
                             android:layout_marginLeft="5dp"
                             android:background="@drawable/bg_button_rounded_shadow"
