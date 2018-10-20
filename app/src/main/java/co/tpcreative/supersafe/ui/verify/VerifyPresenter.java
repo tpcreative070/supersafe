@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.verify;
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
@@ -14,6 +15,8 @@ import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.Email;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -151,15 +154,14 @@ public class VerifyPresenter extends Presenter<BaseView>{
 
     public void onSendGmail(String email,String code){
         BaseView view = view();
-        String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
                 .withUsername(view.getContext().getString(R.string.user_name))
                 .withPassword(view.getContext().getString(R.string.password))
                 .withMailto(email)
-                .withType(BackgroundMail.TYPE_PLAIN)
+                .withType(BackgroundMail.TYPE_HTML)
                 .withSubject(title)
-                .withBody(body)
+                .withBody(Email.getInstance().getValue(code,"SignIn"))
                 .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                     @Override
                     public void onSuccess() {

@@ -976,10 +976,17 @@ public class Utils {
         context.sendBroadcast(mediaScanIntent);
     }
 
-    public static String getFontString(final int color,String value){
+    public static String getFontString(final int content,String value){
         Theme theme = Theme.getInstance().getThemeInfo();
-        String sourceString = SuperSafeApplication.getInstance().getString(color, "<font color='"+theme.getAccentColor()+"'>" + value +"</font>");
+        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font color='"+theme.getAccentColor()+"'>" + value +"</font>");
         return sourceString;
     }
+
+    public static String getFontString(final int content,String value,int fontSize){
+        Theme theme = Theme.getInstance().getThemeInfo();
+        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font size='"+fontSize+"' color='"+theme.getAccentColor()+"'>" + value +"</font>");
+        return sourceString;
+    }
+
 
 }

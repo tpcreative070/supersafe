@@ -168,7 +168,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.102:8081</string>
+    <string name="url_developer">http://192.168.0.101:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -359,6 +359,7 @@
     <string name="key_significant_other">Significant Other</string>
     <string name="key_trash">Trash</string>
     <string name="key_empty_trash">Empty Trash</string>
+    <string name="key_email_template">file:///android_asset/email.html</string>
 
 
     /*Preference keys*/

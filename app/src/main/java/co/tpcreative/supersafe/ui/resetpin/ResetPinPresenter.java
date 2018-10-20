@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.Email;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -95,9 +96,9 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                 .withUsername(view.getContext().getString(R.string.user_name))
                 .withPassword(view.getContext().getString(R.string.password))
                 .withMailto(email)
-                .withType(BackgroundMail.TYPE_PLAIN)
+                .withType(BackgroundMail.TYPE_HTML)
                 .withSubject(title)
-                .withBody(body)
+                .withBody(Email.getInstance().getValue(code,"Reset"))
                 .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                     @Override
                     public void onSuccess() {
