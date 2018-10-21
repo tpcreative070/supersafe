@@ -138,6 +138,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             });
         }
         catch (Exception e){
+            SingletonPremiumTimer.getInstance().onStop();
             e.printStackTrace();
         }
     }

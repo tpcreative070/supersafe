@@ -141,12 +141,14 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                         if (preference.getKey().equals(getString(R.string.key_name))){
                             String main = Utils.getHexCode(getString(R.string.key_main_album));
                             String trash = Utils.getHexCode(getString(R.string.key_trash));
+                            String name = preference.getSummary().toString();
                             if (!main.equals(presenter.mMainCategories.categories_hex_name) && !trash.equals(presenter.mMainCategories.categories_hex_name)){
-                                onShowChangeCategoriesNameDialog(EnumStatus.CHANGE);
+                                onShowChangeCategoriesNameDialog(EnumStatus.CHANGE,name);
                             }
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
-                            onShowChangeCategoriesNameDialog(EnumStatus.SET);
+                            String name = preference.getSummary().toString();
+                            onShowChangeCategoriesNameDialog(EnumStatus.SET,null);
                         }
                     }
                     return true;
@@ -182,7 +184,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             addPreferencesFromResource(R.xml.pref_general_album_settings);
         }
 
-        public void onShowChangeCategoriesNameDialog(EnumStatus enumStatus){
+        public void onShowChangeCategoriesNameDialog(EnumStatus enumStatus,String name){
             String title = "";
             String content = "";
             String positiveAction = "";
@@ -228,7 +230,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                             dialog.dismiss();
                         }
                     })
-                    .input(null, null, new MaterialDialog.InputCallback() {
+                    .input(null, name, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                             switch (enumStatus){

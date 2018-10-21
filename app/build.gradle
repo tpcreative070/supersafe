@@ -213,6 +213,9 @@ dependencies {
     /*simplerecyclerviewlibrary*/
     implementation project(':simplerecyclerviewlibrary')
 
+    /*Fingerprint*/
+    implementation project(':fingerprint-auth-library')
+
 }
 
 /*Resolved duplicated for Google api client*/

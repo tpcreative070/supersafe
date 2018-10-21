@@ -258,7 +258,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         onStopLoading(EnumStatus.REQUEST_CODE);
         onStopLoading(EnumStatus.UNLOCK_ALBUMS);
         switch (status){
-            case REQUEST_CODE_ERROR:{
+            case REQUEST_CODE:{
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 btnSendRequest.setEnabled(true);
                 btnUnlock.setText(getString(R.string.unlock_all_albums));
@@ -266,11 +266,12 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
                 Toast.makeText(this,"Request code error !!!",Toast.LENGTH_SHORT).show();
                 break;
             }
-            case SEND_EMAIL_ERROR:{
+            case SEND_EMAIL:{
                 Toast.makeText(this,"Sent email email error !!!",Toast.LENGTH_SHORT).show();
                 break;
             }
-            case VERIFIED_ERROR:{
+            case VERIFY:{
+                btnUnlock.setText(getString(R.string.unlock_all_albums));
                 Toast.makeText(this,"Verify failed",Toast.LENGTH_SHORT).show();
                 break;
             }
@@ -285,17 +286,17 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
     @Override
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
-            case REQUEST_CODE_SUCCESSFUL:{
+            case REQUEST_CODE:{
                 btnSendRequest.setEnabled(false);
                 break;
             }
-            case SEND_EMAIL_SUCCESSFUL:{
+            case SEND_EMAIL:{
                 onStopLoading(EnumStatus.REQUEST_CODE);
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 Toast.makeText(this,"Sent the code to your email. Please check it",Toast.LENGTH_SHORT).show();
                 break;
             }
-            case VERIFIED_SUCCESSFUL:{
+            case VERIFY:{
                 btnUnlock.setText(getString(R.string.unlock_all_albums));
                 onStopLoading(EnumStatus.UNLOCK_ALBUMS);
                 if (presenter.mListCategories!=null){

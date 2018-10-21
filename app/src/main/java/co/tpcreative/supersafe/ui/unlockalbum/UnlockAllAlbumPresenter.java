@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.model.Email;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
@@ -64,13 +65,13 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFIED_ERROR);
+                        view.onError(onResponse.message,EnumStatus.VERIFY);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.VERIFIED_SUCCESSFUL);
+                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
@@ -96,28 +97,27 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
 
     public void onSendGmail(String email,String code){
         BaseView view = view();
-        String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
                 .withUsername(view.getContext().getString(R.string.user_name))
                 .withPassword(view.getContext().getString(R.string.password))
                 .withMailto(email)
-                .withType(BackgroundMail.TYPE_PLAIN)
+                .withType(BackgroundMail.TYPE_HTML)
                 .withSubject(title)
-                .withBody(body)
+                .withBody(Email.getInstance().getValue(code,"Unlock albums"))
                 .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
                     @Override
                     public void onSuccess() {
                         //do some magic
                         Log.d(TAG,"Successful");
-                        view.onSuccessful("Sent email successful",EnumStatus.SEND_EMAIL_SUCCESSFUL);
+                        view.onSuccessful("Sent email successful",EnumStatus.SEND_EMAIL);
                     }
                 })
                 .withOnFailCallback(new BackgroundMail.OnFailCallback() {
                     @Override
                     public void onFail() {
                         //do some magic
-                        view.onSuccessful("Sent email failed",EnumStatus.SEND_EMAIL_SUCCESSFUL);
+                        view.onSuccessful("Sent email failed",EnumStatus.SEND_EMAIL);
                         Log.d(TAG,"Failed");
                     }
                 })
@@ -128,11 +128,11 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         Log.d(TAG,"info");
         BaseView view = view();
         if (view == null) {
-            view.onError("View is null", EnumStatus.REQUEST_CODE_ERROR);
+            view.onError("View is null", EnumStatus.REQUEST_CODE);
             return;
         }
         if (NetworkUtil.pingIpAddress(view.getContext())) {
-            view.onError("NO internet", EnumStatus.REQUEST_CODE_ERROR);
+            view.onError("NO internet", EnumStatus.REQUEST_CODE);
             return;
         }
 
@@ -146,13 +146,13 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ ->view.onStartLoading(EnumStatus.OTHER) )
+                .doOnSubscribe(__ ->view.onStartLoading(EnumStatus.REQUEST_CODE) )
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.REQUEST_CODE_ERROR);
+                        view.onError(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE_SUCCESSFUL);
+                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                         onSendGmail(mUser.email,onResponse.code);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));

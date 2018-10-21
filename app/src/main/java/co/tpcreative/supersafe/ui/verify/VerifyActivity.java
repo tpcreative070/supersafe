@@ -19,14 +19,16 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Theme;
 
-public class VerifyActivity extends BaseActivity implements BaseView, TextView.OnEditorActionListener{
+public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, TextView.OnEditorActionListener{
 
     private static final String TAG = VerifyActivity.class.getSimpleName();
     @BindView(R.id.tvTitle)

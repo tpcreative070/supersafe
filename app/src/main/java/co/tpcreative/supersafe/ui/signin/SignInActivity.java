@@ -22,6 +22,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
@@ -29,7 +30,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
-public class SignInActivity extends BaseActivity implements TextView.OnEditorActionListener, BaseView<User>{
+public class SignInActivity extends BaseActivityNoneSlide implements TextView.OnEditorActionListener, BaseView<User>{
 
     private static final String TAG = SignInActivity.class.getSimpleName();
     @BindView(R.id.edtEmail)

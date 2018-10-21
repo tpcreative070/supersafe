@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -86,6 +87,9 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.onGetUserInfo();
         onCallLockScreen();
         ServiceManager.getInstance().onGetUserInfo();
+
+        final User mUser = User.getInstance().getUserInfo();
+        Log.d(TAG,"User....." +new Gson().toJson(mUser));
     }
 
     @Override

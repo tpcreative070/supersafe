@@ -1,5 +1,7 @@
 <resources>
 
+
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -9,6 +11,8 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:windowDisablePreview">true</item>
+
 
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>

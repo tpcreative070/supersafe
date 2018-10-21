@@ -359,7 +359,10 @@
     <string name="key_significant_other">Significant Other</string>
     <string name="key_trash">Trash</string>
     <string name="key_empty_trash">Empty Trash</string>
-    <string name="key_email_template">file:///android_asset/email.html</string>
+    <string name="key_fingerprint_unlock">Fingerprint unlock</string>
+    <string name="key_fingerprint_unlock_detail">If enabled, you can still use PIN</string>
+
+
 
 
     /*Preference keys*/

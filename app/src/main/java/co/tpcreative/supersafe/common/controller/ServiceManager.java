@@ -49,6 +49,7 @@ import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.ResponseRXJava;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -535,10 +536,24 @@ public class ServiceManager implements BaseView {
             return;
         }
 
+
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.syncData!=null){
+                final Premium mPremium = mUser.premium;
+                if (mPremium!=null){
+                    if (mUser.syncData.left<=0 && !mPremium.status){
+                        Utils.Log(TAG, mUser.syncData.message+"-------------*******************************-----------");
+                        return;
+                    }
+                }
+            }
+        }
+
+
         if (myService != null) {
             isLoadingData = true;
             myService.onGetListSync(nextPage, new BaseView() {
-
                 @Override
                 public void onStartLoading(EnumStatus status) {
 
@@ -573,7 +588,6 @@ public class ServiceManager implements BaseView {
                 public Activity getActivity() {
                     return null;
                 }
-
 
                 @Override
                 public void onError(String message, EnumStatus status) {

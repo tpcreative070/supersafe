@@ -7,24 +7,20 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.trash.TrashActivity;
+
 
 public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
 
@@ -120,7 +116,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
             SingletonBaseApiActivity.getInstance().onStillScreenLock(EnumStatus.RECREATE);
         }
     }
-
 
     @Override
     public void onStartLoading(EnumStatus status) {

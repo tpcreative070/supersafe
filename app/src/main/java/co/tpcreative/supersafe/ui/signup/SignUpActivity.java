@@ -13,14 +13,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
@@ -28,7 +26,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
-public class SignUpActivity extends BaseActivity implements TextView.OnEditorActionListener, BaseView<User>{
+public class SignUpActivity extends BaseActivityNoneSlide implements TextView.OnEditorActionListener, BaseView<User>{
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
     @BindView(R.id.edtName)

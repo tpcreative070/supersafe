@@ -17,6 +17,7 @@ include ':app',
         'time_ago_library',
         'taptargetviewlibrary',
         'vusikviewlibrary',
-        'simplerecyclerviewlibrary'
+        'simplerecyclerviewlibrary',
+        'fingerprint-auth-library'
 
 

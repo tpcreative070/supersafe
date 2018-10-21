@@ -14,11 +14,12 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 
-public class AskPermissionActivity extends BaseActivity {
+public class AskPermissionActivity extends BaseActivityNoneSlide {
 
     private static final String TAG = AskPermissionActivity.class.getSimpleName();
 

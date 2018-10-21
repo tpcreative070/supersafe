@@ -1,13 +1,16 @@
 package co.tpcreative.supersafe.common.util;
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.hardware.fingerprint.FingerprintManager;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
@@ -17,7 +20,9 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.media.ExifInterface;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -953,7 +958,6 @@ public class Utils {
     }
 
     public static File createTmpFile(Context context) {
-
         String state = Environment.getExternalStorageState();
         if (state.equals(Environment.MEDIA_MOUNTED)) {
             File pic = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
@@ -964,6 +968,21 @@ public class Utils {
             String fileName = UUID.randomUUID().toString();
             return new File(cacheDir, fileName + ".jpg");
         }
+    }
+
+    public static boolean isSensorAvailable() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return ActivityCompat.checkSelfPermission(SuperSafeApplication.getInstance(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED &&
+                        SuperSafeApplication.getInstance().getSystemService(FingerprintManager.class).isHardwareDetected();
+            } else {
+                return FingerprintManagerCompat.from(SuperSafeApplication.getInstance()).isHardwareDetected();
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
 
     }
 

@@ -1,42 +1,34 @@
 package co.tpcreative.supersafe.ui.splashscreen;
 import android.os.Build;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
-import com.google.gson.Gson;
-import com.snatik.storage.Storage;
-
-import java.util.List;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
-import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class SplashScreenActivity extends BaseActivity {
+public class SplashScreenActivity extends BaseActivityNoneSlide {
 
     private String value = "" ;
     private boolean grant_access;
     private boolean isRunning;
     private static final String TAG = SplashScreenActivity.class.getSimpleName();
+    @BindView(R.id.rlScreen)
+    RelativeLayout rlScreen;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +36,8 @@ public class SplashScreenActivity extends BaseActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+        Theme theme  = Theme.getInstance().getThemeInfo();
+        rlScreen.setBackgroundColor(getResources().getColor(theme.getPrimaryColor()));
 
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
@@ -55,25 +49,6 @@ public class SplashScreenActivity extends BaseActivity {
             grant_access = false;
         }
         SuperSafeApplication.getInstance().initFolder();
-                if (grant_access){
-                    if (isRunning){
-                        if(!"".equals(value)){
-                            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SPLASH_SCREEN.ordinal());
-                            Navigator.onMoveToMainTab(SplashScreenActivity.this);
-                        }
-                        else{
-                            Navigator.onMoveSetPin(SplashScreenActivity.this,EnumPinAction.NONE);
-                        }
-                    }
-                    else{
-                        Navigator.onMoveToDashBoard(SplashScreenActivity.this);
-                    }
-                }
-                else{
-                    Navigator.onMoveGrantAccess(SplashScreenActivity.this);
-                }
-                finish();
-
 
         Log.d(TAG,"" + SuperSafeApplication.getInstance().getDeviceId());
 
@@ -101,6 +76,31 @@ public class SplashScreenActivity extends BaseActivity {
 
         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
         Utils.Log(TAG,"Max "+count);
+
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (grant_access){
+                    if (isRunning){
+                        if(!"".equals(value)){
+                            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SPLASH_SCREEN.ordinal());
+                            Navigator.onMoveToMainTab(SplashScreenActivity.this);
+                        }
+                        else{
+                            Navigator.onMoveSetPin(SplashScreenActivity.this,EnumPinAction.NONE);
+                        }
+                    }
+                    else{
+                        Navigator.onMoveToDashBoard(SplashScreenActivity.this);
+                    }
+                }
+                else{
+                    Navigator.onMoveGrantAccess(SplashScreenActivity.this);
+                }
+                finish();
+            }
+        },0);
 
     }
 

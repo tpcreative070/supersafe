@@ -1,50 +1,35 @@
 package co.tpcreative.supersafe.common.activity;
-import android.Manifest;
+
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.ftinc.kit.util.SizeUtils;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
-import java.io.File;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
-import co.tpcreative.supersafe.common.hiddencamera.CameraCallbacks;
-import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
-import co.tpcreative.supersafe.common.hiddencamera.CameraError;
-import co.tpcreative.supersafe.common.hiddencamera.CameraPreview;
-import co.tpcreative.supersafe.common.hiddencamera.HiddenCameraUtils;
-import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -52,19 +37,17 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
-public abstract class BaseVerifyPinActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener,CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener{
+
+public abstract class BaseActivityNoneSlide extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener, SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
     private Toast mToast;
     private HomeWatcher mHomeWatcher;
-    public static final String TAG = BaseVerifyPinActivity.class.getSimpleName();
+    public static final String TAG = BaseActivityNoneSlide.class.getSimpleName();
     private SlidrConfig mConfig;
     protected Storage storage;
 
-    /*Hidden camera*/
-    private CameraPreview mCameraPreview;
-    private CameraConfig mCachedCameraConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +64,8 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         storage = new Storage(this);
-
-        //Add the camera preview surface to the root of the activity view.
-        mCameraPreview = addPreView();
     }
+
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
         context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
@@ -122,7 +103,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         if (isFaceDown){
             final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
             if (result){
-                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
+               Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
             }
         }
     }
@@ -140,41 +121,28 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        Utils.Log(TAG,"onDestroy....");
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
-        if (unbinder != null)
+        if (unbinder != null){
             unbinder.unbind();
+        }
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-        SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        Utils.Log(TAG,"Action here........onResume");
+        Utils.Log(TAG,"onResume....");
         SingletonBaseActivity.getInstance().setListener(this);
+        SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();
             }
         }
-        if (mCachedCameraConfig != null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                return;
-            }
-            startCamera(mCachedCameraConfig);
-        }
         super.onResume();
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mCameraPreview != null) mCameraPreview.stopPreviewAndFreeCamera();
     }
 
     protected void onRegisterHomeWatcher(){
@@ -278,103 +246,5 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             onStartCount++;
         }
     }
-
-
-
-    /*Hidden camera*/
-
-
-
-
-    /**
-     * Add camera preview to the root of the activity layout.
-     *
-     * @return {@link CameraPreview} that was added to the view.
-     */
-    private CameraPreview addPreView() {
-        //create fake camera view
-        CameraPreview cameraSourceCameraPreview = new CameraPreview(this, this);
-        cameraSourceCameraPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        View view = ((ViewGroup) getWindow().getDecorView().getRootView()).getChildAt(0);
-
-        if (view instanceof LinearLayout) {
-            LinearLayout linearLayout = (LinearLayout) view;
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(1, 1);
-            linearLayout.addView(cameraSourceCameraPreview, params);
-        } else if (view instanceof RelativeLayout) {
-            RelativeLayout relativeLayout = (RelativeLayout) view;
-
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(1, 1);
-            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-            relativeLayout.addView(cameraSourceCameraPreview, params);
-        } else if (view instanceof FrameLayout) {
-            FrameLayout frameLayout = (FrameLayout) view;
-
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(1, 1);
-            frameLayout.addView(cameraSourceCameraPreview, params);
-        } else {
-            throw new RuntimeException("Root view of the activity/fragment cannot be other than Linear/Relative/Frame layout");
-        }
-        return cameraSourceCameraPreview;
-    }
-
-
-
-    /**
-     * Start the hidden camera. Make sure that you check for the runtime permissions before you start
-     * the camera.
-     *
-     * @param cameraConfig camera configuration {@link CameraConfig}
-     */
-    @RequiresPermission(Manifest.permission.CAMERA)
-    protected void startCamera(CameraConfig cameraConfig) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) { //check if the camera permission is available
-            onCameraError(CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE);
-        } else if (cameraConfig.getFacing() == CameraFacing.FRONT_FACING_CAMERA
-                && !HiddenCameraUtils.isFrontCameraAvailable(this)) {   //Check if for the front camera
-            onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA);
-        } else {
-            mCachedCameraConfig = cameraConfig;
-            mCameraPreview.startCameraInternal(cameraConfig);
-        }
-    }
-
-    /**
-     * Call this method to capture the image using the camera you initialized. Don't forget to
-     * initialize the camera using {@link #startCamera(CameraConfig)} before using this function.
-     */
-
-    protected void takePicture() {
-        if (mCameraPreview != null) {
-            if (mCameraPreview.isSafeToTakePictureInternal()) {
-                mCameraPreview.takePictureInternal();
-            }
-        } else {
-            throw new RuntimeException("Background camera not initialized. Call startCamera() to initialize the camera.");
-        }
-    }
-
-    /**
-     * Stop and release the camera forcefully.
-     */
-    protected void stopCamera() {
-        mCachedCameraConfig = null;    //Remove config.
-        if (mCameraPreview != null) mCameraPreview.stopPreviewAndFreeCamera();
-    }
-
-    @Override
-    public void onImageCapture(@NonNull File imageFile, @NonNull String pin) {
-
-    }
-
-    @Override
-    public void onCameraError(int errorCode) {
-
-    }
-
 
 }
