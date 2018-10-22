@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
@@ -70,6 +71,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         ServiceManager.getInstance().setGetListCategories(false);
         ServiceManager.getInstance().setCategoriesSync(false);
         ServiceManager.getInstance().setDeleteAlbum(false);
+        MainCategories.getInstance().getList();
 
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);

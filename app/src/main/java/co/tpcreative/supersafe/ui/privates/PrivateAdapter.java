@@ -89,7 +89,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             Utils.Log(TAG,"name :" + data.categories_name +" - "+ data.categories_max);
 
             if (data.pin.equals("")) {
-                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id, false, false);
+                final Items items = Items.getInstance().getObject(data.item);
                 if (items != null) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {
@@ -116,6 +116,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                                     imgAlbum.setImageResource(0);
                                     int myColor = Color.parseColor(data.image);
                                     imgAlbum.setBackgroundColor(myColor);
+                                    imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
+                                    imgIcon.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -127,7 +129,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     imgAlbum.setImageResource(0);
                     imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
                     imgIcon.setVisibility(View.VISIBLE);
-
                     try {
                         int myColor = Color.parseColor(data.image);
                         imgAlbum.setBackgroundColor(myColor);

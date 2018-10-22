@@ -1498,7 +1498,7 @@ public class ServiceManager implements BaseView {
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
             final String categories_local_id = mMainCategories.categories_local_id;
-            final boolean isFakePin = mainCategories.isFakePin;
+            final boolean isFakePin = mMainCategories.isFakePin;
 
             Utils.Log(TAG, "object " + new Gson().toJson(mMimeTypeFile));
             Bitmap thumbnail = null;
@@ -1620,6 +1620,7 @@ public class ServiceManager implements BaseView {
 
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
+                        response.categories = mMainCategories;
 
                         if (createdThumbnail && createdOriginal) {
                             response.isWorking = true;
@@ -1740,6 +1741,7 @@ public class ServiceManager implements BaseView {
 
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
+                        response.categories = mMainCategories;
 
                         if (createdThumbnail && createdOriginal) {
                             response.isWorking = true;
@@ -1836,9 +1838,9 @@ public class ServiceManager implements BaseView {
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
-
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
+                        response.categories = mMainCategories;
 
                         if (createdOriginal) {
                             response.isWorking = true;
@@ -1886,6 +1888,12 @@ public class ServiceManager implements BaseView {
                                         items.size = driveDescription.size;
                                         items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+
+                                        if (!mResponse.categories.isCustom_Cover){
+                                            final MainCategories main = mResponse.categories;
+                                            main.item = new Gson().toJson(items);
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                        }
                                     }
                                     break;
                                 }
@@ -1900,6 +1908,12 @@ public class ServiceManager implements BaseView {
                                         items.size = driveDescription.size;
                                         items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+
+                                        if (!mResponse.categories.isCustom_Cover){
+                                            final MainCategories main = mResponse.categories;
+                                            main.item = new Gson().toJson(items);
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                        }
                                     }
                                     break;
                                 }
@@ -1938,7 +1952,7 @@ public class ServiceManager implements BaseView {
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
             final String categories_local_id = mMainCategories.categories_local_id;
-            final boolean isFakePin = mainCategories.isFakePin;
+            final boolean isFakePin = mMainCategories.isFakePin;
 
             final byte[] data = mData;
             final Bitmap mBitmap;
@@ -2016,6 +2030,7 @@ public class ServiceManager implements BaseView {
 
                 final ResponseRXJava response = new ResponseRXJava();
                 response.items = items;
+                response.categories = mMainCategories;
 
                 if (createdThumbnail && createdOriginal) {
                     response.isWorking = true;
@@ -2049,7 +2064,7 @@ public class ServiceManager implements BaseView {
                         if (mResponse.isWorking) {
                             final Items mItem = mResponse.items;
                             long mb;
-                            if (storage.isFileExist(mItem.originalPath)) {
+                            if (storage.isFileExist(mItem.originalPath) && storage.isFileExist(mItem.thumbnailPath)) {
                                 final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
                                 mb = (long) +storage.getSize(new File(mItem.originalPath), SizeUnit.B);
                                 if (storage.isFileExist(mItem.thumbnailPath)) {
@@ -2059,6 +2074,14 @@ public class ServiceManager implements BaseView {
                                 mItem.size = driveDescription.size;
                                 mItem.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
+
+                                if (!mResponse.categories.isCustom_Cover){
+                                    final MainCategories main = mResponse.categories;
+                                    main.item = new Gson().toJson(mItem);
+                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                    Utils.Log(TAG,"Special main categories "+ new Gson().toJson(main));
+                                }
+
                             }
                         }
                         Utils.Log(TAG, "Insert Successful");

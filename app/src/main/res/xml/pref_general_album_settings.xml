@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="@string/key_general"
+    <co.tpcreative.supersafe.common.preference.MyPreferenceCategory android:title="@string/key_general"
         android:layout="@layout/preference_category_layout">
-        <Preference
+        <co.tpcreative.supersafe.common.preference.MyPreference
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_account_circle_white_36"
             android:key="@string/key_name"
             android:summary="@string/key_name"
             android:title="@string/name"/>
 
-        <Preference
+        <co.tpcreative.supersafe.common.preference.MyPreference
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_https_white_48"
             android:key="@string/key_album_lock"
@@ -18,5 +18,13 @@
             android:defaultValue="false"
             android:title="@string/album_lock"/>
 
-    </PreferenceCategory>
-</PreferenceScreen>
+        <co.tpcreative.supersafe.common.preference.MyPreference
+            android:title="@string/key_album_cover"
+            android:key="@string/key_album_cover"
+            android:summary="@string/key_custom"
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_blur_on_white_48">
+        </co.tpcreative.supersafe.common.preference.MyPreference>
+
+    </co.tpcreative.supersafe.common.preference.MyPreferenceCategory>
+</android.support.v7.preference.PreferenceScreen>

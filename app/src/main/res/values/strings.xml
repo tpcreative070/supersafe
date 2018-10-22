@@ -168,7 +168,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.101:8081</string>
+    <string name="url_developer">http://192.168.0.103:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -233,6 +233,9 @@
     <string name="device_type">Android</string>
     <string name="slide_show">Slideshow</string>
     <string name="ask_delete">Are you sure you want to delete this item ?</string>
+    <string name="are_you_sure_you_want_to_move_this_album_to_trash">Are you sure you want to move this album to Trash?</string>
+    <string name="delete_all">Delete All</string>
+    <string name="are_you_sure_you_want_to_empty_trash">Are you sure you want to empty Trash?</string>
     <string name="progressing">Progressing...</string>
     <string name="Sending">Sending</string>
     <string name="done">Done</string>
@@ -361,8 +364,8 @@
     <string name="key_empty_trash">Empty Trash</string>
     <string name="key_fingerprint_unlock">Fingerprint unlock</string>
     <string name="key_fingerprint_unlock_detail">If enabled, you can still use PIN</string>
-
-
+    <string name="key_album_cover">Album Cover</string>
+    <string name="key_custom">Custom</string>
 
 
     /*Preference keys*/

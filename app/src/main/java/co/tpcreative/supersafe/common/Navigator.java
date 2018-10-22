@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity;
+import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity;
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity;
@@ -63,7 +64,6 @@ public class Navigator {
     public static final int REQUEST_CODE_EMAIL = 1007;
     public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008;
     public static final int SHARE = 1009;
-
 
 
     public static void onMoveToMainTab(Context context){
@@ -308,5 +308,12 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    public static void onMoveAlbumCover(Context context,MainCategories categories){
+        Intent intent = new Intent(context, AlbumCoverActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MainCategories.class.getSimpleName(),categories);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+    }
 
 }

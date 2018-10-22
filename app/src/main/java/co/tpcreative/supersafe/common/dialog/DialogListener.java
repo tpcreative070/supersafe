@@ -5,7 +5,6 @@ package co.tpcreative.supersafe.common.dialog;
  */
 
 public interface DialogListener {
-
     void onClickButton();
     void dismiss();
 }

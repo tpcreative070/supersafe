@@ -14,7 +14,6 @@
             android:title="@string/key_face_down_lock"/>
 
 
-
         <co.tpcreative.supersafe.common.preference.MySwitchPreference
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_fingerprint_unlock"

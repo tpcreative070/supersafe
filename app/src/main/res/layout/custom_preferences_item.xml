@@ -56,11 +56,25 @@
                 android:maxLines="2"/>
 
         </RelativeLayout>
-        <android.support.v7.widget.SwitchCompat
-            android:visibility="invisible"
-            android:id="@android:id/checkbox"
+
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-        </android.support.v7.widget.SwitchCompat>
+
+            <ImageView
+                android:id="@+id/imgCover"
+                android:layout_centerInParent="true"
+                android:layout_width="@dimen/image_size_custom_40"
+                android:layout_height="@dimen/image_size_custom_40"/>
+
+            <android.support.v7.widget.SwitchCompat
+                android:layout_centerInParent="true"
+                android:visibility="invisible"
+                android:id="@android:id/checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.SwitchCompat>
+        </RelativeLayout>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

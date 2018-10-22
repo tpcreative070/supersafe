@@ -24,6 +24,8 @@ import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.dialog.DialogListener;
+import co.tpcreative.supersafe.common.dialog.DialogManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -137,13 +139,31 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     @Override
     public void onDeleteAlbum(int position) {
         Utils.Log(TAG, "Delete album");
-        presenter.onDeleteAlbum(position);
+        DialogManager.getInstance().onStartDialog(getContext(), R.string.confirm, R.string.are_you_sure_you_want_to_move_this_album_to_trash, new DialogListener() {
+            @Override
+            public void onClickButton() {
+                presenter.onDeleteAlbum(position);
+            }
+            @Override
+            public void dismiss() {
+
+            }
+        });
     }
 
     @Override
     public void onEmptyTrash(int position) {
         try {
-            presenter.onEmptyTrash();
+            DialogManager.getInstance().onStartDialog(getContext(), R.string.delete_all, R.string.are_you_sure_you_want_to_empty_trash, new DialogListener() {
+                @Override
+                public void onClickButton() {
+                    presenter.onEmptyTrash();
+                }
+                @Override
+                public void dismiss() {
+
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }

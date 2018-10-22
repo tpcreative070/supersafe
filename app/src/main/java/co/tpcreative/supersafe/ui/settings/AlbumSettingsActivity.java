@@ -11,27 +11,25 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import java.util.List;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.trash.TrashActivity;
+
 
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
@@ -48,7 +46,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         presenter = new AlbumSettingsPresenter();
         presenter.bindView(this);
         presenter.getData(this);
-
+        onDrawOverLay(this);
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -111,9 +109,10 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        private MyPreference mName;
+        private MyPreference mLockAlbum;
+        private MyPreference mAlbumCover;
 
-        private Preference mName;
-        private Preference mLockAlbum;
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -127,7 +126,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             return new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(final Preference preference, final Object newValue) {
-
                     return true;
                 }
             };
@@ -150,6 +148,9 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                             String name = preference.getSummary().toString();
                             onShowChangeCategoriesNameDialog(EnumStatus.SET,null);
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_album_cover))){
+                            Navigator.onMoveAlbumCover(getContext(),presenter.mMainCategories);
+                        }
                     }
                     return true;
                 }
@@ -160,12 +161,12 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             /*change categories name*/
-            mName = findPreference(getString(R.string.key_name));
+            mName = (MyPreference) findPreference(getString(R.string.key_name));
             mName.setOnPreferenceChangeListener(createChangeListener());
             mName.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mName.setSummary(presenter.mMainCategories.categories_name);
 
-            mLockAlbum = findPreference(getString(R.string.key_album_lock));
+            mLockAlbum = (MyPreference) findPreference(getString(R.string.key_album_lock));
             mLockAlbum.setOnPreferenceChangeListener(createChangeListener());
             mLockAlbum.setOnPreferenceClickListener(createActionPreferenceClickListener());
 
@@ -176,6 +177,25 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             else {
                 mLockAlbum.setSummary(getString(R.string.locked));
             }
+
+            /*Album cover*/
+
+            mAlbumCover = (MyPreference) findPreference(getString(R.string.key_album_cover));
+            mAlbumCover.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mAlbumCover.setOnPreferenceChangeListener(createChangeListener());
+
+            mAlbumCover.setListener(new MyPreference.MyPreferenceListener() {
+                @Override
+                public void onUpdatePreference() {
+                    if (mAlbumCover.getImageView()!=null){
+                        mAlbumCover.getImageView().setImageDrawable(getResources().getDrawable(R.drawable.music_3));
+                        Utils.Log(TAG,"Log album cover.........");
+                    }
+                    else{
+                        Utils.Log(TAG,"Log album cover is null.........");
+                    }
+                }
+            });
 
         }
 
@@ -304,7 +324,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         }
     }
 
-
     @Override
     public void onError(String message, EnumStatus status) {
 
@@ -323,6 +342,14 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
     @Override
     public void onSuccessful(String message, EnumStatus status) {
 
+        switch (status){
+            case RELOAD:{
+                if (presenter.mMainCategories!=null){
+                    setTitle(presenter.mMainCategories.categories_name);
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -339,6 +366,5 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
-
 
 }

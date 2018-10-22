@@ -13,11 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.util.Utils;
 
 
 public class MyPreference extends Preference {
 
+    private static final String TAG = MyPreference.class.getSimpleName();
+
     private Context context;
+    private ImageView imageView;
+    private MyPreferenceListener listener;
+
+    public void setListener(MyPreferenceListener listener) {
+        this.listener = listener;
+    }
 
     public MyPreference(Context context) {
         super(context);
@@ -37,7 +46,21 @@ public class MyPreference extends Preference {
     @Override
     public void onBindViewHolder(PreferenceViewHolder view) {
         super.onBindViewHolder(view);
+        imageView = (ImageView) view.findViewById(R.id.imgCover);
+        if (listener!=null){
+            listener.onUpdatePreference();
+        }
+        Utils.Log(TAG,"onBind....");
     }
 
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+
+
+    public interface MyPreferenceListener{
+        void onUpdatePreference();
+    }
 
 }

@@ -2,14 +2,14 @@ package co.tpcreative.supersafe.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.UUID;
+import co.tpcreative.supersafe.common.util.Utils;
+
 
 @Entity(tableName = "items")
 public class Items implements Serializable {
@@ -53,6 +53,9 @@ public class Items implements Serializable {
     public boolean isOriginalGlobalId;
 
     private static Items instance;
+
+    @Ignore
+    private static final String TAG = Items.class.getSimpleName();
 
 
     @Ignore
@@ -147,6 +150,22 @@ public class Items implements Serializable {
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
         return myMap;
+    }
+
+    @Ignore
+    public Items getObject(String value){
+        try {
+            if (value==null){
+                return null;
+            }
+            final Items items = new Gson().fromJson(value,Items.class);
+            Utils.Log(TAG,new Gson().toJson(items));
+            return items;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

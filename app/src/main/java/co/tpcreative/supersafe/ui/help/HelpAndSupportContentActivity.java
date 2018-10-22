@@ -84,6 +84,16 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         onFaceDown(isFaceDown);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.hideSoftKeyboard(this);
+        SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportContentActivity.class.getSimpleName());
+    }
+
+
+
+
 
     @Override
     public void onStartLoading(EnumStatus status) {
@@ -207,12 +217,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     };
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Utils.hideSoftKeyboard(this);
-        SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportContentActivity.class.getSimpleName());
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
