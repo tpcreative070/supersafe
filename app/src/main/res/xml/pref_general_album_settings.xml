@@ -3,28 +3,28 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto">
     <co.tpcreative.supersafe.common.preference.MyPreferenceCategory android:title="@string/key_general"
         android:layout="@layout/preference_category_layout">
-        <co.tpcreative.supersafe.common.preference.MyPreference
-            android:layout="@layout/custom_preferences_item"
+        <co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings
+            android:layout="@layout/custom_preferences_item_album_settings"
             android:icon="@drawable/baseline_account_circle_white_36"
             android:key="@string/key_name"
             android:summary="@string/key_name"
             android:title="@string/name"/>
 
-        <co.tpcreative.supersafe.common.preference.MyPreference
-            android:layout="@layout/custom_preferences_item"
+        <co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings
+            android:layout="@layout/custom_preferences_item_album_settings"
             android:icon="@drawable/baseline_https_white_48"
             android:key="@string/key_album_lock"
             android:summary="@string/album_lock"
             android:defaultValue="false"
             android:title="@string/album_lock"/>
 
-        <co.tpcreative.supersafe.common.preference.MyPreference
+        <co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings
             android:title="@string/key_album_cover"
             android:key="@string/key_album_cover"
             android:summary="@string/key_custom"
-            android:layout="@layout/custom_preferences_item"
+            android:layout="@layout/custom_preferences_item_album_settings"
             android:icon="@drawable/baseline_blur_on_white_48">
-        </co.tpcreative.supersafe.common.preference.MyPreference>
+        </co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings>
 
     </co.tpcreative.supersafe.common.preference.MyPreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

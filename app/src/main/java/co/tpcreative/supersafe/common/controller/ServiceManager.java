@@ -1175,6 +1175,18 @@ public class ServiceManager implements BaseView {
                                                     } else {
                                                         mItem.isSyncCloud = false;
                                                     }
+
+
+                                                    /*Custom cover*/
+                                                    final MainCategories categories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(mItem.categories_id,false);
+                                                    if (categories!=null){
+                                                        if (!categories.isCustom_Cover){
+                                                            categories.item = new Gson().toJson(mItem);
+                                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(categories);
+                                                        }
+                                                    }
+
+
                                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                                                 } else {
                                                     Utils.Log(TAG, "Failed Save 3");

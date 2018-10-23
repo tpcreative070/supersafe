@@ -1,17 +1,9 @@
 package co.tpcreative.supersafe.common.preference;
-
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
-import android.graphics.Typeface;
-import android.preference.PreferenceManager;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import android.widget.TextView;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.util.Utils;
 
@@ -19,14 +11,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class MyPreference extends Preference {
 
     private static final String TAG = MyPreference.class.getSimpleName();
-
     private Context context;
-    private ImageView imageView;
-    private MyPreferenceListener listener;
-
-    public void setListener(MyPreferenceListener listener) {
-        this.listener = listener;
-    }
 
     public MyPreference(Context context) {
         super(context);
@@ -46,21 +31,7 @@ public class MyPreference extends Preference {
     @Override
     public void onBindViewHolder(PreferenceViewHolder view) {
         super.onBindViewHolder(view);
-        imageView = (ImageView) view.findViewById(R.id.imgCover);
-        if (listener!=null){
-            listener.onUpdatePreference();
-        }
-        Utils.Log(TAG,"onBind....");
-    }
 
-    public ImageView getImageView() {
-        return imageView;
-    }
-
-
-
-    public interface MyPreferenceListener{
-        void onUpdatePreference();
     }
 
 }

@@ -129,6 +129,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
     }
 
+
+
     public void setProgressValue(){
         CircularProgressDrawable circularProgressDrawable;
         CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
@@ -170,6 +172,12 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SingletonPremiumTimer.getInstance().setListener(null);
     }
 
     @Override
