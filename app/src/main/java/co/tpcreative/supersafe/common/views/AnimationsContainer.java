@@ -16,7 +16,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class AnimationsContainer {
-    public int FPS = 10;  // animation FPS
+    public int FPS = 3;  // animation FPS
 
     // single instance procedures
     private static AnimationsContainer mInstance;
@@ -38,21 +38,14 @@ public class AnimationsContainer {
     // animation progress dialog frames
  //   private int[] mProgressAnimFrames = { R.drawable.logo_30001, R.drawable.logo_30002, R.drawable.logo_30003 };
 
-    int[] mUpAnimFrames = {R.drawable.ic_15,
-            R.drawable.ic_0, R.drawable.ic_1, R.drawable.ic_2,
-            R.drawable.ic_3, R.drawable.ic_4, R.drawable.ic_5,
-            R.drawable.ic_6, R.drawable.ic_7, R.drawable.ic_8,
-            R.drawable.ic_9, R.drawable.ic_10, R.drawable.ic_11,
-            R.drawable.ic_12, R.drawable.ic_13, R.drawable.ic_14,
-            R.drawable.ic_14_0, R.drawable.ic_14_1
+    int[] mUpAnimFrames = {R.drawable.ic_up_0,
+            R.drawable.ic_up_1,R.drawable.ic_up_2,
+            R.drawable.ic_up_3,R.drawable.ic_up_4
     };
 
-    int[] mDownAnimFrames = {R.drawable.ic_down_15,R.drawable.ic_down_0,
+    int[] mDownAnimFrames = {R.drawable.ic_down_0,
             R.drawable.ic_down_1, R.drawable.ic_down_2, R.drawable.ic_down_3,
-            R.drawable.ic_down_4, R.drawable.ic_down_5, R.drawable.ic_down_6,
-            R.drawable.ic_down_7, R.drawable.ic_down_8, R.drawable.ic_down_9,
-            R.drawable.ic_down_10, R.drawable.ic_down_11, R.drawable.ic_down_12,
-            R.drawable.ic_down_13, R.drawable.ic_down_14
+            R.drawable.ic_down_4
     };
 
 
@@ -118,7 +111,7 @@ public class AnimationsContainer {
             mSoftReferenceImageView = new SoftReference<MenuItem>(imageView);
             mShouldRun = false;
             mIsRunning = false;
-            mDelayMillis = 1000 / fps;
+            mDelayMillis = 2000 / fps;
 
             imageView.setIcon(mFrames[0]);
 

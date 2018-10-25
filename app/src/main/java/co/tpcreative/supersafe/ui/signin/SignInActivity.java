@@ -162,7 +162,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     public void onError(String message, EnumStatus status) {
         switch (status){
             case SIGN_IN:{
-                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                edtEmail.setError(message);
                 break;
             }
         }
@@ -188,7 +188,6 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
         switch (status){
             case SIGN_IN:{
                 Log.d(TAG,"user : " + new Gson().toJson(object));
-                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
                 Navigator.onMoveToVerify(this,object);
                 presenter.onSendGmail(object.email,object.code);
                 break;

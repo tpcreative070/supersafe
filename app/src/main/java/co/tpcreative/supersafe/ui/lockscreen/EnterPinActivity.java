@@ -205,15 +205,15 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         break;
                     }
                     case VERIFY: {
-                        checkPin(pin);
+                        checkPin(pin,true);
                         break;
                     }
                     case VERIFY_TO_CHANGE: {
-                        checkPin(pin);
+                        checkPin(pin,true);
                         break;
                     }
                     case VERIFY_TO_CHANGE_FAKE_PIN: {
-                        checkPin(pin);
+                        checkPin(pin,true);
                         break;
                     }
                     case CHANGE: {
@@ -244,15 +244,15 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             public void onPinChange(int pinLength, String intermediatePin) {
                 switch (mPinAction) {
                     case VERIFY: {
-                        checkPin(intermediatePin);
+                        checkPin(intermediatePin,false);
                         break;
                     }
                     case VERIFY_TO_CHANGE: {
-                        checkPin(intermediatePin);
+                        checkPin(intermediatePin,false);
                         break;
                     }
                     case VERIFY_TO_CHANGE_FAKE_PIN: {
-                        checkPin(intermediatePin);
+                        checkPin(intermediatePin,false);
                     }
                     default: {
                         Utils.Log(TAG, "Nothing working!!!");
@@ -266,12 +266,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
         mPinLockView.attachIndicatorDots(mIndicatorDots);
         mPinLockView.setPinLockListener(pinLockListener);
-
         mPinLockView.setPinLength(PIN_LENGTH);
 
         mIndicatorDots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION);
-        checkForFont();
-
         onInitHiddenCamera();
 
         imgLauncher.setOnLongClickListener(new View.OnLongClickListener() {
@@ -316,19 +313,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         onBackPressed();
     }
 
-    private void checkForFont() {
-        Intent intent = getIntent();
 
-        if (intent.hasExtra(EXTRA_FONT_TEXT)) {
-
-            String font = intent.getStringExtra(EXTRA_FONT_TEXT);
-            setTextFont(font);
-        }
-        if (intent.hasExtra(EXTRA_FONT_NUM)) {
-            String font = intent.getStringExtra(EXTRA_FONT_NUM);
-            setNumFont(font);
-        }
-    }
 
     public void onDelete(View view) {
         Log.d(TAG, "onDelete here");
@@ -337,25 +322,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-    private void setTextFont(String font) {
-        try {
-            Typeface typeface = Typeface.createFromAsset(getAssets(), font);
-            mTextTitle.setTypeface(typeface);
-            mTextAttempts.setTypeface(typeface);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void setNumFont(String font) {
-        try {
-            Typeface typeface = Typeface.createFromAsset(getAssets(), font);
-
-            mPinLockView.setTypeFace(typeface);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /*Forgot pin*/
     @OnClick(R.id.llForgotPin)
@@ -536,7 +503,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         });
     }
 
-    private void checkPin(String pin) {
+    private void checkPin(String pin,boolean isCompleted) {
         final boolean isFakePinEnabled = PrefsController.getBoolean(getString(R.string.key_fake_pin), false);
         switch (mPinAction) {
             case VERIFY: {
@@ -548,6 +515,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     onTakePicture(pin);
                     onAlertWarning("");
                 }
+                else {
+                    if (isCompleted){
+                        onTakePicture(pin);
+                        onAlertWarning("");
+                    }
+                }
                 break;
             }
             case VERIFY_TO_CHANGE: {
@@ -557,6 +530,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     onTakePicture(pin);
                     onAlertWarning("");
                 }
+                else{
+                    if (isCompleted){
+                        onTakePicture(pin);
+                        onAlertWarning("");
+                    }
+                }
                 break;
             }
             case VERIFY_TO_CHANGE_FAKE_PIN: {
@@ -565,6 +544,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 } else if (pin.length() > getPinFromSharedPreferences().length()) {
                     onTakePicture(pin);
                     onAlertWarning("");
+                }
+                else{
+                    if (isCompleted){
+                        onTakePicture(pin);
+                        onAlertWarning("");
+                    }
                 }
                 break;
             }

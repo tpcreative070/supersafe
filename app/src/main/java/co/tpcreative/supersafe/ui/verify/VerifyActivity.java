@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import java.util.List;
@@ -18,7 +17,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
@@ -26,7 +24,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+
 
 public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, TextView.OnEditorActionListener{
 
@@ -196,7 +194,7 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
     public void onError(String message, EnumStatus status) {
         switch (status){
             case VERIFY_CODE:{
-                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                edtCode.setError(message);
                 break;
             }
         }

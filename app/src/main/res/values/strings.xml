@@ -131,6 +131,7 @@
     <string name="flash_off">Flash off</string>
     <string name="flash_on">Flash on</string>
 
+
     /*Clock Screen*/
 
     <string name="pinlock_title">Enter Pin Code</string>
@@ -360,6 +361,7 @@
     <string name="key_main_album">Main Album</string>
     <string name="key_card_ids">Cards &#38; Ids</string>
     <string name="key_videos">Videos</string>
+    <string name="key_photos">Photos</string>
     <string name="key_significant_other">Significant Other</string>
     <string name="key_trash">Trash</string>
     <string name="key_empty_trash">Empty Trash</string>

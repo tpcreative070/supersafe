@@ -202,7 +202,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
     public void onError(String message, EnumStatus status) {
         switch (status){
             case SIGN_UP:{
-                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+                edtEmail.setError(message);
                 break;
             }
         }

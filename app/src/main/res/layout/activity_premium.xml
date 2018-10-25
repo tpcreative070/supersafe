@@ -54,10 +54,11 @@
                     android:orientation="vertical">
 
                     <ImageView
+                        android:tint="?attr/colorAccent"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/baseline_stars_white_48" />
+                        android:src="@drawable/ic_premium_icon" />
 
                     <TextView
                         android:layout_width="match_parent"
