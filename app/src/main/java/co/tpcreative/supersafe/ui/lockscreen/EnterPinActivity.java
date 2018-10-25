@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.lockscreen;
-
 import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
@@ -10,33 +9,24 @@ import android.graphics.Typeface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.SwitchPreferenceCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.multidots.fingerprintauth.FingerPrintAuthCallback;
 import com.multidots.fingerprintauth.FingerPrintAuthHelper;
-
 import java.io.File;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -64,10 +54,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.restore.RestoreActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
-import co.tpcreative.supersafe.ui.theme.ThemeSettingsPresenter;
-
 
 public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>, FingerPrintAuthCallback {
 
@@ -104,7 +91,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     RelativeLayout includeLayout;
     @BindView(R.id.btnDone)
     Button btnDone;
+    @BindView(R.id.imgFingerprint)
+    ImageView imgFingerprint;
+    @BindView(R.id.imgSwitchTypeUnClock)
+    ImageView imgSwitchTypeUnClock;
     private int count = 0;
+    private boolean isFingerprint ;
 
 
     private static EnumPinAction mPinAction;
@@ -156,13 +148,26 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     onDisplayView();
                     onDisplayText();
                 } else {
+
+                    if (Utils.isSensorAvailable()){
+                        boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
+                        if (isFingerPrintUnLock){
+                            imgSwitchTypeUnClock.setVisibility(View.VISIBLE);
+                            isFingerprint = isFingerPrintUnLock;
+                            onSetVisitFingerprintView(isFingerprint);
+                        }
+                    }
+
                     final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door), false);
                     if (value) {
+                        imgSwitchTypeUnClock.setVisibility(View.INVISIBLE);
                         changeLayoutSecretDoor(true);
                     } else {
                         onDisplayView();
                         onDisplayText();
                     }
+
+
                 }
                 break;
             }
@@ -281,6 +286,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         if (Utils.isSensorAvailable()){
             mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this);
         }
+
     }
 
     @Override
@@ -518,7 +524,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     presenter.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE);
                 }
             }
-
             @Override
             public void onError() {
                 Utils.Log(TAG, "Exporting error");
@@ -541,9 +546,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     presenter.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE);
                 } else if (pin.length() > getPinFromSharedPreferences().length()) {
                     onTakePicture(pin);
-                    shake();
-                    mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
-                    mPinLockView.resetPinLockView();
+                    onAlertWarning("");
                 }
                 break;
             }
@@ -552,9 +555,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.CHANGE);
                 } else if (pin.length() > getPinFromSharedPreferences().length()) {
                     onTakePicture(pin);
-                    shake();
-                    mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
-                    mPinLockView.resetPinLockView();
+                    onAlertWarning("");
                 }
                 break;
             }
@@ -563,9 +564,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.FAKE_PIN);
                 } else if (pin.length() > getPinFromSharedPreferences().length()) {
                     onTakePicture(pin);
-                    shake();
-                    mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
-                    mPinLockView.resetPinLockView();
+                    onAlertWarning("");
                 }
                 break;
             }
@@ -592,6 +591,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
         }
+        Utils.Log(TAG,"Visit...."+ count);
     }
 
     private void onAlertWarning(String title) {
@@ -624,6 +624,27 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 mFirstPin = "";
                 break;
             }
+            case VERIFY:{
+                shake();
+                mTextTitle.setText(title);
+                mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                mPinLockView.resetPinLockView();
+                break;
+            }
+            case VERIFY_TO_CHANGE:{
+                shake();
+                mTextTitle.setText(title);
+                mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                mPinLockView.resetPinLockView();
+                break;
+            }
+            case VERIFY_TO_CHANGE_FAKE_PIN:{
+                shake();
+                mTextTitle.setText(title);
+                mTextAttempts.setText(getString(R.string.pinlock_wrongpin));
+                mPinLockView.resetPinLockView();
+                break;
+            }
         }
     }
 
@@ -642,6 +663,18 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             mTextAttempts.setVisibility(View.INVISIBLE);
             imgLauncher.setVisibility(View.INVISIBLE);
             includeLayout.setVisibility(View.GONE);
+
+
+            if (Utils.isSensorAvailable()){
+                boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
+                if (isFingerPrintUnLock){
+                    imgSwitchTypeUnClock.setVisibility(View.VISIBLE);
+                    isFingerprint = isFingerPrintUnLock;
+                    onSetVisitFingerprintView(isFingerprint);
+                }
+            }
+
+
         }
     }
 
@@ -932,7 +965,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     public void onAuthSuccess(FingerprintManager.CryptoObject cryptoObject) {
         boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
+        isFingerprint = isFingerPrintUnLock;
         if (!isFingerPrintUnLock) {
+
             return;
         }
 
@@ -971,6 +1006,38 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public Context getContext() {
         return getApplicationContext();
     }
+
+
+
+    @OnClick(R.id.imgSwitchTypeUnClock)
+    public void onClickedSwitchTypeUnlock(View view){
+        if (isFingerprint){
+            isFingerprint = false;
+        }
+        else{
+            isFingerprint = true;
+        }
+        onSetVisitFingerprintView(isFingerprint);
+    }
+
+    public void onSetVisitFingerprintView(boolean isFingerprint){
+        if (isFingerprint){
+            mPinLockView.setVisibility(View.INVISIBLE);
+            imgFingerprint.setVisibility(View.VISIBLE);
+            rlDots.setVisibility(View.INVISIBLE);
+            mTextAttempts.setText(getString(R.string.use_your_fingerprint_to_unlock_supersafe));
+            mTextAttempts.setVisibility(View.VISIBLE);
+            mTextTitle.setText("");
+        }
+        else{
+            mPinLockView.setVisibility(View.VISIBLE);
+            imgFingerprint.setVisibility(View.INVISIBLE);
+            rlDots.setVisibility(View.VISIBLE);
+            mTextAttempts.setText("");
+            mTextTitle.setText(getString(R.string.pinlock_title));
+        }
+    }
+
 
     /*Settings preference*/
 

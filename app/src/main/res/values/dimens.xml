@@ -4,6 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="g_top_margin">100dp</dimen>
     <dimen name="button_high">40dp</dimen>
+    <dimen name="button_high_50">50dp</dimen>
     <dimen name="button_high_trash">55dp</dimen>
     <dimen name="relative_high">60dp</dimen>
     <dimen name="linear_high">90dp</dimen>

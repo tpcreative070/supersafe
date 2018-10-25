@@ -42,28 +42,46 @@
 
 
         <LinearLayout
-            android:visibility="invisible"
-            android:id="@+id/llForgotPin"
             android:orientation="horizontal"
-            android:layout_margin="10dp"
+            android:layout_margin="20dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <TextView
-                android:layout_marginRight="10dp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:text="@string/key_forgot_pin"
+            <LinearLayout
+                android:visibility="invisible"
                 android:layout_gravity="center"
+                android:id="@+id/llForgotPin"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginRight="10dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:text="@string/key_forgot_pin"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/baseline_help_outline_white_48"
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size" />
+            </LinearLayout>
+
+
             <ImageView
+                android:visibility="gone"
                 android:layout_gravity="center"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/baseline_help_outline_white_48"
-                android:layout_width="@dimen/icon_size"
-                android:layout_height="@dimen/icon_size" />
+                android:id="@+id/imgSwitchTypeUnClock"
+                android:src="@drawable/baseline_dialpad_white_48"
+                android:layout_width="@dimen/image_size_custom_40"
+                android:layout_height="@dimen/image_size_custom_40"/>
+
         </LinearLayout>
 
 
@@ -121,7 +139,6 @@
                     android:layout_height="@dimen/default_button_size"
                     android:layout_alignParentRight="true"
                     android:onClick="onDelete">
-
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
@@ -132,6 +149,7 @@
 
 
             <TextView
+                android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold"
                 android:id="@+id/attempts"
                 android:layout_width="wrap_content"
@@ -154,7 +172,18 @@
                     android:layout_alignParentBottom="true"
                     android:layout_margin="@dimen/lockview_margin"
                     android:scrollbars="none" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:src="@drawable/baseline_fingerprint_white_48"
+                    android:id="@+id/imgFingerprint"
+                    android:layout_centerInParent="true"
+                    android:layout_width="@dimen/icon_size_60"
+                    android:layout_height="@dimen/icon_size_60" />
+
             </RelativeLayout>
+
+
         </LinearLayout>
 
         <include

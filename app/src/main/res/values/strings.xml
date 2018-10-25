@@ -144,7 +144,7 @@
     <string name="pinlock_confirm_your_pin">Please confirm your pin to continue</string>
     <string name="pinlock_confirm_create">Create a PIN to lock your vault</string>
     <string name="pin_lock_replace">Your fake PIN cannot start with your real PIN, or Your real PIN cannot start with your fake PIN.</string>
-
+    <string name="use_your_fingerprint_to_unlock_supersafe">Use your fingerprint to unlock Supersafe</string>
 
     /*Material Design*/
     <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
