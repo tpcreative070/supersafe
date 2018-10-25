@@ -1007,5 +1007,14 @@ public class Utils {
         return sourceString;
     }
 
+    public static boolean appInstalledOrNot(String uri) {
+        PackageManager pm = SuperSafeApplication.getInstance().getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+        return false;
+    }
 
 }

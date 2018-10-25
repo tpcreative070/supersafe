@@ -64,16 +64,25 @@
 
     <PreferenceCategory android:title="@string/key_info"
         android:layout="@layout/preference_category_layout">
+
         <Preference
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_error_outline_white_48"
             android:key="@string/key_help_support"
             android:title="@string/key_help_support"/>
+
+        <Preference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_description_white_48"
+            android:key="@string/key_privacy_policy"
+            android:title="@string/key_privacy_policy"/>
+
         <Preference
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_contact_support_white_48"
-            android:key="@string/key_about_SuperSafe"
-            android:title="@string/key_about_SuperSafe"/>
+            android:key="@string/key_version"
+            android:title="@string/key_version"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

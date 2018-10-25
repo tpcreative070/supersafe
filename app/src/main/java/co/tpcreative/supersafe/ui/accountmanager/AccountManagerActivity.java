@@ -2,9 +2,14 @@ package co.tpcreative.supersafe.ui.accountmanager;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,18 +20,22 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.common.adapter.DividerItemDecoration;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.albumcover.AlbumCoverAdapter;
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsAdapter;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
-public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,SingletonPremiumTimer.SingletonPremiumTimerListener{
+public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,SingletonPremiumTimer.SingletonPremiumTimerListener,AccountManagerAdapter.ItemSelectedListener{
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
     @BindView(R.id.tvEmail)
@@ -35,22 +44,25 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     TextView tvStatus;
     @BindView(R.id.tvLicenseStatus)
     TextView tvLicenseStatus;
-    @BindView(R.id.progressbar_circular)
-    CircularProgressBar mCircularProgressBar;
     @BindView(R.id.btnSignOut)
     Button btnSignOut;
     @BindView(R.id.tvStatusAccount)
     TextView tvStatusAccount;
     @BindView(R.id.tvPremiumLeft)
     TextView tvPremiumLeft;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
     private AccountManagerPresenter presenter;
+    private AccountManagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_manager);
+        initRecycleView();
         presenter = new AccountManagerPresenter();
         presenter.bindView(this);
+        presenter.getData();
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,7 +80,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 tvStatusAccount.setText(getString(R.string.unverified));
             }
         }
-        setProgressValue();
+
         Utils.Log(TAG,"account: "+ new Gson().toJson(mUser));
         if (mUser.premium.status){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
@@ -80,6 +92,18 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
 
         String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,"30");
         tvPremiumLeft.setText(Html.fromHtml(value));
+    }
+
+    public void initRecycleView(){
+        adapter = new AccountManagerAdapter(getLayoutInflater(),this,this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClickItem(int position) {
 
     }
 
@@ -130,24 +154,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     }
 
 
-
-    public void setProgressValue(){
-        CircularProgressDrawable circularProgressDrawable;
-        CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
-                .colors(getResources().getIntArray(R.array.gplus_colors))
-                .sweepSpeed(2)
-                .rotationSpeed(2)
-                .strokeWidth(Utils.dpToPx(3))
-                .style(CircularProgressDrawable.STYLE_ROUNDED);
-        mCircularProgressBar.setIndeterminateDrawable(circularProgressDrawable = b.build());
-        // /!\ Terrible hack, do not do this at home!
-        circularProgressDrawable.setBounds(0,
-                0,
-                mCircularProgressBar.getWidth(),
-                mCircularProgressBar.getHeight());
-        mCircularProgressBar.setVisibility(View.INVISIBLE);
-        mCircularProgressBar.setVisibility(View.INVISIBLE);
-    }
 
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){
@@ -238,7 +244,12 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-
+        switch (status){
+            case RELOAD:{
+                adapter.setDataSource(presenter.mList);
+                break;
+            }
+        }
     }
 
     @Override

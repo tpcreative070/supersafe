@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
@@ -145,13 +146,15 @@ public class SettingsActivity extends BaseActivity {
 
         private Preference mHelpSupport;
 
-        private Preference mAboutSuperSafe;
+        private Preference mPrivacyPolicy;
 
         private Preference mPrivateCloud;
 
         private Preference mAlbumLock ;
 
         private Preference mUpgrade;
+
+        private Preference mVersion;
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -273,9 +276,9 @@ public class SettingsActivity extends BaseActivity {
             mHelpSupport.setOnPreferenceChangeListener(createChangeListener());
 
             /*About SuperSafe*/
-            mAboutSuperSafe = findPreference(getString(R.string.key_about_SuperSafe));
-            mAboutSuperSafe.setOnPreferenceClickListener(createActionPreferenceClickListener());
-            mAboutSuperSafe.setOnPreferenceChangeListener(createChangeListener());
+            mPrivacyPolicy = findPreference(getString(R.string.key_privacy_policy));
+            mPrivacyPolicy.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mPrivacyPolicy.setOnPreferenceChangeListener(createChangeListener());
 
             /*Album Lock*/
             mAlbumLock = findPreference(getString(R.string.key_album_lock));
@@ -287,6 +290,12 @@ public class SettingsActivity extends BaseActivity {
             mUpgrade.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mUpgrade.setOnPreferenceChangeListener(createChangeListener());
 
+            /*Version*/
+            mVersion = findPreference(getString(R.string.key_version));
+            mVersion.setOnPreferenceChangeListener(createChangeListener());
+            mVersion.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mVersion.setSummary(String.format(getString(R.string.key_super_safe_version),BuildConfig.VERSION_NAME));
+
         }
 
         @Override
@@ -295,7 +304,4 @@ public class SettingsActivity extends BaseActivity {
         }
 
     }
-
-
-
 }

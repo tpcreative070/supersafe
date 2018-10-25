@@ -36,6 +36,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <LinearLayout
             android:background="@color/material_gray_200"
             android:orientation="vertical"
@@ -208,11 +213,34 @@
             </LinearLayout>
 
 
+            <!-- List app was installed on this devices -->
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textColor="?attr/colorAccent"
+                    android:textSize="@dimen/medium"
+                    android:padding="20dp"
+                    android:gravity="left"
+                    android:background="@color/white"
+                    android:text="@string/our_apps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
             <!-- Action button -->
 
 
             <LinearLayout
-                android:layout_marginTop="20dp"
+                android:visibility="gone"
                 android:background="@color/white"
                 android:padding="15dp"
                 android:gravity="center"
@@ -233,18 +261,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        <fr.castorflex.android.circularprogressbar.CircularProgressBar
-            android:layout_centerInParent="true"
-            android:id="@+id/progressbar_circular"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:indeterminate="true"
-            android:indeterminateOnly="false"/>
-
+        </ScrollView>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

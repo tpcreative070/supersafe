@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <LinearLayout
+        android:id="@+id/llHome"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/imgIconApp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_premium_icon"
+            android:layout_width="@dimen/image_size"
+            android:layout_height="@dimen/image_size" />
+
+        <LinearLayout
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_marginBottom="2dp"
+                android:textSize="@dimen/medium"
+                android:textColor="@color/material_gray_800"
+                android:text="PhotoVault"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_marginTop="2dp"
+                android:text="Lock down photo"
+                android:textSize="@dimen/small"
+                android:textColor="@color/material_gray_500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:gravity="right"
+            android:layout_gravity="right|center"
+            android:textSize="@dimen/small"
+            android:text="Installed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -348,10 +348,13 @@
     <string name="key_device_type">device_type</string>
     <string name="key_manufacturer">manufacturer</string>
     <string name="key_name_model">name_model</string>
-    <string name="key_version">version</string>
+    <string name="key_version">Version</string>
     <string name="key_versionRelease">versionRelease</string>
     <string name="key_code">code</string>
     <string name="key_verify_account">verify_account</string>
+    <string name="key_privacy_policy">Privacy Policy</string>
+    <string name="key_super_safe_version">SuperSafe: %1$s</string>
+
 
     <string name="key_main_album">Main Album</string>
     <string name="key_card_ids">Cards &#38; Ids</string>
@@ -513,4 +516,8 @@
     <string name="tap_here_to_add_items_description">Add photos, videos, audios, or create a new album.</string>
     <string name="tap_here_to_enable_sync_data">Tap here to enable sync data.</string>
     <string name="tap_here_to_enable_sync_data_description">The items will be synced to Google drive. You never lost files.</string>
+    <string name="installed">Installed</string>
+    <string name="learn_more">Learn more</string>
+    <string name="our_apps">Our apps</string>
+
 </resources>
