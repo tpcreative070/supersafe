@@ -49,6 +49,8 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
     CircularProgressBar mCircularProgressBar;
     @BindView(R.id.progressbar_circular_unlock_albums)
     CircularProgressBar mCircularProgressBarUnlock;
+    @BindView(R.id.tvPremiumDescription)
+    TextView tvPremiumDescription;
     private UnlockAllAlbumPresenter presenter;
     private boolean isNext;
     private static final String TAG = UnlockAllAlbumActivity.class.getSimpleName();
@@ -72,6 +74,8 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         }
         edtCode.addTextChangedListener(mTextWatcher);
         edtCode.setOnEditorActionListener(this);
+        tvPremiumDescription.setText(getString(R.string.unlock_all_album_title));
+        onDrawOverLay(this);
     }
 
     @Override

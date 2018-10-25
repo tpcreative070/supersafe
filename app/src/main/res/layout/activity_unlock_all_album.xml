@@ -11,155 +11,162 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_collapseMode="pin" />
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
-        </android.support.design.widget.CollapsingToolbarLayout>
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"></android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_margin="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:textColor="?attr/colorPrimary"
-                android:textSize="@dimen/text_size_normal"
-                android:text="@string/unlock_all_album_title"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/layout_premium_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <TextView
-                android:textSize="@dimen/text_size_normal"
-                android:layout_marginTop="20dp"
-                android:textStyle="bold"
-                android:text="@string/step_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tvStep1"
-                android:layout_marginTop="10dp"
-                android:textSize="@dimen/text_size_normal"
-                android:text="@string/request_an_access_code"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
-            <RelativeLayout
-                android:layout_marginTop="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:layout_centerInParent="true"
-                    android:id="@+id/btnSendRequest"
-                    android:textColor="@color/white"
-                    android:text="@string/send_verification_code"
-                    android:padding="10dp"
-                    android:background="@drawable/bg_button_rounded"
-                    android:layout_width="200dp"
-                    android:layout_height="@dimen/button_high" />
-
-                <fr.castorflex.android.circularprogressbar.CircularProgressBar
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true"
-                    android:id="@+id/progressbar_circular"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:indeterminate="true"
-                    android:indeterminateOnly="false"/>
-
-            </RelativeLayout>
-
-
-
-            <TextView
-                android:textSize="@dimen/text_size_normal"
-                android:layout_marginTop="20dp"
-                android:textStyle="bold"
-                android:text="@string/step_2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tvStep2"
-                android:layout_marginTop="10dp"
-                android:textSize="@dimen/text_size_normal"
-                android:text="@string/enter_access_code_to_unlock_all_albums"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/edtCode"
-                style="@style/RegularTextView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:hint="@string/code"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:singleLine="true"
-                android:textSize="@dimen/text_size_normal"
-                app:met_baseColor="@color/colorButton"
-                app:met_floatingLabel="highlight"
-                app:met_primaryColor="@color/colorButton"
-                app:met_textColor="@color/material_gray_700"
-                app:met_textColorHint="@color/colorButton" />
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_marginTop="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/step_1"
+                    android:textSize="@dimen/text_size_normal"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvStep1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/request_an_access_code"
+                    android:textSize="@dimen/text_size_normal" />
 
 
-                <fr.castorflex.android.circularprogressbar.CircularProgressBar
-                    android:visibility="invisible"
-                    android:layout_centerInParent="true"
-                    android:id="@+id/progressbar_circular_unlock_albums"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:indeterminate="true"
-                    android:indeterminateOnly="false"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp">
 
-                <Button
-                    android:id="@+id/btnUnlock"
-                    android:enabled="false"
-                    android:textColor="@color/white"
-                    android:text="@string/unlock_all_albums"
-                    android:padding="10dp"
-                    android:background="@drawable/bg_button_disable_rounded"
-                    android:layout_width="200dp"
-                    android:layout_height="@dimen/button_high"/>
+                    <Button
+                        android:id="@+id/btnSendRequest"
+                        android:layout_width="200dp"
+                        android:layout_height="@dimen/button_high"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/bg_button_rounded"
+                        android:padding="10dp"
+                        android:text="@string/send_verification_code"
+                        android:textColor="@color/white" />
 
-            </RelativeLayout>
+                    <fr.castorflex.android.circularprogressbar.CircularProgressBar
+                        android:id="@+id/progressbar_circular"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="8dp"
+                        android:indeterminate="true"
+                        android:indeterminateOnly="false"
+                        android:visibility="invisible" />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/step_2"
+                    android:textSize="@dimen/text_size_normal"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvStep2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/enter_access_code_to_unlock_all_albums"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edtCode"
+                    style="@style/RegularTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:hint="@string/code"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textSize="@dimen/text_size_normal"
+                    app:met_baseColor="@color/colorButton"
+                    app:met_floatingLabel="highlight"
+                    app:met_primaryColor="@color/colorButton"
+                    app:met_textColor="@color/material_gray_700"
+                    app:met_textColorHint="@color/colorButton" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp">
+
+
+                    <fr.castorflex.android.circularprogressbar.CircularProgressBar
+                        android:id="@+id/progressbar_circular_unlock_albums"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="true"
+                        android:indeterminateOnly="false"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:id="@+id/btnUnlock"
+                        android:layout_width="200dp"
+                        android:layout_height="@dimen/button_high"
+                        android:background="@drawable/bg_button_disable_rounded"
+                        android:enabled="false"
+                        android:padding="10dp"
+                        android:text="@string/unlock_all_albums"
+                        android:textColor="@color/white" />
+
+                </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

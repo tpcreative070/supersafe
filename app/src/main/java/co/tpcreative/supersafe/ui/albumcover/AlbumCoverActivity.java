@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
@@ -35,6 +37,8 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     RecyclerView recyclerView;
     @BindView(R.id.llRecyclerView)
     LinearLayout llRecyclerView;
+    @BindView(R.id.tvPremiumDescription)
+    TextView tvPremiumDescription;
     private AlbumCoverAdapter adapter;
     private boolean isReload;
 
@@ -55,6 +59,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         onDrawOverLay(this);
         btnSwitch.setOnCheckedChangeListener(this);
         presenter.getData();
+        tvPremiumDescription.setText(getString(R.string.premium_cover_description));
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {

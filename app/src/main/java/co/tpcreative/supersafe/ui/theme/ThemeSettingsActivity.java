@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+
 import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
@@ -29,6 +31,8 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     RecyclerView recyclerView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.tvPremiumDescription)
+    TextView tvPremiumDescription;
     private boolean isUpdated;
     private ThemeSettingsPresenter presenter;
 
@@ -45,6 +49,7 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         presenter = new ThemeSettingsPresenter();
         presenter.bindView(this);
         presenter.getData();
+        tvPremiumDescription.setText(getString(R.string.customize_your_theme));
     }
 
     @Override

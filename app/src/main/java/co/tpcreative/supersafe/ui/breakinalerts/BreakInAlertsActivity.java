@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.TextView;
+
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -40,6 +42,8 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     SwitchCompat btnSwitch;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.tvPremiumDescription)
+    TextView tvPremiumDescription;
     private BreakInAlertsAdapter adapter;
     private BreakInAlertsPresenter presenter;
 
@@ -59,6 +63,7 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
         presenter = new BreakInAlertsPresenter();
         presenter.bindView(this);
         presenter.onGetData();
+        tvPremiumDescription.setText(getString(R.string.break_in_alerts));
     }
 
     @Override

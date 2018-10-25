@@ -60,10 +60,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
-    public static final String EXTRA_SET_PIN = "set_pin";
-    public static final String EXTRA_SIGN_UP = "sign_up";
-    public static final String EXTRA_FONT_TEXT = "textFont";
-    public static final String EXTRA_FONT_NUM = "numFont";
+    public static final String EXTRA_SET_PIN = "SET_PIN";
     public static final String EXTRA_ENUM_ACTION = "ENUM_ACTION";
     private static final int PIN_LENGTH = 20;
 
@@ -991,7 +988,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public Context getContext() {
         return getApplicationContext();
     }
-
 
 
     @OnClick(R.id.imgSwitchTypeUnClock)

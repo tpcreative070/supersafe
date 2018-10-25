@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/llHeader"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:tint="@color/material_gray_600"
+                android:src="@drawable/ic_premium_icon"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size" />
+            <TextView
+                android:textSize="@dimen/text_size_normal"
+                android:paddingLeft="20dp"
+                android:layout_gravity="center"
+                android:text="@string/premium_feature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvPremiumDescription"
+            android:text="@string/premium_cover_description"
+            android:textSize="@dimen/text_size_normal"
+            android:textColor="@color/material_gray_600"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/llHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+
+
+</android.support.constraint.ConstraintLayout>

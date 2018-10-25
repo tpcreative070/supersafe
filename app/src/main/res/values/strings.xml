@@ -510,5 +510,7 @@
     <string name="what_is_basic_detail">It\'s free version of SuperSafe. It still protects your important files behind a lock screen and gives you good privacy features.</string>
     <string name="default_covers">Default covers</string>
     <string name="album_items">Album items</string>
+    <string name="premium_cover_description">Select an item from this album for the cover photo.(Or by using the most recent photos)</string>
+    <string name="customize_your_theme">Customize your theme.</string>
 
 </resources>

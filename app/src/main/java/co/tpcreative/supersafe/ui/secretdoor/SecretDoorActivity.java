@@ -5,6 +5,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -22,6 +24,8 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
     SwitchCompat btnSwitch;
     @BindView(R.id.rlScanner)
     RelativeLayout rlScanner;
+    @BindView(R.id.tvPremiumDescription)
+    TextView tvPremiumDescription;
 
 
     @Override
@@ -47,6 +51,7 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
                 }
             }
         });
+        tvPremiumDescription.setText(getString(R.string.secret_door));
     }
 
     @Override
