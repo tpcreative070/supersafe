@@ -16,7 +16,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 
-@Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 3, exportSchema = false)
+@Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 4, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore

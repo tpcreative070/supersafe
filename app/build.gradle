@@ -213,6 +213,7 @@ dependencies {
     /*simplerecyclerviewlibrary*/
     implementation project(':simplerecyclerviewlibrary')
 
+
     /*Fingerprint*/
     implementation project(':fingerprint-auth-library')
 

@@ -168,7 +168,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.100:8081</string>
+    <string name="url_developer">http://192.168.0.122:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -274,6 +274,7 @@
     <string name="premium">Premium</string>
     <string name="break_in_alerts">Whenever someone enters an incorrect PIN, We will log the date time and snap a secret photo</string>
     <string name="disabled">Disabled</string>
+    <string name="set_custom_covers">Set custom cover</string>
     <string name="enabled">Enabled</string>
     <string name="fake_pin">Create a second PIN or pattern that opens to a decoy Supersafe</string>
     <string name="secret_door">Disguise Supersafe as a different app. Simply press and hold on the Supersafe logo to bring up the lock screen.</string>
@@ -505,5 +506,7 @@
     <string name="what_if_i_do_not_want_premium_detail">That\'s file. When your complimentary Premium expires, You can switch to Basic</string>
     <string name="what_is_basic">What\'s basic?</string>
     <string name="what_is_basic_detail">It\'s free version of SuperSafe. It still protects your important files behind a lock screen and gives you good privacy features.</string>
+    <string name="default_covers">Default covers</string>
+    <string name="album_items">Album items</string>
 
 </resources>

@@ -129,7 +129,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                         int myColor = Color.parseColor(data.image);
                         imgAlbum.setBackgroundColor(myColor);
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 }
             }
@@ -141,7 +141,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     int myColor = Color.parseColor(data.image);
                     imgAlbum.setBackgroundColor(myColor);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
             tvTitle.setText(data.categories_name);

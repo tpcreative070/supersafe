@@ -57,11 +57,40 @@ public class MainCategories implements Serializable{
             "#371989",
             "#FF9800"};
 
+    @Ignore
+    public transient String []ListDefaultIcon = new String[]{
+            "baseline_account_circle_white_48",
+            "baseline_local_movies_white_48",
+            "baseline_favorite_border_white_48",
+            "baseline_favorite_border_white_48",
+            "baseline_theaters_white_48",
+            "baseline_library_music_white_48",
+            "baseline_weekend_white_48",
+            "baseline_insert_photo_white_48",
+            "baseline_cast_for_education_white_48"
+    };
+
+    @Ignore
+    public transient String []ListDefaultBackground = new String[]{
+            "#9C27B0",
+            "#cf7b00",
+            "#1e88e5",
+            "#CDDC39",
+            "#00acc1",
+            "#007c91",
+            "#6cd1de",
+            "#448AFF",
+            "#8BC34A"
+    };
 
     /*Send data to camera action*/
 
     private static final String TAG = MainCategories.class.getSimpleName();
 
+    public MainCategories(String defaultBackground,String defaultIcon){
+        this.image = defaultBackground;
+        this.icon = defaultIcon;
+    }
 
     public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer,boolean isFakePin,String pin,String item,boolean isCustom_Cover) {
         this.categories_name = categories_name;

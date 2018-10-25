@@ -64,6 +64,7 @@ public class Navigator {
     public static final int REQUEST_CODE_EMAIL = 1007;
     public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008;
     public static final int SHARE = 1009;
+    public static final int ALBUM_COVER = 1010;
 
 
     public static void onMoveToMainTab(Context context){
@@ -308,12 +309,12 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveAlbumCover(Context context,MainCategories categories){
+    public static void onMoveAlbumCover(Activity context,MainCategories categories){
         Intent intent = new Intent(context, AlbumCoverActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(MainCategories.class.getSimpleName(),categories);
         intent.putExtras(bundle);
-        context.startActivity(intent);
+        context.startActivityForResult(intent,ALBUM_COVER);
     }
 
 }

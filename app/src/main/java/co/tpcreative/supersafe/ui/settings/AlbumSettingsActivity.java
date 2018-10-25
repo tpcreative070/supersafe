@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -75,14 +77,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
         storage = new Storage(getApplicationContext());
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment == null) {
-            fragment = Fragment.instantiate(this, AlbumSettingsActivity.SettingsFragment.class.getName());
-        }
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, fragment);
-        transaction.commit();
+        onSetUpPreference();
     }
 
     @Override
@@ -101,14 +96,13 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         onFaceDown(isFaceDown);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
+        presenter.getData();
     }
-
 
     @Override
     public void onStartLoading(EnumStatus status) {
@@ -166,7 +160,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                             onShowChangeCategoriesNameDialog(EnumStatus.SET,null);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_cover))){
-                            Navigator.onMoveAlbumCover(getContext(),presenter.mMainCategories);
+                            Navigator.onMoveAlbumCover(getActivity(),presenter.mMainCategories);
                         }
                     }
                     return true;
@@ -427,6 +421,16 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         }
     }
 
+    public void onSetUpPreference(){
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (fragment == null) {
+            fragment = Fragment.instantiate(this, AlbumSettingsActivity.SettingsFragment.class.getName());
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.commit();
+    }
+
     @Override
     public Activity getActivity() {
         return this;
@@ -440,6 +444,20 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Navigator.ALBUM_COVER: {
+                if (resultCode == RESULT_OK) {
+                    onSetUpPreference();
+                    SingletonPrivateFragment.getInstance().onUpdateView();
+                }
+                break;
+            }
+        }
     }
 
 }

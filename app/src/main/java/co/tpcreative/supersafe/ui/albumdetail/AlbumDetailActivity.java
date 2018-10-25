@@ -65,11 +65,10 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 
-
 public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
+
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
