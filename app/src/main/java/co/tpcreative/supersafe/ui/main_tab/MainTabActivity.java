@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -22,6 +23,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -74,6 +77,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
         setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.main_tab);
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24);
         ab.setDisplayHomeAsUpEnabled(true);
@@ -90,6 +94,21 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
         final User mUser = User.getInstance().getUserInfo();
         Log.d(TAG,"User....." +new Gson().toJson(mUser));
+        onShowSuggestion();
+    }
+
+
+    public void onShowSuggestion(){
+        final boolean isFirstFile = PrefsController.getBoolean(getString(R.string.key_is_first_files),false);
+        if (!isFirstFile){
+            onSuggestionAddFiles();
+        }
+        else{
+            final boolean isFirstEnableSyncData = PrefsController.getBoolean(getString(R.string.key_is_first_enable_sync_data),false);
+            if (!isFirstEnableSyncData){
+                onSuggestionSyncData();
+            }
+        }
     }
 
     @Override
@@ -98,11 +117,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         switch (status){
             case FINISH:{
                 finish();
-                break;
-            }
-            case RECREATE:{
-                Utils.Log(TAG,"ReCreate............");
-                recreate();
                 break;
             }
         }
@@ -116,12 +130,26 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public void onAction(EnumStatus enumStatus) {
         try {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    onAnimationIcon(enumStatus);
+            switch (enumStatus){
+                case RECREATE:{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recreate();
+                        }
+                    });
+                    break;
                 }
-            });
+                default:{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onAnimationIcon(enumStatus);
+                        }
+                    });
+                    break;
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -159,20 +187,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 return true;
             }
             case R.id.action_sync :{
-                final User mUser = User.getInstance().getUserInfo();
-                if (mUser!=null){
-                    if (mUser.verified){
-                        if (!mUser.driveConnected){
-                            Navigator.onCheckSystem(this,null);
-                        }
-                        else{
-                            Navigator.onManagerCloud(this);
-                        }
-                    }
-                    else{
-                        Navigator.onVerifyAccount(this);
-                    }
-                }
+                onEnableSyncData();
                 return true;
             }
             case R.id.settings :{
@@ -412,8 +427,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_tab, menu);
-        this.menuItem = menu.getItem(0);
+        toolbar.inflateMenu(R.menu.main_tab);
+        this.menuItem = toolbar.getMenu().getItem(0);
         return true;
     }
 
@@ -587,6 +602,70 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
 
+    }
+
+
+    public void onSuggestionAddFiles(){
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(mSpeedDialView, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
+                        .titleTextSize(25)
+                        .titleTextColor(R.color.white)
+                        .descriptionTextColor(R.color.md_light_blue_200)
+                        .descriptionTextSize(17)
+                        .outerCircleColor(R.color.colorPrimary)
+                        .transparentTarget(true)
+                        .targetCircleColor(R.color.white)
+                        .cancelable(true)
+                        .dimColor(R.color.white),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        mSpeedDialView.open();
+                        view.dismiss(true);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
+                    }
+                });
+    }
+
+    public void onSuggestionSyncData(){
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forToolbarMenuItem(toolbar,R.id.action_sync, getString(R.string.tap_here_to_enable_sync_data), getString(R.string.tap_here_to_enable_sync_data_description))
+                        .titleTextSize(25)
+                        .titleTextColor(R.color.white)
+                        .descriptionTextColor(R.color.md_light_blue_200)
+                        .descriptionTextSize(17)
+                        .outerCircleColor(R.color.colorButton)
+                        .transparentTarget(true)
+                        .targetCircleColor(R.color.white)
+                        .cancelable(true)
+                        .dimColor(R.color.white),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        onEnableSyncData();
+                        view.dismiss(true);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data),true);
+                    }
+                });
+    }
+
+    public void onEnableSyncData(){
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.verified){
+                if (!mUser.driveConnected){
+                    Navigator.onCheckSystem(this,null);
+                }
+                else{
+                    Navigator.onManagerCloud(this);
+                }
+            }
+            else{
+                Navigator.onVerifyAccount(this);
+            }
+        }
     }
 
 

@@ -39,6 +39,7 @@ import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.hiddencamera.CameraCallbacks;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -141,6 +142,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        SingletonBaseApiActivity.getInstance().setListener(null);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }

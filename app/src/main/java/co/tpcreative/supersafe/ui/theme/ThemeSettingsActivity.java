@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
@@ -18,8 +17,10 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 
@@ -118,7 +119,7 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     protected void onDestroy() {
         super.onDestroy();
         if (isUpdated){
-            SingletonBaseApiActivity.getInstance().onStillScreenLock(EnumStatus.RECREATE);
+            SingletonManagerTab.getInstance().onAction(EnumStatus.RECREATE);
         }
     }
 

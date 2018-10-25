@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Supersafe</string>
+    <string name="app_name">SuperSafe</string>
     <string name="title_text">Google Sign-In\nQuickstart</string>
 
     <!-- Sign-in status messages -->
@@ -102,7 +102,7 @@
     <string name="photo">Import photos</string>
     <string name="album">Add album</string>
     <string name="grant_access">GRANT ACCESS</string>
-    <string name="keep_safety">Suppersafe needs access to your file storage</string>
+    <string name="keep_safety">SuperSafe needs access to your file storage</string>
     <string name="allow">This allows Supersafe to access and encrypt your photos or videos.</string>
     <string name="exit">EXIT</string>
     <string name="login">SIGN IN with your Super Safe account email</string>
@@ -111,12 +111,12 @@
     <string name="confirm">Confirm</string>
     <string name="internet">Please check your connections</string>
     <string name="yes">YES</string>
-    <string name="verify_title">Check %1$s for an access code to log in</string>
+    <string name="verify_title">Check %1$s for an access code to sign in</string>
     <string name="code">Access code</string>
     <string name="login_action">SIGN IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
-    <string name="welcome">Welcome to Supersafe</string>
+    <string name="welcome">Welcome to SuperSafe</string>
     <string name="safe_detail">A safe place for your photos or videos</string>
     <string name="title_forget">Add an email in the case you forget</string>
     <string name="name">Name</string>
@@ -145,14 +145,9 @@
     <string name="pinlock_confirm_your_pin">Please confirm your pin to continue</string>
     <string name="pinlock_confirm_create">Create a PIN to lock your vault</string>
     <string name="pin_lock_replace">Your fake PIN cannot start with your real PIN, or Your real PIN cannot start with your fake PIN.</string>
-    <string name="use_your_fingerprint_to_unlock_supersafe">Use your fingerprint to unlock Supersafe</string>
+    <string name="use_your_fingerprint_to_unlock_supersafe">Use your fingerprint to unlock SuperSafe</string>
 
     /*Material Design*/
-    <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
-    cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian
-    bergkase cream cheese fromage frais cheesy feet port-salut airedale. St. agur blue cheese rubber
-    cheese caerphilly cheddar cheesecake cream cheese manchego lancashire. Roquefort squirty cheese
-    the big cheese.</string>
     <string name="checkin">Checkin</string>
     <string name="menu_night_mode">Night mode</string>
     <string name="menu_night_mode_system">Follow system</string>
@@ -169,7 +164,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.122:8081</string>
+    <string name="url_developer">http://192.168.0.100:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -277,8 +272,8 @@
     <string name="disabled">Disabled</string>
     <string name="set_custom_covers">Set custom cover</string>
     <string name="enabled">Enabled</string>
-    <string name="fake_pin">Create a second PIN or pattern that opens to a decoy Supersafe</string>
-    <string name="secret_door">Disguise Supersafe as a different app. Simply press and hold on the Supersafe logo to bring up the lock screen.</string>
+    <string name="fake_pin">Create a second PIN or pattern that opens to a decoy SuperSafe</string>
+    <string name="secret_door">Disguise SuperSafe as a different app. Simply press and hold on the Supersafe logo to bring up the lock screen.</string>
     <string name="recent_alerts">Recent alerts</string>
     <string name="create_fake_pin">Create Fake PIN</string>
     <string name="change_fake_pin">Change Fake PIN</string>
@@ -304,7 +299,7 @@
     <string name="try_it_now">Try it now</string>
     <string name="long_press_the_log">Long press the logo ti active Secret Door.</string>
     <string name="enable_secret_door">Enable Secret Door?</string>
-    <string name="enable_secret_door_detail">Supersafe will look like a different app when you open it. All you need to do is find and long-press the Supersafe logo to reveal the PIN pad.</string>
+    <string name="enable_secret_door_detail">SuperSafe will look like a different app when you open it. All you need to do is find and long-press the SuperSafe logo to reveal the PIN pad.</string>
     <string name="successful_percent">100 %</string>
     <string name="system_scan_complete">System scan complete</string>
     <string name="threats_detected">0 threats detected</string>
@@ -317,13 +312,13 @@
     <string name="left">Left %1$s</string>
     <string name="quota_available">100 quota will be available next month</string>
     <string name="remove_quota_limit">REMOVE QUOTA LIMIT</string>
-    <string name="supersafe_used_space">Supersafe Used Space</string>
+    <string name="supersafe_used_space">SuperSafe Used Space</string>
     <string name="other_used_space">Other Used Space</string>
     <string name="free_space">Free Space</string>
     <string name="pause_cloud_sync">Pause Cloud Sync</string>
     <string name="cloud_sync_only_wifi">Cloud Sync Only In Wifi</string>
     <string name="calculating">Calculating</string>
-    <string name="supersafe_premium">Supersafe Premium</string>
+    <string name="supersafe_premium">SuperSafe Premium</string>
     <string name="premium_left">You have %1$s days of complimentary Premium remaining</string>
     <string name="move_items_to_trash">Move %1$s items to trash?</string>
     <string name="share_items">Share %1$s items...</string>
@@ -383,6 +378,8 @@
     <string name="key_main_categories_hash_list">main_categories_hash_list</string>
     <string name="key_categories_id">categories_id</string>
     <string name="key_home_pressed">home_pressed</string>
+    <string name="key_is_first_files">is_first_files</string>
+    <string name="key_is_first_enable_sync_data">is_first_enable_sync_data</string>
 
     /*Google Drive api*/
     <string name="key_parents">parents</string>
@@ -430,7 +427,7 @@
     <string name="key_album_lock">Album Lock</string>
     <string name="key_album_all_lock">Album Lock</string>
     <string name="key_help_support">Help &amp; Support</string>
-    <string name="key_about_SuperSafe">About Supersafe</string>
+    <string name="key_about_SuperSafe">About SuperSafe</string>
     <string name="key_categories_max">categories_max</string>
     <string name="key_change">Change</string>
     <string name="key_change_pin">Change PIN</string>
@@ -448,7 +445,7 @@
     <string name="key_pause_cloud_sync">pause_cloud_sync</string>
     <string name="key_cloud_sync_only_wifi">cloud_sync_only_wifi</string>
     <string name="key_face_down_lock">Face down lock</string>
-    <string name="key_face_down_lock_detail">When you place your phone face down, Supersafe will automatically close and lock itself.</string>
+    <string name="key_face_down_lock_detail">When you place your phone face down, SuperSafe will automatically close and lock itself.</string>
     <string name="locked">Locked</string>
     <string name="unlocked">Unlocked</string>
     <string name="album_lock">Album Lock</string>
@@ -512,5 +509,8 @@
     <string name="album_items">Album items</string>
     <string name="premium_cover_description">Select an item from this album for the cover photo.(Or by using the most recent photos)</string>
     <string name="customize_your_theme">Customize your theme.</string>
-
+    <string name="tap_here_to_add_items">Tap here to add items</string>
+    <string name="tap_here_to_add_items_description">Add photos, videos, audios, or create a new album.</string>
+    <string name="tap_here_to_enable_sync_data">Tap here to enable sync data.</string>
+    <string name="tap_here_to_enable_sync_data_description">The items will be synced to Google drive. You never lost files.</string>
 </resources>

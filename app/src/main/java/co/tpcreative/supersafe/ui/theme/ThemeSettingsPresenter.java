@@ -1,10 +1,7 @@
 package co.tpcreative.supersafe.ui.theme;
-
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.util.Utils;

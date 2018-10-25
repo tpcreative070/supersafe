@@ -179,6 +179,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
     @Override
     protected void onDestroy() {
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        SingletonBaseApiActivity.getInstance().setListener(null);
         if (mHomeWatcher!=null){
             Utils.Log(TAG,"Stop home watcher....");
             mHomeWatcher.stopWatch();

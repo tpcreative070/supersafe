@@ -1,35 +1,17 @@
 package co.tpcreative.supersafe.ui.theme;
-
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.snatik.storage.Storage;
-
-import java.security.NoSuchAlgorithmException;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.EnumStatusProgress;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.Theme;
 import de.hdodenhof.circleimageview.CircleImageView;
 

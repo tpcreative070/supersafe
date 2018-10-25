@@ -30,6 +30,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -123,6 +124,7 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     protected void onDestroy() {
         Utils.Log(TAG,"onDestroy....");
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        SingletonBaseApiActivity.getInstance().setListener(null);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }

@@ -30,7 +30,6 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-
     <LinearLayout
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -55,4 +54,5 @@
             </android.support.v7.widget.RecyclerView>
         </LinearLayout>
     </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>

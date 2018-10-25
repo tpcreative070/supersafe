@@ -6,17 +6,14 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 public class SecretDoorActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
 
@@ -26,7 +23,6 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
     RelativeLayout rlScanner;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +55,6 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
         final Theme mTheme = Theme.getInstance().getThemeInfo();
         PrefsController.putBoolean(getString(R.string.key_secret_door),b);
     }
-
 
     @Override
     public void onStillScreenLock(EnumStatus status) {
