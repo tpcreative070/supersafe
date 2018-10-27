@@ -1,4 +1,4 @@
-package com.darsh.multipleimageselect.activities;
+package co.tpcreative.supersafe.ui.multiselects;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,25 +21,22 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.darsh.multipleimageselect.R;
-import com.darsh.multipleimageselect.adapters.CustomAlbumSelectAdapter;
-import com.darsh.multipleimageselect.helpers.Constants;
-import com.darsh.multipleimageselect.models.Album;
-import com.darsh.multipleimageselect.models.MimeTypeFile;
-import com.darsh.multipleimageselect.models.Utils;
 import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.AlbumMultiItems;
+import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter;
 
-/**
- * Created by Darshan on 4/14/2015.
- */
 
 public class AlbumSelectActivity extends HelperActivity {
 
     private static final String TAG = AlbumSelectActivity.class.getSimpleName();
-    private ArrayList<Album> albums;
+    private ArrayList<AlbumMultiItems> albums;
 
     private TextView errorDisplay;
 
@@ -80,7 +77,7 @@ public class AlbumSelectActivity extends HelperActivity {
         if (intent == null) {
             finish();
         }
-        Constants.limit = intent.getIntExtra(Constants.INTENT_EXTRA_LIMIT, Constants.DEFAULT_LIMIT);
+        Navigator.limit = intent.getIntExtra(Navigator.INTENT_EXTRA_LIMIT, Navigator.DEFAULT_LIMIT);
 
         errorDisplay = (TextView) findViewById(R.id.text_view_error);
         errorDisplay.setVisibility(View.INVISIBLE);
@@ -91,8 +88,8 @@ public class AlbumSelectActivity extends HelperActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(), ImageSelectActivity.class);
-                intent.putExtra(Constants.INTENT_EXTRA_ALBUM, albums.get(position).name);
-                startActivityForResult(intent, Constants.REQUEST_CODE);
+                intent.putExtra(Navigator.INTENT_EXTRA_ALBUM, albums.get(position).name);
+                startActivityForResult(intent, Navigator.REQUEST_CODE);
             }
         });
     }
@@ -105,18 +102,18 @@ public class AlbumSelectActivity extends HelperActivity {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case Constants.PERMISSION_GRANTED: {
+                    case Navigator.PERMISSION_GRANTED: {
                         loadAlbums();
                         break;
                     }
 
-                    case Constants.FETCH_STARTED: {
+                    case Navigator.FETCH_STARTED: {
                         progressBar.setVisibility(View.VISIBLE);
                         gridView.setVisibility(View.INVISIBLE);
                         break;
                     }
 
-                    case Constants.FETCH_COMPLETED: {
+                    case Navigator.FETCH_COMPLETED: {
                         if (adapter == null) {
                             adapter = new CustomAlbumSelectAdapter(getApplicationContext(), albums);
                             gridView.setAdapter(adapter);
@@ -131,7 +128,7 @@ public class AlbumSelectActivity extends HelperActivity {
                         break;
                     }
 
-                    case Constants.ERROR: {
+                    case Navigator.ERROR: {
                         progressBar.setVisibility(View.INVISIBLE);
                         errorDisplay.setVisibility(View.VISIBLE);
                         break;
@@ -212,7 +209,7 @@ public class AlbumSelectActivity extends HelperActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Constants.REQUEST_CODE
+        if (requestCode == Navigator.REQUEST_CODE
                 && resultCode == RESULT_OK
                 && data != null) {
             setResult(RESULT_OK, data);
@@ -241,10 +238,10 @@ public class AlbumSelectActivity extends HelperActivity {
     private class AlbumLoaderRunnable implements Runnable {
         @Override
         public void run() {
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
             if (adapter == null) {
-                sendMessage(Constants.FETCH_STARTED);
+                sendMessage(Navigator.FETCH_STARTED);
             }
 
             String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
@@ -261,11 +258,11 @@ public class AlbumSelectActivity extends HelperActivity {
                     .query(queryUri, projection,
                             selection,null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC");
             if (cursor == null) {
-                sendMessage(Constants.ERROR);
+                sendMessage(Navigator.ERROR);
                 return;
             }
 
-            ArrayList<Album> temp = new ArrayList<>(cursor.getCount());
+            ArrayList<AlbumMultiItems> temp = new ArrayList<>(cursor.getCount());
             HashSet<Long> albumSet = new HashSet<>();
             File file;
             if (cursor.moveToLast()) {
@@ -290,7 +287,7 @@ public class AlbumSelectActivity extends HelperActivity {
                             String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
                             if (mimeTypeFile != null) {
-                                temp.add(new Album(album, image));
+                                temp.add(new AlbumMultiItems(album, image));
                                 albumSet.add(albumId);
                             }
                             else{
@@ -308,7 +305,7 @@ public class AlbumSelectActivity extends HelperActivity {
             albums.clear();
             albums.addAll(temp);
 
-            sendMessage(Constants.FETCH_COMPLETED);
+            sendMessage(Navigator.FETCH_COMPLETED);
         }
     }
 
@@ -344,7 +341,7 @@ public class AlbumSelectActivity extends HelperActivity {
     @Override
     protected void permissionGranted() {
         Message message = handler.obtainMessage();
-        message.what = Constants.PERMISSION_GRANTED;
+        message.what = Navigator.PERMISSION_GRANTED;
         message.sendToTarget();
     }
 

@@ -33,8 +33,6 @@ import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.darsh.multipleimageselect.helpers.Constants;
-import com.darsh.multipleimageselect.models.Image;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -62,6 +60,7 @@ import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
@@ -214,7 +213,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     actionMode = toolbar.startActionMode(callback);
                 }
                 countSelected = 0;
-                actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+                actionMode.setTitle(countSelected + " " + getString(R.string.selected));
                 Utils.Log(TAG,"Action here");
                 return true;
             }
@@ -226,7 +225,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     public void onClickItem(int position) {
         if (actionMode!=null){
             toggleSelection(position);
-            actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+            actionMode.setTitle(countSelected + " " + getString(R.string.selected));
         }
         else{
             try {
@@ -243,7 +242,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             actionMode = toolbar.startActionMode(callback);
         }
         toggleSelection(position);
-        actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+        actionMode.setTitle(countSelected + " " + getString(R.string.selected));
     }
 
     @Override
@@ -666,9 +665,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
                 break;
             }
-            case Constants.REQUEST_CODE: {
+            case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+                    ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
                     List<Integer> mListFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
@@ -851,7 +850,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         countSelected = countSelect;
         onShowUI();
         adapter.notifyDataSetChanged();
-        actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+        actionMode.setTitle(countSelected + " " + getString(R.string.selected));
     }
 
     public void onShowUI(){

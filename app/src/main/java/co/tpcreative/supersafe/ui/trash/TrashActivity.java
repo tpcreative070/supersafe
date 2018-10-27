@@ -106,7 +106,7 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
             actionMode = toolbar.startActionMode(callback);
         }
         toggleSelection(position);
-        actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+        actionMode.setTitle(countSelected + " " + getString(R.string.selected));
         if (countSelected == 0) {
             actionMode.finish();
         }
@@ -255,7 +255,7 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         countSelected = countSelect;
         onShowUI();
         adapter.notifyDataSetChanged();
-        actionMode.setTitle(countSelected + " " + getString(com.darsh.multipleimageselect.R.string.selected));
+        actionMode.setTitle(countSelected + " " + getString(R.string.selected));
     }
 
     public void onShowUI(){

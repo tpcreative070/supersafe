@@ -11,5 +11,4 @@ public class MimeTypeFile {
         this.formatType = formatType;
         this.mimeType = mimeType;
     }
-
 }

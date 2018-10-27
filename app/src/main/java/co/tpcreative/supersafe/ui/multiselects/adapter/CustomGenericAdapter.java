@@ -1,7 +1,8 @@
-package com.darsh.multipleimageselect.adapters;
+package co.tpcreative.supersafe.ui.multiselects.adapter;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
+
 import java.util.ArrayList;
 
 public abstract class CustomGenericAdapter<T> extends BaseAdapter {

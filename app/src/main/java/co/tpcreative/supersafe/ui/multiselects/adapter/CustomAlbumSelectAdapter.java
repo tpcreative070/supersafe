@@ -1,4 +1,4 @@
-package com.darsh.multipleimageselect.adapters;
+package co.tpcreative.supersafe.ui.multiselects.adapter;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -8,17 +8,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.darsh.multipleimageselect.R;
-import com.darsh.multipleimageselect.models.Album;
-import com.darsh.multipleimageselect.models.EnumFormatType;
-import com.darsh.multipleimageselect.models.MimeTypeFile;
-import com.darsh.multipleimageselect.models.Utils;
 import org.apache.commons.io.FilenameUtils;
 import java.util.ArrayList;
+import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.AlbumMultiItems;
+import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.MimeTypeFile;
 
 
-public class CustomAlbumSelectAdapter extends CustomGenericAdapter<Album> {
-    public CustomAlbumSelectAdapter(Context context, ArrayList<Album> albums) {
+public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiItems> {
+    public CustomAlbumSelectAdapter(Context context, ArrayList<AlbumMultiItems> albums) {
         super(context, albums);
     }
 
@@ -51,7 +51,7 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<Album> {
                 .priority(Priority.HIGH);
 
 
-        final Album data = arrayList.get(position);
+        final AlbumMultiItems data = arrayList.get(position);
 
 
         try {

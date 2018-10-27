@@ -18,8 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.darsh.multipleimageselect.helpers.Constants;
-import com.darsh.multipleimageselect.models.Image;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -44,6 +42,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
@@ -236,9 +235,9 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
                 }
                 break;
             }
-            case Constants.REQUEST_CODE: {
+            case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+                    ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
                     List<Integer> mListFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;

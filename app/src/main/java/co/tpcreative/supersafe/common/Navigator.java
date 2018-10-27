@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
-import com.darsh.multipleimageselect.helpers.Constants;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
@@ -34,6 +32,7 @@ import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity;
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
+import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity;
 import co.tpcreative.supersafe.ui.player.PlayerActivity;
 import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
@@ -65,6 +64,22 @@ public class Navigator {
     public static final int REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008;
     public static final int SHARE = 1009;
     public static final int ALBUM_COVER = 1010;
+
+    /*Multiple selects*/
+
+    public static final int PERMISSION_REQUEST_CODE = 1000;
+    public static final int PERMISSION_GRANTED = 1001;
+    public static final int PERMISSION_DENIED = 1002;
+    public static final int REQUEST_CODE = 2000;
+    public static final int FETCH_STARTED = 2001;
+    public static final int FETCH_COMPLETED = 2002;
+    public static final int ERROR = 2005;
+    public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 23;
+    public static final String INTENT_EXTRA_ALBUM = "album";
+    public static final String INTENT_EXTRA_IMAGES = "images";
+    public static final String INTENT_EXTRA_LIMIT = "limit";
+    public static final int DEFAULT_LIMIT = 10;
+    public static int limit;
 
 
     public static void onMoveToMainTab(Context context){
@@ -151,8 +166,8 @@ public class Navigator {
 
     public static void onMoveToAlbum(Activity activity){
         Intent intent = new Intent(activity, AlbumSelectActivity.class);
-        intent.putExtra(Constants.INTENT_EXTRA_LIMIT, 10);
-        activity.startActivityForResult(intent, Constants.REQUEST_CODE);
+        intent.putExtra(Navigator.INTENT_EXTRA_LIMIT, 10);
+        activity.startActivityForResult(intent, Navigator.REQUEST_CODE);
     }
 
     public static void onMoveAlbumDetail(Activity context, MainCategories mainCategories){

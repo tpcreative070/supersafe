@@ -1,12 +1,10 @@
 package com.darsh.multipleimageselect.adapters;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
@@ -15,14 +13,9 @@ import com.darsh.multipleimageselect.models.EnumFormatType;
 import com.darsh.multipleimageselect.models.Image;
 import com.darsh.multipleimageselect.models.MimeTypeFile;
 import com.darsh.multipleimageselect.models.Utils;
-
 import org.apache.commons.io.FilenameUtils;
-
 import java.util.ArrayList;
 
-/**
- * Created by Darshan on 4/18/2015.
- */
 public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
     private static final String TAG = CustomImageSelectAdapter.class.getSimpleName();
     private Context context;

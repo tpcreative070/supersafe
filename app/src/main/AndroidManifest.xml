@@ -83,11 +83,22 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.camera.CameraActivity" />
-        <activity android:name="com.darsh.multipleimageselect.activities.AlbumSelectActivity">
+        <activity android:name=".ui.multiselects.AlbumSelectActivity"
+            android:label="@string/select_album">
             <intent-filter>
                 <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.multiselects.ImageSelectActivity"
+            android:label="@string/album_view">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+
         <activity
             android:name=".ui.albumdetail.AlbumDetailActivity"
             android:label="" />

@@ -1,4 +1,4 @@
-package com.darsh.multipleimageselect.activities;
+package co.tpcreative.supersafe.ui.multiselects;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -25,16 +25,16 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.darsh.multipleimageselect.R;
-import com.darsh.multipleimageselect.adapters.CustomImageSelectAdapter;
-import com.darsh.multipleimageselect.helpers.Constants;
-import com.darsh.multipleimageselect.models.Image;
-import com.darsh.multipleimageselect.models.MimeTypeFile;
-import com.darsh.multipleimageselect.models.Utils;
 import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.Image;
+import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter;
 
 
 public class ImageSelectActivity extends HelperActivity {
@@ -82,7 +82,7 @@ public class ImageSelectActivity extends HelperActivity {
         if (intent == null) {
             finish();
         }
-        album = intent.getStringExtra(Constants.INTENT_EXTRA_ALBUM);
+        album = intent.getStringExtra(Navigator.INTENT_EXTRA_ALBUM);
 
         errorDisplay = (TextView) findViewById(R.id.text_view_error);
         errorDisplay.setVisibility(View.INVISIBLE);
@@ -113,18 +113,18 @@ public class ImageSelectActivity extends HelperActivity {
             @Override
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case Constants.PERMISSION_GRANTED: {
+                    case Navigator.PERMISSION_GRANTED: {
                         loadImages();
                         break;
                     }
 
-                    case Constants.FETCH_STARTED: {
+                    case Navigator.FETCH_STARTED: {
                         progressBar.setVisibility(View.VISIBLE);
                         gridView.setVisibility(View.INVISIBLE);
                         break;
                     }
 
-                    case Constants.FETCH_COMPLETED: {
+                    case Navigator.FETCH_COMPLETED: {
                         /*
                         If adapter is null, this implies that the loaded images will be shown
                         for the first time, hence send FETCH_COMPLETED message.
@@ -153,7 +153,7 @@ public class ImageSelectActivity extends HelperActivity {
                         break;
                     }
 
-                    case Constants.ERROR: {
+                    case Navigator.ERROR: {
                         progressBar.setVisibility(View.INVISIBLE);
                         errorDisplay.setVisibility(View.VISIBLE);
                         break;
@@ -273,10 +273,10 @@ public class ImageSelectActivity extends HelperActivity {
     };
 
     private void toggleSelection(int position) {
-        if (!images.get(position).isSelected && countSelected >= Constants.limit) {
+        if (!images.get(position).isSelected && countSelected >= Navigator.limit) {
             Toast.makeText(
                     getApplicationContext(),
-                    String.format(getString(R.string.limit_exceeded), Constants.limit),
+                    String.format(getString(R.string.limit_exceeded), Navigator.limit),
                     Toast.LENGTH_SHORT)
                     .show();
             return;
@@ -311,7 +311,7 @@ public class ImageSelectActivity extends HelperActivity {
 
     private void sendIntent() {
         Intent intent = new Intent();
-        intent.putParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES, getSelected());
+        intent.putParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES, getSelected());
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -323,14 +323,14 @@ public class ImageSelectActivity extends HelperActivity {
     private class ImageLoaderRunnable implements Runnable {
         @Override
         public void run() {
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             /*
             If the adapter is null, this is first time this activity's view is
             being shown, hence send FETCH_STARTED message to show progress bar
             while images are loaded from phone
              */
             if (adapter == null) {
-                sendMessage(Constants.FETCH_STARTED);
+                sendMessage(Navigator.FETCH_STARTED);
             }
 
             File file;
@@ -351,7 +351,7 @@ public class ImageSelectActivity extends HelperActivity {
             Cursor cursor = getContentResolver().query(queryUri, projection,
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?", new String[]{ album }, MediaStore.Images.Media.DATE_ADDED);
             if (cursor == null) {
-                sendMessage(Constants.ERROR);
+                sendMessage(Navigator.ERROR);
                 return;
             }
 
@@ -400,7 +400,7 @@ public class ImageSelectActivity extends HelperActivity {
             images.clear();
             images.addAll(temp);
 
-            sendMessage(Constants.FETCH_COMPLETED, tempCountSelected);
+            sendMessage(Navigator.FETCH_COMPLETED, tempCountSelected);
         }
     }
 
@@ -440,7 +440,7 @@ public class ImageSelectActivity extends HelperActivity {
 
     @Override
     protected void permissionGranted() {
-        sendMessage(Constants.PERMISSION_GRANTED);
+        sendMessage(Navigator.PERMISSION_GRANTED);
     }
 
     @Override

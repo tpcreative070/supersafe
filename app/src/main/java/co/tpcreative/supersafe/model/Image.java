@@ -1,4 +1,4 @@
-package com.darsh.multipleimageselect.models;
+package co.tpcreative.supersafe.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -28,7 +28,7 @@ public class Image implements Parcelable {
         dest.writeString(path);
     }
 
-    public static final Parcelable.Creator<Image> CREATOR = new Parcelable.Creator<Image>() {
+    public static final Creator<Image> CREATOR = new Creator<Image>() {
         @Override
         public Image createFromParcel(Parcel source) {
             return new Image(source);

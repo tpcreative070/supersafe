@@ -1,9 +1,5 @@
 package com.darsh.multipleimageselect.models;
-
-import android.net.Uri;
 import android.webkit.MimeTypeMap;
-
-import java.io.File;
 import java.util.HashMap;
 
 public class Utils {
