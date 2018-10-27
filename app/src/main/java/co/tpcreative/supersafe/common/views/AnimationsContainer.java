@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.views;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -7,16 +6,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.view.MenuItem;
-import android.widget.ImageView;
-
 import java.lang.ref.SoftReference;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class AnimationsContainer {
-    public int FPS = 3;  // animation FPS
+    public int FPS = 4;  // animation FPS
 
     // single instance procedures
     private static AnimationsContainer mInstance;
@@ -47,7 +43,6 @@ public class AnimationsContainer {
             R.drawable.ic_down_1, R.drawable.ic_down_2, R.drawable.ic_down_3,
             R.drawable.ic_down_4
     };
-
 
     /**
      * @param imageView
@@ -183,7 +178,6 @@ public class AnimationsContainer {
                             imageView.setIcon(imageRes);
                         }
                     }
-
                 }
             };
             mHandler.post(runnable);
@@ -195,7 +189,6 @@ public class AnimationsContainer {
         public synchronized void stop() {
             mShouldRun = false;
         }
-
 
     }
 }

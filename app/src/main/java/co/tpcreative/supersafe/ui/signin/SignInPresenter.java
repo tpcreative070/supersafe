@@ -48,7 +48,7 @@ public class SignInPresenter extends Presenter<BaseView<User>>{
         hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
         hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
         hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_version).toLowerCase(),""+ SuperSafeApplication.getInstance().getVersion());
         hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
         subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())

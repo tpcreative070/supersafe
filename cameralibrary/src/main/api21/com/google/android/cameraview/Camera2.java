@@ -642,6 +642,9 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     void captureStillPicture() {
         try {
+            if (mCamera==null){
+                return;
+            }
             CaptureRequest.Builder captureRequestBuilder = mCamera.createCaptureRequest(
                     CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureRequestBuilder.addTarget(mImageReader.getSurface());

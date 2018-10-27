@@ -81,9 +81,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         Utils.Log(TAG,"LifeTime");
     }
 
-
-
-
     @Override
     public void onStillScreenLock(EnumStatus status) {
         switch (status){
@@ -150,7 +147,5 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general_premium);
         }
-
     }
-
 }

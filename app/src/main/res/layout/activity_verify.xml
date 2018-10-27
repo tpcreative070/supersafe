@@ -53,7 +53,7 @@
                 android:layout_marginBottom="30dp"
                 android:hint="@string/code"
                 android:imeOptions="actionNext"
-                android:inputType="text|textCapCharacters"
+                android:inputType="number"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size_normal"
                 app:met_baseColor="@color/colorButton"

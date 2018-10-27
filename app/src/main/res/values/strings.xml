@@ -164,7 +164,7 @@
     <string name="action_play_next">Play Next</string>
     <string name="backdrop_title">LOVE MUSIC</string>
     <string name="backdrop_subtitle">This season top 20 albums</string>
-    <string name="url_developer">http://192.168.0.100:8081</string>
+    <string name="url_developer">http://192.168.1.2:8081</string>
     <string name="url_live">http://tpcreative.me:8081</string>
     <string name="drive_api">https://www.googleapis.com/drive/v3/files/</string>
     <string name="authorization"></string>
@@ -348,7 +348,8 @@
     <string name="key_device_type">device_type</string>
     <string name="key_manufacturer">manufacturer</string>
     <string name="key_name_model">name_model</string>
-    <string name="key_version">Version</string>
+    <string name="key_version">version</string>
+    <string name="key_version_app">Version</string>
     <string name="key_versionRelease">versionRelease</string>
     <string name="key_code">code</string>
     <string name="key_verify_account">verify_account</string>

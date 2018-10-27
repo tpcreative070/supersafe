@@ -22,12 +22,13 @@
         android:layout_height="30dp"/>
 
     <TextView
+        android:padding="3dp"
         android:id="@+id/text_view_album_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
-        android:background="@color/multiple_image_select_albumTextBackground"
-        android:textColor="@color/multiple_image_select_primaryText"
+        android:background="@color/multiple_image_select_primaryText"
+        android:textColor="@color/multiple_image_select_buttonText"
         android:textSize="20dp"
         android:lines="1"
         android:gravity="center"/>
