@@ -87,6 +87,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private GoogleSignInOptions.Builder options;
     private Set<Scope> requiredScopes;
     private List<String> requiredScopesString;
+    private boolean isLive = false;
 
 
     @Override
@@ -95,6 +96,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         Fabric.with(this, new Crashlytics());
         mInstance = this;
         ViewTarget.setTagId(R.id.fab_glide_tag);
+        isLive = true;
 
         /*Init own service api*/
 
@@ -164,7 +166,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString = new ArrayList<>();
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
-
     }
 
     public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
@@ -445,10 +446,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     }
 
     public String getUrl() {
-        if (BuildConfig.DEBUG) {
-            url = getString(R.string.url_developer);
-        } else {
+        if (!BuildConfig.DEBUG || isLive) {
             url = getString(R.string.url_live);
+        } else {
+            url = getString(R.string.url_developer);
         }
         return url;
     }

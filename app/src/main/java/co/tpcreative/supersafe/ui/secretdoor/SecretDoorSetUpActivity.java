@@ -19,7 +19,7 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-
+import co.tpcreative.supersafe.model.EnumStatus;
 
 
 public class SecretDoorSetUpActivity extends BaseActivity {
@@ -70,6 +70,11 @@ public class SecretDoorSetUpActivity extends BaseActivity {
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
+    @Override
+    public void onNotifier(EnumStatus status) {
 
     }
 

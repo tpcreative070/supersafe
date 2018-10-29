@@ -180,8 +180,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();
@@ -189,6 +188,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
         }
     }
+
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

@@ -57,8 +57,7 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();

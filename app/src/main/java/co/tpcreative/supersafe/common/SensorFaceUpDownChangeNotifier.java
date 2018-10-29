@@ -100,7 +100,6 @@ public class SensorFaceUpDownChangeNotifier {
     }
 
 
-
     public interface Listener {
         void onOrientationChange(boolean isFaceDown);
     }

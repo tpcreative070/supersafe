@@ -27,10 +27,8 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
-import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -39,7 +37,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public abstract class BaseActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener, SensorFaceUpDownChangeNotifier.Listener{
+public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -89,11 +87,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
         }
-    }
-
-    @Override
-    public void onStillScreenLock(EnumStatus status) {
-        Utils.Log(TAG,"onStillScreenLock");
     }
 
 
@@ -146,7 +139,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
     protected void onDestroy() {
         Utils.Log(TAG,"onDestroy....");
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonBaseApiActivity.getInstance().setListener(null);
+        SingletonMultipleListener.getInstance().remove(null);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -159,7 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Singleto
     @Override
     protected void onResume() {
         Utils.Log(TAG,"onResume....");
-        SingletonBaseActivity.getInstance().setListener(this);
+        SingletonMultipleListener.getInstance().addListener(this);
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){

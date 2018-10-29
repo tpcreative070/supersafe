@@ -107,8 +107,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();

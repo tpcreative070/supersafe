@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity;
 import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity;
 
 public class AlbumCoverActivity extends BaseActivity implements BaseView,CompoundButton.OnCheckedChangeListener ,AlbumCoverAdapter.ItemSelectedListener{
@@ -72,8 +73,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();
@@ -190,7 +190,8 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     @Override
     protected void onResume() {
         super.onResume();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportContentActivity.class.getSimpleName());
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
     }
 
 

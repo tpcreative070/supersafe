@@ -41,16 +41,6 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
         Navigator.onMoveSetPin(this, EnumPinAction.SIGN_UP);
     }
 
-    @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
-        switch (status){
-            case FINISH:{
-                finish();
-                break;
-            }
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -64,6 +54,11 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
+
+    }
+
+    @Override
+    public void onNotifier(EnumStatus status) {
 
     }
 

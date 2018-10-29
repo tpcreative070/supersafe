@@ -69,8 +69,7 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();

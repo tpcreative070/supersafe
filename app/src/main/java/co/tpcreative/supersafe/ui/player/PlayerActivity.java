@@ -152,8 +152,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();

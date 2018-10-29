@@ -127,8 +127,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();
@@ -136,7 +135,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             }
         }
     }
-
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

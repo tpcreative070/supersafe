@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.util.PathUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import dmax.dialog.SpotsDialog;
@@ -142,6 +143,11 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     protected void onResume() {
         super.onResume();
         GalleryCameraMediaManager.getInstance().setListener(this);
+    }
+
+    @Override
+    public void onNotifier(EnumStatus status) {
+
     }
 
     @Override

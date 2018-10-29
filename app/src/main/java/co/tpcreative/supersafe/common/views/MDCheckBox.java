@@ -68,7 +68,7 @@ public class MDCheckBox extends View implements Checkable {
         borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(dp(2));
-        checkDrawable = context.getResources().getDrawable(R.mipmap.check);
+        checkDrawable = context.getResources().getDrawable(R.drawable.baseline_check_white_48);
         setVisibility(VISIBLE);
     }
 

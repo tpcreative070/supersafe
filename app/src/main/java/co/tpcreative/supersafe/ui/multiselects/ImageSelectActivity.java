@@ -31,10 +31,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter;
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 
 public class ImageSelectActivity extends HelperActivity {
@@ -174,6 +176,12 @@ public class ImageSelectActivity extends HelperActivity {
         getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, observer);
 
         checkPermission();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(ImageSelectActivity.class.getSimpleName());
     }
 
     @Override

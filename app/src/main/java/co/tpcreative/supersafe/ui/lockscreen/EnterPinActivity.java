@@ -34,8 +34,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
-import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
@@ -56,7 +55,7 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
-public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>, FingerPrintAuthCallback {
+public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>, FingerPrintAuthCallback,SingletonMultipleListener.Listener {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -284,10 +283,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
-        switch (status) {
-            case FINISH: {
+    public void onNotifier(EnumStatus status) {
+        switch (status){
+            case FINISH:{
                 finish();
                 break;
             }
@@ -783,8 +781,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 switch (action) {
                     case SCREEN_LOCK: {
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.STILL_SCREEN_LOCK.ordinal());
-                        SingletonBaseActivity.getInstance().onStillScreenLock(EnumStatus.FINISH);
-                        SingletonBaseApiActivity.getInstance().onStillScreenLock(EnumStatus.FINISH);
+                        SingletonMultipleListener.getInstance().notifyListeners(EnumStatus.FINISH);
                         Utils.Log(TAG, "onStillScreenLock");
                     }
                 }

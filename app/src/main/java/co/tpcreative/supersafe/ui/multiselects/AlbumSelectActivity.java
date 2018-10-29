@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AlbumMultiItems;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter;
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 
 public class AlbumSelectActivity extends HelperActivity {
@@ -149,6 +151,12 @@ public class AlbumSelectActivity extends HelperActivity {
         getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, observer);
 
         checkPermission();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSelectActivity.class.getSimpleName());
     }
 
     @Override

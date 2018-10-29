@@ -43,7 +43,7 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();

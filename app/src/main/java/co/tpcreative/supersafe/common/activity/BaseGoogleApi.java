@@ -44,12 +44,10 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -59,7 +57,7 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 
 
-public abstract class BaseGoogleApi extends AppCompatActivity implements SingletonBaseApiActivity.SingletonBaseApiActivityListener, SensorFaceUpDownChangeNotifier.Listener{
+public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
 
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
 
@@ -102,10 +100,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
         }
     }
 
-    @Override
-    public void onStillScreenLock(EnumStatus status) {
-        Utils.Log(TAG,"onStillScreenLock");
-    }
 
     @Override
     public Resources.Theme getTheme() {
@@ -179,7 +173,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
     @Override
     protected void onDestroy() {
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonBaseApiActivity.getInstance().setListener(null);
+        SingletonMultipleListener.getInstance().remove(this);
         if (mHomeWatcher!=null){
             Utils.Log(TAG,"Stop home watcher....");
             mHomeWatcher.stopWatch();
@@ -192,8 +186,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements Singlet
     @Override
     protected void onResume() {
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-       SingletonBaseApiActivity.getInstance().setListener(this);
-       super.onResume();
+        SingletonMultipleListener.getInstance().addListener(this);
+        super.onResume();
     }
 
     public void onRegisterHomeWatcher(){

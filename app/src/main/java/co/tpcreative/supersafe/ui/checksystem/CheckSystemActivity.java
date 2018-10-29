@@ -68,10 +68,9 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
-        switch (status) {
-            case FINISH: {
+    public void onNotifier(EnumStatus status) {
+        switch (status){
+            case FINISH:{
                 finish();
                 break;
             }

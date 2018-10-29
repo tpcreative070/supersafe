@@ -22,27 +22,23 @@ import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
-import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment;
 
 
-public abstract class BaseGalleryActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener, MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener{
+public abstract class BaseGalleryActivity extends AppCompatActivity implements  MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -104,12 +100,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements S
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        Utils.Log(TAG,"onStillScreenLock");
-    }
-
-
-    @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
         final Theme result = Theme.getInstance().getThemeInfo();
@@ -156,7 +146,7 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements S
     @Override
     protected void onDestroy() {
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonBaseApiActivity.getInstance().setListener(null);
+        SingletonMultipleListener.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -169,7 +159,7 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements S
     protected void onResume() {
         Utils.Log(TAG,"Action here........onResume");
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        SingletonBaseActivity.getInstance().setListener(this);
+        SingletonMultipleListener.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();

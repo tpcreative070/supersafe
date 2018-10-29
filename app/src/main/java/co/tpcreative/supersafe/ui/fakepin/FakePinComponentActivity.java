@@ -291,6 +291,10 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
     }
 
     @Override
+    public void onNotifier(EnumStatus status) {
+    }
+
+    @Override
     public void onUpdateView() {
         runOnUiThread(new Runnable() {
             @Override

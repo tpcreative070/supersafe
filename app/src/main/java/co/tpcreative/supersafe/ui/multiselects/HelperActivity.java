@@ -13,6 +13,9 @@ import android.view.View;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 
 public class HelperActivity extends BaseActivity {
@@ -118,4 +121,19 @@ public class HelperActivity extends BaseActivity {
 
     }
 
+    @Override
+    public void onNotifier(EnumStatus status) {
+        switch (status){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(HelperActivity.class.getSimpleName());
+    }
 }

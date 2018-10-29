@@ -79,8 +79,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();
@@ -88,7 +87,6 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
             }
         }
     }
-
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

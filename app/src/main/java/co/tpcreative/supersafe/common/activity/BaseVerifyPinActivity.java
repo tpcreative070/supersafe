@@ -36,10 +36,8 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
-import co.tpcreative.supersafe.common.controller.SingletonBaseApiActivity;
+import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.hiddencamera.CameraCallbacks;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -47,13 +45,11 @@ import co.tpcreative.supersafe.common.hiddencamera.CameraPreview;
 import co.tpcreative.supersafe.common.hiddencamera.HiddenCameraUtils;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
 
-public abstract class BaseVerifyPinActivity extends AppCompatActivity implements SingletonBaseActivity.SingletonBaseActivityListener,CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener{
+public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -98,11 +94,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onStillScreenLock(EnumStatus status) {
-        Utils.Log(TAG,"onStillScreenLock");
-    }
-
 
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
@@ -142,7 +133,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonBaseApiActivity.getInstance().setListener(null);
+        SingletonMultipleListener.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -155,7 +146,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     protected void onResume() {
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         Utils.Log(TAG,"Action here........onResume");
-        SingletonBaseActivity.getInstance().setListener(this);
+        SingletonMultipleListener.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();

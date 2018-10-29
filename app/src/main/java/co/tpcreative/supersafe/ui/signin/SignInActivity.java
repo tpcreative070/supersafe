@@ -49,8 +49,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
-        super.onStillScreenLock(status);
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();

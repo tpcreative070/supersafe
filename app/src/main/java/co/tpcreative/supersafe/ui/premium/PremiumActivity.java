@@ -82,7 +82,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     }
 
     @Override
-    public void onStillScreenLock(EnumStatus status) {
+    public void onNotifier(EnumStatus status) {
         switch (status){
             case FINISH:{
                 finish();
