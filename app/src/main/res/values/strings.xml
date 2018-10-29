@@ -498,7 +498,7 @@
     <string name="per_year">per year</string>
     <string name="most_popular">MOST POPULAR</string>
     <string name="yearly">Yearly</string>
-    <string name="life_time">Lifetime</string>
+    <string name="tv_life_time">Lifetime</string>
     <string name="use_every_feature">Use every feature</string>
     <string name="it_top_shelf_supersafe">It\'s top-shelf SuperSafe</string>
     <string name="never_lost_files">Never lost files</string>
@@ -539,5 +539,16 @@
     <string name="permission_ok">OK</string>
     <string name="permission_settings">Settings</string>
     <string name="permission_package">package</string>
+
+
+    <!--In app purchase -->
+    <string name="key_in_ap_purchase">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB</string>
+    <string name="six_months">co.tpcreative.supersafe.6.months</string>
+    <string name="one_years">co.tpcreative.supersafe.1.years</string>
+    <string name="life_time">co.tpcreative.supersafe.life.time</string>
+
+
+    <!-- Google ads -->
+
 
 </resources>

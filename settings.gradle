@@ -18,6 +18,7 @@ include ':app',
         'taptargetviewlibrary',
         'vusikviewlibrary',
         'simplerecyclerviewlibrary',
-        'fingerprint-auth-library'
+        'fingerprint-auth-library',
+        'checkoutlibrary'
 
 

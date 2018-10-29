@@ -24,6 +24,8 @@ import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 
+import org.solovyev.android.checkout.Billing;
+
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -44,6 +46,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
@@ -93,10 +97,16 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
         mInstance = this;
-        ViewTarget.setTagId(R.id.fab_glide_tag);
         isLive = true;
+
+
+
+
+        Fabric.with(this, new Crashlytics());
+
+        ViewTarget.setTagId(R.id.fab_glide_tag);
+
 
         /*Init own service api*/
 
@@ -137,7 +147,13 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .build();
 
         storage = new Storage(getApplicationContext());
-        supersafe = storage.getExternalStorageDirectory() + "/SuperSafe_DoNot_Delete/";
+        if (BuildConfig.DEBUG){
+            supersafe = storage.getExternalStorageDirectory() + "/SuperSafe_DoNot_Delete/";
+        }
+        else{
+            supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/";
+        }
+
         key = ".encrypt_key";
         fake_key = ".encrypt_fake_key";
         userSecret = ".userSecret";
@@ -167,6 +183,8 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
     }
+
+
 
     public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
         if (options != null) {
@@ -200,6 +218,23 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public static synchronized SuperSafeApplication getInstance() {
         return mInstance;
     }
+
+    /*In app purchase*/
+
+    private final Billing mBilling = new Billing(this, new Billing.DefaultConfiguration() {
+        /*In app purchase*/
+        String key_purchase = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB";
+        @Override
+        public String getPublicKey() {
+            return key_purchase;
+        }
+    });
+
+    @Nonnull
+    public Billing getBilling() {
+        return mBilling;
+    }
+
 
     public void setConnectivityListener(SuperSafeReceiver.ConnectivityReceiverListener listener) {
         SuperSafeReceiver.connectivityReceiverListener = listener;

@@ -56,7 +56,6 @@ public interface RootAPI{
 
 
 
-
     @FormUrlEncoded
     @POST(SIGN_UP)
     Observable<SignInResponse> onSignUP(@FieldMap Map<String,String> request);
