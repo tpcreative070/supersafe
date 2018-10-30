@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.common.util;
 import android.Manifest;
 import android.app.Activity;
+import android.arch.persistence.room.Ignore;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,10 +38,14 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 
 import org.apache.commons.io.FilenameUtils;
+import org.solovyev.android.checkout.Purchase;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +58,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -63,6 +69,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
@@ -1015,6 +1022,22 @@ public class Utils {
         } catch (PackageManager.NameNotFoundException e) {
         }
         return false;
+    }
+
+
+    public static Map<String,Object> objectToHashMap(final Purchase items){
+        Type type = new TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
+        return myMap;
+    }
+
+    public static Locale getCurrentLocale(Context context){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return context.getResources().getConfiguration().getLocales().get(0);
+        } else{
+            //noinspection deprecation
+            return context.getResources().getConfiguration().locale;
+        }
     }
 
 }

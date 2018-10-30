@@ -1149,16 +1149,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             case CameraError.ERROR_CAMERA_OPEN_FAILED:
                 //Camera open failed. Probably because another application
                 //is using the camera
-                showMessage(getString(R.string.error_cannot_open));
                 break;
             case CameraError.ERROR_IMAGE_WRITE_FAILED:
                 //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
-                showMessage(getString(R.string.error_cannot_write));
                 break;
             case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
                 //camera permission is not available
                 //Ask for the camera permission before initializing it.
-                showMessage(getString(R.string.error_cannot_get_permission));
                 break;
             case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
                 showMessage(getString(R.string.error_not_having_camera));
@@ -1169,7 +1166,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public void onInitHiddenCamera() {
         final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false);
         if (!value) {
-            showMessage("Permission denied");
             return;
         }
         mCameraConfig = new CameraConfig()
@@ -1190,7 +1186,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public void onTakePicture(String pin) {
         final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false);
         if (!value) {
-            showMessage("Permission denied");
             return;
         }
         mCameraConfig.getBuilder(SuperSafeApplication.getInstance())

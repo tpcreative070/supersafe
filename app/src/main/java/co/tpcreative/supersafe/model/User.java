@@ -1,4 +1,6 @@
 package co.tpcreative.supersafe.model;
+import android.view.View;
+
 import com.google.gson.Gson;
 
 import java.io.Serializable;
@@ -24,6 +26,7 @@ public class User extends BaseResponse implements Serializable{
     public boolean isUpload;
     public boolean isRequestSync;
     public boolean isUpdateView;
+    public Checkout checkout;
     private static User instance ;
 
     public static User getInstance(){
@@ -49,8 +52,17 @@ public class User extends BaseResponse implements Serializable{
         return null;
     }
 
-
-
-
+    public boolean isPremium(){
+        final User mUser = getUserInfo();
+        if (mUser!=null){
+            final Checkout mCheckout = mUser.checkout;
+            if (mCheckout!=null){
+                if (mCheckout.isPurchasedLifeTime || mCheckout.isPurchasedOneYears || mCheckout.isPurchasedSixMonths){
+                   return true;
+                }
+            }
+        }
+        return  false;
+    }
 
 }

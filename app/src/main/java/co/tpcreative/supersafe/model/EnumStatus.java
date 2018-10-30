@@ -80,6 +80,7 @@ public enum EnumStatus {
         SIGN_UP_SUCCESSFUL,
         SIGN_UP_ERROR,
         USER_INFO,
+        CHECKOUT,
         OTHER
 
 }

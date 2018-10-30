@@ -61,6 +61,7 @@
                         android:src="@drawable/ic_premium_icon" />
 
                     <TextView
+                        android:id="@+id/tvTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -80,6 +81,7 @@
                     android:orientation="vertical">
 
                     <TextView
+
                         android:id="@+id/tvPremiumLeft"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -195,9 +197,7 @@
                         </LinearLayout>
                     </LinearLayout>
 
-
                 </LinearLayout>
-
 
                 <RelativeLayout
                     android:layout_width="match_parent"

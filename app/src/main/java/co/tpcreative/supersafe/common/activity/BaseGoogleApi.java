@@ -289,6 +289,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 mUser.driveConnected = false;
                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                 onDriveError();
+                Utils.onWriteLog("Sign-in failed on Google drive..",EnumStatus.SIGN_IN);
             }
         }
     }
@@ -308,6 +309,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                     // required and is fatal. For apps where sign-in is optional, handle
                     // appropriately
                     Log.e(TAG, "Sign-in failed.");
+                    Utils.onWriteLog("Sign-in failed on Google drive ?..",EnumStatus.SIGN_IN);
                     onDriveError();
                     return;
                 }
@@ -319,6 +321,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 } else {
                     onDriveError();
                     Log.e(TAG, "Sign-in failed..");
+                    Utils.onWriteLog("Sign-in failed on Google drive..",EnumStatus.SIGN_IN);
                 }
                 break;
             }

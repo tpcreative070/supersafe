@@ -30,13 +30,6 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
-import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity;
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
-import co.tpcreative.supersafe.ui.premium.PremiumActivity;
-import co.tpcreative.supersafe.ui.signin.SignInActivity;
-import co.tpcreative.supersafe.ui.signup.SignUpActivity;
-import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
@@ -56,7 +49,6 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.network.Dependencies;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.splashscreen.SplashScreenActivity;
 
 public class SuperSafeApplication extends MultiDexApplication implements Dependencies.DependenciesListener, MultiDexApplication.ActivityLifecycleCallbacks {
 
@@ -169,11 +161,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         registerActivityLifecycleCallbacks(this);
         Log.d(TAG, supersafe);
 
+
         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(Drive.SCOPE_FILE)
                 .requestScopes(Drive.SCOPE_APPFOLDER);
-
 
         requiredScopes = new HashSet<>(2);
         requiredScopes.add(Drive.SCOPE_FILE);

@@ -2381,6 +2381,7 @@ public class ServiceManager implements BaseView {
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
                 ServiceManager.getInstance().onCheckingMissData();
                 ServiceManager.getInstance().onGetUserInfo();
+                PremiumManager.getInstance().onStartInAppPurchase();
                 break;
             }
             case USER_INFO: {

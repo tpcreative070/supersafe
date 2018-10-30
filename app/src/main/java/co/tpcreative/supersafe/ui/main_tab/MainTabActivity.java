@@ -39,6 +39,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
+import co.tpcreative.supersafe.common.controller.PremiumManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
@@ -93,6 +94,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         final User mUser = User.getInstance().getUserInfo();
         Log.d(TAG,"User....." +new Gson().toJson(mUser));
         onShowSuggestion();
+        PremiumManager.getInstance().onStartInAppPurchase();
     }
 
 
@@ -478,6 +480,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
         ServiceManager.getInstance().onDismissServices();
+        PremiumManager.getInstance().onStop();
         Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), new ServiceManager.ServiceManagerSyncDataListener() {
             @Override
             public void onCompleted() {

@@ -53,6 +53,7 @@ public interface RootAPI{
     String GET_LIST_FILE_IN_APP_FOLDER = "/drive/v3/files";
     String GET_FILES_INFO = "/drive/v3/files/{id}";
     String DELETE_CLOUD_ITEM = "/drive/v3/files/{id}";
+    String CHECKOUT = "/api/checkout";
 
 
 
@@ -83,6 +84,10 @@ public interface RootAPI{
     @FormUrlEncoded
     @POST(UPDATE)
     Observable<BaseResponse> onUpdateUser(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(CHECKOUT)
+    Observable<BaseResponse> onCheckout(@FieldMap Map<String,Object>request);
 
     @FormUrlEncoded
     @POST(CHECK_USER_ID)

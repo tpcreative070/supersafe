@@ -1,4 +1,6 @@
 package co.tpcreative.supersafe.ui.premium;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,7 +18,6 @@ import org.solovyev.android.checkout.ActivityCheckout;
 import org.solovyev.android.checkout.Billing;
 import org.solovyev.android.checkout.BillingRequests;
 import org.solovyev.android.checkout.Checkout;
-import org.solovyev.android.checkout.EmptyRequestListener;
 import org.solovyev.android.checkout.Inventory;
 import org.solovyev.android.checkout.ProductTypes;
 import org.solovyev.android.checkout.Purchase;
@@ -30,12 +31,14 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
+import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
-public class PremiumActivity extends BaseActivity implements SingletonPremiumTimer.SingletonPremiumTimerListener{
+public class PremiumActivity extends BaseActivity implements SingletonPremiumTimer.SingletonPremiumTimerListener,BaseView{
 
     private static final String TAG = PremiumActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -49,9 +52,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     TextView tvYearly;
     @BindView(R.id.tvLifeTime)
     TextView tvLifeTime;
+    @BindView(R.id.tvTitle)
+    TextView tvTitle;
 
     /*In app purchase*/
-    private Inventory mInventory;
     private ActivityCheckout mCheckout;
     private ActivityCheckout mCheckoutLifeTime;
     private InventoryCallback mInventoryCallback;
@@ -61,6 +65,9 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     private Sku mMonths;
     private Sku mYears;
     private Sku mLifeTime;
+    private boolean isPurchased;
+    private PremiumPresenter presenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        presenter = new PremiumPresenter();
+        presenter.bindView(this);
 
 
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
@@ -83,10 +92,16 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         tvPremiumLeft.setText(Html.fromHtml(value));
         onDrawOverLay(this);
 
-
         /*Init In app purchase*/
         onStartInAppPurchase();
+        onUpdateView();
+    }
 
+    public void onUpdateView(){
+        if (User.getInstance().isPremium()){
+            tvTitle.setText(getText(R.string.you_are_in_premium_features));
+            tvPremiumLeft.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -108,10 +123,14 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @OnClick(R.id.llMonths)
     public void onClickedMonths(View view){
         Utils.Log(TAG,"Months");
-        if (mProduct==null){
+
+        if (User.getInstance().isPremium()){
             return;
         }
 
+        if (mProduct==null){
+            return;
+        }
         if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
             if (mMonths!=null){
                 final Purchase purchase = mProduct.getPurchaseInState(mMonths, Purchase.State.PURCHASED);
@@ -133,6 +152,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             return;
         }
 
+        if (User.getInstance().isPremium()){
+            return;
+        }
+
         if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
             if (mYears!=null){
                 final Purchase purchase = mProduct.getPurchaseInState(mYears, Purchase.State.PURCHASED);
@@ -145,7 +168,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 }
             }
         }
-
     }
 
     @OnClick(R.id.llLifeTime)
@@ -153,12 +175,18 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         if (mProductLifeTime==null){
             return;
         }
+
+        if (User.getInstance().isPremium()){
+            return;
+        }
+
+
         if (mProductLifeTime.getSkus()!=null && mProductLifeTime.getSkus().size()>0){
             if (mLifeTime!=null){
-                final Purchase purchase = mProductLifeTime.getPurchaseInState(mLifeTime, Purchase.State.PURCHASED);
-                if (purchase != null) {
+                //final Purchase purchase = mProductLifeTime.getPurchaseInState(mLifeTime, Purchase.State.PURCHASED);
+                if (isPurchased) {
                     Toast.makeText(getApplicationContext(),"Already charged",Toast.LENGTH_SHORT).show();
-                    consumeLifeTime(purchase);
+                    //consumeLifeTime(purchase);
                 } else {
                     Utils.Log(TAG,"value...?"+ new Gson().toJson(mLifeTime));
                     purchaseLifeTime(mLifeTime);
@@ -240,24 +268,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         }
     }
 
-    /*In app purchase*/
-
-    private class PurchaseListener extends EmptyRequestListener<Purchase> {
-        @Override
-        public void onSuccess(Purchase purchase) {
-            // here you can process the loaded purchase
-            Utils.Log(TAG,new Gson().toJson(purchase));
-            Toast.makeText(getApplicationContext(),new Gson().toJson("Test 0:"+ new Gson().toJson(purchase)),Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onError(int response, Exception e) {
-            // handle errors here
-            Utils.Log(TAG,e.getMessage());
-            Toast.makeText(getApplicationContext(),new Gson().toJson("Test 1:"+e.getMessage()),Toast.LENGTH_SHORT).show();
-        }
-    }
-
     /* Start in app purchase */
 
     @Override
@@ -311,6 +321,9 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                         if (index.id.code.equals(getString(R.string.life_time))){
                             tvLifeTime.setText(index.price);
                             mLifeTime = index;
+                            if (mProductLifeTime.isPurchased(mLifeTime)){
+                                isPurchased = true;
+                            }
                         }
                     }
                 }
@@ -322,31 +335,31 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     /**
      * @return {@link RequestListener} that reloads inventory when the action is finished
      */
+
     private <T> RequestListener<T> makeRequestListener() {
         return new RequestListener<T>() {
             @Override
             public void onSuccess(@Nonnull T result) {
-                reloadInventory();
-                reloadInventoryLifeTime();
-                Utils.Log(TAG,"action here....!!!.");
                 try {
-                    Toast.makeText(getApplicationContext(),"Successful "+new Gson().toJson(result),Toast.LENGTH_SHORT).show();
+                    Utils.onWriteLog(new Gson().toJson("Checkout "+result),EnumStatus.CHECKOUT);
+                    if (presenter!=null){
+                        final Purchase purchase = (Purchase) result;
+                        presenter.onAddCheckout(purchase);
+                    }
                 }
                 catch (Exception e){
                     Toast.makeText(getApplicationContext(),"Error "+e.getMessage(),Toast.LENGTH_SHORT).show();
                 }
+                reloadInventory();
+                reloadInventoryLifeTime();
             }
-
             @Override
             public void onError(int response, @Nonnull Exception e) {
                 reloadInventory();
                 reloadInventoryLifeTime();
-                Utils.Log(TAG,"action here.... error!!!.");
-                Toast.makeText(getApplicationContext(),"Error "+ e,Toast.LENGTH_SHORT).show();
             }
         };
     }
-
 
     private void consume(final Purchase purchase) {
         mCheckout.whenReady(new Checkout.EmptyListener() {
@@ -365,7 +378,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             }
         });
     }
-
 
     public void onStartInAppPurchase(){
         final Billing billing = SuperSafeApplication.getInstance().getBilling();
@@ -416,6 +428,70 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         // load SKU details
         request.loadSkus(ProductTypes.IN_APP,mList);
         mCheckoutLifeTime.loadInventory(request, mInventoryCallbackLifeTime);
+    }
+
+
+    /*Presenter*/
+
+    @Override
+    public void onStartLoading(EnumStatus status) {
+
+    }
+
+    @Override
+    public void onStopLoading(EnumStatus status) {
+
+    }
+
+    @Override
+    public void onError(String message) {
+
+    }
+
+    @Override
+    public void onError(String message, EnumStatus status) {
+        switch (status){
+            case CHECKOUT:{
+                Toast.makeText(getApplicationContext(),"Message "+ message,Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status) {
+        switch (status){
+            case CHECKOUT:{
+                Toast.makeText(getApplicationContext(),"Message "+ message,Toast.LENGTH_SHORT).show();
+                onUpdateView();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Object object) {
+
+    }
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, List list) {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
     }
 
 }

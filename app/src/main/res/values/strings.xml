@@ -356,6 +356,7 @@
     <string name="key_verify_account">verify_account</string>
     <string name="key_privacy_policy">Privacy Policy</string>
     <string name="key_super_safe_version">SuperSafe: %1$s</string>
+    <string name="key_locale">locale</string>
 
 
     <string name="key_main_album">Main Album</string>
@@ -546,6 +547,7 @@
     <string name="six_months">co.tpcreative.supersafe.6.months</string>
     <string name="one_years">co.tpcreative.supersafe.1.years</string>
     <string name="life_time">co.tpcreative.supersafe.life.time</string>
+    <string name="you_are_in_premium_features">You Are In Premium Features</string>
 
 
     <!-- Google ads -->
