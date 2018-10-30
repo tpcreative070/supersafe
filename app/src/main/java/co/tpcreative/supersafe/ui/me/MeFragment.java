@@ -13,9 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -28,6 +26,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.User;
 
 public class MeFragment extends BaseFragment implements BaseView,SingletonPremiumTimer.SingletonPremiumTimerListener{
 
@@ -121,9 +120,18 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
            tvEmail.setText(presenter.mUser.email);
         }
 
-        String sourceString = Utils.getFontString(R.string.premium_left,"30");
-        tvPremiumLeft.setText(Html.fromHtml(sourceString));
-
+        final boolean isPremium = User.getInstance().isPremium();
+        if (isPremium){
+            tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
+        }
+        else{
+            String dayLeft  = "30";
+            if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
+                dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+            }
+            String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
+            tvPremiumLeft.setText(Html.fromHtml(sourceString));
+        }
     }
 
     @Override
@@ -132,8 +140,14 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String sourceString = Utils.getFontString(R.string.premium_left,days);
-                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
+                    final boolean isPremium = User.getInstance().isPremium();
+                    if (isPremium){
+                        tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
+                    }
+                    else{
+                        String sourceString = Utils.getFontString(R.string.premium_left,days);
+                        tvPremiumLeft.setText(Html.fromHtml(sourceString));
+                    }
                 }
             });
         }
@@ -155,7 +169,11 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         Log.d(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.INVISIBLE);
-            SingletonPremiumTimer.getInstance().setListener(this);
+
+            final boolean isPremium = User.getInstance().isPremium();
+            if (!isPremium){
+                SingletonPremiumTimer.getInstance().setListener(this);
+            }
         }
         else{
             SingletonPremiumTimer.getInstance().setListener(null);

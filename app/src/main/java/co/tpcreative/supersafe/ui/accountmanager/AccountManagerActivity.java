@@ -9,6 +9,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import java.util.List;
@@ -45,6 +46,11 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     TextView tvPremiumLeft;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.rlPremiumComplimentary)
+    RelativeLayout rlPremiumComplimentary;
+    @BindView(R.id.rlPremium)
+    RelativeLayout rlPremium;
+
     private AccountManagerPresenter presenter;
     private AccountManagerAdapter adapter;
 
@@ -74,17 +80,32 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             }
         }
 
-        Utils.Log(TAG,"account: "+ new Gson().toJson(mUser));
-        if (mUser.premium.status){
+
+        final boolean isPremium = User.getInstance().isPremium();
+        if (isPremium){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
             tvLicenseStatus.setText(getString(R.string.premium));
+            rlPremium.setVisibility(View.VISIBLE);
+            rlPremiumComplimentary.setVisibility(View.GONE);
         }
-        else {
-            tvLicenseStatus.setText(getString(R.string.free));
+        else{
+            String dayLeft  = "30";
+            if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
+                dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+            }
+            String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
+            tvPremiumLeft.setText(Html.fromHtml(value));
+            if (mUser.premium.status){
+                tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
+                tvLicenseStatus.setText(getString(R.string.premium));
+            }
+            else {
+                tvLicenseStatus.setText(getString(R.string.free));
+            }
+            rlPremium.setVisibility(View.GONE);
+            rlPremiumComplimentary.setVisibility(View.VISIBLE);
         }
 
-        String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,"30");
-        tvPremiumLeft.setText(Html.fromHtml(value));
     }
 
     public void initRecycleView(){
@@ -110,7 +131,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
     }
 
-
     @Override
     public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
         try {
@@ -127,7 +147,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
     }
 
-
     @OnClick(R.id.btnUpgrade)
     public void onClickedUpgrade(View view){
         Navigator.onMoveToPremium(this);
@@ -142,11 +161,12 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
-        SingletonPremiumTimer.getInstance().setListener(this);
+        final boolean isPremium = User.getInstance().isPremium();
+        if (!isPremium){
+            SingletonPremiumTimer.getInstance().setListener(this);
+        }
         SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
     }
-
-
 
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){

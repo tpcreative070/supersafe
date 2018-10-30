@@ -749,6 +749,14 @@ class Camera2 extends CameraViewImpl implements SensorOrientationChangeNotifier.
      * capturing a still picture.
      */
     void unlockFocus() {
+
+        if (mCaptureSession==null){
+            return;
+        }
+        if (mPreviewRequestBuilder==null){
+            return;
+        }
+
         Log.d(TAG,"unlockFocus");
         mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
                 CaptureRequest.CONTROL_AF_TRIGGER_CANCEL);

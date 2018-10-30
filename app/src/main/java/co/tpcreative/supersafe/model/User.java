@@ -65,4 +65,16 @@ public class User extends BaseResponse implements Serializable{
         return  false;
     }
 
+    public boolean isPremiumComplimentary(){
+        final User mUser = getUserInfo();
+        if (mUser!=null){
+           if (mUser.premium!=null){
+               if (mUser.premium.status){
+                   return true;
+               }
+           }
+        }
+        return  false;
+    }
+
 }

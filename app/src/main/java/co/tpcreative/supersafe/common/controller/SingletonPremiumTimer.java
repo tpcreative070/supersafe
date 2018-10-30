@@ -12,6 +12,10 @@ public class SingletonPremiumTimer {
     private CountDownTimer mCountDownTimer;
     long current_milliseconds = 0;
     long end_milliseconds = 0;
+    private String daysLeft ;
+    private String hoursLeft ;
+    private String minutesLeft ;
+    private String secondsLeft ;
 
     private SingletonPremiumTimerListener ls;
 
@@ -32,7 +36,6 @@ public class SingletonPremiumTimer {
     }
 
     public void onStartTimer(){
-
         if (mCountDownTimer!=null){
             Utils.Log(TAG,"Running............");
             return;
@@ -52,6 +55,12 @@ public class SingletonPremiumTimer {
             current_milliseconds =  mUser.premium.current_milliseconds ;
             end_milliseconds = mUser.premium.past_milliseconds;
 
+            if (current_milliseconds>= end_milliseconds){
+                mUser.premium.status = false;
+                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+                return;
+            }
+
             Utils.Log(TAG,"Device milliseconds :"+ mUser.premium.device_milliseconds +" current milliseconds "+ mUser.premium.current_milliseconds);
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,10 +72,10 @@ public class SingletonPremiumTimer {
                 current_milliseconds = current_milliseconds-1;
                 Long serverUptimeSeconds =
                         (millisUntilFinished - current_milliseconds) / 1000;
-                String daysLeft = String.format("%d", serverUptimeSeconds / 86400);
-                String hoursLeft = String.format("%d", (serverUptimeSeconds % 86400) / 3600);
-                String minutesLeft = String.format("%d", ((serverUptimeSeconds % 86400) % 3600) / 60);
-                String secondsLeft = String.format("%d", ((serverUptimeSeconds % 86400) % 3600) % 60);
+                daysLeft = String.format("%d", serverUptimeSeconds / 86400);
+                hoursLeft = String.format("%d", (serverUptimeSeconds % 86400) / 3600);
+                minutesLeft = String.format("%d", ((serverUptimeSeconds % 86400) % 3600) / 60);
+                secondsLeft = String.format("%d", ((serverUptimeSeconds % 86400) % 3600) % 60);
                 if (ls!=null){
                     ls.onPremiumTimer(daysLeft,hoursLeft,minutesLeft,secondsLeft);
                 }
@@ -74,7 +83,12 @@ public class SingletonPremiumTimer {
             }
             @Override
             public void onFinish() {
-                Utils.Log(TAG,"Finish");
+                if (current_milliseconds>=end_milliseconds){
+                    final User user = User.getInstance().getUserInfo();
+                    user.premium.status = false;
+                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
+                }
+                Utils.Log(TAG,"Finish :"+ end_milliseconds +" - "+current_milliseconds);
             }
         }.start();
     }
@@ -102,6 +116,10 @@ public class SingletonPremiumTimer {
 
     public interface SingletonPremiumTimerListener{
         void onPremiumTimer(String days,String hours,String minutes,String seconds);
+    }
+
+    public String getDaysLeft() {
+        return daysLeft;
     }
 
 }

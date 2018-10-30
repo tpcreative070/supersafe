@@ -88,7 +88,13 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
 
-        String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,"30");
+
+        String dayLeft  = "30";
+        if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
+            dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+        }
+
+        String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
         tvPremiumLeft.setText(Html.fromHtml(value));
         onDrawOverLay(this);
 
@@ -180,7 +186,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             return;
         }
 
-
         if (mProductLifeTime.getSkus()!=null && mProductLifeTime.getSkus().size()>0){
             if (mLifeTime!=null){
                 //final Purchase purchase = mProductLifeTime.getPurchaseInState(mLifeTime, Purchase.State.PURCHASED);
@@ -215,7 +220,11 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         super.onResume();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(PremiumActivity.class.getSimpleName());
-        SingletonPremiumTimer.getInstance().setListener(this);
+
+        final boolean isPremium = User.getInstance().isPremium();
+        if (!isPremium){
+            SingletonPremiumTimer.getInstance().setListener(this);
+        }
     }
 
     @Override

@@ -147,6 +147,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             return;
         }
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+
+            final boolean isPremiumComplimentary  = User.getInstance().isPremiumComplimentary();
+            if (!isPremiumComplimentary){
+                return;
+            }
+
             final User mUser = User.getInstance().getUserInfo();
             if (mUser!=null){
                 final Premium premium = mUser.premium;
