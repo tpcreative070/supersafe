@@ -1,14 +1,9 @@
 package co.tpcreative.supersafe.ui.premium;
 import android.util.Log;
-import android.view.View;
-
 import com.google.gson.Gson;
-
 import org.solovyev.android.checkout.Purchase;
-
 import java.io.IOException;
 import java.util.Map;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -16,9 +11,8 @@ import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Checkout;
+import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -60,7 +54,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
             return;
         }
 
-        final Checkout checkout = new Checkout();
+        final CheckoutItems checkout = new CheckoutItems();
 
         if (purchase.sku.equals(getString(R.string.six_months))){
            checkout.isPurchasedSixMonths = true;

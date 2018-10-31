@@ -66,12 +66,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
-
-
         onUpdatedView();
     }
-
-
 
     public void onUpdatedView(){
 
@@ -87,7 +83,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 tvStatusAccount.setText(getString(R.string.unverified));
             }
         }
-
 
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){

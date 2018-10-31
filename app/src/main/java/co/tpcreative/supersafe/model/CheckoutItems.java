@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.model;
 
-public class Checkout {
+public class CheckoutItems {
 
     public boolean isPurchasedSixMonths;
     public boolean isPurchasedOneYears;

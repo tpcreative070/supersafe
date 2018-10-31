@@ -604,7 +604,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     }
 
-
     public void onSuggestionAddFiles(){
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(mSpeedDialView, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
@@ -625,8 +624,33 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         view.dismiss(true);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                     }
+
+                    @Override
+                    public void onOuterCircleClick(TapTargetView view) {
+                        super.onOuterCircleClick(view);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
+                        view.dismiss(true);
+                        Utils.Log(TAG,"onOuterCircleClick");
+                    }
+
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
+                        view.dismiss(true);
+                        Utils.Log(TAG,"onTargetDismissed");
+                    }
+
+                    @Override
+                    public void onTargetCancel(TapTargetView view) {
+                        super.onTargetCancel(view);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
+                        view.dismiss(true);
+                        Utils.Log(TAG,"onTargetCancel");
+                    }
                 });
     }
+
 
     public void onSuggestionSyncData(){
         TapTargetView.showFor(this,                 // `this` is an Activity
@@ -647,9 +671,35 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         onEnableSyncData();
                         view.dismiss(true);
                         PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data),true);
+                        Utils.Log(TAG,"onTargetClick");
+                    }
+
+                    @Override
+                    public void onOuterCircleClick(TapTargetView view) {
+                        super.onOuterCircleClick(view);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data),true);
+                        view.dismiss(true);
+                        Utils.Log(TAG,"onOuterCircleClick");
+                    }
+
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data),true);
+                        view.dismiss(true);
+                        Utils.Log(TAG,"onTargetDismissed");
+                    }
+
+                    @Override
+                    public void onTargetCancel(TapTargetView view) {
+                        super.onTargetCancel(view);
+                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data),true);
+                        view.dismiss(true);
+                        Utils.Log(TAG,"onTargetCancel");
                     }
                 });
     }
+
 
     public void onEnableSyncData(){
         final User mUser = User.getInstance().getUserInfo();

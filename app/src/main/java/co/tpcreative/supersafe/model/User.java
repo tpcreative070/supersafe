@@ -27,7 +27,7 @@ public class User extends BaseResponse implements Serializable{
     public boolean isUpload;
     public boolean isRequestSync;
     public boolean isUpdateView;
-    public Checkout checkout;
+    public CheckoutItems checkout;
     private static User instance ;
 
     public static User getInstance(){
@@ -56,7 +56,7 @@ public class User extends BaseResponse implements Serializable{
     public boolean isPremium(){
         final User mUser = getUserInfo();
         if (mUser!=null){
-            final Checkout mCheckout = mUser.checkout;
+            final CheckoutItems mCheckout = mUser.checkout;
             if (mCheckout!=null){
                 if (mCheckout.isPurchasedLifeTime || mCheckout.isPurchasedOneYears || mCheckout.isPurchasedSixMonths){
                    return true;

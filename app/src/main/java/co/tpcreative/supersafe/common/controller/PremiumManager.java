@@ -1,20 +1,17 @@
 package co.tpcreative.supersafe.common.controller;
-
 import com.google.gson.Gson;
-
 import org.solovyev.android.checkout.Billing;
 import org.solovyev.android.checkout.Checkout;
 import org.solovyev.android.checkout.Inventory;
 import org.solovyev.android.checkout.ProductTypes;
 import org.solovyev.android.checkout.Purchase;
 import org.solovyev.android.checkout.Sku;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
@@ -58,6 +55,11 @@ public class PremiumManager {
                                     if (user.checkout != null) {
                                         user.checkout.isPurchasedSixMonths = false;
                                     }
+                                    else{
+                                        CheckoutItems checkoutItems = new CheckoutItems();
+                                        checkoutItems.isPurchasedSixMonths = false;
+                                        user.checkout = checkoutItems;
+                                    }
                                     PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                 }
                                 Utils.onWriteLog(" response expired months :" + new Gson().toJson(purchaseExpire), EnumStatus.CHECKOUT);
@@ -68,12 +70,22 @@ public class PremiumManager {
                                         if (user.checkout != null) {
                                             user.checkout.isPurchasedSixMonths = false;
                                         }
+                                        else{
+                                            CheckoutItems checkoutItems = new CheckoutItems();
+                                            checkoutItems.isPurchasedSixMonths = false;
+                                            user.checkout = checkoutItems;
+                                        }
                                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                     }
                                 } else {
                                     if (user != null) {
                                         if (user.checkout != null) {
                                             user.checkout.isPurchasedSixMonths = true;
+                                        }
+                                        else{
+                                            CheckoutItems checkoutItems = new CheckoutItems();
+                                            checkoutItems.isPurchasedSixMonths = true;
+                                            user.checkout = checkoutItems;
                                         }
                                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                     }
@@ -88,6 +100,11 @@ public class PremiumManager {
                                     if (user.checkout != null) {
                                         user.checkout.isPurchasedOneYears = false;
                                     }
+                                    else{
+                                        CheckoutItems checkoutItems = new CheckoutItems();
+                                        checkoutItems.isPurchasedOneYears = false;
+                                        user.checkout = checkoutItems;
+                                    }
                                     PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                 }
                                 Utils.onWriteLog(" response expired years :" + new Gson().toJson(purchaseExpire), EnumStatus.CHECKOUT);
@@ -98,12 +115,22 @@ public class PremiumManager {
                                         if (user.checkout != null) {
                                             user.checkout.isPurchasedOneYears = false;
                                         }
+                                        else{
+                                            CheckoutItems checkoutItems = new CheckoutItems();
+                                            checkoutItems.isPurchasedOneYears = false;
+                                            user.checkout = checkoutItems;
+                                        }
                                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                     }
                                 } else {
                                     if (user != null) {
                                         if (user.checkout != null) {
                                             user.checkout.isPurchasedOneYears = true;
+                                        }
+                                        else{
+                                            CheckoutItems checkoutItems = new CheckoutItems();
+                                            checkoutItems.isPurchasedOneYears = true;
+                                            user.checkout = checkoutItems;
                                         }
                                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                     }
@@ -137,8 +164,13 @@ public class PremiumManager {
                                 if (user != null) {
                                     if (user.checkout != null) {
                                         user.checkout.isPurchasedLifeTime = true;
-                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                     }
+                                    else{
+                                        CheckoutItems checkoutItems = new CheckoutItems();
+                                        checkoutItems.isPurchasedLifeTime = true;
+                                        user.checkout = checkoutItems;
+                                    }
+                                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                                 }
                             }
                             Utils.onWriteLog("response Life time :" + new Gson().toJson(index), EnumStatus.CHECKOUT);
