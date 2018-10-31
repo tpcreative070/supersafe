@@ -126,10 +126,27 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){
             tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
-            tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
+            Theme theme = Theme.getInstance().getThemeInfo();
+            tvPremiumLeft.setTextColor(getResources().getColor(theme.getPrimaryColor()));
+            if (presenter.mUser.driveConnected) {
+                tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
+            } else {
+                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
+            }
+        }
+        else if (User.getInstance().isPremiumComplimentary()){
+            String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+            if (dayLeft!=null){
+                String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
+                tvPremiumLeft.setText(Html.fromHtml(sourceString));
+            }
+            if (presenter.mUser.driveConnected) {
+                tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
+            } else {
+                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
+            }
         }
         else{
-
             if (presenter.mUser.driveConnected) {
                 String value;
                 final SyncData syncData = presenter.mUser.syncData;
@@ -144,18 +161,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
 
-
-            if (User.getInstance().isPremiumComplimentary()){
-                if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-                    String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-                    String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
-                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                }
-            }
-            else{
-                tvPremiumLeft.setText(getString(R.string.complimentary_expired));
-                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
-            }
+            tvPremiumLeft.setText(getString(R.string.premium_expired));
+            tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
         }
     }
 

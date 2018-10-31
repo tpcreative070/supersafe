@@ -53,7 +53,7 @@
 
                             <TextView
                                 android:textStyle="bold"
-                                android:textSize="@dimen/text_size_large"
+                                android:textSize="@dimen/medium"
                                 android:layout_marginTop="10dp"
                                 android:id="@+id/tvPremiumLeft"
                                 android:layout_width="match_parent"
@@ -63,7 +63,8 @@
                                 android:layout_marginLeft="10dp"
                                 android:gravity="center"
                                 android:text="@string/premium_left"
-                                android:textColor="@color/material_gray_700" />
+                                android:textColor="@color/material_gray_700"/>
+
                         </RelativeLayout>
                     </LinearLayout>
                 </RelativeLayout>

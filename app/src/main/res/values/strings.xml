@@ -321,7 +321,7 @@
     <string name="calculating">Calculating</string>
     <string name="supersafe_premium">SuperSafe Premium</string>
     <string name="premium_left">You have %1$s days of complimentary Premium remaining</string>
-    <string name="complimentary_expired">Your complimentary was expired</string>
+    <string name="premium_expired">Your premium was expired</string>
     <string name="move_items_to_trash">Move %1$s items to trash?</string>
     <string name="share_items">Share %1$s items...</string>
     <string name="export_items">Export %1$s items...</string>

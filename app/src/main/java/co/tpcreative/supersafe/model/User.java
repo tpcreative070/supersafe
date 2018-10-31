@@ -10,6 +10,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 
 public class User extends BaseResponse implements Serializable{
 
@@ -84,6 +85,20 @@ public class User extends BaseResponse implements Serializable{
             }
         }
         return false;
+    }
+
+
+    public boolean isCheckAllowUpload(){
+        final boolean expired = isPremiumExpired();
+        if (expired){
+            final SyncData syncData = User.getInstance().getUserInfo().syncData;
+            if (syncData!=null){
+                if (syncData.left==0){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

@@ -63,6 +63,23 @@
 
 
                 <LinearLayout
+                    android:id="@+id/llTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="@dimen/medium"
+                        android:padding="30dp"
+                        android:gravity="center"
+                        android:text="@string/you_are_in_premium_features"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/llPremium"
                     android:layout_marginTop="10dp"
                     android:background="@color/material_gray_100"
                     android:padding="10dp"

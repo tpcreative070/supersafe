@@ -157,13 +157,15 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             if (mUser!=null){
                 final Premium premium = mUser.premium;
                 if (mUser.premium!=null){
-                    long currentDatetime = System.currentTimeMillis();
-                    long device_milliseconds = premium.device_milliseconds;
-                    if (device_milliseconds>0){
-                        long result  = currentDatetime - device_milliseconds;
-                        mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                        SingletonPremiumTimer.getInstance().onStartTimer();
+                    if (mUser.premium.status){
+                        long currentDatetime = System.currentTimeMillis();
+                        long device_milliseconds = premium.device_milliseconds;
+                        if (device_milliseconds>0){
+                            long result  = currentDatetime - device_milliseconds;
+                            mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
+                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            SingletonPremiumTimer.getInstance().onStartTimer();
+                        }
                     }
                 }
             }
@@ -1002,6 +1004,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 if (mUser!=null){
                                     mUser.syncData = onResponse.syncData;
                                     PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                    Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.GET_LIST_FILE);
                                 }
                                 Log.d(TAG, "Ready for sync");
                                 view.onSuccessful("Ready for sync");

@@ -61,6 +61,7 @@
                         android:src="@drawable/ic_premium_icon" />
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tvTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -69,7 +70,7 @@
                         android:gravity="center"
                         android:text="@string/your_premium_expires_soon"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/text_size_xlarge_20" />
+                        android:textSize="@dimen/medium" />
                 </LinearLayout>
 
                 <LinearLayout

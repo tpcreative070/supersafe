@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import java.util.List;
@@ -45,6 +46,10 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     TextView tvOtherSpace;
     @BindView(R.id.tvFreeSpace)
     TextView tvFreeSpace;
+    @BindView(R.id.llPremium)
+    LinearLayout llPremium;
+    @BindView(R.id.llTitle)
+    LinearLayout llTitle;
 
     @BindView(R.id.tvValueSupersafeSpace)
     TextView tvValueSupersafeSpace;
@@ -73,12 +78,25 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         presenter.bindView(this);
         btnSwitchPauseSync.setOnCheckedChangeListener(this);
 
-        String lefFiles = String.format(getString(R.string.left),"100");
+        String lefFiles = String.format(getString(R.string.left),""+Navigator.LIMIT_UPLOAD);
         tvLeft.setText(lefFiles);
 
         String updated = String.format(getString(R.string.left),"0");
         tvUploaded.setText(updated);
         onShowUI();
+        onUpdatedView();
+    }
+
+
+    public void onUpdatedView(){
+        if (User.getInstance().isPremiumExpired()){
+            llPremium.setVisibility(View.VISIBLE);
+            llTitle.setVisibility(View.GONE);
+        }
+        else{
+            llPremium.setVisibility(View.GONE);
+            llTitle.setVisibility(View.VISIBLE);
+        }
     }
 
     public void onShowUI(){
@@ -124,14 +142,14 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 }
             }
             catch (Exception e){
-                String lefFiles = String.format(getString(R.string.left),"100");
+                String lefFiles = String.format(getString(R.string.left),""+Navigator.LIMIT_UPLOAD);
                 tvLeft.setText(lefFiles);
                 isThrow = true;
             }
 
             try {
                 if (mUser.syncData!=null){
-                    String uploadedFiles = String.format(getString(R.string.uploaded),""+(100 - mUser.syncData.left));
+                    String uploadedFiles = String.format(getString(R.string.uploaded),""+(Navigator.LIMIT_UPLOAD - mUser.syncData.left));
                     tvUploaded.setText(uploadedFiles);
                 }
             }

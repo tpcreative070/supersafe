@@ -112,7 +112,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 }
             }
             else{
-                tvTitle.setText(getString(R.string.complimentary_expired));
+                tvTitle.setText(getString(R.string.premium_expired));
                 tvTitle.setTextColor(getResources().getColor(R.color.red_300));
                 tvPremiumLeft.setVisibility(View.GONE);
             }

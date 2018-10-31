@@ -434,6 +434,8 @@ public class ServiceManager implements BaseView {
             return;
         }
 
+
+
         getObservableItems(mList).
                 subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).
@@ -537,27 +539,11 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-        final boolean isPremium = User.getInstance().isPremium();
-        if (!isPremium){
-            final SyncData syncData = User.getInstance().syncData;
-            if (syncData!=null){
-                if (syncData.left==0){
-                    return;
-                }
-            }
-        }
 
         final User mUser = User.getInstance().getUserInfo();
-        if (mUser!=null){
-            if (mUser.syncData!=null){
-                final Premium mPremium = mUser.premium;
-                if (mPremium!=null){
-                    if (mUser.syncData.left<=0 && !mPremium.status){
-                        Utils.Log(TAG, mUser.syncData.message+"-------------*******************************-----------");
-                        return;
-                    }
-                }
-            }
+        if (mUser.premium==null){
+            Utils.Log(TAG, "Premium is null..----------------*******************************-----------");
+            return;
         }
 
 
@@ -713,13 +699,22 @@ public class ServiceManager implements BaseView {
                                 onDownloadFilesFromDriveStore();
                             } else {
                                 Utils.Log(TAG, "Preparing uploading...");
-                                onUploadDataToStore();
+                                if (User.getInstance().isCheckAllowUpload()){
+                                    onUploadDataToStore();
+                                }
+                                else{
+                                    Utils.Log(TAG, "Limit uploaded now..----------------*******************************-----------");
+                                }
                             }
                         } else {
                             Utils.Log(TAG, "Preparing uploading...");
-                            onUploadDataToStore();
+                            if (User.getInstance().isCheckAllowUpload()){
+                                onUploadDataToStore();
+                            }
+                            else{
+                                Utils.Log(TAG, "Limit uploaded now..----------------*******************************-----------");
+                            }
                         }
-
                     }
                 }
             });

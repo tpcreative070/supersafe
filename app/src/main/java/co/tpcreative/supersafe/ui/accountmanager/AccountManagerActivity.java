@@ -89,8 +89,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
 
 
-
-
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
@@ -112,7 +110,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             }
             else{
                 tvLicenseStatus.setText(getString(R.string.free));
-                tvPremiumLeft.setText(getString(R.string.complimentary_expired));
+                tvPremiumLeft.setText(getString(R.string.premium_expired));
                 tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
             }
         }
