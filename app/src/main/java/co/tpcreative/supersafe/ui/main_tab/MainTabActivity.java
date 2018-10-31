@@ -272,11 +272,9 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         onShowDialog();
                         return false; // false will close it without animation
                     case R.id.fab_photo:
-                        showMessage(actionItem.getLabel(getApplicationContext()) + " Photo");
                         Navigator.onMoveToAlbum(MainTabActivity.this);
                         return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
                     case R.id.fab_camera:
-                        showMessage(actionItem.getLabel(getApplicationContext()) + " Camera");
                         onAddPermissionCamera();
                         return  false;
                 }

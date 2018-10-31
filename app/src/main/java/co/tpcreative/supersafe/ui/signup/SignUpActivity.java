@@ -227,7 +227,6 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         switch (status){
             case SIGN_UP:{
                 Navigator.onMoveToMainTab(this);
-                Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
             }
             break;
         }

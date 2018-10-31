@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.ui.accountmanager;
 import java.util.ArrayList;
 import java.util.List;
+
+import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -18,8 +20,8 @@ public class AccountManagerPresenter extends Presenter<BaseView>{
 
     public void getData(){
         BaseView view = view();
-        boolean qrScanner = Utils.appInstalledOrNot("tpcreative.co.qrscanner.free.release");
-        mList.add(new AppLists("ic_qrscanner_launcher","QRScanner","Scan code quickly by your hands",qrScanner));
+        boolean qrScanner = Utils.appInstalledOrNot(getString(R.string.qrscanner_package_name));
+        mList.add(new AppLists("ic_qrscanner_launcher","QRScanner","Scan code quickly by your hands",qrScanner,getString(R.string.qrscanner_package_name),getString(R.string.qrscanner_link)));
         view.onSuccessful("Successful", EnumStatus.RELOAD);
     }
 

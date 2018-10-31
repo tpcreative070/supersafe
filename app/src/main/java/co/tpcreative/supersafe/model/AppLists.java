@@ -9,6 +9,8 @@ public class AppLists {
     public String ic_name;
     public String title;
     public String description;
+    public String link;
+    public String packageName;
     public boolean isInstalled;
 
 
@@ -25,11 +27,13 @@ public class AppLists {
 
     }
 
-    public AppLists(String ic_name,String title,String description,boolean isInstalled){
+    public AppLists(String ic_name,String title,String description,boolean isInstalled,String packageName,String link){
         this.ic_name = ic_name;
         this.title = title;
         this.description = description;
         this.isInstalled = isInstalled;
+        this.link = link;
+        this.packageName = packageName;
     }
 
     public Drawable getDrawable(Context mContext, String name) {

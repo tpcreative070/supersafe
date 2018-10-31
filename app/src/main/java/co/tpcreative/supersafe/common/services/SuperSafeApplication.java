@@ -92,9 +92,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         mInstance = this;
         isLive = true;
 
-
-
-
         Fabric.with(this, new Crashlytics());
 
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -139,12 +136,8 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .build();
 
         storage = new Storage(getApplicationContext());
-        if (BuildConfig.DEBUG){
-            supersafe = storage.getExternalStorageDirectory() + "/SuperSafe_DoNot_Delete/";
-        }
-        else{
-            supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/";
-        }
+        supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/";
+
 
         key = ".encrypt_key";
         fake_key = ".encrypt_fake_key";

@@ -527,7 +527,8 @@
     <string name="installed">Installed</string>
     <string name="learn_more">Learn more</string>
     <string name="our_apps">Our apps</string>
-
+    <string name="qrscanner_link">https://play.google.com/store/apps/details?id=tpcreative.co.qrscanner.free.release</string>
+    <string name="qrscanner_package_name">tpcreative.co.qrscanner.free.release</string>
 
     <!--Multi selects -->
     <string name="album_view">Select photo album</string>

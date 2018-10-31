@@ -53,7 +53,7 @@ import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 
 public class Navigator {
 
-    public static final int LIMIT_UPLOAD = 20;
+    public static final int LIMIT_UPLOAD = 100;
 
     public static final int PHOTO_SLIDE_SHOW = 100;
     public static final int CAMERA_ACTION = 1001;
