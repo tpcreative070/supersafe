@@ -321,6 +321,7 @@
     <string name="calculating">Calculating</string>
     <string name="supersafe_premium">SuperSafe Premium</string>
     <string name="premium_left">You have %1$s days of complimentary Premium remaining</string>
+    <string name="complimentary_expired">Your complimentary was expired</string>
     <string name="move_items_to_trash">Move %1$s items to trash?</string>
     <string name="share_items">Share %1$s items...</string>
     <string name="export_items">Export %1$s items...</string>
@@ -464,6 +465,10 @@
     <string name="lock">Lock</string>
     <string name="open">Open</string>
     <string name="unlocked_successful">Unlocked successful</string>
+    <string name="no_limited_cloud_sync_storage">No limited Cloud sync storage</string>
+    <string name="Remove_upload_limit_of_100_files_per_month">Remove upload limit of 100 files per month</string>
+
+    <string name="your_premium_has_expired">Your premium has expired. Do you want to upgrade to continue to use services?</string>
 
     <!--Help and Support -->
     <string name="faq">FAQ</string>

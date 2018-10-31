@@ -88,25 +88,34 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
 
-
-        String dayLeft  = "30";
-        if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-            dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-        }
-
-        String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
-        tvPremiumLeft.setText(Html.fromHtml(value));
         onDrawOverLay(this);
 
         /*Init In app purchase*/
         onStartInAppPurchase();
-        onUpdateView();
+        onUpdatedView();
     }
 
-    public void onUpdateView(){
-        if (User.getInstance().isPremium()){
+
+    public void onUpdatedView(){
+        final boolean isPremium = User.getInstance().isPremium();
+        if (isPremium){
             tvTitle.setText(getText(R.string.you_are_in_premium_features));
             tvPremiumLeft.setVisibility(View.GONE);
+        }
+        else{
+
+            if (User.getInstance().isPremiumComplimentary()){
+                if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
+                    String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+                    String sourceString = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
+                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
+                }
+            }
+            else{
+                tvTitle.setText(getString(R.string.complimentary_expired));
+                tvTitle.setTextColor(getResources().getColor(R.color.red_300));
+                tvPremiumLeft.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -477,7 +486,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         switch (status){
             case CHECKOUT:{
                 Toast.makeText(getApplicationContext(),"Message "+ message,Toast.LENGTH_SHORT).show();
-                onUpdateView();
+                onUpdatedView();
                 break;
             }
         }

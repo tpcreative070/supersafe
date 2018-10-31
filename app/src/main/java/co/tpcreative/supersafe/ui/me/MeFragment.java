@@ -120,17 +120,42 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
            tvEmail.setText(presenter.mUser.email);
         }
 
+    }
+
+    public void onUpdatedView(){
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){
             tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
+            tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
         }
         else{
-            String dayLeft  = "30";
-            if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-                dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+
+            if (presenter.mUser.driveConnected) {
+                String value;
+                final SyncData syncData = presenter.mUser.syncData;
+                if (syncData != null) {
+                    int result = Navigator.LIMIT_UPLOAD - syncData.left;
+                    value = String.format(getString(R.string.monthly_used), result + "", ""+Navigator.LIMIT_UPLOAD);
+                } else {
+                    value = String.format(getString(R.string.monthly_used), "0", ""+Navigator.LIMIT_UPLOAD);
+                }
+                tvEnableCloud.setText(value);
+            } else {
+                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
-            String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
-            tvPremiumLeft.setText(Html.fromHtml(sourceString));
+
+
+            if (User.getInstance().isPremiumComplimentary()){
+                if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
+                    String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+                    String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
+                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
+                }
+            }
+            else{
+                tvPremiumLeft.setText(getString(R.string.complimentary_expired));
+                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
+            }
         }
     }
 
@@ -169,11 +194,11 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         Log.d(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.INVISIBLE);
-
             final boolean isPremium = User.getInstance().isPremium();
             if (!isPremium){
                 SingletonPremiumTimer.getInstance().setListener(this);
             }
+            onUpdatedView();
         }
         else{
             SingletonPremiumTimer.getInstance().setListener(null);
@@ -186,6 +211,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         Log.d(TAG,"onResume");
         presenter.onCalculate();
         presenter.onShowUserInfo();
+        onUpdatedView();
         try {
             if (presenter.mUser != null) {
                 if (presenter.mUser.verified) {
@@ -194,19 +220,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                     tvStatus.setText(getString(R.string.verify_change));
                 }
                 tvEmail.setText(presenter.mUser.email);
-            }
-            if (presenter.mUser.driveConnected) {
-                String value;
-                final SyncData syncData = presenter.mUser.syncData;
-                if (syncData != null) {
-                    int result = 100 - syncData.left;
-                    value = String.format(getString(R.string.monthly_used), result + "", "100");
-                } else {
-                    value = String.format(getString(R.string.monthly_used), "0", "100");
-                }
-                tvEnableCloud.setText(value);
-            } else {
-                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
         }
         catch (Exception e){

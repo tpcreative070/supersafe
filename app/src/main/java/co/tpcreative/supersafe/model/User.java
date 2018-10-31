@@ -77,4 +77,13 @@ public class User extends BaseResponse implements Serializable{
         return  false;
     }
 
+    public boolean isPremiumExpired(){
+        if (!isPremium()){
+            if (!isPremiumComplimentary()){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

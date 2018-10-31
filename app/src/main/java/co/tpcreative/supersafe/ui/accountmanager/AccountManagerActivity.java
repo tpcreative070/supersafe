@@ -67,18 +67,28 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
 
+
+        onUpdatedView();
+    }
+
+
+
+    public void onUpdatedView(){
+
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
             tvEmail.setText(mUser.email);
             if (mUser.verified){
-               tvStatusAccount.setTextColor(getResources().getColor(R.color.ColorBlueV1));
-               tvStatusAccount.setText(getString(R.string.verified));
+                tvStatusAccount.setTextColor(getResources().getColor(R.color.ColorBlueV1));
+                tvStatusAccount.setText(getString(R.string.verified));
             }
             else{
                 tvStatusAccount.setTextColor(getResources().getColor(R.color.red));
                 tvStatusAccount.setText(getString(R.string.unverified));
             }
         }
+
+
 
 
         final boolean isPremium = User.getInstance().isPremium();
@@ -89,23 +99,23 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             rlPremiumComplimentary.setVisibility(View.GONE);
         }
         else{
-            String dayLeft  = "30";
-            if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-                dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-            }
-            String value = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
-            tvPremiumLeft.setText(Html.fromHtml(value));
-            if (mUser.premium.status){
-                tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
-                tvLicenseStatus.setText(getString(R.string.premium));
-            }
-            else {
-                tvLicenseStatus.setText(getString(R.string.free));
-            }
             rlPremium.setVisibility(View.GONE);
             rlPremiumComplimentary.setVisibility(View.VISIBLE);
+            if (User.getInstance().isPremiumComplimentary()){
+                tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
+                tvLicenseStatus.setText(getString(R.string.premium));
+                if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
+                    String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
+                    String sourceString = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
+                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
+                }
+            }
+            else{
+                tvLicenseStatus.setText(getString(R.string.free));
+                tvPremiumLeft.setText(getString(R.string.complimentary_expired));
+                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
+            }
         }
-
     }
 
     public void initRecycleView(){

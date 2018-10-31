@@ -14,8 +14,8 @@
             android:layout="@layout/custom_preferences_item_premium"
             android:icon="@drawable/baseline_wb_cloudy_white_48"
             android:key="@string/key_private_cloud"
-            android:summary="@string/never_lost_files"
-            android:title="@string/key_private_cloud"/>
+            android:summary="@string/Remove_upload_limit_of_100_files_per_month"
+            android:title="@string/no_limited_cloud_sync_storage"/>
 
         <Preference
             android:layout="@layout/custom_preferences_item_premium"
@@ -30,6 +30,7 @@
             android:key="@string/no_advertisement"
             android:summary="@string/get_rid_of_those_ugly_ads"
             android:title="@string/no_advertisement"/>
+
 
     </PreferenceCategory>
 </PreferenceScreen>

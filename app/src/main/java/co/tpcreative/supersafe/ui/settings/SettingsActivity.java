@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
@@ -9,6 +10,11 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -170,6 +176,7 @@ public class SettingsActivity extends BaseActivity {
             return new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
+
                     if (preference instanceof Preference){
                         if (preference.getKey().equals(getString(R.string.key_account))){
                             Log.d(TAG,"value : ");
@@ -180,15 +187,37 @@ public class SettingsActivity extends BaseActivity {
                             Utils.Log(TAG,"Action here");
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
+                            if (User.getInstance().isPremiumExpired()){
+                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                return true;
+                            }
                             Navigator.onMoveThemeSettings(activity);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
+
+                            if (User.getInstance().isPremiumExpired()){
+                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                return true;
+                            }
+
                             Navigator.onMoveBreakInAlerts(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
+
+                            if (User.getInstance().isPremiumExpired()){
+                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                return true;
+                            }
+
                             Navigator.onMoveFakePin(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_secret_door))){
+
+                            if (User.getInstance().isPremiumExpired()){
+                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                return true;
+                            }
+
                             Navigator.onMoveSecretDoor(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_help_support))){
@@ -214,6 +243,10 @@ public class SettingsActivity extends BaseActivity {
                             }
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
+                            if (User.getInstance().isPremiumExpired()){
+                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                return true;
+                            }
                             Navigator.onMoveUnlockAllAlbums(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_upgrade))){
@@ -296,5 +329,25 @@ public class SettingsActivity extends BaseActivity {
             addPreferencesFromResource(R.xml.pref_general);
         }
 
+        public void onShowDialog(String message){
+            MaterialDialog.Builder builder =  new MaterialDialog.Builder(getContext())
+                    .title(getString(R.string.confirm))
+                    .theme(Theme.LIGHT)
+                    .content(message)
+                    .titleColor(getResources().getColor(R.color.black))
+                    .negativeText(getString(R.string.cancel))
+                    .positiveText(getString(R.string.ok))
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Navigator.onMoveToPremium(getContext());
+                        }
+                    });
+
+
+            builder.show();
+        }
+
     }
+
 }

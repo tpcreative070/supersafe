@@ -79,15 +79,22 @@ public class SingletonPremiumTimer {
                 if (ls!=null){
                     ls.onPremiumTimer(daysLeft,hoursLeft,minutesLeft,secondsLeft);
                 }
+
+                if (daysLeft.equals("0") && hoursLeft.equals("0") && minutesLeft.equals("0") && secondsLeft.equals("0")) {
+                    final User user = User.getInstance().getUserInfo();
+                    if (user!=null){
+                        if (user.premium!=null){
+                            user.premium.status = false;
+                            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
+                            onStop();
+                            Utils.Log(TAG,"Limited upload now");
+                        }
+                    }
+                }
                 Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
             }
             @Override
             public void onFinish() {
-                if (current_milliseconds>=end_milliseconds){
-                    final User user = User.getInstance().getUserInfo();
-                    user.premium.status = false;
-                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
-                }
                 Utils.Log(TAG,"Finish :"+ end_milliseconds +" - "+current_milliseconds);
             }
         }.start();

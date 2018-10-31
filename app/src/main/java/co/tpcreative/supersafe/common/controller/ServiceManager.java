@@ -51,6 +51,7 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.ResponseRXJava;
+import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.Observable;
@@ -536,6 +537,15 @@ public class ServiceManager implements BaseView {
             return;
         }
 
+        final boolean isPremium = User.getInstance().isPremium();
+        if (!isPremium){
+            final SyncData syncData = User.getInstance().syncData;
+            if (syncData!=null){
+                if (syncData.left==0){
+                    return;
+                }
+            }
+        }
 
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){

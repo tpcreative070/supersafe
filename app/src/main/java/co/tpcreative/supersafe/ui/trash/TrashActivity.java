@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,6 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -30,6 +33,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 
 public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapter.ItemSelectedListener{
@@ -49,6 +53,12 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     RecyclerView recyclerView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.rlRecyclerView)
+    RelativeLayout rlRecyclerView;
+    @BindView(R.id.llUpgrade)
+    LinearLayout llUpgrade;
+    @BindView(R.id.rlEmptyTrash)
+    RelativeLayout rlEmptyTrash;
     private TrashAdapter adapter;
     private TrashPresenter presenter;
     private ActionMode actionMode;
@@ -78,6 +88,17 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         }
     }
 
+
+    public void onUpdatedView(){
+        if (!User.getInstance().isPremium()){
+            if (!User.getInstance().isPremiumComplimentary()){
+                llUpgrade.setVisibility(View.VISIBLE);
+                rlEmptyTrash.setVisibility(View.GONE);
+                rlRecyclerView.setVisibility(View.GONE);
+            }
+        }
+    }
+
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
@@ -88,6 +109,7 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
         super.onResume();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(TrashActivity.class.getSimpleName());
+        onUpdatedView();
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){
@@ -121,6 +143,11 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
                 onShowDialog(getString(R.string.restore),false);
             }
         }
+    }
+
+    @OnClick(R.id.btnUpgradeVersion)
+    public void onUpgradeToRecover(){
+        Navigator.onMoveToPremium(getApplicationContext());
     }
 
     public void onShowDialog(String message,boolean isEmpty){
