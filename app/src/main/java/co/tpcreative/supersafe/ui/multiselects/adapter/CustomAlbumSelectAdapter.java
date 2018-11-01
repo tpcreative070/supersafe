@@ -69,6 +69,14 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
                                 .apply(options).into(viewHolder.imageView);
                         break;
                     }
+                    case FILES:{
+                        viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
+                        viewHolder.imgAudioVideo.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                        Glide.with(context)
+                                .load(R.drawable.image_background_audio_video)
+                                .apply(options).into(viewHolder.imageView);
+                        break;
+                    }
                     case VIDEO:{
                         viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
                         viewHolder.imgAudioVideo.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_videocam_white_36));

@@ -99,6 +99,17 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                             imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                             break;
                         }
+                        case FILES:{
+                            Theme theme = Theme.getInstance().getThemeInfo();
+                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                            Glide.with(context)
+                                    .load(note1)
+                                    .apply(options)
+                                    .into(imgAlbum);
+                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                            break;
+                        }
+
                         default: {
                             try {
                                 if (storage.isFileExist("" + items.thumbnailPath)) {

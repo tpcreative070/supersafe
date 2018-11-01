@@ -672,6 +672,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             return;
         }
 
+        if (items.categories_id == null || items.categories_id.equals("null")){
+            view.onError("Categories id is null", EnumStatus.ADD_ITEMS);
+        }
+
         // Map<String, Object> hashMap = new HashMap<>();
 
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
@@ -1026,6 +1030,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                 description.global_thumbnail_id = index.global_thumbnail_id;
                                                 switch (formatTypeFile) {
                                                     case AUDIO: {
+                                                        description.thumbnailSync = true;
+                                                        break;
+                                                    }
+                                                    case FILES:{
                                                         description.thumbnailSync = true;
                                                         break;
                                                     }

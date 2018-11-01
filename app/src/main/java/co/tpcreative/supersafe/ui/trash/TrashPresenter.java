@@ -22,6 +22,7 @@ public class TrashPresenter extends Presenter<BaseView>{
     protected int videos = 0;
     protected int photos = 0;
     protected int audios = 0;
+    protected int others = 0;
 
 
     public TrashPresenter(){
@@ -50,6 +51,7 @@ public class TrashPresenter extends Presenter<BaseView>{
         photos = 0;
         videos = 0;
         audios = 0;
+        others = 0;
         for (Items index : mList){
             final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
             switch (enumTypeFile){
@@ -65,6 +67,10 @@ public class TrashPresenter extends Presenter<BaseView>{
                     audios+=1;
                     break;
                 }
+                case FILES:{
+                    others+=1;
+                    break;
+                }
             }
         }
     }
@@ -75,6 +81,9 @@ public class TrashPresenter extends Presenter<BaseView>{
             if (isEmpty){
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
                 if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                }
+                else if (formatTypeFile == EnumFormatType.FILES && mList.get(i).global_original_id==null){
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
                 }
                 else if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id == null){

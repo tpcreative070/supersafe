@@ -77,14 +77,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     CoordinatorLayout main_content;
     @BindView(R.id.backdrop)
     ImageView backdrop;
-    @BindView(R.id.imgIcon)
-    ImageView imgIcon;
     @BindView(R.id.tv_Photos)
     TextView tv_Photos;
     @BindView(R.id.tv_Videos)
     TextView tv_Videos;
     @BindView(R.id.tv_Audios)
     TextView tv_Audios;
+    @BindView(R.id.tv_Others)
+    TextView tv_Others;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.llBottom)
@@ -128,25 +128,44 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
 
         final Items items = Items.getInstance().getObject(presenter.mainCategories.item);
-
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
-            if (formatTypeFile == EnumFormatType.AUDIO) {
-
-                try {
-                    int myColor = Color.parseColor(presenter.mainCategories.image);
-                    backdrop.setBackgroundColor(myColor);
+            switch (formatTypeFile){
+                case AUDIO:{
+                    try {
+                        int myColor = Color.parseColor(presenter.mainCategories.image);
+                        backdrop.setBackgroundColor(myColor);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
                 }
-                catch (Exception e){
-                    e.printStackTrace();
+                case FILES:{
+                    try {
+                        int myColor = Color.parseColor(presenter.mainCategories.image);
+                        backdrop.setBackgroundColor(myColor);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
                 }
-            } else {
-                backdrop.setRotation(items.degrees);
-                Glide.with(this)
-                        .load(storage.readFile(items.thumbnailPath))
-                        .apply(options)
-                        .into(backdrop);
-                imgIcon.setVisibility(View.INVISIBLE);
+                default:{
+                    if (storage.isFileExist(items.thumbnailPath)){
+                        backdrop.setRotation(items.degrees);
+                        Glide.with(this)
+                                .load(storage.readFile(items.thumbnailPath))
+                                .apply(options)
+                                .into(backdrop);
+                    }
+                    else{
+                        backdrop.setImageResource(0);
+                        int myColor = Color.parseColor(presenter.mainCategories.image);
+                        backdrop.setBackgroundColor(myColor);
+                    }
+                    break;
+                }
             }
         } else {
             backdrop.setImageResource(0);
@@ -155,10 +174,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 backdrop.setBackgroundColor(myColor);
             }
             catch (Exception e){
-
+                e.printStackTrace();
             }
-            imgIcon.setVisibility(View.VISIBLE);
-            imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(this,presenter.mainCategories.icon));
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
         onDrawOverLay(this);
@@ -229,7 +246,17 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         else{
             try {
-                Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList,presenter.mainCategories);
+                EnumFormatType formatType = EnumFormatType.values()[presenter.mList.get(position).formatType];
+                switch (formatType){
+                    case FILES:{
+                        Toast.makeText(getContext(),"Can not support to open type of this file",Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    default:{
+                        Navigator.onPhotoSlider(this, presenter.mList.get(position), presenter.mList,presenter.mainCategories);
+                        break;
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -442,14 +469,11 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             public boolean onActionSelected(SpeedDialActionItem actionItem) {
                 switch (actionItem.getId()) {
                     case R.id.fab_album:
-                        showToast(" Album");
                         return false; // false will close it without animation
                     case R.id.fab_photo:
-                        showToast(actionItem.getLabel(getApplicationContext()) + " Photo");
                         Navigator.onMoveToAlbum(AlbumDetailActivity.this);
                         return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
                     case R.id.fab_camera:
-                        showToast(actionItem.getLabel(getApplicationContext()) + " Camera");
                         onAddPermissionCamera();
                         return false;
                 }
@@ -563,6 +587,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 }
                                                 break;
                                             }
+                                            case FILES:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
@@ -596,6 +629,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
                                             case AUDIO:{
+                                                File input = new File(index.originalPath);
+                                                Utils.Log(TAG,"Name :"+index.originalName);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                            case FILES:{
                                                 File input = new File(index.originalPath);
                                                 Utils.Log(TAG,"Name :"+index.originalName);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
@@ -682,6 +725,11 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+
+                            if (mimeTypeFile==null){
+                                return;
+                            }
+
                             mimeTypeFile.name = name;
                             if (presenter.mainCategories == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
@@ -746,6 +794,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
+
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
 
@@ -754,6 +803,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
+
+                String others = String.format(getString(R.string.others_default),""+presenter.others);
+                tv_Others.setText(others);
+
                 adapter.setDataSource(presenter.mList);
 
                 if (actionMode!=null){

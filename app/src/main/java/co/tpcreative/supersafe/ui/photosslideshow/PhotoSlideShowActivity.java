@@ -315,6 +315,10 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     imgPlayer.setVisibility(View.VISIBLE);
                     break;
                 }
+                case FILES:{
+                    imgPlayer.setVisibility(View.INVISIBLE);
+                    break;
+                }
                 default:{
                     imgPlayer.setVisibility(View.INVISIBLE);
                     break;
@@ -449,7 +453,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     }
                     final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
-                    if (formatTypeFile!=EnumFormatType.AUDIO){
+                    if (formatTypeFile!=EnumFormatType.AUDIO && formatTypeFile !=EnumFormatType.FILES){
                         if (items!=null) {
                             onRotateBitmap(items);
                             isReload = true;
@@ -530,6 +534,15 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 }
                                                 break;
                                             }
+                                            case FILES:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
@@ -563,6 +576,15 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
                                             case AUDIO:{
+                                                File input = new File(index.originalPath);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(input.getAbsolutePath())){
+                                                    presenter.mListShare.add(output);
+                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                }
+                                                break;
+                                            }
+                                            case FILES:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){

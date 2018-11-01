@@ -252,6 +252,11 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
 
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+
+                            if (mimeTypeFile==null){
+                                return;
+                            }
+
                             mimeTypeFile.name = name;
                             final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
                             if (list == null) {

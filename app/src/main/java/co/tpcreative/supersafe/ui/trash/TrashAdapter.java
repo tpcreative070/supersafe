@@ -141,6 +141,18 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                         Utils.Log(TAG,"audio");
                         break;
                     }
+                    case FILES:{
+                        imgVideoCam.setVisibility(View.VISIBLE);
+                        imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                        tvTitle.setVisibility(View.VISIBLE);
+                        tvTitle.setText(data.title);
+                        Theme theme = Theme.getInstance().getThemeInfo();
+                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
+                        Glide.with(context)
+                                .load(note1)
+                                .apply(options).into(imgAlbum);
+                        break;
+                    }
                     case VIDEO: {
                         imgVideoCam.setVisibility(View.VISIBLE);
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_videocam_white_36));
@@ -153,7 +165,7 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                         }
                         break;
                     }
-                    default: {
+                    case IMAGE: {
                         tvTitle.setVisibility(View.INVISIBLE);
                         imgVideoCam.setVisibility(View.INVISIBLE);
                         if (storage.isFileExist(path)){

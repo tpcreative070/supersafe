@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,12 +79,21 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 if (mFile.exists()){
                     final String path = mFile.getAbsolutePath();
                     final String name = mFile.getName();
-                    Log.d(TAG, "file extension " + Utils.getFileExtension(path));
-                    String fileExtension = Utils.getFileExtension(path);
-                    final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                    final String fileExtension = Utils.getFileExtension(path);
+                    final String mimeType = intent.getType();
+                    Log.d(TAG, "file extension " + fileExtension);
+
+                    MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+
+                    if (mimeTypeFile==null){
+                        mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
+                        mimeTypeFile.name = name;
+                    }
+
                     mimeTypeFile.name = name;
                     mListFile.add(0);
                     ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path,mainCategories);
+
                 }
                 else{
                     onStopProgressing();
@@ -118,12 +128,20 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                     if (mFile.exists()){
                         final String path = mFile.getAbsolutePath();
                         final String name = mFile.getName();
-                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
+                        final String mimeType = intent.getType();
                         String fileExtension = Utils.getFileExtension(path);
-                        final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                        Log.d(TAG, "file extension " + fileExtension);
+
+
+                        MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                        if (mimeTypeFile==null){
+                            mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
+                            mimeTypeFile.name = name;
+                        }
                         mimeTypeFile.name = name;
                         mListFile.add(i);
                         ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path, mainCategories);
+
                     }
                     else{
                         onStopProgressing();

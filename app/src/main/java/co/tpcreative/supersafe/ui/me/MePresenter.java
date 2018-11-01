@@ -23,6 +23,7 @@ public class MePresenter extends Presenter<BaseView>{
     protected int videos = 0;
     protected int photos = 0;
     protected int audios = 0;
+    protected int others = 0;
 
 
 
@@ -41,6 +42,7 @@ public class MePresenter extends Presenter<BaseView>{
             photos = 0;
             videos = 0;
             audios = 0;
+            others = 0;
             final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(false,false);
             for (Items index : mList){
                 final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
@@ -55,6 +57,10 @@ public class MePresenter extends Presenter<BaseView>{
                     }
                     case AUDIO:{
                         audios+=1;
+                        break;
+                    }
+                    case FILES:{
+                        others +=1;
                         break;
                     }
                 }

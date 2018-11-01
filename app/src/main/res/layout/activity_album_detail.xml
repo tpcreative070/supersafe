@@ -72,17 +72,15 @@
                     android:layout_weight="1"
                     android:text="@string/audios_default"/>
 
-                <RelativeLayout
-                    android:layout_height="match_parent"
+
+                <TextView
+                    android:textSize="@dimen/text_size_normal"
+                    android:id="@+id/tv_Others"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left|bottom"
                     android:layout_weight="1"
-                    android:layout_width="0dp">
-                    <ImageView
-                        android:layout_alignParentBottom="true"
-                        android:id="@+id/imgIcon"
-                        android:layout_centerInParent="true"
-                        android:layout_width="@dimen/image_size_custom"
-                        android:layout_height="@dimen/image_size_custom" />
-                </RelativeLayout>
+                    android:text="@string/others_default"/>
 
             </LinearLayout>
 
@@ -92,7 +90,6 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>

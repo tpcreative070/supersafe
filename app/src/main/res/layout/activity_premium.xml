@@ -211,6 +211,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/llOne"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
@@ -238,6 +239,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/llTwo"
                     android:layout_marginBottom="20dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
@@ -264,6 +266,48 @@
                         android:layout_alignStart="@android:id/title"
                         android:textColor="?attr/preference_summary"/>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/llSwitchToBasic"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:text="@string/switch_to_supersafe_basic"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="@dimen/text_size_preference_item_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:textColor="?attr/preference_title"
+                        android:ellipsize="marquee"
+                        android:fadingEdge="horizontal" />
+                    <TextView
+                        android:text="@string/switch_to_supersafe_basic_detail"
+                        android:textSize="@dimen/text_size_preference_item_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@android:id/title"
+                        android:layout_alignStart="@android:id/title"
+                        android:textColor="?attr/preference_summary"/>
+
+                    <Button
+                        android:id="@+id/btnSwitchToBasic"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorAccent"
+                        android:text="@string/switch_to_basic"
+                        android:layout_marginTop="20dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>

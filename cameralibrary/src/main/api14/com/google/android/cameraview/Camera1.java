@@ -220,6 +220,7 @@ class Camera1 extends CameraViewImpl implements SensorOrientationChangeNotifier.
 
     @Override
     void setFlash(int flash) {
+        Log.d(TAG,"flash :" +mFlash);
         if (flash == mFlash) {
             return;
         }

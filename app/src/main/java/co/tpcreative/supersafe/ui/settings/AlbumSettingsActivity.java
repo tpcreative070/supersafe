@@ -214,6 +214,16 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                         mAlbumCover.getImgIcon().setImageDrawable(getContext().getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                                         break;
                                     }
+                                    case FILES:{
+                                        Theme theme = Theme.getInstance().getThemeInfo();
+                                        Drawable note1 = getContext().getResources().getDrawable(theme.getAccentColor());
+                                        Glide.with(getContext())
+                                                .load(note1)
+                                                .apply(options)
+                                                .into(mAlbumCover.getImageView());
+                                        mAlbumCover.getImgIcon().setImageDrawable(getContext().getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                                        break;
+                                    }
                                     default: {
                                         try {
                                             if (storage.isFileExist("" + items.thumbnailPath)) {

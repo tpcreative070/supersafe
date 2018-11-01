@@ -24,6 +24,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
     protected int videos = 0;
     protected int photos = 0;
     protected int audios = 0;
+    protected int others = 0;
     protected List<Integer> mListExportShare = new ArrayList<>();
     protected List<File> mListShare = new ArrayList<>();
     protected EnumStatus status = EnumStatus.OTHER;
@@ -63,6 +64,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
         photos = 0;
         videos = 0;
         audios = 0;
+        others = 0;
         for (Items index : mList){
             final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
             switch (enumTypeFile){
@@ -76,6 +78,10 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
                 }
                 case AUDIO:{
                     audios+=1;
+                    break;
+                }
+                case FILES:{
+                    others+=1;
                     break;
                 }
             }

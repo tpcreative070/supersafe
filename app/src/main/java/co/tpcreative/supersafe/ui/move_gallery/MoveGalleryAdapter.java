@@ -76,6 +76,8 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
         TextView tvVideos;
         @BindView(R.id.tvAudios)
         TextView tvAudios;
+        @BindView(R.id.tvOthers)
+        TextView tvOthers;
         private int mPosition;
         private GalleryAlbum data;
 
@@ -92,6 +94,13 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
                     case AUDIO: {
+                        Glide.with(mContext)
+                                .load(R.drawable.bg_button_rounded)
+                                .apply(options)
+                                .into(imgAlbum);
+                        break;
+                    }
+                    case FILES:{
                         Glide.with(mContext)
                                 .load(R.drawable.bg_button_rounded)
                                 .apply(options)
@@ -133,6 +142,8 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
             String videos = String.format(mContext.getString(R.string.videos_default),""+data.videos);
 
             String audios = String.format(mContext.getString(R.string.audios_default),""+data.audios);
+
+            String others = String.format(mContext.getString(R.string.others_default),""+data.audios);
 
             tvPhotos.setText(photos);
             tvVideos.setText(videos);

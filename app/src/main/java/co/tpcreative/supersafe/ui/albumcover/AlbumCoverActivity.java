@@ -18,7 +18,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import java.util.List;
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -194,6 +196,10 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
     }
 
+    @OnClick(R.id.btnUpgrade)
+    public void onClickedUpgrade(View view){
+        Navigator.onMoveToPremium(getContext());
+    }
 
     @Override
     public void onBackPressed() {

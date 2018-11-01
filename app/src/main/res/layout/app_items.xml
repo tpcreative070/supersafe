@@ -46,6 +46,7 @@
         </LinearLayout>
 
         <TextView
+            android:singleLine="true"
             android:id="@+id/tvStatus"
             android:gravity="right"
             android:layout_gravity="right|center"

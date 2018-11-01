@@ -113,9 +113,17 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                                     .load(note1)
                                     .apply(options)
                                     .into(imgAlbum);
-                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
-
-                            Utils.Log(TAG,"load data 1");
+                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                            break;
+                        }
+                        case FILES:{
+                            Theme theme = Theme.getInstance().getThemeInfo();
+                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                            Glide.with(context)
+                                    .load(note1)
+                                    .apply(options)
+                                    .into(imgAlbum);
+                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_files));
                             break;
                         }
                         default: {

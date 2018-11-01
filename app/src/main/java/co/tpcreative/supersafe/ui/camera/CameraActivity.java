@@ -10,21 +10,15 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
-import com.google.gson.Gson;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Utils;
-
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.User;
+
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback{
@@ -148,9 +142,6 @@ public class CameraActivity extends BaseActivity implements
         onRegisterHomeWatcher();
         Utils.Log(TAG,"onResume");
     }
-
-
-
 
     @Override
     protected void onPause() {

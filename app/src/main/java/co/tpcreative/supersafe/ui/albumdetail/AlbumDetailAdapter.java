@@ -145,7 +145,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         }
                         break;
                     }
-                    default: {
+                    case IMAGE: {
                         tvTitle.setVisibility(View.INVISIBLE);
                         imgVideoCam.setVisibility(View.INVISIBLE);
                         if (storage.isFileExist(path)){
@@ -154,6 +154,18 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                                     .load(storage.readFile(path))
                                     .apply(options).into(imgAlbum);
                         }
+                        break;
+                    }
+                    case FILES:{
+                        imgVideoCam.setVisibility(View.VISIBLE);
+                        imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                        tvTitle.setVisibility(View.VISIBLE);
+                        tvTitle.setText(data.title);
+                        Theme theme = Theme.getInstance().getThemeInfo();
+                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
+                        Glide.with(context)
+                                .load(note1)
+                                .apply(options).into(imgAlbum);
                         break;
                     }
                 }

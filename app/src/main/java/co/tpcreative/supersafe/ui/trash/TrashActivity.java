@@ -45,6 +45,8 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
     TextView tv_Videos;
     @BindView(R.id.tv_Photos)
     TextView tv_Photos;
+    @BindView(R.id.tv_Others)
+    TextView tv_Others;
     @BindView(R.id.btnUpgradeVersion)
     Button btnUpgradeVersion;
     @BindView(R.id.btnTrash)
@@ -90,12 +92,10 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
 
 
     public void onUpdatedView(){
-        if (!User.getInstance().isPremium()){
-            if (!User.getInstance().isPremiumComplimentary()){
-                llUpgrade.setVisibility(View.VISIBLE);
-                rlEmptyTrash.setVisibility(View.GONE);
-                rlRecyclerView.setVisibility(View.GONE);
-            }
+        if (User.getInstance().isPremiumExpired()){
+            llUpgrade.setVisibility(View.VISIBLE);
+            rlEmptyTrash.setVisibility(View.GONE);
+            rlRecyclerView.setVisibility(View.GONE);
         }
     }
 
@@ -164,8 +164,6 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
                         presenter.onDeleteAll(isEmpty);
                     }
                 });
-
-
         builder.show();
     }
 
@@ -321,6 +319,9 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
 
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
+
+                String others = String.format(getString(R.string.others_default),""+presenter.others);
+                tv_Others.setText(others);
 
 
                 adapter.setDataSource(presenter.mList);

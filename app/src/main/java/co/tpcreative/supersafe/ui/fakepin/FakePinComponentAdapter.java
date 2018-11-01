@@ -92,6 +92,14 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategories, BaseHol
                         imgIcon.setVisibility(View.INVISIBLE);
                         break;
                     }
+                    case FILES:{
+                        Glide.with(context)
+                                .load(R.drawable.bg_button_rounded)
+                                .apply(options)
+                                .into(imgAlbum);
+                        imgIcon.setVisibility(View.INVISIBLE);
+                        break;
+                    }
                     default: {
                         try {
                             if (storage.isFileExist(""+items.thumbnailPath)){

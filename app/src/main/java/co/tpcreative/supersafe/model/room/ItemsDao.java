@@ -38,6 +38,10 @@ public interface ItemsDao {
     List<Items> loadSyncDataItems(boolean isSyncCloud,boolean isDeleteLocal,int statusAction,boolean isFakePin);
 
 
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin AND categories_id =:categories_id")
+    List<Items> loadSyncDataItemsByCategoriesIdNull(boolean isSyncCloud,boolean isDeleteLocal,int statusAction,boolean isFakePin,String categories_id);
+
+
     @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND deleteAction = :deleteAction AND isFakePin =:isFakePin")
     List<Items> loadDeleteLocalDataItems(boolean isDeleteLocal,int deleteAction,boolean isFakePin);
 

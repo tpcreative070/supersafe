@@ -396,7 +396,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         Log.d(TAG, "file extension " + Utils.getFileExtension(path));
 
                         try {
-                            final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                            MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                            if (mimeTypeFile==null){
+                                return;
+                            }
                             mimeTypeFile.name = name;
                             final List<MainCategories> list = MainCategories.getInstance().getList();
                             if (list==null){
@@ -436,11 +439,20 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onResume() {
         super.onResume();
+        onSwitchToBasic();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
         presenter.onGetUserInfo();
+    }
+
+    public void onSwitchToBasic(){
+        if (User.getInstance().isPremiumExpired()){
+            if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
+                Navigator.onMoveToPremium(getContext());
+            }
+        }
     }
 
     @Override

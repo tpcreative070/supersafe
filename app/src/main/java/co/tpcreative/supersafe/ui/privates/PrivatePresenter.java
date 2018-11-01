@@ -71,6 +71,9 @@ public class PrivatePresenter extends Presenter<BaseView> {
                 if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
                 }
+                else if (formatTypeFile == EnumFormatType.FILES && mList.get(i).global_original_id==null){
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                }
                 else if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id == null){
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
                 }

@@ -24,7 +24,7 @@
             app:autoFocus="true"
             app:aspectRatio="4:3"
             app:facing="back"
-            app:flash="auto"/>
+            app:flash="off"/>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                app:srcCompat="@drawable/ic_flash_auto"
+                app:srcCompat="@drawable/ic_flash_off"
                 android:background="@null"/>
 
             <Button

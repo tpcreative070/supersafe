@@ -20,6 +20,7 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
     protected int videos = 0;
     protected int photos = 0;
     protected int audios = 0;
+    protected int others = 0;
 
     public MoveGalleryPresenter(){
         mList = new ArrayList<>();
@@ -35,6 +36,7 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 photos = 0;
                 videos = 0;
                 audios = 0;
+                others = 0;
                 for (Items i : mListItem){
                     final EnumFormatType enumTypeFile = EnumFormatType.values()[i.formatType];
                     switch (enumTypeFile){
@@ -50,9 +52,13 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                             audios+=1;
                             break;
                         }
+                        case FILES:{
+                            others +=1;
+                            break;
+                        }
                     }
                 }
-                mList.add(new GalleryAlbum(index,photos,videos,audios));
+                mList.add(new GalleryAlbum(index,photos,videos,audios,others));
             }
         }
         view.onSuccessful("Successful", EnumStatus.RELOAD);

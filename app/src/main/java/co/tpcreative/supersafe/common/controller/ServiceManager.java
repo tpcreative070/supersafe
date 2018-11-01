@@ -469,10 +469,26 @@ public class ServiceManager implements BaseView {
 
     public void onCheckingMissData() {
         Utils.Log(TAG, "Preparing checking miss data ###########################");
+
         if (myService == null) {
             return;
         }
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false, false);
+
+        final List<Items> checkNull = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItemsByNull(false);
+        if (checkNull!=null && checkNull.size()>0){
+            for (int i = 0;i<checkNull.size();i++){
+                if (checkNull.get(i).categories_id==null || checkNull.get(i).categories_id.equals("null")){
+                    final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(checkNull.get(i).categories_local_id, false);
+                    if (main != null) {
+                        checkNull.get(i).categories_id = main.categories_id;
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
+                    }
+                }
+            }
+        }
+
+
+        List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false, false);
         if (mList == null) {
             Utils.Log(TAG, "Not Found Miss Data");
             return;
@@ -481,6 +497,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "----------------Not Found Miss Data---------------");
             return;
         }
+
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
@@ -541,6 +558,10 @@ public class ServiceManager implements BaseView {
 
 
         final User mUser = User.getInstance().getUserInfo();
+        if (mUser==null){
+            return;
+        }
+
         if (mUser.premium==null){
             Utils.Log(TAG, "Premium is null..----------------*******************************-----------");
             return;
@@ -948,7 +969,7 @@ public class ServiceManager implements BaseView {
 
         for (Items index : lists) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[index.formatType];
-            if (index.global_thumbnail_id != null && formatTypeFile != EnumFormatType.AUDIO) {
+            if (index.global_thumbnail_id != null && (formatTypeFile != EnumFormatType.AUDIO && formatTypeFile != EnumFormatType.FILES)) {
                 final Items item = index;
                 item.isOriginalGlobalId = false;
                 mList.add(item);
@@ -1127,12 +1148,14 @@ public class ServiceManager implements BaseView {
                             isWorking = false;
                         }
 
-                        if (itemObject.global_thumbnail_id == null & formatTypeFile != EnumFormatType.AUDIO) {
+
+                        if (itemObject.global_thumbnail_id == null & (formatTypeFile != EnumFormatType.AUDIO && formatTypeFile != EnumFormatType.FILES)) {
                             Utils.Log(TAG, "global_thumbnail_id is null at " + itemObject.id + " format type :" + formatTypeFile.name() + "---name global :" + itemObject.items_id);
                             onWriteLog("global_thumbnail_id is null ", EnumStatus.DOWNLOAD);
                             onWriteLog("Delete null at id " + itemObject.id, EnumStatus.DOWNLOAD);
                             isWorking = false;
                         }
+
 
                         if (myService == null) {
                             isWorking = false;
@@ -1251,8 +1274,25 @@ public class ServiceManager implements BaseView {
             return;
         }
 
+
+        final List<Items> checkNull = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItemsByNull(false);
+        if (checkNull!=null && checkNull.size()>0){
+            for (int i = 0;i<checkNull.size();i++){
+                if (checkNull.get(i).categories_id==null || checkNull.get(i).categories_id.equals("null")){
+                    final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(checkNull.get(i).categories_local_id, false);
+                    if (main != null) {
+                        checkNull.get(i).categories_id = main.categories_id;
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
+                    }
+                }
+            }
+        }
+
+
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems(false);
         final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems(false);
+
+
         if (list == null) {
             Utils.Log(TAG, "No Found data from device !!!");
             return;
@@ -1278,6 +1318,7 @@ public class ServiceManager implements BaseView {
                 mList.add(item);
             }
         }
+
 
         totalList = mList.size();
         isUploadData = true;
@@ -1375,6 +1416,11 @@ public class ServiceManager implements BaseView {
                                                         EnumFormatType formatTypeFile = EnumFormatType.values()[mItem.formatType];
                                                         switch (formatTypeFile) {
                                                             case AUDIO: {
+                                                                mItem.global_thumbnail_id = "null";
+                                                                onAddItems(mItem);
+                                                                break;
+                                                            }
+                                                            case FILES:{
                                                                 mItem.global_thumbnail_id = "null";
                                                                 onAddItems(mItem);
                                                                 break;
@@ -1786,7 +1832,7 @@ public class ServiceManager implements BaseView {
                 }
 
                 case AUDIO: {
-                    Utils.Log(TAG, "Start RXJava Video Progressing");
+                    Utils.Log(TAG, "Start RXJava Audio Progressing");
                     try {
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1806,6 +1852,104 @@ public class ServiceManager implements BaseView {
                         description.mimeType = mMimeType;
                         description.items_id = uuId;
                         description.formatType = EnumFormatType.AUDIO.ordinal();
+                        description.degrees = 0;
+                        description.thumbnailSync = true;
+                        description.originalSync = false;
+                        description.global_original_id = null;
+                        description.global_thumbnail_id = null;
+                        description.fileType = EnumFileType.NONE.ordinal();
+                        description.originalName = currentTime;
+                        description.title = mMimeTypeFile.name;
+                        description.thumbnailName = null;
+                        description.size = "0";
+                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
+                        description.isDeleteLocal = false;
+                        description.isDeleteGlobal = false;
+                        description.deleteAction = EnumDelete.NONE.ordinal();
+                        description.isFakePin = isFakePin;
+
+
+                        items = new Items(false,
+                                false,
+                                description.originalSync,
+                                description.thumbnailSync,
+                                description.degrees,
+                                description.fileType,
+                                description.formatType,
+                                description.title,
+                                description.originalName,
+                                description.thumbnailName,
+                                description.items_id,
+                                description.originalPath,
+                                description.thumbnailPath,
+                                description.local_id,
+                                description.global_original_id,
+                                description.global_thumbnail_id,
+                                description.categories_id,
+                                description.categories_local_id,
+                                description.mimeType,
+                                description.fileExtension,
+                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
+                                EnumStatus.UPLOAD,
+                                description.size,
+                                description.statusProgress,
+                                description.isDeleteLocal,
+                                description.isDeleteGlobal,
+                                description.deleteAction,
+                                description.isFakePin);
+
+                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
+                        boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
+
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.items = items;
+                        response.categories = mMainCategories;
+
+                        if (createdOriginal) {
+                            response.isWorking = true;
+                            subscriber.onNext(response);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile successful");
+                        } else {
+                            response.isWorking = false;
+                            subscriber.onNext(response);
+                            subscriber.onComplete();
+                            Utils.Log(TAG, "CreatedFile failed");
+                        }
+
+                    } catch (Exception e) {
+                        Log.w(TAG, "Cannot write to " + e);
+                        onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.isWorking = false;
+                        subscriber.onNext(response);
+                        subscriber.onComplete();
+                    } finally {
+                        Utils.Log(TAG, "Finally");
+                    }
+                    break;
+                }
+                case FILES:{
+                    Utils.Log(TAG, "Start RXJava Files Progressing");
+                    try {
+                        String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
+                        String currentTime = Utils.getCurrentDateTime();
+                        String uuId = Utils.getUUId();
+                        String pathContent = rootPath + uuId + "/";
+                        storage.createDirectory(pathContent);
+                        String originalPath = pathContent + currentTime;
+
+                        DriveDescription description = new DriveDescription();
+                        description.fileExtension = mMimeTypeFile.extension;
+                        description.originalPath = originalPath;
+                        description.thumbnailPath = null;
+                        description.subFolderName = uuId;
+                        description.categories_id = categories_id;
+                        description.categories_local_id = categories_local_id;
+                        description.local_id = uuId;
+                        description.mimeType = mMimeType;
+                        description.items_id = uuId;
+                        description.formatType = EnumFormatType.FILES.ordinal();
                         description.degrees = 0;
                         description.thumbnailSync = true;
                         description.originalSync = false;
@@ -1914,6 +2058,23 @@ public class ServiceManager implements BaseView {
                                     }
                                     break;
                                 }
+                                case FILES:{
+                                    if (storage.isFileExist(items.originalPath)) {
+                                        final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
+                                        mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
+                                        driveDescription.size = "" + mb;
+                                        items.size = driveDescription.size;
+                                        items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+
+                                        if (!mResponse.categories.isCustom_Cover){
+                                            final MainCategories main = mResponse.categories;
+                                            main.item = new Gson().toJson(items);
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                        }
+                                    }
+                                    break;
+                                }
                                 default: {
                                     if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
                                         final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
@@ -1960,7 +2121,6 @@ public class ServiceManager implements BaseView {
                     }
                 });
     }
-
 
     /*--------------Camera action-----------------*/
 

@@ -245,7 +245,7 @@
                     android:padding="20dp"
                     android:gravity="left"
                     android:background="@color/white"
-                    android:text="@string/our_apps"
+                    android:text="@string/did_you_discover"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

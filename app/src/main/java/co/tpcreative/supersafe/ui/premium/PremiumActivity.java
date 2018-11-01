@@ -9,7 +9,10 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +32,9 @@ import javax.annotation.Nonnull;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -54,6 +59,13 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     TextView tvLifeTime;
     @BindView(R.id.tvTitle)
     TextView tvTitle;
+
+    @BindView(R.id.llOne)
+    LinearLayout llOne;
+    @BindView(R.id.llTwo)
+    LinearLayout llTwo;
+    @BindView(R.id.llSwitchToBasic)
+    LinearLayout llSwitchToBasic;
 
     /*In app purchase*/
     private ActivityCheckout mCheckout;
@@ -93,6 +105,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         /*Init In app purchase*/
         onStartInAppPurchase();
         onUpdatedView();
+
     }
 
 
@@ -101,9 +114,11 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         if (isPremium){
             tvTitle.setText(getText(R.string.you_are_in_premium_features));
             tvPremiumLeft.setVisibility(View.GONE);
+            llOne.setVisibility(View.VISIBLE);
+            llTwo.setVisibility(View.VISIBLE);
+            llSwitchToBasic.setVisibility(View.GONE);
         }
         else{
-
             if (User.getInstance().isPremiumComplimentary()){
                 if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
                     String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
@@ -115,9 +130,34 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 tvTitle.setText(getString(R.string.premium_expired));
                 tvTitle.setTextColor(getResources().getColor(R.color.red_300));
                 tvPremiumLeft.setVisibility(View.GONE);
+                llOne.setVisibility(View.GONE);
+                llTwo.setVisibility(View.GONE);
+                llSwitchToBasic.setVisibility(View.VISIBLE);
             }
         }
+
+        if (User.getInstance().isPremiumExpired()){
+            if (PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
+                llOne.setVisibility(View.VISIBLE);
+                llTwo.setVisibility(View.VISIBLE);
+                llSwitchToBasic.setVisibility(View.GONE);
+            }
+            else{
+                llOne.setVisibility(View.GONE);
+                llTwo.setVisibility(View.GONE);
+                llSwitchToBasic.setVisibility(View.VISIBLE);
+
+            }
+        }
+
     }
+
+    @OnClick(R.id.btnSwitchToBasic)
+    public void onClickedSwitchToBasic(View view){
+        PrefsController.putBoolean(getString(R.string.key_switch_to_basic),true);
+        recreate();
+    }
+
 
     @Override
     public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
@@ -510,6 +550,34 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @Override
     public Activity getActivity() {
         return this;
+    }
+
+    public void onSwitchToBasic(){
+        if (User.getInstance().isPremiumExpired()){
+            if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
+               Navigator.onMoveToFaceDown(getApplicationContext());
+            }
+        }
+        else {
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:{
+                onSwitchToBasic();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        onSwitchToBasic();
     }
 
 }

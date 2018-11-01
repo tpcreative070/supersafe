@@ -54,6 +54,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     TextView tvPhotos;
     @BindView(R.id.tvVideos)
     TextView tvVideos;
+    @BindView(R.id.tvOther)
+    TextView tvOther;
 
     public static MeFragment newInstance(int index) {
         MeFragment fragment = new MeFragment();
@@ -319,6 +321,10 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
 
                 String audios = String.format(getString(R.string.audios_default), "" + presenter.audios);
                 tvAudios.setText(audios);
+
+                String others = String.format(getString(R.string.others_default), "" + presenter.others);
+                tvOther.setText(others);
+
                 break;
             }
         }

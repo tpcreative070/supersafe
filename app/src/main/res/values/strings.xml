@@ -242,6 +242,7 @@
     <string name="photos_default">%1$s Photos</string>
     <string name="videos_default">%1$s Videos</string>
     <string name="audios_default">%1$s Audios</string>
+    <string name="others_default">%1$s Others</string>
     <string name="premium_features">Premium features</string>
     <string name="what_trash">What is trash ?</string>
     <string name="what_trash_info">It\'s temporary storage for stuffs you\'ve deleted. Everything in Trash still take up space on your device.</string>
@@ -371,6 +372,7 @@
     <string name="key_fingerprint_unlock_detail">If enabled, you can still use PIN</string>
     <string name="key_album_cover">Album Cover</string>
     <string name="key_custom">Custom</string>
+    <string name="key_switch_to_basic">switch_to_basic</string>
 
 
     /*Preference keys*/
@@ -515,7 +517,7 @@
     <string name="what_if_i_do_not_want_premium">What if I don\'t want Premium</string>
     <string name="what_if_i_do_not_want_premium_detail">That\'s file. When your complimentary Premium expires, You can switch to Basic</string>
     <string name="what_is_basic">What\'s basic?</string>
-    <string name="what_is_basic_detail">It\'s free version of SuperSafe. It still protects your important files behind a lock screen and gives you good privacy features.</string>
+    <string name="what_is_basic_detail">It\'s the free version of SuperSafe. It still protect your important files and you still can upload file to Google Drive 100 files per month. All of them behind a lock screen and gives you good privacy features</string>
     <string name="default_covers">Default covers</string>
     <string name="album_items">Album items</string>
     <string name="premium_cover_description">Select an item from this album for the cover photo.(Or by using the most recent photos)</string>
@@ -526,9 +528,13 @@
     <string name="tap_here_to_enable_sync_data_description">The items will be synced to Google drive. You never lost files.</string>
     <string name="installed">Installed</string>
     <string name="learn_more">Learn more</string>
+    <string name="did_you_discover">Did You discover our apps?</string>
     <string name="our_apps">Our apps</string>
     <string name="qrscanner_link">https://play.google.com/store/apps/details?id=tpcreative.co.qrscanner.free.release</string>
     <string name="qrscanner_package_name">tpcreative.co.qrscanner.free.release</string>
+
+    <string name="gpsspeed_link">https://play.google.com/store/apps/details?id=tpcreative.co.gpsspeedkm</string>
+    <string name="gpsspeed_package_name">tpcreative.co.gpsspeedkm</string>
 
     <!--Multi selects -->
     <string name="album_view">Select photo album</string>
@@ -554,7 +560,10 @@
     <string name="one_years">co.tpcreative.supersafe.1.years</string>
     <string name="life_time">co.tpcreative.supersafe.life.time</string>
     <string name="you_are_in_premium_features">You Are In Premium Features</string>
-
+    <string name="upgrade_to_premium_for_the_best_supersafe_experiences">Upgrade to Premium for the best SuperSafe experiences</string>
+    <string name="switch_to_supersafe_basic">Switch to SuperSafe basic</string>
+    <string name="switch_to_supersafe_basic_detail">It\'s the free version of SuperSafe. It still protect your important files and you still can upload file to Google Drive 100 files per month. All of them behind a lock screen and gives you good privacy features</string>
+    <string name="switch_to_basic">SWITCH TO BASIC</string>
 
     <!-- Google ads -->
 

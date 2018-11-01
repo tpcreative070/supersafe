@@ -42,28 +42,27 @@
                             android:background="@color/white">
 
                             <ImageView
-                                android:layout_alignParentTop="true"
-                                android:layout_centerInParent="true"
                                 android:id="@+id/imgPro"
                                 android:layout_width="@dimen/image_size_custom"
                                 android:layout_height="@dimen/image_size_custom"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerInParent="true"
                                 android:layout_gravity="left|center"
                                 android:src="@drawable/ic_premium_icon"
                                 android:tint="?attr/colorAccent" />
 
                             <TextView
-                                android:textStyle="bold"
-                                android:textSize="@dimen/medium"
-                                android:layout_marginTop="10dp"
                                 android:id="@+id/tvPremiumLeft"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/imgPro"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="10dp"
+                                android:layout_marginTop="10dp"
                                 android:gravity="center"
-                                android:text="@string/premium_left"
-                                android:textColor="@color/material_gray_700"/>
+                                android:textColor="@color/material_gray_700"
+                                android:textSize="@dimen/medium"
+                                android:textStyle="bold" />
 
                         </RelativeLayout>
                     </LinearLayout>
@@ -74,29 +73,32 @@
 
 
                 <RelativeLayout
-                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:background="@color/white">
 
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="10dp">
+                        android:layout_margin="10dp"
+                        android:orientation="horizontal">
+
                         <ImageView
-                            android:padding="3dp"
                             android:layout_width="@dimen/icon_size_30"
                             android:layout_height="@dimen/icon_size_30"
-                            android:layout_gravity="center"
+                            android:layout_gravity="center|top"
+                            android:padding="3dp"
                             android:src="@drawable/baseline_account_circle_white_36"
                             android:tint="?attr/colorPrimary" />
 
                         <LinearLayout
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="3dp"
+                            android:layout_marginBottom="3dp"
                             android:id="@+id/llAccount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
                             android:orientation="vertical">
 
                             <TextView
@@ -107,18 +109,17 @@
                                 android:textSize="@dimen/text_size_large" />
 
                             <TextView
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="3dp"
                                 android:id="@+id/tvStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-
+                                android:layout_marginLeft="10dp"
                                 android:text="@string/verify_change"
                                 android:textColor="@color/colorButton"
                                 android:textSize="@dimen/text_size_large" />
                         </LinearLayout>
                     </LinearLayout>
                 </RelativeLayout>
-
 
 
                 <!--Cloud And Local-->
@@ -144,19 +145,22 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/llAccount"
                             android:orientation="horizontal">
+
                             <ImageView
                                 android:layout_width="@dimen/icon_size_30"
                                 android:layout_height="@dimen/icon_size_30"
-                                android:layout_gravity="center"
+                                android:layout_gravity="center|top"
                                 android:src="@drawable/ic_drive_cloud"
                                 android:tint="?attr/colorPrimary" />
 
 
                             <LinearLayout
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="3dp"
+                                android:layout_marginBottom="3dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
+                                android:layout_marginLeft="10dp"
                                 android:orientation="vertical">
 
                                 <TextView
@@ -167,10 +171,11 @@
                                     android:textSize="@dimen/text_size_large" />
 
                                 <TextView
-                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginTop="3dp"
                                     android:id="@+id/tvEnableCloud"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
                                     android:text="@string/enable_cloud_sync"
                                     android:textColor="@color/colorButton"
                                     android:textSize="@dimen/text_size_normal" />
@@ -188,17 +193,19 @@
                             android:orientation="horizontal">
 
                             <ImageView
-                                android:padding="3dp"
                                 android:layout_width="@dimen/icon_size_30"
                                 android:layout_height="@dimen/icon_size_30"
-                                android:layout_gravity="center"
+                                android:layout_gravity="center|top"
+                                android:padding="3dp"
                                 android:src="@drawable/baseline_sd_card_white_48"
                                 android:tint="?attr/colorPrimary" />
 
                             <LinearLayout
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="3dp"
+                                android:layout_marginBottom="3dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_marginLeft="10dp"
                                 android:orientation="vertical">
 
                                 <TextView
@@ -206,13 +213,15 @@
                                     android:layout_height="wrap_content"
                                     android:text="@string/local"
                                     android:textSize="@dimen/text_size_large" />
+
                                 <LinearLayout
-                                    android:layout_marginLeft="10dp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
                                     android:orientation="vertical">
 
                                     <TextView
+                                        android:layout_marginTop="3dp"
                                         android:id="@+id/tvPhotos"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -221,6 +230,7 @@
                                         android:textSize="@dimen/text_size_normal" />
 
                                     <TextView
+                                        android:layout_marginTop="3dp"
                                         android:id="@+id/tvVideos"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -229,18 +239,28 @@
                                         android:textSize="@dimen/text_size_normal" />
 
                                     <TextView
+                                        android:layout_marginTop="3dp"
                                         android:id="@+id/tvAudios"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/audio"
                                         android:textColor="@color/colorButton"
                                         android:textSize="@dimen/text_size_normal" />
+
+                                    <TextView
+                                        android:layout_marginTop="3dp"
+                                        android:id="@+id/tvOther"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/others"
+                                        android:textColor="@color/colorButton"
+                                        android:textSize="@dimen/text_size_normal" />
+
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
                 </RelativeLayout>
-
 
 
                 <RelativeLayout
@@ -257,20 +277,20 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:padding="2dp"
-                            android:tint="?attr/colorPrimary"
                             android:id="@+id/imgSettings"
                             android:layout_width="@dimen/icon_size_30"
                             android:layout_height="@dimen/icon_size_30"
-                            android:src="@drawable/baseline_settings_white_36" />
+                            android:padding="2dp"
+                            android:src="@drawable/baseline_settings_white_36"
+                            android:tint="?attr/colorPrimary" />
 
                         <TextView
-                            android:textSize="@dimen/text_size_large"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
                             android:gravity="center"
-                            android:text="@string/settings" />
+                            android:text="@string/settings"
+                            android:textSize="@dimen/text_size_large" />
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
