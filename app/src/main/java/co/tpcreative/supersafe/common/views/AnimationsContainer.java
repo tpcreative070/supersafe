@@ -99,29 +99,36 @@ public class AnimationsContainer {
         }
 
         public FramesSequenceAnimation(MenuItem imageView, int[] frames, int fps) {
-            isAllow = true;
-            mHandler = new Handler();
-            mFrames = frames;
-            mIndex = -1;
-            mSoftReferenceImageView = new SoftReference<MenuItem>(imageView);
-            mShouldRun = false;
-            mIsRunning = false;
-            mDelayMillis = 2000 / fps;
+            try {
+                isAllow = true;
+                mHandler = new Handler();
+                mFrames = frames;
+                mIndex = -1;
+                mSoftReferenceImageView = new SoftReference<MenuItem>(imageView);
+                mShouldRun = false;
+                mIsRunning = false;
+                mDelayMillis = 2000 / fps;
 
-            imageView.setIcon(mFrames[0]);
+                imageView.setIcon(mFrames[0]);
 
-            // use in place bitmap to save GC work (when animation images are the same size & type)
-            if (Build.VERSION.SDK_INT >= 11) {
-                Bitmap bmp = ((BitmapDrawable) imageView.getIcon()).getBitmap();
-                int width = bmp.getWidth();
-                int height = bmp.getHeight();
-                Bitmap.Config config = bmp.getConfig();
-                mBitmap = Bitmap.createBitmap(width, height, config);
-                mBitmapOptions = new BitmapFactory.Options();
-                // setup bitmap reuse options.
-                mBitmapOptions.inBitmap = mBitmap;
-                mBitmapOptions.inMutable = true;
-                mBitmapOptions.inSampleSize = 1;
+                // use in place bitmap to save GC work (when animation images are the same size & type)
+                if (Build.VERSION.SDK_INT >= 11) {
+                    Bitmap bmp = ((BitmapDrawable) imageView.getIcon()).getBitmap();
+                    int width = 60;
+                    int height = 60;
+                    Bitmap.Config config = bmp.getConfig();
+                    mBitmap = Bitmap.createBitmap(width, height, config);
+                    mBitmapOptions = new BitmapFactory.Options();
+                    BitmapFactory.Options mBitmapOptions = new BitmapFactory.Options();
+                    mBitmapOptions.inBitmap = mBitmap;
+                    mBitmapOptions.inJustDecodeBounds = false;
+                    mBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+                    mBitmapOptions.inDither = true;
+                    mBitmapOptions.inSampleSize = 1;
+                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
             }
         }
 

@@ -1028,6 +1028,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                             if (items == null) {
                                                 description.global_original_id = index.global_original_id;
                                                 description.global_thumbnail_id = index.global_thumbnail_id;
+                                                description.categories_id = index.categories_id;
                                                 switch (formatTypeFile) {
                                                     case AUDIO: {
                                                         description.thumbnailSync = true;
@@ -1053,6 +1054,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                             } else {
                                                 items.global_original_id = index.global_original_id;
                                                 items.global_thumbnail_id = index.global_thumbnail_id;
+                                                items.categories_id = index.categories_id;
                                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                                                 Log.d(TAG, "This item is existing");
                                             }

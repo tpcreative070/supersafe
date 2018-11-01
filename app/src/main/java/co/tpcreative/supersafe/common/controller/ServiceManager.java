@@ -482,6 +482,8 @@ public class ServiceManager implements BaseView {
                     if (main != null) {
                         checkNull.get(i).categories_id = main.categories_id;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
+
+                        Utils.Log(TAG,"Update categories id...................^^^???");
                     }
                 }
             }
@@ -1192,7 +1194,7 @@ public class ServiceManager implements BaseView {
                                                         mItem.originalSync = true;
                                                         Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
                                                     } else {
-                                                        Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
+                                                        Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
                                                         mItem.thumbnailSync = true;
                                                     }
 
@@ -1204,17 +1206,18 @@ public class ServiceManager implements BaseView {
                                                         mItem.isSyncCloud = false;
                                                     }
 
-
                                                     /*Custom cover*/
                                                     final MainCategories categories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(mItem.categories_id,false);
                                                     if (categories!=null){
                                                         if (!categories.isCustom_Cover){
                                                             categories.item = new Gson().toJson(mItem);
                                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(categories);
+                                                            Utils.Log(TAG,"Update main categories for custom cover");
                                                         }
                                                     }
-
-
+                                                    else{
+                                                        Utils.Log(TAG,"Can not find main categories for custom cover: "+ mItem.categories_id);
+                                                    }
                                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                                                 } else {
                                                     Utils.Log(TAG, "Failed Save 3");
@@ -1283,6 +1286,8 @@ public class ServiceManager implements BaseView {
                     if (main != null) {
                         checkNull.get(i).categories_id = main.categories_id;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
+
+                        Utils.Log(TAG,"Update categories id...................^^^???");
                     }
                 }
             }
