@@ -221,20 +221,21 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     public void getDriveAbout() {
         BaseView view = view();
         if (view == null) {
+            view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            return;
-        }
-        if (subscriptions == null) {
+            view.onError("No connection", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
         final User user = User.getInstance().getUserInfo();
         if (user == null) {
+            view.onError("User is null", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
 
         if (user.access_token == null) {
+            view.onError("access token is null", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
 
@@ -247,15 +248,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_DRIVE_ABOUT))
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
                         return;
                     }
                     view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                     if (onResponse.error != null) {
-                        Log.d(TAG, "onError 1");
                         view.onError("Error " + new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
-                        Log.d(TAG, "onSuccessful 2");
                         final User mUser = User.getInstance().getUserInfo();
                         mUser.driveAbout = onResponse;
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
@@ -264,10 +263,9 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
                         return;
                     }
-
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
@@ -554,6 +552,11 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
         if (user.access_token == null) {
             view.onError("no access_token", EnumStatus.LIST_CATEGORIES_SYNC);
+            return;
+        }
+
+        if (user.cloud_id==null){
+            view.onError("cloud id null", EnumStatus.LIST_CATEGORIES_SYNC);
             return;
         }
 
@@ -1374,38 +1377,36 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         }
         final User user = User.getInstance().getUserInfo();
         if (user == null) {
+            view.onError("User is null",EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
 
         if (user.access_token == null) {
-            return;
-        }
-
-        if (!user.driveConnected) {
+            view.onError("Access token is null",EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
 
         String access_token = user.access_token;
         Log.d(TAG, "access_token : " + access_token);
+        view.onSuccessful(access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_DRIVE_ABOUT))
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        view.onError("View is disable",EnumStatus.GET_DRIVE_ABOUT);
                         return;
                     }
                     view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                     if (onResponse.error != null) {
-                        view.onError(new Gson().toJson(onResponse.error), EnumStatus.GET_DRIVE_ABOUT);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
                             PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                         }
+                        view.onError(new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
-                        view.onSuccessful(new Gson().toJson(onResponse));
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = true;
@@ -1419,36 +1420,44 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         Log.d(TAG, "View is null");
                         return;
                     }
-
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
-                            Log.d(TAG, "error" + bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError("" + msg, EnumStatus.GET_DRIVE_ABOUT);
-                            final User mUser = User.getInstance().getUserInfo();
-                            if (mUser != null) {
-                                user.driveConnected = false;
-                                PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                            final String value = bodys.string();
+                            final DriveAbout driveAbout = new Gson().fromJson(value, DriveAbout.class);
+                            if (driveAbout != null) {
+                                if (driveAbout.error != null) {
+                                    final User mUser = User.getInstance().getUserInfo();
+                                    if (mUser != null) {
+                                        user.driveConnected = false;
+                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                    }
+                                    view.onError(EnumStatus.GET_DRIVE_ABOUT.name()+"-"+new Gson().toJson(driveAbout.error), EnumStatus.REQUEST_ACCESS_TOKEN);
+                                }
+                            } else {
+                                final User mUser = User.getInstance().getUserInfo();
+                                if (mUser != null) {
+                                    user.driveConnected = false;
+                                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                }
+                                view.onError(EnumStatus.GET_DRIVE_ABOUT.name()+" - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN);
                             }
                         } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError("" + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                             final User mUser = User.getInstance().getUserInfo();
                             if (mUser != null) {
                                 user.driveConnected = false;
                                 PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                             }
+                            view.onError("Error IOException " + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         }
                     } else {
                         Log.d(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :" + throwable.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
                             PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
                         }
+                        view.onError("Error else :" + throwable.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                     }
                     view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                 }));

@@ -234,6 +234,7 @@
     <string name="delete_all">Delete All</string>
     <string name="are_you_sure_you_want_to_empty_trash">Are you sure you want to empty Trash?</string>
     <string name="progressing">Progressing...</string>
+    <string name="importing">Importing...</string>
     <string name="Sending">Sending</string>
     <string name="done">Done</string>
     <string name="create_album">Create Album</string>
@@ -564,6 +565,7 @@
     <string name="switch_to_supersafe_basic">Switch to SuperSafe basic</string>
     <string name="switch_to_supersafe_basic_detail">It\'s the free version of SuperSafe. It still protect your important files and you still can upload file to Google Drive 100 files per month. All of them behind a lock screen and gives you good privacy features</string>
     <string name="switch_to_basic">SWITCH TO BASIC</string>
+    <string name="imported_file_successful">Imported %1$s files successful</string>
 
     <!-- Google ads -->
 

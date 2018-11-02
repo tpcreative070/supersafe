@@ -14,6 +14,49 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/rlProgress"
+            android:background="@drawable/bg_button_rounded_share"
+            android:layout_margin="10dp"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="250dp">
+
+            <ImageView
+                android:id="@+id/imgChecked"
+                android:src="@drawable/baseline_check_circle_white_48"
+                android:layout_centerInParent="true"
+                android:layout_width="@dimen/icon_size_90"
+                android:layout_height="@dimen/icon_size_90" />
+
+            <TextView
+                android:layout_margin="20dp"
+                android:id="@+id/tvTitle"
+                android:textSize="@dimen/large"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                android:textColor="@color/white"
+                android:text="@string/imported_file_successful"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnGotIt"
+                android:background="@drawable/bg_button_rounded_got_it"
+                android:layout_margin="20dp"
+                android:text="@string/got_it"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_high" />
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

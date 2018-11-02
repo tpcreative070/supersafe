@@ -33,6 +33,7 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
 
@@ -123,7 +124,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         request.user_id = presenter.mUser.email;
         request.cloud_id = presenter.mUser.cloud_id;
         presenter.onAddUserCloud(request);
-        //ServiceManager.getInstance().onRefreshData();
     }
 
     @Override
@@ -166,15 +166,12 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                     else{
                         if (accountName.equals(cloud_id)){
                             presenter.mUser.cloud_id = accountName;
-
-
                             signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                                 @Override
                                 public void onCompleted() {
                                     onShowProgressDialog();
                                     signIn(accountName);
                                 }
-
                                 @Override
                                 public void onError() {
                                     onShowProgressDialog();
@@ -367,20 +364,31 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     @Override
     public void onError(String message, EnumStatus status) {
         Log.d(TAG,""+message);
-        onStopProgressDialog();
+        switch (status){
+            case CREATE:{
+                onStopProgressDialog();
+                break;
+            }
+        }
     }
 
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        onStopProgressDialog();
-        presenter.mUser.cloud_id= message;
-        presenter.mUser.driveConnected = true;
-        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
-        Utils.Log(TAG,"Fish enable cloud.........................");
-        ServiceManager.getInstance().onSyncDataOwnServer("0");
-        ServiceManager.getInstance().onGetUserInfo();
-        onBackPressed();
+        switch (status){
+            case CREATE:{
+                onStopProgressDialog();
+                presenter.mUser.cloud_id= message;
+                presenter.mUser.driveConnected = true;
+                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
+                Utils.Log(TAG,"Finsh enable cloud.........................");
+                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                ServiceManager.getInstance().onGetUserInfo();
+                ServiceManager.getInstance().onGetListCategoriesSync();
+                onBackPressed();
+                break;
+            }
+        }
     }
 
     @Override
@@ -396,5 +404,10 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
 
+    }
+
+    @Override
+    protected boolean isSignIn() {
+        return true;
     }
 }

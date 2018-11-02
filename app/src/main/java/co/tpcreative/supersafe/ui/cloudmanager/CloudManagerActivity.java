@@ -85,8 +85,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         tvUploaded.setText(updated);
         onShowUI();
         onUpdatedView();
+        presenter.onGetDriveAbout();
     }
-
 
     public void onUpdatedView(){
         if (User.getInstance().isPremiumExpired()){
@@ -210,7 +210,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onError(String message, EnumStatus status) {
        switch (status){
            case REQUEST_ACCESS_TOKEN:{
-               Utils.Log(TAG,"Error response "+ message);
+               Utils.Log(TAG,"Error response "+ message );
                getAccessToken();
                break;
            }
@@ -292,7 +292,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         super.onResume();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(CloudManagerActivity.class.getSimpleName());
-        presenter.onGetDriveAbout();
         onShowSwitch();
     }
 
@@ -314,6 +313,11 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     @Override
     protected void onDriveClientReady() {
 
+    }
+
+    @Override
+    protected boolean isSignIn() {
+        return false;
     }
 
     @Override

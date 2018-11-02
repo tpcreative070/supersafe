@@ -162,9 +162,10 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             } else {
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
-
-            tvPremiumLeft.setText(getString(R.string.premium_expired));
-            tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
+            if (presenter.mUser.verified){
+                tvPremiumLeft.setText(getString(R.string.premium_expired));
+                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
+            }
         }
     }
 

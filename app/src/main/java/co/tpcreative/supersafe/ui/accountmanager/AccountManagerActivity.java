@@ -302,4 +302,9 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+    @Override
+    protected boolean isSignIn() {
+        return false;
+    }
 }

@@ -1,6 +1,5 @@
 
 package co.tpcreative.supersafe.common.activity;
-import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
@@ -74,7 +73,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
      * */
 
     private GoogleSignInClient mGoogleSignInClient;
-    private User mUser;
     Unbinder unbinder;
     protected ActionBar actionBar ;
     private HomeWatcher mHomeWatcher;
@@ -93,8 +91,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             onStartCount = 2;
         }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
-        mUser = User.getInstance().getUserInfo();
-
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
@@ -126,7 +122,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             }
         }
     }
-
 
     protected void setStatusBarColored(Activity context, int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -301,7 +296,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Utils.Log(TAG,"Action here........????");
         switch (requestCode) {
             case REQUEST_CODE_SIGN_IN: {
                 if (resultCode != RESULT_OK) {
@@ -318,6 +312,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 if (getAccountTask.isSuccessful()) {
                     Log.d(TAG, "sign in successful");
                     initializeDriveClient(getAccountTask.getResult());
+                    onDriveSuccessful();
                 } else {
                     onDriveError();
                     Log.e(TAG, "Sign-in failed..");
@@ -366,6 +361,14 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 credential.setSelectedAccount(accounts[0]);
                 try {
                     String value = credential.getToken();
+                    if (value!=null){
+                        Utils.Log(TAG,"access token  start "+ value);
+                        final User mUser = User.getInstance().getUserInfo();
+                        if (mUser!=null){
+                            mUser.access_token = String.format(getString(R.string.access_token),value);
+                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        }
+                    }
                     return value;
                 }
                 catch (GoogleAuthException e){
@@ -381,78 +384,90 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         @Override
         protected void onPostExecute(String accessToken) {
             super.onPostExecute(accessToken);
-            if (accessToken!=null){
-                mUser = User.getInstance().getUserInfo();
-                if (mUser!=null){
-                    mUser.access_token =String.format(SuperSafeApplication.getInstance().getString(R.string.access_token),accessToken);
-                    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
-                    if (ServiceManager.getInstance().getMyService()==null){
-                        return;
-                    }
-                    Log.d(TAG,"Call DriveAbout");
-                    ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
-                        @Override
-                        public void onError(String message, EnumStatus status) {
-                            Log.d(TAG,"error :"+ message);
-                            revokeAccess();
-                        }
-
-                        @Override
-                        public void onSuccessful(String message) {
-                            //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                            ServiceManager.getInstance().onGetListCategoriesSync();
-                            final User mUser = User.getInstance().getUserInfo();
-                            if (mUser!=null){
-                                if (mUser.driveAbout==null){
-                                    ServiceManager.getInstance().onGetDriveAbout();
+            try {
+                if (accessToken != null) {
+                    final User mUser = User.getInstance().getUserInfo();
+                    if (mUser != null) {
+                        Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
+                        ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
+                            @Override
+                            public void onError(String message, EnumStatus status) {
+                                Utils.Log(TAG,"onError " +message + " - " +status.name());
+                                switch (status){
+                                    case REQUEST_ACCESS_TOKEN:{
+                                        revokeAccess();
+                                        break;
+                                    }
+                                }
+                                if (isSignIn()) {
+                                    Utils.Log(TAG,"Call onDriveClientReady");
+                                    onDriveClientReady();
                                 }
                             }
-                            Log.d(TAG,"successful :"+ message);
-                        }
-                        @Override
-                        public void onStartLoading(EnumStatus status) {
+                            @Override
+                            public void onSuccessful(String message) {
+                                Utils.Log(TAG,"token request "+ message);
+                            }
+                            @Override
+                            public void onStartLoading(EnumStatus status) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onStopLoading(EnumStatus status) {
+                            @Override
+                            public void onStopLoading(EnumStatus status) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onError(String message) {
+                            @Override
+                            public void onError(String message) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, Object object) {
+                            @Override
+                            public void onSuccessful(String message, EnumStatus status, Object object) {
+                            }
 
-                        }
+                            @Override
+                            public void onSuccessful(String message, EnumStatus status, List list) {
 
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, List list) {
+                            }
 
-                        }
+                            @Override
+                            public Context getContext() {
+                                return getContext();
+                            }
 
-                        @Override
-                        public Context getContext() {
-                            return null;
-                        }
+                            @Override
+                            public Activity getActivity() {
+                                return BaseGoogleApi.this;
+                            }
 
-                        @Override
-                        public Activity getActivity() {
-                            return null;
-                        }
+                            @Override
+                            public void onSuccessful(String message, EnumStatus status) {
+                                Utils.Log(TAG,"onSuccessful " +message + " - " +status.name());
+                                final User mUser = User.getInstance().getUserInfo();
+                                ServiceManager.getInstance().onGetListCategoriesSync();
+                                if (mUser != null) {
+                                    if (mUser.driveAbout == null) {
+                                        ServiceManager.getInstance().onGetDriveAbout();
+                                    }
+                                }
+                                if (isSignIn()) {
+                                    Utils.Log(TAG,"Call onDriveClientReady");
+                                    onDriveClientReady();
+                                }
 
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status) {
-
-                        }
-
-                    });
+                            }
+                        });
+                    }
                 }
+                Log.d(TAG, "response token : " + String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), accessToken));
             }
-            Log.d(TAG,"response token : "+ String.format(SuperSafeApplication.getInstance().getString(R.string.access_token),accessToken));
+            catch (Exception e){
+                e.printStackTrace();
+                Utils.Log(TAG,"Call onDriveClientReady");
+                onDriveClientReady();
+            }
         }
     }
 
@@ -465,7 +480,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
 
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mSignInAccount = signInAccount;
-        onDriveClientReady();
         Log.d(TAG,"Google client ready");
         Log.d(TAG,"Account :"+ mSignInAccount.getAccount());
         new GetAccessToken().execute(mSignInAccount.getAccount());
@@ -492,6 +506,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
 
     protected abstract void onDriveRevokeAccess();
 
+    protected abstract boolean isSignIn();
+
 
     protected void signOut() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {
@@ -508,6 +524,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     }
 
     protected void signOut(ServiceManager.ServiceManagerSyncDataListener ls) {
+        Utils.Log(TAG,"Call signOut");
         if (mGoogleSignInClient==null){
             return;
         }

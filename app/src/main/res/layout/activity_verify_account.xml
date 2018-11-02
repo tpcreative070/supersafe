@@ -298,7 +298,7 @@
                         android:layout_height="@dimen/button_high"
                         android:layout_marginBottom="20dp"
                         android:background="@drawable/bg_button_disable_rounded"
-                        android:text="@string/login_action"
+                        android:text="@string/verify"
                         android:textColor="@color/colorDisableText"
                         android:textSize="@dimen/text_size_normal" />
 

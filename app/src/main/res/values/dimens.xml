@@ -41,6 +41,7 @@
     <dimen name="icon_size_15">15dp</dimen>
     <dimen name="icon_size_30">30dp</dimen>
     <dimen name="icon_size_60">60dp</dimen>
+    <dimen name="icon_size_90">90dp</dimen>
     <dimen name="image_size_custom">70dp</dimen>
     <dimen name="image_size_custom_40">40dp</dimen>
     <dimen name="image_size_custom_60">60dp</dimen>
@@ -140,6 +141,7 @@
     
     <dimen name="small">14sp</dimen>
     <dimen name="medium">18sp</dimen>
+    <dimen name="medium_x">20sp</dimen>
     <dimen name="large">22sp</dimen>
     
 

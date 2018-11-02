@@ -126,7 +126,6 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         request.cloud_id = presenter.mUser.email;
         request.user_id = presenter.mUser.email;
         presenter.onAddUserCloud(request);
-        //ServiceManager.getInstance().onRefreshData();
     }
 
     @Override
@@ -341,4 +340,10 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+    @Override
+    protected boolean isSignIn() {
+        return true;
+    }
+
 }

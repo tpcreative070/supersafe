@@ -448,7 +448,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     }
 
     public void onSwitchToBasic(){
-        if (User.getInstance().isPremiumExpired()){
+        final User mUser  = User.getInstance();
+        if (User.getInstance().isPremiumExpired() && mUser.verified){
             if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
                 Navigator.onMoveToPremium(getContext());
             }
@@ -556,6 +557,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onDriveClientReady() {
 
+    }
+
+    @Override
+    protected boolean isSignIn() {
+        return false;
     }
 
     @Override
@@ -727,6 +733,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
         }
     }
+
+
 
 
 }

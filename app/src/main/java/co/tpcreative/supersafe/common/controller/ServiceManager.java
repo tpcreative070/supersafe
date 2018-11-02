@@ -49,9 +49,7 @@ import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.ResponseRXJava;
-import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.Observable;
@@ -433,8 +431,6 @@ public class ServiceManager implements BaseView {
             SingletonPrivateFragment.getInstance().onUpdateView();
             return;
         }
-
-
 
         getObservableItems(mList).
                 subscribeOn(Schedulers.io())

@@ -5,12 +5,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
@@ -29,6 +37,15 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     private static final String TAG = ShareFilesActivity.class.getSimpleName();
     final List<Integer> mListFile = new ArrayList<>();
     private AlertDialog dialog;
+    @BindView(R.id.imgChecked)
+    ImageView imgChecked;
+    @BindView(R.id.btnGotIt)
+    Button btnGotIt;
+    @BindView(R.id.tvTitle)
+    TextView tvTitle;
+    @BindView(R.id.rlProgress)
+    RelativeLayout rlProgress;
+    int count =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +55,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         setContentView(R.layout.activity_share_files);
         onDrawOverLay(this);
         onHandlerIntent();
+        onShowUI(View.GONE);
     }
 
     void onHandlerIntent(){
@@ -55,6 +73,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
             }
         }
         catch (Exception e){
+            finish();
             e.printStackTrace();
         }
     }
@@ -92,11 +111,13 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
 
                     mimeTypeFile.name = name;
                     mListFile.add(0);
+                    count = 1;
                     ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path,mainCategories);
 
                 }
                 else{
                     onStopProgressing();
+                    finish();
                 }
             }
             else {
@@ -140,19 +161,22 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         }
                         mimeTypeFile.name = name;
                         mListFile.add(i);
+                        count = imageUris.size();
                         ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path, mainCategories);
-
                     }
                     else{
                         onStopProgressing();
+                        finish();
                     }
                 }
             }
             else{
+                finish();
                 Utils.Log(TAG,"Nothing to do at multiple items");
             }
         }
         catch (Exception e){
+            finish();
             e.printStackTrace();
         }
     }
@@ -188,6 +212,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         try {
             if (mListFile.size()==0){
                 onStopProgressing();
+                onShowUI(View.VISIBLE);
             }
         }
         catch (Exception e){
@@ -203,7 +228,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                     if (dialog==null){
                         dialog = new SpotsDialog.Builder()
                                 .setContext(ShareFilesActivity.this)
-                                .setMessage(getString(R.string.progressing))
+                                .setMessage(getString(R.string.importing))
                                 .setCancelable(true)
                                 .build();
                     }
@@ -227,7 +252,6 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 public void run() {
                     if (dialog!=null){
                         dialog.dismiss();
-                        finish();
                     }
                 }
             });
@@ -235,5 +259,23 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
         }
+    }
+
+    public void onShowUI(int res){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                tvTitle.setVisibility(res);
+                imgChecked.setVisibility(res);
+                btnGotIt.setVisibility(res);
+                rlProgress.setVisibility(res);
+                tvTitle.setText(String.format(getString(R.string.imported_file_successful),""+count));
+            }
+        });
+    }
+
+    @OnClick(R.id.btnGotIt)
+    public void onClickedGotIt(View view){
+        finish();
     }
 }

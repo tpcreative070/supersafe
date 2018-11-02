@@ -25,8 +25,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
-import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -34,9 +33,9 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 
-public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapter.ItemSelectedListener{
+
+public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
 
     private static final String TAG = TrashActivity.class.getSimpleName();
     @BindView(R.id.tv_Audios)
@@ -165,31 +164,6 @@ public class TrashActivity extends BaseGoogleApi implements BaseView,TrashAdapte
                     }
                 });
         builder.show();
-    }
-
-    @Override
-    protected void onDriveClientReady() {
-
-    }
-
-    @Override
-    protected void onDriveSuccessful() {
-
-    }
-
-    @Override
-    protected void onDriveError() {
-
-    }
-
-    @Override
-    protected void onDriveSignOut() {
-
-    }
-
-    @Override
-    protected void onDriveRevokeAccess() {
-
     }
 
     @Override

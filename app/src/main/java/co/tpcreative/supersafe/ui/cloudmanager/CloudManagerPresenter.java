@@ -1,20 +1,14 @@
 package co.tpcreative.supersafe.ui.cloudmanager;
-
 import android.app.Activity;
 import android.content.Context;
-
 import com.google.gson.Gson;
-
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
-import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -25,7 +19,6 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
 
     private static final String TAG = CloudManagerPresenter.class.getSimpleName();
-
 
     public CloudManagerPresenter() {
 
@@ -199,9 +192,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
             public Activity getActivity() {
                 return null;
             }
-
         });
     }
-
 
 }
