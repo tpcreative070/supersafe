@@ -122,7 +122,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                tvTitle.setText(Html.fromHtml(sourceString));
            }
         }
-
     }
 
 
@@ -506,6 +505,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             case SEND_EMAIL:{
                 onShowView(btnSendVerifyCode);
                 SingletonManagerProcessing.getInstance().onStopProgressing(VerifyAccountActivity.this);
+                Utils.showGotItSnackbar(tvEmail,R.string.we_sent_access_code_to_your_email);
                 break;
             }
             case VERIFY_CODE:{

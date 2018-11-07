@@ -1091,7 +1091,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         try {
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                             view.onError("" + msg, EnumStatus.GET_LIST_FILE);
                         } catch (IOException e) {
                             e.printStackTrace();

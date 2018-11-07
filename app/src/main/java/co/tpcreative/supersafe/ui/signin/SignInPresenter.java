@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -50,6 +52,7 @@ public class SignInPresenter extends Presenter<BaseView<User>>{
         hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
         hash.put(getString(R.string.key_version).toLowerCase(),""+ SuperSafeApplication.getInstance().getVersion());
         hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
+        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
         subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

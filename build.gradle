@@ -30,8 +30,8 @@ task clean(type: Delete) {
 
 
 subprojects {
-    ext.appVersionCode = 51
-    ext.appVersionName = "0.5.1"
+    ext.appVersionCode = 52
+    ext.appVersionName = "0.5.2"
     ext.appMinSdkVersion = 17
     ext.appSupportVersion = "27.1.1"
     ext.appCompileSdkVersion = 27

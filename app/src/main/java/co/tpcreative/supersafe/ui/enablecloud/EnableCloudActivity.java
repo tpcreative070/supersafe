@@ -11,20 +11,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.gson.Gson;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -34,9 +29,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
-import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
-
 
 public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
@@ -82,7 +74,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         }
     }
 
-
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
@@ -119,7 +110,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     @Override
     protected void onDriveClientReady() {
-        Log.d(TAG,"Google drive ready");
+        Utils.Log(TAG,"Google drive ready");
         UserCloudRequest request = new UserCloudRequest();
         request.user_id = presenter.mUser.email;
         request.cloud_id = presenter.mUser.cloud_id;
@@ -140,11 +131,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
             case Navigator.REQUEST_CODE_EMAIL :
                 if (resultCode == Activity.RESULT_OK) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                    Log.d(TAG,"accountName : " + accountName);
+                    Utils.Log(TAG,"accountName : " + accountName);
                     final String cloud_id = presenter.mUser.cloud_id;
                     if (cloud_id==null){
                         presenter.mUser.cloud_id = accountName;
-
+                        Utils.Log(TAG,"Call Sign out");
                         signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                             @Override
                             public void onCompleted() {
@@ -161,11 +152,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
                             }
                         });
-
                     }
                     else{
                         if (accountName.equals(cloud_id)){
                             presenter.mUser.cloud_id = accountName;
+                            Utils.Log(TAG,"Call Sign out");
                             signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                                 @Override
                                 public void onCompleted() {
@@ -193,8 +184,9 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
               case Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT:
                   if (resultCode == Activity.RESULT_OK) {
                       String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                      Log.d(TAG,"accountName : " + accountName);
+                      Utils.Log(TAG,"accountName : " + accountName);
                       presenter.mUser.cloud_id = accountName;
+                      Utils.Log(TAG,"Call Sign out");
                       signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                           @Override
                           public void onCompleted() {
@@ -215,7 +207,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                   }
                   break;
             default:
-                Log.d(TAG,"Nothing action");
+                Utils.Log(TAG,"Nothing action");
                 break;
         }
     }
@@ -337,7 +329,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     @Override
     protected void onDriveError() {
-        Log.d(TAG,"onDriveError");
+        Utils.Log(TAG,"onDriveError");
         onStopProgressDialog();
     }
 
@@ -363,7 +355,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     @Override
     public void onError(String message, EnumStatus status) {
-        Log.d(TAG,""+message);
+        Utils.Log(TAG,""+message);
         switch (status){
             case CREATE:{
                 onStopProgressDialog();
@@ -378,9 +370,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         switch (status){
             case CREATE:{
                 onStopProgressDialog();
-                presenter.mUser.cloud_id= message;
-                presenter.mUser.driveConnected = true;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(presenter.mUser));
+                final User mUser = User.getInstance().getUserInfo();
+                mUser.cloud_id= message;
+                mUser.driveConnected = true;
+                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                presenter.mUser = mUser;
                 Utils.Log(TAG,"Finsh enable cloud.........................");
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
                 ServiceManager.getInstance().onGetUserInfo();

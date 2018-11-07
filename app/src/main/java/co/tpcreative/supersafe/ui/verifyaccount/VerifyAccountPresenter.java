@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -63,6 +65,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         hash.put(getString(R.string.key_user_id),request.email);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_code),request.code);
+        hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -221,6 +224,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
         hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
         hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
+        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
         subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -275,6 +279,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
         hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
         hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
+        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
         subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

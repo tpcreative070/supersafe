@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import org.solovyev.android.checkout.Purchase;
 import java.io.IOException;
 import java.util.Map;
+
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -78,7 +80,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
         hash.put(getString(R.string.key_version).toLowerCase(),""+ SuperSafeApplication.getInstance().getVersion());
         hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-
+        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
         Utils.onWriteLog(new Gson().toJson(hash),EnumStatus.CHECKOUT);
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(hash)
                 .subscribeOn(Schedulers.io())

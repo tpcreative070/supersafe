@@ -90,7 +90,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        isLive = true;
+        isLive = false;
 
         Fabric.with(this, new Crashlytics());
 
@@ -168,7 +168,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
     }
-
 
 
     public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
@@ -474,7 +473,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return url;
     }
 
-
     public String getPathDatabase() {
         String currentDBPath = getDatabasePath(getString(R.string.key_database)).getAbsolutePath();
         return currentDBPath;
@@ -542,6 +540,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public String getVersionRelease() {
         String versionRelease = Build.VERSION.RELEASE;
         return versionRelease;
+    }
+
+    public  String getAppVersionRelease(){
+        return BuildConfig.VERSION_NAME;
     }
 
     public File getPackagePath(Context context) {

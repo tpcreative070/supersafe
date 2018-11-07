@@ -355,6 +355,7 @@
     <string name="key_version">version</string>
     <string name="key_version_app">Version</string>
     <string name="key_versionRelease">versionRelease</string>
+    <string name="key_appVersionRelease">appVersionRelease</string>
     <string name="key_code">code</string>
     <string name="key_verify_account">verify_account</string>
     <string name="key_privacy_policy">Privacy Policy</string>
@@ -566,6 +567,7 @@
     <string name="switch_to_supersafe_basic_detail">It\'s the free version of SuperSafe. It still protect your important files and you still can upload file to Google Drive 100 files per month. All of them behind a lock screen and gives you good privacy features</string>
     <string name="switch_to_basic">SWITCH TO BASIC</string>
     <string name="imported_file_successful">Imported %1$s files successful</string>
+    <string name="we_sent_access_code_to_your_email">We sent access code to your email.Please check it.</string>
 
     <!-- Google ads -->
 

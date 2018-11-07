@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.common.controller;
 import android.os.CountDownTimer;
 import com.google.gson.Gson;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -91,7 +90,7 @@ public class SingletonPremiumTimer {
                         }
                     }
                 }
-                Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
+                //Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
             }
             @Override
             public void onFinish() {

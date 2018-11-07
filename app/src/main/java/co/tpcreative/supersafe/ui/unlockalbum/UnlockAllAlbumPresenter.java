@@ -62,6 +62,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         hash.put(getString(R.string.key_user_id),request.email);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_code),request.code);
+        hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
