@@ -9,7 +9,6 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -177,15 +176,14 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
     @OnClick(R.id.llMonths)
     public void onClickedMonths(View view){
-        Utils.Log(TAG,"Months");
-
         if (User.getInstance().isPremium()){
             return;
         }
-
         if (mProduct==null){
             return;
         }
+
+        Utils.Log(TAG,"Months");
         if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
             if (mMonths!=null){
                 final Purchase purchase = mProduct.getPurchaseInState(mMonths, Purchase.State.PURCHASED);
@@ -198,6 +196,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 }
             }
         }
+
     }
 
     @OnClick(R.id.llYears)

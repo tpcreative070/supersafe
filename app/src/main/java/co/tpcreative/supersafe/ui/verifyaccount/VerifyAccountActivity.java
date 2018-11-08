@@ -88,7 +88,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     private VerifyAccountPresenter presenter;
 
 
-
     private boolean isBack = true;
     private boolean isSync  = true;
 
