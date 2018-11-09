@@ -448,12 +448,22 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     }
 
     public void onSwitchToBasic(){
-        final User mUser  = User.getInstance();
+        final User mUser  = User.getInstance().getUserInfo();
+        boolean isPremium = User.getInstance().isPremium();
+        boolean isComplimentary = User.getInstance().isPremiumComplimentary();
         if (User.getInstance().isPremiumExpired() && mUser.verified){
+            Utils.Log(TAG,"Switch to basic");
             if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
                 Navigator.onMoveToPremium(getContext());
             }
         }
+        else{
+            Utils.Log(TAG,"Premium!!!!!!");
+        }
+
+        Utils.Log(TAG,"is expired "+ User.getInstance().isPremiumExpired());
+        Utils.Log(TAG,"is premium "+ isPremium);
+        Utils.Log(TAG,"is complimentary "+ isComplimentary);
     }
 
     @Override
@@ -733,8 +743,5 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
         }
     }
-
-
-
 
 }

@@ -104,7 +104,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         /*Init In app purchase*/
         onStartInAppPurchase();
         onUpdatedView();
-
     }
 
 
@@ -154,9 +153,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @OnClick(R.id.btnSwitchToBasic)
     public void onClickedSwitchToBasic(View view){
         PrefsController.putBoolean(getString(R.string.key_switch_to_basic),true);
-        recreate();
+        finish();
     }
-
 
     @Override
     public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
@@ -555,6 +553,9 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         if (User.getInstance().isPremiumExpired()){
             if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
                Navigator.onMoveToFaceDown(getApplicationContext());
+            }
+            else{
+                finish();
             }
         }
         else {

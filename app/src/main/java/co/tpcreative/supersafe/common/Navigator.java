@@ -318,6 +318,7 @@ public class Navigator {
 
     public static void onMoveToPremium(Context context){
         Intent intent = new Intent(context, PremiumActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
