@@ -65,8 +65,6 @@
         <LinearLayout
             android:id="@+id/llBottom"
             android:background="#7F000000"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:orientation="horizontal"
             android:layout_centerInParent="true"
             android:layout_alignParentBottom="true"

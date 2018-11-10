@@ -569,7 +569,14 @@
     <string name="imported_file_successful">Imported %1$s files successful</string>
     <string name="we_sent_access_code_to_your_email">We sent access code to your email.Please check it.</string>
     <string name="error_occurred">Error occurred!</string>
+
+
     <!-- Google ads -->
+    <string name="admob_app_id">ca-app-pub-7476107722193302~7102656055</string>
+    <string name="banner_home_footer">ca-app-pub-7476107722193302/1275614300</string>
+    <string name="interstitial_full_screen">ca-app-pub-7476107722193302/3135490887</string>
+    <string name="banner_home_footer_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_full_screen_test">ca-app-pub-3940256099942544/1033173712</string>
 
 
 </resources>

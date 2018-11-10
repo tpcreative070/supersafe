@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+
+    <string name="app_name">SuperSafe Develop</string>
+    <string name="admob_app_id">ca-app-pub-7476107722193302~7102656055</string>
+    <string name="banner_home_footer">ca-app-pub-7476107722193302/1275614300</string>
+    <string name="interstitial_full_screen">ca-app-pub-7476107722193302/3135490887</string>
+    <string name="banner_home_footer_test">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_full_screen_test">ca-app-pub-3940256099942544/1033173712</string>
+
+</resources>

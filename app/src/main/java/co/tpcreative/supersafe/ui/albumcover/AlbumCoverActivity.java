@@ -196,11 +196,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
     }
 
-    @OnClick(R.id.btnUpgrade)
-    public void onClickedUpgrade(View view){
-        Navigator.onMoveToPremium(getContext());
-    }
-
     @Override
     public void onBackPressed() {
         if (isReload){
