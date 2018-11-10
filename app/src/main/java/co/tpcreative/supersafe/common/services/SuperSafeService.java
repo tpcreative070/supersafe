@@ -1537,6 +1537,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             user_id = user.email;
         }
 
+
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
