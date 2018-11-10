@@ -1,9 +1,7 @@
 package co.tpcreative.supersafe.common.util;
 import android.Manifest;
 import android.app.Activity;
-import android.arch.persistence.room.Ignore;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -42,10 +40,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
-
 import org.apache.commons.io.FilenameUtils;
 import org.solovyev.android.checkout.Purchase;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -308,18 +304,22 @@ public class Utils {
             //options.inPurgeable = true;
             BitmapFactory.decodeByteArray(data, 0, data.length, options);
 
+            int width = options.outWidth;
+            int height = options.outHeight;
+
+            Utils.Log(TAG,"width :"+ width+" "+ "height :"+height);
+
             // Calculate inSampleSize
             options.inSampleSize = calculateInSampleSize(options, Utils.THUMB_SIZE_WIDTH, Utils.THUMB_SIZE_HEIGHT);
 
             // Decode bitmap with inSampleSize set
-             options.inJustDecodeBounds = false;
+            options.inJustDecodeBounds = false;
             thumbImage =  ThumbnailUtils.extractThumbnail(BitmapFactory.decodeByteArray(data, 0, data.length, options),Utils.THUMB_SIZE_WIDTH,Utils.THUMB_SIZE_HEIGHT);
-
 
             in = new ByteArrayInputStream(data);
             ExifInterface exifInterface = new ExifInterface(in);
             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-            Log.d("EXIF", "Exif: " + orientation);
+            Log.d(TAG, "Exif: " + orientation);
             Matrix matrix = new Matrix();
             if (orientation == 6) {
                 matrix.postRotate(90);
@@ -666,6 +666,12 @@ public class Utils {
                     public void onFailed() {
                         ls.onError();
                     }
+
+                    @Override
+                    public void onSuccessful(String path) {
+
+                    }
+
                 });
             }
         }
@@ -1043,5 +1049,65 @@ public class Utils {
             return context.getResources().getConfiguration().locale;
         }
     }
+
+    public Bitmap scaleStandard(File input){
+        try {
+            final Bitmap thumbnail;
+            final int THUMBSIZE_HEIGHT = 1032;
+            final int THUMBSIZE_WIDTH = 774;
+
+            BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+            bmpFactoryOptions.inJustDecodeBounds = true;
+            Bitmap bitmap = BitmapFactory.decodeFile(input.getAbsolutePath(), bmpFactoryOptions);
+            int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
+            int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
+            if (heightRatio > 1 || widthRatio > 1) {
+                if (heightRatio > widthRatio) {
+                    bmpFactoryOptions.inSampleSize = heightRatio;
+                } else {
+                    bmpFactoryOptions.inSampleSize = widthRatio;
+                }
+            }
+            bmpFactoryOptions.inJustDecodeBounds = false;
+            bitmap = BitmapFactory.decodeFile(input.getAbsolutePath(), bmpFactoryOptions);
+
+            thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
+                    THUMBSIZE_HEIGHT,
+                    THUMBSIZE_WIDTH);
+            android.media.ExifInterface exifInterface = new android.media.ExifInterface(input.getAbsolutePath());
+            int orientation = exifInterface.getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, 1);
+            Log.d("EXIF", "Exif: " + orientation);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            } else if (orientation == 3) {
+                matrix.postRotate(180);
+            } else if (orientation == 8) {
+                matrix.postRotate(270);
+            }
+            return  Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void onDeleteTemporaryFile(){
+        try {
+            File rootDataDir = SuperSafeApplication.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            File []list = rootDataDir.listFiles();
+            for (int i = 0; i< list.length;i++){
+                Utils.Log(TAG,"File list :"+list[i].getAbsolutePath());
+                SuperSafeApplication.getInstance().getStorage().deleteFile(list[i].getAbsolutePath());
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 }

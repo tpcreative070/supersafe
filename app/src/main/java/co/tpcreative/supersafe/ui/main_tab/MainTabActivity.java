@@ -32,6 +32,9 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+import com.snatik.storage.Storage;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -69,6 +72,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     AnimationsContainer.FramesSequenceAnimation animation;
     private MenuItem menuItem;
     private EnumStatus previousStatus;
+    private Storage storage;
 
 
     @Override
@@ -95,6 +99,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Log.d(TAG,"User....." +new Gson().toJson(mUser));
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
+        storage = new Storage(this);
     }
 
 
@@ -502,6 +507,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Utils.Log(TAG,"OnDestroy");
         ServiceManager.getInstance().onDismissServices();
         PremiumManager.getInstance().onStop();
+        Utils.onDeleteTemporaryFile();
         Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), new ServiceManager.ServiceManagerSyncDataListener() {
             @Override
             public void onCompleted() {
@@ -518,6 +524,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         });
         SuperSafeApplication.getInstance().writeUserSecret(presenter.mUser);
     }
+
+
 
     public void onAnimationIcon(final EnumStatus status){
         Utils.Log(TAG,"value : "+ status.name());

@@ -61,14 +61,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
     private static final String TAG = PhotoSlideShowActivity.class.getSimpleName();
     private RequestOptions options = new RequestOptions()
-            .centerCrop()
-            .override(400,600)
+            .centerInside()
             .placeholder(R.color.black38)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .skipMemoryCache(true)
             .error(R.drawable.baseline_music_note_white_48)
             .priority(Priority.HIGH);
-
 
     @BindView(R.id.rlTop)
     RelativeLayout rlTop;
@@ -149,10 +147,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         GalleryCameraMediaManager.getInstance().setListener(this);
         attachFragment(R.id.gallery_root);
 
-
-
         /*Auto slide*/
-
 
         handler = new Handler();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -603,7 +598,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 break;
                                             }
                                             default:{
-                                                File input = new File(index.thumbnailPath);
+                                                File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);

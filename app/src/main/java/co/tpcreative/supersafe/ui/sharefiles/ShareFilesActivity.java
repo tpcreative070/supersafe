@@ -12,11 +12,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.snatik.storage.Storage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -46,6 +45,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     @BindView(R.id.rlProgress)
     RelativeLayout rlProgress;
     int count =0;
+    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_files);
         onDrawOverLay(this);
+        storage = new Storage(this);
         onHandlerIntent();
         onShowUI(View.GONE);
     }
@@ -89,35 +90,62 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 String response = "";
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                     Utils.Log(TAG,"value path :"+ imageUri.getPath());
+                    Utils.Log(TAG,"Path existing "+ storage.isFileExist(imageUri.getPath()));
                     response = PathUtil.getRealPathFromUri(this,imageUri);
+                    if (response==null){
+                        response = PathUtil.getFilePathFromURI(this,imageUri);
+                    }
                 }
                 else{
                     response = PathUtil.getPath(this,imageUri);
-                }
-                final File mFile = new File(response);
-                if (mFile.exists()){
-                    final String path = mFile.getAbsolutePath();
-                    final String name = mFile.getName();
-                    final String fileExtension = Utils.getFileExtension(path);
-                    final String mimeType = intent.getType();
-                    Log.d(TAG, "file extension " + fileExtension);
-
-                    MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-
-                    if (mimeTypeFile==null){
-                        mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
-                        mimeTypeFile.name = name;
+                    if (response==null){
+                        response = PathUtil.getFilePathFromURI(this,imageUri);
                     }
-
-                    mimeTypeFile.name = name;
-                    mListFile.add(0);
-                    count = 1;
-                    ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path,mainCategories);
-
                 }
-                else{
+
+                if (response==null){
                     onStopProgressing();
-                    finish();
+                    Utils.showGotItSnackbar(imgChecked, R.string.error_occurred, new ServiceManager.ServiceManagerSyncDataListener() {
+                        @Override
+                        public void onCompleted() {
+                            finish();
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
+                }else {
+                    final File mFile = new File(response);
+                    if (mFile.exists()) {
+                        final String path = mFile.getAbsolutePath();
+                        final String name = mFile.getName();
+                        final String fileExtension = Utils.getFileExtension(path);
+                        final String mimeType = intent.getType();
+                        Log.d(TAG, "file extension " + fileExtension);
+
+                        MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+
+                        if (mimeTypeFile == null) {
+                            mimeTypeFile = new MimeTypeFile("." + fileExtension, EnumFormatType.FILES, mimeType);
+                            mimeTypeFile.name = name;
+                        }
+
+                        mimeTypeFile.name = name;
+                        mListFile.add(0);
+                        count = 1;
+                        ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, mListFile, path, mainCategories);
+
+                    } else {
+                        onStopProgressing();
+                        finish();
+                    }
                 }
             }
             else {
@@ -141,32 +169,58 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                     String response = "";
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                         response = PathUtil.getRealPathFromUri(this,imageUris.get(i));
+                        if (response==null){
+                            response = PathUtil.getFilePathFromURI(this,imageUris.get(i));
+                        }
                     }
                     else{
                         response = PathUtil.getPath(this,imageUris.get(i));
-                    }
-                    final File mFile = new File(response);
-                    if (mFile.exists()){
-                        final String path = mFile.getAbsolutePath();
-                        final String name = mFile.getName();
-                        final String mimeType = intent.getType();
-                        String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG, "file extension " + fileExtension);
-
-
-                        MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-                        if (mimeTypeFile==null){
-                            mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
-                            mimeTypeFile.name = name;
+                        if (response==null){
+                            response = PathUtil.getFilePathFromURI(this,imageUris.get(i));
                         }
-                        mimeTypeFile.name = name;
-                        mListFile.add(i);
-                        count = imageUris.size();
-                        ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path, mainCategories);
+                    }
+                    if (response!=null){
+                        final File mFile = new File(response);
+                        if (mFile.exists()){
+                            final String path = mFile.getAbsolutePath();
+                            final String name = mFile.getName();
+                            final String mimeType = intent.getType();
+                            String fileExtension = Utils.getFileExtension(path);
+                            Log.d(TAG, "file extension " + fileExtension);
+
+                            MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
+                            if (mimeTypeFile==null){
+                                mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
+                                mimeTypeFile.name = name;
+                            }
+                            mimeTypeFile.name = name;
+                            mListFile.add(i);
+                            count = imageUris.size();
+                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path, mainCategories);
+                        }
+                        else{
+                            onStopProgressing();
+                            finish();
+                        }
                     }
                     else{
                         onStopProgressing();
-                        finish();
+                        Utils.showGotItSnackbar(imgChecked, R.string.error_occurred, new ServiceManager.ServiceManagerSyncDataListener() {
+                            @Override
+                            public void onCompleted() {
+                                finish();
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+
+                            @Override
+                            public void onCancel() {
+
+                            }
+                        });
                     }
                 }
             }
@@ -185,6 +239,12 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     protected void onResume() {
         super.onResume();
         GalleryCameraMediaManager.getInstance().setListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.onDeleteTemporaryFile();
     }
 
     @Override
@@ -278,4 +338,5 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     public void onClickedGotIt(View view){
         finish();
     }
+
 }

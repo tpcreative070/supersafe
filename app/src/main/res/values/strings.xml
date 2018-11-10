@@ -471,7 +471,7 @@
     <string name="unlocked_successful">Unlocked successful</string>
     <string name="no_limited_cloud_sync_storage">No limited Cloud sync storage</string>
     <string name="Remove_upload_limit_of_100_files_per_month">Remove upload limit of 100 files per month</string>
-
+    <string name="picture_jpg">picture.jpg</string>
     <string name="your_premium_has_expired">Your premium has expired. Do you want to upgrade to continue to use services?</string>
 
     <!--Help and Support -->
@@ -568,7 +568,7 @@
     <string name="switch_to_basic">SWITCH TO BASIC</string>
     <string name="imported_file_successful">Imported %1$s files successful</string>
     <string name="we_sent_access_code_to_your_email">We sent access code to your email.Please check it.</string>
-
+    <string name="error_occurred">Error occurred!</string>
     <!-- Google ads -->
 
 

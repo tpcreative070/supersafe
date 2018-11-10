@@ -118,6 +118,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
             }
         }
         getData();
+        view.onSuccessful("Successful",EnumStatus.DELETE);
     }
 
 }

@@ -142,6 +142,31 @@ public class Storage {
         return true;
     }
 
+    public void createFileByteDataNoEncrypt(Context context,byte[]data,OnStorageListener listener){
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "picture.jpg");
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            os.write(data);
+            os.close();
+        } catch (IOException e) {
+            Log.w(TAG, "Cannot write to " + file, e);
+            listener.onFailed();
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+            listener.onSuccessful(file.getAbsolutePath());
+        }
+        Log.d(TAG,"path "+ file.getAbsolutePath());
+    }
+
+
     public boolean createFile(File output,File input, int mode){
         FileInputStream inputStream = null;
         try {

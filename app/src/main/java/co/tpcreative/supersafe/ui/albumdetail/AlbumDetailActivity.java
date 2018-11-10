@@ -53,6 +53,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -62,7 +63,6 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import dmax.dialog.SpotsDialog;
 
@@ -659,11 +659,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             }
                                             default:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
                                                     ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
                                                 }
+                                                Utils.Log(TAG,"Exporting file "+ input.getAbsolutePath());
                                                 break;
                                             }
                                         }
@@ -815,6 +816,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     llBottom.setVisibility(View.INVISIBLE);
                     isReload = true;
                 }
+                break;
+            }
+            case DELETE:{
+                SingletonPrivateFragment.getInstance().onUpdateView();
                 break;
             }
         }

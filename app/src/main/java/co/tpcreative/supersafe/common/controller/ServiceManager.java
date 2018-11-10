@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import javax.crypto.Cipher;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -52,6 +54,7 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ResponseRXJava;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -1571,42 +1574,6 @@ public class ServiceManager implements BaseView {
                     Utils.Log(TAG, "Start RXJava Image Progressing");
                     try {
 
-                        final int THUMBSIZE_HEIGHT = 600;
-                        final int THUMBSIZE_WIDTH = 400;
-
-                        BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
-                        bmpFactoryOptions.inJustDecodeBounds = true;
-                        Bitmap bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
-                        int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) THUMBSIZE_HEIGHT);
-                        int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) THUMBSIZE_WIDTH);
-                        if (heightRatio > 1 || widthRatio > 1) {
-                            if (heightRatio > widthRatio) {
-                                bmpFactoryOptions.inSampleSize = heightRatio;
-                            } else {
-                                bmpFactoryOptions.inSampleSize = widthRatio;
-                            }
-                        }
-                        bmpFactoryOptions.inJustDecodeBounds = false;
-                        bitmap = BitmapFactory.decodeFile(mPath, bmpFactoryOptions);
-
-                        thumbnail = ThumbnailUtils.extractThumbnail(bitmap,
-                                THUMBSIZE_HEIGHT,
-                                THUMBSIZE_WIDTH);
-                        ExifInterface exifInterface = new ExifInterface(mPath);
-                        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                        Log.d("EXIF", "Exif: " + orientation);
-                        Matrix matrix = new Matrix();
-                        if (orientation == 6) {
-                            matrix.postRotate(90);
-                        } else if (orientation == 3) {
-                            matrix.postRotate(180);
-                        } else if (orientation == 8) {
-                            matrix.postRotate(270);
-                        }
-                        thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
-
-
-
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
                         String uuId = Utils.getUUId();
@@ -1675,12 +1642,19 @@ public class ServiceManager implements BaseView {
                                 description.deleteAction,
                                 description.isFakePin);
 
+
+
+                        File file =  new Compressor(getContext())
+                                .setMaxWidth(1032)
+                                .setMaxHeight(774)
+                                .setQuality(85)
+                                .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                .compressToFile(new File(path));
+
                         Utils.Log(TAG, "start compress");
-                        boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
+                        boolean createdThumbnail = storage.createFile(new File(thumbnailPath), file, Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = storage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
                         Utils.Log(TAG, "start end");
-
-
 
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
@@ -1697,6 +1671,7 @@ public class ServiceManager implements BaseView {
                             subscriber.onComplete();
                             Utils.Log(TAG, "CreatedFile failed");
                         }
+
 
                     } catch (Exception e) {
                         Log.w(TAG, "Cannot write to " + e);
@@ -2133,9 +2108,8 @@ public class ServiceManager implements BaseView {
             final boolean isFakePin = mMainCategories.isFakePin;
 
             final byte[] data = mData;
-            final Bitmap mBitmap;
             try {
-                mBitmap = Utils.getThumbnailScale(data);
+
                 String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                 String currentTime = Utils.getCurrentDateTime();
                 String uuId = Utils.getUUId();
@@ -2202,26 +2176,60 @@ public class ServiceManager implements BaseView {
                         description.deleteAction,
                         description.isFakePin);
 
-                boolean createdThumbnail = storage.createFile(thumbnailPath, mBitmap);
-                boolean createdOriginal = storage.createFile(originalPath, data);
 
 
-                final ResponseRXJava response = new ResponseRXJava();
-                response.items = items;
-                response.categories = mMainCategories;
+                storage.createFileByteDataNoEncrypt(getContext(), data, new OnStorageListener() {
+                    @Override
+                    public void onSuccessful() {
 
-                if (createdThumbnail && createdOriginal) {
-                    response.isWorking = true;
-                    subscriber.onNext(response);
-                    subscriber.onComplete();
-                    Utils.Log(TAG, "CreatedFile successful");
-                } else {
-                    response.isWorking = false;
-                    subscriber.onNext(response);
-                    subscriber.onComplete();
-                    Utils.Log(TAG, "CreatedFile failed");
-                }
+                    }
+                    @Override
+                    public void onSuccessful(String path) {
+                        try {
 
+                            File file =  new Compressor(getContext())
+                                    .setMaxWidth(1032)
+                                    .setMaxHeight(774)
+                                    .setQuality(85)
+                                    .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                                    .compressToFile(new File(path));
+
+                            boolean createdThumbnail = storage.createFile(new File(thumbnailPath), file, Cipher.ENCRYPT_MODE);
+                            boolean createdOriginal = storage.createFile(originalPath, data);
+
+
+                            final ResponseRXJava response = new ResponseRXJava();
+                            response.items = items;
+                            response.categories = mMainCategories;
+
+                            if (createdThumbnail && createdOriginal) {
+                                response.isWorking = true;
+                                subscriber.onNext(response);
+                                subscriber.onComplete();
+                                Utils.Log(TAG, "CreatedFile successful");
+                            } else {
+                                response.isWorking = false;
+                                subscriber.onNext(response);
+                                subscriber.onComplete();
+                                Utils.Log(TAG, "CreatedFile failed");
+                            }
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                            final ResponseRXJava response = new ResponseRXJava();
+                            response.isWorking = false;
+                            subscriber.onNext(response);
+                            subscriber.onComplete();
+                        }
+                    }
+                    @Override
+                    public void onFailed() {
+                        final ResponseRXJava response = new ResponseRXJava();
+                        response.isWorking = false;
+                        subscriber.onNext(response);
+                        subscriber.onComplete();
+                    }
+                });
             } catch (Exception e) {
                 final ResponseRXJava response = new ResponseRXJava();
                 response.isWorking = false;
@@ -2303,6 +2311,11 @@ public class ServiceManager implements BaseView {
                         subscriber.onComplete();
                         Utils.Log(TAG,"Exporting failed");
                     }
+
+                    @Override
+                    public void onSuccessful(String path) {
+
+                    }
                 });
             } catch (Exception e) {
                 subscriber.onNext(false);
@@ -2342,7 +2355,6 @@ public class ServiceManager implements BaseView {
                     onWriteLog("Request syn data on upload", EnumStatus.UPLOAD);
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
-
                 } else {
                     String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
                     onWriteLog(message, EnumStatus.UPLOAD);
@@ -2368,7 +2380,6 @@ public class ServiceManager implements BaseView {
                     Utils.Log(TAG, "Request syn data on download.........");
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
-
                 } else {
                     String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
                     onWriteLog(message, EnumStatus.DOWNLOAD);
@@ -2391,7 +2402,6 @@ public class ServiceManager implements BaseView {
                     Utils.Log(TAG, "Request own syn data on download.........");
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onGetDriveAbout();
-
                 } else {
                     String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
                     onWriteLog(message, EnumStatus.DELETE_SYNC_OWN_DATA);
@@ -2512,7 +2522,7 @@ public class ServiceManager implements BaseView {
 
     @Override
     public Context getContext() {
-        return null;
+        return mContext;
     }
 
     @Override
@@ -2599,7 +2609,6 @@ public class ServiceManager implements BaseView {
 
         void onError(String message, EnumStatus status);
     }
-
 
     public interface DeleteServiceListener {
         void onDone();
