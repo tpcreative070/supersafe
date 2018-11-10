@@ -1229,7 +1229,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             @Override
             public void onProgressingDownloading(int percent) {
                 listener.onProgressDownload(percent);
-                Utils.Log(TAG, "Progressing " + percent + "%");
+                Utils.Log(TAG, "Progressing downloaded " + percent + "%");
             }
 
             @Override
@@ -1326,7 +1326,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
             @Override
             public void onProgressUpdate(int percentage) {
-                Utils.Log(TAG, "Progressing " + percentage + "%");
+                Utils.Log(TAG, "Progressing uploaded " + percentage + "%");
                 listener.onProgressUpdate(percentage);
             }
 
