@@ -81,6 +81,8 @@ public enum EnumStatus {
         SIGN_UP_ERROR,
         USER_INFO,
         CHECKOUT,
+        CHECK_VERSION,
+        AUTHOR_SYNC,
         OTHER
 
 }

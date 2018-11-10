@@ -8,14 +8,17 @@ import java.io.Serializable;
 
 import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.SyncData;
+import co.tpcreative.supersafe.model.Version;
 
 public class BaseResponse implements Serializable {
-    public String message ;
-    public boolean error ;
+    public String message;
+    public boolean error;
     public String nextPage;
     public Premium premium;
     public SyncData syncData;
     public Purchase purchase;
+    public Version version;
+
     public String toFormResponse() {
         return new Gson().toJson(this);
     }

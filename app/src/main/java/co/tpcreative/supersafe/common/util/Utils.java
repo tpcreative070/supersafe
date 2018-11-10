@@ -156,7 +156,7 @@ public class Utils {
             file.close();
             return true ;
         } catch (IOException e) {
-            e.printStackTrace();
+            Utils.Log(TAG,e.getMessage());
             return false ;
         }
     }

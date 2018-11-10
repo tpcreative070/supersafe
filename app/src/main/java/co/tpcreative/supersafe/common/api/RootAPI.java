@@ -55,6 +55,19 @@ public interface RootAPI{
     String DELETE_CLOUD_ITEM = "/drive/v3/files/{id}";
     String CHECKOUT = "/api/checkout";
 
+    String AUTHOR = "/api/track/syncDevices";
+    String CHECK_VERSION = "/api/track/version";
+
+
+
+    @FormUrlEncoded
+    @POST(AUTHOR)
+    Observable<BaseResponse> onAuthor(@FieldMap Map<String, String> request);
+
+
+    @POST(CHECK_VERSION)
+    Observable<BaseResponse> onCheckVersion();
+
 
     @FormUrlEncoded
     @POST(SIGN_UP)

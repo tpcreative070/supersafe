@@ -80,6 +80,9 @@ public class ServiceManager implements BaseView {
             mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             ServiceManager.getInstance().onCheckingMissData();
             ServiceManager.getInstance().onGetUserInfo();
+            ServiceManager.getInstance().onSyncCheckVersion();
+            ServiceManager.getInstance().onSyncAuthorDevice();
+
         }
 
         //binder comes from server to communicate with method's of
@@ -264,6 +267,27 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "My services is null");
         }
     }
+
+    /*Sync Author Device*/
+
+    public void onSyncAuthorDevice() {
+        if (myService != null) {
+            myService.onSyncAuthorDevice();
+        } else {
+            Utils.Log(TAG, "My services is null");
+        }
+    }
+
+
+    /*Check Version App*/
+    public void onSyncCheckVersion(){
+        if (myService != null) {
+            myService.onCheckVersion();
+        } else {
+            Utils.Log(TAG, "My services is null");
+        }
+    }
+
 
     public void onGetListCategoriesSync() {
         if (myService == null) {
@@ -1643,7 +1667,6 @@ public class ServiceManager implements BaseView {
                                 description.isFakePin);
 
 
-
                         File file =  new Compressor(getContext())
                                 .setMaxWidth(1032)
                                 .setMaxHeight(774)
@@ -2175,8 +2198,6 @@ public class ServiceManager implements BaseView {
                         description.isDeleteGlobal,
                         description.deleteAction,
                         description.isFakePin);
-
-
 
                 storage.createFileByteDataNoEncrypt(getContext(), data, new OnStorageListener() {
                     @Override

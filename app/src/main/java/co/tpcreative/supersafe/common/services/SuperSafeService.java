@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
@@ -1463,6 +1465,110 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }));
     }
 
+
+
+
+    /*TrackHandler*/
+
+
+
+    public void onCheckVersion(){
+        Log.d(TAG,"onCheckVersion");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        subscriptions.add(SuperSafeApplication.serverAPI.onCheckVersion()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CHECK_VERSION))
+                .subscribe(onResponse -> {
+                    if (onResponse!=null){
+                        if (onResponse.version!=null){
+                            view.onSuccessful("Successful",EnumStatus.CHECK_VERSION);
+                            final User user = User.getInstance().getUserInfo();
+                            user.version = onResponse.version;
+                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user) );
+                        }
+                    }
+                    view.onStopLoading(EnumStatus.CHECK_VERSION);
+                    Log.d(TAG, "Body check version: " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                    }
+                    view.onStopLoading(EnumStatus.CHECK_VERSION);
+                }));
+    }
+
+
+    public void onSyncAuthorDevice(){
+        Log.d(TAG,"onSyncAuthorDevice");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        final User user = User.getInstance().getUserInfo();
+        String user_id = "null@gmail.com";
+        if (user!=null){
+            user_id = user.email;
+        }
+
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
+        hash.put(getString(R.string.key_appVersionRelease),BuildConfig.VERSION_NAME);
+        hash.put(getString(R.string.key_user_id),user_id);
+        subscriptions.add(SuperSafeApplication.serverAPI.onAuthor(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.AUTHOR_SYNC))
+                .subscribe(onResponse -> {
+                    view.onStopLoading(EnumStatus.AUTHOR_SYNC);
+                    Log.d(TAG, "Body author device: " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG,"Author error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Author Can not call" + throwable.getMessage());
+                    }
+                    view.onStopLoading(EnumStatus.AUTHOR_SYNC);
+                }));
+    }
 
 
     /**
