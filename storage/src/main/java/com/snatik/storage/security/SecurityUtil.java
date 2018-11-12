@@ -27,6 +27,14 @@ public class SecurityUtil {
     private static final String TAG = "SecurityUtil";
     public static final String AES_ALGORITHM = "AES";
     public static final String AES_TRANSFORMATION = "AES/CTR/NoPadding";
+    public static final String SHA1_8BIT = "PBKDF2WithHmacSHA1And8bit";
+    public static final String SHA1 = "PBKDF2WithHmacSHA1";
+    public static final int iterationCount = 1000; // recommended by PKCS#5
+    public static final int keyLength = 128;
+    /*Encrypt key*/
+    public static final String IVX = "1234567891234567"; // 16 lenght - not secret
+    public static final String SECRET_KEY = "secret@123456789"; // 16 lenght - secret
+    public static final byte[] SALT = "0000111100001111".getBytes(); // random 16 bytes array
 
 
     /**

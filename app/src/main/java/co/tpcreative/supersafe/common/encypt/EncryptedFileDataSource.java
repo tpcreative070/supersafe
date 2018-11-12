@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.TransferListener;
-
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -224,7 +223,6 @@ public final class EncryptedFileDataSource implements DataSource {
     public int available() throws IOException {
       return mUpstream.available();
     }
-
   }
 
 }

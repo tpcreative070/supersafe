@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.services;
-
 import android.Manifest;
 import android.accounts.Account;
 import android.app.Activity;
@@ -13,7 +12,6 @@ import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
-
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,15 +21,13 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
-
+import com.snatik.storage.security.SecurityUtil;
 import org.solovyev.android.checkout.Billing;
-
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import io.fabric.sdk.android.Fabric;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,9 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.Nonnull;
-
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
@@ -66,7 +60,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private String fake_key;
     private String userSecret;
     private Storage storage;
-    private EncryptConfiguration configuration;
     private EncryptConfiguration configurationFile;
     private static int resumed;
     private static int paused;
@@ -118,20 +111,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .build();
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
 
-        /*Storage Config*/
-        String IVX = "abcdefghijklmnop"; // 16 lenght - not secret
-        String SECRET_KEY = "secret@123"; // 16 lenght - secret
-        byte[] SALT = "0000111100001111".getBytes(); // random 16 bytes array
-        configuration = new EncryptConfiguration.Builder()
-                .setEncryptContent(IVX, SECRET_KEY, SALT)
-                .build();
 
         /*Config file*/
-        String IVX_ = "abcdefghijklmnop"; // 16 lenght - not secret
-        String SECRET_KEY_ = "secret@123"; // 16 lenght - secret
-        byte[] SALT_ = "0000111100001111".getBytes(); // random 16 bytes array
         configurationFile = new EncryptConfiguration.Builder()
-                .setEncryptContent(IVX_, SECRET_KEY_, SALT_)
+                .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build();
 
         storage = new Storage(getApplicationContext());
@@ -342,7 +325,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return;
         }
-        storage.setEncryptConfiguration(configuration);
+        storage.setEncryptConfiguration(configurationFile);
         storage.createFile(getSuperSafe() + key, value);
         Log.d(TAG, "Created key :" + value);
     }
@@ -352,7 +335,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return "";
         }
-        storage.setEncryptConfiguration(configuration);
+        storage.setEncryptConfiguration(configurationFile);
         boolean isFile = storage.isFileExist(getSuperSafe() + key);
         if (isFile) {
             String value = storage.readTextFile(getSuperSafe() + key);
@@ -367,37 +350,42 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return;
         }
-        storage.setEncryptConfiguration(configuration);
+        storage.setEncryptConfiguration(configurationFile);
         storage.createFile(getSuperSafe() + userSecret, new Gson().toJson(user));
     }
 
     public User readUseSecret() {
-        if (!isPermissionRead()) {
-            Log.d(TAG, "Please grant access permission");
-            return null;
-        }
-        storage.setEncryptConfiguration(configuration);
-        boolean isFile = storage.isFileExist(getSuperSafe() + userSecret);
-        if (isFile) {
-            String value = storage.readTextFile(getSuperSafe() + userSecret);
-            if (value!=null){
-                final User mUser = new Gson().fromJson(value,User.class);
-                if (mUser!=null){
-                    return mUser;
-                }
+        try {
+            if (!isPermissionRead()) {
+                Log.d(TAG, "Please grant access permission");
+                return null;
             }
-            return null;
+            storage.setEncryptConfiguration(configurationFile);
+            boolean isFile = storage.isFileExist(getSuperSafe() + userSecret);
+            if (isFile) {
+                String value = storage.readTextFile(getSuperSafe() + userSecret);
+                if (value!=null){
+                    Utils.Log(TAG,value);
+                    final User mUser = new Gson().fromJson(value,User.class);
+                    if (mUser!=null){
+                        return mUser;
+                    }
+                }
+                return null;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
         return null;
     }
-
 
     public void writeFakeKey(String value) {
         if (!isPermissionWrite()) {
             Log.d(TAG, "Please grant access permission");
             return;
         }
-        storage.setEncryptConfiguration(configuration);
+        storage.setEncryptConfiguration(configurationFile);
         storage.createFile(getSuperSafe() + fake_key, value);
         Log.d(TAG, "Created key :" + value);
     }
@@ -407,7 +395,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return "";
         }
-        storage.setEncryptConfiguration(configuration);
+        storage.setEncryptConfiguration(configurationFile);
         boolean isFile = storage.isFileExist(getSuperSafe() + fake_key);
         if (isFile) {
             String value = storage.readTextFile(getSuperSafe() + fake_key);

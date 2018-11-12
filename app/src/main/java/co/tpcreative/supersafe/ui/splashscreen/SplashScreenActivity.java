@@ -79,7 +79,6 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
         Utils.Log(TAG,"Max "+count);
 
-
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
