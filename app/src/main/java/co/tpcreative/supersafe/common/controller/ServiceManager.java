@@ -2560,7 +2560,7 @@ public class ServiceManager implements BaseView {
                         break;
                     }
                     default:{
-                        Utils.Log(TAG,"Nothing to do");
+                        Utils.Log(TAG,"Nothing to do ???");
                     }
                 }
                 break;
@@ -2578,7 +2578,6 @@ public class ServiceManager implements BaseView {
                 break;
             }
             case USER_INFO: {
-
                 final boolean isPremiumComplimentary  = User.getInstance().isPremiumComplimentary();
                 if (!isPremiumComplimentary){
                     return;

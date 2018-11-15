@@ -46,8 +46,8 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         actionBar = getSupportActionBar();
         onStartCount = 1;
         if (savedInstanceState == null) {
-            this.overridePendingTransition(R.animator.anim_slide_in_left,
-                    R.animator.anim_slide_out_left);
+           // this.overridePendingTransition(R.animator.anim_slide_in_left,
+           //         R.animator.anim_slide_out_left);
         } else {
             onStartCount = 2;
         }
@@ -227,8 +227,8 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         if (onStartCount > 1) {
-            this.overridePendingTransition(R.animator.anim_slide_in_right,
-                    R.animator.anim_slide_out_right);
+            //this.overridePendingTransition(R.animator.anim_slide_in_right,
+            //        R.animator.anim_slide_out_right);
         } else if (onStartCount == 1) {
             onStartCount++;
         }

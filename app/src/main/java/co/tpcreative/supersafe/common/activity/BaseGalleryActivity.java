@@ -88,6 +88,9 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
         Slidr.attach(activity, mConfig);
     }
 
+
+
+
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
         context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
                 .getColor(colorPrimary)));

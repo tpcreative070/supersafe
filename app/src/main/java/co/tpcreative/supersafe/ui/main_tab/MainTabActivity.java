@@ -45,6 +45,7 @@ import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.PremiumManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonEnterPinManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -56,6 +57,7 @@ import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.test.TestActivity;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
     private static final String TAG = MainTabActivity.class.getSimpleName();
@@ -100,6 +102,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
         storage = new Storage(this);
+
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+        storage.createFile(SuperSafeApplication.getInstance().getSupersafePicture()+"text.txt","Welcome to TPCreative");
+
     }
 
 
@@ -199,7 +205,9 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 return true;
             }
             case R.id.help :{
-                Navigator.onMoveHelpSupport(this);
+                //Navigator.onMoveHelpSupport(this);
+                Intent intent = new Intent(this, TestActivity.class);
+                startActivity(intent);
                 return true;
             }
         }
@@ -444,12 +452,19 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onResume() {
         super.onResume();
+        if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
+            Utils.Log(TAG,"isEnterPinWorking");
+            SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
+            return;
+        }
+
         onSwitchToBasic();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         ServiceManager.getInstance().onGetDriveAbout();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
         presenter.onGetUserInfo();
+        Utils.Log(TAG,"onResume");
     }
 
     public void onSwitchToBasic(){

@@ -60,9 +60,7 @@
         <!-- Enter pin code -->
         <activity
             android:name=".ui.lockscreen.EnterPinActivity"
-            android:label="@string/key_change"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:label="@string/key_change"/>
         <activity
             android:name=".ui.signin.SignInActivity"
             android:screenOrientation="portrait"
@@ -171,7 +169,8 @@
             android:label="@string/premium" />
         <activity android:name=".ui.restore.RestoreActivity" />
         <activity android:name=".ui.albumcover.AlbumCoverActivity" />
-        <activity android:name=".ui.switchbasic.SwitchBasicActivity"></activity>
+        <activity android:name=".ui.switchbasic.SwitchBasicActivity" />
+        <activity android:name=".ui.test.TestActivity"></activity>
     </application>
 
 </manifest>

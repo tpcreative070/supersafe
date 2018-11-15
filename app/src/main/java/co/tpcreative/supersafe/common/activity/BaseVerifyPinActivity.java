@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.activity;
 import android.Manifest;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -24,10 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
 import java.io.File;
 import butterknife.ButterKnife;
@@ -45,9 +41,11 @@ import co.tpcreative.supersafe.common.hiddencamera.CameraPreview;
 import co.tpcreative.supersafe.common.hiddencamera.HiddenCameraUtils;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Theme;
 
 public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
     Unbinder unbinder;
@@ -69,8 +67,8 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         actionBar = getSupportActionBar();
         onStartCount = 1;
         if (savedInstanceState == null) {
-            this.overridePendingTransition(R.animator.anim_slide_in_left,
-                    R.animator.anim_slide_out_left);
+//            this.overridePendingTransition(R.animator.anim_slide_in_left,
+//                    R.animator.anim_slide_out_left);
         } else {
             onStartCount = 2;
         }
@@ -81,6 +79,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
 
         //Add the camera preview surface to the root of the activity view.
         mCameraPreview = addPreView();
+
     }
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
@@ -92,6 +91,17 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
         }
+    }
+
+
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        final Theme result = Theme.getInstance().getThemeInfo();
+        if (result!=null){
+            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
+        }
+        return theme;
     }
 
 
@@ -265,8 +275,8 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         if (onStartCount > 1) {
-            this.overridePendingTransition(R.animator.anim_slide_in_right,
-                    R.animator.anim_slide_out_right);
+//            this.overridePendingTransition(R.animator.anim_slide_in_right,
+//                    R.animator.anim_slide_out_right);
         } else if (onStartCount == 1) {
             onStartCount++;
         }

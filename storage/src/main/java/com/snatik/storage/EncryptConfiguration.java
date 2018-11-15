@@ -1,16 +1,12 @@
 package com.snatik.storage;
-
 import android.os.Build;
 import android.util.Log;
-
 import com.snatik.storage.security.SecurityUtil;
-
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
@@ -195,7 +191,7 @@ public class EncryptConfiguration {
 				 * initialize secret key factory which in-turn generates key.
 				 */
 
-                KeySpec keySpec = new PBEKeySpec(secretKey.toCharArray(), salt, SecurityUtil.iterationCount, SecurityUtil.keyLength);
+                KeySpec keySpec = new PBEKeySpec(secretKey.toCharArray(),salt, SecurityUtil.iterationCount, SecurityUtil.keyLength);
                 SecretKeyFactory keyFactory = null;
                 if (Build.VERSION.SDK_INT >= 19) {
                     // see:
@@ -213,7 +209,6 @@ public class EncryptConfiguration {
                 }
                 byte[] keyBytes = keyFactory.generateSecret(keySpec).getEncoded();
                 _secretKey = keyBytes;
-
             } catch (InvalidKeySpecException e) {
                 Log.e(TAG, "InvalidKeySpecException", e);
             } catch (NoSuchAlgorithmException e) {

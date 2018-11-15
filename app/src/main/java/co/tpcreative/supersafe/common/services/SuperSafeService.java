@@ -186,6 +186,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         String email = mUser.email;
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),email);
+        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         subscriptions.add(SuperSafeApplication.serverAPI.onUserInfo(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -398,6 +399,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
         hashMap.put(getString(R.string.key_categories_max), mainCategories.categories_max + "");
+        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -484,6 +486,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
+        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -565,6 +568,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         Map<String, Object> hashMap = new HashMap<>();
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
+        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -692,6 +696,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             contentTitle.items_id = items.items_id;
             String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
             hashMap.put(getString(R.string.key_name), hex);
+            hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         }
 
         String access_token = user.access_token;
@@ -857,6 +862,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         hashMap.put(getString(R.string.key_user_id), user.email);
+        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
         Log.d(TAG, "access_token : " + access_token);
@@ -946,6 +952,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_next_page), nextPage);
         hashMap.put(getString(R.string.key_isSyncCloud), true);
+        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
 
         String access_token = user.access_token;
         view.onSuccessful("access_token" + getString(R.string.access_token, access_token));
@@ -1466,10 +1473,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
 
-
-
     /*TrackHandler*/
-
 
 
     public void onCheckVersion(){
@@ -1570,7 +1574,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     view.onStopLoading(EnumStatus.AUTHOR_SYNC);
                 }));
     }
-
 
     /**
      * Class used for the client Binder.  Because we know this service always

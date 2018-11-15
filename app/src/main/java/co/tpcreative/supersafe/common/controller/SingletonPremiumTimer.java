@@ -35,6 +35,7 @@ public class SingletonPremiumTimer {
     }
 
     public void onStartTimer(){
+        Utils.Log(TAG,"onStartTimer");
         if (mCountDownTimer!=null){
             Utils.Log(TAG,"Running............");
             return;

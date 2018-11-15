@@ -84,7 +84,6 @@
                         android:layout_marginRight="20dp"
                         android:layout_toRightOf="@+id/imgEdit"
                         android:singleLine="true"
-                        android:text="@string/tpcreative"
                         android:textSize="@dimen/text_size_normal" />
                 </RelativeLayout>
 

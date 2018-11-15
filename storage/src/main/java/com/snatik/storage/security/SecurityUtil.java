@@ -31,6 +31,16 @@ public class SecurityUtil {
     public static final String SHA1 = "PBKDF2WithHmacSHA1";
     public static final int iterationCount = 1000; // recommended by PKCS#5
     public static final int keyLength = 128;
+
+    public static final String url_developer = "http://192.168.1.2:8081";
+    public static final String url_live = "http://tpcreative.me:8081";
+
+    public static final String key_password_default = "tpcreative.co";
+    public static final String user_name = "mail.suppersafe@gmail.com";
+    public static final String password  = "Phong@123";
+    public static final String tpcreative = "tpcreative.co@gmail.com";
+    public static final String DEFAULT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRwY3JlYXRpdmUuY29AZ21haWwuY29tIiwibmFtZSI6IkZyZWUiLCJyb2xlIjoiMCIsImNyZWF0ZWRfZGF0ZSI6IjExLzEzLzIwMTggMTA6NDg6MDAgUE0iLCJfaWQiOiI1YmVhZjIzMDQ2NGEwNzNmNjUzNDVjYmUiLCJpYXQiOjE1NDIxMjQwODB9.oEfdmeOTYxGnJtl1ZJtC71AELyLcNz6w6FhlTizVJdE";
+
     /*Encrypt key*/
     public static final String IVX = "1234567891234567"; // 16 lenght - not secret
     public static final String SECRET_KEY = "secret@123456789"; // 16 lenght - secret
@@ -66,8 +76,7 @@ public class SecurityUtil {
         try {
             SecretKey secretkey = new SecretKeySpec(secretKey, AES_ALGORITHM);
             IvParameterSpec IV = new IvParameterSpec(ivx);
-            String transformation = AES_TRANSFORMATION;
-            Cipher decipher = Cipher.getInstance(transformation);
+            Cipher decipher = Cipher.getInstance(AES_TRANSFORMATION);
             decipher.init(encryptionMode, secretkey, IV);
             return decipher.doFinal(content);
         } catch (NoSuchAlgorithmException e) {
@@ -117,14 +126,6 @@ public class SecurityUtil {
         return null;
     }
 
-    public static byte[] generateKey(String password) throws Exception {
-        byte[] keyStart = password.getBytes("UTF-8");
-        KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
-        sr.setSeed(keyStart);
-        kgen.init(128, sr);
-        SecretKey skey = kgen.generateKey();
-        return skey.getEncoded();
-    }
+
 
 }

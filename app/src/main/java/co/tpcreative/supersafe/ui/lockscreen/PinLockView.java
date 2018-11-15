@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 
@@ -49,44 +50,46 @@ public class PinLockView extends RecyclerView {
         @Override
         public void onNumberClicked(int keyValue) {
 
-                if (mPin.length() < getPinLength()) {
+            if (mPin.length() < getPinLength()) {
+                mPin = mPin.concat(String.valueOf(keyValue));
+
+                if (isIndicatorDotsAttached()) {
+                    mIndicatorDots.updateDot(mPin.length());
+                }
+
+                if (mPin.length() == 1) {
+                    mAdapter.setPinLength(mPin.length());
+                    mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+                }
+
+                if (mPinLockListener != null) {
+                    if (mPin.length() == mPinLength) {
+                        mPinLockListener.onComplete(mPin);
+                    } else {
+                        mPinLockListener.onPinChange(mPin.length(), mPin);
+                    }
+                }
+
+            } else {
+                if (!isShowDeleteButton()) {
+                    resetPinLockView();
                     mPin = mPin.concat(String.valueOf(keyValue));
 
                     if (isIndicatorDotsAttached()) {
                         mIndicatorDots.updateDot(mPin.length());
                     }
 
-                    if (mPin.length() == 1) {
-                        mAdapter.setPinLength(mPin.length());
-                        mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
-                    }
-
                     if (mPinLockListener != null) {
-                        if (mPin.length() == mPinLength) {
-                            mPinLockListener.onComplete(mPin);
-                        } else {
-                            mPinLockListener.onPinChange(mPin.length(), mPin);
-                        }
+                        mPinLockListener.onPinChange(mPin.length(), mPin);
                     }
+
                 } else {
-                    if (!isShowDeleteButton()) {
-                        resetPinLockView();
-                        mPin = mPin.concat(String.valueOf(keyValue));
-
-                        if (isIndicatorDotsAttached()) {
-                            mIndicatorDots.updateDot(mPin.length());
-                        }
-
-                        if (mPinLockListener != null) {
-                            mPinLockListener.onPinChange(mPin.length(), mPin);
-                        }
-
-                    } else {
-                        if (mPinLockListener != null) {
-                            mPinLockListener.onComplete(mPin);
-                        }
+                    if (mPinLockListener != null) {
+                        mPinLockListener.onComplete(mPin);
                     }
+                }
             }
+
         }
     };
 
@@ -126,8 +129,8 @@ public class PinLockView extends RecyclerView {
             = new PinLockAdapter.OnVerifyClickListener() {
         @Override
         public void onVerifyClicked() {
-            Log.d(TAG,"onVerify");
-            if (mPinLockListener!=null){
+            Log.d(TAG, "onVerify");
+            if (mPinLockListener != null) {
                 mPinLockListener.onComplete(mPin);
             }
         }

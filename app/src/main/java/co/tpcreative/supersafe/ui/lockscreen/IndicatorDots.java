@@ -1,8 +1,11 @@
 package co.tpcreative.supersafe.ui.lockscreen;
 
+import android.accounts.Account;
 import android.animation.LayoutTransition;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.AsyncTask;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -10,10 +13,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import co.tpcreative.supersafe.R;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.gson.Gson;
 
+import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
+
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 /**
  * It represents a set of indicator dots which when attached with {@link PinLockView}
@@ -43,6 +61,9 @@ public class IndicatorDots extends LinearLayout {
     private int mEmptyDrawable;
     private int mPinLength;
     private int mIndicatorType;
+
+    private Activity activity;
+
 
     private int mPreviousLength;
 
@@ -82,7 +103,6 @@ public class IndicatorDots extends LinearLayout {
                 View dot = new View(context);
                 emptyDot(dot);
 
-                Log.d(TAG,"empty dot :");
 
                 LayoutParams params = new LayoutParams(mDotDiameter,
                         mDotDiameter);
@@ -111,6 +131,7 @@ public class IndicatorDots extends LinearLayout {
     }
 
     void updateDot(int length) {
+
         if (mIndicatorType == 0) {
             if (length > 0) {
                 if (length > mPreviousLength) {
@@ -139,6 +160,7 @@ public class IndicatorDots extends LinearLayout {
                     dot.setLayoutParams(params);
 
                     addView(dot, length - 1);
+                    Utils.Log(TAG, "mDotSpacing: " + mDotSpacing);
                 } else {
                     removeViewAt(length);
                 }
@@ -149,6 +171,7 @@ public class IndicatorDots extends LinearLayout {
             }
         }
     }
+
 
     private void emptyDot(View dot) {
         dot.setBackgroundResource(mEmptyDrawable);
@@ -180,4 +203,12 @@ public class IndicatorDots extends LinearLayout {
         initView(getContext());
     }
 
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+    }
 }

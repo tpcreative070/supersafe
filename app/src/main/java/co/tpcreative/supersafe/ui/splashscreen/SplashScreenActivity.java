@@ -30,6 +30,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
     @BindView(R.id.rlScreen)
     RelativeLayout rlScreen;
     private Handler handler = new Handler();
+    private int DELAY = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                 }
                 finish();
             }
-        },0);
+        },DELAY);
 
     }
 

@@ -19,6 +19,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.controller.SingletonEnterPinManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -218,6 +219,11 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     public void onResume() {
         super.onResume();
+        if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
+            Utils.Log(TAG,"isEnterPinWorking");
+            return;
+        }
+
         Log.d(TAG,"onResume");
         presenter.onCalculate();
         presenter.onShowUserInfo();

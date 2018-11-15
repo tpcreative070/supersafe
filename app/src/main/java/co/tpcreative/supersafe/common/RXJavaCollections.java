@@ -46,5 +46,17 @@ public class RXJavaCollections {
                 });
     }
 
+    public void onUI(){
+       Observable.create(subscriber -> {
+
+       })
+         .subscribeOn(Schedulers.computation())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .observeOn(Schedulers.io())
+                    .subscribe(response -> {
+
+                    });
+    }
+
 
 }

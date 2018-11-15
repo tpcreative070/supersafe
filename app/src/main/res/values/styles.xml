@@ -1,7 +1,5 @@
 <resources>
 
-
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -26,6 +24,7 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
     </style>
 
 
@@ -714,6 +713,9 @@
         <item name="actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
         <item name="android:actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
     </style>
+
+
+
 
 
 </resources>

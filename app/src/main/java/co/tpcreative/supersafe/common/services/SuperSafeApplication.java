@@ -83,7 +83,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        isLive = true;
+        isLive = false;
 
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -331,18 +331,24 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     }
 
     public String readKey() {
-        if (!isPermissionRead()) {
-            Log.d(TAG, "Please grant access permission");
-            return "";
+        try {
+            if (!isPermissionRead()) {
+                Log.d(TAG, "Please grant access permission");
+                return "";
+            }
+            storage.setEncryptConfiguration(configurationFile);
+            boolean isFile = storage.isFileExist(getSuperSafe() + key);
+            if (isFile) {
+                String value = storage.readTextFile(getSuperSafe() + key);
+                Log.d(TAG, "Key value is : " + value);
+                return value;
+            }
         }
-        storage.setEncryptConfiguration(configurationFile);
-        boolean isFile = storage.isFileExist(getSuperSafe() + key);
-        if (isFile) {
-            String value = storage.readTextFile(getSuperSafe() + key);
-            Log.d(TAG, "Key value is : " + value);
-            return value;
+        catch (Exception e){
+            deleteFolder();
         }
         return "";
+
     }
 
     public void writeUserSecret(final User user) {
@@ -453,9 +459,9 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public String getUrl() {
         if (!BuildConfig.DEBUG || isLive) {
-            url = getString(R.string.url_live);
+            url = SecurityUtil.url_live;
         } else {
-            url = getString(R.string.url_developer);
+            url = SecurityUtil.url_developer;
         }
         return url;
     }
@@ -486,8 +492,9 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             }
             return authorization;
         } catch (Exception e) {
+
         }
-        return null;
+        return SecurityUtil.DEFAULT_TOKEN;
     }
 
     @Override

@@ -3,6 +3,7 @@ package co.tpcreative.supersafe.ui.signup;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.snatik.storage.security.SecurityUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,7 +48,8 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
 
         Map<String, String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email), request.email);
-        hash.put(getString(R.string.key_password), getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_other_email),request.email);
+        hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
         hash.put(getString(R.string.key_name), request.name);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_device_type), getString(R.string.device_type));

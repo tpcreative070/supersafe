@@ -50,5 +50,4 @@
         app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
         app:sdOverlayLayout="@id/overlay" />
 
-
 </android.support.design.widget.CoordinatorLayout>

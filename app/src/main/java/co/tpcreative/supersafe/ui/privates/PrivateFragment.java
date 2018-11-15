@@ -42,6 +42,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     private PrivateAdapter adapter;
     private Storage storage;
 
+
     public static PrivateFragment newInstance(int index) {
         PrivateFragment fragment = new PrivateFragment();
         Bundle b = new Bundle();
@@ -171,6 +172,12 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     @Override
     public void onResume() {
         super.onResume();
+        Utils.Log(TAG,"onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override

@@ -5,6 +5,8 @@ import android.text.Html;
 import android.util.Log;
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
+import com.snatik.storage.security.SecurityUtil;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -157,8 +159,8 @@ public class VerifyPresenter extends Presenter<BaseView>{
         BaseView view = view();
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
-                .withUsername(view.getContext().getString(R.string.user_name))
-                .withPassword(view.getContext().getString(R.string.password))
+                .withUsername(SecurityUtil.user_name)
+                .withPassword(SecurityUtil.password)
                 .withMailto(email)
                 .withType(BackgroundMail.TYPE_HTML)
                 .withSubject(title)

@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
+import com.snatik.storage.security.SecurityUtil;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,7 +125,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email),request.email);
-        hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
         hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
@@ -177,7 +179,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email),request.email);
-        hash.put(getString(R.string.key_password),getString(R.string.key_password_default));
+        hash.put(getString(R.string.key_password),SecurityUtil.key_password_default);
         hash.put(getString(R.string.key_name),request.name);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
@@ -325,8 +327,8 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         String body = String.format(getString(R.string.send_code),code);
         String title = String.format(getString(R.string.send_code_title),code);
         BackgroundMail.newBuilder(view.getActivity())
-                .withUsername(view.getContext().getString(R.string.user_name))
-                .withPassword(view.getContext().getString(R.string.password))
+                .withUsername(SecurityUtil.user_name)
+                .withPassword(SecurityUtil.password)
                 .withMailto(email)
                 .withType(BackgroundMail.TYPE_PLAIN)
                 .withSubject(title)
