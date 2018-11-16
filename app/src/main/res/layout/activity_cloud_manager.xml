@@ -383,6 +383,7 @@
                             android:textSize="@dimen/text_size_normal" />
 
                         <android.support.v7.widget.SwitchCompat
+                            android:id="@+id/switch_SaveSpace"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
@@ -406,12 +407,14 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvDeviceSaving"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerInParent="true"
                             android:text="6.3MB"
-                            android:textSize="@dimen/text_size_normal" />
+                            android:textSize="@dimen/text_size_normal"/>
+
                     </RelativeLayout>
 
                 </LinearLayout>

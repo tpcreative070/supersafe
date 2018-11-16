@@ -62,6 +62,14 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     SwitchCompat btnSwitchPauseSync;
     @BindView(R.id.tvDriveAccount)
     TextView tvDriveAccount;
+
+
+    @BindView(R.id.tvDeviceSaving)
+    TextView tvDeviceSaving;
+    @BindView(R.id.switch_SaveSpace)
+    SwitchCompat switch_SaveSpace;
+
+
     private CloudManagerPresenter presenter;
     private boolean isPauseCloudSync = true;
 
@@ -77,6 +85,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
         btnSwitchPauseSync.setOnCheckedChangeListener(this);
+        switch_SaveSpace.setOnCheckedChangeListener(this);
 
         String lefFiles = String.format(getString(R.string.left),""+Navigator.LIMIT_UPLOAD);
         tvLeft.setText(lefFiles);
@@ -170,8 +179,13 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
 
     public void onShowSwitch(){
+
         final boolean pause_cloud_sync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync),false);
         btnSwitchPauseSync.setChecked(pause_cloud_sync);
+
+        final boolean saving_space = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
+        switch_SaveSpace.setChecked(saving_space);
+
     }
 
 
@@ -265,6 +279,9 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 isPauseCloudSync = b;
                 PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync),b);
                 break;
+            }
+            case R.id.switch_SaveSpace :{
+                PrefsController.putBoolean(getString(R.string.key_saving_space),b);
             }
         }
     }

@@ -54,7 +54,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return ""+System.currentTimeMillis();
         }
     }
-    
+
     /*Items action*/
 
     public synchronized void onInsert(Items cTalkManager){

@@ -1198,7 +1198,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     public void onDownloadFile(final Items items, final ServiceManager.DownloadServiceListener listener) {
         Utils.Log(TAG, "onDownloadFile !!!!");
         final User mUser = User.getInstance().getUserInfo();
-
         if (!mUser.driveConnected) {
             listener.onError("No Drive api connected", EnumStatus.DOWNLOAD);
             return;
