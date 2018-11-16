@@ -57,7 +57,7 @@ import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.test.TestActivity;
+
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
     private static final String TAG = MainTabActivity.class.getSimpleName();
@@ -205,9 +205,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 return true;
             }
             case R.id.help :{
-                //Navigator.onMoveHelpSupport(this);
-                Intent intent = new Intent(this, TestActivity.class);
-                startActivity(intent);
+                Navigator.onMoveHelpSupport(this);
                 return true;
             }
         }

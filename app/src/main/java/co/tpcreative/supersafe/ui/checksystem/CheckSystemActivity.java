@@ -65,6 +65,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 }
             }, 5000);
         }
+        onStartOverridePendingTransition();
     }
 
     @Override

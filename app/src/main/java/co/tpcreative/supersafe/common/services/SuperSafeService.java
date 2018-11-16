@@ -1190,7 +1190,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 description.isDeleteLocal,
                 description.isDeleteGlobal,
                 description.deleteAction,
-                description.isFakePin);
+                description.isFakePin,
+                false);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 

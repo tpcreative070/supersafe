@@ -1631,6 +1631,7 @@ public class ServiceManager implements BaseView {
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
                         description.isFakePin = isFakePin;
+                        description.isSaver = false;
 
 
                         items = new Items(false,
@@ -1660,7 +1661,8 @@ public class ServiceManager implements BaseView {
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
                                 description.deleteAction,
-                                description.isFakePin);
+                                description.isFakePin,
+                                description.isSaver);
 
 
                         File file =  new Compressor(getContext())
@@ -1760,6 +1762,7 @@ public class ServiceManager implements BaseView {
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
                         description.isFakePin = isFakePin;
+                        description.isSaver = false;
 
 
                         items = new Items(false,
@@ -1789,7 +1792,8 @@ public class ServiceManager implements BaseView {
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
                                 description.deleteAction,
-                                description.isFakePin);
+                                description.isFakePin,
+                                description.isSaver);
 
 
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
@@ -1862,6 +1866,7 @@ public class ServiceManager implements BaseView {
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
                         description.isFakePin = isFakePin;
+                        description.isSaver = false;
 
 
                         items = new Items(false,
@@ -1891,7 +1896,8 @@ public class ServiceManager implements BaseView {
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
                                 description.deleteAction,
-                                description.isFakePin);
+                                description.isFakePin,
+                                description.isSaver);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
@@ -1960,6 +1966,7 @@ public class ServiceManager implements BaseView {
                         description.isDeleteGlobal = false;
                         description.deleteAction = EnumDelete.NONE.ordinal();
                         description.isFakePin = isFakePin;
+                        description.isSaver = false;
 
 
                         items = new Items(false,
@@ -1989,7 +1996,8 @@ public class ServiceManager implements BaseView {
                                 description.isDeleteLocal,
                                 description.isDeleteGlobal,
                                 description.deleteAction,
-                                description.isFakePin);
+                                description.isFakePin,
+                                description.isSaver);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
@@ -2164,6 +2172,7 @@ public class ServiceManager implements BaseView {
                 description.isDeleteGlobal = false;
                 description.deleteAction = EnumDelete.NONE.ordinal();
                 description.isFakePin = isFakePin;
+                description.isSaver = false;
 
 
                 Items items = new Items(false,
@@ -2193,7 +2202,8 @@ public class ServiceManager implements BaseView {
                         description.isDeleteLocal,
                         description.isDeleteGlobal,
                         description.deleteAction,
-                        description.isFakePin);
+                        description.isFakePin,
+                        description.isSaver);
 
                 storage.createFileByteDataNoEncrypt(getContext(), data, new OnStorageListener() {
                     @Override

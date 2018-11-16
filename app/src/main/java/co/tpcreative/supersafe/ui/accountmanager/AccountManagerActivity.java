@@ -71,6 +71,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
         onUpdatedView();
+
+        onStartOverridePendingTransition();
     }
 
     public void onUpdatedView(){

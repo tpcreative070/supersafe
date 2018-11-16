@@ -718,8 +718,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             public void run() {
                               onBackPressed();
                             }
-                        },70);
-
+                        },100);
                         Utils.Log(TAG, "Action ...................done");
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
                         break;

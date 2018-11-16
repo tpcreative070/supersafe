@@ -86,6 +86,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         onShowUI();
         onUpdatedView();
         presenter.onGetDriveAbout();
+
+        onStartOverridePendingTransition();
     }
 
     public void onUpdatedView(){

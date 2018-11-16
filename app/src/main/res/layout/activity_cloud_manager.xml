@@ -2,11 +2,12 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
 
     tools:context=".ui.cloudmanager.CloudManagerActivity">
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -47,18 +48,19 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
-                    android:background="?attr/colorPrimary"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
+                    android:layout_height="200dp"
+                    android:background="?attr/colorPrimary"
+                    android:orientation="vertical">
+
                     <ImageView
-                        android:layout_marginTop="20dp"
+                        android:layout_width="@dimen/log_size"
+                        android:layout_height="@dimen/log_size"
                         android:layout_alignParentTop="true"
                         android:layout_centerInParent="true"
-                        android:src="@drawable/ic_launcher"
                         android:layout_gravity="center"
-                        android:layout_width="@dimen/log_size"
-                        android:layout_height="@dimen/log_size" />
+                        android:layout_marginTop="20dp"
+                        android:src="@drawable/ic_launcher" />
                 </RelativeLayout>
 
 
@@ -66,266 +68,355 @@
                     android:id="@+id/llTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
-                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="30dp"
+                        android:text="@string/you_are_in_premium_features"
                         android:textColor="?attr/colorPrimary"
                         android:textSize="@dimen/medium"
-                        android:padding="30dp"
-                        android:gravity="center"
-                        android:text="@string/you_are_in_premium_features"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
 
                 <LinearLayout
                     android:id="@+id/llPremium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@color/material_gray_100"
-                    android:padding="10dp"
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:padding="10dp">
 
                     <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:gravity="center"
-                        android:text="@string/monthly_usage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:text="@string/monthly_usage" />
 
                     <LinearLayout
-                        android:layout_marginTop="20dp"
-                        android:weightSum="3"
-                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
                         <TextView
                             android:id="@+id/tvUploaded"
-                            android:paddingRight="10dp"
-                            android:text="@string/uploaded"
-                            android:gravity="right"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1.4"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:gravity="right"
+                            android:paddingRight="10dp"
+                            android:text="@string/uploaded" />
+
                         <LinearLayout
-                            android:gravity="center"
-                            android:layout_weight="0.2"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.2"
+                            android:gravity="center">
+
                             <View
-                                android:layout_gravity="center"
-                                android:background="?attr/colorAccent"
                                 android:layout_width="1dp"
-                                android:layout_height="match_parent"/>
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:background="?attr/colorAccent" />
 
                         </LinearLayout>
+
                         <TextView
                             android:id="@+id/tvLeft"
-                            android:text="@string/left"
-                            android:paddingLeft="10dp"
-                            android:gravity="left"
-                            android:layout_weight="1.4"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.4"
+                            android:gravity="left"
+                            android:paddingLeft="10dp"
+                            android:text="@string/left" />
                     </LinearLayout>
 
                     <TextView
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:text="@string/quota_available"
-                        android:layout_marginTop="20dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="@string/quota_available" />
 
                     <Button
                         android:id="@+id/btnRemoveLimit"
-                        android:text="@string/remove_quota_limit"
-                        android:background="@drawable/bg_button_rounded"
-                        android:textColor="@color/white"
-                        android:layout_marginTop="20dp"
-                        android:layout_gravity="center"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/button_high"/>
+                        android:layout_height="@dimen/button_high"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/bg_button_rounded"
+                        android:text="@string/remove_quota_limit"
+                        android:textColor="@color/white" />
 
                 </LinearLayout>
 
                 <RelativeLayout
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="6dp"
-                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:id="@+id/imgGoogleDrive"
-                        android:src="@drawable/ic_google_drive"
+                        android:layout_width="@dimen/icon_size_30"
+                        android:layout_height="@dimen/icon_size_30"
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
-                        android:layout_width="@dimen/icon_size_30"
-                        android:layout_height="@dimen/icon_size_30"/>
+                        android:src="@drawable/ic_google_drive" />
 
                     <TextView
-                        android:textColor="?attr/colorAccent"
                         android:id="@+id/tvDriveAccount"
-                        android:textSize="@dimen/text_size_normal"
-                        android:paddingRight="20dp"
-                        android:paddingLeft="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_toRightOf="@+id/imgGoogleDrive"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:textColor="?attr/colorAccent"
+                        android:textSize="@dimen/text_size_normal" />
                 </RelativeLayout>
 
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:background="@color/material_gray_100"
-                    android:padding="10dp"
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:padding="10dp">
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:orientation="horizontal">
+
                         <ImageView
-                            android:layout_gravity="center"
                             android:id="@+id/imgSuperSafeSpace"
-                            android:background="@drawable/dot_supersafe_space"
                             android:layout_width="@dimen/icon_size_15"
-                            android:layout_height="@dimen/icon_size_15"/>
+                            android:layout_height="@dimen/icon_size_15"
+                            android:layout_gravity="center"
+                            android:background="@drawable/dot_supersafe_space" />
 
                         <TextView
-                            android:textColor="?attr/colorAccent"
-                            android:textSize="@dimen/text_size_normal"
-                            android:text="@string/calculating"
                             android:id="@+id/tvValueSupersafeSpace"
-                            android:singleLine="true"
-                            android:paddingLeft="10dp"
-                            android:layout_gravity="center"
                             android:layout_width="90dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="10dp"
+                            android:singleLine="true"
+                            android:text="@string/calculating"
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="@dimen/text_size_normal" />
 
                         <TextView
-                            android:visibility="invisible"
                             android:id="@+id/tvSupersafeSpace"
-                            android:textSize="@dimen/text_size_normal"
-                            android:text="@string/supersafe_used_space"
-                            android:paddingLeft="10dp"
-                            android:layout_gravity="center"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="10dp"
+                            android:text="@string/supersafe_used_space"
+                            android:textSize="@dimen/text_size_normal"
+                            android:visibility="invisible" />
 
                     </LinearLayout>
 
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:orientation="horizontal">
+
                         <ImageView
                             android:id="@+id/imgOtherSpace"
-                            android:background="@drawable/dot_other_space"
-                            android:layout_gravity="center"
                             android:layout_width="@dimen/icon_size_15"
-                            android:layout_height="@dimen/icon_size_15"/>
+                            android:layout_height="@dimen/icon_size_15"
+                            android:layout_gravity="center"
+                            android:background="@drawable/dot_other_space" />
 
                         <TextView
-                            android:textColor="?attr/colorAccent"
-                            android:textSize="@dimen/text_size_normal"
-                            android:text="@string/calculating"
                             android:id="@+id/tvValueOtherSpace"
-                            android:singleLine="true"
-                            android:paddingLeft="10dp"
-                            android:layout_gravity="center"
                             android:layout_width="90dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="10dp"
+                            android:singleLine="true"
+                            android:text="@string/calculating"
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="@dimen/text_size_normal" />
 
                         <TextView
-                            android:visibility="invisible"
                             android:id="@+id/tvOtherSpace"
-                            android:textSize="@dimen/text_size_normal"
-                            android:text="@string/other_used_space"
-                            android:paddingLeft="10dp"
-                            android:layout_gravity="center"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="10dp"
+                            android:text="@string/other_used_space"
+                            android:textSize="@dimen/text_size_normal"
+                            android:visibility="invisible" />
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:orientation="horizontal">
+
                         <ImageView
                             android:id="@+id/imgFreeSpace"
-                            android:background="@drawable/dot_free_space"
-                            android:layout_gravity="center"
                             android:layout_width="@dimen/icon_size_15"
-                            android:layout_height="@dimen/icon_size_15"/>
+                            android:layout_height="@dimen/icon_size_15"
+                            android:layout_gravity="center"
+                            android:background="@drawable/dot_free_space" />
 
                         <TextView
-                            android:textColor="?attr/colorAccent"
-                            android:textSize="@dimen/text_size_normal"
-                            android:text="@string/calculating"
                             android:id="@+id/tvValueFreeSpace"
-                            android:singleLine="true"
-                            android:paddingLeft="10dp"
-                            android:layout_gravity="center"
                             android:layout_width="90dp"
-                            android:layout_height="wrap_content" />
-                        <TextView
-                            android:visibility="invisible"
-                            android:id="@+id/tvFreeSpace"
-                            android:textSize="@dimen/text_size_normal"
-                            android:text="@string/free_space"
-                            android:paddingLeft="10dp"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:paddingLeft="10dp"
+                            android:singleLine="true"
+                            android:text="@string/calculating"
+                            android:textColor="?attr/colorAccent"
+                            android:textSize="@dimen/text_size_normal" />
+
+                        <TextView
+                            android:id="@+id/tvFreeSpace"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingLeft="10dp"
+                            android:text="@string/free_space"
+                            android:textSize="@dimen/text_size_normal"
+                            android:visibility="invisible" />
                     </LinearLayout>
                 </LinearLayout>
 
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@color/material_gray_100"
-                    android:padding="10dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/material_gray_100"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
                     <RelativeLayout
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp">
+
                         <TextView
-                            android:text="@string/pause_cloud_sync"
-                            android:textSize="@dimen/text_size_normal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
                             android:layout_centerInParent="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:text="@string/pause_cloud_sync"
+                            android:textSize="@dimen/text_size_normal" />
 
                         <android.support.v7.widget.SwitchCompat
                             android:id="@+id/btnSwitchPauseSync"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerInParent="true"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true" />
                     </RelativeLayout>
                 </LinearLayout>
+
+                <!--Space saver -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/material_gray_100"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/space_saver"
+                        android:textSize="@dimen/large" />
+
+                    <TextView
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/smart_storage"
+                        android:textColor="@color/material_gray_500"
+                        android:textSize="@dimen/small" />
+
+                    <RelativeLayout
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerInParent="true"
+                            android:text="@string/save_space"
+                            android:textSize="@dimen/text_size_normal" />
+
+                        <android.support.v7.widget.SwitchCompat
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true" />
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerInParent="true"
+                            android:text="@string/device_storage_saved"
+                            android:textSize="@dimen/text_size_normal"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:text="6.3MB"
+                            android:textSize="@dimen/text_size_normal" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.NestedScrollView>

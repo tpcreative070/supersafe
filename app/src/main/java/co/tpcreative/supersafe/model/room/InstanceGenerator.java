@@ -1,13 +1,14 @@
 package co.tpcreative.supersafe.model.room;
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.util.Log;
 import java.util.List;
 import java.util.UUID;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -53,8 +54,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return ""+System.currentTimeMillis();
         }
     }
-
-
+    
     /*Items action*/
 
     public synchronized void onInsert(Items cTalkManager){

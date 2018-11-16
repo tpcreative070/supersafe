@@ -170,7 +170,6 @@
         <activity android:name=".ui.restore.RestoreActivity" />
         <activity android:name=".ui.albumcover.AlbumCoverActivity" />
         <activity android:name=".ui.switchbasic.SwitchBasicActivity" />
-        <activity android:name=".ui.test.TestActivity"></activity>
     </application>
 
 </manifest>

@@ -49,7 +49,6 @@ public class PinLockView extends RecyclerView {
 
         @Override
         public void onNumberClicked(int keyValue) {
-
             if (mPin.length() < getPinLength()) {
                 mPin = mPin.concat(String.valueOf(keyValue));
 

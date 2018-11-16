@@ -1,37 +1,17 @@
 package co.tpcreative.supersafe.ui.lockscreen;
-
-import android.accounts.Account;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.AsyncTask;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.gson.Gson;
-
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
-import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.User;
-
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 
 /**
  * It represents a set of indicator dots which when attached with {@link PinLockView}
@@ -39,6 +19,8 @@ import java.util.List;
  * <p>
  * Created by aritraroy on 01/06/16.
  */
+
+
 public class IndicatorDots extends LinearLayout {
 
 
@@ -131,7 +113,6 @@ public class IndicatorDots extends LinearLayout {
     }
 
     void updateDot(int length) {
-
         if (mIndicatorType == 0) {
             if (length > 0) {
                 if (length > mPreviousLength) {
@@ -159,8 +140,8 @@ public class IndicatorDots extends LinearLayout {
                     params.setMargins(mDotSpacing, 0, mDotSpacing, 0);
                     dot.setLayoutParams(params);
 
-                    addView(dot, length - 1);
-                    Utils.Log(TAG, "mDotSpacing: " + mDotSpacing);
+                    addView(dot, length-1);
+                    Utils.Log(TAG, "mDotSpacing: " + length);
                 } else {
                     removeViewAt(length);
                 }

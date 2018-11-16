@@ -33,6 +33,7 @@ public class DriveDescription implements Serializable{
     public boolean isDeleteGlobal;
     public int deleteAction;
     public boolean isFakePin;
+    public boolean isSaver;
 
     private static DriveDescription instance;
 

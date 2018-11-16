@@ -55,6 +55,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         presenter.bindView(this);
         presenter.onUserInfo();
         Utils.Log(TAG,"Enable cloud...........");
+        onStartOverridePendingTransition();
     }
 
     @Override

@@ -84,16 +84,18 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         super.onCreate(savedInstanceState);
         actionBar = getSupportActionBar();
         onStartCount = 1;
-        if (savedInstanceState == null) {
-//            this.overridePendingTransition(R.animator.anim_slide_in_left,
-//                    R.animator.anim_slide_out_left);
-        } else {
+        if (savedInstanceState != null) {
             onStartCount = 2;
         }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+    }
+
+    protected void onStartOverridePendingTransition(){
+        this.overridePendingTransition(R.animator.anim_slide_in_left,
+                R.animator.anim_slide_out_left);
     }
 
 
@@ -267,8 +269,9 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     protected void onStart() {
         super.onStart();
         if (onStartCount > 1) {
-//            this.overridePendingTransition(R.animator.anim_slide_in_right,
-//                    R.animator.anim_slide_out_right);
+            this.overridePendingTransition(R.animator.anim_slide_in_right,
+                    R.animator.anim_slide_out_right);
+            Utils.Log(TAG,"2");
         } else if (onStartCount == 1) {
             onStartCount++;
         }
@@ -388,7 +391,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 if (accessToken != null) {
                     final User mUser = User.getInstance().getUserInfo();
                     if (mUser != null) {
-                        Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
+                        //Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
                         ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
                             @Override
                             public void onError(String message, EnumStatus status) {
@@ -461,7 +464,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                         });
                     }
                 }
-                Log.d(TAG, "response token : " + String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), accessToken));
+                //Log.d(TAG, "response token : " + String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), accessToken));
             }
             catch (Exception e){
                 e.printStackTrace();
