@@ -20,6 +20,7 @@ include ':app',
         'simplerecyclerviewlibrary',
         'fingerprint-auth-library',
         'checkoutlibrary',
-        'bungeelibrary'
+        'bungeelibrary',
+        'dialogsuccessprogresslibrary'
 
 

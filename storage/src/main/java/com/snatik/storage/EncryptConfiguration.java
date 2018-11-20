@@ -117,6 +117,7 @@ public class EncryptConfiguration {
         private static final String UTF_8 = "UTF-8";
 
         public Builder() {
+
         }
 
         /**

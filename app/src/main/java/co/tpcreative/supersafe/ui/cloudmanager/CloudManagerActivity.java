@@ -1,11 +1,15 @@
 package co.tpcreative.supersafe.ui.cloudmanager;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,8 +17,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.google.gson.Gson;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.snatik.storage.Storage;
+
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -27,11 +37,14 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveAbout;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
-public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener,BaseView<Long>{
+public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener, BaseView<Long> {
 
     private static String TAG = CloudManagerActivity.class.getSimpleName();
     @BindView(R.id.tvUploaded)
@@ -72,6 +85,10 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     private CloudManagerPresenter presenter;
     private boolean isPauseCloudSync = true;
+    private boolean isDownload;
+    private boolean isSpaceSaver;
+    private Storage storage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,95 +99,91 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
 
+        storage = new Storage(this);
+
+
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
         btnSwitchPauseSync.setOnCheckedChangeListener(this);
         switch_SaveSpace.setOnCheckedChangeListener(this);
 
-        String lefFiles = String.format(getString(R.string.left),""+Navigator.LIMIT_UPLOAD);
+        String lefFiles = String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD);
         tvLeft.setText(lefFiles);
 
-        String updated = String.format(getString(R.string.left),"0");
+        String updated = String.format(getString(R.string.left), "0");
         tvUploaded.setText(updated);
         onShowUI();
         onUpdatedView();
         presenter.onGetDriveAbout();
-
         onStartOverridePendingTransition();
+
     }
 
-    public void onUpdatedView(){
-        if (User.getInstance().isPremiumExpired()){
+    public void onUpdatedView() {
+        if (User.getInstance().isPremiumExpired()) {
             llPremium.setVisibility(View.VISIBLE);
             llTitle.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             llPremium.setVisibility(View.GONE);
             llTitle.setVisibility(View.VISIBLE);
         }
     }
 
-    public void onShowUI(){
+    public void onShowUI() {
         tvSupersafeSpace.setVisibility(View.VISIBLE);
         tvOtherSpace.setVisibility(View.VISIBLE);
         tvFreeSpace.setVisibility(View.VISIBLE);
         final User mUser = User.getInstance().getUserInfo();
-        Utils.Log(TAG,"user :"+ new Gson().toJson(mUser));
         boolean isThrow = false;
-        if (mUser!=null){
+        if (mUser != null) {
             DriveAbout driveAbout = mUser.driveAbout;
             tvDriveAccount.setText(mUser.cloud_id);
             try {
                 String superSafeSpace = ConvertUtils.byte2FitMemorySize(driveAbout.inAppUsed);
                 tvValueSupersafeSpace.setText(superSafeSpace);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 tvValueOtherSpace.setText(getString(R.string.calculating));
                 isThrow = true;
             }
             try {
                 String superSafeSpace = ConvertUtils.byte2FitMemorySize(driveAbout.quotaBytesUsedAggregate);
                 tvValueOtherSpace.setText(superSafeSpace);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 tvValueOtherSpace.setText(getString(R.string.calculating));
                 isThrow = true;
             }
             try {
-                final  long result = driveAbout.quotaBytesTotal - driveAbout.quotaBytesUsedAggregate;
+                final long result = driveAbout.quotaBytesTotal - driveAbout.quotaBytesUsedAggregate;
                 String superSafeSpace = ConvertUtils.byte2FitMemorySize(result);
                 tvValueFreeSpace.setText(superSafeSpace);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 tvValueFreeSpace.setText(getString(R.string.calculating));
                 isThrow = true;
             }
 
             try {
-                if (mUser.syncData!=null){
-                    String lefFiles = String.format(getString(R.string.left),""+mUser.syncData.left);
+                if (mUser.syncData != null) {
+                    String lefFiles = String.format(getString(R.string.left), "" + mUser.syncData.left);
                     tvLeft.setText(lefFiles);
                 }
-            }
-            catch (Exception e){
-                String lefFiles = String.format(getString(R.string.left),""+Navigator.LIMIT_UPLOAD);
+            } catch (Exception e) {
+                String lefFiles = String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD);
                 tvLeft.setText(lefFiles);
                 isThrow = true;
             }
 
             try {
-                if (mUser.syncData!=null){
-                    String uploadedFiles = String.format(getString(R.string.uploaded),""+(Navigator.LIMIT_UPLOAD - mUser.syncData.left));
+                if (mUser.syncData != null) {
+                    String uploadedFiles = String.format(getString(R.string.uploaded), "" + (Navigator.LIMIT_UPLOAD - mUser.syncData.left));
                     tvUploaded.setText(uploadedFiles);
                 }
-            }
-            catch (Exception e){
-                String uploadedFiles = String.format(getString(R.string.uploaded),"0");
+            } catch (Exception e) {
+                String uploadedFiles = String.format(getString(R.string.uploaded), "0");
                 tvUploaded.setText(uploadedFiles);
                 isThrow = true;
             }
 
-            if (isThrow){
+            if (isThrow) {
                 tvSupersafeSpace.setVisibility(View.INVISIBLE);
                 tvOtherSpace.setVisibility(View.INVISIBLE);
                 tvFreeSpace.setVisibility(View.INVISIBLE);
@@ -178,14 +191,18 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         }
     }
 
-    public void onShowSwitch(){
-
-        final boolean pause_cloud_sync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync),false);
+    public void onShowSwitch() {
+        final boolean pause_cloud_sync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync), false);
         btnSwitchPauseSync.setChecked(pause_cloud_sync);
 
-        final boolean saving_space = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
+        final boolean saving_space = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
         switch_SaveSpace.setChecked(saving_space);
-
+        if (saving_space) {
+            presenter.onGetSaveData();
+        }
+        else {
+            tvDeviceSaving.setText(ConvertUtils.byte2FitMemorySize(0));
+        }
     }
 
 
@@ -198,8 +215,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_item_refresh:{
+        switch (item.getItemId()) {
+            case R.id.menu_item_refresh: {
                 presenter.onGetDriveAbout();
                 break;
             }
@@ -224,17 +241,17 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public void onError(String message, EnumStatus status) {
-       switch (status){
-           case REQUEST_ACCESS_TOKEN:{
-               Utils.Log(TAG,"Error response "+ message );
-               getAccessToken();
-               break;
-           }
-           default:{
-               Utils.Log(TAG,"Error response "+ message);
-               break;
-           }
-       }
+        switch (status) {
+            case REQUEST_ACCESS_TOKEN: {
+                Utils.Log(TAG, "Error response " + message);
+                getAccessToken();
+                break;
+            }
+            default: {
+                Utils.Log(TAG, "Error response " + message);
+                break;
+            }
+        }
     }
 
     @Override
@@ -244,9 +261,22 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        switch (status){
-            case GET_LIST_FILES_IN_APP:{
+        switch (status) {
+            case GET_LIST_FILES_IN_APP: {
                 onShowUI();
+                break;
+            }
+            case SAVER: {
+                tvDeviceSaving.setText(ConvertUtils.byte2FitMemorySize(presenter.sizeSaverFiles));
+                break;
+            }
+            case GET_LIST_FILE: {
+                onShowDialog();
+                break;
+            }
+            case DOWNLOAD: {
+                tvDeviceSaving.setText(ConvertUtils.byte2FitMemorySize(0));
+                isDownload = true;
                 break;
             }
         }
@@ -259,7 +289,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-        Utils.Log(TAG,"Successful response "+ message);
+        Utils.Log(TAG, "Successful response " + message);
     }
 
     @Override
@@ -274,22 +304,32 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        switch (compoundButton.getId()){
-            case R.id.btnSwitchPauseSync :{
+        Utils.Log(TAG, "onCheckedChanged...............!!!");
+        switch (compoundButton.getId()) {
+            case R.id.btnSwitchPauseSync: {
                 isPauseCloudSync = b;
-                PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync),b);
+                PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync), b);
                 break;
             }
-            case R.id.switch_SaveSpace :{
-                PrefsController.putBoolean(getString(R.string.key_saving_space),b);
+            case R.id.switch_SaveSpace: {
+                if (b) {
+                    isDownload = false;
+                    isSpaceSaver = true;
+                    presenter.onEnableSaverSpace();
+                } else {
+                    isSpaceSaver = false;
+                    presenter.onDisableSaverSpace(EnumStatus.GET_LIST_FILE);
+                }
+                PrefsController.putBoolean(getString(R.string.key_saving_space), b);
+                break;
             }
         }
     }
 
     @Override
     public void onNotifier(EnumStatus status) {
-        switch (status){
-            case FINISH:{
+        switch (status) {
+            case FINISH: {
                 finish();
                 break;
             }
@@ -302,7 +342,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
 
     @OnClick(R.id.btnRemoveLimit)
-    public void onRemoveLimit(View view){
+    public void onRemoveLimit(View view) {
         Navigator.onMoveToPremium(this);
     }
 
@@ -352,8 +392,70 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!isPauseCloudSync){
+        if (!isPauseCloudSync) {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
+
+        if (isDownload) {
+            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, false, false);
+            if (mList != null && mList.size() > 0) {
+                for (int i = 0; i < mList.size(); i++) {
+                    EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
+                    switch (formatType) {
+                        case IMAGE: {
+                            mList.get(i).isSyncCloud = false;
+                            mList.get(i).originalSync = false;
+                            mList.get(i).statusAction = EnumStatus.DOWNLOAD.ordinal();
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                            break;
+                        }
+                    }
+                }
+            }
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            Utils.Log(TAG, "Re-Download file");
+        }
+
+        if (isSpaceSaver){
+            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, true, false);
+            for (Items index : mList){
+                storage.deleteFile(index.originalPath);
+            }
+        }
+
     }
+
+    public void onShowDialog() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.custom_view_dialog, null);
+        TextView space_required = view.findViewById(R.id.tvSpaceRequired);
+        space_required.setText(String.format(getString(R.string.space_required), ConvertUtils.byte2FitMemorySize(presenter.sizeFile)));
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .title(getString(R.string.download_private_cloud_files))
+                .customView(view, false)
+                .theme(Theme.LIGHT)
+                .cancelable(false)
+                .titleColor(getResources().getColor(R.color.black))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .negativeText(getString(R.string.cancel))
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Utils.Log(TAG, "negative");
+                        switch_SaveSpace.setChecked(true);
+                    }
+                })
+                .positiveText(getString(R.string.download))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Utils.Log(TAG, "positive");
+                        PrefsController.putBoolean(getString(R.string.key_saving_space), false);
+                        presenter.onDisableSaverSpace(EnumStatus.DOWNLOAD);
+                    }
+                });
+        builder.show();
+    }
+
+
 }

@@ -25,16 +25,16 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
     protected int photos = 0;
     protected int audios = 0;
     protected int others = 0;
-    protected List<Integer> mListExportShare = new ArrayList<>();
     protected List<File> mListShare = new ArrayList<>();
     protected EnumStatus status = EnumStatus.OTHER;
+    protected List<HashMap<Integer,Items>> mListHashExporting;
 
 
 
     public AlbumDetailPresenter(){
         mList = new ArrayList<>();
-        mListExportShare = new ArrayList<>();
         mListShare = new ArrayList<>();
+        mListHashExporting = new ArrayList<>();
     }
 
     public void  getData(Activity activity){
@@ -44,7 +44,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
             Bundle bundle = activity.getIntent().getExtras();
             mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             if (mainCategories!=null){
-                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,mainCategories.isFakePin);
+                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,false,mainCategories.isFakePin);
                 if (data!=null){
                     mList = data;
                     onCalculate();
@@ -93,7 +93,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
         mList.clear();
         try {
             if (mainCategories!=null){
-                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,mainCategories.isFakePin);
+                final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,false,mainCategories.isFakePin);
                 if (data!=null){
                     mList = data;
                     onCalculate();

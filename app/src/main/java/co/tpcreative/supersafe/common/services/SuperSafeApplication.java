@@ -114,6 +114,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
         /*Config file*/
         configurationFile = new EncryptConfiguration.Builder()
+                .setChuckSize(1024*2)
                 .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build();
 

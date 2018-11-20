@@ -6,7 +6,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class DriveDescription implements Serializable{
 
     private static String TAG = DriveDescription.class.getSimpleName();
-
     public String categories_local_id;
     public String categories_id;
     public String fileExtension;
@@ -34,6 +33,9 @@ public class DriveDescription implements Serializable{
     public int deleteAction;
     public boolean isFakePin;
     public boolean isSaver;
+    public boolean isExport;
+    public boolean isWaitingForExporting;
+    public int custom_items;
 
     private static DriveDescription instance;
 
@@ -43,7 +45,6 @@ public class DriveDescription implements Serializable{
         }
         return instance;
     }
-
 
     public String convertToHex(final String value){
         try {
@@ -68,6 +69,5 @@ public class DriveDescription implements Serializable{
         }
         return null;
     }
-
 
 }

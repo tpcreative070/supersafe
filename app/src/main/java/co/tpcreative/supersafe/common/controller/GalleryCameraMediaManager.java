@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.common.controller;
 
+import co.tpcreative.supersafe.model.EnumStatus;
+
 public class GalleryCameraMediaManager {
 
     private static GalleryCameraMediaManager instance;
@@ -26,6 +28,7 @@ public class GalleryCameraMediaManager {
         void onUpdatedView();
         void onStartProgress();
         void onStopProgress();
+        void onCompletedDownload(EnumStatus status);
     }
 
     public void onStartProgress(){
@@ -40,6 +43,11 @@ public class GalleryCameraMediaManager {
         }
     }
 
+    public void onCompletedDownload(EnumStatus enumStatus){
+        if (listener!=null){
+            listener.onCompletedDownload(enumStatus);
+        }
+    }
 
     public void setListener(AlbumDetailManagerListener ls){
         this.listener = ls;

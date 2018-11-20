@@ -83,6 +83,19 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
+    public final synchronized List<Items> getListItems(final String categories_local_id,boolean isDeleteLocal,boolean isExport,boolean isFakePin){
+        try{
+            if (categories_local_id==null){
+                return null;
+            }
+            return instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isExport,isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
     public final synchronized List<Items> getListItems(final String categories_local_id,boolean isDeleteLocal,boolean isFakePin){
         try{
             if (categories_local_id==null){
@@ -193,6 +206,38 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return null;
     }
+
+    public final synchronized List<Items> getListSyncData(boolean isSyncCloud,boolean isFakePin){
+        try{
+            return instance.itemsDao().loadSyncData(isSyncCloud,isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+    public final synchronized List<Items> getListSyncData(boolean isSyncCloud,boolean isSaver,boolean isWaitingForExporting,boolean isFakePin){
+        try{
+            return instance.itemsDao().loadSyncData(isSyncCloud,isSaver,isWaitingForExporting,isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getListSyncData(boolean isSyncCloud,boolean isSaver,boolean isFakePin){
+        try{
+            return instance.itemsDao().loadSyncData(isSyncCloud,isSaver,isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
 
     public final synchronized Items getItemId(int id,boolean isFakePin){
         try{

@@ -4,4 +4,5 @@ public interface OnStorageListener {
     void onSuccessful();
     void onSuccessful(String path);
     void onFailed();
+    void onSuccessful(int position);
 }

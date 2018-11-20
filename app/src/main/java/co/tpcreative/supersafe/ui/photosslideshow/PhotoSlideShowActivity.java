@@ -30,16 +30,19 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.Cipher;
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
@@ -47,9 +50,12 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 import io.reactivex.Observable;
@@ -100,6 +106,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     private boolean isProgressing;
     private  int position = 0;
     private  PhotoView photoView;
+    SweetAlertDialog mDialogProgress;
 
 
     private Handler handler;
@@ -426,7 +433,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                         if (presenter.mList.size()>0){
                             storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
                             presenter.status = EnumStatus.EXPORT;
-                            onShowDialog(EnumStatus.EXPORT,position);
+                            if (presenter.mList.get(position).isSaver){
+                                onEnableSyncData(position);
+                            }
+                            else{
+                                onShowDialog(EnumStatus.EXPORT,position);
+                            }
                         }
                         else{
                             onBackPressed();
@@ -467,6 +479,38 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
         }
     }
+
+    /*Download file*/
+    public void onEnableSyncData(int position){
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.verified){
+                if (!mUser.driveConnected){
+                    Navigator.onCheckSystem(this,null);
+                }
+                else{
+                    onDialogDownloadFile();
+                    final List<Items> list = new ArrayList<>();
+                    final Items items = presenter.mList.get(position);
+                    items.isChecked = true;
+                    list.add(items);
+                    ServiceManager.getInstance().setListDownloadFile(list);
+                    ServiceManager.getInstance().getObservableDownload();
+                }
+            }
+            else{
+                Navigator.onVerifyAccount(this);
+            }
+        }
+    }
+
+    public void onDialogDownloadFile(){
+        mDialogProgress = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText(getString(R.string.downloading));
+        mDialogProgress.show();
+        mDialogProgress.setCancelable(false);
+    }
+
 
     @Override
     public void onMoveAlbumSuccessful() {
@@ -509,15 +553,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
+                        List<ExportFiles> mListExporting = new ArrayList<>();
                         switch (status){
                             case SHARE:{
                                 GalleryCameraMediaManager.getInstance().onStartProgress();
-                                presenter.mListExportShare.clear();
                                 presenter.mListShare.clear();
                                 final Items index = presenter.mList.get(position);
                                     if (index!=null){
-                                        presenter.mListExportShare.add(index.id);
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
                                             case AUDIO:{
@@ -525,7 +567,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -534,7 +577,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -543,7 +587,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -552,22 +597,24 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                         }
 
                                 }
+
+                                ServiceManager.getInstance().setmListExport(mListExporting);
+                                ServiceManager.getInstance().onExportingFiles();
                                 break;
                             }
                             case EXPORT:{
                                 GalleryCameraMediaManager.getInstance().onStartProgress();
-                                presenter.mListExportShare.clear();
                                 presenter.mListShare.clear();
                                 final Items index = presenter.mList.get(position);
                                 if (index!=null){
-                                        presenter.mListExportShare.add(index.id);
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
                                             case AUDIO:{
@@ -575,7 +622,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -584,7 +632,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -593,7 +642,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -602,12 +652,16 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                         }
                                     }
+
+                                ServiceManager.getInstance().setmListExport(mListExporting);
+                                ServiceManager.getInstance().onExportingFiles();
                                 break;
                             }
                             case DELETE:{
@@ -638,7 +692,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     @Override
     public void onStopProgress() {
         try {
-            if (presenter.mListExportShare.size()==0){
+
                 Utils.Log(TAG,"onStopProgress");
                 onStopProgressing();
                 switch (presenter.status){
@@ -660,7 +714,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                         break;
                     }
                 }
-            }
+
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -698,6 +752,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 public void run() {
                     if (dialog!=null){
                         dialog.dismiss();
+                        deselectAll();
                     }
                 }
             });
@@ -707,6 +762,39 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     }
 
+    private void deselectAll() {
+        boolean isExport = false;
+        switch (presenter.status){
+            case EXPORT:{
+                if (presenter.mList.get(position).isChecked){
+                    presenter.mList.get(position).isExport = true;
+                    presenter.mList.get(position).isDeleteLocal = true;
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(position));
+                    onCheckDelete();
+                }
+                break;
+            }
+        }
+    }
+
+    public void onCheckDelete(){
+        final List<Items> mList = presenter.mList;
+        if (presenter.mList.get(position).isChecked){
+            EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(position).formatType];
+            if (formatTypeFile == EnumFormatType.AUDIO && mList.get(position).global_original_id == null) {
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+            } else if (formatTypeFile == EnumFormatType.FILES && mList.get(position).global_original_id == null) {
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+            } else if (mList.get(position).global_original_id == null & mList.get(position).global_thumbnail_id == null) {
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+            } else {
+                mList.get(position).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(position));
+                Utils.Log(TAG, "ServiceManager waiting for delete");
+            }
+            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(position).local_id);
+        }
+    }
 
     @SuppressLint("RestrictedApi")
     public void openOptionMenu(View v){
@@ -731,6 +819,43 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         popup.show();
     }
 
+    @Override
+    public void onCompletedDownload(EnumStatus status) {
+        switch (status){
+            case DONE:{
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        onShowDialog(EnumStatus.EXPORT,position);
+                    }
+                });
+                Utils.Log(TAG, " already sync");
+                break;
+            }
+            case ERROR:{
+                final User mUser = User.getInstance().getUserInfo();
+                if (mUser!=null){
+                    mUser.driveConnected = false;
+                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                }
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                });
+                break;
+            }
+        }
+    }
+
 
     /*ViewPresenter*/
 
@@ -743,7 +868,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     public void onStopLoading(EnumStatus status) {
 
     }
-
 
     @Override
     public void onBackPressed() {
@@ -783,8 +907,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     }
 
-
-
     public void onRotateBitmap(final Items items){
         subscriptions = Observable.create(subscriber -> {
             isProgressing = true;
@@ -803,13 +925,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     mDegrees = 180;
                 }
             }
-
             final  int valueDegrees = mDegrees;
             mItem.degrees = valueDegrees;
             presenter.mList.get(position).degrees = valueDegrees;
                     subscriber.onNext(mItem);
             subscriber.onComplete();
-
         })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -832,7 +952,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     }
                 });
     }
-
 
     @Override
     public void onError(String message, EnumStatus status) {
@@ -878,7 +997,5 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
-
-
 
 }

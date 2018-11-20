@@ -229,6 +229,9 @@ dependencies {
     /*bungeelibrary*/
     implementation project (':bungeelibrary')
 
+    /*dialogsuccessprogresslibrary*/
+    implementation project(':dialogsuccessprogresslibrary')
+
 }
 
 /*Resolved duplicated for Google api client*/

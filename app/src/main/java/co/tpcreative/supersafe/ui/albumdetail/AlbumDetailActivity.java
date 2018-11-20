@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -48,10 +49,13 @@ import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
+import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -59,12 +63,22 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
+import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Image;
+import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
 
@@ -97,7 +111,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     private int countSelected;
     private boolean isSelectAll = false;
     private AlertDialog dialog;
-
+    SweetAlertDialog mDialogProgress;
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -206,7 +220,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
@@ -300,7 +313,18 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         if (countSelected>0){
             storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
             presenter.status = EnumStatus.EXPORT;
-            onShowDialog(presenter.status);
+            boolean isSaver = false;
+            for (int i = 0;i<presenter.mList.size();i++){
+                if (presenter.mList.get(i).isSaver && presenter.mList.get(i).isChecked){
+                    isSaver = true;
+                }
+            }
+            if (isSaver){
+                onEnableSyncData();
+            }
+            else{
+                onShowDialog(presenter.status);
+            }
         }
     }
 
@@ -327,7 +351,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public void onStopProgress() {
         try {
-            if (presenter.mListExportShare.size()==0){
                 Utils.Log(TAG,"onStopProgress");
                 onStopProgressing();
                 switch (presenter.status){
@@ -349,7 +372,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         break;
                     }
                 }
-            }
+
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -480,6 +503,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 return true; // To keep the Speed Dial open
             }
         });
+
     }
 
     @Override
@@ -567,15 +591,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
+                        List<ExportFiles> mListExporting = new ArrayList<>();
                         switch (status){
                             case SHARE:{
                                 GalleryCameraMediaManager.getInstance().onStartProgress();
-                                presenter.mListExportShare.clear();
                                 presenter.mListShare.clear();
-                                for (Items index : presenter.mList){
+                                for (int i = 0; i< presenter.mList.size();i++){
+                                    Items index = presenter.mList.get(i);
                                     if (index.isChecked){
-                                        presenter.mListExportShare.add(index.id);
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
                                             case AUDIO:{
@@ -583,7 +606,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -592,7 +616,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -601,7 +626,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -610,22 +636,26 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                         }
                                     }
                                 }
+
+                                ServiceManager.getInstance().setmListExport(mListExporting);
+                                ServiceManager.getInstance().onExportingFiles();
                                 break;
                             }
                             case EXPORT:{
                                 GalleryCameraMediaManager.getInstance().onStartProgress();
-                                presenter.mListExportShare.clear();
                                 presenter.mListShare.clear();
-                                for (Items index : presenter.mList){
+
+                                for (int i = 0;i< presenter.mList.size();i++){
+                                    Items index = presenter.mList.get(i);
                                     if (index.isChecked){
-                                        presenter.mListExportShare.add(index.id);
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
                                             case AUDIO:{
@@ -634,7 +664,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -644,7 +675,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -653,7 +685,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
@@ -662,7 +695,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ServiceManager.getInstance().onExportFiles(input,output,presenter.mListExportShare);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    mListExporting.add(exportFiles);
                                                 }
                                                 Utils.Log(TAG,"Exporting file "+ input.getAbsolutePath());
                                                 break;
@@ -670,6 +704,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                         }
                                     }
                                 }
+
+                                ServiceManager.getInstance().setmListExport(mListExporting);
+                                ServiceManager.getInstance().onExportingFiles();
+
                                 break;
                             }
                             case DELETE:{
@@ -685,6 +723,34 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 });
         builder.show();
     }
+
+    public void onDialogDownloadFile(){
+        mDialogProgress = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText(getString(R.string.downloading));
+        mDialogProgress.show();
+        mDialogProgress.setCancelable(false);
+    }
+
+    /*Download file*/
+    public void onEnableSyncData(){
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.verified){
+                if (!mUser.driveConnected){
+                    Navigator.onCheckSystem(this,null);
+                }
+                else{
+                    onDialogDownloadFile();
+                    ServiceManager.getInstance().setListDownloadFile(presenter.mList);
+                    ServiceManager.getInstance().getObservableDownload();
+                }
+            }
+            else{
+                Navigator.onVerifyAccount(this);
+            }
+        }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -712,7 +778,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
-                    List<Integer> mListFiles = new ArrayList<>();
+                    List<ImportFiles> mListImportFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -736,14 +802,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            mListFiles.add(i);
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFiles, path, presenter.mainCategories);
+                            ImportFiles importFiles = new ImportFiles(presenter.mainCategories,mimeTypeFile,path,i,false);
+                            mListImportFiles.add(importFiles);
                             isReload = true;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     }
+                    ServiceManager.getInstance().setmListImport(mListImportFiles);
+                    ServiceManager.getInstance().onImportingFiles();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }
@@ -758,6 +825,44 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
             default: {
                 Utils.Log(TAG, "Nothing to do");
+                break;
+            }
+        }
+    }
+
+
+    @Override
+    public void onCompletedDownload(EnumStatus status) {
+        switch (status){
+            case DONE:{
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        onClickedExport();
+                    }
+                });
+                Utils.Log(TAG, " already sync");
+                break;
+            }
+            case ERROR:{
+                final User mUser = User.getInstance().getUserInfo();
+                if (mUser!=null){
+                    mUser.driveConnected = false;
+                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                }
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                });
                 break;
             }
         }
@@ -889,26 +994,69 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     private void deselectAll() {
+        boolean isExport = false;
         for (int i = 0, l = presenter.mList.size(); i < l; i++) {
-            presenter.mList.get(i).isChecked = false;
+            switch (presenter.status){
+                case EXPORT:{
+                    if (presenter.mList.get(i).isChecked){
+                        presenter.mList.get(i).isExport = true;
+                        presenter.mList.get(i).isDeleteLocal = true;
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(i));
+                    }
+                    isExport = true;
+                    break;
+                }
+            }
         }
         countSelected = 0;
         onShowUI();
-        adapter.notifyDataSetChanged();
+        if (isExport){
+           onCheckDelete();
+        }
+        else{
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void onCheckDelete(){
+        final List<Items> mList = presenter.mList;
+        for (int i = 0, l = mList.size(); i < l; i++) {
+            if (presenter.mList.get(i).isChecked){
+                EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
+                if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id == null) {
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                } else if (formatTypeFile == EnumFormatType.FILES && mList.get(i).global_original_id == null) {
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                } else if (mList.get(i).global_original_id == null & mList.get(i).global_thumbnail_id == null) {
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                } else {
+                    mList.get(i).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                    Utils.Log(TAG, "ServiceManager waiting for delete");
+                }
+                storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).local_id);
+            }
+        }
+        presenter.getData();
     }
 
     public void selectAll(){
-        int countSelect = 0 ;
-        for (int i =0;i<presenter.mList.size();i++){
-            presenter.mList.get(i).isChecked = isSelectAll;
-            if (presenter.mList.get(i).isChecked) {
-                countSelect++;
+        try {
+            int countSelect = 0 ;
+            for (int i =0;i<presenter.mList.size();i++){
+                presenter.mList.get(i).isChecked = isSelectAll;
+                if (presenter.mList.get(i).isChecked) {
+                    countSelect++;
+                }
             }
+            countSelected = countSelect;
+            onShowUI();
+            adapter.notifyDataSetChanged();
+            actionMode.setTitle(countSelected + " " + getString(R.string.selected));
         }
-        countSelected = countSelect;
-        onShowUI();
-        adapter.notifyDataSetChanged();
-        actionMode.setTitle(countSelected + " " + getString(R.string.selected));
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void onShowUI(){

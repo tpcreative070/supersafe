@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import co.tpcreative.supersafe.common.util.Utils;
 
-
 @Entity(tableName = "items")
 public class Items implements Serializable {
 
@@ -45,6 +44,9 @@ public class Items implements Serializable {
     public int deleteAction;
     public boolean isFakePin;
     public boolean isSaver;
+    public boolean isExport;
+    public boolean isWaitingForExporting;
+    public int custom_items;
 
     @Ignore
     public boolean isChecked;
@@ -68,7 +70,7 @@ public class Items implements Serializable {
     }
 
 
-    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver){
+    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -98,6 +100,9 @@ public class Items implements Serializable {
         this.deleteAction = deleteAction;
         this.isFakePin = isFakePin;
         this.isSaver = isSaver;
+        this.isExport = isExport;
+        this.isWaitingForExporting = isWaitingForExporting;
+        this.custom_items = custom_items;
     }
 
     public Items(){

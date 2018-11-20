@@ -672,6 +672,10 @@ public class Utils {
 
                     }
 
+                    @Override
+                    public void onSuccessful(int position) {
+
+                    }
                 });
             }
         }

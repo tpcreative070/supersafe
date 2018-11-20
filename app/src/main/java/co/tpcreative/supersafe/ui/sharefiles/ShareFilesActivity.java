@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.common.util.PathUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import dmax.dialog.SpotsDialog;
@@ -44,8 +45,9 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     TextView tvTitle;
     @BindView(R.id.rlProgress)
     RelativeLayout rlProgress;
-    int count =0;
     private Storage storage;
+    private final List<ImportFiles> mListImport = new ArrayList<>();
+    private int count=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,10 +140,11 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         }
 
                         mimeTypeFile.name = name;
-                        mListFile.add(0);
-                        count = 1;
-                        ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile, mListFile, path, mainCategories);
-
+                        count +=1;
+                        ImportFiles importFiles = new ImportFiles(mainCategories,mimeTypeFile,path,0,false);
+                        mListImport.add(importFiles);
+                        ServiceManager.getInstance().setmListImport(mListImport);
+                        ServiceManager.getInstance().onImportingFiles();
                     } else {
                         onStopProgressing();
                         finish();
@@ -193,10 +196,11 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                                 mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
                                 mimeTypeFile.name = name;
                             }
+
                             mimeTypeFile.name = name;
-                            mListFile.add(i);
-                            count = imageUris.size();
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFile, path, mainCategories);
+                            count +=1;
+                            ImportFiles importFiles = new ImportFiles(mainCategories,mimeTypeFile,path,i,false);
+                            mListImport.add(importFiles);
                         }
                         else{
                             onStopProgressing();
@@ -223,6 +227,8 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         });
                     }
                 }
+                ServiceManager.getInstance().setmListImport(mListImport);
+                ServiceManager.getInstance().onImportingFiles();
             }
             else{
                 finish();
@@ -270,10 +276,8 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     @Override
     public void onStopProgress() {
         try {
-            if (mListFile.size()==0){
-                onStopProgressing();
-                onShowUI(View.VISIBLE);
-            }
+            onStopProgressing();
+            onShowUI(View.VISIBLE);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -302,6 +306,11 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCompletedDownload(EnumStatus status) {
+
     }
 
     private void onStopProgressing(){

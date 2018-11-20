@@ -189,6 +189,8 @@
     <string name="signin_with_google">SignIn with Google</string>
     <string name="choose_google_account">Choose your Google account to sign in SupperSafe</string>
     <string name="ok">OK</string>
+    <string name="download">Download</string>
+    <string name="downloading">Downloading</string>
     <string name="enable_cloud">Enable cloud sync after sign in</string>
     <string name="local">Local</string>
     <string name="photos">Photos</string>
@@ -454,9 +456,12 @@
     <string name="key_theme_list">theme_list</string>
     <string name="key_pause_cloud_sync">pause_cloud_sync</string>
     <string name="key_saving_space">saving_space</string>
+    <string name="download_private_cloud_files">Download Private Cloud Files</string>
+    <string name="download_pricate_cloud_files_detail">When you give up Space Saver, We will restore your full-size files to your device</string>
     <string name="key_cloud_sync_only_wifi">cloud_sync_only_wifi</string>
     <string name="key_face_down_lock">Face down lock</string>
     <string name="key_face_down_lock_detail">When you place your phone face down, SuperSafe will automatically close and lock itself.</string>
+    <string name="space_required">Space required: %1$s</string>
     <string name="locked">Locked</string>
     <string name="unlocked">Unlocked</string>
     <string name="album_lock">Album Lock</string>

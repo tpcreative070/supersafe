@@ -126,8 +126,9 @@ public class Storage {
     }
 
     public boolean createFile(String path, byte[] content) {
+        OutputStream stream= null;
         try {
-            OutputStream stream = new FileOutputStream(new File(path));
+            stream = new FileOutputStream(new File(path));
             // encrypt if needed
             if (mConfiguration != null && mConfiguration.isEncrypted()) {
                 content = encrypt(content, Cipher.ENCRYPT_MODE);
@@ -139,6 +140,15 @@ public class Storage {
             Log.e(TAG, "Failed create file", e);
             return false;
         }
+        finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return true;
     }
 
@@ -149,7 +159,6 @@ public class Storage {
         try {
             os = new FileOutputStream(file);
             os.write(data);
-            os.close();
         } catch (IOException e) {
             Log.w(TAG, "Cannot write to " + file, e);
             listener.onFailed();
@@ -157,11 +166,11 @@ public class Storage {
             if (os != null) {
                 try {
                     os.close();
+                    listener.onSuccessful(file.getAbsolutePath());
                 } catch (IOException e) {
-                    // Ignore
+                    e.printStackTrace();
                 }
             }
-            listener.onSuccessful(file.getAbsolutePath());
         }
         Log.d(TAG,"path "+ file.getAbsolutePath());
     }
@@ -184,8 +193,6 @@ public class Storage {
             }
             fOutputStream.flush();
             fOutputStream.close();
-            inputStream.close();
-            return true;
         } catch (IOException ex) {
             ex.printStackTrace();
             return false;
@@ -194,9 +201,12 @@ public class Storage {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
             }
         }
+        return true;
     }
 
     public void createFile(File output, File input, int mode, OnStorageListener listener){
@@ -216,8 +226,6 @@ public class Storage {
             }
             fOutputStream.flush();
             fOutputStream.close();
-            inputStream.close();
-            listener.onSuccessful();
         } catch (IOException ex) {
             ex.printStackTrace();
             listener.onFailed();
@@ -226,7 +234,10 @@ public class Storage {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException ignored) {}
+                    listener.onSuccessful();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
             }
         }
     }
@@ -245,8 +256,6 @@ public class Storage {
             }
             fOutputStream.flush();
             fOutputStream.close();
-            inputStream.close();
-            listener.onSuccessful();
         } catch (IOException ex) {
             ex.printStackTrace();
             listener.onFailed();
@@ -255,7 +264,10 @@ public class Storage {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException ignored) {}
+                    listener.onSuccessful();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
             }
         }
     }
@@ -266,7 +278,6 @@ public class Storage {
         if (mConfiguration == null || !mConfiguration.isEncrypted()) {
             return;
         }
-
         FileInputStream inputStream = null;
         CipherOutputStream cipherOutputStream;
         try {
@@ -290,7 +301,9 @@ public class Storage {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
             }
         }
     }
@@ -316,15 +329,22 @@ public class Storage {
             cipherOutputStream.close();
             outputStream.flush();
             outputStream.close();
-            inputStream.close();
             Log.d(TAG,"Call end");
-            return true;
+
         } catch (IOException ex) {
             ex.printStackTrace();
+            return false;
         }
         finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
+            }
         }
-        return false;
+        return true;
     }
 
     public void createLargeFile(File output, File input, Cipher mCipher,OnStorageListener listener){
@@ -349,7 +369,6 @@ public class Storage {
             cipherOutputStream.close();
             outputStream.flush();
             outputStream.close();
-            listener.onSuccessful();
         } catch (IOException ex) {
             ex.printStackTrace();
             listener.onFailed();
@@ -358,7 +377,48 @@ public class Storage {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException ignored) {}
+                    listener.onSuccessful();
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void createLargeFile(File output, File input, Cipher mCipher,int position,OnStorageListener listener){
+
+        if (mConfiguration == null || !mConfiguration.isEncrypted()) {
+            return;
+        }
+
+        FileInputStream inputStream = null;
+        CipherOutputStream cipherOutputStream;
+        try {
+            inputStream = new FileInputStream(input);
+            FileOutputStream outputStream = new FileOutputStream(output);
+            cipherOutputStream = new CipherOutputStream(outputStream, mCipher);
+            //note the following line
+            byte buffer[] = new byte[1024 * 1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                Log.d(getClass().getCanonicalName(), "writing from File path...");
+                cipherOutputStream.write(buffer, 0, bytesRead);
+            }
+            cipherOutputStream.close();
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            listener.onFailed();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                    listener.onSuccessful(position);
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
             }
         }
     }
@@ -709,6 +769,5 @@ public class Storage {
             }
         }
     }
-
 
 }

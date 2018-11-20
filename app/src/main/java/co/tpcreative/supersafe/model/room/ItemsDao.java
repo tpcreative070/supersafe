@@ -28,13 +28,16 @@ public interface ItemsDao {
     List<Items> loadAll(String categories_local_id,int formatType,boolean isDeleteLocal,boolean isFakePin);
 
 
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isExport =:isExport AND isFakePin =:isFakePin ORDER BY id DESC")
+    List<Items> loadAll(String categories_local_id,boolean isDeleteLocal,boolean isExport,boolean isFakePin);
+
     @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC")
     List<Items> loadAll(String categories_local_id,boolean isDeleteLocal,boolean isFakePin);
 
     @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC LIMIT 1")
     Items getLatestId(String categories_local_id,boolean isDeleteLocal,boolean isFakePin);
 
-    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin ORDER BY id DESC LIMIT 3")
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin  ORDER BY id DESC LIMIT 3")
     List<Items> loadSyncDataItems(boolean isSyncCloud,boolean isDeleteLocal,int statusAction,boolean isFakePin);
 
 
@@ -48,6 +51,16 @@ public interface ItemsDao {
 
     @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND isDeleteGlobal = :isDeleteGlobal AND isFakePin =:isFakePin")
     List<Items> loadDeleteLocalAndGlobalDataItems(boolean isDeleteLocal,boolean isDeleteGlobal,boolean isFakePin);
+
+
+    @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isFakePin =:isFakePin")
+    List<Items> loadSyncData(boolean isSyncCloud,boolean isFakePin);
+
+    @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isSaver =:isSaver AND isWaitingForExporting =:isWaitingForExporting AND isFakePin =:isFakePin ORDER BY id DESC LIMIT 1")
+    List<Items> loadSyncData(boolean isSyncCloud,boolean isSaver,boolean isWaitingForExporting,boolean isFakePin);
+
+    @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isSaver =:isSaver AND isFakePin =:isFakePin")
+    List<Items> loadSyncData(boolean isSyncCloud,boolean isSaver,boolean isFakePin);
 
     @Query("Select * FROM items WHERE id = :id AND isFakePin =:isFakePin")
     Items loadItemId(int id,boolean isFakePin);

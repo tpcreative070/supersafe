@@ -32,21 +32,19 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
+import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 
 public class FakePinComponentActivity extends BaseActivity implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
@@ -238,7 +236,7 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
             case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
-                    List<Integer> mListFiles = new ArrayList<>();
+                    List<ImportFiles> mListImport = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -263,12 +261,16 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            mListFiles.add(i);
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFiles, path, list.get(0));
+                            ImportFiles importFiles = new ImportFiles(list.get(0),mimeTypeFile,path,0,false);
+                            mListImport.add(importFiles);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
+
+                    ServiceManager.getInstance().setmListImport(mListImport);
+                    ServiceManager.getInstance().onImportingFiles();
+
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }

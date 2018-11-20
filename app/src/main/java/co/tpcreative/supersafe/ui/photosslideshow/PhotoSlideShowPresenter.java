@@ -24,7 +24,6 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
     private final String TAG = PhotoSlideShowPresenter.class.getSimpleName();
     protected Items items;
     protected List<Items> mList;
-    protected List<Integer> mListExportShare = new ArrayList<>();
     protected List<File> mListShare = new ArrayList<>();
     protected EnumStatus status = EnumStatus.OTHER;
     protected Storage storage ;

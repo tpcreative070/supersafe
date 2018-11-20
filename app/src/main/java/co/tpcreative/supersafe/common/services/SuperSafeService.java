@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
@@ -1163,6 +1162,17 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onSaveItem(final DriveDescription description) {
         Utils.Log(TAG, "onSaveItem");
+
+        boolean isSaver = false;
+        EnumFormatType formatType = EnumFormatType.values()[description.formatType];
+        switch (formatType){
+            case IMAGE:{
+                isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
+                description.originalSync = isSaver;
+                break;
+            }
+        }
+
         Items items = new Items(false,
                 false,
                 description.originalSync,
@@ -1191,16 +1201,23 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 description.isDeleteGlobal,
                 description.deleteAction,
                 description.isFakePin,
-                false);
+                isSaver,
+                false,
+                false,
+                0);
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
-    public void onDownloadFile(final Items items, final ServiceManager.DownloadServiceListener listener) {
+    public void onDownloadFile(final Items items,String destination, final ServiceManager.DownloadServiceListener listener) {
         Utils.Log(TAG, "onDownloadFile !!!!");
         final User mUser = User.getInstance().getUserInfo();
         if (!mUser.driveConnected) {
             listener.onError("No Drive api connected", EnumStatus.DOWNLOAD);
             return;
+        }
+
+        if (mUser.access_token==null){
+            listener.onError("No Access token", EnumStatus.DOWNLOAD);
         }
 
         final DownloadFileRequest request = new DownloadFileRequest();
@@ -1215,9 +1232,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         request.items = items;
         request.api_name = String.format(getString(R.string.url_drive_download), id);
         request.Authorization = mUser.access_token;
-        String path = SuperSafeApplication.getInstance().getSupersafePrivate();
-        String pathFolder = path + items.local_id + "/";
-        request.path_folder_output = pathFolder;
+
+        if (destination==null){
+            String path = SuperSafeApplication.getInstance().getSupersafePrivate();
+            String pathFolder = path + items.local_id + "/";
+            destination = pathFolder;
+        }
+        request.path_folder_output = destination;
 
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override

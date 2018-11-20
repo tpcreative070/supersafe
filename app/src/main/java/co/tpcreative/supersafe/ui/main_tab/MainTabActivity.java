@@ -32,9 +32,6 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
-import com.snatik.storage.Storage;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -54,6 +51,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
+import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
@@ -74,7 +72,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     AnimationsContainer.FramesSequenceAnimation animation;
     private MenuItem menuItem;
     private EnumStatus previousStatus;
-    private Storage storage;
 
 
     @Override
@@ -101,13 +98,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Log.d(TAG,"User....." +new Gson().toJson(mUser));
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
-        storage = new Storage(this);
-
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-        storage.createFile(SuperSafeApplication.getInstance().getSupersafePicture()+"text.txt","Welcome to TPCreative");
-
     }
-
 
     public void onShowSuggestion(){
         final boolean isFirstFile = PrefsController.getBoolean(getString(R.string.key_is_first_files),false);
@@ -393,8 +384,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
-
-                    List<Integer> mListFiles = new ArrayList<>();
+                    List<ImportFiles> mListImportFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -417,12 +407,17 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            mListFiles.add(i);
-                            ServiceManager.getInstance().onSaveDataOnGallery(mimeTypeFile,mListFiles, path, list.get(0));
+
+                            ImportFiles importFiles = new ImportFiles(list.get(0),mimeTypeFile,path,i,false);
+                            mListImportFiles.add(importFiles);
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
+
+                    ServiceManager.getInstance().setmListImport(mListImportFiles);
+                    ServiceManager.getInstance().onImportingFiles();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }
