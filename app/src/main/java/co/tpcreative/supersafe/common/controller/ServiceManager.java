@@ -2275,7 +2275,7 @@ public class ServiceManager implements BaseView {
                 description.global_thumbnail_id = null;
                 description.fileType = EnumFileType.NONE.ordinal();
                 description.originalName = currentTime;
-                description.title = currentTime;
+                description.title = currentTime + getString(R.string.key_jpg);;
                 description.thumbnailName = "thumbnail_" + currentTime;
                 description.size = "0";
                 description.statusProgress = EnumStatusProgress.NONE.ordinal();
@@ -2342,7 +2342,7 @@ public class ServiceManager implements BaseView {
                                     .compressToFile(new File(path));
 
                             boolean createdThumbnail = storage.createFile(new File(thumbnailPath), file, Cipher.ENCRYPT_MODE);
-                            boolean createdOriginal = storage.createFile(originalPath, data);
+                            boolean createdOriginal = storage.createFile(originalPath, data,Cipher.ENCRYPT_MODE);
 
 
                             final ResponseRXJava response = new ResponseRXJava();

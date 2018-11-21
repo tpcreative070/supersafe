@@ -134,8 +134,6 @@ public class Storage {
                 content = encrypt(content, Cipher.ENCRYPT_MODE);
             }
             stream.write(content);
-            stream.flush();
-            stream.close();
         } catch (IOException e) {
             Log.e(TAG, "Failed create file", e);
             return false;
@@ -143,6 +141,7 @@ public class Storage {
         finally {
             if (stream != null) {
                 try {
+                    stream.flush();
                     stream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -151,6 +150,40 @@ public class Storage {
         }
         return true;
     }
+
+
+    public boolean createFile(String path, byte[] content,int mode) {
+        OutputStream stream= null;
+        try {
+            stream = new FileOutputStream(new File(path));
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(content);
+            int length = 0;
+            byte[] buffer = new byte[1024*1024];
+            while ((length = inputStream.read(buffer)) > 0) {
+                if (mConfiguration != null && mConfiguration.isEncrypted()) {
+                    buffer = encrypt(buffer,mode);
+                }
+                stream.write(buffer, 0, length);
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed create file", e);
+            return false;
+        }
+        finally {
+            if (stream != null) {
+                try {
+                    stream.flush();
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
+
+
 
     public void createFileByteDataNoEncrypt(Context context,byte[]data,OnStorageListener listener){
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
