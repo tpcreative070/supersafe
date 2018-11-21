@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import dmax.dialog.SpotsDialog;
-
 
 public class ShareFilesActivity extends BaseActivity implements GalleryCameraMediaManager.AlbumDetailManagerListener{
 
@@ -201,6 +201,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                             count +=1;
                             ImportFiles importFiles = new ImportFiles(mainCategories,mimeTypeFile,path,i,false);
                             mListImport.add(importFiles);
+                            Utils.Log(TAG,new Gson().toJson(mimeTypeFile));
                         }
                         else{
                             onStopProgressing();

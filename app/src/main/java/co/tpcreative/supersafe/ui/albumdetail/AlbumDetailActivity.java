@@ -53,7 +53,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
-import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -74,11 +73,7 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+
 
 public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
 
@@ -604,9 +599,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             case AUDIO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -614,9 +612,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             case FILES:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -624,9 +625,13 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
+
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -634,9 +639,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             default:{
                                                 File input = new File(index.thumbnailPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -644,7 +652,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                         }
                                     }
                                 }
-
+                                onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
                                 break;
@@ -662,9 +670,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File input = new File(index.originalPath);
                                                 Utils.Log(TAG,"Name :"+index.originalName);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -673,9 +684,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 File input = new File(index.originalPath);
                                                 Utils.Log(TAG,"Name :"+index.originalName);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -683,19 +697,25 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                             default:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,i,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 Utils.Log(TAG,"Exporting file "+ input.getAbsolutePath());
@@ -705,6 +725,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                     }
                                 }
 
+                                onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
 
@@ -1004,6 +1025,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(i));
                     }
                     isExport = true;
+                    break;
+                }
+                default:{
+                    presenter.mList.get(i).isChecked = false;
                     break;
                 }
             }

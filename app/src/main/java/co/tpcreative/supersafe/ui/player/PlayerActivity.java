@@ -183,7 +183,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
             for (Items index : presenter.mList){
                 mEncryptedFile = new File(index.originalPath);
                 Uri uri = Uri.fromFile(mEncryptedFile);
-                presenter.mListSource.add(new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri));
+                presenter.mListSource.add(new ExtractorMediaSource.Factory(dataSourceFactory).setContinueLoadingCheckIntervalBytes(4048*4048).setExtractorsFactory(extractorsFactory).createMediaSource(uri));
             }
             ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource(
                     presenter.mListSource.toArray(new MediaSource[presenter.mListSource.size()]));

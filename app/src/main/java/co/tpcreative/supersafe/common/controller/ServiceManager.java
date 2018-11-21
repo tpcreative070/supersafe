@@ -134,6 +134,7 @@ public class ServiceManager implements BaseView {
 
     public void setmListImport(List<ImportFiles> mListImport) {
         if (!isImporting) {
+            this.mListImport.clear();
             this.mListImport.addAll(mListImport);
         }
     }
@@ -151,8 +152,9 @@ public class ServiceManager implements BaseView {
     }
 
     public void setListDownloadFile(List<Items> downloadFile) {
-        Utils.Log(TAG,"Download file "+isDownloadingFiles);
+        Utils.Log(TAG, "Download file " + isDownloadingFiles);
         if (!isDownloadingFiles) {
+            this.mListDownLoadFiles.clear();
             this.mListDownLoadFiles.addAll(downloadFile);
         }
     }
@@ -167,6 +169,7 @@ public class ServiceManager implements BaseView {
 
     public void setmListExport(List<ExportFiles> mListExport) {
         if (!isExporting) {
+            this.mListExport.clear();
             this.mListExport.addAll(mListExport);
         }
     }
@@ -1894,7 +1897,6 @@ public class ServiceManager implements BaseView {
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
-
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
                         response.categories = mMainCategories;
@@ -2108,7 +2110,7 @@ public class ServiceManager implements BaseView {
                                 description.custom_items);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
-                        boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
+                        boolean createdOriginal = mStorage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
 
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
@@ -2443,90 +2445,140 @@ public class ServiceManager implements BaseView {
     }
 
     public void onExportingFiles() {
-        setExporting(true);
-        boolean isWorking = false;
-        ExportFiles exportFiles = null;
-        int position = 0;
-        for (ExportFiles index : mListExport) {
-            if (!index.isExport) {
-                exportFiles = index;
-                isWorking = true;
-                position = index.position;
-                break;
+        Utils.Log(TAG, "Export amount files :" + mListExport.size());
+        subscriptions = Observable.create(subscriber -> {
+
+            setExporting(true);
+            boolean isWorking = false;
+            ExportFiles exportFiles = null;
+            int position = 0;
+            for (int i = 0; i < mListExport.size(); i++) {
+                if (!mListExport.get(i).isExport) {
+                    exportFiles = mListExport.get(i);
+                    isWorking = true;
+                    position = i;
+                    break;
+                }
             }
-        }
 
-        if (isWorking) {
-            final File mInput = exportFiles.input;
-            final File mOutPut = exportFiles.output;
-            try {
-                Storage storage = new Storage(SuperSafeApplication.getInstance());
-                storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-                final Cipher mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
-                storage.createLargeFile(mOutPut, mInput, mCipher, position, new OnStorageListener() {
-                    @Override
-                    public void onSuccessful() {
+            if (isWorking) {
+                final File mInput = exportFiles.input;
+                final File mOutPut = exportFiles.output;
+                try {
+                    Storage storage = new Storage(SuperSafeApplication.getInstance());
+                    storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+                    final Cipher mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
+                    EnumFormatType formatType = EnumFormatType.values()[exportFiles.formatType];
+                    if (formatType == EnumFormatType.VIDEO || formatType == EnumFormatType.AUDIO){
+                        storage.createLargeFile(mOutPut, mInput, mCipher, position, new OnStorageListener() {
+                            @Override
+                            public void onSuccessful() {
+                            }
 
+                            @Override
+                            public void onFailed() {
+                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT);
+                                Utils.Log(TAG, "Exporting failed");
+                            }
+
+                            @Override
+                            public void onSuccessful(String path) {
+
+                            }
+
+                            @Override
+                            public void onSuccessful(int position) {
+                                Utils.Log(TAG, "Exporting file...............................Successful " +position);
+                                mListExport.get(position).isExport = true;
+                                onExportingFiles();
+                            }
+                        });
+                    }
+                    else{
+                        storage.createFile(mOutPut, mInput, Cipher.DECRYPT_MODE, position, new OnStorageListener() {
+                            @Override
+                            public void onSuccessful() {
+                            }
+
+                            @Override
+                            public void onFailed() {
+                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT);
+                                Utils.Log(TAG, "Exporting failed");
+                            }
+
+                            @Override
+                            public void onSuccessful(String path) {
+
+                            }
+
+                            @Override
+                            public void onSuccessful(int position) {
+                                Utils.Log(TAG, "Exporting file...............................Successful " +position);
+                                mListExport.get(position).isExport = true;
+                                onExportingFiles();
+                            }
+                        });
                     }
 
-                    @Override
-                    public void onFailed() {
-                        Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT);
-                        Utils.Log(TAG, "Exporting failed");
-                    }
 
-                    @Override
-                    public void onSuccessful(String path) {
+                } catch (Exception e) {
+                    Log.w(TAG, "Cannot write to " + e);
+                } finally {
+                    Utils.Log(TAG, "Finally");
+                }
 
-                    }
+            } else {
+                Utils.Log(TAG, "Exporting file............................Done");
+                GalleryCameraMediaManager.getInstance().onStopProgress();
+                setExporting(false);
+            }
 
-                    @Override
-                    public void onSuccessful(int position) {
-                        Utils.Log(TAG, "Exporting successful");
-                        mListExport.get(position).isExport = true;
-                        Utils.Log(TAG, "Importing file............................");
-                        onExportingFiles();
-                    }
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+
                 });
-            } catch (Exception e) {
-                Log.w(TAG, "Cannot write to " + e);
-            } finally {
-                Utils.Log(TAG, "Finally");
-            }
-
-        } else {
-            GalleryCameraMediaManager.getInstance().onStopProgress();
-            setExporting(false);
-        }
     }
 
     public void onImportingFiles() {
-        setImporting(true);
-        boolean isWorking = false;
-        ImportFiles importFiles = null;
-        for (ImportFiles index : mListImport) {
-            if (!index.isImport) {
-                importFiles = index;
-                isWorking = true;
-                break;
-            }
-        }
-        if (isWorking) {
-            ServiceManager.getInstance().onSaveDataOnGallery(importFiles, new ServiceManager.ServiceManagerGalleySyncDataListener() {
-                @Override
-                public void onCompleted(ImportFiles importFiles) {
-                    mListImport.get(importFiles.position).isImport = true;
-                    Utils.Log(TAG, "Importing file............................");
-                    onImportingFiles();
+        Utils.Log(TAG, "Import amount files :" + mListImport.size());
+        subscriptions = Observable.create(subscriber -> {
+            setImporting(true);
+            boolean isWorking = false;
+            ImportFiles importFiles = null;
+            for (int i = 0; i < mListImport.size(); i++) {
+                if (!mListImport.get(i).isImport) {
+                    importFiles = mListImport.get(i);
+                    importFiles.position = i;
+                    isWorking = true;
+                    break;
                 }
-            });
-        } else {
-            GalleryCameraMediaManager.getInstance().onStopProgress();
-            setImporting(false);
-        }
+            }
+
+            if (isWorking) {
+                ServiceManager.getInstance().onSaveDataOnGallery(importFiles, new ServiceManager.ServiceManagerGalleySyncDataListener() {
+                    @Override
+                    public void onCompleted(ImportFiles importFiles) {
+                        mListImport.get(importFiles.position).isImport = true;
+                        Utils.Log(TAG, "Importing file............................Successful "+importFiles.position);
+                        onImportingFiles();
+                    }
+                });
+            } else {
+                Utils.Log(TAG, "Importing file............................Done");
+                GalleryCameraMediaManager.getInstance().onStopProgress();
+                setImporting(false);
+            }
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(response -> {
+
+                });
     }
-
-
 
     /*Download file*/
 
@@ -2563,7 +2615,8 @@ public class ServiceManager implements BaseView {
     }
 
     public void getObservableDownload() {
-        Utils.Log(TAG,"Preparing download.....");
+        Utils.Log(TAG, "Preparing download.....");
+        Utils.Log(TAG, "Download amount files :" + mListDownLoadFiles.size());
         setDownloadingFiles(true);
         int position = 0;
         Items items = null;
@@ -2587,6 +2640,7 @@ public class ServiceManager implements BaseView {
                 }
             }
             items.isOriginalGlobalId = true;
+            final int next = position;
             getObservableItems(items, position).
                     subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).
@@ -2598,7 +2652,7 @@ public class ServiceManager implements BaseView {
 
                         @Override
                         public void onComplete() {
-                            Utils.Log(TAG, "complete");
+                            Utils.Log(TAG, "Downloading completed............."+next);
                             getObservableDownload();
                         }
 
@@ -2750,7 +2804,7 @@ public class ServiceManager implements BaseView {
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting) {
             Utils.Log(TAG, "Progress download is :" + isDownloadData);
             Utils.Log(TAG, "Progress upload is :" + isUploadData);
         } else {

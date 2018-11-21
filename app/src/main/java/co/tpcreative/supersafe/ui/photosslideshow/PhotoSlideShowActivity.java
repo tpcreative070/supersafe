@@ -510,8 +510,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         mDialogProgress.show();
         mDialogProgress.setCancelable(false);
     }
-
-
+    
     @Override
     public void onMoveAlbumSuccessful() {
         try {
@@ -565,9 +564,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                             case AUDIO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -575,9 +577,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                             case FILES:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare() +index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -585,9 +590,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -595,9 +603,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                             default:{
                                                 File input = new File(index.thumbnailPath);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
@@ -606,6 +617,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
                                 }
 
+                                onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
                                 break;
@@ -619,49 +631,61 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                         switch (formatType){
                                             case AUDIO:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                             case FILES:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.originalName +index.fileExtension);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture() +index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                             case VIDEO:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                             default:{
                                                 File input = new File(index.originalPath);
-                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName +index.fileExtension);
+                                                File output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.title);
+                                                if (storage.isFileExist(output.getAbsolutePath())){
+                                                    output = new File(SuperSafeApplication.getInstance().getSupersafePicture()+index.originalName+"(1)" +index.fileExtension);
+                                                }
                                                 if (storage.isFileExist(input.getAbsolutePath())){
                                                     presenter.mListShare.add(output);
-                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false);
+                                                    ExportFiles exportFiles = new ExportFiles(input,output,0,false,index.formatType);
                                                     mListExporting.add(exportFiles);
                                                 }
                                                 break;
                                             }
                                         }
                                     }
-
-                                ServiceManager.getInstance().setmListExport(mListExporting);
-                                ServiceManager.getInstance().onExportingFiles();
+                                    onStartProgressing();
+                                    ServiceManager.getInstance().setmListExport(mListExporting);
+                                    ServiceManager.getInstance().onExportingFiles();
                                 break;
                             }
                             case DELETE:{
@@ -692,7 +716,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     @Override
     public void onStopProgress() {
         try {
-
                 Utils.Log(TAG,"onStopProgress");
                 onStopProgressing();
                 switch (presenter.status){
@@ -714,7 +737,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                         break;
                     }
                 }
-
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -753,6 +775,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     if (dialog!=null){
                         dialog.dismiss();
                         deselectAll();
+                        Utils.Log(TAG,"Action 1");
                     }
                 }
             });
@@ -763,15 +786,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     private void deselectAll() {
-        boolean isExport = false;
         switch (presenter.status){
             case EXPORT:{
-                if (presenter.mList.get(position).isChecked){
-                    presenter.mList.get(position).isExport = true;
-                    presenter.mList.get(position).isDeleteLocal = true;
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(position));
-                    onCheckDelete();
-                }
+                Utils.Log(TAG,"Action 2");
+                presenter.mList.get(position).isExport = true;
+                presenter.mList.get(position).isDeleteLocal = true;
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(position));
+                onCheckDelete();
                 break;
             }
         }
@@ -779,21 +800,23 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
     public void onCheckDelete(){
         final List<Items> mList = presenter.mList;
-        if (presenter.mList.get(position).isChecked){
-            EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(position).formatType];
-            if (formatTypeFile == EnumFormatType.AUDIO && mList.get(position).global_original_id == null) {
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
-            } else if (formatTypeFile == EnumFormatType.FILES && mList.get(position).global_original_id == null) {
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
-            } else if (mList.get(position).global_original_id == null & mList.get(position).global_thumbnail_id == null) {
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
-            } else {
-                mList.get(position).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(position));
-                Utils.Log(TAG, "ServiceManager waiting for delete");
-            }
-            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(position).local_id);
+        Utils.Log(TAG,"Action 3");
+        EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(position).formatType];
+        if (formatTypeFile == EnumFormatType.AUDIO && mList.get(position).global_original_id == null) {
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+        } else if (formatTypeFile == EnumFormatType.FILES && mList.get(position).global_original_id == null) {
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+        } else if (mList.get(position).global_original_id == null & mList.get(position).global_thumbnail_id == null) {
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+        } else {
+            mList.get(position).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(position));
+            Utils.Log(TAG, "ServiceManager waiting for delete");
         }
+        storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(position).local_id);
+        presenter.onDelete(position);
+        isReload = true;
+        Utils.Log(TAG,"Action 4");
     }
 
     @SuppressLint("RestrictedApi")

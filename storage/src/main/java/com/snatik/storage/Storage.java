@@ -242,6 +242,40 @@ public class Storage {
         }
     }
 
+    public void createFile(File output, File input, int mode,int position, OnStorageListener listener){
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(input);
+            int length = 0;
+            FileOutputStream fOutputStream = new FileOutputStream(
+                    output);
+            //note the following line
+            byte[] buffer = new byte[1024*1024];
+            while ((length = inputStream.read(buffer)) > 0) {
+                if (mConfiguration != null && mConfiguration.isEncrypted()) {
+                    buffer = encrypt(buffer,mode);
+                }
+                fOutputStream.write(buffer, 0, length);
+            }
+            fOutputStream.flush();
+            fOutputStream.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            listener.onFailed();
+        }
+        finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                    listener.onSuccessful(position);
+                } catch (IOException ignored) {
+                    ignored.printStackTrace();
+                }
+            }
+        }
+    }
+
+
     public void createFile(File output, File input, OnStorageListener listener){
         FileInputStream inputStream = null;
         try {
