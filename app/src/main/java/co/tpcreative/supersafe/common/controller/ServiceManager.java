@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -18,7 +17,6 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
@@ -26,14 +24,11 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import javax.crypto.Cipher;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -66,7 +61,6 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
 
 public class ServiceManager implements BaseView {
 
@@ -651,7 +645,6 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Pause Cloud Sync is Enabled...----------------*******************************-----------");
             return;
         }
-
 
         final User mUser = User.getInstance().getUserInfo();
         if (mUser == null) {
@@ -1366,7 +1359,6 @@ public class ServiceManager implements BaseView {
             return;
         }
 
-
         final List<Items> checkNull = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItemsByNull(false);
         if (checkNull != null && checkNull.size() > 0) {
             for (int i = 0; i < checkNull.size(); i++) {
@@ -1382,10 +1374,8 @@ public class ServiceManager implements BaseView {
             }
         }
 
-
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems(false);
         final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncUploadDataItems(false);
-
 
         if (list == null) {
             Utils.Log(TAG, "No Found data from device !!!");
@@ -1412,7 +1402,6 @@ public class ServiceManager implements BaseView {
                 mList.add(item);
             }
         }
-
 
         totalList = mList.size();
         isUploadData = true;

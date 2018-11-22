@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.player;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -49,9 +48,7 @@ import javax.crypto.spec.SecretKeySpec;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;

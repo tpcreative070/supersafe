@@ -193,6 +193,7 @@ public class AnimationsContainer {
         /**
          * Stops the animation
          */
+
         public synchronized void stop() {
             mShouldRun = false;
         }
