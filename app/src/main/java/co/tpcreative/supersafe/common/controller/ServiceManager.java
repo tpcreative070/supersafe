@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
@@ -1801,22 +1803,28 @@ public class ServiceManager implements BaseView {
                 case VIDEO: {
                     Utils.Log(TAG, "Start RXJava Video Progressing");
                     try {
+                        try {
+                            thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
+                                    MediaStore.Video.Thumbnails.MINI_KIND);
+                            ExifInterface exifInterface = new ExifInterface(mPath);
+                            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                            Log.d("EXIF", "Exif: " + orientation);
+                            Matrix matrix = new Matrix();
+                            if (orientation == 6) {
+                                matrix.postRotate(90);
+                            } else if (orientation == 3) {
+                                matrix.postRotate(180);
+                            } else if (orientation == 8) {
+                                matrix.postRotate(270);
+                            }
+                            thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
 
-                        thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
-                                MediaStore.Video.Thumbnails.MINI_KIND);
-                        ExifInterface exifInterface = new ExifInterface(mPath);
-                        int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                        Log.d("EXIF", "Exif: " + orientation);
-                        Matrix matrix = new Matrix();
-                        if (orientation == 6) {
-                            matrix.postRotate(90);
-                        } else if (orientation == 3) {
-                            matrix.postRotate(180);
-                        } else if (orientation == 8) {
-                            matrix.postRotate(270);
                         }
-                        thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
-
+                        catch (Exception e){
+                            thumbnail  = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().getResources(),
+                                    R.drawable.bg_music);
+                            Log.w(TAG, "Cannot write to " + e);
+                        }
 
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1893,10 +1901,12 @@ public class ServiceManager implements BaseView {
                                 description.custom_items);
 
 
+                        Utils.Log(TAG,"Call thumbnail");
                         boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
+                        Utils.Log(TAG,"Call original");
                         final ResponseRXJava response = new ResponseRXJava();
                         response.items = items;
                         response.categories = mMainCategories;
@@ -2230,8 +2240,11 @@ public class ServiceManager implements BaseView {
                             Utils.Log(TAG, "Original path :" + mResponse.originalPath);
                             Storage storage = new Storage(SuperSafeApplication.getInstance());
                             storage.deleteFile(mResponse.originalPath);
+                            listener.onCompleted(importFiles);
                         }
-                        listener.onCompleted(importFiles);
+                        else{
+                            listener.onFailed(importFiles);
+                        }
                     }
                 });
     }
@@ -2488,7 +2501,7 @@ public class ServiceManager implements BaseView {
 
                             @Override
                             public void onSuccessful(int position) {
-                                Utils.Log(TAG, "Exporting file...............................Successful " +position);
+                                Utils.Log(TAG, "Exporting large file...............................Successful " +position);
                                 mListExport.get(position).isExport = true;
                                 onExportingFiles();
                             }
@@ -2564,6 +2577,12 @@ public class ServiceManager implements BaseView {
                         mListImport.get(importFiles.position).isImport = true;
                         Utils.Log(TAG, "Importing file............................Successful "+importFiles.position);
                         onImportingFiles();
+                    }
+                    @Override
+                    public void onFailed(ImportFiles importFiles) {
+                        mListImport.get(importFiles.position).isImport = true;
+                        onImportingFiles();
+                        Utils.Log(TAG, "Importing file............................Failed "+importFiles.position);
                     }
                 });
             } else {
@@ -2930,6 +2949,7 @@ public class ServiceManager implements BaseView {
 
     public interface ServiceManagerGalleySyncDataListener {
         void onCompleted(ImportFiles importFiles);
+        void onFailed(ImportFiles importFiles);
     }
 
     /*Upload Service*/

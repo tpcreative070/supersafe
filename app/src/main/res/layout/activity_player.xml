@@ -13,9 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <com.google.android.exoplayer2.ui.PlayerView
             app:shutter_background_color="@color/yellow_700"
+            app:show_buffering="true"
             android:layout_alignParentBottom="true"
             android:id="@+id/simpleexoplayerview"
             android:layout_width="match_parent"
@@ -30,6 +30,7 @@
             app:fallSpeed="0.1"/>
 
         <RelativeLayout
+            android:background="#9F000000"
             android:id="@+id/rlTop"
             android:layout_width="match_parent"
             android:layout_height="50dp">
@@ -56,6 +57,19 @@
                 android:layout_marginBottom="100dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+
+                <ImageView
+                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/imgRotate"
+                    android:padding="7dp"
+                    android:src="@drawable/baseline_rotate_right_white_36"
+                    android:layout_gravity="center"
+                    android:layout_width="@dimen/image_size"
+                    android:layout_height="@dimen/image_size" />
+
+
         </RelativeLayout>
 
 
@@ -71,9 +85,6 @@
                 android:layout_height="match_parent">
             </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
-
-
-
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

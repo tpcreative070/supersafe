@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.common.activity;
+
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
@@ -16,11 +15,13 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+
 import com.ftinc.kit.util.SizeUtils;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
@@ -33,18 +34,16 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
+public abstract class BasePlayerActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
     private Toast mToast;
     private HomeWatcher mHomeWatcher;
-    public static final String TAG = BaseActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
+    public static final String TAG = BasePlayerActivity.class.getSimpleName();
     protected Storage storage;
 
 
@@ -59,45 +58,9 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
         } else {
             onStartCount = 2;
         }
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
         storage = new Storage(this);
     }
 
-    protected void onDrawOverLay(Activity activity){
-        final Theme theme = Theme.getInstance().getThemeInfo();
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(activity, mConfig);
-    }
-
-    protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
-        context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
-                .getColor(colorPrimary)));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
-        }
-    }
-
-
-    @Override
-    public Resources.Theme getTheme() {
-        Resources.Theme theme = super.getTheme();
-        final Theme result = Theme.getInstance().getThemeInfo();
-        if (result!=null){
-            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
-        }
-        return theme;
-    }
 
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());

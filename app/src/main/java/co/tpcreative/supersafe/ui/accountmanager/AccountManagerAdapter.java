@@ -1,22 +1,14 @@
 package co.tpcreative.supersafe.ui.accountmanager;
-
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
-
 import java.security.NoSuchAlgorithmException;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -24,12 +16,9 @@ import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AppLists;
-import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+
 
 public class AccountManagerAdapter extends BaseAdapter<AppLists, BaseHolder> {
 

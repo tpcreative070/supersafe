@@ -1,6 +1,8 @@
 package co.tpcreative.supersafe.ui.player;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,6 +50,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -57,7 +61,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import dyanamitechetan.vusikview.VusikView;
 
-public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdapter.ItemSelectedListener{
+public class PlayerActivity extends BasePlayerActivity implements BaseView, PlayerAdapter.ItemSelectedListener {
 
     private static final String TAG = PlayerActivity.class.getSimpleName();
     @BindView(R.id.simpleexoplayerview)
@@ -79,6 +83,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     private SimpleExoPlayer player;
     private PlayerAdapter adapter;
     int lastWindowIndex = 0;
+    private boolean isPortrait ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,30 +91,30 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+
+
         presenter = new PlayerPresenter();
         presenter.bindView(this);
-
         try {
             storage = new Storage(this);
             storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             mCipher = storage.getCipher(Cipher.DECRYPT_MODE);
             mSecretKeySpec = new SecretKeySpec(storage.getmConfiguration().getSecretKey(), SecurityUtil.AES_ALGORITHM);
             mIvParameterSpec = new IvParameterSpec(storage.getmConfiguration().getIvParameter());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (mCipher!=null){
+        if (mCipher != null) {
             initRecycleView(getLayoutInflater());
             presenter.onGetIntent(this);
         }
 
-        Drawable note1 = getResources().getDrawable( R.drawable.music_1 );
-        Drawable note2 = getResources().getDrawable( R.drawable.music_2 );
-        Drawable note3 = getResources().getDrawable( R.drawable.music_3 );
-        Drawable note4 = getResources().getDrawable( R.drawable.music_4 );
-        Drawable[]  myImageList = new Drawable[]{note1,note2,note3,note4};
+        Drawable note1 = getResources().getDrawable(R.drawable.music_1);
+        Drawable note2 = getResources().getDrawable(R.drawable.music_2);
+        Drawable note3 = getResources().getDrawable(R.drawable.music_3);
+        Drawable note4 = getResources().getDrawable(R.drawable.music_4);
+        Drawable[] myImageList = new Drawable[]{note1, note2, note3, note4};
         animationPlayer.setImages(myImageList).start();
 
         playerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
@@ -120,12 +125,12 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
                 recyclerView.setVisibility(visibility);
             }
         });
-
+        isPortrait = true;
     }
 
-    public void initRecycleView(LayoutInflater layoutInflater){
-        adapter = new PlayerAdapter(layoutInflater,this,this);
-        RecyclerView.LayoutManager mLayoutManager =  new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    public void initRecycleView(LayoutInflater layoutInflater) {
+        adapter = new PlayerAdapter(layoutInflater, this, this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -134,17 +139,17 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
 
     @Override
     public void onClickGalleryItem(int position) {
-        Utils.Log(TAG,"Position :"+ position);
+        Utils.Log(TAG, "Position :" + position);
         onUpdatedUI(position);
         player.seekToDefaultPosition(position);
 
     }
 
-    public void onUpdatedUI(int position){
-        for (int i = 0 ; i < presenter.mList.size();i++){
-            if (i==position){
+    public void onUpdatedUI(int position) {
+        for (int i = 0; i < presenter.mList.size(); i++) {
+            if (i == position) {
                 presenter.mList.get(i).isChecked = true;
-            }else{
+            } else {
                 presenter.mList.get(i).isChecked = false;
             }
         }
@@ -153,8 +158,8 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
 
     @Override
     public void onNotifier(EnumStatus status) {
-        switch (status){
-            case FINISH:{
+        switch (status) {
+            case FINISH: {
                 finish();
                 break;
             }
@@ -173,6 +178,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
         playerView.setPlayer(player);
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+
         DataSource.Factory dataSourceFactory = new EncryptedFileDataSourceFactory(mCipher, mSecretKeySpec, mIvParameterSpec, bandwidthMeter);
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
 
@@ -180,10 +186,10 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
         try {
             //MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri);
             presenter.mListSource.clear();
-            for (Items index : presenter.mList){
+            for (Items index : presenter.mList) {
                 mEncryptedFile = new File(index.originalPath);
                 Uri uri = Uri.fromFile(mEncryptedFile);
-                presenter.mListSource.add(new ExtractorMediaSource.Factory(dataSourceFactory).setContinueLoadingCheckIntervalBytes(4048*4048).setExtractorsFactory(extractorsFactory).createMediaSource(uri));
+                presenter.mListSource.add(new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri));
             }
             ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource(
                     presenter.mListSource.toArray(new MediaSource[presenter.mListSource.size()]));
@@ -197,37 +203,37 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-                    Utils.Log(TAG,"1");
+                    Utils.Log(TAG, "1");
                 }
 
                 @Override
                 public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-                    Utils.Log(TAG,"2");
+                    Utils.Log(TAG, "2");
                 }
 
                 @Override
                 public void onLoadingChanged(boolean isLoading) {
-                    Utils.Log(TAG,"3");
+                    Utils.Log(TAG, "3");
                 }
 
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    Utils.Log(TAG,"4");
+                    Utils.Log(TAG, "4");
                 }
 
                 @Override
                 public void onRepeatModeChanged(int repeatMode) {
-                    Utils.Log(TAG,"5");
+                    Utils.Log(TAG, "5");
                 }
 
                 @Override
                 public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-                    Utils.Log(TAG,"6");
+                    Utils.Log(TAG, "6");
                 }
 
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
-                    Utils.Log(TAG,"7");
+                    Utils.Log(TAG, "7");
                 }
 
                 @Override
@@ -238,17 +244,17 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
                     }
                     tvTitle.setText(presenter.mList.get(lastWindowIndex).title);
                     onUpdatedUI(lastWindowIndex);
-                    Utils.Log(TAG,"position ???????"+ lastWindowIndex);
+                    Utils.Log(TAG, "position ???????" + lastWindowIndex);
                 }
 
                 @Override
                 public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-                    Utils.Log(TAG,"9");
+                    Utils.Log(TAG, "9");
                 }
 
                 @Override
                 public void onSeekProcessed() {
-                    Utils.Log(TAG,"10");
+                    Utils.Log(TAG, "10");
                 }
             });
 
@@ -260,8 +266,8 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (player!=null){
-            if (animationPlayer!=null){
+        if (player != null) {
+            if (animationPlayer != null) {
                 animationPlayer.stopNotesFall();
             }
             player.stop();
@@ -305,29 +311,41 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     }
 
     @OnClick(R.id.imgArrowBack)
-    public void onClickedBack(View view){
+    public void onClickedBack(View view) {
         finish();
+    }
+
+    @OnClick(R.id.imgRotate)
+    public void onClickedRotate(View view){
+        if (isPortrait){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            isPortrait = false;
+        }
+        else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            isPortrait = true;
+        }
     }
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        switch (status){
-            case PLAY:{
+        switch (status) {
+            case PLAY: {
                 mEncryptedFile = new File(presenter.mItems.originalPath);
-                Utils.Log(TAG,mEncryptedFile.getAbsolutePath());
-                if (mCipher==null){
-                    Utils.Log(TAG," mcipher is null");
+                Utils.Log(TAG, mEncryptedFile.getAbsolutePath());
+                if (mCipher == null) {
+                    Utils.Log(TAG, " mcipher is null");
                     return;
                 }
                 EnumFormatType formatType = EnumFormatType.values()[presenter.mItems.formatType];
-                switch (formatType){
-                    case AUDIO:{
+                switch (formatType) {
+                    case AUDIO: {
                         animationPlayer.startNotesFall();
                         animationPlayer.setVisibility(View.VISIBLE);
                         playerView.setBackgroundResource(R.color.yellow_700);
                         break;
                     }
-                    case VIDEO:{
+                    case VIDEO: {
                         playerView.setBackgroundColor(getResources().getColor(R.color.black));
                         break;
                     }
@@ -337,6 +355,7 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
                 adapter.setDataSource(presenter.mList);
                 playVideo();
                 break;
+
             }
         }
     }
@@ -355,4 +374,20 @@ public class PlayerActivity extends BaseActivity implements BaseView ,PlayerAdap
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Utils.Log(TAG, "Saved");
+        outState.putBoolean(getString(R.string.key_rotate),isPortrait);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Utils.Log(TAG, "Restore");
+        isPortrait = savedInstanceState.getBoolean(getString(R.string.key_rotate),false);
+    }
+
+
 }

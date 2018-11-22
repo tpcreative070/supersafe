@@ -392,6 +392,7 @@
     <string name="key_home_pressed">home_pressed</string>
     <string name="key_is_first_files">is_first_files</string>
     <string name="key_is_first_enable_sync_data">is_first_enable_sync_data</string>
+    <string name="key_rotate">rotate</string>
 
     /*Google Drive api*/
     <string name="key_parents">parents</string>

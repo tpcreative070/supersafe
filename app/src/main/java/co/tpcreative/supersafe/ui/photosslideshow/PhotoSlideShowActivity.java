@@ -460,7 +460,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     }
                     final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
-                    if (formatTypeFile!=EnumFormatType.AUDIO && formatTypeFile !=EnumFormatType.FILES){
+                    if (formatTypeFile!=EnumFormatType.AUDIO && formatTypeFile !=EnumFormatType.FILES ){
                         if (items!=null) {
                             onRotateBitmap(items);
                             isReload = true;

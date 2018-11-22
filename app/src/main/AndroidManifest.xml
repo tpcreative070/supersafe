@@ -119,8 +119,10 @@
         <activity
             android:name=".ui.cloudmanager.CloudManagerActivity"
             android:label="@string/cloud_manager" />
-        <activity android:name=".ui.checksystem.CheckSystemActivity" />
-        <activity android:name=".ui.player.PlayerActivity" />
+        <activity android:name=".ui.checksystem.CheckSystemActivity"/>
+        <activity android:name=".ui.player.PlayerActivity"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.trash.TrashActivity"
             android:label="@string/key_trash" />
