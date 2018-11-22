@@ -355,7 +355,6 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
                 adapter.setDataSource(presenter.mList);
                 playVideo();
                 break;
-
             }
         }
     }
