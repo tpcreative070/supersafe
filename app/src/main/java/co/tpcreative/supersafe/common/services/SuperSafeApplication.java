@@ -27,6 +27,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
+import co.tpcreative.supersafe.model.EnumStatus;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        isLive = false;
+        isLive = true;
 
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -164,9 +165,15 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public String getSecretKey() {
         final User user = User.getInstance().getUserInfo();
         if (user!=null){
-            Utils.Log(TAG,"Get secret key");
-            secretKey = user._id;
-            return secretKey;
+            if (user._id!=null){
+                Utils.Log(TAG,"Get secret key " + user._id);
+                secretKey = user._id;
+                return secretKey;
+            }
+            Utils.Log(TAG,"secret id is null");
+        }
+        else{
+            Utils.Log(TAG,"Get secret key null");
         }
         return SecurityUtil.SECRET_KEY;
     }
@@ -182,9 +189,12 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     }
 
     public EncryptConfiguration getConfigurationFile() {
+        configurationFile = new EncryptConfiguration.Builder()
+                .setChuckSize(1024*2)
+                .setEncryptContent(SecurityUtil.IVX,getSecretKey(), SecurityUtil.SALT)
+                .build();
         return configurationFile;
     }
-
 
     public List<String> getRequiredScopesString() {
         return requiredScopesString;
@@ -288,7 +298,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityDestroyed(Activity activity) {
     }
-
 
     public String getSuperSafe() {
         return supersafe;

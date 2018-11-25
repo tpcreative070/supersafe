@@ -137,6 +137,7 @@ public class Utils {
     }
 
     public static boolean mCreateAndSaveFileOverride(String fileName,String path_folder_name,String responseJson, boolean append) {
+        Utils.Log(TAG,"path "+ path_folder_name);
         final String newLine = System.getProperty("line.separator");
         try{
             File root = new File(path_folder_name+ "/" + fileName);

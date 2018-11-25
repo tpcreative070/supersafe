@@ -55,7 +55,6 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
 
