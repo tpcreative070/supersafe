@@ -40,6 +40,7 @@ public enum EnumStatus {
         REQUEST_CODE_SUCCESSFUL,
         REQUEST_CODE_ERROR,
         UPDATE_THEME,
+        UPDATE_USER_TOKEN,
         CHANGE_EMAIL,
         CHANGE_EMAIL_SUCCESSFUL,
         CHANGE_EMAIL_ERROR,

@@ -173,6 +173,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
             final VerifyCodeRequest request = new VerifyCodeRequest();
             request.code = code;
             request.email = presenter.mUser.email;
+            request._id = presenter.mUser._id;
             presenter.onVerifyCode(request);
         }
     }

@@ -19,6 +19,8 @@ import com.snatik.storage.Storage;
 import java.security.NoSuchAlgorithmException;
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnItemLongClick;
+import butterknife.OnLongClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
@@ -195,15 +197,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                 e.printStackTrace();
             }
 
-            rlHome.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    if (itemSelectedListener!=null){
-                        itemSelectedListener.onLongClickItem(position);
-                    }
-                    return false;
-                }
-            });
+
         }
 
         @OnClick(R.id.rlHome)
@@ -211,6 +205,14 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
             if (itemSelectedListener != null) {
                 itemSelectedListener.onClickItem(mPosition);
             }
+        }
+
+        @OnLongClick(R.id.rlHome)
+        public boolean onLongClickedItem(View view){
+            if (itemSelectedListener!=null){
+                itemSelectedListener.onLongClickItem(mPosition);
+            }
+            return true;
         }
 
     }

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.Cipher;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
@@ -88,7 +86,6 @@ public class ServiceManager implements BaseView {
             ServiceManager.getInstance().onGetUserInfo();
             ServiceManager.getInstance().onSyncCheckVersion();
             ServiceManager.getInstance().onSyncAuthorDevice();
-
         }
 
         //binder comes from server to communicate with method's of
@@ -324,6 +321,15 @@ public class ServiceManager implements BaseView {
         }
     }
 
+    /*Update user token*/
+    public void onUpdatedUserToken() {
+        Utils.onWriteLog("onUpdatedUserToken",EnumStatus.UPDATE_USER_TOKEN);
+        if (myService != null) {
+            myService.onUpdateUserToken();
+        } else {
+            Utils.Log(TAG, "My services is null");
+        }
+    }
 
     /*Response Network*/
 
@@ -635,6 +641,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "List categories is deleting...----------------*******************************-----------");
             return;
         }
+
         if (isGetListCategories) {
             Utils.Log(TAG, "Getting list categories...----------------*******************************-----------");
             return;
@@ -2923,6 +2930,10 @@ public class ServiceManager implements BaseView {
                     }
                 }, 5000);
                 Utils.Log(TAG, "Get info successful");
+                break;
+            }
+            case UPDATE_USER_TOKEN:{
+                onSyncDataOwnServer("0");
                 break;
             }
         }

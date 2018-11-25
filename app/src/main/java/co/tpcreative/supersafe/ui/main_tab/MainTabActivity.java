@@ -555,11 +555,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         if (animation!=null){
             animation.stop();
         }
-        Utils.Log(TAG,"Create new ");
+        Utils.Log(TAG,"Calling AnimationsContainer........................");
+        Utils.onWriteLog("Calling AnimationsContainer",EnumStatus.CREATE);
         previousStatus = status;
         animation = AnimationsContainer.getInstance().createSplashAnim(item, status);
         animation.start();
-
     }
 
     /*MainTab View*/
@@ -578,7 +578,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public Context getContext() {
         return getApplicationContext();
     }
-
 
     @Override
     protected void onDriveClientReady() {

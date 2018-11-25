@@ -29,6 +29,7 @@ import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.Authorization;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveTitle;
@@ -206,8 +207,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
-                            Log.d(TAG,"error" +bodys.string());
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
+                            Utils.Log(TAG,"error " +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
                         } catch (IOException e) {
@@ -219,6 +225,71 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     view.onStopLoading(EnumStatus.USER_INFO);
                 }));
     }
+
+    public void onUpdateUserToken(){
+        Log.d(TAG,"onUpdateUserToken");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            return;
+        }
+
+        if (subscriptions == null) {
+            return;
+        }
+
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser==null){
+            return;
+        }
+
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_user_id),mUser.email);
+        hash.put(getString(R.string.key_other_email),mUser.other_email);
+        hash.put(getString(R.string.key_change_email),""+mUser.change);
+        hash.put(getString(R.string.key_active),""+mUser.active);
+        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
+
+        subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.UPDATE_USER_TOKEN))
+                .subscribe(onResponse -> {
+                    view.onStopLoading(EnumStatus.UPDATE_USER_TOKEN);
+                    if (onResponse.error){
+                        view.onError(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
+                    }
+                    else{
+                        if (onResponse.user!=null){
+                            if (onResponse.user.author!=null){
+                                final Authorization authorization = mUser.author;
+                                authorization.session_token = onResponse.user.author.session_token;
+                                mUser.author = authorization;
+                                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
+                            }
+                        }
+                    }
+                    Log.d(TAG, "Body Update token: " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Utils.Log(TAG,"error " +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                    view.onStopLoading(EnumStatus.UPDATE_USER_TOKEN);
+                }));
+    }
+
 
     public void getDriveAbout() {
         BaseView view = view();
@@ -345,7 +416,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             final String value = bodys.string();
                             final DriveAbout driveAbout = new Gson().fromJson(value, DriveAbout.class);
                             if (driveAbout != null) {
@@ -440,7 +516,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -515,7 +596,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -634,7 +720,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -724,7 +815,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -892,7 +988,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             final String value = bodys.string();
                             if (value != null) {
                                 view.onError("Error " + value, EnumStatus.DELETE_SYNC_OWN_DATA);
@@ -1096,7 +1197,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Utils.Log(TAG, msg);
@@ -1162,7 +1268,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onSaveItem(final DriveDescription description) {
         Utils.Log(TAG, "onSaveItem");
-
+        Utils.onWriteLog(new Gson().toJson(description),EnumStatus.CREATE);
         boolean isSaver = false;
         EnumFormatType formatType = EnumFormatType.values()[description.formatType];
         switch (formatType){
@@ -1582,7 +1688,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"Author error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);

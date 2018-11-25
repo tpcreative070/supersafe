@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Email;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
@@ -55,6 +57,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),request.email);
+        hash.put(getString(R.string.key_id),request._id);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_code),request.code);
         hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
@@ -78,7 +81,12 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -156,7 +164,12 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);

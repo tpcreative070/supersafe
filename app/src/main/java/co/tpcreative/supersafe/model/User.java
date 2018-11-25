@@ -15,8 +15,13 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class User extends BaseResponse implements Serializable{
 
     public String email;
+    public String _id;
+    public String other_email;
+    public long current_milliseconds;
     public String name;
-    public String role;
+    public int role;
+    public boolean change;
+    public boolean active;
     public String code ;
     public String cloud_id;
     public Authorization author;

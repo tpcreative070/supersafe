@@ -61,6 +61,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private String userSecret;
     private Storage storage;
     private EncryptConfiguration configurationFile;
+    private EncryptConfiguration configurationPin;
     private static int resumed;
     private static int paused;
     private static int started;
@@ -77,6 +78,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private Set<Scope> requiredScopes;
     private List<String> requiredScopesString;
     private boolean isLive = false;
+    private String secretKey;
 
 
     @Override
@@ -110,12 +112,19 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 .setUseDefaultSharedPreference(true)
                 .build();
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+        PrefsController.putLong(getString(R.string.key_seek_to),0);
+        PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
 
 
         /*Config file*/
         configurationFile = new EncryptConfiguration.Builder()
                 .setChuckSize(1024*2)
-                .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
+                .setEncryptContent(SecurityUtil.IVX,getSecretKey(), SecurityUtil.SALT)
+                .build();
+
+        configurationPin = new EncryptConfiguration.Builder()
+                .setChuckSize(1024*2)
+                .setEncryptContent(SecurityUtil.IVX,SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build();
 
         storage = new Storage(getApplicationContext());
@@ -152,6 +161,15 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
     }
 
+    public String getSecretKey() {
+        final User user = User.getInstance().getUserInfo();
+        if (user!=null){
+            Utils.Log(TAG,"Get secret key");
+            secretKey = user._id;
+            return secretKey;
+        }
+        return SecurityUtil.SECRET_KEY;
+    }
 
     public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
         if (options != null) {
@@ -326,7 +344,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return;
         }
-        storage.setEncryptConfiguration(configurationFile);
+        storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + key, value);
         Log.d(TAG, "Created key :" + value);
     }
@@ -337,7 +355,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 Log.d(TAG, "Please grant access permission");
                 return "";
             }
-            storage.setEncryptConfiguration(configurationFile);
+            storage.setEncryptConfiguration(configurationPin);
             boolean isFile = storage.isFileExist(getSuperSafe() + key);
             if (isFile) {
                 String value = storage.readTextFile(getSuperSafe() + key);
@@ -357,7 +375,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return;
         }
-        storage.setEncryptConfiguration(configurationFile);
+        storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + userSecret, new Gson().toJson(user));
     }
 
@@ -367,7 +385,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
                 Log.d(TAG, "Please grant access permission");
                 return null;
             }
-            storage.setEncryptConfiguration(configurationFile);
+            storage.setEncryptConfiguration(configurationPin);
             boolean isFile = storage.isFileExist(getSuperSafe() + userSecret);
             if (isFile) {
                 String value = storage.readTextFile(getSuperSafe() + userSecret);
@@ -392,7 +410,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return;
         }
-        storage.setEncryptConfiguration(configurationFile);
+        storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + fake_key, value);
         Log.d(TAG, "Created key :" + value);
     }
@@ -402,7 +420,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             Log.d(TAG, "Please grant access permission");
             return "";
         }
-        storage.setEncryptConfiguration(configurationFile);
+        storage.setEncryptConfiguration(configurationPin);
         boolean isFile = storage.isFileExist(getSuperSafe() + fake_key);
         if (isFile) {
             String value = storage.readTextFile(getSuperSafe() + fake_key);

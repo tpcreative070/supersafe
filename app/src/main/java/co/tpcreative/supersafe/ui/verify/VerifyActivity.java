@@ -25,7 +25,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 
-
 public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, TextView.OnEditorActionListener{
 
     private static final String TAG = VerifyActivity.class.getSimpleName();
@@ -111,6 +110,7 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
         VerifyCodeRequest request = new VerifyCodeRequest();
         request.code = edtCode.getText().toString().trim();
         request.email = presenter.user.email;
+        request._id = presenter.user._id;
         presenter.onVerifyCode(request);
         Utils.hideSoftKeyboard(this);
     }

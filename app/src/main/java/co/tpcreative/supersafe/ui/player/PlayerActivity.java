@@ -16,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -49,6 +50,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -81,6 +83,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     private PlayerAdapter adapter;
     int lastWindowIndex = 0;
     private boolean isPortrait ;
+    private long seekTo = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +91,6 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-
 
         presenter = new PlayerPresenter();
         presenter.bindView(this);
@@ -102,10 +104,15 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             e.printStackTrace();
         }
 
+
+        seekTo = PrefsController.getLong(getString(R.string.key_seek_to),0);
+        lastWindowIndex = PrefsController.getInt(getString(R.string.key_lastWindowIndex),0);
         if (mCipher != null) {
             initRecycleView(getLayoutInflater());
             presenter.onGetIntent(this);
         }
+
+        Utils.Log(TAG,"Create PlayerActivity");
 
         Drawable note1 = getResources().getDrawable(R.drawable.music_1);
         Drawable note2 = getResources().getDrawable(R.drawable.music_2);
@@ -117,9 +124,11 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         playerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
-                tvTitle.setVisibility(visibility);
-                rlTop.setVisibility(visibility);
-                recyclerView.setVisibility(visibility);
+                if (tvTitle!=null){
+                    tvTitle.setVisibility(visibility);
+                    rlTop.setVisibility(visibility);
+                    recyclerView.setVisibility(visibility);
+                }
             }
         });
         isPortrait = true;
@@ -139,7 +148,6 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         Utils.Log(TAG, "Position :" + position);
         onUpdatedUI(position);
         player.seekToDefaultPosition(position);
-
     }
 
     public void onUpdatedUI(int position) {
@@ -190,11 +198,16 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
             ConcatenatingMediaSource concatenatedSource = new ConcatenatingMediaSource(
                     presenter.mListSource.toArray(new MediaSource[presenter.mListSource.size()]));
-            player.prepare(concatenatedSource);
+            boolean haveStartPosition = lastWindowIndex != C.INDEX_UNSET;
+            if (haveStartPosition) {
+                player.seekTo(lastWindowIndex, seekTo);
+                Utils.Log(TAG,"Return value "+ lastWindowIndex + " - "+ seekTo);
+            }
+            else{
+                Utils.Log(TAG,"No value "+ lastWindowIndex + " - "+ seekTo);
+            }
+            player.prepare(concatenatedSource,!haveStartPosition,false);
             player.setPlayWhenReady(true);
-            player.setRepeatMode(Player.REPEAT_MODE_OFF);
-            playerView.getPlayer().setRepeatMode(Player.REPEAT_MODE_OFF);
-            playerView.setControllerAutoShow(false);
 
 
             player.addListener(new Player.EventListener() {
@@ -215,7 +228,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
 
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                    Utils.Log(TAG, "4");
+                    Utils.Log(TAG, "4 " +playbackState);
                 }
 
                 @Override
@@ -263,6 +276,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utils.Log(TAG,"onDestroy");
         if (player != null) {
             if (animationPlayer != null) {
                 animationPlayer.stopNotesFall();
@@ -309,6 +323,8 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
 
     @OnClick(R.id.imgArrowBack)
     public void onClickedBack(View view) {
+        PrefsController.putLong(getString(R.string.key_seek_to),0);
+        PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
         finish();
     }
 
@@ -374,15 +390,18 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Utils.Log(TAG, "Saved");
+        long seekPosition = player.getCurrentPosition();
         outState.putBoolean(getString(R.string.key_rotate),isPortrait);
+        PrefsController.putLong(getString(R.string.key_seek_to),seekPosition);
+        PrefsController.putInt(getString(R.string.key_lastWindowIndex),player.getCurrentWindowIndex());
+        Utils.Log(TAG, "Saved------------------------ "+seekPosition +" - "+player.getCurrentWindowIndex());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Utils.Log(TAG, "Restore");
         isPortrait = savedInstanceState.getBoolean(getString(R.string.key_rotate),false);
+        Utils.Log(TAG, "Restore "+seekTo);
     }
 
 

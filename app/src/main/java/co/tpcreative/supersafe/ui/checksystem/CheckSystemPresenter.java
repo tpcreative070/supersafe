@@ -14,6 +14,7 @@ import java.util.Map;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignInRequest;
@@ -22,6 +23,7 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.User;
@@ -57,7 +59,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     }
 
 
-    public void onCheckUser(final String email){
+    public void onCheckUser(final String email,String other_email){
         Log.d(TAG,"info onCheckUser");
         BaseView view = view();
         if (view == null) {
@@ -72,6 +74,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),email);
+        hash.put(getString(R.string.key_other_email),other_email);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckUserId(hash)
                 .subscribeOn(Schedulers.io())
@@ -96,7 +99,12 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -144,7 +152,11 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                     else{
                         mUser = onResponse.user;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
-                        onSendGmail(mUser.email,onResponse.user.code);
+                        String email = mUser.email;
+                        if (mUser.change){
+                            email = mUser.other_email;
+                        }
+                        onSendGmail(email,onResponse.user.code);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
@@ -179,6 +191,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email),request.email);
+        hash.put(getString(R.string.key_other_email),request.email);
         hash.put(getString(R.string.key_password),SecurityUtil.key_password_default);
         hash.put(getString(R.string.key_name),request.name);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
@@ -238,6 +251,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),request.email);
+        hash.put(getString(R.string.key_id),request._id);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_code),request.code);
         hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
@@ -261,7 +275,12 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -307,7 +326,12 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -395,7 +419,12 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -445,7 +474,12 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);

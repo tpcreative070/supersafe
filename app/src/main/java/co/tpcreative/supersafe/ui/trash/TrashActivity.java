@@ -230,7 +230,7 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
             countSelected--;
         }
         onShowUI();
-        adapter.notifyDataSetChanged();
+        adapter.notifyItemChanged(position);
     }
 
     private void deselectAll() {

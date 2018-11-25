@@ -223,7 +223,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onClickedSendVerifyCode(View view){
         Log.d(TAG,"Verify code");
         SingletonManagerProcessing.getInstance().onStartProgressing(this);
-        presenter.onCheckUser(presenter.mUser.email);
+        presenter.onCheckUser(presenter.mUser.email,presenter.mUser.other_email);
     }
 
     @OnClick(R.id.btnCancel)
@@ -247,11 +247,21 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         tvEmail.setText(email);
         String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + email +"</font>");
         tvTitle.setText(Html.fromHtml(sourceString));
-        presenter.onChangeEmail(email);
+
+        if (email.equals(presenter.mUser.email)){
+            return;
+        }
+        VerifyCodeRequest request = new VerifyCodeRequest();
+        request.email = email;
+        request.other_email = email;
+        request.user_id = presenter.mUser.email;
+        request._id = presenter.mUser._id;
+
+
+        presenter.onChangeEmail(request);
         Utils.hideSoftKeyboard(this);
         Utils.hideKeyboard(edtEmail);
     }
-
 
     @OnClick(R.id.btnReSend)
     public void onClickedResend(){
@@ -265,7 +275,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         }catch (Exception e){
 
         }
-
     }
 
     @OnClick(R.id.btnSignIn)
@@ -281,6 +290,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         VerifyCodeRequest request = new VerifyCodeRequest();
         request.code = edtCode.getText().toString().trim();
         request.email = presenter.mUser.email;
+        request._id = presenter.mUser._id;
         presenter.onVerifyCode(request);
         Utils.hideSoftKeyboard(this);
     }
@@ -482,7 +492,12 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @Override
     public void onError(String message, EnumStatus status) {
-
+        switch (status){
+            case CHANGE_EMAIL:{
+                edtEmail.setError(message);
+                break;
+            }
+        }
     }
 
     @Override

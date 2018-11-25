@@ -56,7 +56,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         onStartLoading(EnumStatus.OTHER);
 
         if (presenter.googleOauth != null) {
-            presenter.onCheckUser(presenter.googleOauth.email);
+            presenter.onCheckUser(presenter.googleOauth.email,presenter.googleOauth.email);
         } else {
             handler.postDelayed(new Runnable() {
                 @Override
@@ -155,6 +155,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                     VerifyCodeRequest request = new VerifyCodeRequest();
                     request.email = presenter.mUser.email;
                     request.code = input.toString().trim();
+                    request._id = presenter.mUser._id;
                     presenter.onVerifyCode(request);
                 }
             });

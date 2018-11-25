@@ -335,8 +335,11 @@
     <string name="key_list_items">list_items</string>
     <string name="key_email">email</string>
     <string name="key_other_email">other_email</string>
+    <string name="key_active">active</string>
+    <string name="key_change_email">change</string>
     <string name="other_email_address">Other email addresses</string>
     <string name="key_user_id">user_id</string>
+    <string name="key_id">_id</string>
     <string name="key_password">password</string>
     <string name="key_name">name</string>
     <string name="send_code">Welcome to SuperSafe,\n\n
@@ -393,6 +396,8 @@
     <string name="key_is_first_files">is_first_files</string>
     <string name="key_is_first_enable_sync_data">is_first_enable_sync_data</string>
     <string name="key_rotate">rotate</string>
+    <string name="key_seek_to">seek_to</string>
+    <string name="key_lastWindowIndex">lastWindowIndex</string>
 
     /*Google Drive api*/
     <string name="key_parents">parents</string>

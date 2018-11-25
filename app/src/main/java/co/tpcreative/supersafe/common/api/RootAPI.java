@@ -35,6 +35,8 @@ public interface RootAPI{
     String SIGN_UP = "/api/user/signup";
     String SIGN_IN = "/api/user/signin";
     String UPDATE = "/api/user/update";
+    String UPDATE_TOKEN = "/api/user/updateToken";
+
     String VERIFY_CODE = "api/user/verifycode";
     String RESEND_CODE = "api/user/resendcode";
     String CHECK_USER_CLOUD = "/api/usercloud/check";
@@ -95,7 +97,11 @@ public interface RootAPI{
 
     @FormUrlEncoded
     @POST(UPDATE)
-    Observable<BaseResponse> onUpdateUser(@FieldMap Map<String,String>request);
+    Observable<SignInResponse> onUpdateUser(@FieldMap Map<String,String>request);
+
+    @FormUrlEncoded
+    @POST(UPDATE_TOKEN)
+    Observable<SignInResponse> onUpdateToken(@FieldMap Map<String,String>request);
 
     @FormUrlEncoded
     @POST(CHECKOUT)

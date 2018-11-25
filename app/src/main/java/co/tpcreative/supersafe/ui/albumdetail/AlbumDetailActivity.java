@@ -98,6 +98,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     Toolbar toolbar;
     @BindView(R.id.llBottom)
     LinearLayout llBottom;
+
+
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
     private boolean isReload;
@@ -188,7 +190,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
         onDrawOverLay(this);
-        llBottom.setVisibility(View.INVISIBLE);
+        llBottom.setVisibility(View.GONE);
 
         /*Root Fragment*/
         attachFragment(R.id.gallery_root);
@@ -203,6 +205,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
             }
         });
+
+
     }
 
     @Override
@@ -248,6 +252,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @Override
     public void onClickItem(int position) {
+        Utils.Log(TAG,"On clicked item");
         if (actionMode!=null){
             toggleSelection(position);
             actionMode.setTitle(countSelected + " " + getString(R.string.selected));
@@ -273,6 +278,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @Override
     public void onLongClickItem(int position) {
+        Utils.Log(TAG,"On long clicked item");
         if (actionMode == null) {
             actionMode = toolbar.startActionMode(callback);
         }
@@ -939,7 +945,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 if (actionMode!=null){
                     countSelected = 0;
                     actionMode.finish();
-                    llBottom.setVisibility(View.INVISIBLE);
+                    llBottom.setVisibility(View.GONE);
                     isReload = true;
                 }
                 break;
@@ -1011,7 +1017,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             countSelected--;
         }
         onShowUI();
-        adapter.notifyDataSetChanged();
+        adapter.notifyItemChanged(position);
+        //adapter.notifyDataSetChanged();
     }
 
     private void deselectAll() {
@@ -1090,7 +1097,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 @Override
                 public void run() {
                     if (countSelected==0){
-                        llBottom.setVisibility(View.INVISIBLE);
+                        llBottom.setVisibility(View.GONE);
                         mSpeedDialView.setVisibility(View.VISIBLE);
                     }
                     else{
