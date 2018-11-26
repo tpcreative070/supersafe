@@ -67,8 +67,8 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_UP);
                     } else {
-                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, onResponse.user);
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(onResponse.user));
+                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, onResponse.user);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

@@ -61,9 +61,11 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import spencerstudios.com.bungeelib.Bungee;
 
 
@@ -96,7 +98,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
-        initSpeedDial(true);
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
@@ -110,11 +111,19 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public void onShowSuggestion(){
         final boolean isFirstFile = PrefsController.getBoolean(getString(R.string.key_is_first_files),false);
         if (!isFirstFile){
+            List<Items> mList = InstanceGenerator.getInstance(this).getListAllItems(false);
+            if (mList!=null && mList.size()>0){
+                PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
+                return;
+            }
             onSuggestionAddFiles();
         }
         else{
             final boolean isFirstEnableSyncData = PrefsController.getBoolean(getString(R.string.key_is_first_enable_sync_data),false);
             if (!isFirstEnableSyncData){
+                if (presenter.mUser.driveConnected){
+                    PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data),true);
+                }
                 onSuggestionSyncData();
             }
         }
@@ -214,6 +223,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
 
     private void initSpeedDial(boolean addActionItems) {
+        Utils.Log(TAG,"Init floating button");
         final co.tpcreative.supersafe.model.Theme mTheme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
         if (addActionItems) {
             Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
@@ -443,6 +453,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onResume() {
         super.onResume();
+        initSpeedDial(true);
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
@@ -495,7 +506,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         switch (event){
             case COMPLETED_RECREATE:{
                 recreate();
-                initSpeedDial(true);
                 break;
             }
             case UNLOCK:{

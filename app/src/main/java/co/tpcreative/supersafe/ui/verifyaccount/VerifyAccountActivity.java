@@ -43,6 +43,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
+import co.tpcreative.supersafe.model.Theme;
 
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
@@ -121,6 +122,12 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                tvTitle.setText(Html.fromHtml(sourceString));
            }
         }
+
+        Theme theme = Theme.getInstance().getThemeInfo();
+        progressBarCircularIndeterminateSignIn.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
+
+        progressBarCircularIndeterminateReSend.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
+        progressBarCircularIndeterminateVerifyCode.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
     }
 
 
@@ -222,7 +229,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @OnClick(R.id.btnSendVerifyCode)
     public void onClickedSendVerifyCode(View view){
         Log.d(TAG,"Verify code");
-        SingletonManagerProcessing.getInstance().onStartProgressing(this);
+        SingletonManagerProcessing.getInstance().onStartProgressing(this,R.string.progressing);
         presenter.onCheckUser(presenter.mUser.email,presenter.mUser.other_email);
     }
 
@@ -266,7 +273,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @OnClick(R.id.btnReSend)
     public void onClickedResend(){
         try{
-            SingletonManagerProcessing.getInstance().onStartProgressing(this);
+            SingletonManagerProcessing.getInstance().onStartProgressing(this,R.string.progressing);
             Utils.hideSoftKeyboard(this);
             VerifyCodeRequest request = new VerifyCodeRequest();
             request.email = presenter.mUser.email;
@@ -356,12 +363,13 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     public void onShowDialog(){
+        Theme theme = Theme.getInstance().getThemeInfo();
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.signin_with_google)
                 .setDescription(R.string.choose_google_account)
                 .setHeaderDrawable(R.drawable.ic_google_transparent_margin_60)
                 .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                .setHeaderColor(R.color.colorPrimary)
+                .setHeaderColor(theme.getPrimaryColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.ok)
                 .setNegativeText(R.string.cancel)
@@ -383,12 +391,13 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     public void onShowDialogEnableSync(){
+        Theme theme = Theme.getInstance().getThemeInfo();
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.enable_cloud_sync)
                 .setDescription(R.string.message_prompt)
                 .setHeaderDrawable(R.drawable.ic_drive_cloud)
                 .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                .setHeaderColor(R.color.colorPrimary)
+                .setHeaderColor(theme.getPrimaryColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.enable_now)
                 .setNegativeText(R.string.cancel)

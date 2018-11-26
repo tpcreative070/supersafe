@@ -761,7 +761,7 @@
 
     <!-- ProgressBar for color -->
     <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">?attr/colorAccent</item>
     </style>
 
     <!--Menu item for text color -->
@@ -842,9 +842,17 @@
 
 
 
+    <!--Animation transfer activities -->
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+    <!--Custom Dialog -->
+    <style name="CustomDialog" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogSpotColor">?attr/colorAccent</item>
+        <item name="DialogSpotCount">4</item>
     </style>
 
 

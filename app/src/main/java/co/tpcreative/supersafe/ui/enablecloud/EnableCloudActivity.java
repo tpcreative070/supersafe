@@ -28,6 +28,7 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 
 public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
@@ -257,7 +258,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     }
 
     public void onShowWarningAnotherAccount(){
-
         StringBuilder builder = new StringBuilder();
         builder.append("If you use another Google Drive");
         builder.append("\n");
@@ -265,12 +265,13 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         builder.append("\n");
         builder.append("2. All of your local files will be synced to the new Google Drive");
 
+        Theme theme = Theme.getInstance().getThemeInfo();
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.user_another_google_drive_title)
                 .setDescription(builder.toString())
                 .setHeaderDrawable(R.drawable.ic_drive_cloud)
                 .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                .setHeaderColor(R.color.colorPrimary)
+                .setHeaderColor(theme.getAccentColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.user_another)
                 .setNegativeText(R.string.cancel)

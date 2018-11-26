@@ -114,8 +114,8 @@ public class AnimationsContainer {
                 // use in place bitmap to save GC work (when animation images are the same size & type)
                 if (Build.VERSION.SDK_INT >= 11) {
                     Bitmap bmp = ((BitmapDrawable) imageView.getIcon()).getBitmap();
-                    int width = 60;
-                    int height = 60;
+                    int width = 40;
+                    int height = 40;
                     Bitmap.Config config = bmp.getConfig();
                     mBitmap = Bitmap.createBitmap(width, height, config);
                     mBitmapOptions = new BitmapFactory.Options();

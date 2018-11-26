@@ -46,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
+                android:tint="?attr/colorAccent"
                 android:src="@drawable/ic_drive_cloud"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
@@ -59,7 +60,7 @@
 
             <TextView
                 android:textStyle="bold"
-                android:textColor="@color/blue_light"
+                android:textColor="?attr/colorAccent"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/link_your_google_drive"
                 android:layout_width="match_parent"
@@ -96,7 +97,7 @@
                 android:id="@+id/btnUserAnotherAccount"
                 android:layout_marginTop="20dp"
                 android:textSize="@dimen/text_size_normal"
-                android:textColor="@color/colorButton"
+                android:textColor="?attr/colorAccent"
                 android:background="@null"
                 android:layout_gravity="center"
                 android:text="@string/user_another_google_drive"

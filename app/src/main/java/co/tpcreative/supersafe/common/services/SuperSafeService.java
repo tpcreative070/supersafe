@@ -143,7 +143,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void onGetUserInfo(){
-        Log.d(TAG,"onGetUserInfo");
+        Log.d(TAG,"onGetUserInfo 1");
         BaseView view = view();
         if (view == null) {
             return;
@@ -153,7 +153,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             if (!isPremiumComplimentary){
                 return;
             }
-
             final User mUser = User.getInstance().getUserInfo();
             if (mUser!=null){
                 final Premium premium = mUser.premium;
@@ -166,13 +165,18 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                             SingletonPremiumTimer.getInstance().onStartTimer();
+                            Log.d(TAG,"onGetUserInfo 3");
                         }
+                        Log.d(TAG,"onGetUserInfo 4");
                     }
+                    Log.d(TAG,"onGetUserInfo 5");
                 }
+                Log.d(TAG,"onGetUserInfo 6");
             }
             return;
         }
 
+        Log.d(TAG,"onGetUserInfo 2");
         if (subscriptions == null) {
             return;
         }

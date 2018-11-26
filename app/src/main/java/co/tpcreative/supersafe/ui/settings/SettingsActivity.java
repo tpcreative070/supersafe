@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;

@@ -59,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/your_email"
-                    android:textColor="@color/colorButton"
+                    android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_normal" />
 
                 <RelativeLayout
@@ -98,7 +98,6 @@
                         android:layout_height="25dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:background="@color/colorButton"
                         android:elevation="10dp"
                         android:visibility="invisible" />
 
@@ -206,8 +205,8 @@
                         android:singleLine="true"
                         android:textSize="@dimen/text_size_normal"
                         app:met_floatingLabel="highlight"
-                        app:met_primaryColor="@color/colorButton"
-                        app:met_textColorHint="@color/colorButton" />
+                        app:met_primaryColor="?attr/colorAccent"
+                        app:met_textColorHint="?attr/colorAccent" />
                 </LinearLayout>
 
 
@@ -255,7 +254,7 @@
 
                 <TextView
                     android:id="@+id/tvTitle"
-                    android:textColor="@color/colorButton"
+                    android:textColor="?attr/colorAccent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
@@ -272,10 +271,10 @@
                     android:inputType="number"
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_normal"
-                    app:met_baseColor="@color/colorButton"
+                    app:met_baseColor="?attr/colorAccent"
                     app:met_floatingLabel="highlight"
-                    app:met_primaryColor="@color/colorButton"
-                    app:met_textColorHint="@color/colorButton" />
+                    app:met_primaryColor="?attr/colorAccent"
+                    app:met_textColorHint="?attr/colorAccent" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"

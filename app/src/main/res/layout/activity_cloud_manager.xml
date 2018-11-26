@@ -352,6 +352,7 @@
                     android:padding="10dp">
 
                     <TextView
+                        android:textColor="?attr/colorPrimaryDark"
                         android:layout_marginBottom="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
@@ -407,6 +408,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:textColor="?attr/colorAccent"
                             android:id="@+id/tvDeviceSaving"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -416,10 +418,7 @@
                             android:textSize="@dimen/text_size_normal"/>
 
                     </RelativeLayout>
-
                 </LinearLayout>
-
-
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.NestedScrollView>

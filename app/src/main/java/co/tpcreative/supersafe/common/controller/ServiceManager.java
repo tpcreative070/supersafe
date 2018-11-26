@@ -315,6 +315,7 @@ public class ServiceManager implements BaseView {
 
     /*User info*/
     public void onGetUserInfo() {
+        Utils.Log(TAG,"onGetUserInfo");
         if (myService != null) {
             myService.onGetUserInfo();
         } else {
@@ -2921,7 +2922,6 @@ public class ServiceManager implements BaseView {
                 if (!isPremiumComplimentary) {
                     return;
                 }
-
                 SingletonPremiumTimer.getInstance().onStop();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

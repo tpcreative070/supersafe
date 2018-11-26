@@ -18,6 +18,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
@@ -193,8 +194,8 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
     protected void onDestroy() {
         super.onDestroy();
         presenter.unbindView();
+        ServiceManager.getInstance().onGetUserInfo();
     }
-
 
     @Override
     public void onError(String message, EnumStatus status) {

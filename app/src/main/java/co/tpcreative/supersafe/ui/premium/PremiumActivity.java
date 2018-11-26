@@ -66,6 +66,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @BindView(R.id.llSwitchToBasic)
     LinearLayout llSwitchToBasic;
 
+
     /*In app purchase*/
     private ActivityCheckout mCheckout;
     private ActivityCheckout mCheckoutLifeTime;
@@ -104,6 +105,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         /*Init In app purchase*/
         onStartInAppPurchase();
         onUpdatedView();
+        scrollView.smoothScrollTo(0,0);
     }
 
 

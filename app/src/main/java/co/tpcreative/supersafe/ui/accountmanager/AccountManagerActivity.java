@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import java.util.List;
@@ -54,6 +55,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     RelativeLayout rlPremiumComplimentary;
     @BindView(R.id.rlPremium)
     RelativeLayout rlPremium;
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
 
     private AccountManagerPresenter presenter;
     private AccountManagerAdapter adapter;
@@ -72,6 +75,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         onDrawOverLay(this);
         onUpdatedView();
         onStartOverridePendingTransition();
+        scrollView.smoothScrollTo(0,0);
     }
 
     public void onUpdatedView(){

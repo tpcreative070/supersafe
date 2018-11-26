@@ -65,6 +65,8 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             }, 5000);
         }
         onStartOverridePendingTransition();
+        co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+        progressBarCircularIndeterminate.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
     }
 
     @Override
