@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -17,6 +18,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -32,6 +34,11 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -44,17 +51,20 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonEnterPinManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
+import spencerstudios.com.bungeelib.Bungee;
 
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
@@ -73,7 +83,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private MenuItem menuItem;
     private EnumStatus previousStatus;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,13 +100,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
-        onCallLockScreen();
-        ServiceManager.getInstance().onGetUserInfo();
-
         final User mUser = User.getInstance().getUserInfo();
         Log.d(TAG,"User....." +new Gson().toJson(mUser));
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
+        SingletonPremiumTimer.getInstance().onStartTimer();
     }
 
     public void onShowSuggestion(){
@@ -132,15 +139,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public void onAction(EnumStatus enumStatus) {
         try {
             switch (enumStatus){
-                case RECREATE:{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            recreate();
-                        }
-                    });
-                    break;
-                }
                 default:{
                     runOnUiThread(new Runnable() {
                         @Override
@@ -445,15 +443,17 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onCallLockScreen();
         if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
             Utils.Log(TAG,"isEnterPinWorking");
             SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
             return;
         }
-
         onSwitchToBasic();
         GoogleDriveConnectionManager.getInstance().setListener(this);
-        ServiceManager.getInstance().onGetDriveAbout();
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
         presenter.onGetUserInfo();
@@ -490,11 +490,44 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case COMPLETED_RECREATE:{
+                recreate();
+                initSpeedDial(true);
+                break;
+            }
+            case UNLOCK:{
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                break;
+            }
+        }
+    };
+
     @Override
     public void onBackPressed() {
         if (mSpeedDialView.isOpen()){
             mSpeedDialView.close();
         }else {
+            ServiceManager.getInstance().onDismissServices();
+            PremiumManager.getInstance().onStop();
+            Utils.onDeleteTemporaryFile();
+            Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), new ServiceManager.ServiceManagerSyncDataListener() {
+                @Override
+                public void onCompleted() {
+                    Utils.Log(TAG,"Exporting successful");
+                }
+                @Override
+                public void onError() {
+                    Utils.Log(TAG,"Exporting error");
+                }
+                @Override
+                public void onCancel() {
+
+                }
+            });
+            SuperSafeApplication.getInstance().writeUserSecret(presenter.mUser);
             super.onBackPressed();
         }
     }
@@ -513,26 +546,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
-        ServiceManager.getInstance().onDismissServices();
-        PremiumManager.getInstance().onStop();
-        Utils.onDeleteTemporaryFile();
-        Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), new ServiceManager.ServiceManagerSyncDataListener() {
-            @Override
-            public void onCompleted() {
-                Utils.Log(TAG,"Exporting successful");
-            }
-            @Override
-            public void onError() {
-                Utils.Log(TAG,"Exporting error");
-            }
-            @Override
-            public void onCancel() {
-
-            }
-        });
-        SuperSafeApplication.getInstance().writeUserSecret(presenter.mUser);
+        EventBus.getDefault().unregister(this);
     }
-
 
 
     public void onAnimationIcon(final EnumStatus status){

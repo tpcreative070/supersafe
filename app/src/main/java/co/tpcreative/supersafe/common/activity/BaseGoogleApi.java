@@ -98,7 +98,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 R.animator.anim_slide_out_left);
     }
 
-
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
@@ -109,7 +108,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         return theme;
     }
 
-
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];
@@ -117,6 +115,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             case SPLASH_SCREEN:{
                 Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
                 PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 break;
             }
             default:{
@@ -162,9 +162,14 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
-        super.setContentView(layoutResID);
-        Log.d(TAG,"action here");
-        unbinder = ButterKnife.bind(this);
+        try {
+            super.setContentView(layoutResID);
+            Log.d(TAG,"action here");
+            unbinder = ButterKnife.bind(this);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -41,6 +41,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     private PrivatePresenter presenter;
     private PrivateAdapter adapter;
     private Storage storage;
+    public boolean isClicked;
 
 
     public static PrivateFragment newInstance(int index) {
@@ -112,6 +113,9 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
 
     @Override
     public void onClickItem(int position) {
+        if (isClicked){
+            return;
+        }
         Log.d(TAG, "Position :" + position);
         try {
             String value = Utils.getHexCode(getString(R.string.key_trash));
@@ -120,6 +124,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
             } else {
                 final MainCategories mainCategories = presenter.mList.get(position);
                 final String pin = mainCategories.pin;
+                isClicked = true;
                 if (pin.equals("")) {
                     Navigator.onMoveAlbumDetail(getActivity(), mainCategories);
                 } else {
@@ -172,6 +177,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     @Override
     public void onResume() {
         super.onResume();
+        isClicked = false;
         Utils.Log(TAG,"onResume");
     }
 

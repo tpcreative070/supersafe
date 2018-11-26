@@ -86,6 +86,7 @@ public class ServiceManager implements BaseView {
             ServiceManager.getInstance().onGetUserInfo();
             ServiceManager.getInstance().onSyncCheckVersion();
             ServiceManager.getInstance().onSyncAuthorDevice();
+            ServiceManager.getInstance().onGetDriveAbout();
         }
 
         //binder comes from server to communicate with method's of
@@ -318,6 +319,7 @@ public class ServiceManager implements BaseView {
             myService.onGetUserInfo();
         } else {
             Utils.Log(TAG, "My services is null");
+            onStartService();
         }
     }
 
@@ -2834,7 +2836,6 @@ public class ServiceManager implements BaseView {
         }
         Utils.Log(TAG, "Dismiss Service manager");
     }
-
 
     @Override
     public void onError(String message, EnumStatus status) {

@@ -86,11 +86,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        isLive = true;
+        isLive = false;
 
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
-
 
         /*Init own service api*/
 
@@ -115,7 +114,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         PrefsController.putLong(getString(R.string.key_seek_to),0);
         PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
-
 
         /*Config file*/
         configurationFile = new EncryptConfiguration.Builder()
@@ -160,6 +158,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString = new ArrayList<>();
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
+
     }
 
     public String getSecretKey() {

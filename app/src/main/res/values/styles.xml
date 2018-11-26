@@ -25,6 +25,10 @@
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
 
+
+        <!--Animation transfer activity-->
+       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+
     </style>
 
 
@@ -50,13 +54,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+      <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+      -->
+
     </style>
 
     <style name="AppTheme.PURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorPurple</item>
-        <item name="colorAccent">@color/secondaryColorPurple</item>
+        <item name="colorAccent">@color/secondaryDarkColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -74,13 +83,19 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+
+        <!--Animation transfer activity
+      <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+      -->
+
     </style>
 
     <style name="AppTheme.DEEPPURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorDeepPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
-        <item name="colorAccent">@color/secondaryColorDeepPurple</item>
+        <item name="colorAccent">@color/primaryColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -98,6 +113,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
 
@@ -105,7 +125,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorCyan</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
-        <item name="colorAccent">@color/secondaryColorCyan</item>
+        <item name="colorAccent">@color/primaryColorBrown</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -123,13 +143,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+       -->
+
     </style>
 
     <style name="AppTheme.TEAL" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorTeal</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorTeal</item>
-        <item name="colorAccent">@color/secondaryColorTeal</item>
+        <item name="colorAccent">@color/secondaryDarkColorTeal</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -147,6 +172,12 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+
+        <!--Animation transfer activity
+       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+       -->
+
     </style>
 
 
@@ -172,13 +203,19 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.LIME" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLime</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
-        <item name="colorAccent">@color/secondaryColorLime</item>
+        <item name="colorAccent">@color/primaryColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -196,6 +233,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
 
@@ -221,13 +263,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+       -->
+
     </style>
 
     <style name="AppTheme.BROWN" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBrown</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
-        <item name="colorAccent">@color/secondaryColorBrown</item>
+        <item name="colorAccent">@color/md_teal_500</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -243,6 +290,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.GRAY" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -265,13 +317,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+       -->
+
     </style>
 
     <style name="AppTheme.BLUEGRAY" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBlueGray</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBlueGray</item>
-        <item name="colorAccent">@color/secondaryColorBlueGray</item>
+        <item name="colorAccent">@color/secondaryDarkColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -287,6 +344,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <!-- End Custom theme -->
@@ -318,6 +380,12 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+
+        <!--Animation transfer activity
+       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+       -->
+
     </style>
 
 
@@ -346,13 +414,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.PURPLE.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorPurple</item>
-        <item name="colorAccent">@color/secondaryColorPurple</item>
+        <item name="colorAccent">@color/secondaryDarkColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -373,13 +446,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.DEEPPURPLE.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorDeepPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
-        <item name="colorAccent">@color/secondaryColorDeepPurple</item>
+        <item name="colorAccent">@color/primaryColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -400,6 +478,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+         -->
+
     </style>
 
 
@@ -407,7 +490,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorCyan</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
-        <item name="colorAccent">@color/secondaryColorCyan</item>
+        <item name="colorAccent">@color/primaryColorBrown</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -428,13 +511,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.TEAL.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorTeal</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorTeal</item>
-        <item name="colorAccent">@color/secondaryColorTeal</item>
+        <item name="colorAccent">@color/secondaryDarkColorTeal</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -455,6 +543,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
 
@@ -484,13 +577,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.LIME.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLime</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
-        <item name="colorAccent">@color/secondaryColorLime</item>
+        <item name="colorAccent">@color/primaryColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -512,6 +610,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
 
@@ -541,13 +644,18 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.BROWN.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBrown</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
-        <item name="colorAccent">@color/secondaryColorBrown</item>
+        <item name="colorAccent">@color/md_teal_500</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -569,6 +677,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.GRAY.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -597,13 +710,19 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
     <style name="AppTheme.BLUEGRAY.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBlueGray</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBlueGray</item>
-        <item name="colorAccent">@color/secondaryColorBlueGray</item>
+        <item name="colorAccent">@color/secondaryDarkColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
@@ -625,6 +744,11 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+
+        <!--Animation transfer activity
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        -->
+
     </style>
 
 
@@ -716,6 +840,12 @@
 
 
 
+
+
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
 
 
 </resources>

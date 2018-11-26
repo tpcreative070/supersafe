@@ -72,7 +72,6 @@
                     android:layout_weight="1"
                     android:text="@string/audios_default"/>
 
-
                 <TextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Others"
@@ -81,7 +80,6 @@
                     android:layout_gravity="center|left|bottom"
                     android:layout_weight="1"
                     android:text="@string/others_default"/>
-
             </LinearLayout>
 
             <android.support.v7.widget.Toolbar
@@ -94,30 +92,17 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="match_parent">
-
         <android.support.v7.widget.RecyclerView
-            android:layout_above="@+id/footer"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:scrollbars="vertical"/>
-
-        <include
-            android:id="@+id/footer"
-            android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_gravity="bottom|end"
-            layout="@layout/footer_items_detail_album"/>
-
     </RelativeLayout>
-
 
     <FrameLayout
         android:visibility="gone"
@@ -144,5 +129,13 @@
         app:sdMainFabClosedSrc="@drawable/baseline_add_white_24"
         app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
         app:sdOverlayLayout="@id/overlay" />
+
+    <include
+        android:id="@+id/footer"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|end"
+        layout="@layout/footer_items_detail_album"/>
 
 </android.support.design.widget.CoordinatorLayout>

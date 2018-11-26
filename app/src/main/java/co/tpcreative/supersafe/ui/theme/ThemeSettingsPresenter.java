@@ -36,4 +36,22 @@ public class ThemeSettingsPresenter extends Presenter<BaseView>{
         view.onSuccessful("Successful", EnumStatus.SHOW_DATA);
     }
 
+    public void getDataReload(){
+        BaseView view = view();
+        mList = Theme.getInstance().getList();
+        mTheme = Theme.getInstance().getThemeInfo();
+        if (mTheme!=null){
+            for(int i = 0;i <mList.size() ;i++){
+                if (mTheme.getId()==mList.get(i).getId()){
+                    mList.get(i).isCheck = true;
+                }
+                else{
+                    mList.get(i).isCheck = false;
+                }
+            }
+        }
+        Utils.Log(TAG,"Value :" + new Gson().toJson(mList));
+        view.onSuccessful("Successful", EnumStatus.RELOAD);
+    }
+
 }

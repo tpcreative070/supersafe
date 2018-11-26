@@ -103,11 +103,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             }
         });
 
-        final Theme mTheme = Theme.getInstance().getThemeInfo();
-        if (mTheme!=null){
-            imgSettings.setColorFilter(getContext().getResources().getColor(mTheme.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
-            //imgPro.setColorFilter(getContext().getResources().getColor(R.color.holo_blue_dark), PorterDuff.Mode.SRC_ATOP);
-        }
 
         presenter = new MePresenter();
         presenter.bindView(this);

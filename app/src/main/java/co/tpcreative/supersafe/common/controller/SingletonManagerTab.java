@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller;
-
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class SingletonManagerTab {
@@ -33,6 +32,7 @@ public class SingletonManagerTab {
             listener.onRequestAccessToken();
         }
     }
+
     public void onSyncDone(){
         if (listener!=null){
             listener.onSyncDone();

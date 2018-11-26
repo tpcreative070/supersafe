@@ -67,8 +67,8 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         actionBar = getSupportActionBar();
         onStartCount = 1;
         if (savedInstanceState == null) {
-//            this.overridePendingTransition(R.animator.anim_slide_in_left,
-//                    R.animator.anim_slide_out_left);
+            this.overridePendingTransition(android.R.anim.fade_in,
+                    android.R.anim.fade_in);
         } else {
             onStartCount = 2;
         }
@@ -92,7 +92,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
         }
     }
-
 
     @Override
     public Resources.Theme getTheme() {
@@ -275,8 +274,8 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         if (onStartCount > 1) {
-//            this.overridePendingTransition(R.animator.anim_slide_in_right,
-//                    R.animator.anim_slide_out_right);
+            this.overridePendingTransition(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
         } else if (onStartCount == 1) {
             onStartCount++;
         }

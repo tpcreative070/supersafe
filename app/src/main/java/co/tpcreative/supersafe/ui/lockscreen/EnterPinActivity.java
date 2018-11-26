@@ -32,6 +32,8 @@ import com.google.gson.Gson;
 import com.multidots.fingerprintauth.FingerPrintAuthCallback;
 import com.multidots.fingerprintauth.FingerPrintAuthHelper;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.List;
 
@@ -717,6 +719,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             @Override
                             public void run() {
                               onBackPressed();
+                              EventBus.getDefault().post(EnumStatus.UNLOCK);
                             }
                         },100);
                         Utils.Log(TAG, "Action ...................done");

@@ -365,6 +365,7 @@
     <string name="key_privacy_policy">Privacy Policy</string>
     <string name="key_super_safe_version">SuperSafe: %1$s</string>
     <string name="key_locale">locale</string>
+    <string name="key_change_theme">change_theme</string>
 
 
     <string name="key_main_album">Main Album</string>

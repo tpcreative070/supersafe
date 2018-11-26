@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.common.activity;
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
@@ -33,7 +31,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
 
@@ -87,7 +84,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
             window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
         }
     }
-
 
     @Override
     public Resources.Theme getTheme() {
@@ -168,6 +164,7 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
                 return;
             }
         }
+
 
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {

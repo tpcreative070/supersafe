@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.theme;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,11 +10,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
@@ -21,6 +27,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
 
 public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
@@ -32,6 +39,10 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     Toolbar toolbar;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
+    @BindView(R.id.imgIcon)
+    ImageView imgIcon;
+    @BindView(R.id.tvTitle)
+    TextView tvTitle;
     private boolean isUpdated;
     private ThemeSettingsPresenter presenter;
 
@@ -75,14 +86,15 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         recyclerView.setAdapter(adapter);
     }
 
-
     @Override
     public void onClickItem(int position) {
         isUpdated = true;
         presenter.mTheme = presenter.mList.get(position);
         setStatusBarColored(this,presenter.mTheme.getPrimaryColor(),presenter.mTheme.getPrimaryDarkColor());
+        tvTitle.setTextColor(getContext().getResources().getColor(presenter.mTheme.getAccentColor()));
+        imgIcon.setColorFilter(getContext().getResources().getColor(presenter.mTheme.getAccentColor()), PorterDuff.Mode.SRC_ATOP);
         PrefsController.putString(getString(R.string.key_theme_object),new Gson().toJson(presenter.mTheme));
-        presenter.getData();
+        adapter.notifyItemChanged(position);
     }
 
     @Override
@@ -115,8 +127,8 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (isUpdated){
-            SingletonManagerTab.getInstance().onAction(EnumStatus.RECREATE);
+        if(isUpdated){
+            EventBus.getDefault().post(EnumStatus.RECREATE);
         }
     }
 
@@ -150,6 +162,9 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         switch (status){
             case SHOW_DATA:{
                 adapter.setDataSource(presenter.mList);
+                break;
+            }
+            case RELOAD:{
                 break;
             }
         }

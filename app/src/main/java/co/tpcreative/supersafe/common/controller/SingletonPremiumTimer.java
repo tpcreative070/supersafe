@@ -91,7 +91,7 @@ public class SingletonPremiumTimer {
                         }
                     }
                 }
-                //Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
+                Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
             }
             @Override
             public void onFinish() {

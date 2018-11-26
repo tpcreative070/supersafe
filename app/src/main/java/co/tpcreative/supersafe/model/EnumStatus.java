@@ -87,6 +87,9 @@ public enum EnumStatus {
         CHECKOUT,
         CHECK_VERSION,
         AUTHOR_SYNC,
+        LOCK,
+        UNLOCK,
+        COMPLETED_RECREATE,
         OTHER
 
 }

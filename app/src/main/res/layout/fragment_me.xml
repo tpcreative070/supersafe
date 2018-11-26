@@ -90,7 +90,7 @@
                             android:layout_gravity="center|top"
                             android:padding="3dp"
                             android:src="@drawable/baseline_account_circle_white_36"
-                            android:tint="?attr/colorPrimary" />
+                            android:tint="?attr/colorAccent" />
 
                         <LinearLayout
                             android:layout_marginTop="3dp"
@@ -102,6 +102,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:textColor="?attr/colorAccent"
                                 android:id="@+id/tvEmail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -114,7 +115,6 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="10dp"
                                 android:text="@string/verify_change"
-                                android:textColor="@color/colorButton"
                                 android:textSize="@dimen/text_size_large" />
                         </LinearLayout>
                     </LinearLayout>
@@ -150,7 +150,7 @@
                                 android:layout_height="@dimen/icon_size_30"
                                 android:layout_gravity="center|top"
                                 android:src="@drawable/ic_drive_cloud"
-                                android:tint="?attr/colorPrimary" />
+                                android:tint="?attr/colorAccent" />
 
 
                             <LinearLayout
@@ -163,6 +163,7 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textColor="?attr/colorAccent"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="left|center"
@@ -176,7 +177,6 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="10dp"
                                     android:text="@string/enable_cloud_sync"
-                                    android:textColor="@color/colorButton"
                                     android:textSize="@dimen/text_size_normal" />
                             </LinearLayout>
 
@@ -197,7 +197,7 @@
                                 android:layout_gravity="center|top"
                                 android:padding="3dp"
                                 android:src="@drawable/baseline_sd_card_white_48"
-                                android:tint="?attr/colorPrimary" />
+                                android:tint="?attr/colorAccent" />
 
                             <LinearLayout
                                 android:layout_marginTop="3dp"
@@ -208,6 +208,7 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:textColor="?attr/colorAccent"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/local"
@@ -225,7 +226,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/photos"
-                                        android:textColor="@color/colorButton"
                                         android:textSize="@dimen/text_size_normal" />
 
                                     <TextView
@@ -234,7 +234,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/videos"
-                                        android:textColor="@color/colorButton"
                                         android:textSize="@dimen/text_size_normal" />
 
                                     <TextView
@@ -243,7 +242,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/audio"
-                                        android:textColor="@color/colorButton"
                                         android:textSize="@dimen/text_size_normal" />
 
                                     <TextView
@@ -252,7 +250,6 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="@string/others"
-                                        android:textColor="@color/colorButton"
                                         android:textSize="@dimen/text_size_normal" />
 
                                 </LinearLayout>
@@ -281,9 +278,10 @@
                             android:layout_height="@dimen/icon_size_30"
                             android:padding="2dp"
                             android:src="@drawable/baseline_settings_white_36"
-                            android:tint="?attr/colorPrimary" />
+                            android:tint="?attr/colorAccent" />
 
                         <TextView
+                            android:textColor="?attr/colorAccent"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"

@@ -12,6 +12,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Theme;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -51,6 +52,7 @@ public class ThemeSettingsAdapter extends BaseAdapter<Theme, BaseHolder> {
         @BindView(R.id.imgChecked)
         ImageView imgChecked;
         int mPosition;
+        Theme theme;
 
         public ItemHolder(View itemView) {
             super(itemView);
@@ -64,17 +66,26 @@ public class ThemeSettingsAdapter extends BaseAdapter<Theme, BaseHolder> {
             Glide.with(context)
                     .load(context.getResources().getDrawable(data.getPrimaryColor()))
                     .apply(options).into(imgTheme);
+            theme = data;
             if (data.isCheck){
                 imgChecked.setVisibility(View.VISIBLE);
             }
             else {
                 imgChecked.setVisibility(View.INVISIBLE);
             }
+            Utils.Log(TAG,"Change position "+ position);
         }
 
         @OnClick(R.id.rlHome)
         public void onClicked(View view) {
             if (itemSelectedListener != null) {
+                for (int i = 0;i <dataSource.size();i++){
+                    if (dataSource.get(i).isCheck){
+                        dataSource.get(i).isCheck = false;
+                        notifyItemChanged(i);
+                    }
+                }
+                dataSource.get(mPosition).isCheck = true;
                 itemSelectedListener.onClickItem(mPosition);
             }
         }

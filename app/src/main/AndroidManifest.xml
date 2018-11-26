@@ -56,7 +56,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ui.main_tab.MainTabActivity" />
+        <activity android:name=".ui.main_tab.MainTabActivity"
+            android:theme="@style/AppTheme"/>
+
         <!-- Enter pin code -->
         <activity
             android:name=".ui.lockscreen.EnterPinActivity"

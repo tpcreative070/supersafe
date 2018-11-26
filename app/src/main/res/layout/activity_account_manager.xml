@@ -67,7 +67,7 @@
                         android:gravity="left"
                         android:layout_gravity="center"
                         android:id="@+id/tvPremiumLeft"
-                        android:textSize="@dimen/medium"
+                        android:textSize="@dimen/medium_17"
                         android:text="@string/your_complimentary_premium"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
@@ -117,7 +117,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:inputType="textCapCharacters"
-                    android:textColor="@color/colorButton"
+                    android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_normal"
                     android:textAllCaps="true"
                     android:text="@string/key_account_type"
@@ -176,7 +176,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:inputType="textCapCharacters"
-                    android:textColor="@color/colorButton"
+                    android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_normal"
                     android:textAllCaps="true"
                     android:text="@string/key_primary_email_address"
@@ -241,7 +241,7 @@
 
                 <TextView
                     android:textColor="?attr/colorAccent"
-                    android:textSize="@dimen/medium"
+                    android:textSize="@dimen/text_size_normal"
                     android:padding="20dp"
                     android:gravity="left"
                     android:background="@color/white"

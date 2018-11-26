@@ -2,16 +2,12 @@ package co.tpcreative.supersafe.ui.checksystem;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -56,7 +52,6 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
             e.printStackTrace();
         }
     }
-
 
     public void onCheckUser(final String email,String other_email){
         Log.d(TAG,"info onCheckUser");

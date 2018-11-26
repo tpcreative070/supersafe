@@ -15,11 +15,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
-                android:tint="@color/material_gray_600"
+                android:id="@+id/imgIcon"
+                android:tint="?attr/colorAccent"
                 android:src="@drawable/ic_premium_icon"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size" />
             <TextView
+                android:id="@+id/tvTitle"
+                android:textColor="?attr/colorAccent"
                 android:textSize="@dimen/text_size_normal"
                 android:paddingLeft="20dp"
                 android:layout_gravity="center"
