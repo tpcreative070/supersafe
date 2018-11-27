@@ -839,9 +839,6 @@
     </style>
 
 
-
-
-
     <!--Animation transfer activities -->
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
@@ -849,11 +846,10 @@
     </style>
 
     <!--Custom Dialog -->
-    <style name="CustomDialog" parent="android:Theme.DeviceDefault.Dialog">
+    <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
         <item name="DialogSpotColor">?attr/colorAccent</item>
         <item name="DialogSpotCount">4</item>
     </style>
-
 
 </resources>

@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
@@ -17,14 +19,19 @@ import android.widget.TextView;
  */
 public class SpotsDialog extends AlertDialog {
 
+    private int mFillDrawable;
+    private TypedArray typedArray;
+
     public static class Builder {
 
         private Context context;
         private String message;
         private int messageId;
         private int themeId;
+        private int dotColorId;
         private boolean cancelable = true; // default dialog behaviour
         private OnCancelListener cancelListener;
+
 
         public Builder setContext(Context context) {
             this.context = context;
@@ -33,6 +40,11 @@ public class SpotsDialog extends AlertDialog {
 
         public Builder setMessage(String message) {
             this.message = message;
+            return this;
+        }
+
+        public Builder setDotColor(int color) {
+            this.dotColorId = color;
             return this;
         }
 
@@ -59,8 +71,10 @@ public class SpotsDialog extends AlertDialog {
         public AlertDialog build() {
             return new SpotsDialog(
                     context,
+                    dotColorId,
                     messageId != 0 ? context.getString(messageId) : message,
                     themeId != 0 ? themeId : R.style.SpotsDialogDefault,
+
                     cancelable,
                     cancelListener
             );
@@ -74,10 +88,12 @@ public class SpotsDialog extends AlertDialog {
     private AnimatedView[] spots;
     private AnimatorPlayer animator;
     private CharSequence message;
+    private int dorColorId;
 
-    private SpotsDialog(Context context, String message, int theme, boolean cancelable, OnCancelListener cancelListener) {
+    private SpotsDialog(Context context,int dotColorId, String message, int theme, boolean cancelable, OnCancelListener cancelListener) {
         super(context, theme);
         this.message = message;
+        this.dorColorId = dotColorId;
 
         setCancelable(cancelable);
         if (cancelListener != null) setOnCancelListener(cancelListener);
@@ -89,7 +105,8 @@ public class SpotsDialog extends AlertDialog {
 
         setContentView(R.layout.dmax_spots_dialog);
         setCanceledOnTouchOutside(false);
-
+        typedArray = getContext().obtainStyledAttributes(R.styleable.Dialog);
+        mFillDrawable = typedArray.getResourceId(R.styleable.Dialog_DialogSpotColor,R.drawable.dot_empty);
         initMessage();
         initProgress();
     }
@@ -134,7 +151,10 @@ public class SpotsDialog extends AlertDialog {
         int progressWidth = getContext().getResources().getDimensionPixelSize(R.dimen.progress_width);
         for (int i = 0; i < spots.length; i++) {
             AnimatedView v = new AnimatedView(getContext());
-            v.setBackgroundResource(R.drawable.dmax_spots_spot);
+            GradientDrawable shape =  new GradientDrawable();
+            shape.setCornerRadius(10);
+            shape.setColor(getContext().getResources().getColor(dorColorId));
+            v.setBackground(shape);
             v.setTarget(progressWidth);
             v.setXFactor(-1f);
             v.setVisibility(View.INVISIBLE);

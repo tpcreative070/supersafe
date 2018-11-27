@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -40,6 +41,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
     ProgressBarCircularIndeterminate progressBarCircularIndeterminate;
     private CheckSystemPresenter presenter;
     Handler handler = new Handler();
+    String email ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +55,20 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         presenter.bindView(this);
         presenter.getIntent(this);
         onStartLoading(EnumStatus.OTHER);
-
         if (presenter.googleOauth != null) {
-            presenter.onCheckUser(presenter.googleOauth.email,presenter.googleOauth.email);
+            String email = presenter.googleOauth.email;
+            if (email.equals(presenter.mUser.email)){
+                presenter.onCheckUser(presenter.googleOauth.email,presenter.googleOauth.email);
+            }
+            else{
+                this.email = email;
+                VerifyCodeRequest request = new VerifyCodeRequest();
+                request.email = email;
+                request.other_email = email;
+                request.user_id = presenter.mUser.email;
+                request._id = presenter.mUser._id;
+                presenter.onChangeEmail(request);
+            }
         } else {
             handler.postDelayed(new Runnable() {
                 @Override
@@ -110,6 +123,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         switch (requestCode) {
             case Navigator.ENABLE_CLOUD:
                 if (resultCode == Activity.RESULT_OK) {
+                    Log.d(TAG, "onBackPressed onActivity Result");
                     onBackPressed();
                 }
                 break;
@@ -139,7 +153,6 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
     public void onVerifyInputCode(String email) {
 
         Utils.Log(TAG, " User..." + new Gson().toJson(presenter.mUser));
-
         try {
 
             MaterialDialog.Builder dialog = new MaterialDialog.Builder(this);
@@ -148,7 +161,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             dialog.title(getString(R.string.verify_email));
             dialog.content(Html.fromHtml(value));
             dialog.theme(Theme.LIGHT);
-            dialog.inputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+            dialog.inputType(InputType.TYPE_CLASS_NUMBER);
             dialog.input(getString(R.string.pin_code), null, false, new MaterialDialog.InputCallback() {
                 @Override
                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
@@ -260,7 +273,10 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             }
             case USER_ID_EXISTING: {
                 Log.d(TAG, "USER_ID_EXISTING : " + message);
-                Toast.makeText(this, message + " is existing :", Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case CHANGE_EMAIL:{
+                presenter.onCheckUser(presenter.mUser.email,presenter.mUser.other_email);
                 break;
             }
             case VERIFY_CODE: {
@@ -287,6 +303,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                             }
                         });
                     } else {
+                        Log.d(TAG, "Google drive Sync is disable");
                         onStopLoading(status);
                         onBackPressed();
                     }
@@ -325,6 +342,12 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 if (presenter.mUser != null) {
                     onVerifyInputCode(presenter.mUser.email);
                 }
+                break;
+            }
+            case CHANGE_EMAIL:{
+                SignInRequest request = new SignInRequest();
+                request.email = email;
+                presenter.onSignIn(request);
                 break;
             }
             case CLOUD_ID_EXISTING: {

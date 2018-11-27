@@ -206,7 +206,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onSuccessful("Successful",EnumStatus.USER_INFO);
                         }
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Log.d(TAG, "Body user info : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();

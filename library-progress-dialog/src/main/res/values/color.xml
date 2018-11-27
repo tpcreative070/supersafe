@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="spots_dialog_color">@android:color/holo_blue_dark</color>
+    <color name="dot_emptyborder">#87898C</color>
+    <color name="transparent">#00000000</color>
+    <color name="inbox_accent">#db4437</color>
 </resources>

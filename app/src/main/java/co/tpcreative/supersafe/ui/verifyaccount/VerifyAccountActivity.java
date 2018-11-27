@@ -45,7 +45,6 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Theme;
 
-
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
     @BindView(R.id.imgEdit)
@@ -125,9 +124,9 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
         Theme theme = Theme.getInstance().getThemeInfo();
         progressBarCircularIndeterminateSignIn.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
-
         progressBarCircularIndeterminateReSend.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
         progressBarCircularIndeterminateVerifyCode.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
+
     }
 
 
@@ -268,6 +267,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         presenter.onChangeEmail(request);
         Utils.hideSoftKeyboard(this);
         Utils.hideKeyboard(edtEmail);
+
     }
 
     @OnClick(R.id.btnReSend)

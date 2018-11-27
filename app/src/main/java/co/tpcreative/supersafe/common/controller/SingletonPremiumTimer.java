@@ -60,7 +60,6 @@ public class SingletonPremiumTimer {
                 PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
                 return;
             }
-
             Utils.Log(TAG,"Device milliseconds :"+ mUser.premium.device_milliseconds +" current milliseconds "+ mUser.premium.current_milliseconds);
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,7 +90,7 @@ public class SingletonPremiumTimer {
                         }
                     }
                 }
-                Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
+                //Utils.Log(TAG,"day lefts: "+ daysLeft + " hours left: " + hoursLeft +" minutes left: " +minutesLeft + " seconds left: "+ secondsLeft);
             }
             @Override
             public void onFinish() {

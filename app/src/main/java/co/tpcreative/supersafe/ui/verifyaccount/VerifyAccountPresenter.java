@@ -3,19 +3,15 @@ import android.util.Log;
 import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignInRequest;
-import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
@@ -68,16 +64,16 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
-
                             if (onResponse.premium!=null){
                                 mUser.premium = onResponse.premium;
                             }
+                            SuperSafeApplication.getInstance().writeUserSecret(mUser);
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         }
+                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
@@ -247,10 +243,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
-                        SignUpRequest request = new SignUpRequest();
-                        request.email = email;
-                        request.name = "Google";
-                        onSignUp(request);
+                        view.onError("User is not existing",EnumStatus.CHECK);
                     }
                     else{
                         view.onSuccessful("User is existing",EnumStatus.CHECK);
@@ -266,6 +259,11 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                             if (code==403){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
+                            }
+                            else if (code ==401){
+                                SignInRequest request = new SignInRequest();
+                                request.email = email;
+                                onSignIn(request);
                             }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
@@ -342,70 +340,6 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         Log.d(TAG, "Can not call " + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.SIGN_IN);
-                }));
-    }
-
-    public void onSignUp(SignUpRequest request){
-        Log.d(TAG,"info");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
-            return;
-        }
-        if (subscriptions == null) {
-            return;
-        }
-
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_email),request.email);
-        hash.put(getString(R.string.key_other_email),request.email);
-        hash.put(getString(R.string.key_password),SecurityUtil.key_password_default);
-        hash.put(getString(R.string.key_name),request.name);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(hash)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_UP))
-                .subscribe(onResponse -> {
-                    if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.SIGN_UP);
-                    }
-                    else{
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
-                        String code = onResponse.user.code;
-                        mUser = onResponse.user;
-                        if (code!=null){
-                            onSendGmail(request.email,code);
-                        }
-                    }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
-                }, throwable -> {
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        int code  = ((HttpException) throwable).response().code();
-                        try {
-                            if (code==403){
-                                Utils.Log(TAG,"code "+code);
-                                ServiceManager.getInstance().onUpdatedUserToken();
-                            }
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
-                    }
-                    view.onStopLoading(EnumStatus.SIGN_UP);
                 }));
     }
 

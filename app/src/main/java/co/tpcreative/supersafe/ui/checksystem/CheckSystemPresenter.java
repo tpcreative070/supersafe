@@ -14,7 +14,6 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignInRequest;
-import co.tpcreative.supersafe.common.request.SignUpRequest;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -47,6 +46,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         try {
             Bundle bundle = activity.getIntent().getExtras();
             googleOauth = (GoogleOauth) bundle.get(getString(R.string.key_google_oauth));
+            Utils.Log(TAG,"≈ "+ new Gson().toJson(googleOauth));
         }
         catch (Exception e){
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     }
 
     public void onCheckUser(final String email,String other_email){
-        Log.d(TAG,"info onCheckUser");
+        Log.d(TAG,"onCheckUser");
         BaseView view = view();
         if (view == null) {
             return;
@@ -77,10 +77,9 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
-                        SignUpRequest request = new SignUpRequest();
+                        SignInRequest request = new SignInRequest();
                         request.email = email;
-                        request.name = "Google";
-                        onSignUp(request);
+                        onSignIn(request);
                     }
                     else{
                         //view.onSuccessful(email,!onResponse.error);
@@ -99,6 +98,11 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
+                            else if (code ==401){
+                                SignInRequest request = new SignInRequest();
+                                request.email = email;
+                                onSignIn(request);
+                            }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Log.d(TAG, msg);
@@ -113,7 +117,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     }
 
     public void onSignIn(SignInRequest request){
-        Log.d(TAG,"info");
+        Log.d(TAG,"onSignIn");
         BaseView view = view();
         if (view == null) {
             return;
@@ -170,68 +174,9 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 }));
     }
 
-    public void onSignUp(SignUpRequest request){
-        Log.d(TAG,"info");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
-            return;
-        }
-        if (subscriptions == null) {
-            return;
-        }
-
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_email),request.email);
-        hash.put(getString(R.string.key_other_email),request.email);
-        hash.put(getString(R.string.key_password),SecurityUtil.key_password_default);
-        hash.put(getString(R.string.key_name),request.name);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(hash)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_UP))
-                .subscribe(onResponse -> {
-                    if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.SIGN_UP);
-                    }
-                    else{
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
-                        String code = onResponse.user.code;
-                        mUser = onResponse.user;
-                        if (code!=null){
-                            onSendGmail(request.email,code);
-                        }
-                    }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
-                }, throwable -> {
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        try {
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Log.d(TAG, "Can not call sign up" + throwable.getMessage());
-                    }
-                    view.onStopLoading(EnumStatus.SIGN_UP);
-                }));
-    }
-
 
     public void onVerifyCode(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Log.d(TAG,"onVerifyCode");
         BaseView view = view();
         if (view == null) {
             return;
@@ -258,14 +203,20 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
-                        final User mUser = User.getInstance().getUserInfo();
+                        mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
+                            if (onResponse.premium!=null){
+                                mUser.premium = onResponse.premium;
+                                Utils.Log(TAG,"Saved.............");
+                            }
+                            SuperSafeApplication.getInstance().writeUserSecret(mUser);
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            mUser = User.getInstance().getUserInfo();
                         }
+                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Log.d(TAG, "Body verify code : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -287,6 +238,86 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                     view.onStopLoading(EnumStatus.VERIFY_CODE);
                 }));
     }
+
+
+    public void onChangeEmail(VerifyCodeRequest request){
+        Log.d(TAG,"info");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            view.onError("No connection",EnumStatus.CHANGE_EMAIL);
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+        Map<String,String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_user_id),request.user_id);
+        hash.put(getString(R.string.key_email),request.email);
+        hash.put(getString(R.string.key_other_email),request.other_email);
+        hash.put(getString(R.string.key_id),request._id);
+        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
+        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
+
+        subscriptions.add(SuperSafeApplication.serverAPI.onUpdateUser(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CHANGE_EMAIL))
+                .subscribe(onResponse -> {
+                    view.onStopLoading(EnumStatus.CHANGE_EMAIL);
+                    if (onResponse.error){
+                        view.onError(onResponse.message,EnumStatus.CHANGE_EMAIL);
+                    }
+                    else{
+                        if (onResponse!=null){
+                            if (onResponse.user!=null){
+                                if (onResponse.user.author!=null){
+                                    if (mUser!=null){
+                                        mUser.author = onResponse.user.author;
+                                        mUser.email = request.email;
+                                        mUser.other_email = request.other_email;
+                                        mUser.change = true;
+                                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                    }
+                                    else{
+                                        Utils.Log(TAG,"User is null");
+                                    }
+                                    mUser = User.getInstance().getUserInfo();
+                                    view.onSuccessful(onResponse.message,EnumStatus.CHANGE_EMAIL);
+                                }
+                            }
+                        }
+                    }
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
+                        try {
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
+                            Log.d(TAG,"error" +bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                    }
+                    view.onStopLoading(EnumStatus.CHANGE_EMAIL);
+                }));
+    }
+
 
     public void onResendCode(VerifyCodeRequest request){
         Log.d(TAG,"info");
@@ -392,22 +423,23 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         hash.put(getString(R.string.key_cloud_id),cloudRequest.cloud_id);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
 
-
         subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body ???: " + new Gson().toJson(onResponse));
-                    if (!onResponse.error){
+                    if (onResponse.error){
+                        view.onError(onResponse.message,EnumStatus.CREATE);
+                    }
+                    else{
+                        mUser = User.getInstance().getUserInfo();
                         mUser.verified = true;
                         mUser.cloud_id = onResponse.cloud_id;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         view.onSuccessful(onResponse.message,EnumStatus.CREATE);
                     }
-                    else{
-                        view.onError(onResponse.message,EnumStatus.CREATE);
-                    }
+                    Utils.Log(TAG,"User info "+ new Gson().toJson(mUser));
                     //view.onShowUserCloud(onResponse.error,onResponse.message);
 
                 }, throwable -> {
@@ -451,7 +483,6 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
 
         Log.d(TAG,"request :"+ new Gson().toJson(hash));
-
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -486,7 +517,6 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                     view.onStopLoading(EnumStatus.CLOUD_ID_EXISTING);
                 }));
     }
-
 
     private String getString(int res){
         BaseView view = view();
