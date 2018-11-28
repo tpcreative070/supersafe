@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.signup;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -50,6 +51,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         edtName.addTextChangedListener(mTextWatcher);

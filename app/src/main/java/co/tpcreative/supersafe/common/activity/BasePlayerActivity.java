@@ -59,8 +59,27 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
             onStartCount = 2;
         }
         storage = new Storage(this);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
     }
 
+    protected void onStartOverridePendingTransition(){
+        this.overridePendingTransition(R.animator.anim_slide_in_left,
+                R.animator.anim_slide_out_left);
+    }
+
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        final Theme result = Theme.getInstance().getThemeInfo();
+        if (result!=null){
+            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
+        }
+        return theme;
+    }
 
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());

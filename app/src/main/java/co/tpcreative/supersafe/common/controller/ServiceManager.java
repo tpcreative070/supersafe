@@ -96,6 +96,11 @@ public class ServiceManager implements BaseView {
         }
     };
 
+    public void onInitConfigurationFile(){
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+        mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+    }
+
     private Cipher mCiphers;
     private boolean isDownloadData;
     private boolean isLoadingData;

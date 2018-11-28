@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.dashboard;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -26,6 +27,7 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
         Log.d(TAG,"PIN " +SuperSafeApplication.getInstance().readKey());

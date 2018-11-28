@@ -88,7 +88,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             onStartCount = 2;
         }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
@@ -519,7 +519,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     protected abstract void onDriveRevokeAccess();
 
     protected abstract boolean isSignIn();
-
 
     protected void signOut() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {

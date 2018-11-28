@@ -75,10 +75,8 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
         storage = new Storage(this);
-
         //Add the camera preview surface to the root of the activity view.
         mCameraPreview = addPreView();
-
     }
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
@@ -101,7 +99,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         }
         return theme;
     }
-
 
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());

@@ -12,6 +12,7 @@ import java.util.Map;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
@@ -69,6 +70,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                     } else {
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(onResponse.user));
                         view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, onResponse.user);
+                        ServiceManager.getInstance().onInitConfigurationFile();
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

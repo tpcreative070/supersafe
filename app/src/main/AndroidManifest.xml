@@ -22,7 +22,6 @@
         android:theme="@style/AppTheme.Slide">
         <activity
             android:name=".ui.splashscreen.SplashScreenActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,34 +55,39 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ui.main_tab.MainTabActivity"
-            android:theme="@style/AppTheme"/>
+
 
         <!-- Enter pin code -->
         <activity
             android:name=".ui.lockscreen.EnterPinActivity"
             android:label="@string/key_lock_screen"/>
+
+
+        <activity android:name=".ui.main_tab.MainTabActivity"
+            android:theme="@style/AppTheme"/>
+
         <activity
             android:name=".ui.signin.SignInActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".ui.verify.VerifyActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".ui.askpermission.AskPermissionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".ui.dashboard.DashBoardActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".ui.signup.SignUpActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"/>
         <activity android:name=".ui.camera.CameraActivity" />
+
+        <activity
+            android:name=".ui.fakepin.FakePinComponentActivity"
+            android:theme="@style/AppTheme"
+            android:label="@string/app_name" />
+
         <activity
             android:name=".ui.multiselects.AlbumSelectActivity"
             android:label="@string/select_album">
@@ -122,9 +126,7 @@
             android:name=".ui.cloudmanager.CloudManagerActivity"
             android:label="@string/cloud_manager" />
         <activity android:name=".ui.checksystem.CheckSystemActivity"/>
-        <activity android:name=".ui.player.PlayerActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.player.PlayerActivity"/>
         <activity
             android:name=".ui.trash.TrashActivity"
             android:label="@string/key_trash" />
@@ -149,10 +151,6 @@
         <activity android:name=".ui.secretdoor.SecretDoorActivity" />
         <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity" />
         <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
-        <activity
-            android:name=".ui.fakepin.FakePinComponentActivity"
-            android:theme="@style/AppTheme"
-            android:label="@string/app_name" />
         <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity" />
         <activity android:name=".ui.facedown.FaceDownActivity" />
         <activity

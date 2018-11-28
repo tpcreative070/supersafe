@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.askpermission;
 import android.Manifest;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import com.karumi.dexter.Dexter;
@@ -25,6 +26,7 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_permission);
     }

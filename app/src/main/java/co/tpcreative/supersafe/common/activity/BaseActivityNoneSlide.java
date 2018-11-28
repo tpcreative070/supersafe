@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.activity;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-import com.r0adkll.slidr.model.SlidrConfig;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -21,24 +21,23 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.EnumStatus;
-
+import co.tpcreative.supersafe.model.Theme;
+import spencerstudios.com.bungeelib.Bungee;
 
 
 public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
+
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
     private Toast mToast;
     private HomeWatcher mHomeWatcher;
     public static final String TAG = BaseActivityNoneSlide.class.getSimpleName();
-    private SlidrConfig mConfig;
     protected Storage storage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +45,24 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         actionBar = getSupportActionBar();
         onStartCount = 1;
         if (savedInstanceState == null) {
-           // this.overridePendingTransition(R.animator.anim_slide_in_left,
-           //         R.animator.anim_slide_out_left);
+            Bungee.fade(this);
         } else {
             onStartCount = 2;
         }
+        storage = new Storage(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        storage = new Storage(this);
+    }
+
+    @Override
+    public Resources.Theme getTheme() {
+        Resources.Theme theme = super.getTheme();
+        final Theme result = Theme.getInstance().getThemeInfo();
+        if (result!=null){
+            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
+        }
+        return theme;
     }
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
@@ -67,7 +75,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
             window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
         }
     }
-
 
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
@@ -229,8 +236,7 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         if (onStartCount > 1) {
-            //this.overridePendingTransition(R.animator.anim_slide_in_right,
-            //        R.animator.anim_slide_out_right);
+            Bungee.fade(this);
         } else if (onStartCount == 1) {
             onStartCount++;
         }

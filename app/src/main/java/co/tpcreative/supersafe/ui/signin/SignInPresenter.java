@@ -14,6 +14,7 @@ import java.util.Map;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignInRequest;
@@ -67,6 +68,7 @@ public class SignInPresenter extends Presenter<BaseView<User>>{
                     else{
                         view.onSuccessful(onResponse.message,EnumStatus.SIGN_IN,onResponse.user);
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(onResponse.user));
+                        ServiceManager.getInstance().onInitConfigurationFile();
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

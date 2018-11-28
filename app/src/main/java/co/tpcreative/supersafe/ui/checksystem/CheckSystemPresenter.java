@@ -155,6 +155,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                             email = mUser.other_email;
                         }
                         onSendGmail(email,onResponse.user.code);
+                        ServiceManager.getInstance().onInitConfigurationFile();
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

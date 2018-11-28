@@ -56,10 +56,10 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
         } else {
             onStartCount = 2;
         }
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        storage = new Storage(this);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        storage = new Storage(this);
     }
 
     protected void onDrawOverLay(Activity activity){

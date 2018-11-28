@@ -3,6 +3,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -27,17 +28,14 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -52,10 +50,9 @@ import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity;
 
 
-public class FakePinComponentActivity extends BaseGoogleApi implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
+public class FakePinComponentActivity extends BaseActivityNoneSlide implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
 
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
@@ -67,6 +64,7 @@ public class FakePinComponentActivity extends BaseGoogleApi implements BaseView 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fake_pin_component);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -156,7 +154,6 @@ public class FakePinComponentActivity extends BaseGoogleApi implements BaseView 
             }
         });
     }
-
 
     public void onShowDialog() {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
@@ -437,33 +434,5 @@ public class FakePinComponentActivity extends BaseGoogleApi implements BaseView 
         }
     }
 
-    @Override
-    protected void onDriveClientReady() {
 
-    }
-
-    @Override
-    protected void onDriveSuccessful() {
-
-    }
-
-    @Override
-    protected void onDriveError() {
-
-    }
-
-    @Override
-    protected void onDriveSignOut() {
-
-    }
-
-    @Override
-    protected void onDriveRevokeAccess() {
-
-    }
-
-    @Override
-    protected boolean isSignIn() {
-        return false;
-    }
 }

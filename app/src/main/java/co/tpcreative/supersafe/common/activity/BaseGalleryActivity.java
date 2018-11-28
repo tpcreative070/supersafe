@@ -70,10 +70,10 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
         } else {
             onStartCount = 2;
         }
+        storage = new Storage(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
-        storage = new Storage(this);
     }
 
     protected void onDrawOverLay(Activity activity){
