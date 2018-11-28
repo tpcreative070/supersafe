@@ -10,14 +10,22 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity;
 
 
 public class CameraActivity extends BaseActivity implements
@@ -119,14 +127,33 @@ public class CameraActivity extends BaseActivity implements
 
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        mCameraView.start();
+        GalleryCameraMediaManager.getInstance().setProgressing(false);
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(CameraActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -134,26 +161,12 @@ public class CameraActivity extends BaseActivity implements
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mCameraView.start();
-        GalleryCameraMediaManager.getInstance().setProgressing(false);
-        onRegisterHomeWatcher();
-        Utils.Log(TAG,"onResume");
-    }
 
     @Override
     protected void onPause() {
         mCameraView.stop();
         Utils.Log(TAG,"onPause");
         super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Utils.Log(TAG,"onDestroy");
     }
 
     @Override

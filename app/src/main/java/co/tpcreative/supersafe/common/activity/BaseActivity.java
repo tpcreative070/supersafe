@@ -34,7 +34,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
+public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -131,10 +131,14 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+    }
+
+    @Override
     protected void onDestroy() {
         Utils.Log(TAG,"onDestroy....");
-        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonMultipleListener.getInstance().remove(null);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -147,7 +151,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
     @Override
     protected void onResume() {
         Utils.Log(TAG,"onResume....");
-        SingletonMultipleListener.getInstance().addListener(this);
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){

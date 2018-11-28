@@ -6,14 +6,21 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 public class SecretDoorActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
 
@@ -52,28 +59,27 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        final Theme mTheme = Theme.getInstance().getThemeInfo();
-        PrefsController.putBoolean(getString(R.string.key_secret_door),b);
-    }
-
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
-            case FINISH:{
-                finish();
-                break;
-            }
+        if (!b){
+            PrefsController.putBoolean(getString(R.string.key_secret_door),b);
         }
     }
 
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        onFaceDown(isFaceDown);
-    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
+                break;
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorActivity.class.getSimpleName());
         final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door),false);
@@ -84,6 +90,19 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
             rlScanner.setVisibility(View.INVISIBLE);
         }
         btnSwitch.setChecked(value);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
 }

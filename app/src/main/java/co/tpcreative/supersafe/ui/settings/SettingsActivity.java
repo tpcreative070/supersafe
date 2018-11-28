@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,25 +16,24 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.switchbasic.SwitchBasicActivity;
 import spencerstudios.com.bungeelib.Bungee;
+
 
 public class SettingsActivity extends BaseActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
@@ -61,15 +59,6 @@ public class SettingsActivity extends BaseActivity {
         transaction.commit();
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
-            case FINISH:{
-                finish();
-                break;
-            }
-        }
-    }
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary, int colorPrimaryDark) {
         context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
@@ -82,25 +71,7 @@ public class SettingsActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        onFaceDown(isFaceDown);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        if (!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -118,8 +89,35 @@ public class SettingsActivity extends BaseActivity {
                 EventBus.getDefault().post(EnumStatus.COMPLETED_RECREATE);
                 break;
             }
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
+                break;
+            }
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(SettingsActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -217,14 +215,13 @@ public class SettingsActivity extends BaseActivity {
             return new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-
                     if (preference instanceof Preference){
                         if (preference.getKey().equals(getString(R.string.key_account))){
-                            Log.d(TAG,"value : ");
+                            Utils.Log(TAG,"value : ");
                             Navigator.onManagerAccount(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_lock_screen))){
-                            Navigator.onMoveToChangePin(getContext(), EnumPinAction.NONE);
+                            Navigator.onMoveToChangePin(getContext(),EnumPinAction.NONE);
                             Utils.Log(TAG,"Action here");
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
@@ -235,30 +232,24 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onMoveThemeSettings(activity);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
-
                             if (User.getInstance().isPremiumExpired()){
                                 onShowDialog(getString(R.string.your_premium_has_expired));
                                 return true;
                             }
-
                             Navigator.onMoveBreakInAlerts(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
-
                             if (User.getInstance().isPremiumExpired()){
                                 onShowDialog(getString(R.string.your_premium_has_expired));
                                 return true;
                             }
-
                             Navigator.onMoveFakePin(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_secret_door))){
-
                             if (User.getInstance().isPremiumExpired()){
                                 onShowDialog(getString(R.string.your_premium_has_expired));
                                 return true;
                             }
-
                             Navigator.onMoveSecretDoor(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_help_support))){
@@ -384,8 +375,6 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onMoveToPremium(getContext());
                         }
                     });
-
-
             builder.show();
         }
 

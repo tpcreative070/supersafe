@@ -304,7 +304,6 @@
 
                 </RelativeLayout>
 
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -325,12 +324,11 @@
                         android:layout_height="@dimen/button_high"
                         android:background="@null"
                         android:text="@string/resend"
-                        android:textColor="@color/colorButtonDark"
+                        android:textColor="?attr/colorAccent"
                         android:textSize="@dimen/text_size_normal"/>
 
                 </RelativeLayout>
             </LinearLayout>
-
         </LinearLayout>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

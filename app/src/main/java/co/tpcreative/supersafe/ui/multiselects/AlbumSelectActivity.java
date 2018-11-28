@@ -159,6 +159,7 @@ public class AlbumSelectActivity extends HelperActivity {
         SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSelectActivity.class.getSimpleName());
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();

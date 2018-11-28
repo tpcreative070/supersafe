@@ -7,6 +7,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -14,7 +19,9 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
@@ -52,15 +59,34 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
         }
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinActivity.class.getSimpleName());
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
@@ -93,12 +119,5 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
         Navigator.onMoveFakePinComponent(this);
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinActivity.class.getSimpleName());
-    }
 
 }

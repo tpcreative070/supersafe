@@ -27,12 +27,19 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
+import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -45,9 +52,10 @@ import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity;
 
 
-public class FakePinComponentActivity extends BaseActivity implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
+public class FakePinComponentActivity extends BaseGoogleApi implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
 
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
@@ -283,9 +291,23 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
+                break;
+            }
+        }
+    };
+
     @Override
     protected void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         presenter.getData();
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
@@ -293,12 +315,17 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        //onFaceDown(isFaceDown);
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
     }
 
+
     @Override
-    public void onNotifier(EnumStatus status) {
+    public void onOrientationChange(boolean isFaceDown) {
+
     }
 
     @Override
@@ -410,4 +437,33 @@ public class FakePinComponentActivity extends BaseActivity implements BaseView ,
         }
     }
 
+    @Override
+    protected void onDriveClientReady() {
+
+    }
+
+    @Override
+    protected void onDriveSuccessful() {
+
+    }
+
+    @Override
+    protected void onDriveError() {
+
+    }
+
+    @Override
+    protected void onDriveSignOut() {
+
+    }
+
+    @Override
+    protected void onDriveRevokeAccess() {
+
+    }
+
+    @Override
+    protected boolean isSignIn() {
+        return false;
+    }
 }

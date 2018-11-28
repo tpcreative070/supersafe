@@ -16,12 +16,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -74,14 +81,38 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override
@@ -185,18 +216,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        onFaceDown(isFaceDown);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
-    }
-
-    @Override
     public void onBackPressed() {
         if (isReload){
             Intent intent = getIntent();
@@ -206,8 +225,4 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         super.onBackPressed();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

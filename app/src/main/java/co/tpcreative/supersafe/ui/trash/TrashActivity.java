@@ -20,6 +20,11 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -30,9 +35,11 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 
 
 public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
@@ -79,16 +86,6 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         presenter.getData(this);
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
-            case FINISH:{
-                finish();
-                break;
-            }
-        }
-    }
-
 
     public void onUpdatedView(){
         if (User.getInstance().isPremiumExpired()){
@@ -98,17 +95,39 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         }
     }
 
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        onFaceDown(isFaceDown);
-    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
+                break;
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         onRegisterHomeWatcher();
         SuperSafeApplication.getInstance().writeKeyHomePressed(TrashActivity.class.getSimpleName());
         onUpdatedView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     public void initRecycleView(LayoutInflater layoutInflater){

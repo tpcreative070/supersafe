@@ -250,12 +250,12 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             switch (action) {
                 case SCREEN_PRESS_HOME: {
                     Utils.Log(TAG, "Start screen off.................:" + activity.getClass().getSimpleName());
-                    Navigator.onMoveToVerifyPin(activity, EnumPinAction.NONE);
                     PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal());
+                    Navigator.onMoveToVerifyPin(activity, EnumPinAction.NONE);
                     break;
                 }
                 default: {
-                    Utils.Log(TAG, "Nothing to do");
+                    Utils.Log(TAG, "Nothing to do "+ action.name());
                 }
             }
         } else {

@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:textColor="@color/colorButton"
+                android:textColor="?attr/colorAccent"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/forgot_your_pin"
                 android:layout_width="match_parent"
@@ -95,6 +95,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
                     android:indeterminate="true"
+
                     android:indeterminateOnly="false"/>
             </RelativeLayout>
 
@@ -121,17 +122,18 @@
                 style="@style/RegularTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
                 android:hint="@string/code"
                 android:imeOptions="actionDone"
-                android:inputType="text|textCapCharacters"
+                android:inputType="number"
                 android:singleLine="true"
                 android:textSize="@dimen/text_size_normal"
-                app:met_baseColor="@color/colorButton"
+                app:met_baseColor="?attr/colorAccent"
                 app:met_floatingLabel="highlight"
-                app:met_primaryColor="@color/colorButton"
-                app:met_textColor="@color/material_gray_700"
-                app:met_textColorHint="@color/colorButton" />
+                app:met_primaryColor="?attr/colorAccent"
+                app:met_textColor="?attr/colorAccent"
+                app:met_textColorHint="?attr/colorAccent" />
 
             <Button
                 android:id="@+id/btnReset"

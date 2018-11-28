@@ -1,30 +1,21 @@
 package co.tpcreative.supersafe.ui.facedown;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.model.EnumStatus;
+import spencerstudios.com.bungeelib.Bungee;
 
-public class FaceDownActivity extends BaseActivity {
+public class FaceDownActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_face_down);
-        onDrawOverLay(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         finish();
-    }
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
-
-    }
-
-    @Override
-    public void onNotifier(EnumStatus status) {
-
+        Bungee.fade(this);
     }
 }

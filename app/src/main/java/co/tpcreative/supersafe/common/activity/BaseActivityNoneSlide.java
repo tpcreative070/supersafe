@@ -29,7 +29,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 
 
 
-public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
+public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -56,7 +56,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         }
         storage = new Storage(this);
     }
-
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
         context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
@@ -108,8 +107,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         Utils.Log(TAG,"onDestroy....");
-        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonMultipleListener.getInstance().remove(null);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -120,9 +117,14 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+    }
+
+    @Override
     protected void onResume() {
         Utils.Log(TAG,"onResume....");
-        SingletonMultipleListener.getInstance().addListener(this);
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){

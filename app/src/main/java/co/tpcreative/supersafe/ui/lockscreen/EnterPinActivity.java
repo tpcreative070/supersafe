@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.lockscreen;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -27,16 +26,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.multidots.fingerprintauth.FingerPrintAuthCallback;
 import com.multidots.fingerprintauth.FingerPrintAuthHelper;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -141,14 +136,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 //        rlLockScreen.setBackgroundColor(getResources().getColor(theme.getPrimaryColor()));
 //        setStatusBarColored(this, theme.getPrimaryColor(), theme.getPrimaryDarkColor());
 
-
         presenter = new LockScreenPresenter();
         presenter.bindView(this);
         int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
         mPinAction = EnumPinAction.values()[result];
         int resultNext = getIntent().getIntExtra(EXTRA_ENUM_ACTION, 0);
         mPinActionNext = EnumPinAction.values()[resultNext];
-
 
         switch (mPinAction) {
             case SET: {
@@ -163,7 +156,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     onDisplayView();
                     onDisplayText();
                 } else {
-
                     if (Utils.isSensorAvailable()) {
                         boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
                         if (isFingerPrintUnLock) {
@@ -172,7 +164,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             onSetVisitFingerprintView(isFingerprint);
                         }
                     }
-
                     final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door), false);
                     if (value) {
                         imgSwitchTypeUnClock.setVisibility(View.INVISIBLE);
@@ -181,8 +172,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         onDisplayView();
                         onDisplayText();
                     }
-
-
                 }
                 break;
             }
@@ -315,13 +304,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ServiceManager.getInstance().onStartService();
+        SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
     }
 
     @OnClick(R.id.btnDone)
@@ -363,7 +352,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         SingletonEnterPinManager.getInstance().setEnterPinWorking(true);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -400,7 +388,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         return false;
     }
 
-
     private void setPin(String pin) {
         switch (mPinAction) {
             case SET: {
@@ -418,6 +405,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             }
                             default: {
                                 Navigator.onMoveToMainTab(this);
+                                Bungee.fade(this);
                                 presenter.onChangeStatus(EnumStatus.SET, EnumPinAction.DONE);
                                 break;
                             }
@@ -481,6 +469,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                                 default: {
                                     writePinToSharedPreferences(pin);
                                     Navigator.onMoveToMainTab(this);
+                                    Bungee.fade(this);
                                     presenter.onChangeStatus(EnumStatus.RESET, EnumPinAction.DONE);
                                     break;
                                 }
@@ -504,6 +493,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 if (mUser != null) {
                     PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
                     Navigator.onMoveToMainTab(EnterPinActivity.this);
+                    Bungee.fade(EnterPinActivity.this);
                     presenter.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE);
                 }
             }
@@ -568,7 +558,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
         }
-
     }
 
     private void shake() {
@@ -664,7 +653,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             imgLauncher.setVisibility(View.INVISIBLE);
             includeLayout.setVisibility(View.GONE);
 
-
             if (Utils.isSensorAvailable()) {
                 boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
                 if (isFingerPrintUnLock) {
@@ -673,8 +661,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     onSetVisitFingerprintView(isFingerprint);
                 }
             }
-
-
         }
     }
 
@@ -781,8 +767,15 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 mPinAction = action;
                 switch (action) {
                     case DONE: {
-                        Navigator.onMoveFakePinComponent(this);
-                        finish();
+                        Handler handler =  new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Navigator.onMoveFakePinComponent(EnterPinActivity.this);
+                                Bungee.fade(EnterPinActivity.this);
+                                finish();
+                            }
+                        },100);
                         break;
                     }
                 }
@@ -803,11 +796,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 Utils.Log(TAG, "Nothing to do");
                 break;
             }
-
         }
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -819,7 +809,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 switch (action) {
                     case SCREEN_LOCK: {
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.STILL_SCREEN_LOCK.ordinal());
-                        SingletonMultipleListener.getInstance().notifyListeners(EnumStatus.FINISH);
+                        EventBus.getDefault().post(EnumStatus.FINISH);
                         Utils.Log(TAG, "onStillScreenLock");
                     }
                 }
@@ -987,7 +977,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         if (!isFingerPrintUnLock) {
             return;
         }
-
         switch (mPinAction) {
             case VERIFY: {
                 presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.DONE);
@@ -1024,7 +1013,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         return getApplicationContext();
     }
 
-
     @OnClick(R.id.imgSwitchTypeUnClock)
     public void onClickedSwitchTypeUnlock(View view) {
         if (isFingerprint) {
@@ -1052,15 +1040,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-
     /*Settings preference*/
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
         private MyPreference mChangePin;
         private MySwitchPreference mFaceDown;
         private MySwitchPreference mFingerPrint;
-
-
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
          * corresponding preference has been changed.
@@ -1094,7 +1079,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             };
         }
 
-
         @Override
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -1102,7 +1086,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             mChangePin = (MyPreference) findPreference(getString(R.string.key_change_pin));
             mChangePin.setOnPreferenceChangeListener(createChangeListener());
             mChangePin.setOnPreferenceClickListener(createActionPreferenceClickListener());
-
 
             /*Face down*/
 
@@ -1170,7 +1153,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     public void onImageCapture(@NonNull File imageFile, @NonNull String pin) {
         super.onImageCapture(imageFile, pin);
-        showMessage(imageFile.getAbsolutePath());
         BreakInAlerts inAlerts = new BreakInAlerts();
         inAlerts.fileName = imageFile.getAbsolutePath();
         inAlerts.pin = pin;

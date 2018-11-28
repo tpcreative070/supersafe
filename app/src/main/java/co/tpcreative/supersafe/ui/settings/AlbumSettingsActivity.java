@@ -23,6 +23,11 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -80,14 +85,33 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         onSetUpPreference();
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
+        presenter.getData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
     }
 
     @Override
@@ -95,13 +119,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         onFaceDown(isFaceDown);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
-        presenter.getData();
-    }
 
     @Override
     public void onStartLoading(EnumStatus status) {

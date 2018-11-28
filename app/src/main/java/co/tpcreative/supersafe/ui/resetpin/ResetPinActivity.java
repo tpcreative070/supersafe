@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.resetpin;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -14,6 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -30,7 +35,9 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -62,7 +69,8 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         if (presenter.mUser!=null){
             String email = presenter.mUser.email;
             if (email!=null){
-                String result = String.format(getString(R.string.request_an_access_code),"<font color='#0091EA'>" + email +"</font>");
+                String result = Utils.getFontString(R.string.request_an_access_code,email);
+                tvStep1.setText(Html.fromHtml(result));
                 tvStep1.setText(Html.fromHtml(result));
             }
         }
@@ -78,14 +86,32 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         }
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
     }
 
     @Override
@@ -93,17 +119,12 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         onFaceDown(isFaceDown);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
-    }
 
     public void setProgressValue(){
+        Theme theme = Theme.getInstance().getThemeInfo();
         CircularProgressDrawable circularProgressDrawable;
         CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
-                .colors(getResources().getIntArray(R.array.gplus_colors))
+                .color(getResources().getColor(theme.getAccentColor()))
                 .sweepSpeed(2)
                 .rotationSpeed(2)
                 .strokeWidth(Utils.dpToPx(3))
@@ -114,6 +135,9 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
                 0,
                 mCircularProgressBar.getWidth(),
                 mCircularProgressBar.getHeight());
+
+//        mCircularProgressBar.getIndeterminateDrawable().setColorFilter(.getResources().getColor(theme.getAccentColor()),
+//                PorterDuff.Mode.SRC_IN);
         mCircularProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -187,13 +211,6 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
                 request.email = presenter.mUser.email;
                 presenter.onRequestCode(request);
             }
-            else{
-                Toast.makeText(this,"Email is null",Toast.LENGTH_SHORT).show();
-            }
-
-        }
-        else{
-            Toast.makeText(this,"Email is null",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -226,15 +243,15 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
             case REQUEST_CODE_ERROR:{
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 btnSendRequest.setEnabled(true);
-                Toast.makeText(this,"Request code error !!!",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,R.string.request_code_occurred_error);
                 break;
             }
             case SEND_EMAIL_ERROR:{
-                Toast.makeText(this,"Sent email email error !!!",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,R.string.sent_email_occurred_error);
                 break;
             }
             case VERIFIED_ERROR:{
-                Toast.makeText(this,"Verify failed",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,R.string.verify_occurred_error);
                 break;
             }
         }
@@ -255,7 +272,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
             case SEND_EMAIL_SUCCESSFUL:{
                 onStopLoading(EnumStatus.OTHER);
                 btnSendRequest.setText(getString(R.string.send_verification_code));
-                Toast.makeText(this,"Sent the code to your email. Please check it",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,R.string.we_sent_access_code_to_your_email);
                 break;
             }
             case VERIFIED_SUCCESSFUL:{

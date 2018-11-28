@@ -18,6 +18,11 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
@@ -31,12 +36,15 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
 
 public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
 
     private static final String TAG = CheckSystemActivity.class.getSimpleName();
-
     @BindView(R.id.progressBarCircularIndeterminate)
     ProgressBarCircularIndeterminate progressBarCircularIndeterminate;
     private CheckSystemPresenter presenter;
@@ -82,28 +90,40 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         progressBarCircularIndeterminate.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(CheckSystemActivity.class.getSimpleName());
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+    }
+
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //ServiceManager.getInstance().onInitMainCategories();
-        presenter.unbindView();
-    }
 
     @Override
     public Context getContext() {
@@ -195,13 +215,6 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(CheckSystemActivity.class.getSimpleName());
     }
 
     @Override

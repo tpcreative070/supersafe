@@ -30,16 +30,6 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
     }
 
     @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
-            case FINISH:{
-                finish();
-                break;
-            }
-        }
-    }
-
-    @Override
     public void onOrientationChange(boolean isFaceDown) {
 
     }

@@ -35,13 +35,14 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private String TAG = PrivateAdapter.class.getSimpleName();
 
+    Theme theme = Theme.getInstance().getThemeInfo();
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(400, 400)
-            .placeholder(R.color.colorPrimary)
+            .placeholder(theme.getPrimaryColor())
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .error(R.color.colorPrimary)
+            .error(theme.getAccentColor())
             .priority(Priority.HIGH);
 
     public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {

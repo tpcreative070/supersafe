@@ -44,10 +44,9 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 
-public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
+public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -141,8 +140,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonMultipleListener.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -152,10 +149,16 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        if (mCameraPreview != null) mCameraPreview.stopPreviewAndFreeCamera();
+    }
+
+    @Override
     protected void onResume() {
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         Utils.Log(TAG,"Action here........onResume");
-        SingletonMultipleListener.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();
@@ -170,13 +173,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             startCamera(mCachedCameraConfig);
         }
         super.onResume();
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mCameraPreview != null) mCameraPreview.stopPreviewAndFreeCamera();
     }
 
     protected void onRegisterHomeWatcher(){
@@ -281,12 +277,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         }
     }
 
-
-
     /*Hidden camera*/
-
-
-
 
     /**
      * Add camera preview to the root of the activity layout.

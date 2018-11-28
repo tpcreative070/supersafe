@@ -87,18 +87,18 @@ public class SensorFaceUpDownChangeNotifier {
     private void notifyListeners() {
         ArrayList<WeakReference<Listener>> deadLiksArr = new ArrayList<WeakReference<Listener>>();
         for (WeakReference<Listener> wr : mListeners) {
-            if (wr.get() == null)
+            if (wr.get() == null){
                 deadLiksArr.add(wr);
-            else
+            }
+            else {
                 wr.get().onOrientationChange(isFaceDown);
+            }
         }
-
         // remove dead references
         for (WeakReference<Listener> wr : deadLiksArr) {
             mListeners.remove(wr);
         }
     }
-
 
     public interface Listener {
         void onOrientationChange(boolean isFaceDown);
@@ -123,13 +123,11 @@ public class SensorFaceUpDownChangeNotifier {
                 notifyListeners();
                 isFaceDownTemporary = isFaceDown;
             }
-
         }
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
         }
-
     }
 }

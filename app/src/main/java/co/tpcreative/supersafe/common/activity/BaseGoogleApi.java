@@ -56,7 +56,7 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 
 
-public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
+public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener{
 
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
 
@@ -113,14 +113,15 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
                 PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
+                Utils.Log(TAG,"Lock screen");
                 break;
             }
             default:{
-                Utils.Log(TAG,"Nothing to do");
+                Utils.Log(TAG,"Nothing to do " +action.name());
             }
         }
     }
@@ -173,9 +174,13 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
+        super.onPause();
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonMultipleListener.getInstance().remove(this);
+    }
+
+    @Override
+    protected void onDestroy() {
         if (mHomeWatcher!=null){
             Utils.Log(TAG,"Stop home watcher....");
             mHomeWatcher.stopWatch();
@@ -188,7 +193,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     @Override
     protected void onResume() {
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        SingletonMultipleListener.getInstance().addListener(this);
         super.onResume();
     }
 
@@ -200,7 +204,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 return;
             }
         }
-
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
@@ -210,10 +213,11 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 switch (action){
                     case NONE:{
                         PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                        Utils.Log(TAG,"Pressed home button");
                         break;
                     }
                     default:{
-                        Utils.Log(TAG,"Nothing to do");
+                        Utils.Log(TAG,"Nothing to do on home" +action.name());
                     }
                 }
                 mHomeWatcher.stopWatch();

@@ -38,7 +38,7 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment;
 
 
-public abstract class BaseGalleryActivity extends AppCompatActivity implements  MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener,SingletonMultipleListener.Listener{
+public abstract class BaseGalleryActivity extends AppCompatActivity implements  MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -87,8 +87,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
                 .build();
         Slidr.attach(activity, mConfig);
     }
-
-
 
 
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
@@ -148,8 +146,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     }
     @Override
     protected void onDestroy() {
-        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        SingletonMultipleListener.getInstance().remove(this);
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
@@ -159,10 +155,15 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+    }
+
+    @Override
     protected void onResume() {
         Utils.Log(TAG,"Action here........onResume");
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        SingletonMultipleListener.getInstance().addListener(this);
         if (mHomeWatcher!=null){
             if (!mHomeWatcher.isRegistered){
                 onRegisterHomeWatcher();

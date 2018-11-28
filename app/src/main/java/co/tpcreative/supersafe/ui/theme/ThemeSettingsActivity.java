@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 import butterknife.BindView;
@@ -25,9 +27,12 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
+import co.tpcreative.supersafe.ui.trash.TrashActivity;
+import spencerstudios.com.bungeelib.Bungee;
 
 
 public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
@@ -62,13 +67,34 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         tvPremiumDescription.setText(getString(R.string.customize_your_theme));
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(ThemeSettingsActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+        if(isUpdated){
+            EventBus.getDefault().post(EnumStatus.RECREATE);
         }
     }
 
@@ -98,13 +124,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(ThemeSettingsActivity.class.getSimpleName());
-    }
-
-    @Override
     public void onBackPressed() {
         Intent intent = getIntent();
         if (isUpdated){
@@ -122,14 +141,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
             }
         }
         return false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(isUpdated){
-            EventBus.getDefault().post(EnumStatus.RECREATE);
-        }
     }
 
     @Override

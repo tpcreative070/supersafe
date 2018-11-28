@@ -75,11 +75,6 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
 
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-
-    }
-
     private void onStartProgressing() {
         try {
             runOnUiThread(new Runnable() {

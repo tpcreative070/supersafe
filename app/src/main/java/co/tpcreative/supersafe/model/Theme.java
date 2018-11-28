@@ -22,6 +22,7 @@ public class Theme implements Serializable {
     private int primaryColor;
     private int primaryDarkColor;
     private int accentColor;
+    private String accentColorHex;
     public boolean isCheck;
 
     private static Theme instance ;
@@ -44,12 +45,13 @@ public class Theme implements Serializable {
         this.isCheck = false;
     }
 
-    public Theme(int id , int primaryColor, int primaryDarkColor, int accentColor) {
+    public Theme(int id , int primaryColor, int primaryDarkColor, int accentColor,String accentColorHex) {
         this.id = id;
         this.primaryColor = primaryColor;
         this.primaryDarkColor = primaryDarkColor;
         this.accentColor = accentColor;
         this.isCheck = false;
+        this.accentColorHex = accentColorHex;
     }
 
 
@@ -67,6 +69,10 @@ public class Theme implements Serializable {
 
     public void setPrimaryColor(int primaryColor) {
         this.primaryColor = primaryColor;
+    }
+
+    public String getAccentColorHex() {
+        return accentColorHex;
     }
 
     public int getPrimaryDarkColor() {
@@ -99,7 +105,7 @@ public class Theme implements Serializable {
         catch (Exception e){
             e.printStackTrace();
         }
-        return new Theme(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton);
+        return new Theme(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
     }
 
 

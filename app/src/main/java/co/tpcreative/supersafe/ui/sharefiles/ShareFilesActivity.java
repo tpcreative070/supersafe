@@ -255,11 +255,6 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     }
 
     @Override
-    public void onNotifier(EnumStatus status) {
-
-    }
-
-    @Override
     public void onOrientationChange(boolean isFaceDown) {
 
     }

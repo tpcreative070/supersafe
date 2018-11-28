@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,13 +29,20 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonEnterPinManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
@@ -44,6 +52,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
@@ -129,20 +138,39 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     }
 
-
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        isSync = true;
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(VerifyAccountActivity.class.getSimpleName());
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+    }
 
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override
@@ -453,21 +481,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                  break;
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isSync = true;
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(VerifyAccountActivity.class.getSimpleName());
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        presenter.unbindView();
-    }
-
 
     @Override
     public void onStartLoading(EnumStatus status) {

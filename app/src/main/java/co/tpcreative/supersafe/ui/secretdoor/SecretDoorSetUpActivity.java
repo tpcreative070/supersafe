@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.text.SpannableString;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -15,10 +16,17 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 
@@ -68,13 +76,36 @@ public class SecretDoorSetUpActivity extends BaseActivity {
         });
     }
 
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                finish();
+                break;
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorSetUpActivity.class.getSimpleName());
     }
 
     @Override
-    public void onNotifier(EnumStatus status) {
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
 
     }
 
@@ -90,6 +121,7 @@ public class SecretDoorSetUpActivity extends BaseActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        PrefsController.putBoolean(getString(R.string.key_secret_door),true);
                         onBackPressed();
                     }
                 })

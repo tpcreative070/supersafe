@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -34,11 +33,9 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -57,7 +54,6 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
-import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
@@ -130,18 +126,55 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     }
 
     @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    public void onOrientationChange(boolean isFaceDown) {
+        Utils.Log(TAG,"onOrientationChange");
+        onFaceDown(isFaceDown);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case COMPLETED_RECREATE:{
+                recreate();
+                break;
+            }
+            case UNLOCK:{
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                break;
+            }
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initSpeedDial(true);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onCallLockScreen();
+        if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
+            Utils.Log(TAG,"isEnterPinWorking");
+            SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
+            return;
+        }
+        onSwitchToBasic();
+        GoogleDriveConnectionManager.getInstance().setListener(this);
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
+        presenter.onGetUserInfo();
+        Utils.Log(TAG,"onResume");
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        onFaceDown(isFaceDown);
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -450,26 +483,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         return menuItem;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initSpeedDial(true);
-        if (!EventBus.getDefault().isRegistered(this)){
-            EventBus.getDefault().register(this);
-        }
-        onCallLockScreen();
-        if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
-            Utils.Log(TAG,"isEnterPinWorking");
-            SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
-            return;
-        }
-        onSwitchToBasic();
-        GoogleDriveConnectionManager.getInstance().setListener(this);
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
-        presenter.onGetUserInfo();
-        Utils.Log(TAG,"onResume");
-    }
 
     public void onSwitchToBasic(){
         final User mUser  = User.getInstance().getUserInfo();
@@ -501,20 +514,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
         }
     }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(EnumStatus event) {
-        switch (event){
-            case COMPLETED_RECREATE:{
-                recreate();
-                break;
-            }
-            case UNLOCK:{
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                break;
-            }
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -552,14 +551,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             getAccessToken();
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Utils.Log(TAG,"OnDestroy");
-        EventBus.getDefault().unregister(this);
-    }
-
 
     public void onAnimationIcon(final EnumStatus status){
         Utils.Log(TAG,"value : "+ status.name());

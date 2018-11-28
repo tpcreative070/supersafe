@@ -16,6 +16,11 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -32,7 +37,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AppLists;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-
+import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity;
 
 public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,SingletonPremiumTimer.SingletonPremiumTimerListener,AccountManagerAdapter.ItemSelectedListener{
 
@@ -57,7 +62,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     RelativeLayout rlPremium;
     @BindView(R.id.scrollView)
     ScrollView scrollView;
-
     private AccountManagerPresenter presenter;
     private AccountManagerAdapter adapter;
 
@@ -149,14 +153,42 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         }
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
+        final boolean isPremium = User.getInstance().isPremium();
+        if (!isPremium){
+            SingletonPremiumTimer.getInstance().setListener(this);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+        SingletonPremiumTimer.getInstance().setListener(null);
+    }
+
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
+        onFaceDown(isFaceDown);
     }
 
     @Override
@@ -180,21 +212,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         Navigator.onMoveToPremium(this);
     }
 
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
-        onFaceDown(isFaceDown);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        final boolean isPremium = User.getInstance().isPremium();
-        if (!isPremium){
-            SingletonPremiumTimer.getInstance().setListener(this);
-        }
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
-    }
 
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){
@@ -219,12 +237,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 }
             });
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SingletonPremiumTimer.getInstance().setListener(null);
     }
 
     @Override
@@ -312,4 +324,5 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     protected boolean isSignIn() {
         return false;
     }
+
 }

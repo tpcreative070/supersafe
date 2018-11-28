@@ -58,11 +58,6 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
     }
 
     @Override
-    public void onNotifier(EnumStatus status) {
-
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
     }

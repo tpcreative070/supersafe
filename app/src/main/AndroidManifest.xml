@@ -62,7 +62,7 @@
         <!-- Enter pin code -->
         <activity
             android:name=".ui.lockscreen.EnterPinActivity"
-            android:label="@string/key_change"/>
+            android:label="@string/key_lock_screen"/>
         <activity
             android:name=".ui.signin.SignInActivity"
             android:screenOrientation="portrait"
@@ -151,6 +151,7 @@
         <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
         <activity
             android:name=".ui.fakepin.FakePinComponentActivity"
+            android:theme="@style/AppTheme"
             android:label="@string/app_name" />
         <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity" />
         <activity android:name=".ui.facedown.FaceDownActivity" />

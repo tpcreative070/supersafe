@@ -23,6 +23,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.snatik.storage.Storage;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,6 +46,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 
 
 public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener, BaseView<Long> {
@@ -326,14 +331,61 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         }
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status) {
-            case FINISH: {
-                finish();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(CloudManagerActivity.class.getSimpleName());
+        onShowSwitch();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        if (!isPauseCloudSync) {
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+        }
+        if (isDownload) {
+            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, false, false);
+            if (mList != null && mList.size() > 0) {
+                for (int i = 0; i < mList.size(); i++) {
+                    EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
+                    switch (formatType) {
+                        case IMAGE: {
+                            mList.get(i).isSyncCloud = false;
+                            mList.get(i).originalSync = false;
+                            mList.get(i).statusAction = EnumStatus.DOWNLOAD.ordinal();
+                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                            break;
+                        }
+                    }
+                }
+            }
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            Utils.Log(TAG, "Re-Download file");
+        }
+        if (isSpaceSaver){
+            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, true, false);
+            for (Items index : mList){
+                storage.deleteFile(index.originalPath);
+            }
+        }
+        presenter.unbindView();
     }
 
     @Override
@@ -346,13 +398,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         Navigator.onMoveToPremium(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(CloudManagerActivity.class.getSimpleName());
-        onShowSwitch();
-    }
 
     @Override
     protected void onDriveError() {
@@ -389,41 +434,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (!isPauseCloudSync) {
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
-        }
-
-        if (isDownload) {
-            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, false, false);
-            if (mList != null && mList.size() > 0) {
-                for (int i = 0; i < mList.size(); i++) {
-                    EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
-                    switch (formatType) {
-                        case IMAGE: {
-                            mList.get(i).isSyncCloud = false;
-                            mList.get(i).originalSync = false;
-                            mList.get(i).statusAction = EnumStatus.DOWNLOAD.ordinal();
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
-                            break;
-                        }
-                    }
-                }
-            }
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
-            Utils.Log(TAG, "Re-Download file");
-        }
-
-        if (isSpaceSaver){
-            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, true, false);
-            for (Items index : mList){
-                storage.deleteFile(index.originalPath);
-            }
-        }
-
-    }
 
     public void onShowDialog() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

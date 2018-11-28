@@ -41,6 +41,11 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.List;
 import javax.crypto.Cipher;
@@ -49,8 +54,10 @@ import javax.crypto.spec.SecretKeySpec;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -58,6 +65,8 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import dyanamitechetan.vusikview.VusikView;
 
 public class PlayerActivity extends BasePlayerActivity implements BaseView, PlayerAdapter.ItemSelectedListener {
@@ -161,13 +170,37 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status) {
-            case FINISH: {
-                finish();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(PlayerActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+        if (player != null) {
+            if (animationPlayer != null) {
+                animationPlayer.stopNotesFall();
+            }
+            player.stop();
         }
     }
 
@@ -271,25 +304,6 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Utils.Log(TAG,"onDestroy");
-        if (player != null) {
-            if (animationPlayer != null) {
-                animationPlayer.stopNotesFall();
-            }
-            player.stop();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(PlayerActivity.class.getSimpleName());
     }
 
     @Override

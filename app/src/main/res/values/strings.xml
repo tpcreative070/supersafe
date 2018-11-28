@@ -214,6 +214,7 @@
     <string name="select_again">SELECT AGAIN</string>
     <string name="user_another">USER ANOTHER</string>
     <string name="user_another_google_drive_title">Are you sure want to change another Google Drive?</string>
+    <string name="are_you_sure_delete_all_items">Are you sure you want to delete these items?</string>
     <string name="verify_email">Verify Email</string>
     <string name="pin_code">PIN CODE</string>
     <string name="description_pin_code">A Pin code has been sent to your email %1$s</string>
@@ -298,7 +299,7 @@
     <string name="error_camera_permission_denied">Camera permission denied.</string>
     <string name="btn_tittle_capture_image">Capture image</string>
     <string name="try_it_now">Try it now</string>
-    <string name="long_press_the_log">Long press the logo ti active Secret Door.</string>
+    <string name="long_press_the_log">Long press the logo to active Secret Door.</string>
     <string name="enable_secret_door">Enable Secret Door?</string>
     <string name="enable_secret_door_detail">SuperSafe will look like a different app when you open it. All you need to do is find and long-press the SuperSafe logo to reveal the PIN pad.</string>
     <string name="successful_percent">100 %</string>
@@ -581,6 +582,9 @@
     <string name="imported_file_successful">Imported %1$s files successful</string>
     <string name="we_sent_access_code_to_your_email">We sent access code to your email. Please check it.</string>
     <string name="error_occurred">Error occurred!</string>
+    <string name="verify_occurred_error">Verify occurred error</string>
+    <string name="sent_email_occurred_error">Sent email occurred error</string>
+    <string name="request_code_occurred_error">Request code occurred error</string>
 
 
     <!-- Google ads -->

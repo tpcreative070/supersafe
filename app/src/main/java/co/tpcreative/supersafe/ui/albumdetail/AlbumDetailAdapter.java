@@ -172,7 +172,8 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                     }
                 }
 
-                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.colorAccent),
+                final Theme theme = Theme.getInstance().getThemeInfo();
+                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(theme.getAccentColor()),
                         PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
                 switch (progress){

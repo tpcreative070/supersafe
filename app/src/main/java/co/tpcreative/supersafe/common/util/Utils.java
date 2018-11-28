@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
@@ -33,6 +34,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
@@ -133,6 +136,27 @@ public class Utils {
         builder.title(R.string.confirm);
         builder.content(message);
         builder.positiveText(R.string.ok);
+        builder .show();
+    }
+
+    public static void showDialog(Activity activity, String message, ServiceManager.ServiceManagerSyncDataListener ls){
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(activity);
+        builder.title(R.string.confirm);
+        builder.content(message);
+        builder.positiveText(R.string.ok);
+        builder.negativeText(R.string.cancel);
+        builder.onNegative(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                ls.onCancel();
+            }
+        });
+        builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                ls.onCompleted();
+            }
+        });
         builder .show();
     }
 
@@ -1019,13 +1043,13 @@ public class Utils {
 
     public static String getFontString(final int content,String value){
         Theme theme = Theme.getInstance().getThemeInfo();
-        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font color='"+theme.getAccentColor()+"'>" + value +"</font>");
+        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font color='"+theme.getAccentColorHex()+"'>"+"<b>" + value +"</b>"+"</font>");
         return sourceString;
     }
 
     public static String getFontString(final int content,String value,int fontSize){
         Theme theme = Theme.getInstance().getThemeInfo();
-        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font size='"+fontSize+"' color='"+theme.getAccentColor()+"'>" + value +"</font>");
+        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font size='"+fontSize+"' color='"+theme.getAccentColorHex()+"'>"+"<b>" + value +"</b>"+"</font>");
         return sourceString;
     }
 

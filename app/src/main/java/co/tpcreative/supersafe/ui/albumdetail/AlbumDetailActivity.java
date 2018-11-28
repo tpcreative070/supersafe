@@ -44,6 +44,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.snatik.storage.Storage;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +77,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity;
 import dmax.dialog.SpotsDialog;
 
 
@@ -209,15 +215,39 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     }
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
         }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        GalleryCameraMediaManager.getInstance().setListener(this);
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumDetailActivity.class.getSimpleName());
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+        if (isReload) {
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+        }
+        storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
+    }
+
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
@@ -436,14 +466,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public Context getContext() {
         return getApplicationContext();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        GalleryCameraMediaManager.getInstance().setListener(this);
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumDetailActivity.class.getSimpleName());
     }
 
     /*Init Floating View*/
@@ -899,14 +921,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
      * Converting dp to pixel
      */
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isReload) {
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
-        }
-        storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
-    }
 
     @Override
     public void onError(String message, EnumStatus status) {

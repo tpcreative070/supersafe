@@ -32,6 +32,11 @@ import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +62,7 @@ import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.player.PlayerActivity;
 import dmax.dialog.SpotsDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -194,13 +200,42 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
 
-    @Override
-    public void onNotifier(EnumStatus status) {
-        switch (status){
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
             case FINISH:{
-                finish();
+                Navigator.onMoveToFaceDown(this);
                 break;
             }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+        onRegisterHomeWatcher();
+        SuperSafeApplication.getInstance().writeKeyHomePressed(PhotoSlideShowActivity.class.getSimpleName());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+        presenter.unbindView();
+        onStopSlider();
+        Utils.Log(TAG,"Destroy");
+        if (subscriptions!=null){
+            subscriptions.dispose();
+        }
+        try {
+            storage.deleteFile(Utils.getPackagePath(getApplicationContext()).getAbsolutePath());
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -346,14 +381,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             return PagerAdapter.POSITION_NONE;
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(PhotoSlideShowActivity.class.getSimpleName());
-    }
-
 
     public void onHideView(){
         if (isHide){
@@ -914,21 +941,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         onStopSlider();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        onStopSlider();
-        Utils.Log(TAG,"Destroy");
-        if (subscriptions!=null){
-            subscriptions.dispose();
-        }
-        try {
-            storage.deleteFile(Utils.getPackagePath(getApplicationContext()).getAbsolutePath());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
     public void onRotateBitmap(final Items items){
         subscriptions = Observable.create(subscriber -> {
