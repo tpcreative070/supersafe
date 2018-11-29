@@ -416,8 +416,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 @Override
                 public void run() {
                     if (dialog==null){
+                        co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
                         dialog = new SpotsDialog.Builder()
                                 .setContext(AlbumDetailActivity.this)
+                                .setDotColor(theme.getAccentColor())
                                 .setMessage(getString(R.string.progressing))
                                 .setCancelable(true)
                                 .build();

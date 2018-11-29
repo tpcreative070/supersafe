@@ -75,7 +75,11 @@
             android:layout="@layout/custom_preferences_item"
             android:icon="@drawable/baseline_description_white_48"
             android:key="@string/key_privacy_policy"
-            android:title="@string/key_privacy_policy"/>
+            android:title="@string/key_privacy_policy">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/tvPrimacyPolicy"></intent>
+        </Preference>
 
         <Preference
             android:layout="@layout/custom_preferences_item"

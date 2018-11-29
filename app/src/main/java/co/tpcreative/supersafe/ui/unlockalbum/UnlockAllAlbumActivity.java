@@ -72,7 +72,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         if (presenter.mUser!=null){
             String email = presenter.mUser.email;
             if (email!=null){
-                String result = String.format(getString(R.string.request_an_access_code),"<font color='#0091EA'>" + email +"</font>");
+                String result = Utils.getFontString(R.string.request_an_access_code,email);
                 tvStep1.setText(Html.fromHtml(result));
             }
         }
@@ -282,16 +282,16 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
                 btnSendRequest.setEnabled(true);
                 btnUnlock.setText(getString(R.string.unlock_all_albums));
                 btnUnlock.setEnabled(true);
-                Toast.makeText(this,"Request code error !!!",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,message);
                 break;
             }
             case SEND_EMAIL:{
-                Toast.makeText(this,"Sent email email error !!!",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,message);
                 break;
             }
             case VERIFY:{
                 btnUnlock.setText(getString(R.string.unlock_all_albums));
-                Toast.makeText(this,"Verify failed",Toast.LENGTH_SHORT).show();
+                Utils.showGotItSnackbar(tvStep1,message);
                 break;
             }
         }

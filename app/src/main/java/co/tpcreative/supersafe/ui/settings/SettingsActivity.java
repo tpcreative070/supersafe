@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -284,6 +285,11 @@ public class SettingsActivity extends BaseActivity {
                         else if (preference.getKey().equals(getString(R.string.key_upgrade))){
                             Navigator.onMoveToPremium(getContext());
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_privacy_policy))){
+                            Utils.Log(TAG,"Log here");
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.tvPrimacyPolicy)));
+                            startActivity(intent);
+                        }
                     }
                     return true;
                 }
@@ -377,7 +383,6 @@ public class SettingsActivity extends BaseActivity {
                     });
             builder.show();
         }
-
     }
 
 }

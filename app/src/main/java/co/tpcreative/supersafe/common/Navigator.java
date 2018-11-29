@@ -284,6 +284,11 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    public static void onMoveFakePinComponentInside(Context context){
+        Intent intent = new Intent(context, FakePinComponentActivity.class);
+        context.startActivity(intent);
+    }
+
     public static void onMoveSecretDoor(Context context){
         Intent intent = new Intent(context, SecretDoorActivity.class);
         context.startActivity(intent);

@@ -54,7 +54,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
             return;
         }
         if (NetworkUtil.pingIpAddress(view.getContext())) {
-            view.onError("NO internet", EnumStatus.VERIFIED_ERROR);
+            view.onError(getString(R.string.no_internet_connection), EnumStatus.VERIFIED_ERROR);
             return;
         }
         if (subscriptions == null) {
@@ -142,7 +142,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
             return;
         }
         if (NetworkUtil.pingIpAddress(view.getContext())) {
-            view.onError("NO internet", EnumStatus.REQUEST_CODE);
+            view.onError(getString(R.string.no_internet_connection), EnumStatus.REQUEST_CODE);
             return;
         }
 

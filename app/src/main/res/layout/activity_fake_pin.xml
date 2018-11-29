@@ -59,39 +59,13 @@
                 android:layout_height="wrap_content" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:tint="@color/grey_light"
-                android:layout_gravity="center"
-                android:src="@drawable/baseline_stars_white_48"
-                android:layout_width="@dimen/icon_size_30"
-                android:layout_height="@dimen/icon_size_30" />
-            <TextView
-                android:textSize="@dimen/text_size_normal"
-                android:layout_marginLeft="10dp"
-                android:text="@string/premium_feature"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
 
-        <TextView
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:textColor="@color/material_gray_800"
-            android:textSize="@dimen/text_size_normal"
-            android:text="@string/fake_pin"
+        <include
+            layout="@layout/layout_premium_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            ></include>
+
 
         <TextView
             android:id="@+id/tvCreatePin"

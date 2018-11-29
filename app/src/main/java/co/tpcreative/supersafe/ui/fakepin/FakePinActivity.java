@@ -7,25 +7,20 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class FakePinActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
 
@@ -37,6 +32,8 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     LinearLayout llView;
     @BindView(R.id.imgView)
     ImageView imgView;
+    @BindView(R.id.tvPremiumDescription)
+    TextView tvPremiumDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +54,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
         else{
             tvCreatePin.setText(getText(R.string.change_fake_pin));
         }
+        tvPremiumDescription.setText(getString(R.string.fake_pin));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -86,8 +84,6 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
         EventBus.getDefault().unregister(this);
     }
 
-
-
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
@@ -116,8 +112,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
 
     @OnClick(R.id.imgView)
     public void onViewComponent(View view){
-        Navigator.onMoveFakePinComponent(this);
+        Navigator.onMoveFakePinComponentInside(this);
     }
-
 
 }

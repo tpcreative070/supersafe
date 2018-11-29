@@ -820,6 +820,24 @@ public class Utils {
         }, 200);
     }
 
+    public static void showGotItSnackbar(final View view, final @StringRes String text) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                multilineSnackbar(
+                        Snackbar.make(
+                                view, text, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                .setAction(R.string.got_it, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+
+                                    }
+                                })
+                ).show();
+            }
+        }, 200);
+    }
+
     public static void showGotItSnackbar(final View view, final @StringRes int text, ServiceManager.ServiceManagerSyncDataListener ls) {
         new Handler().postDelayed(new Runnable() {
             @Override

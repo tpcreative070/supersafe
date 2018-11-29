@@ -128,17 +128,18 @@
                     style="@style/RegularTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:hint="@string/code"
                     android:imeOptions="actionDone"
                     android:inputType="number"
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_normal"
-                    app:met_baseColor="@color/colorButton"
+                    app:met_baseColor="?attr/colorAccent"
                     app:met_floatingLabel="highlight"
-                    app:met_primaryColor="@color/colorButton"
-                    app:met_textColor="@color/material_gray_700"
-                    app:met_textColorHint="@color/colorButton" />
+                    app:met_primaryColor="?attr/colorAccent"
+                    app:met_textColor="?attr/colorAccent"
+                    app:met_textColorHint="?attr/colorAccent"/>
 
                 <RelativeLayout
                     android:layout_width="wrap_content"

@@ -32,7 +32,6 @@ import spencerstudios.com.bungeelib.Bungee;
 public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
 
     Unbinder unbinder;
-    protected ActionBar actionBar ;
     int onStartCount = 0;
     private Toast mToast;
     private HomeWatcher mHomeWatcher;
@@ -42,7 +41,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        actionBar = getSupportActionBar();
         onStartCount = 1;
         if (savedInstanceState == null) {
             Bungee.fade(this);
@@ -107,8 +105,8 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
-        Log.d(TAG,"action here");
         unbinder = ButterKnife.bind(this);
+        Log.d(TAG,"action here");
     }
 
     @Override
@@ -196,10 +194,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
 
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    protected void setDisplayHomeAsUpEnabled(boolean check){
-        actionBar.setDisplayHomeAsUpEnabled(check);
     }
 
     protected void setNoTitle(){

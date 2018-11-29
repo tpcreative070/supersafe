@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.sharefiles;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +14,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.snatik.storage.Storage;
 import java.io.File;
 import java.util.ArrayList;
@@ -20,9 +28,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.PathUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -30,6 +41,9 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
 import dmax.dialog.SpotsDialog;
 
 public class ShareFilesActivity extends BaseActivity implements GalleryCameraMediaManager.AlbumDetailManagerListener{
@@ -55,11 +69,62 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_files);
+        User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser._id!=null){
+                ServiceManager.getInstance().onInitConfigurationFile();
+            }
+            else{
+                finish();
+                return;
+            }
+        }
+        else{
+            finish();
+            return;
+        }
         onDrawOverLay(this);
         storage = new Storage(this);
-        onHandlerIntent();
         onShowUI(View.GONE);
+        onAddPermission();
     }
+
+    public void onAddPermission() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            onHandlerIntent();
+                            SuperSafeApplication.getInstance().initFolder();
+                        }
+                        else{
+                            finish();
+                            Log.d(TAG,"Permission is denied");
+                        }
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            /*Miss add permission in manifest*/
+                            Log.d(TAG, "request permission is failed");
+                        }
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        /* ... */
+                        token.continuePermissionRequest();
+                    }
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Log.d(TAG, "error ask permission");
+                    }
+                }).onSameThread().check();
+    }
+
 
     void onHandlerIntent(){
         try {
@@ -286,8 +351,10 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 @Override
                 public void run() {
                     if (dialog==null){
+                        Theme theme = Theme.getInstance().getThemeInfo();
                         dialog = new SpotsDialog.Builder()
                                 .setContext(ShareFilesActivity.this)
+                                .setDotColor(theme.getAccentColor())
                                 .setMessage(getString(R.string.importing))
                                 .setCancelable(true)
                                 .build();
