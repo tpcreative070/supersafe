@@ -26,7 +26,6 @@ public class MePresenter extends Presenter<BaseView>{
     protected int others = 0;
 
 
-
     public MePresenter(){
 
     }

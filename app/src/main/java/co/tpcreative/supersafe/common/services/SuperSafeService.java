@@ -8,6 +8,9 @@ import android.os.IBinder;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1239,7 +1242,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             Utils.Log(TAG,"Delete everytime..............");
             hashMapGlobal.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
-            GalleryCameraMediaManager.getInstance().onUpdatedView();
+            //GalleryCameraMediaManager.getInstance().onUpdatedView();
+            EventBus.getDefault().post(EnumStatus.RELOAD);
             view.onDone();
             /*Note here*/
         }
@@ -1264,7 +1268,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onDone();
             hashMapGlobalCategories.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
-            GalleryCameraMediaManager.getInstance().onUpdatedView();
+            //GalleryCameraMediaManager.getInstance().onUpdatedView();
+            EventBus.getDefault().post(EnumStatus.RELOAD);
             /*Note here*/
         }
     }

@@ -56,6 +56,7 @@ public enum EnumStatus {
         RESET,
         RESTORE,
         RELOAD,
+        REFRESH,
         UNLOCK_ALBUMS,
         FINISH,
         RECREATE,

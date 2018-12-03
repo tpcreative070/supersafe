@@ -63,13 +63,11 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.album_cover_item, parent, false));
     }
 
-
     public interface ItemSelectedListener {
         void onClickItem(int position);
     }
 
     public class ItemHolder extends BaseHolder<Items> {
-
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.imgIcon)
@@ -103,53 +101,53 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
             }
 
             try {
-                    storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-                    EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
-                    switch (formatTypeFile) {
-                        case AUDIO: {
-                            Theme theme = Theme.getInstance().getThemeInfo();
-                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
-                            Glide.with(context)
-                                    .load(note1)
-                                    .apply(options)
-                                    .into(imgAlbum);
-                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
-                            break;
-                        }
-                        case FILES:{
-                            Theme theme = Theme.getInstance().getThemeInfo();
-                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
-                            Glide.with(context)
-                                    .load(note1)
-                                    .apply(options)
-                                    .into(imgAlbum);
-                            imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_files));
-                            break;
-                        }
-                        default: {
-                            try {
-                                if (storage.isFileExist("" + items.thumbnailPath)) {
-                                    imgAlbum.setRotation(items.degrees);
-                                    Glide.with(context)
-                                            .load(storage.readFile(items.thumbnailPath))
-                                            .apply(options)
-                                            .into(imgAlbum);
-                                    imgIcon.setVisibility(View.INVISIBLE);
-                                    Utils.Log(TAG,"load data 2");
-                                } else {
-                                    imgAlbum.setImageResource(0);
-                                    int myColor = Color.parseColor(categories.image);
-                                    imgAlbum.setBackgroundColor(myColor);
-                                    imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, categories.icon));
-                                    imgIcon.setVisibility(View.VISIBLE);
-                                    Utils.Log(TAG,"load data 3");
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        }
+                storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+                EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
+                switch (formatTypeFile) {
+                    case AUDIO: {
+                        Theme theme = Theme.getInstance().getThemeInfo();
+                        Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                        Glide.with(context)
+                                .load(note1)
+                                .apply(options)
+                                .into(imgAlbum);
+                        imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
+                        break;
                     }
+                    case FILES:{
+                        Theme theme = Theme.getInstance().getThemeInfo();
+                        Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                        Glide.with(context)
+                                .load(note1)
+                                .apply(options)
+                                .into(imgAlbum);
+                        imgIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_files));
+                        break;
+                    }
+                    default: {
+                        try {
+                            if (storage.isFileExist("" + items.thumbnailPath)) {
+                                imgAlbum.setRotation(items.degrees);
+                                Glide.with(context)
+                                        .load(storage.readFile(items.thumbnailPath))
+                                        .apply(options)
+                                        .into(imgAlbum);
+                                imgIcon.setVisibility(View.INVISIBLE);
+                                Utils.Log(TAG,"load data 2");
+                            } else {
+                                imgAlbum.setImageResource(0);
+                                int myColor = Color.parseColor(categories.image);
+                                imgAlbum.setBackgroundColor(myColor);
+                                imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, categories.icon));
+                                imgIcon.setVisibility(View.VISIBLE);
+                                Utils.Log(TAG,"load data 3");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -74,8 +74,8 @@
             app:met_floatingLabel="highlight"
             app:met_baseColor="?attr/colorAccent"
             app:met_primaryColor="?attr/colorAccent"
-            app:met_textColorHint="?attr/preference_summary"
-            app:met_textColor="?attr/preference_summary"
+            app:met_textColorHint="?attr/colorAccent"
+            app:met_textColor="@color/material_gray_700"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

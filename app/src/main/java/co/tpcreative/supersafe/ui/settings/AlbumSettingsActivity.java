@@ -360,14 +360,17 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
                                     if (presenter.mMainCategories==null){
                                         Toast.makeText(getContext(),"Can not change category name",Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
                                         return;
                                     }
                                     else if (base64Code.equals(result)){
                                         Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
                                         return;
                                     }
                                     else if (base64Code.equals(main)){
                                         Toast.makeText(getContext(),"This name already existing",Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
                                         return;
                                     }
                                     else{
@@ -387,6 +390,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                         if (!presenter.mMainCategories.isFakePin){
                                             SingletonPrivateFragment.getInstance().onUpdateView();
                                         }
+                                        dialog.dismiss();
                                     }
                                     break;
                                 }

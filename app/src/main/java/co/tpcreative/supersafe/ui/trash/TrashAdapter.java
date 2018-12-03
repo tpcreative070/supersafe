@@ -44,20 +44,16 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
             .priority(Priority.HIGH);
     private Context context;
     private ItemSelectedListener itemSelectedListener;
-    private Encrypter encrypter;
     private Storage storage;
     private String TAG = TrashAdapter.class.getSimpleName();
+    Theme theme = Theme.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
 
     public TrashAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
         storage = new Storage(context);
         this.itemSelectedListener = itemSelectedListener;
-        try {
-            encrypter = new Encrypter();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -112,15 +108,6 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                 imgSelect.setVisibility(View.INVISIBLE);
             }
 
-//            if (data.isChecked){
-//                Utils.Log(TAG,"Selected....");
-//                imgSelected.setImageDrawable(context.getResources().getDrawable(com.darsh.multipleimageselect.R.drawable.ic_done_white));
-//            }
-//            else{
-//                Utils.Log(TAG,"Selected....???");
-//                imgSelected.setImageDrawable(null);
-//            }
-
             try {
                 String path = data.thumbnailPath;
                 storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
@@ -131,14 +118,9 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                         tvTitle.setVisibility(View.VISIBLE);
                         tvTitle.setText(data.title);
-                        //imgAlbum.setImageDrawable(context.getResources().getDrawable(R.drawable.image_background_audio_video));
-
-                        Theme theme = Theme.getInstance().getThemeInfo();
-                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options).into(imgAlbum);
-                        Utils.Log(TAG,"audio");
                         break;
                     }
                     case FILES:{
@@ -146,8 +128,6 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
                         tvTitle.setVisibility(View.VISIBLE);
                         tvTitle.setText(data.title);
-                        Theme theme = Theme.getInstance().getThemeInfo();
-                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options).into(imgAlbum);
@@ -178,10 +158,9 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                     }
                 }
 
-                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.colorAccent),
+                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(theme.getAccentColor()),
                         PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
-                Utils.Log(TAG,""+progress.name());
                 switch (progress){
                     case PROGRESSING:{
                         imgCheck.setVisibility(View.INVISIBLE);

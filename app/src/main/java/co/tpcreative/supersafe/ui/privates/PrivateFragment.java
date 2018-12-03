@@ -43,7 +43,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     private Storage storage;
     public boolean isClicked;
 
-
     public static PrivateFragment newInstance(int index) {
         PrivateFragment fragment = new PrivateFragment();
         Bundle b = new Bundle();
@@ -278,12 +277,13 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         if (mainCategories.pin.equals(input.toString())) {
-                            mainCategories.pin = "";
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
-                            SingletonPrivateFragment.getInstance().onUpdateView();
+//                            mainCategories.pin = "";
+//                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+//                            SingletonPrivateFragment.getInstance().onUpdateView();
+                            Navigator.onMoveAlbumDetail(getActivity(), mainCategories);
                             dialog.dismiss();
                         } else {
-                            Utils.showInfoSnackbar(getView(), R.string.wrong_password,true);
+                            Utils.showInfoSnackbar(getView(),R.string.wrong_password,true);
                             dialog.getInputEditText().setText("");
                         }
                     }

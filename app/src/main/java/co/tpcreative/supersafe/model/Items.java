@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -54,6 +55,8 @@ public class Items implements Serializable {
     public boolean isDeleted;
     @Ignore
     public boolean isOriginalGlobalId;
+    @Ignore
+    public Date date;
 
     private static Items instance;
 

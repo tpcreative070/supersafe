@@ -17,7 +17,9 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class AlbumDetailPresenter extends Presenter<BaseView> {
+public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
+
+    private final static String TAG = AlbumDetailPresenter.class.getSimpleName();
 
     protected List<Items> mList;
     protected MainCategories mainCategories;
@@ -88,7 +90,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
         }
     }
 
-    public void  getData(){
+    public void  getData(EnumStatus enumStatus){
         BaseView view = view();
         mList.clear();
         try {
@@ -98,7 +100,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
                     mList = data;
                     onCalculate();
                 }
-                view.onSuccessful("Successful",EnumStatus.RELOAD);
+                view.onSuccessful("Successful",enumStatus);
             }
             else{
                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
@@ -110,15 +112,17 @@ public class AlbumDetailPresenter extends Presenter<BaseView> {
     }
 
     public void onDelete(){
-        BaseView view = view();
-        for (Items index : mList){
-            if (index.isChecked()){
-                index.isDeleteLocal = true;
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(index);
+        BaseView<Integer> view = view();
+        for (int i =0 ; i<mList.size();i++){
+            if (mList.get(i).isChecked()){
+                Utils.Log(TAG,"Delete position at "+ i);
+                mList.get(i).isDeleteLocal = true;
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                view.onSuccessful("Successful",EnumStatus.DELETE,i);
             }
         }
-        getData();
         view.onSuccessful("Successful",EnumStatus.DELETE);
+        getData(EnumStatus.REFRESH);
     }
 
 }

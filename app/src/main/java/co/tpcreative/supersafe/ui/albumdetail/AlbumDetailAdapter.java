@@ -14,18 +14,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
-import java.security.NoSuchAlgorithmException;
 import butterknife.BindView;
 import butterknife.OnClick;
-import butterknife.OnItemLongClick;
 import butterknife.OnLongClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
@@ -35,26 +34,24 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
-            .override(400, 400)
-            .placeholder(R.drawable.baseline_music_note_white_48)
-            .error(R.drawable.baseline_music_note_white_48)
+            .override(200 ,200)
+            .placeholder(R.color.material_gray_100)
+            .error(R.color.red_100)
             .priority(Priority.HIGH);
     private Context context;
     private ItemSelectedListener itemSelectedListener;
-    private Encrypter encrypter;
     private Storage storage;
     private String TAG = AlbumDetailAdapter.class.getSimpleName();
+    final Theme theme = Theme.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
+
 
     public AlbumDetailAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
         storage = new Storage(context);
         this.itemSelectedListener = itemSelectedListener;
-        try {
-            encrypter = new Encrypter();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
     }
 
     @Override
@@ -67,13 +64,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.album_detail_item, parent, false));
     }
 
-    private void showPopupMenu(View view, int position) {
-        PopupMenu popup = new PopupMenu(context, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_album_detail, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MyMenuItemClickListener(position));
-        popup.show();
-    }
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
@@ -104,10 +94,12 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
             super(itemView);
         }
 
+
         @Override
         public void bind(Items data, int position) {
             super.bind(data, position);
             mPosition = position;
+            Utils.Log(TAG,"Position "+ position);
 
             if (data.isChecked) {
                 view_alpha.setAlpha(0.5f);
@@ -120,7 +112,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
             try {
                 String path = data.thumbnailPath;
-                storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
                 EnumFormatType formatTypeFile = EnumFormatType.values()[data.formatType];
                 switch (formatTypeFile) {
                     case AUDIO: {
@@ -128,8 +119,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                         tvTitle.setVisibility(View.VISIBLE);
                         tvTitle.setText(data.title);
-                        Theme theme = Theme.getInstance().getThemeInfo();
-                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options).into(imgAlbum);
@@ -163,8 +152,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         imgVideoCam.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
                         tvTitle.setVisibility(View.VISIBLE);
                         tvTitle.setText(data.title);
-                        Theme theme = Theme.getInstance().getThemeInfo();
-                        Drawable note1 = context.getResources().getDrawable( theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options).into(imgAlbum);
@@ -172,7 +159,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                     }
                 }
 
-                final Theme theme = Theme.getInstance().getThemeInfo();
                 progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(theme.getAccentColor()),
                         PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
@@ -193,12 +179,9 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         break;
                     }
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
 
         @OnClick(R.id.rlHome)
@@ -218,15 +201,5 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
     }
 
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-        int position;
-        public MyMenuItemClickListener(int position) {
-            this.position = position;
-        }
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            return false;
-        }
-    }
 
 }

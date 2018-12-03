@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,20 +38,25 @@ public class MainCategories implements Serializable{
     public boolean isFakePin;
     public String pin ;
     public boolean isCustom_Cover;
-    public String item ;
+    public String item;
+    public String mainCategories;
+    @Ignore
+    public Date date;
+    @Ignore
+    public boolean isChecked;
 
     @Ignore
     private static MainCategories instance ;
 
     @Ignore
-    private transient String []ListIcon =new  String[]{"baseline_photo_white_48",
+    public static final transient String []ListIcon =new  String[]{"baseline_photo_white_48",
             "baseline_how_to_vote_white_48",
             "baseline_local_movies_white_48",
             "baseline_favorite_border_white_48",
             "baseline_delete_white_48"};
 
     @Ignore
-    private transient String []ListColor =new  String[]{"#34bdb7",
+    public static final transient String []ListColor =new  String[]{"#34bdb7",
             "#03A9F4",
             "#9E9D24",
             "#AA00FF",
@@ -92,7 +98,7 @@ public class MainCategories implements Serializable{
         this.icon = defaultIcon;
     }
 
-    public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer,boolean isFakePin,String pin,String item,boolean isCustom_Cover) {
+    public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer,boolean isFakePin,String pin,String item,String mainCategories,boolean isCustom_Cover) {
         this.categories_name = categories_name;
         this.image = image;
         this.icon = icon;
@@ -106,6 +112,7 @@ public class MainCategories implements Serializable{
         this.pin = pin;
         this.item = item;
         this.isCustom_Cover = isCustom_Cover;
+        this.mainCategories = mainCategories;
     }
 
     public MainCategories(){
@@ -120,6 +127,7 @@ public class MainCategories implements Serializable{
         this.isFakePin = false;
         this.pin = "";
         this.item = null;
+        this.mainCategories = null;
         this.isCustom_Cover = false;
     }
 
@@ -194,21 +202,31 @@ public class MainCategories implements Serializable{
     @Ignore
     public Map<String,MainCategories>getMainCategoriesDefault(){
         Map<String,MainCategories> map = new HashMap<>();
-        map.put(Utils.getHexCode("1234"),new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,false));
-        map.put(Utils.getHexCode("1235"),new MainCategories("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,false));
-        map.put(Utils.getHexCode("1236"),new MainCategories("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,false));
-        map.put(Utils.getHexCode("1237"),new MainCategories("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,false));
+        map.put(Utils.getHexCode("1234"),new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,null,false));
+        map.put(Utils.getHexCode("1235"),new MainCategories("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,null,false));
+        map.put(Utils.getHexCode("1236"),new MainCategories("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,null,false));
+        map.put(Utils.getHexCode("1237"),new MainCategories("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,null,false));
         return map;
     }
 
     @Ignore
+    public List<MainCategories> getCategoriesDefault(){
+        List<MainCategories> list = new ArrayList<>();
+        list.add(new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,null,false));
+        list.add(new MainCategories("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,null,false));
+        list.add(new MainCategories("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,null,false));
+        list.add(new MainCategories("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,null,false));
+        return list;
+    }
+
+    @Ignore
     public MainCategories getTrashItem(){
-        return new MainCategories("null",Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false,false,false,false,"",null,false);
+        return new MainCategories("null",Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false,false,false,false,"",null,null,false);
     }
 
     @Ignore
     public MainCategories getMainItemFakePin(){
-        return new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,true,"",null,false);
+        return new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,true,"",null,null,false);
     }
 
     @Ignore
@@ -217,7 +235,7 @@ public class MainCategories implements Serializable{
             final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(categories_hex_name,isFakePin);
             if (main==null){
                 final int count  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategories("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,true,false,isFakePin,"",null,false));
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategories("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,true,false,isFakePin,"",null,null,false));
                 return true;
             }
         }
@@ -233,7 +251,7 @@ public class MainCategories implements Serializable{
             final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(categories_hex_name,isFakePin);
             if (main==null){
                 final int count  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategories("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,false,false,isFakePin,"",null,false));
+                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategories("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,false,false,isFakePin,"",null,null,false));
                 return true;
             }
         }
@@ -289,6 +307,22 @@ public class MainCategories implements Serializable{
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
         return myMap;
+    }
+
+    @Ignore
+    public MainCategories getObject(String value){
+        try {
+            if (value==null){
+                return null;
+            }
+            final MainCategories items = new Gson().fromJson(value,MainCategories.class);
+            Utils.Log(TAG,new Gson().toJson(items));
+            return items;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

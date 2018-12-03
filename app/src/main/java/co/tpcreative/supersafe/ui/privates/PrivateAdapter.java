@@ -34,8 +34,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     private Storage storage;
     private ItemSelectedListener itemSelectedListener;
     private String TAG = PrivateAdapter.class.getSimpleName();
-
     Theme theme = Theme.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable(theme.getAccentColor());
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(400, 400)
@@ -82,17 +82,12 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public void bind(MainCategories data, int position) {
             super.bind(data, position);
             this.data = data;
-
-            Utils.Log(TAG,"name :" + data.categories_name +" - "+ data.categories_max);
-
             if (data.pin.equals("")) {
                 final Items items = Items.getInstance().getObject(data.item);
                 if (items != null) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {
                         case AUDIO: {
-                            Theme theme = Theme.getInstance().getThemeInfo();
-                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
                             Glide.with(context)
                                     .load(note1)
                                     .apply(options)
@@ -101,8 +96,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                             break;
                         }
                         case FILES:{
-                            Theme theme = Theme.getInstance().getThemeInfo();
-                            Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
                             Glide.with(context)
                                     .load(note1)
                                     .apply(options)

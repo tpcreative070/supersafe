@@ -205,7 +205,9 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        subscriptions.dispose();
+        if (subscriptions!=null){
+            subscriptions.dispose();
+        }
     }
 
     /*Detecting textWatch*/

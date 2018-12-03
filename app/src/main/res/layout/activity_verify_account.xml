@@ -207,8 +207,10 @@
                         android:singleLine="true"
                         android:textSize="@dimen/text_size_normal"
                         app:met_floatingLabel="highlight"
+                        app:met_baseColor="?attr/colorAccent"
                         app:met_primaryColor="?attr/colorAccent"
-                        app:met_textColorHint="?attr/colorAccent" />
+                        app:met_textColorHint="?attr/colorAccent"
+                        app:met_textColor="@color/material_gray_700" />
                 </LinearLayout>
 
 
@@ -273,10 +275,11 @@
                     android:inputType="number"
                     android:singleLine="true"
                     android:textSize="@dimen/text_size_normal"
-                    app:met_baseColor="?attr/colorAccent"
                     app:met_floatingLabel="highlight"
+                    app:met_baseColor="?attr/colorAccent"
                     app:met_primaryColor="?attr/colorAccent"
-                    app:met_textColorHint="?attr/colorAccent" />
+                    app:met_textColorHint="?attr/colorAccent"
+                    app:met_textColor="@color/material_gray_700"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

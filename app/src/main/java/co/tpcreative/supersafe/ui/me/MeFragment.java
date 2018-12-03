@@ -91,7 +91,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     protected void work() {
         super.work();
-
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -102,8 +101,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                 }
             }
         });
-
-
         presenter = new MePresenter();
         presenter.bindView(this);
         presenter.onShowUserInfo();

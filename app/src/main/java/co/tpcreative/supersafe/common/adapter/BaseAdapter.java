@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import co.tpcreative.supersafe.common.util.Utils;
+
 public class BaseAdapter<V, VH extends BaseHolder> extends RecyclerView.Adapter<VH> {
 
     protected LayoutInflater inflater;
     protected List<V> dataSource = Collections.emptyList();
+    private static final String TAG = BaseAdapter.class.getSimpleName();
+
 
     public BaseAdapter(LayoutInflater inflater) {
         this.inflater = inflater;
@@ -64,6 +68,22 @@ public class BaseAdapter<V, VH extends BaseHolder> extends RecyclerView.Adapter<
         if(this.dataSource.size()> position){
             dataSource.remove(position);
             notifyItemRangeRemoved(position, 1);
+        }
+    }
+
+    public void removeAt(int position) {
+        try {
+            Utils.Log(TAG,"Position "+ position +" size of dataSource "+dataSource.size());
+            if(this.dataSource.size()> position){
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position,dataSource.size());
+            }
+            else{
+                Utils.Log(TAG,"Can not delete ");
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 

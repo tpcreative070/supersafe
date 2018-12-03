@@ -488,6 +488,8 @@
     <string name="Remove_upload_limit_of_100_files_per_month">Remove upload limit of 100 files per month</string>
     <string name="picture_jpg">picture.jpg</string>
     <string name="your_premium_has_expired">Your premium has expired. Do you want to upgrade to continue to use services?</string>
+    <string name="default_icon">Default Items</string>
+    <string name="custom_icon">Custom Items</string>
 
     <!--Help and Support -->
     <string name="faq">FAQ</string>
@@ -505,7 +507,7 @@
     <string name="i_forgot_the_password_how_to_unlock_my_albums">I forgot the Password How to unlock my albums</string>
     <string name="i_forgot_the_password_how_to_unlock_my_albums_content">file:///android_asset/unlock_albums.html</string>
 
-    <string name="what_is_the_fake_pin_and_how_do_i_use_it">What\'s the fake PIN and how do i use it?</string>
+    <string name="what_is_the_fake_pin_and_how_do_i_use_it">What\'s the fake PIN and how do I use it?</string>
     <string name="what_is_the_fake_pin_and_how_do_i_use_it_content">file:///android_asset/fake_pin.html</string>
 
     <string name="contact_support">Contact support</string>

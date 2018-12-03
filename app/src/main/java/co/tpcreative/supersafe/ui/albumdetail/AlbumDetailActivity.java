@@ -44,11 +44,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.leinardi.android.speeddial.SpeedDialActionItem;
 import com.leinardi.android.speeddial.SpeedDialView;
 import com.snatik.storage.Storage;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,14 +72,14 @@ import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MessageEvent;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity;
 import dmax.dialog.SpotsDialog;
 
 
-public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
 
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
@@ -130,20 +128,18 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
         storage = new Storage(this);
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-
-        initRecycleView(getLayoutInflater());
         initSpeedDial(true);
 
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         presenter.getData(this);
+        initRecycleView(getLayoutInflater());
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
-
         final Items items = Items.getInstance().getObject(presenter.mainCategories.item);
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
@@ -223,7 +219,27 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 break;
             }
         }
+
+        MessageEvent event1 = new MessageEvent();
+        event1.enumStatus = EnumStatus.DOWNLOAD;
+
+
     };
+
+    @Override
+    public void onUpdatedView() {
+        try {
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    presenter.getData(EnumStatus.RELOAD);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     protected void onResume() {
@@ -314,20 +330,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         toggleSelection(position);
         actionMode.setTitle(countSelected + " " + getString(R.string.selected));
-    }
-
-    @Override
-    public void onUpdatedView() {
-        try {
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    presenter.getData();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @OnClick(R.id.imgShare)
@@ -584,6 +586,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        adapter.setDataSource(presenter.mList);
     }
 
     public void onShowDialog(EnumStatus status){
@@ -763,10 +766,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                             }
                             case DELETE:{
                                 presenter.onDelete();
-                                if (actionMode!=null){
-                                    actionMode.finish();
-                                }
-                                isReload = true;
                                 break;
                             }
                         }
@@ -811,7 +810,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data");
-                    presenter.getData();
+                    presenter.getData(EnumStatus.RELOAD);
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera");
                 }
@@ -820,7 +819,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case Navigator.PHOTO_SLIDE_SHOW: {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data");
-                    presenter.getData();
+                    presenter.getData(EnumStatus.RELOAD);
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera");
                 }
@@ -943,7 +942,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
-
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
 
@@ -955,33 +953,60 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
-                adapter.setDataSource(presenter.mList);
-
                 if (actionMode!=null){
                     countSelected = 0;
                     actionMode.finish();
                     llBottom.setVisibility(View.GONE);
                     isReload = true;
                 }
+                adapter.setDataSource(presenter.mList);
+                break;
+            }
+            case REFRESH:{
+                String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
+                tv_Photos.setText(photos);
+
+                String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
+                tv_Videos.setText(videos);
+
+                String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
+                tv_Audios.setText(audios);
+
+                String others = String.format(getString(R.string.others_default),""+presenter.others);
+                tv_Others.setText(others);
+                adapter.getDataSource().clear();
+                adapter.getDataSource().addAll(presenter.mList);
                 break;
             }
             case DELETE:{
                 SingletonPrivateFragment.getInstance().onUpdateView();
+                if (actionMode!=null){
+                    actionMode.finish();
+                }
+                isReload = true;
                 break;
             }
         }
     }
+
+
+    @Override
+    public void onSuccessful(String message, EnumStatus status, Integer object) {
+        switch (status){
+            case DELETE:{
+                Utils.Log(TAG,"Position "+ object);
+                adapter.removeAt(object);
+                break;
+            }
+        }
+    }
+
 
     @Override
     public Activity getActivity() {
         return this;
     }
 
-    @Override
-    public void onSuccessful(String message, EnumStatus status, Object object) {
-
-    }
 
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
@@ -1051,7 +1076,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     break;
                 }
                 default:{
-                    presenter.mList.get(i).isChecked = false;
+                    if (presenter.mList.get(i).isChecked){
+                        presenter.mList.get(i).isChecked = false;
+                        adapter.notifyItemChanged(i);
+                    }
                     break;
                 }
             }
@@ -1060,9 +1088,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         onShowUI();
         if (isExport){
            onCheckDelete();
-        }
-        else{
-            adapter.notifyDataSetChanged();
         }
     }
 
@@ -1083,9 +1108,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     Utils.Log(TAG, "ServiceManager waiting for delete");
                 }
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).local_id);
+                adapter.removeAt(i);
             }
         }
-        presenter.getData();
+        presenter.getData(EnumStatus.REFRESH);
     }
 
     public void selectAll(){
