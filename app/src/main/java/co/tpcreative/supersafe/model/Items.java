@@ -39,9 +39,11 @@ public class Items implements Serializable {
     public int fileType;
     public String title;
     public String size;
-    public int statusProgress;
     public boolean isDeleteLocal;
     public boolean isDeleteGlobal;
+
+
+    public int statusProgress;
     public int deleteAction;
     public boolean isFakePin;
     public boolean isSaver;

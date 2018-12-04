@@ -3,17 +3,17 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import co.tpcreative.supersafe.common.util.Utils;
 
-public class DriveTitle implements Serializable {
+public class DriveEvent implements Serializable {
 
-    private static DriveTitle instance;
+    private static DriveEvent instance;
     public String items_id;
     public int fileType;
-    private static final String TAG = DriveTitle.class.getSimpleName();
+    private static final String TAG = DriveEvent.class.getSimpleName();
 
 
-    public static DriveTitle getInstance(){
+    public static DriveEvent getInstance(){
         if (instance==null){
-            instance = new DriveTitle();
+            instance = new DriveEvent();
         }
         return instance;
     }
@@ -30,10 +30,10 @@ public class DriveTitle implements Serializable {
         return null;
     }
 
-    public DriveTitle hexToObject(String value){
+    public DriveEvent hexToObject(String value){
         try {
             String result = Utils.hexToString(value);
-            return new Gson().fromJson(result,DriveTitle.class);
+            return new Gson().fromJson(result,DriveEvent.class);
         }
         catch (Exception e){
             Utils.Log(TAG,"Error :" + e.getMessage());

@@ -217,7 +217,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     if (mAlbumCover.getImageView()!=null){
                         final MainCategories main = presenter.mMainCategories;
                         if (main.pin.equals("")) {
-                            final Items items = Items.getInstance().getObject(main.item);
+                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLocalId(main.item_Local_Id);
                             if (items != null) {
                                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                                 switch (formatTypeFile) {

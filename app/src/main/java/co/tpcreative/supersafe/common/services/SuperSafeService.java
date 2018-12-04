@@ -20,7 +20,6 @@ import java.util.Map;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
@@ -35,7 +34,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Authorization;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.DriveDescription;
-import co.tpcreative.supersafe.model.DriveTitle;
+import co.tpcreative.supersafe.model.DriveEvent;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -788,9 +787,9 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             hashMap.put(getString(R.string.key_user_id), user.email);
             hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
             hashMap.put(getString(R.string.key_kind), getString(R.string.key_drive_file));
-            DriveTitle contentTitle = new DriveTitle();
+            DriveEvent contentTitle = new DriveEvent();
             contentTitle.items_id = items.items_id;
-            String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
+            String hex = DriveEvent.getInstance().convertToHex(new Gson().toJson(contentTitle));
             hashMap.put(getString(R.string.key_name), hex);
             hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         }
@@ -1139,7 +1138,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                     hashMapGlobal.put(index.items_id, index.items_id);
                                     final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
                                     if (description != null) {
-                                        DriveTitle driveTitle = DriveTitle.getInstance().hexToObject(index.name);
+                                        DriveEvent driveTitle = DriveEvent.getInstance().hexToObject(index.name);
                                         if (driveTitle != null) {
                                             final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id,false);
                                             EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
@@ -1300,7 +1299,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 description.items_id,
                 description.originalPath,
                 description.thumbnailPath,
-                description.subFolderName,
+                description.local_id,
                 description.global_original_id,
                 description.global_thumbnail_id,
                 description.categories_id,
@@ -1441,13 +1440,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         HashMap<String, Object> content = new HashMap<>();
 
 
-        DriveTitle contentTitle = new DriveTitle();
+        DriveEvent contentEvent = new DriveEvent();
         File file = null;
         if (items.isOriginalGlobalId) {
-            contentTitle.fileType = EnumFileType.ORIGINAL.ordinal();
+            contentEvent.fileType = EnumFileType.ORIGINAL.ordinal();
             file = new File(items.originalPath);
         } else {
-            contentTitle.fileType = EnumFileType.THUMBNAIL.ordinal();
+            contentEvent.fileType = EnumFileType.THUMBNAIL.ordinal();
             file = new File(items.thumbnailPath);
         }
 
@@ -1457,8 +1456,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             return;
         }
 
-        contentTitle.items_id = items.items_id;
-        String hex = DriveTitle.getInstance().convertToHex(new Gson().toJson(contentTitle));
+        contentEvent.items_id = items.items_id;
+        String hex = DriveEvent.getInstance().convertToHex(new Gson().toJson(contentEvent));
         content.put(getString(R.string.key_name), hex);
         List<String> list = new ArrayList<>();
         list.add(getString(R.string.key_appDataFolder));

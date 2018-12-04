@@ -202,7 +202,7 @@
     <string name="free">Free</string>
     <string name="pro">Pro</string>
     <string name="link_your_google_drive">Link Google Drive to store your encrypted files</string>
-    <string name="google_drive_account">Your Google Drive account is below. Link it to restore previous files</string>
+    <string name="google_drive_account">Your Google Drive account is below. Link it to sync data to Private Store</string>
     <string name="link_google_drive">LINK GOOGLE DRIVE</string>
     <string name="user_another_google_drive">USE ANOTHER GOOGLE DRIVE</string>
     <string name="cloud_manager">Cloud Manager</string>

@@ -72,7 +72,6 @@ import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MessageEvent;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -140,7 +139,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
-        final Items items = Items.getInstance().getObject(presenter.mainCategories.item);
+        final Items items = InstanceGenerator.getInstance(this).getLocalId(presenter.mainCategories.item_Local_Id);
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             switch (formatTypeFile){
@@ -207,8 +206,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
             }
         });
-
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -219,11 +216,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 break;
             }
         }
-
-        MessageEvent event1 = new MessageEvent();
-        event1.enumStatus = EnumStatus.DOWNLOAD;
-
-
     };
 
     @Override
@@ -239,7 +231,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             e.printStackTrace();
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -263,7 +254,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
     }
-
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
@@ -530,7 +520,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 return true; // To keep the Speed Dial open
             }
         });
-
     }
 
     @Override

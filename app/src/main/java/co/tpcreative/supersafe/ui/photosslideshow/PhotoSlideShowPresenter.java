@@ -1,11 +1,8 @@
 package co.tpcreative.supersafe.ui.photosslideshow;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +11,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -28,7 +26,6 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
     protected EnumStatus status = EnumStatus.OTHER;
     protected Storage storage ;
     protected MainCategories mainCategories;
-
     public PhotoSlideShowPresenter(){
         mList = new ArrayList<>();
     }
@@ -43,7 +40,10 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
             mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             for (Items index : list){
                 if (!index.local_id.equals(items.local_id)){
-                    mList.add(index);
+                    EnumFormatType formatType = EnumFormatType.values()[index.formatType];
+                    if (formatType!=EnumFormatType.FILES){
+                        mList.add(index);
+                    }
                 }
             }
             mList.add(0,items);

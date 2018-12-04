@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.DateUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -67,7 +68,7 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
         final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mMainCategories.categories_local_id,false,mMainCategories.isFakePin);
         if (data!=null){
             mList = data;
-            final Items oldItem = Items.getInstance().getObject(mMainCategories.item);
+            final Items oldItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLocalId(mMainCategories.item_Local_Id);
             if (oldItem!=null){
                 for (int i = 0 ; i<mList.size() ; i++){
                     mList.get(i).date = dateEventItems;
@@ -96,7 +97,7 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
         final List<MainCategories> data = MainCategories.getInstance().getCategoriesDefault();
         if (data!=null){
             mListMainCategories = data;
-            final MainCategories oldMainCategories = MainCategories.getInstance().getObject(mMainCategories.mainCategories);
+            final MainCategories oldMainCategories =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(mMainCategories.mainCategories_Local_Id);
             if (oldMainCategories!=null){
                 for (int i = 0 ; i<mListMainCategories.size() ; i++){
                     mListMainCategories.get(i).date = dateEventCategories;

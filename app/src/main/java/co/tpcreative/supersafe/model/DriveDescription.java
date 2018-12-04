@@ -27,9 +27,12 @@ public class DriveDescription implements Serializable{
     public boolean originalSync;
     public int fileType;
     public String size;
-    public int statusProgress;
     public boolean isDeleteLocal;
     public boolean isDeleteGlobal;
+
+
+
+    public int statusProgress;
     public int deleteAction;
     public boolean isFakePin;
     public boolean isSaver;

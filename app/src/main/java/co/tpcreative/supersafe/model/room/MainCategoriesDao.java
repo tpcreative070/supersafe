@@ -64,4 +64,7 @@ public interface MainCategoriesDao {
     @Query("Select * FROM maincategories  ORDER BY id DESC LIMIT :limit")
     MainCategories loadLatestItem(int limit);
 
+    @Query("Select * FROM maincategories  WHERE categories_local_id = :categories_local_id")
+    MainCategories loadLocalId(String  categories_local_id);
+
 }

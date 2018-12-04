@@ -323,6 +323,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final synchronized Items getLocalId(String localId){
+        try{
+            return instance.itemsDao().loadLocalId(localId);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
 
     public final synchronized boolean onDelete(Items entity){
         try{
@@ -461,6 +471,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     public final synchronized MainCategories getCategoriesLocalId(String categories_local_id,boolean isFakePin){
         try{
             return instance.mainCategoriesDao().loadItemLocalId(categories_local_id,isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized MainCategories getCategoriesLocalId(String categories_local_id){
+        try{
+            return instance.mainCategoriesDao().loadLocalId(categories_local_id);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

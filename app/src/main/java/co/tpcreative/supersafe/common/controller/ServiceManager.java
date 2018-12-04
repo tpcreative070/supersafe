@@ -38,7 +38,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeService;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveDescription;
-import co.tpcreative.supersafe.model.DriveTitle;
+import co.tpcreative.supersafe.model.DriveEvent;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -1308,8 +1308,14 @@ public class ServiceManager implements BaseView {
                                                     final MainCategories categories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(mItem.categories_id, false);
                                                     if (categories != null) {
                                                         if (!categories.isCustom_Cover) {
-                                                            categories.item = new Gson().toJson(mItem);
-                                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(categories);
+                                                            EnumFormatType formatType = EnumFormatType.values()[mItem.formatType];
+                                                            switch (formatType){
+                                                                case IMAGE:{
+                                                                    categories.item_Local_Id = mItem.local_id;
+                                                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(categories);
+                                                                    break;
+                                                                }
+                                                            }
                                                             Utils.Log(TAG, "Update main categories for custom cover");
                                                         }
                                                     } else {
@@ -1489,7 +1495,7 @@ public class ServiceManager implements BaseView {
                                     try {
                                         if (response != null) {
                                             if (response.id != null) {
-                                                DriveTitle contentTitle = DriveTitle.getInstance().hexToObject(response.name);
+                                                DriveEvent contentTitle = DriveEvent.getInstance().hexToObject(response.name);
                                                 final Items mItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(contentTitle.items_id, false);
                                                 if (mItem != null && contentTitle != null) {
                                                     EnumFileType type = EnumFileType.values()[contentTitle.fileType];
@@ -1826,7 +1832,7 @@ public class ServiceManager implements BaseView {
                         }
                         catch (Exception e){
                             thumbnail  = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().getResources(),
-                                    R.drawable.bg_music);
+                                    R.drawable.ic_default_video);
                             Log.w(TAG, "Cannot write to " + e);
                         }
 
@@ -2178,11 +2184,12 @@ public class ServiceManager implements BaseView {
                                         items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
 
-                                        if (!mResponse.categories.isCustom_Cover) {
-                                            final MainCategories main = mResponse.categories;
-                                            main.item = new Gson().toJson(items);
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
-                                        }
+//                                        if (!mResponse.categories.isCustom_Cover) {
+//                                            final MainCategories main = mResponse.categories;
+//                                            main.item = new Gson().toJson(items);
+//                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+//                                        }
+
                                     }
                                     break;
                                 }
@@ -2195,15 +2202,15 @@ public class ServiceManager implements BaseView {
                                         items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
 
-                                        if (!mResponse.categories.isCustom_Cover) {
-                                            final MainCategories main = mResponse.categories;
-                                            main.item = new Gson().toJson(items);
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
-                                        }
+//                                        if (!mResponse.categories.isCustom_Cover) {
+//                                            final MainCategories main = mResponse.categories;
+//                                            main.item = new Gson().toJson(items);
+//                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+//                                        }
                                     }
                                     break;
                                 }
-                                default: {
+                                case IMAGE: {
                                     if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
                                         final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
                                         mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
@@ -2217,7 +2224,7 @@ public class ServiceManager implements BaseView {
 
                                         if (!mResponse.categories.isCustom_Cover) {
                                             final MainCategories main = mResponse.categories;
-                                            main.item = new Gson().toJson(items);
+                                            main.item_Local_Id = items.local_id;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                         }
                                     }
@@ -2433,7 +2440,7 @@ public class ServiceManager implements BaseView {
 
                                 if (!mResponse.categories.isCustom_Cover) {
                                     final MainCategories main = mResponse.categories;
-                                    main.item = new Gson().toJson(mItem);
+                                    main.item_Local_Id = mItem.local_id;
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                     Utils.Log(TAG, "Special main categories " + new Gson().toJson(main));
                                 }

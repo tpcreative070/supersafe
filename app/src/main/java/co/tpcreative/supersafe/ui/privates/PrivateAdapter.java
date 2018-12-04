@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
 public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
@@ -83,7 +84,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             super.bind(data, position);
             this.data = data;
             if (data.pin.equals("")) {
-                final Items items = Items.getInstance().getObject(data.item);
+                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLocalId(data.item_Local_Id);
                 if (items != null) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {
