@@ -36,7 +36,7 @@ public class FakePinComponentPresenter extends Presenter<BaseView> {
                 final List<Items> mListItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(main.categories_local_id,true);
                 for (Items index : mListItems){
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+index.local_id);
+                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+index.items_id);
                 }
                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(main);
             }

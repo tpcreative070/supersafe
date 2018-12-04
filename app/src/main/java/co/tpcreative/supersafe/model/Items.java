@@ -22,7 +22,6 @@ public class Items implements Serializable {
     public boolean isSyncOwnServer;
     public String global_original_id;
     public String global_thumbnail_id;
-    public String local_id;
     public String categories_local_id;
     public String categories_id;
     public int formatType;
@@ -30,7 +29,6 @@ public class Items implements Serializable {
     public String originalPath;
     public String mimeType;
     public String fileExtension;
-    public String description;
     public int statusAction;
     public String items_id;
     public int degrees;
@@ -59,6 +57,8 @@ public class Items implements Serializable {
     public boolean isOriginalGlobalId;
     @Ignore
     public Date date;
+    @Ignore
+    public String name ;
 
     private static Items instance;
 
@@ -74,8 +74,40 @@ public class Items implements Serializable {
         return instance;
     }
 
+    public Items(Items items){
+        this.originalName = items.originalName;
+        this.thumbnailName = items.thumbnailName;
+        this.items_id = items.items_id;
+        this.fileType = items.fileType;
+        this.formatType = items.formatType;
+        this.title = items.title;
+        this.isSyncCloud = items.isSyncCloud;
+        this.isSyncOwnServer = items.isSyncOwnServer;
+        this.thumbnailSync = items.thumbnailSync;
+        this.originalSync = items.originalSync;
+        this.degrees = items.degrees;
+        this.global_original_id = items.global_original_id;
+        this.global_thumbnail_id = items.global_thumbnail_id;
+        this.categories_id = items.categories_id;
+        this.categories_local_id = items.categories_local_id;
+        this.originalPath = items.originalPath;
+        this.thumbnailPath = items.thumbnailPath;
+        this.mimeType = items.mimeType;
+        this.fileExtension = items.fileExtension;
+        this.statusAction = items.statusAction;
+        this.size = items.size;
+        this.statusProgress = items.statusProgress;
+        this.isDeleteLocal = items.isDeleteLocal ;
+        this.isDeleteGlobal = items.isDeleteGlobal;
+        this.deleteAction = items.deleteAction;
+        this.isFakePin = items.isFakePin;
+        this.isSaver = items.isSaver;
+        this.isExport = items.isExport;
+        this.isWaitingForExporting = items.isWaitingForExporting;
+        this.custom_items = items.custom_items;
+    }
 
-    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String local_id, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, String driveDescription, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items){
+    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -87,7 +119,6 @@ public class Items implements Serializable {
         this.thumbnailSync = thumbnailSync;
         this.originalSync = originalSync;
         this.degrees = degrees;
-        this.local_id = local_id;
         this.global_original_id = global_original_id;
         this.global_thumbnail_id = global_thumbnail_id;
         this.categories_id = categories_id;
@@ -96,7 +127,6 @@ public class Items implements Serializable {
         this.thumbnailPath = thumbnailPath;
         this.mimeType = mimeType;
         this.fileExtension = fileExtension;
-        this.description = driveDescription;
         this.statusAction = enumStatus.ordinal();
         this.size = size;
         this.statusProgress = statusProgress;

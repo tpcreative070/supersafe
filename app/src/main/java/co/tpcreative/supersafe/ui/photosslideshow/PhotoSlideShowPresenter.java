@@ -39,7 +39,7 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
             List<Items> list = (ArrayList<Items>)bundle.get(context.getString(R.string.key_list_items));
             mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             for (Items index : list){
-                if (!index.local_id.equals(items.local_id)){
+                if (!index.items_id.equals(items.items_id)){
                     EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                     if (formatType!=EnumFormatType.FILES){
                         mList.add(index);
@@ -58,10 +58,10 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
         try {
             BaseView view = view();
             final Items items = mList.get(position);
-            final Items mItem = InstanceGenerator.getInstance(view.getContext()).getLocalId(items.local_id,items.isFakePin);
+            final Items mItem = InstanceGenerator.getInstance(view.getContext()).getItemId(items.items_id,items.isFakePin);
             if (mItem!=null){
                 if (mItem.isFakePin){
-                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.local_id);
+                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.items_id);
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mItem);
                 }
                 else{

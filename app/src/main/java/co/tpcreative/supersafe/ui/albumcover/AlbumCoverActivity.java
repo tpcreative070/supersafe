@@ -126,7 +126,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     public void onClickItem(int position) {
         Utils.Log(TAG,"position..."+position);
         try {
-            presenter.mMainCategories.item_Local_Id = presenter.mList.get(position).local_id;
+            presenter.mMainCategories.items_id = presenter.mList.get(position).items_id;
             InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
             presenter.getData();
             isReload = true;

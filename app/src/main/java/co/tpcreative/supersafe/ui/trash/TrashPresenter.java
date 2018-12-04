@@ -94,7 +94,7 @@ public class TrashPresenter extends Presenter<BaseView>{
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
                     Utils.Log(TAG,"ServiceManager waiting for delete");
                 }
-                storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).local_id);
+                storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).items_id);
             }
             else{
                 mList.get(i).isDeleteLocal = false;

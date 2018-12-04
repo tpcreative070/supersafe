@@ -84,7 +84,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             super.bind(data, position);
             this.data = data;
             if (data.pin.equals("")) {
-                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLocalId(data.item_Local_Id);
+                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(data.items_id);
                 if (items != null) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {

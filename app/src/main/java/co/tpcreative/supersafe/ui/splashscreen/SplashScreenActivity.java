@@ -73,18 +73,16 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                 + " \n versionRelease " + versionRelease
         );
         ServiceManager.getInstance().onStartService();
-        ServiceManager.getInstance().setUploadData(false);
-        ServiceManager.getInstance().setDownloadData(false);
-        ServiceManager.getInstance().setDeleteOwnCloud(false);
-        ServiceManager.getInstance().setDeleteSyncCLoud(false);
-        ServiceManager.getInstance().setGetListCategories(false);
-        ServiceManager.getInstance().setCategoriesSync(false);
-        ServiceManager.getInstance().setDeleteAlbum(false);
+//        ServiceManager.getInstance().setUploadData(false);
+//        ServiceManager.getInstance().setDownloadData(false);
+//        ServiceManager.getInstance().setDeleteOwnCloud(false);
+//        ServiceManager.getInstance().setDeleteSyncCLoud(false);
+//        ServiceManager.getInstance().setGetListCategories(false);
+//        ServiceManager.getInstance().setCategoriesSync(false);
+//        ServiceManager.getInstance().setDeleteAlbum(false);
         MainCategories.getInstance().getList();
-
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
-
         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
         Utils.Log(TAG,"Max "+count);
 

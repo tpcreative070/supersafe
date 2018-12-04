@@ -139,7 +139,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
-        final Items items = InstanceGenerator.getInstance(this).getLocalId(presenter.mainCategories.item_Local_Id);
+        final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mainCategories.items_id);
         if (items != null) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             switch (formatTypeFile){
@@ -395,7 +395,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         break;
                     }
                 }
-
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -1096,7 +1095,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
                     Utils.Log(TAG, "ServiceManager waiting for delete");
                 }
-                storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).local_id);
+                storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).items_id);
                 adapter.removeAt(i);
             }
         }
@@ -1148,22 +1147,28 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public Configuration getConfiguration() {
         //default configuration
-        Configuration cfg=new Configuration.Builder()
-                .hasCamera(true)
-                .hasShade(true)
-                .hasPreview(true)
-                .setSpaceSize(4)
-                .setPhotoMaxWidth(120)
-                .setLocalCategoriesId(presenter.mainCategories.categories_local_id)
-                .setCheckBoxColor(0xFF3F51B5)
-                .setFakePIN(presenter.mainCategories.isFakePin)
-                .setDialogHeight(Configuration.DIALOG_HALF)
-                .setDialogMode(Configuration.DIALOG_LIST)
-                .setMaximum(9)
-                .setTip(null)
-                .setAblumsTitle(null)
-                .build();
-        return cfg;
+        try {
+            Configuration cfg =new Configuration.Builder()
+                    .hasCamera(true)
+                    .hasShade(true)
+                    .hasPreview(true)
+                    .setSpaceSize(4)
+                    .setPhotoMaxWidth(120)
+                    .setLocalCategoriesId(presenter.mainCategories.categories_local_id)
+                    .setCheckBoxColor(0xFF3F51B5)
+                    .setFakePIN(presenter.mainCategories.isFakePin)
+                    .setDialogHeight(Configuration.DIALOG_HALF)
+                    .setDialogMode(Configuration.DIALOG_LIST)
+                    .setMaximum(9)
+                    .setTip(null)
+                    .setAblumsTitle(null)
+                    .build();
+            return cfg;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

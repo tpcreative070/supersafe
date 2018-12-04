@@ -16,6 +16,7 @@ public class AnimationsContainer {
 
     // single instance procedures
     private static AnimationsContainer mInstance;
+    private Handler mHandler;
 
 
     public interface OnAnimationStoppedListener{
@@ -81,7 +82,6 @@ public class AnimationsContainer {
         private boolean mShouldRun; // true if the animation should continue running. Used to stop the animation
         private boolean mIsRunning; // true if the animation currently running. prevents starting the animation twice
         private SoftReference<MenuItem> mSoftReferenceImageView; // Used to prevent holding ImageView when it should be dead.
-        private Handler mHandler;
         private int mDelayMillis;
         private boolean isAllow;
         private OnAnimationStoppedListener mOnAnimationStoppedListener;
@@ -195,6 +195,9 @@ public class AnimationsContainer {
          */
 
         public synchronized void stop() {
+            if (mHandler!=null){
+                mHandler.removeCallbacks(null);
+            }
             mShouldRun = false;
         }
 

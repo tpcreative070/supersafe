@@ -38,7 +38,7 @@ public class MainCategories implements Serializable{
     public boolean isFakePin;
     public String pin ;
     public boolean isCustom_Cover;
-    public String item_Local_Id;
+    public String items_id;
     public String mainCategories_Local_Id;
     @Ignore
     public Date date;
@@ -98,7 +98,7 @@ public class MainCategories implements Serializable{
         this.icon = defaultIcon;
     }
 
-    public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer,boolean isFakePin,String pin,String item_Local_Id,String mainCategories_Local_Id,boolean isCustom_Cover) {
+    public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer,boolean isFakePin,String pin,String items_id,String mainCategories_Local_Id,boolean isCustom_Cover) {
         this.categories_name = categories_name;
         this.image = image;
         this.icon = icon;
@@ -110,7 +110,7 @@ public class MainCategories implements Serializable{
         this.isChange = isChange;
         this.isFakePin = isFakePin;
         this.pin = pin;
-        this.item_Local_Id = item_Local_Id;
+        this.items_id = items_id;
         this.mainCategories_Local_Id = mainCategories_Local_Id;
         this.isCustom_Cover = isCustom_Cover;
 
@@ -127,7 +127,7 @@ public class MainCategories implements Serializable{
         this.isChange = false;
         this.isFakePin = false;
         this.pin = "";
-        this.item_Local_Id = null;
+        this.items_id = null;
         this.mainCategories_Local_Id = null;
         this.isCustom_Cover = false;
     }

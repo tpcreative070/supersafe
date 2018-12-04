@@ -68,11 +68,11 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
         final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mMainCategories.categories_local_id,false,mMainCategories.isFakePin);
         if (data!=null){
             mList = data;
-            final Items oldItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLocalId(mMainCategories.item_Local_Id);
+            final Items oldItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(mMainCategories.items_id);
             if (oldItem!=null){
                 for (int i = 0 ; i<mList.size() ; i++){
                     mList.get(i).date = dateEventItems;
-                    if (oldItem.local_id.equals(mList.get(i).local_id)){
+                    if (oldItem.items_id.equals(mList.get(i).items_id)){
                         mList.get(i).isChecked = true;
                     }
                     else{

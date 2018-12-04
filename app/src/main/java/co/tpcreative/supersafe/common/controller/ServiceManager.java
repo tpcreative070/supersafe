@@ -391,6 +391,7 @@ public class ServiceManager implements BaseView {
             return;
         }
 
+        isGetListCategories = true;
         myService.onGetListCategoriesSync(new BaseView() {
             @Override
             public void onError(String message, EnumStatus status) {
@@ -1311,7 +1312,7 @@ public class ServiceManager implements BaseView {
                                                             EnumFormatType formatType = EnumFormatType.values()[mItem.formatType];
                                                             switch (formatType){
                                                                 case IMAGE:{
-                                                                    categories.item_Local_Id = mItem.local_id;
+                                                                    categories.items_id = mItem.items_id;
                                                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(categories);
                                                                     break;
                                                                 }
@@ -1696,75 +1697,44 @@ public class ServiceManager implements BaseView {
                         String originalPath = pathContent + currentTime;
 
 
-                        DriveDescription description = new DriveDescription();
-                        description.fileExtension = mMimeTypeFile.extension;
+                        Items itemsPhoto = new Items();
+                        itemsPhoto.fileExtension = mMimeTypeFile.extension;
 
-                        description.originalPath = originalPath;
-                        description.thumbnailPath = thumbnailPath;
-                        description.subFolderName = uuId;
-                        description.categories_local_id = categories_local_id;
-                        description.categories_id = categories_id;
-                        description.local_id = uuId;
-                        description.global_original_id = null;
-                        description.mimeType = mMimeType;
-                        description.thumbnailName = currentTime;
-                        description.items_id = uuId;
-                        description.formatType = EnumFormatType.IMAGE.ordinal();
-                        description.degrees = 0;
-                        description.thumbnailSync = false;
-                        description.originalSync = false;
-                        description.global_thumbnail_id = null;
-                        description.fileType = EnumFileType.NONE.ordinal();
-                        description.originalName = currentTime;
-                        description.title = mMimeTypeFile.name;
-                        description.thumbnailName = "thumbnail_" + currentTime;
-                        description.size = "0";
-                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
-                        description.isDeleteLocal = false;
-                        description.isDeleteGlobal = false;
-                        description.deleteAction = EnumDelete.NONE.ordinal();
-                        description.isFakePin = isFakePin;
+                        itemsPhoto.originalPath = originalPath;
+                        itemsPhoto.thumbnailPath = thumbnailPath;
+                        itemsPhoto.categories_local_id = categories_local_id;
+                        itemsPhoto.categories_id = categories_id;
+                        itemsPhoto.global_original_id = null;
+                        itemsPhoto.mimeType = mMimeType;
+                        itemsPhoto.thumbnailName = currentTime;
+                        itemsPhoto.items_id = uuId;
+                        itemsPhoto.formatType = EnumFormatType.IMAGE.ordinal();
+                        itemsPhoto.degrees = 0;
+                        itemsPhoto.thumbnailSync = false;
+                        itemsPhoto.originalSync = false;
+                        itemsPhoto.global_thumbnail_id = null;
+                        itemsPhoto.fileType = EnumFileType.NONE.ordinal();
+                        itemsPhoto.originalName = currentTime;
+                        itemsPhoto.title = mMimeTypeFile.name;
+                        itemsPhoto.thumbnailName = "thumbnail_" + currentTime;
+                        itemsPhoto.size = "0";
+                        itemsPhoto.statusProgress = EnumStatusProgress.NONE.ordinal();
+                        itemsPhoto.isDeleteLocal = false;
+                        itemsPhoto.isDeleteGlobal = false;
+                        itemsPhoto.deleteAction = EnumDelete.NONE.ordinal();
+                        itemsPhoto.isFakePin = isFakePin;
 
                         final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
-                        description.isSaver = isSaver;
+                        itemsPhoto.isSaver = isSaver;
 
-                        description.isExport = false;
-                        description.isWaitingForExporting = false;
-                        description.custom_items = 0;
+                        itemsPhoto.isExport = false;
+                        itemsPhoto.isWaitingForExporting = false;
+                        itemsPhoto.custom_items = 0;
 
+                        itemsPhoto.isSyncCloud = false;
+                        itemsPhoto.isSyncOwnServer = false;
+                        itemsPhoto.statusAction = EnumStatus.UPLOAD.ordinal();
 
-                        items = new Items(false,
-                                false,
-                                description.originalSync,
-                                description.thumbnailSync,
-                                description.degrees,
-                                description.fileType,
-                                description.formatType,
-                                description.title,
-                                description.originalName,
-                                description.thumbnailName,
-                                description.items_id,
-                                description.originalPath,
-                                description.thumbnailPath,
-                                description.local_id,
-                                description.global_original_id,
-                                description.global_thumbnail_id,
-                                description.categories_id,
-                                description.categories_local_id,
-                                description.mimeType,
-                                description.fileExtension,
-                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD,
-                                description.size,
-                                description.statusProgress,
-                                description.isDeleteLocal,
-                                description.isDeleteGlobal,
-                                description.deleteAction,
-                                description.isFakePin,
-                                description.isSaver,
-                                description.isExport,
-                                description.isWaitingForExporting,
-                                description.custom_items);
 
 
                         File file = new Compressor(getContext())
@@ -1780,7 +1750,7 @@ public class ServiceManager implements BaseView {
                         Utils.Log(TAG, "start end");
 
                         final ResponseRXJava response = new ResponseRXJava();
-                        response.items = items;
+                        response.items = itemsPhoto;
                         response.categories = mMainCategories;
                         response.originalPath = mPath;
 
@@ -1845,70 +1815,38 @@ public class ServiceManager implements BaseView {
                         String originalPath = pathContent + currentTime;
 
 
-                        DriveDescription description = new DriveDescription();
-                        description.fileExtension = mMimeTypeFile.extension;
-                        description.originalPath = originalPath;
-                        description.thumbnailPath = thumbnailPath;
-                        description.subFolderName = uuId;
-                        description.categories_id = categories_id;
-                        description.categories_local_id = categories_local_id;
-                        description.local_id = uuId;
-                        description.global_original_id = null;
-                        description.mimeType = mMimeType;
-                        description.items_id = uuId;
-                        description.formatType = EnumFormatType.VIDEO.ordinal();
-                        description.degrees = 0;
-                        description.thumbnailSync = false;
-                        description.originalSync = false;
-                        description.global_thumbnail_id = null;
-                        description.fileType = EnumFileType.NONE.ordinal();
-                        description.originalName = currentTime;
-                        description.title = mMimeTypeFile.name;
-                        description.thumbnailName = "thumbnail_" + currentTime;
-                        description.size = "0";
-                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
-                        description.isDeleteLocal = false;
-                        description.isDeleteGlobal = false;
-                        description.deleteAction = EnumDelete.NONE.ordinal();
-                        description.isFakePin = isFakePin;
-                        description.isSaver = false;
-                        description.isExport = false;
-                        description.isWaitingForExporting = false;
-                        description.custom_items = 0;
+                        Items itemsVideo = new Items();
+                        itemsVideo.fileExtension = mMimeTypeFile.extension;
+                        itemsVideo.originalPath = originalPath;
+                        itemsVideo.thumbnailPath = thumbnailPath;
+                        itemsVideo.categories_id = categories_id;
+                        itemsVideo.categories_local_id = categories_local_id;
+                        itemsVideo.global_original_id = null;
+                        itemsVideo.mimeType = mMimeType;
+                        itemsVideo.items_id = uuId;
+                        itemsVideo.formatType = EnumFormatType.VIDEO.ordinal();
+                        itemsVideo.degrees = 0;
+                        itemsVideo.thumbnailSync = false;
+                        itemsVideo.originalSync = false;
+                        itemsVideo.global_thumbnail_id = null;
+                        itemsVideo.fileType = EnumFileType.NONE.ordinal();
+                        itemsVideo.originalName = currentTime;
+                        itemsVideo.title = mMimeTypeFile.name;
+                        itemsVideo.thumbnailName = "thumbnail_" + currentTime;
+                        itemsVideo.size = "0";
+                        itemsVideo.statusProgress = EnumStatusProgress.NONE.ordinal();
+                        itemsVideo.isDeleteLocal = false;
+                        itemsVideo.isDeleteGlobal = false;
+                        itemsVideo.deleteAction = EnumDelete.NONE.ordinal();
+                        itemsVideo.isFakePin = isFakePin;
+                        itemsVideo.isSaver = false;
+                        itemsVideo.isExport = false;
+                        itemsVideo.isWaitingForExporting = false;
+                        itemsVideo.custom_items = 0;
 
-
-                        items = new Items(false,
-                                false,
-                                description.originalSync,
-                                description.thumbnailSync,
-                                description.degrees,
-                                description.fileType,
-                                description.formatType,
-                                description.title,
-                                description.originalName,
-                                description.thumbnailName,
-                                description.items_id,
-                                description.originalPath,
-                                description.thumbnailPath,
-                                description.local_id,
-                                description.global_original_id,
-                                description.global_thumbnail_id,
-                                description.categories_id,
-                                description.categories_local_id,
-                                description.mimeType,
-                                description.fileExtension,
-                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD,
-                                description.size,
-                                description.statusProgress,
-                                description.isDeleteLocal,
-                                description.isDeleteGlobal,
-                                description.deleteAction,
-                                description.isFakePin,
-                                description.isSaver,
-                                description.isExport,
-                                description.isWaitingForExporting,
-                                description.custom_items);
+                        itemsVideo.isSyncCloud = false;
+                        itemsVideo.isSyncOwnServer = false;
+                        itemsVideo.statusAction = EnumStatus.UPLOAD.ordinal();
 
 
                         Utils.Log(TAG,"Call thumbnail");
@@ -1918,7 +1856,7 @@ public class ServiceManager implements BaseView {
 
                         Utils.Log(TAG,"Call original");
                         final ResponseRXJava response = new ResponseRXJava();
-                        response.items = items;
+                        response.items = itemsVideo;
                         response.categories = mMainCategories;
                         response.originalPath = mPath;
 
@@ -1957,76 +1895,47 @@ public class ServiceManager implements BaseView {
                         storage.createDirectory(pathContent);
                         String originalPath = pathContent + currentTime;
 
-                        DriveDescription description = new DriveDescription();
-                        description.fileExtension = mMimeTypeFile.extension;
-                        description.originalPath = originalPath;
-                        description.thumbnailPath = null;
-                        description.subFolderName = uuId;
-                        description.categories_id = categories_id;
-                        description.categories_local_id = categories_local_id;
-                        description.local_id = uuId;
-                        description.mimeType = mMimeType;
-                        description.items_id = uuId;
-                        description.formatType = EnumFormatType.AUDIO.ordinal();
-                        description.degrees = 0;
-                        description.thumbnailSync = true;
-                        description.originalSync = false;
-                        description.global_original_id = null;
-                        description.global_thumbnail_id = null;
-                        description.fileType = EnumFileType.NONE.ordinal();
-                        description.originalName = currentTime;
-                        description.title = mMimeTypeFile.name;
-                        description.thumbnailName = null;
-                        description.size = "0";
-                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
-                        description.isDeleteLocal = false;
-                        description.isDeleteGlobal = false;
-                        description.deleteAction = EnumDelete.NONE.ordinal();
-                        description.isFakePin = isFakePin;
-                        description.isSaver = false;
-                        description.isExport = false;
-                        description.isWaitingForExporting = false;
-                        description.custom_items = 0;
+                        Items itemsAudio = new Items();
+                        itemsAudio.fileExtension = mMimeTypeFile.extension;
+                        itemsAudio.originalPath = originalPath;
+                        itemsAudio.thumbnailPath = null;
+                        itemsAudio.categories_id = categories_id;
+                        itemsAudio.categories_local_id = categories_local_id;
+                        itemsAudio.mimeType = mMimeType;
+                        itemsAudio.items_id = uuId;
+                        itemsAudio.formatType = EnumFormatType.AUDIO.ordinal();
+                        itemsAudio.degrees = 0;
+                        itemsAudio.thumbnailSync = true;
+                        itemsAudio.originalSync = false;
+                        itemsAudio.global_original_id = null;
+                        itemsAudio.global_thumbnail_id = null;
+                        itemsAudio.fileType = EnumFileType.NONE.ordinal();
+                        itemsAudio.originalName = currentTime;
+                        itemsAudio.title = mMimeTypeFile.name;
+                        itemsAudio.thumbnailName = "null";
+                        itemsAudio.size = "0";
+                        itemsAudio.statusProgress = EnumStatusProgress.NONE.ordinal();
+                        itemsAudio.isDeleteLocal = false;
+                        itemsAudio.isDeleteGlobal = false;
+                        itemsAudio.deleteAction = EnumDelete.NONE.ordinal();
+                        itemsAudio.isFakePin = isFakePin;
+                        itemsAudio.isSaver = false;
+                        itemsAudio.isExport = false;
+                        itemsAudio.isWaitingForExporting = false;
+                        itemsAudio.custom_items = 0;
 
 
-                        items = new Items(false,
-                                false,
-                                description.originalSync,
-                                description.thumbnailSync,
-                                description.degrees,
-                                description.fileType,
-                                description.formatType,
-                                description.title,
-                                description.originalName,
-                                description.thumbnailName,
-                                description.items_id,
-                                description.originalPath,
-                                description.thumbnailPath,
-                                description.local_id,
-                                description.global_original_id,
-                                description.global_thumbnail_id,
-                                description.categories_id,
-                                description.categories_local_id,
-                                description.mimeType,
-                                description.fileExtension,
-                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD,
-                                description.size,
-                                description.statusProgress,
-                                description.isDeleteLocal,
-                                description.isDeleteGlobal,
-                                description.deleteAction,
-                                description.isFakePin,
-                                description.isSaver,
-                                description.isExport,
-                                description.isWaitingForExporting,
-                                description.custom_items);
+                        itemsAudio.isSyncCloud = false;
+                        itemsAudio.isSyncOwnServer = false;
+                        itemsAudio.statusAction = EnumStatus.UPLOAD.ordinal();
+
+
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
 
                         final ResponseRXJava response = new ResponseRXJava();
-                        response.items = items;
+                        response.items = itemsAudio;
                         response.categories = mMainCategories;
                         response.originalPath = mPath;
 
@@ -2064,76 +1973,46 @@ public class ServiceManager implements BaseView {
                         storage.createDirectory(pathContent);
                         String originalPath = pathContent + currentTime;
 
-                        DriveDescription description = new DriveDescription();
-                        description.fileExtension = mMimeTypeFile.extension;
-                        description.originalPath = originalPath;
-                        description.thumbnailPath = null;
-                        description.subFolderName = uuId;
-                        description.categories_id = categories_id;
-                        description.categories_local_id = categories_local_id;
-                        description.local_id = uuId;
-                        description.mimeType = mMimeType;
-                        description.items_id = uuId;
-                        description.formatType = EnumFormatType.FILES.ordinal();
-                        description.degrees = 0;
-                        description.thumbnailSync = true;
-                        description.originalSync = false;
-                        description.global_original_id = null;
-                        description.global_thumbnail_id = null;
-                        description.fileType = EnumFileType.NONE.ordinal();
-                        description.originalName = currentTime;
-                        description.title = mMimeTypeFile.name;
-                        description.thumbnailName = null;
-                        description.size = "0";
-                        description.statusProgress = EnumStatusProgress.NONE.ordinal();
-                        description.isDeleteLocal = false;
-                        description.isDeleteGlobal = false;
-                        description.deleteAction = EnumDelete.NONE.ordinal();
-                        description.isFakePin = isFakePin;
-                        description.isSaver = false;
-                        description.isExport = false;
-                        description.isWaitingForExporting = false;
-                        description.custom_items = 0;
+                        Items itemsFile = new Items();
+                        itemsFile.fileExtension = mMimeTypeFile.extension;
+                        itemsFile.originalPath = originalPath;
+                        itemsFile.thumbnailPath = null;
+                        itemsFile.categories_id = categories_id;
+                        itemsFile.categories_local_id = categories_local_id;
+                        itemsFile.mimeType = mMimeType;
+                        itemsFile.items_id = uuId;
+                        itemsFile.formatType = EnumFormatType.FILES.ordinal();
+                        itemsFile.degrees = 0;
+                        itemsFile.thumbnailSync = true;
+                        itemsFile.originalSync = false;
+                        itemsFile.global_original_id = null;
+                        itemsFile.global_thumbnail_id = null;
+                        itemsFile.fileType = EnumFileType.NONE.ordinal();
+                        itemsFile.originalName = currentTime;
+                        itemsFile.title = mMimeTypeFile.name;
+                        itemsFile.thumbnailName = "null";
+                        itemsFile.size = "0";
+                        itemsFile.statusProgress = EnumStatusProgress.NONE.ordinal();
+                        itemsFile.isDeleteLocal = false;
+                        itemsFile.isDeleteGlobal = false;
+                        itemsFile.deleteAction = EnumDelete.NONE.ordinal();
+                        itemsFile.isFakePin = isFakePin;
+                        itemsFile.isSaver = false;
+                        itemsFile.isExport = false;
+                        itemsFile.isWaitingForExporting = false;
+                        itemsFile.custom_items = 0;
+
+                        itemsFile.isSyncCloud = false;
+                        itemsFile.isSyncOwnServer = false;
+                        itemsFile.statusAction = EnumStatus.UPLOAD.ordinal();
 
 
-                        items = new Items(false,
-                                false,
-                                description.originalSync,
-                                description.thumbnailSync,
-                                description.degrees,
-                                description.fileType,
-                                description.formatType,
-                                description.title,
-                                description.originalName,
-                                description.thumbnailName,
-                                description.items_id,
-                                description.originalPath,
-                                description.thumbnailPath,
-                                description.local_id,
-                                description.global_original_id,
-                                description.global_thumbnail_id,
-                                description.categories_id,
-                                description.categories_local_id,
-                                description.mimeType,
-                                description.fileExtension,
-                                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                                EnumStatus.UPLOAD,
-                                description.size,
-                                description.statusProgress,
-                                description.isDeleteLocal,
-                                description.isDeleteGlobal,
-                                description.deleteAction,
-                                description.isFakePin,
-                                description.isSaver,
-                                description.isExport,
-                                description.isWaitingForExporting,
-                                description.custom_items);
 
                         mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
                         boolean createdOriginal = mStorage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
 
                         final ResponseRXJava response = new ResponseRXJava();
-                        response.items = items;
+                        response.items = itemsFile;
                         response.categories = mMainCategories;
                         response.originalPath = mPath;
 
@@ -2177,11 +2056,8 @@ public class ServiceManager implements BaseView {
                             switch (enumFormatType) {
                                 case AUDIO: {
                                     if (storage.isFileExist(items.originalPath)) {
-                                        final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
                                         mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                                        driveDescription.size = "" + mb;
-                                        items.size = driveDescription.size;
-                                        items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                        items.size = "" + mb;
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
 
 //                                        if (!mResponse.categories.isCustom_Cover) {
@@ -2195,11 +2071,8 @@ public class ServiceManager implements BaseView {
                                 }
                                 case FILES: {
                                     if (storage.isFileExist(items.originalPath)) {
-                                        final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
                                         mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                                        driveDescription.size = "" + mb;
-                                        items.size = driveDescription.size;
-                                        items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                        items.size = "" + mb;
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
 
 //                                        if (!mResponse.categories.isCustom_Cover) {
@@ -2210,21 +2083,18 @@ public class ServiceManager implements BaseView {
                                     }
                                     break;
                                 }
-                                case IMAGE: {
+                                default: {
                                     if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
-                                        final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(items.description);
                                         mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
                                         if (storage.isFileExist(items.thumbnailPath)) {
                                             mb += (long) +storage.getSize(new File(items.thumbnailPath), SizeUnit.B);
                                         }
-                                        driveDescription.size = "" + mb;
-                                        items.size = driveDescription.size;
-                                        items.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                        items.size = "" + mb;
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
 
                                         if (!mResponse.categories.isCustom_Cover) {
                                             final MainCategories main = mResponse.categories;
-                                            main.item_Local_Id = items.local_id;
+                                            main.items_id = items.items_id;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                         }
                                     }
@@ -2280,74 +2150,44 @@ public class ServiceManager implements BaseView {
                 String thumbnailPath = pathContent + "thumbnail_" + currentTime;
                 String originalPath = pathContent + currentTime;
 
-                DriveDescription description = new DriveDescription();
-                description.fileExtension = getString(R.string.key_jpg);
-                description.originalPath = originalPath;
-                description.thumbnailPath = thumbnailPath;
-                description.subFolderName = uuId;
-                description.categories_id = categories_id;
-                description.categories_local_id = categories_local_id;
-                description.local_id = uuId;
-                description.global_original_id = null;
-                description.mimeType = MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype();
-                description.thumbnailName = currentTime;
-                description.items_id = uuId;
-                description.formatType = EnumFormatType.IMAGE.ordinal();
-                description.degrees = 0;
-                description.thumbnailSync = false;
-                description.originalSync = false;
-                description.global_thumbnail_id = null;
-                description.fileType = EnumFileType.NONE.ordinal();
-                description.originalName = currentTime;
-                description.title = currentTime + getString(R.string.key_jpg);;
-                description.thumbnailName = "thumbnail_" + currentTime;
-                description.size = "0";
-                description.statusProgress = EnumStatusProgress.NONE.ordinal();
-                description.isDeleteLocal = false;
-                description.isDeleteGlobal = false;
-                description.deleteAction = EnumDelete.NONE.ordinal();
-                description.isFakePin = isFakePin;
+
+
+                Items items = new Items();
+                items.fileExtension = getString(R.string.key_jpg);
+                items.originalPath = originalPath;
+                items.thumbnailPath = thumbnailPath;
+                items.categories_id = categories_id;
+                items.categories_local_id = categories_local_id;
+                items.global_original_id = null;
+                items.mimeType = MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype();
+                items.thumbnailName = currentTime;
+                items.items_id = uuId;
+                items.formatType = EnumFormatType.IMAGE.ordinal();
+                items.degrees = 0;
+                items.thumbnailSync = false;
+                items.originalSync = false;
+                items.global_thumbnail_id = null;
+                items.fileType = EnumFileType.NONE.ordinal();
+                items.originalName = currentTime;
+                items.title = currentTime + getString(R.string.key_jpg);;
+                items.thumbnailName = "thumbnail_" + currentTime;
+                items.size = "0";
+                items.statusProgress = EnumStatusProgress.NONE.ordinal();
+                items.isDeleteLocal = false;
+                items.isDeleteGlobal = false;
+                items.deleteAction = EnumDelete.NONE.ordinal();
+                items.isFakePin = isFakePin;
+                items.isExport = false;
+                items.isWaitingForExporting = false;
+                items.custom_items = 0;
+                items.isSyncCloud = false;
+                items.isSyncOwnServer = false;
+                items.statusAction = EnumStatus.UPLOAD.ordinal();
+
 
                 final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
-                description.isSaver = isSaver;
+                items.isSaver = isSaver;
 
-                description.isExport = false;
-                description.isWaitingForExporting = false;
-                description.custom_items = 0;
-
-
-                Items items = new Items(false,
-                        false,
-                        description.originalSync,
-                        description.thumbnailSync,
-                        description.degrees,
-                        description.fileType,
-                        description.formatType,
-                        description.title,
-                        description.originalName,
-                        description.thumbnailName,
-                        description.items_id,
-                        description.originalPath,
-                        description.thumbnailPath,
-                        description.local_id,
-                        description.global_original_id,
-                        description.global_thumbnail_id,
-                        description.categories_id = categories_id,
-                        description.categories_local_id,
-                        description.mimeType,
-                        description.fileExtension,
-                        DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                        EnumStatus.UPLOAD,
-                        description.size,
-                        description.statusProgress,
-                        description.isDeleteLocal,
-                        description.isDeleteGlobal,
-                        description.deleteAction,
-                        description.isFakePin,
-                        description.isSaver,
-                        description.isExport,
-                        description.isWaitingForExporting,
-                        description.custom_items);
 
                 storage.createFileByteDataNoEncrypt(getContext(), data, new OnStorageListener() {
                     @Override
@@ -2428,19 +2268,15 @@ public class ServiceManager implements BaseView {
                             final Items mItem = mResponse.items;
                             long mb;
                             if (storage.isFileExist(mItem.originalPath) && storage.isFileExist(mItem.thumbnailPath)) {
-                                final DriveDescription driveDescription = DriveDescription.getInstance().hexToObject(mItem.description);
                                 mb = (long) +storage.getSize(new File(mItem.originalPath), SizeUnit.B);
                                 if (storage.isFileExist(mItem.thumbnailPath)) {
                                     mb += (long) +storage.getSize(new File(mItem.thumbnailPath), SizeUnit.B);
                                 }
-                                driveDescription.size = "" + mb;
-                                mItem.size = driveDescription.size;
-                                mItem.description = DriveDescription.getInstance().convertToHex(new Gson().toJson(driveDescription));
+                                mItem.size = "" + mb;
                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mItem);
-
                                 if (!mResponse.categories.isCustom_Cover) {
                                     final MainCategories main = mResponse.categories;
-                                    main.item_Local_Id = mItem.local_id;
+                                    main.items_id = mItem.items_id;
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                     Utils.Log(TAG, "Special main categories " + new Gson().toJson(main));
                                 }
@@ -2834,20 +2670,30 @@ public class ServiceManager implements BaseView {
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync) {
             Utils.Log(TAG, "Progress download is :" + isDownloadData);
             Utils.Log(TAG, "Progress upload is :" + isUploadData);
-        } else {
+        }
+        else {
             onStopService();
             SingletonPremiumTimer.getInstance().onStop();
+            ServiceManager.getInstance().setUploadData(false);
+            ServiceManager.getInstance().setDownloadData(false);
+            ServiceManager.getInstance().setExporting(false);
+            ServiceManager.getInstance().setImporting(false);
+            ServiceManager.getInstance().setDeleteSyncCLoud(false);
+            ServiceManager.getInstance().setDeleteOwnCloud(false);
+            ServiceManager.getInstance().setDeleteAlbum(false);
+            ServiceManager.getInstance().setGetListCategories(false);
+            ServiceManager.getInstance().setCategoriesSync(false);
             if (myService != null) {
                 myService.unbindView();
             }
             if (subscriptions != null) {
                 subscriptions.dispose();
             }
+            Utils.Log(TAG, "Dismiss Service manager");
         }
-        Utils.Log(TAG, "Dismiss Service manager");
     }
 
     @Override
@@ -2927,6 +2773,16 @@ public class ServiceManager implements BaseView {
                 ServiceManager.getInstance().onCheckingMissData();
                 ServiceManager.getInstance().onGetUserInfo();
                 PremiumManager.getInstance().onStartInAppPurchase();
+                break;
+            }
+            case DISCONNECTED:{
+                ServiceManager.getInstance().setUploadData(false);
+                ServiceManager.getInstance().setDownloadData(false);
+                ServiceManager.getInstance().setDeleteOwnCloud(false);
+                ServiceManager.getInstance().setDeleteSyncCLoud(false);
+                ServiceManager.getInstance().setGetListCategories(false);
+                ServiceManager.getInstance().setCategoriesSync(false);
+                ServiceManager.getInstance().setDeleteAlbum(false);
                 break;
             }
             case USER_INFO: {

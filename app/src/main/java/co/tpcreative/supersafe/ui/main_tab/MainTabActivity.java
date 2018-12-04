@@ -580,6 +580,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         previousStatus = status;
         animation = AnimationsContainer.getInstance().createSplashAnim(item, status);
         animation.start();
+
     }
 
     /*MainTab View*/

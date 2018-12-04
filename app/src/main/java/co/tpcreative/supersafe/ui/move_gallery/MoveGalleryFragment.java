@@ -63,6 +63,9 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mConfig = mListener.getConfiguration();
+        if (mConfig==null){
+            return;
+        }
         mAdapterAlbumGrid = new MoveGalleryAdapter(getActivity().getLayoutInflater(),getActivity(),this);
         presenter = new MoveGalleryPresenter();
         presenter.bindView(this);
@@ -101,6 +104,12 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     }
 
     public void openAlbum() {
+
+        if (mConfig==null){
+            dialog.dismiss();
+            return;
+        }
+
         int screenHeight = Utils.getScreenHeight(getActivity());
         if (dialog != null && dialog.isShowing()) {
             dialog.dismiss();

@@ -246,21 +246,27 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     @Override
     public Configuration getConfiguration() {
         //default configuration
-        Configuration cfg=new Configuration.Builder()
-                .hasCamera(true)
-                .hasShade(true)
-                .hasPreview(true)
-                .setSpaceSize(4)
-                .setPhotoMaxWidth(120)
-                .setLocalCategoriesId(presenter.mainCategories.categories_local_id)
-                .setCheckBoxColor(0xFF3F51B5)
-                .setDialogHeight(Configuration.DIALOG_HALF)
-                .setDialogMode(Configuration.DIALOG_LIST)
-                .setMaximum(9)
-                .setTip(null)
-                .setAblumsTitle(null)
-                .build();
-        return cfg;
+        try {
+            Configuration cfg=new Configuration.Builder()
+                    .hasCamera(true)
+                    .hasShade(true)
+                    .hasPreview(true)
+                    .setSpaceSize(4)
+                    .setPhotoMaxWidth(120)
+                    .setLocalCategoriesId(presenter.mainCategories.categories_local_id)
+                    .setCheckBoxColor(0xFF3F51B5)
+                    .setDialogHeight(Configuration.DIALOG_HALF)
+                    .setDialogMode(Configuration.DIALOG_LIST)
+                    .setMaximum(9)
+                    .setTip(null)
+                    .setAblumsTitle(null)
+                    .build();
+            return cfg;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -482,7 +488,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     if (isProgressing){
                         return;
                     }
-                    final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).local_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
+                    final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).items_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     if (formatTypeFile!=EnumFormatType.AUDIO && formatTypeFile !=EnumFormatType.FILES ){
                         if (items!=null) {
@@ -837,7 +843,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(position));
             Utils.Log(TAG, "ServiceManager waiting for delete");
         }
-        storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(position).local_id);
+        storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(position).items_id);
         presenter.onDelete(position);
         isReload = true;
         Utils.Log(TAG,"Action 4");

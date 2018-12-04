@@ -37,7 +37,7 @@ public class PlayerPresenter extends Presenter<BaseView>{
                     if (list!=null){
                         mList.clear();
                         for (Items index : list){
-                            if (!index.local_id.equals(items.local_id)){
+                            if (!index.items_id.equals(items.items_id)){
                                 mList.add(index);
                             }
                         }

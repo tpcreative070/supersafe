@@ -39,6 +39,7 @@ import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Premium;
@@ -813,6 +814,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     } else {
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     }
+                    Utils.Log(TAG,"Adding item Response "+ new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
                         Log.d(TAG, "View is null");
@@ -1079,7 +1081,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
                         final List<MainCategories> listCategories = onResponse.listCategories;
-                        final List<DriveResponse> driveResponse = onResponse.files;
+                        final List<Items> driveResponse = onResponse.files;
                         if (onResponse.nextPage == null) {
                             try {
                                 Utils.Log(TAG,"Special values "+new Gson().toJson(listCategories));
@@ -1134,37 +1136,33 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         } else {
                             try {
                                 view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
-                                for (DriveResponse index : driveResponse) {
+                                for (Items index : driveResponse) {
                                     hashMapGlobal.put(index.items_id, index.items_id);
-                                    final DriveDescription description = DriveDescription.getInstance().hexToObject(index.description);
-                                    if (description != null) {
+                                    Items itemsResponse = new Items(index);
                                         DriveEvent driveTitle = DriveEvent.getInstance().hexToObject(index.name);
                                         if (driveTitle != null) {
                                             final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id,false);
-                                            EnumFormatType formatTypeFile = EnumFormatType.values()[description.formatType];
+                                            EnumFormatType formatTypeFile = EnumFormatType.values()[itemsResponse.formatType];
                                             if (items == null) {
-                                                description.global_original_id = index.global_original_id;
-                                                description.global_thumbnail_id = index.global_thumbnail_id;
-                                                description.categories_id = index.categories_id;
                                                 switch (formatTypeFile) {
                                                     case AUDIO: {
-                                                        description.thumbnailSync = true;
+                                                        itemsResponse.thumbnailSync = true;
                                                         break;
                                                     }
                                                     case FILES:{
-                                                        description.thumbnailSync = true;
+                                                        itemsResponse.thumbnailSync = true;
                                                         break;
                                                     }
                                                     default: {
-                                                        description.originalSync = false;
-                                                        description.thumbnailSync = false;
+                                                        itemsResponse.originalSync = false;
+                                                        itemsResponse.thumbnailSync = false;
                                                         break;
                                                     }
                                                 }
                                                 final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                                 if (main != null) {
-                                                    description.categories_local_id = main.categories_local_id;
-                                                    onSaveItem(description);
+                                                    itemsResponse.categories_local_id = main.categories_local_id;
+                                                    onSaveItem(itemsResponse);
                                                 } else {
                                                     view.onSuccessful("..................categories_id is nul.............");
                                                 }
@@ -1179,10 +1177,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                             view.onError("Can not convert item", EnumStatus.GET_LIST_FILE);
                                             Log.d(TAG, "Can not convert item");
                                         }
-                                    } else {
-                                        view.onError("Description item is null", EnumStatus.GET_LIST_FILE);
-                                        Utils.Log(TAG, "Description item is null");
-                                    }
                                 }
                             } catch (Exception e) {
                                 view.onError("Error "+e.getMessage(), EnumStatus.GET_LIST_FILE);
@@ -1273,51 +1267,25 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         }
     }
 
-    public void onSaveItem(final DriveDescription description) {
+    public void onSaveItem(final Items mItem) {
+        final Items items = new Items(mItem);
         Utils.Log(TAG, "onSaveItem");
-        Utils.onWriteLog(new Gson().toJson(description),EnumStatus.CREATE);
+        Utils.onWriteLog(new Gson().toJson(items),EnumStatus.CREATE);
         boolean isSaver = false;
-        EnumFormatType formatType = EnumFormatType.values()[description.formatType];
+        EnumFormatType formatType = EnumFormatType.values()[items.formatType];
         switch (formatType){
             case IMAGE:{
                 isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
-                description.originalSync = isSaver;
+                items.originalSync = isSaver;
                 break;
             }
         }
-
-        Items items = new Items(false,
-                false,
-                description.originalSync,
-                description.thumbnailSync,
-                description.degrees,
-                description.fileType,
-                description.formatType,
-                description.title,
-                description.originalName,
-                description.thumbnailName,
-                description.items_id,
-                description.originalPath,
-                description.thumbnailPath,
-                description.local_id,
-                description.global_original_id,
-                description.global_thumbnail_id,
-                description.categories_id,
-                description.categories_local_id,
-                description.mimeType,
-                description.fileExtension,
-                DriveDescription.getInstance().convertToHex(new Gson().toJson(description)),
-                EnumStatus.DOWNLOAD,
-                description.size,
-                description.statusProgress,
-                description.isDeleteLocal,
-                description.isDeleteGlobal,
-                description.deleteAction,
-                description.isFakePin,
-                isSaver,
-                false,
-                false,
-                0);
+        items.isExport = false;
+        items.isWaitingForExporting = false;
+        items.custom_items = 0;
+        items.isSyncCloud = false;
+        items.isSyncOwnServer = false;
+        items.statusAction = EnumStatus.DOWNLOAD.ordinal();
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
@@ -1348,7 +1316,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
         if (destination==null){
             String path = SuperSafeApplication.getInstance().getSupersafePrivate();
-            String pathFolder = path + items.local_id + "/";
+            String pathFolder = path + items.items_id + "/";
             destination = pathFolder;
         }
         request.path_folder_output = destination;

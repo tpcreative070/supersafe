@@ -65,6 +65,9 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE id = :id AND isFakePin =:isFakePin")
     Items loadItemId(int id,boolean isFakePin);
 
+    @Query("Select * FROM items WHERE items_id = :item_id")
+    Items loadItemId(String item_id);
+
     @Query("Select * FROM items WHERE items_id = :globalName AND isSyncCloud = :isSyncCloud AND isFakePin =:isFakePin")
     Items loadItemId(String globalName,boolean isSyncCloud,boolean isFakePin);
 
@@ -79,12 +82,6 @@ public interface ItemsDao {
 
     @Query("Select * FROM items WHERE items_id = :items_id AND isFakePin =:isFakePin")
     List<Items>loadListItemId(String items_id,boolean isFakePin);
-
-    @Query("Select * FROM items WHERE local_id = :local_id AND isFakePin =:isFakePin")
-    Items loadLocalId(String local_id,boolean isFakePin);
-
-    @Query("Select * FROM items WHERE local_id = :local_id")
-    Items loadLocalId(String local_id);
 
     @Query("Select * FROM items WHERE isFakePin =:isFakePin ")
     List<Items> loadAll(boolean isFakePin);
