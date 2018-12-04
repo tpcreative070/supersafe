@@ -62,6 +62,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -337,16 +338,29 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             storage.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture());
             presenter.status = EnumStatus.EXPORT;
             boolean isSaver = false;
+            long spaceAvailable = 0;
             for (int i = 0;i<presenter.mList.size();i++){
-                if (presenter.mList.get(i).isSaver && presenter.mList.get(i).isChecked){
+                final Items items = presenter.mList.get(i);
+                if (items.isSaver && items.isChecked){
                     isSaver = true;
                 }
+                spaceAvailable +=Long.parseLong(items.size);;
             }
-            if (isSaver){
-                onEnableSyncData();
+
+            long availableSpaceOS =  Utils.getAvailableSpaceInBytes();
+            if (availableSpaceOS < spaceAvailable){
+                long request_spaces = spaceAvailable - availableSpaceOS;
+                String result =  ConvertUtils.byte2FitMemorySize(request_spaces);
+                String message = String.format(getString(R.string.your_space_is_not_enough_to),"export. ","Request spaces: "+result);
+                Utils.showDialog(this,message);
             }
             else{
-                onShowDialog(presenter.status);
+                if (isSaver){
+                    onEnableSyncData();
+                }
+                else{
+                    onShowDialog(presenter.status);
+                }
             }
         }
     }

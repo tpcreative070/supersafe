@@ -23,6 +23,7 @@ import co.tpcreative.supersafe.common.controller.SingletonEnterPinManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
+import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.SyncData;
@@ -57,6 +58,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     TextView tvVideos;
     @BindView(R.id.tvOther)
     TextView tvOther;
+    @BindView(R.id.tvAvailableSpaces)
+    TextView tvAvailableSpaces;
 
     public static MeFragment newInstance(int index) {
         MeFragment fragment = new MeFragment();
@@ -324,6 +327,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                 String others = String.format(getString(R.string.others_default), "" + presenter.others);
                 tvOther.setText(others);
 
+                String availableSpaces =  ConvertUtils.byte2FitMemorySize(Utils.getAvailableSpaceInBytes());
+                tvAvailableSpaces.setText(availableSpaces);
                 break;
             }
         }

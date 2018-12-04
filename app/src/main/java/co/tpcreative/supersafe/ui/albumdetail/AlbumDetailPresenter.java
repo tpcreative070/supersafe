@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.app.Activity;
 import android.os.Bundle;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -32,11 +32,12 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
     protected List<HashMap<Integer,Items>> mListHashExporting;
 
 
-
     public AlbumDetailPresenter(){
         mList = new ArrayList<>();
         mListShare = new ArrayList<>();
         mListHashExporting = new ArrayList<>();
+        String result =  ConvertUtils.byte2FitMemorySize(Utils.getAvailableSpaceInBytes());
+        Utils.Log(TAG,result);
     }
 
     public void  getData(Activity activity){

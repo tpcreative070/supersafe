@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.cloudmanager;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,18 +16,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.snatik.storage.Storage;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -46,7 +41,6 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity;
 
 
 public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener, BaseView<Long> {
@@ -209,7 +203,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             tvDeviceSaving.setText(ConvertUtils.byte2FitMemorySize(0));
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -433,7 +426,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
     public void onShowDialog() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

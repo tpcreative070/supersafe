@@ -2515,7 +2515,6 @@ public class ServiceManager implements BaseView {
                         public void onSubscribe(Disposable d) {
 
                         }
-
                         @Override
                         public void onComplete() {
                             Utils.Log(TAG, "Downloading completed............."+next);

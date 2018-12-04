@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StatFs;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.design.widget.BaseTransientBottomBar;
@@ -951,10 +952,6 @@ public class Utils {
         hashMap.put("m4a",new MimeTypeFile(".m4a", EnumFormatType.AUDIO,"audio/m4a"));
         hashMap.put("jpg",new MimeTypeFile(".jpg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
-
-
-
-
         return hashMap;
     }
 
@@ -975,7 +972,6 @@ public class Utils {
             onWriteLog(e.getMessage(),EnumStatus.DEVICE_ABOUT);
         }
         return "Exception";
-
     }
 
     public static void onWriteLog(String message, EnumStatus status) {
@@ -1003,7 +999,6 @@ public class Utils {
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         context.startActivityForResult(Intent.createChooser(intent, context.getString(R.string.share)),Navigator.SHARE);
     }
-
 
 
     private static Point getScreenSize(Context activity) {
@@ -1154,7 +1149,51 @@ public class Utils {
         }
     }
 
+    /**
+     * @return Number of bytes available on External storage
+     */
+    public static long getAvailableSpaceInBytes() {
+        long availableSpace = -1L;
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
 
+        return availableSpace;
+    }
+
+    /**
+     * @return Number of kilo bytes available on External storage
+     */
+
+    public static long getAvailableSpaceInKB(){
+        final long SIZE_KB = 1024L;
+        long availableSpace = -1L;
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        return availableSpace/SIZE_KB;
+    }
+    /**
+     * @return Number of Mega bytes available on External storage
+     */
+    public static long getAvailableSpaceInMB(){
+        final long SIZE_KB = 1024L;
+        final long SIZE_MB = SIZE_KB * SIZE_KB;
+        long availableSpace = -1L;
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        return availableSpace/SIZE_MB;
+    }
+
+    /**
+     * @return Number of gega bytes available on External storage
+     */
+    public static long getAvailableSpaceInGB(){
+        final long SIZE_KB = 1024L;
+        final long SIZE_GB = SIZE_KB * SIZE_KB * SIZE_KB;
+        long availableSpace = -1L;
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        return availableSpace/SIZE_GB;
+    }
 
 
 }

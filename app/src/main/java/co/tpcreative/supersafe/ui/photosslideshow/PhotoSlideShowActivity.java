@@ -396,7 +396,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     }
 
-
     @Override
     public void onClick(View view) {
         position = viewPager.getCurrentItem();
