@@ -46,7 +46,7 @@
         android:layout_margin="2dp"
         app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
         app:sdExpansionMode="top"
-        app:sdMainFabAnimationRotateAngle="90"
+        app:sdMainFabAnimationRotateAngle="180"
         app:sdMainFabClosedSrc="@drawable/baseline_add_white_24"
         app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
         app:sdOverlayLayout="@id/overlay" />

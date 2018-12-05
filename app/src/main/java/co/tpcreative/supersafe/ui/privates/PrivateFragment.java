@@ -18,6 +18,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.snatik.storage.Storage;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
@@ -236,6 +239,8 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
                         public void run() {
                             if (adapter != null) {
                                 adapter.setDataSource(presenter.mList);
+                                EventBus.getDefault().post(EnumStatus.PRIVATE_DONE);
+                                Utils.Log(TAG,"Reload");
                             }
                         }
                     });

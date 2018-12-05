@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -149,6 +150,12 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case PRIVATE_DONE:{
+                if (mSpeedDialView!=null){
+                    mSpeedDialView.show();
+                }
+                break;
+            }
         }
     };
 
@@ -254,9 +261,20 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     public void visitFloatingButton(int isVisit) {
-        mSpeedDialView.setVisibility(isVisit);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Utils.Log(TAG,"Visited !!! "+ isVisit);
+                //mSpeedDialView.setVisibility(isVisit);
+                if (isVisit==0){
+                    mSpeedDialView.show();
+                }
+                else{
+                    mSpeedDialView.hide();
+                }
+            }
+        });
     }
-
 
     private void initSpeedDial(boolean addActionItems) {
         Utils.Log(TAG,"Init floating button");
@@ -293,7 +311,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                             getTheme()))
                     .create());
-            mSpeedDialView.setMainFabAnimationRotateAngle(180);
+           mSpeedDialView.show();
+
         }
 
         //Set main action clicklistener.
@@ -302,9 +321,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             public boolean onMainActionSelected() {
                 return false; // True to keep the Speed Dial open
             }
-
             @Override
             public void onToggleChanged(boolean isOpen) {
+                //mSpeedDialView.setMainFabOpenedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
+                //mSpeedDialView.setMainFabClosedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
                 Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });

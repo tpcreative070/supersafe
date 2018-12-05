@@ -61,7 +61,6 @@ public class PrivatePresenter extends Presenter<BaseView> {
         }
     }
 
-
     public void onEmptyTrash(){
         BaseView view = view();
         try {

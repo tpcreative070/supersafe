@@ -101,7 +101,7 @@ public class SpeedDialOverlayLayout extends RelativeLayout {
 
     private void init(Context context, @Nullable AttributeSet attrs) {
         TypedArray attr = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SpeedDialOverlayLayout, 0, 0);
-        int overlayColor = ResourcesCompat.getColor(getResources(), R.color.sd_overlay_new_color, context.getTheme());
+        int overlayColor = ResourcesCompat.getColor(getResources(), R.color.sd_overlay_color, context.getTheme());
         try {
             overlayColor = attr.getColor(R.styleable.SpeedDialOverlayLayout_android_background, overlayColor);
             mClickableOverlay = attr.getBoolean(R.styleable.SpeedDialOverlayLayout_clickable_overlay, true);

@@ -91,6 +91,8 @@ public enum EnumStatus {
         LOCK,
         UNLOCK,
         COMPLETED_RECREATE,
+        PRIVATE_DONE,
+        ME_DONE,
         OTHER
 
 }
