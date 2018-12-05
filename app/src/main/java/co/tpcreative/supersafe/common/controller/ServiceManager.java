@@ -1898,7 +1898,7 @@ public class ServiceManager implements BaseView {
                         Items itemsAudio = new Items();
                         itemsAudio.fileExtension = mMimeTypeFile.extension;
                         itemsAudio.originalPath = originalPath;
-                        itemsAudio.thumbnailPath = null;
+                        itemsAudio.thumbnailPath = "null";
                         itemsAudio.categories_id = categories_id;
                         itemsAudio.categories_local_id = categories_local_id;
                         itemsAudio.mimeType = mMimeType;
@@ -1976,7 +1976,7 @@ public class ServiceManager implements BaseView {
                         Items itemsFile = new Items();
                         itemsFile.fileExtension = mMimeTypeFile.extension;
                         itemsFile.originalPath = originalPath;
-                        itemsFile.thumbnailPath = null;
+                        itemsFile.thumbnailPath = "null";
                         itemsFile.categories_id = categories_id;
                         itemsFile.categories_local_id = categories_local_id;
                         itemsFile.mimeType = mMimeType;

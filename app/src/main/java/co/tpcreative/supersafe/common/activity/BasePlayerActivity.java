@@ -15,13 +15,7 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
@@ -29,7 +23,6 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -59,11 +52,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
             onStartCount = 2;
         }
         storage = new Storage(this);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
     }
 
     protected void onStartOverridePendingTransition(){

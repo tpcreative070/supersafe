@@ -829,9 +829,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             Log.d(TAG, "error" + bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
-                            view.onError("" + msg, EnumStatus.ADD_ITEMS);
+                            Utils.Log(TAG,"Adding item Response error"+ bodys.string());
+                            view.onError("" +  bodys.string(), EnumStatus.ADD_ITEMS);
                         } catch (IOException e) {
                             e.printStackTrace();
                             view.onError("" + e.getMessage(), EnumStatus.ADD_ITEMS);
