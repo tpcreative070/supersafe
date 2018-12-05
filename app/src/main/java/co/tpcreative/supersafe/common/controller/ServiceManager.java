@@ -819,7 +819,7 @@ public class ServiceManager implements BaseView {
                             });
                         } else if (itemsDownload != null) {
                             if (itemsDownload.size() > 0) {
-                                Utils.Log(TAG, "Preparing downloading...");
+                                Utils.Log(TAG, "Preparing downloading..."+new Gson().toJson(itemsDownload));
                                 onDownloadFilesFromDriveStore();
                             } else {
                                 Utils.Log(TAG, "Preparing uploading...");
@@ -1202,7 +1202,7 @@ public class ServiceManager implements BaseView {
         totalList = mList.size();
         isDownloadData = true;
         if (mList.size() == 0) {
-            Utils.Log(TAG, "Data items already downloaded from Cloud !!!");
+            Utils.Log(TAG, "Data items already downloaded from Cloud !!!!");
             SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
             isDownloadData = false;
             return;

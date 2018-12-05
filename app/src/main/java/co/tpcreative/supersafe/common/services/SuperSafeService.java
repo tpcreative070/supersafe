@@ -1278,6 +1278,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 items.originalSync = isSaver;
                 break;
             }
+            default:{
+                items.originalSync = false;
+                break;
+            }
         }
         items.isExport = false;
         items.isWaitingForExporting = false;

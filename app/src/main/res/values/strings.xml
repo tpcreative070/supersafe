@@ -352,7 +352,7 @@
         %1$s \n\n
         Didn’t request an access code? Then you can ignore this email. \n\n
         Your Friends, \n
-        The SupperSafe Team</string>
+        The SuperSafe Team</string>
 
     <string name="support_help_email">We have a request was sent from User %1$s \n\n Content:  %2$s </string>
     <string name="support_help_title">SuperSafe Support &#38; Help</string>
