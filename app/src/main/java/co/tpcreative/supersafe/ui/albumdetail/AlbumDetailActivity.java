@@ -882,7 +882,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     @Override
     public void onCompletedDownload(EnumStatus status) {
         switch (status){

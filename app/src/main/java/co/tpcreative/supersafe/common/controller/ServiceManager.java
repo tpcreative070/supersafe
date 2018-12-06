@@ -138,28 +138,12 @@ public class ServiceManager implements BaseView {
         }
     }
 
-    public List<ImportFiles> getmListImport() {
-        return mListImport;
-    }
-
-    public List<ExportFiles> getmListExport() {
-        return mListExport;
-    }
-
-    public List<Items> getListDownloadFile() {
-        return mListDownLoadFiles;
-    }
-
     public void setListDownloadFile(List<Items> downloadFile) {
         Utils.Log(TAG, "Download file " + isDownloadingFiles);
         if (!isDownloadingFiles) {
             this.mListDownLoadFiles.clear();
             this.mListDownLoadFiles.addAll(downloadFile);
         }
-    }
-
-    public boolean isDownloadingFiles() {
-        return isDownloadingFiles;
     }
 
     public void setDownloadingFiles(boolean downloadingFiles) {
@@ -171,10 +155,6 @@ public class ServiceManager implements BaseView {
             this.mListExport.clear();
             this.mListExport.addAll(mListExport);
         }
-    }
-
-    public boolean isExporting() {
-        return isExporting;
     }
 
     public void setExporting(boolean exporting) {
@@ -189,48 +169,25 @@ public class ServiceManager implements BaseView {
         isDeleteAlbum = deleteAlbum;
     }
 
-    public boolean isCategoriesSync() {
-        return isCategoriesSync;
-    }
-
     public void setCategoriesSync(boolean categoriesSync) {
         isCategoriesSync = categoriesSync;
-    }
-
-    public boolean isGetListCategories() {
-        return isGetListCategories;
     }
 
     public void setGetListCategories(boolean getListCategories) {
         isGetListCategories = getListCategories;
     }
 
-    public boolean isDownloadData() {
-        return isDownloadData;
-    }
-
     public void setDownloadData(boolean downloadData) {
         isDownloadData = downloadData;
-    }
-
-    public boolean isDeleteSyncCLoud() {
-        return isDeleteSyncCLoud;
     }
 
     public void setDeleteSyncCLoud(boolean deleteSyncCLoud) {
         isDeleteSyncCLoud = deleteSyncCLoud;
     }
 
-    public boolean isDeleteOwnCloud() {
-        return isDeleteOwnCloud;
-    }
 
     public void setDeleteOwnCloud(boolean deleteOwnCloud) {
         isDeleteOwnCloud = deleteOwnCloud;
-    }
-
-    public boolean isUploadData() {
-        return isUploadData;
     }
 
     public void setUploadData(boolean uploadData) {
@@ -306,10 +263,6 @@ public class ServiceManager implements BaseView {
 
     public SuperSafeService getMyService() {
         return myService;
-    }
-
-    protected void showMessage(String message) {
-        Toast.makeText(SuperSafeApplication.getInstance(), message, Toast.LENGTH_LONG).show();
     }
 
     private String getString(int res) {
@@ -1573,7 +1526,6 @@ public class ServiceManager implements BaseView {
                                     onUpdateSyncDataStatus(EnumStatus.UPLOAD);
                                 }
                             });
-
                         } else {
                             if (!itemObject.originalSync && !itemObject.thumbnailSync) {
                                 onUpdateSyncDataStatus(EnumStatus.UPLOAD);
@@ -1616,29 +1568,24 @@ public class ServiceManager implements BaseView {
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + " status " + status.name());
             }
-
             @Override
             public void onSuccessful(String message) {
 
             }
-
             @Override
             public void onSuccessful(String message, EnumStatus status) {
                 items.isSyncOwnServer = true;
                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                 Utils.Log(TAG, message + " status " + status.name());
             }
-
             @Override
             public void onStartLoading(EnumStatus status) {
 
             }
-
             @Override
             public void onStopLoading(EnumStatus status) {
 
             }
-
             @Override
             public void onError(String message) {
 
@@ -1648,12 +1595,10 @@ public class ServiceManager implements BaseView {
             public void onSuccessful(String message, EnumStatus status, Object object) {
 
             }
-
             @Override
             public void onSuccessful(String message, EnumStatus status, List list) {
 
             }
-
             @Override
             public Context getContext() {
                 return null;
@@ -1663,7 +1608,6 @@ public class ServiceManager implements BaseView {
             public Activity getActivity() {
                 return null;
             }
-
         });
     }
 

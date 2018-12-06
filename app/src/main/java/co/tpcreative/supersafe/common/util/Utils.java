@@ -24,7 +24,9 @@ import android.support.media.ExifInterface;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -1148,6 +1150,27 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    protected void showMessage(String message) {
+        Toast.makeText(SuperSafeApplication.getInstance(), message, Toast.LENGTH_LONG).show();
+    }
+
+    public static boolean isLandscape(AppCompatActivity activity){
+        boolean landscape;
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int width = displaymetrics.widthPixels;
+        int height = displaymetrics.heightPixels;
+
+        if(width<height){
+            landscape = false;
+        }
+        else{
+            landscape = true;
+        }
+        return landscape;
+    }
+
 
     /**
      * @return Number of bytes available on External storage

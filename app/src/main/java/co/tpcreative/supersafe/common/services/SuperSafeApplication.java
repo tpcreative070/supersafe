@@ -243,7 +243,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onActivityResumed(Activity activity) {
         String currentActivity = activity.getClass().getSimpleName();
         String hashValue = getKeyHomePressed().get(currentActivity);
-
         if (hashValue != null && hashValue.equals(currentActivity)) {
             int value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
             EnumPinAction action = EnumPinAction.values()[value];

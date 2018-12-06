@@ -41,11 +41,9 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import java.util.List;
 import javax.crypto.Cipher;
@@ -339,7 +337,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
 
     @OnClick(R.id.imgArrowBack)
     public void onClickedBack(View view) {
-        boolean isLandscape = getResources().getBoolean(R.bool.is_landscape);
+        boolean isLandscape = Utils.isLandscape(this);
         if (isLandscape){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             isPortrait = true;
