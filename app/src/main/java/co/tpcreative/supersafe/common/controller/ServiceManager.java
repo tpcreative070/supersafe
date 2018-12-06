@@ -2391,6 +2391,7 @@ public class ServiceManager implements BaseView {
                 Utils.Log(TAG, "Exporting file............................Done");
                 GalleryCameraMediaManager.getInstance().onStopProgress();
                 setExporting(false);
+                mListExport.clear();
             }
 
         })
@@ -2436,6 +2437,7 @@ public class ServiceManager implements BaseView {
                 Utils.Log(TAG, "Importing file............................Done");
                 GalleryCameraMediaManager.getInstance().onStopProgress();
                 setImporting(false);
+                mListImport.clear();
             }
         })
                 .subscribeOn(Schedulers.computation())
@@ -2536,6 +2538,7 @@ public class ServiceManager implements BaseView {
         } else {
             GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.DONE);
             setDownloadingFiles(false);
+            mListDownLoadFiles.clear();
         }
     }
 

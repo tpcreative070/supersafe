@@ -59,16 +59,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                 R.animator.anim_slide_out_left);
     }
 
-    @Override
-    public Resources.Theme getTheme() {
-        Resources.Theme theme = super.getTheme();
-        final Theme result = Theme.getInstance().getThemeInfo();
-        if (result!=null){
-            theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
-        }
-        return theme;
-    }
-
     public void onCallLockScreen(){
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];

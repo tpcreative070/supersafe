@@ -77,8 +77,15 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mAlbumColumnNumber = getGallerWidth(container) / dp2px(mConfig.photoMaxWidth * 1.5f);
-        return inflater.inflate(R.layout.layout_fragment_root, container, false);
+        try {
+            mAlbumColumnNumber = getGallerWidth(container) / dp2px(mConfig.photoMaxWidth * 1.5f);
+            return inflater.inflate(R.layout.layout_fragment_root, container, false);
+        }
+        catch (Exception e){
+            mAlbumColumnNumber = getGallerWidth(container) / dp2px(120 * 1.5f);
+            return inflater.inflate(R.layout.layout_fragment_root, container, false);
+        }
+
     }
 
     @Override

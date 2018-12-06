@@ -65,6 +65,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import dyanamitechetan.vusikview.VusikView;
@@ -93,6 +94,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     int lastWindowIndex = 0;
     private boolean isPortrait ;
     private long seekTo = 0;
+    private Theme theme = Theme.getInstance().getThemeInfo();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,6 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-
         presenter = new PlayerPresenter();
         presenter.bindView(this);
         try {
@@ -141,6 +142,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
         });
         isPortrait = true;
+        tvTitle.setTextColor(getResources().getColor(theme.getAccentColor()));
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
@@ -337,9 +339,17 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
 
     @OnClick(R.id.imgArrowBack)
     public void onClickedBack(View view) {
-        PrefsController.putLong(getString(R.string.key_seek_to),0);
-        PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
-        finish();
+        boolean isLandscape = getResources().getBoolean(R.bool.is_landscape);
+        if (isLandscape){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            isPortrait = true;
+            Utils.Log(TAG,"Request SCREEN_ORIENTATION_PORTRAIT");
+        }
+        else{
+            PrefsController.putLong(getString(R.string.key_seek_to),0);
+            PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
+            finish();
+        }
     }
 
     @OnClick(R.id.imgRotate)

@@ -130,11 +130,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos_slideshow);
         storage = new Storage(this);
