@@ -211,7 +211,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(PhotoSlideShowActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(PhotoSlideShowActivity.class.getSimpleName());
     }
 
     @Override

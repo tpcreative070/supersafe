@@ -187,7 +187,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(PlayerActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(PlayerActivity.class.getSimpleName());
     }
 
     @Override

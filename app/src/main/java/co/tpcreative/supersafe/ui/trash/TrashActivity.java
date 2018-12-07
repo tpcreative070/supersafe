@@ -113,7 +113,7 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(TrashActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(TrashActivity.class.getSimpleName());
         onUpdatedView();
     }
 

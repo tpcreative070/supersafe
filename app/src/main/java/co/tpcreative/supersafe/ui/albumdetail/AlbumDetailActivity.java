@@ -241,7 +241,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumDetailActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumDetailActivity.class.getSimpleName());
     }
 
     @Override

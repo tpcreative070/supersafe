@@ -181,7 +181,8 @@ public class ImageSelectActivity extends HelperActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(ImageSelectActivity.class.getSimpleName());
+        onRegisterHomeWatcher();
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(ImageSelectActivity.class.getSimpleName());
     }
 
     @Override

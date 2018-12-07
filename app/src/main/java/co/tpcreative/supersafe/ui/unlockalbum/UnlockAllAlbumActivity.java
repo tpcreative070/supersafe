@@ -99,7 +99,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(UnlockAllAlbumActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(UnlockAllAlbumActivity.class.getSimpleName());
     }
 
     @Override

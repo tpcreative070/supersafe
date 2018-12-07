@@ -146,7 +146,7 @@ public class CameraActivity extends BaseActivity implements
         mCameraView.start();
         GalleryCameraMediaManager.getInstance().setProgressing(false);
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(CameraActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(CameraActivity.class.getSimpleName());
     }
 
     @Override

@@ -70,7 +70,7 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportActivity.class.getSimpleName());
     }
 
     @Override

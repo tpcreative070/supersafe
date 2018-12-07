@@ -106,7 +106,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumCoverActivity.class.getSimpleName());
     }
 
     @Override

@@ -35,6 +35,7 @@ import co.tpcreative.supersafe.model.Theme;
 
 
 public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
+
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
@@ -95,21 +96,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
         return theme;
     }
 
-    public void onCallLockScreen(){
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action){
-            case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                break;
-            }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
-            }
-        }
-    }
-
     protected void onFaceDown(final boolean isFaceDown){
         if (isFaceDown){
             final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
@@ -167,8 +153,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
                 return;
             }
         }
-
-
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
@@ -177,7 +161,8 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
                         break;
                     }
                     default:{

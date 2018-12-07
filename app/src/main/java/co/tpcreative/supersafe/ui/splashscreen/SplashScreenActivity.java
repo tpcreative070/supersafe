@@ -72,7 +72,6 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
         );
-        ServiceManager.getInstance().onStartService();
 //        ServiceManager.getInstance().setUploadData(false);
 //        ServiceManager.getInstance().setDownloadData(false);
 //        ServiceManager.getInstance().setDeleteOwnCloud(false);

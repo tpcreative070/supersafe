@@ -198,85 +198,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             }
         }
 
-        final PinLockListener pinLockListener = new PinLockListener() {
-            @Override
-            public void onComplete(String pin) {
-                switch (mPinAction) {
-                    case SET: {
-                        setPin(pin);
-                        break;
-                    }
-                    case VERIFY: {
-                        checkPin(pin, true);
-                        break;
-                    }
-                    case VERIFY_TO_CHANGE: {
-                        checkPin(pin, true);
-                        break;
-                    }
-                    case VERIFY_TO_CHANGE_FAKE_PIN: {
-                        checkPin(pin, true);
-                        break;
-                    }
-                    case CHANGE: {
-                        setPin(pin);
-                        break;
-                    }
-                    case FAKE_PIN: {
-                        setPin(pin);
-                        break;
-                    }
-                    case RESET: {
-                        setPin(pin);
-                        break;
-                    }
-                    default: {
-                        Utils.Log(TAG, "Nothing working");
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onEmpty() {
-                Log.d(TAG, "Pin empty");
-            }
-
-            @Override
-            public void onPinChange(int pinLength, String intermediatePin) {
-                switch (mPinAction) {
-                    case VERIFY: {
-                        checkPin(intermediatePin, false);
-                        break;
-                    }
-                    case VERIFY_TO_CHANGE: {
-                        checkPin(intermediatePin, false);
-                        break;
-                    }
-                    case VERIFY_TO_CHANGE_FAKE_PIN: {
-                        checkPin(intermediatePin, false);
-                    }
-                    default: {
-                        Utils.Log(TAG, "Nothing working!!!");
-                        break;
-                    }
-                }
-                Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
-            }
-
-
-
-
-        };
-
-
-        mPinLockView.attachIndicatorDots(mIndicatorDots);
-        mPinLockView.setPinLockListener(pinLockListener);
-        mPinLockView.setPinLength(PIN_LENGTH);
-        mIndicatorDots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION);
-        mIndicatorDots.setActivity(this);
-        onInitHiddenCamera();
-
         imgLauncher.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -284,13 +205,81 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 return false;
             }
         });
-
-
         if (Utils.isSensorAvailable()) {
             mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this);
         }
-
+        onInitPin();
     }
+
+
+    final PinLockListener pinLockListener = new PinLockListener() {
+        @Override
+        public void onComplete(String pin) {
+            Utils.Log(TAG,"Complete button " +mPinAction.name());
+            switch (mPinAction) {
+                case SET: {
+                    setPin(pin);
+                    break;
+                }
+                case VERIFY: {
+                    checkPin(pin, true);
+                    break;
+                }
+                case VERIFY_TO_CHANGE: {
+                    checkPin(pin, true);
+                    break;
+                }
+                case VERIFY_TO_CHANGE_FAKE_PIN: {
+                    checkPin(pin, true);
+                    break;
+                }
+                case CHANGE: {
+                    setPin(pin);
+                    break;
+                }
+                case FAKE_PIN: {
+                    setPin(pin);
+                    break;
+                }
+                case RESET: {
+                    setPin(pin);
+                    break;
+                }
+                default: {
+                    Utils.Log(TAG, "Nothing working");
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public void onEmpty() {
+            Log.d(TAG, "Pin empty");
+        }
+
+        @Override
+        public void onPinChange(int pinLength, String intermediatePin) {
+            switch (mPinAction) {
+                case VERIFY: {
+                    checkPin(intermediatePin, false);
+                    break;
+                }
+                case VERIFY_TO_CHANGE: {
+                    checkPin(intermediatePin, false);
+                    break;
+                }
+                case VERIFY_TO_CHANGE_FAKE_PIN: {
+                    checkPin(intermediatePin, false);
+                }
+                default: {
+                    Utils.Log(TAG, "Nothing working!!!");
+                    break;
+                }
+            }
+            Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
+        }
+    };
+
 
     @Override
     public void onNotifier(EnumStatus status) {
@@ -309,8 +298,19 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ServiceManager.getInstance().onStartService();
-        SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action){
+            case NONE:{
+                ServiceManager.getInstance().onStartService();
+                SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do");
+            }
+        }
+        Utils.Log(TAG,"onDestroy");
     }
 
     @OnClick(R.id.btnDone)
@@ -326,7 +326,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-
     /*Forgot pin*/
     @OnClick(R.id.llForgotPin)
     public void onForgotPin(View view) {
@@ -340,16 +339,26 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onResume() {
         super.onResume();
+        Utils.Log(TAG,"onResume");
         if (mPinLockView != null) {
             mPinLockView.resetPinLockView();
         }
         onSetVisitableForgotPin(View.GONE);
         mTextAttempts.setText("");
-
         if (mFingerPrintAuthHelper != null) {
             mFingerPrintAuthHelper.startAuth();
         }
         SingletonEnterPinManager.getInstance().setEnterPinWorking(true);
+    }
+
+
+    public void onInitPin(){
+        mIndicatorDots.setActivity(this);
+        mPinLockView.attachIndicatorDots(mIndicatorDots);
+        mPinLockView.setPinLockListener(pinLockListener);
+        mPinLockView.setPinLength(PIN_LENGTH);
+        mIndicatorDots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION);
+        onInitHiddenCamera();
     }
 
     @Override
@@ -808,7 +817,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action) {
                     case SCREEN_LOCK: {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.STILL_SCREEN_LOCK.ordinal());
+                        //PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.STILL_SCREEN_LOCK.ordinal());
                         EventBus.getDefault().post(EnumStatus.FINISH);
                         Utils.Log(TAG, "onStillScreenLock");
                     }

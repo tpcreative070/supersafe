@@ -74,7 +74,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinActivity.class.getSimpleName());
     }
 
     @Override

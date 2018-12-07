@@ -103,7 +103,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
     }
 
     @Override

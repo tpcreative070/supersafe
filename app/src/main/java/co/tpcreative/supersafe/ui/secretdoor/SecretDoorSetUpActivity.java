@@ -94,7 +94,7 @@ public class SecretDoorSetUpActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorSetUpActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorSetUpActivity.class.getSimpleName());
     }
 
     @Override

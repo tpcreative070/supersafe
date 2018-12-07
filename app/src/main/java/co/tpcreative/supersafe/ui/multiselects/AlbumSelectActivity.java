@@ -156,7 +156,8 @@ public class AlbumSelectActivity extends HelperActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSelectActivity.class.getSimpleName());
+        onRegisterHomeWatcher();
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSelectActivity.class.getSimpleName());
     }
 
 

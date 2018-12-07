@@ -87,6 +87,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     private boolean isDownload;
     private boolean isSpaceSaver;
     private Storage storage;
+    private boolean isRefresh ;
 
 
     @Override
@@ -216,6 +217,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         switch (item.getItemId()) {
             case R.id.menu_item_refresh: {
                 presenter.onGetDriveAbout();
+                isRefresh = true;
                 break;
             }
         }
@@ -341,7 +343,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(CloudManagerActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(CloudManagerActivity.class.getSimpleName());
         onShowSwitch();
     }
 
@@ -377,6 +379,9 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             for (Items index : mList){
                 storage.deleteFile(index.originalPath);
             }
+        }
+        if (isRefresh){
+            ServiceManager.getInstance().onGetListCategoriesSync();
         }
         presenter.unbindView();
     }

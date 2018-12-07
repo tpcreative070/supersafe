@@ -74,20 +74,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         }
     }
 
-    public void onCallLockScreen(){
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action){
-            case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                break;
-            }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
-            }
-        }
-    }
 
     protected void onFaceDown(final boolean isFaceDown){
         if (isFaceDown){
@@ -155,8 +141,8 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
-                        break;
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
                     }
                     default:{
                         Utils.Log(TAG,"Nothing to do");

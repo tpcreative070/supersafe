@@ -80,6 +80,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private List<String> requiredScopesString;
     private boolean isLive = false;
     private String secretKey;
+    private Activity activity;
 
 
     @Override
@@ -139,7 +140,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         supersafeBreakInAlerts = supersafe + "break_in_alerts/";
         supersafeShare = supersafe + "share/";
         supersafeDataBaseFolder = "/data/data/"+SuperSafeApplication.getInstance().getPackageName()+"/databases/";
-
 
         supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/";
         registerActivityLifecycleCallbacks(this);
@@ -236,30 +236,36 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
+        if (this.activity==null){
+            this.activity = activity;
+        }
+    }
 
+    public Activity getActivity() {
+        return activity;
     }
 
     @Override
     public void onActivityResumed(Activity activity) {
-        String currentActivity = activity.getClass().getSimpleName();
-        String hashValue = getKeyHomePressed().get(currentActivity);
-        if (hashValue != null && hashValue.equals(currentActivity)) {
-            int value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
-            EnumPinAction action = EnumPinAction.values()[value];
-            switch (action) {
-                case SCREEN_PRESS_HOME: {
-                    Utils.Log(TAG, "Start screen off.................:" + activity.getClass().getSimpleName());
-                    PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal());
-                    Navigator.onMoveToVerifyPin(activity, EnumPinAction.NONE);
-                    break;
-                }
-                default: {
-                    Utils.Log(TAG, "Nothing to do "+ action.name());
-                }
-            }
-        } else {
-            Utils.Log(TAG, "Exception activity " + currentActivity);
-        }
+//        String currentActivity = activity.getClass().getSimpleName();
+//        String hashValue = getKeyHomePressed().get(currentActivity);
+//        if (hashValue != null && hashValue.equals(currentActivity)) {
+//            int value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+//            EnumPinAction action = EnumPinAction.values()[value];
+//            switch (action) {
+//                case SCREEN_PRESS_HOME: {
+//                    Utils.Log(TAG, "Start screen off.................:" + activity.getClass().getSimpleName());
+//                    PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal());
+//                    Navigator.onMoveToVerifyPin(activity,EnumPinAction.NONE);
+//                    break;
+//                }
+//                default: {
+//                    Utils.Log(TAG, "Nothing to do "+ action.name());
+//                }
+//            }
+//        } else {
+//            Utils.Log(TAG, "Exception activity " + currentActivity);
+//        }
         ++resumed;
     }
 

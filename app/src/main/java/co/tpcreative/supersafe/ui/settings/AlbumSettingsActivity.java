@@ -102,7 +102,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
         presenter.getData();
     }
 

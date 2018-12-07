@@ -81,7 +81,7 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(SecretDoorActivity.class.getSimpleName());
         final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door),false);
         if (value){
             rlScanner.setVisibility(View.VISIBLE);

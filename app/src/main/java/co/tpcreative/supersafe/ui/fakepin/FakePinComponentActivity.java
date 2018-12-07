@@ -308,7 +308,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlide implements B
         presenter.getData();
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinComponentActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinComponentActivity.class.getSimpleName());
     }
 
     @Override

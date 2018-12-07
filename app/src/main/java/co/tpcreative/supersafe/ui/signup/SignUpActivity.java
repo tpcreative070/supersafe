@@ -89,9 +89,8 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
-        ServiceManager.getInstance().onGetUserInfo();
+        ServiceManager.getInstance().onStartService();
     }
-
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

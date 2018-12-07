@@ -83,7 +83,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(EnableCloudActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(EnableCloudActivity.class.getSimpleName());
     }
 
     @Override

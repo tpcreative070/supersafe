@@ -47,7 +47,7 @@ public class AboutSuperSafeActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AboutSuperSafeActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(AboutSuperSafeActivity.class.getSimpleName());
     }
 
     @Override

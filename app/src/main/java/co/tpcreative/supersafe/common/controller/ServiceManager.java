@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.Toast;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
@@ -37,7 +36,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeService;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveEvent;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
@@ -82,11 +80,11 @@ public class ServiceManager implements BaseView {
             myService.bindView(ServiceManager.this);
             storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-            ServiceManager.getInstance().onCheckingMissData();
             ServiceManager.getInstance().onGetUserInfo();
             ServiceManager.getInstance().onSyncCheckVersion();
             ServiceManager.getInstance().onSyncAuthorDevice();
             ServiceManager.getInstance().onGetDriveAbout();
+            ServiceManager.getInstance().onCheckingMissData();
         }
 
         //binder comes from server to communicate with method's of
@@ -240,7 +238,6 @@ public class ServiceManager implements BaseView {
         if (myService != null) {
             return;
         }
-
         Intent intent = null;
         intent = new Intent(mContext, SuperSafeService.class);
         intent.putExtra(TAG, "Message");
@@ -269,7 +266,6 @@ public class ServiceManager implements BaseView {
         String value = SuperSafeApplication.getInstance().getString(res);
         return value;
     }
-
 
     /*User info*/
     public void onGetUserInfo() {
@@ -328,35 +324,25 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "My services on categories sync is null");
             return;
         }
-
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             Utils.Log(TAG, "Check network connection");
             return;
         }
-
         if (isCategoriesSync) {
             Utils.Log(TAG, "List categories is sync...!!!--------------*******************************-----------");
             return;
         }
-
         if (isGetListCategories) {
             Utils.Log(TAG, "Setting list categories is sync...--------------*******************************-----------");
             return;
         }
-
         isGetListCategories = true;
-        myService.onGetListCategoriesSync(new BaseView() {
+        myService.onGetListCategoriesSync(new ServiceManagerShortListener() {
             @Override
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
                 isGetListCategories = false;
             }
-
-            @Override
-            public void onSuccessful(String message) {
-
-            }
-
             @Override
             public void onSuccessful(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
@@ -364,103 +350,25 @@ public class ServiceManager implements BaseView {
                 isGetListCategories = false;
                 getObservable();
             }
-
-            @Override
-            public void onStartLoading(EnumStatus status) {
-
-            }
-
-            @Override
-            public void onStopLoading(EnumStatus status) {
-
-            }
-
-            @Override
-            public void onError(String message) {
-
-            }
-
-            @Override
-            public void onSuccessful(String message, EnumStatus status, Object object) {
-
-            }
-
-            @Override
-            public void onSuccessful(String message, EnumStatus status, List list) {
-
-            }
-
-            @Override
-            public Context getContext() {
-                return null;
-            }
-
-            @Override
-            public Activity getActivity() {
-                return null;
-            }
         });
     }
-
 
     private Observable<MainCategories> getObservableItems(List<MainCategories> categories) {
         return Observable.create(subscriber -> {
             for (MainCategories index : categories) {
-                myService.onCategoriesSync(index, new BaseView() {
+                myService.onCategoriesSync(index, new ServiceManagerShortListener() {
                     @Override
                     public void onError(String message, EnumStatus status) {
                         Utils.Log(TAG, message + "--" + status.name());
                         subscriber.onNext(index);
                         subscriber.onComplete();
                     }
-
-                    @Override
-                    public void onSuccessful(String message) {
-
-                    }
-
                     @Override
                     public void onSuccessful(String message, EnumStatus status) {
                         Utils.Log(TAG, message + "--" + status.name());
                         subscriber.onNext(index);
                         subscriber.onComplete();
                     }
-
-                    @Override
-                    public void onStartLoading(EnumStatus status) {
-
-                    }
-
-                    @Override
-                    public void onStopLoading(EnumStatus status) {
-
-                    }
-
-                    @Override
-                    public void onError(String message) {
-
-                    }
-
-                    @Override
-                    public void onSuccessful(String message, EnumStatus status, Object object) {
-
-                    }
-
-                    @Override
-                    public void onSuccessful(String message, EnumStatus status, List list) {
-
-                    }
-
-                    @Override
-                    public Context getContext() {
-                        return null;
-                    }
-
-                    @Override
-                    public Activity getActivity() {
-                        return null;
-                    }
-
                 });
             }
         });
@@ -471,19 +379,15 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "My services on categories sync is null");
             return;
         }
-
         final List<MainCategories> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(false, false);
-
         if (mList == null) {
             Utils.Log(TAG, "Categories already sync");
             return;
         }
-
         if (isCategoriesSync) {
             Utils.Log(TAG, "List categories is sync...--------------*******************************-----------");
             return;
         }
-
         isCategoriesSync = true;
         if (mList.size() == 0) {
             Utils.Log(TAG, "Categories already sync");
@@ -492,34 +396,28 @@ public class ServiceManager implements BaseView {
             SingletonPrivateFragment.getInstance().onUpdateView();
             return;
         }
-
         getObservableItems(mList).
                 subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).
                 subscribe(new Observer<MainCategories>() {
-
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
-
                     @Override
                     public void onComplete() {
-                        Utils.Log(TAG, "complete");
+                        Utils.Log(TAG, "complete sync categories");
                         isCategoriesSync = false;
                         getObservable();
                     }
-
                     @Override
                     public void onError(Throwable e) {
                     }
-
                     @Override
                     public void onNext(MainCategories pojoObject) {
                         // Show Progress
                         Utils.Log(TAG, "next");
                     }
-
                 });
     }
 
@@ -539,7 +437,6 @@ public class ServiceManager implements BaseView {
                     if (main != null) {
                         checkNull.get(i).categories_id = main.categories_id;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
-
                         Utils.Log(TAG, "Update categories id...................^^^???");
                     }
                 }
@@ -627,42 +524,7 @@ public class ServiceManager implements BaseView {
 
         if (myService != null) {
             isLoadingData = true;
-            myService.onGetListSync(nextPage, new BaseView() {
-                @Override
-                public void onStartLoading(EnumStatus status) {
-
-                }
-
-                @Override
-                public void onStopLoading(EnumStatus status) {
-
-                }
-
-                @Override
-                public void onError(String message) {
-
-                }
-
-                @Override
-                public void onSuccessful(String message, EnumStatus status, Object object) {
-
-                }
-
-                @Override
-                public void onSuccessful(String message, EnumStatus status, List list) {
-
-                }
-
-                @Override
-                public Context getContext() {
-                    return null;
-                }
-
-                @Override
-                public Activity getActivity() {
-                    return null;
-                }
-
+            myService.onGetListSync(nextPage, new ServiceManagerShortListener() {
                 @Override
                 public void onError(String message, EnumStatus status) {
                     if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
@@ -672,12 +534,6 @@ public class ServiceManager implements BaseView {
                     Utils.Log(TAG, "Error :" + message);
                     isLoadingData = false;
                 }
-
-                @Override
-                public void onSuccessful(String message) {
-                    Utils.Log(TAG, "Response :" + message);
-                }
-
                 @Override
                 public void onSuccessful(String nextPage, EnumStatus status) {
                     if (status == EnumStatus.LOAD_MORE) {
@@ -727,7 +583,6 @@ public class ServiceManager implements BaseView {
                             }
                         }
 
-
                         boolean isPreviousAlbumDelete = false;
                         if (mPreviousMainCategories != null && mPreviousMainCategories.size() > 0) {
                             if (myService.getHashMapGlobalCategories() != null && myService.getHashMapGlobalCategories().size() > 0) {
@@ -740,7 +595,6 @@ public class ServiceManager implements BaseView {
                                 }
                             }
                         }
-
 
                         if (mainCategories != null && mainCategories.size() > 0) {
                             getObservable();
@@ -815,9 +669,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "No Found data to delete on own items!!!");
             return;
         }
-
         countSyncData = 0;
-
         isDeleteOwnCloud = true;
         totalList = mList.size();
         if (mList.size() == 0) {
@@ -826,67 +678,24 @@ public class ServiceManager implements BaseView {
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             return;
         }
-
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
                     Utils.Log(TAG, "Starting deleting items on own cloud.......");
                     final Items mItem = i;
                     isDeleteOwnCloud = true;
-                    myService.onDeleteOwnSystem(mItem, new BaseView() {
+                    myService.onDeleteOwnSystem(mItem, new ServiceManagerShortListener() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "--" + status.name());
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
                         }
-
-                        @Override
-                        public void onSuccessful(String message) {
-
-                        }
-
                         @Override
                         public void onSuccessful(String message, EnumStatus status) {
                             Utils.Log(TAG, message + " -- " + status.name());
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_OWN_DATA);
 
                         }
-
-                        @Override
-                        public void onStartLoading(EnumStatus status) {
-
-                        }
-
-                        @Override
-                        public void onStopLoading(EnumStatus status) {
-
-                        }
-
-                        @Override
-                        public void onError(String message) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, Object object) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, List list) {
-
-                        }
-
-                        @Override
-                        public Context getContext() {
-                            return null;
-                        }
-
-                        @Override
-                        public Activity getActivity() {
-                            return null;
-                        }
-
                     });
                 })
                 .doOnComplete(() -> {
@@ -930,59 +739,17 @@ public class ServiceManager implements BaseView {
                     Utils.Log(TAG, "Starting deleting items on own cloud.......");
                     final MainCategories main = i;
                     isDeleteAlbum = true;
-                    myService.onDeleteCategoriesSync(main, new BaseView() {
+                    myService.onDeleteCategoriesSync(main, new ServiceManagerShortListener() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "--" + status.name());
                             onUpdateSyncDataStatus(EnumStatus.DELETE_CATEGORIES);
                         }
-
-                        @Override
-                        public void onSuccessful(String message) {
-
-                        }
-
                         @Override
                         public void onSuccessful(String message, EnumStatus status) {
                             Utils.Log(TAG, message + " -- " + status.name());
                             onUpdateSyncDataStatus(EnumStatus.DELETE_CATEGORIES);
                         }
-
-                        @Override
-                        public void onStartLoading(EnumStatus status) {
-
-                        }
-
-                        @Override
-                        public void onStopLoading(EnumStatus status) {
-
-                        }
-
-                        @Override
-                        public void onError(String message) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, Object object) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, List list) {
-
-                        }
-
-                        @Override
-                        public Context getContext() {
-                            return null;
-                        }
-
-                        @Override
-                        public Activity getActivity() {
-                            return null;
-                        }
-
                     });
                 })
                 .doOnComplete(() -> {
@@ -1039,66 +806,23 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Not Found cloud id to delete");
             return;
         }
-
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
                     isDeleteSyncCLoud = true;
                     final Items mItem = i;
                     Utils.Log(TAG, "Starting deleting items on cloud.......");
-                    myService.onDeleteCloudItems(mItem, mItem.isOriginalGlobalId, new BaseView() {
+                    myService.onDeleteCloudItems(mItem, mItem.isOriginalGlobalId, new ServiceManagerShortListener() {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "- " + status.name());
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
                         }
-
-                        @Override
-                        public void onSuccessful(String message) {
-
-                        }
-
                         @Override
                         public void onSuccessful(String message, EnumStatus status) {
                             Utils.Log(TAG, message + "- " + status.name());
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
                         }
-
-                        @Override
-                        public void onStartLoading(EnumStatus status) {
-
-                        }
-
-                        @Override
-                        public void onStopLoading(EnumStatus status) {
-
-                        }
-
-                        @Override
-                        public void onError(String message) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, Object object) {
-
-                        }
-
-                        @Override
-                        public void onSuccessful(String message, EnumStatus status, List list) {
-
-                        }
-
-                        @Override
-                        public Context getContext() {
-                            return null;
-                        }
-
-                        @Override
-                        public Activity getActivity() {
-                            return null;
-                        }
-
                     });
 
                 })
@@ -1563,50 +1287,16 @@ public class ServiceManager implements BaseView {
             return;
         }
         Utils.Log(TAG, "Preparing insert  to own Server");
-        myService.onAddItems(items, new BaseView() {
+        myService.onAddItems(items, new ServiceManagerShortListener() {
             @Override
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + " status " + status.name());
-            }
-            @Override
-            public void onSuccessful(String message) {
-
             }
             @Override
             public void onSuccessful(String message, EnumStatus status) {
                 items.isSyncOwnServer = true;
                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                 Utils.Log(TAG, message + " status " + status.name());
-            }
-            @Override
-            public void onStartLoading(EnumStatus status) {
-
-            }
-            @Override
-            public void onStopLoading(EnumStatus status) {
-
-            }
-            @Override
-            public void onError(String message) {
-
-            }
-
-            @Override
-            public void onSuccessful(String message, EnumStatus status, Object object) {
-
-            }
-            @Override
-            public void onSuccessful(String message, EnumStatus status, List list) {
-
-            }
-            @Override
-            public Context getContext() {
-                return null;
-            }
-
-            @Override
-            public Activity getActivity() {
-                return null;
             }
         });
     }
@@ -1681,7 +1371,7 @@ public class ServiceManager implements BaseView {
 
 
 
-                        File file = new Compressor(getContext())
+                        File file = new Compressor(SuperSafeApplication.getInstance())
                                 .setMaxWidth(1032)
                                 .setMaxHeight(774)
                                 .setQuality(85)
@@ -2133,7 +1823,7 @@ public class ServiceManager implements BaseView {
                 items.isSaver = isSaver;
 
 
-                storage.createFileByteDataNoEncrypt(getContext(), data, new OnStorageListener() {
+                storage.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance(), data, new OnStorageListener() {
                     @Override
                     public void onSuccessful() {
 
@@ -2142,7 +1832,7 @@ public class ServiceManager implements BaseView {
                     @Override
                     public void onSuccessful(String path) {
                         try {
-                            File file = new Compressor(getContext())
+                            File file = new Compressor(SuperSafeApplication.getInstance())
                                     .setMaxWidth(1032)
                                     .setMaxHeight(774)
                                     .setQuality(85)
@@ -2617,18 +2307,27 @@ public class ServiceManager implements BaseView {
 
     public void onDismissServices() {
         if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync) {
-            Utils.Log(TAG, "Progress download is :" + isDownloadData);
-            Utils.Log(TAG, "Progress upload is :" + isUploadData);
+            Utils.Log(TAG, "Progress isDownloadData is :" + isDownloadData);
+            Utils.Log(TAG, "Progress isUploadData is :" + isUploadData);
+            Utils.Log(TAG, "Progress isDownloadingFiles is :" + isDownloadingFiles);
+            Utils.Log(TAG, "Progress isExporting is :" + isExporting);
+            Utils.Log(TAG, "Progress isImporting is :" + isImporting);
+            Utils.Log(TAG, "Progress isDeleteOwnCloud is :" + isDeleteOwnCloud);
+            Utils.Log(TAG, "Progress isDeleteSyncCLoud is :" + isDeleteSyncCLoud);
+            Utils.Log(TAG, "Progress isDeleteAlbum is :" + isDeleteAlbum);
+            Utils.Log(TAG, "Progress isGetListCategories is :" + isGetListCategories);
+            Utils.Log(TAG, "Progress isCategoriesSync is :" + isCategoriesSync);
         }
         else {
             onStopService();
             SingletonPremiumTimer.getInstance().onStop();
-            ServiceManager.getInstance().setUploadData(false);
             ServiceManager.getInstance().setDownloadData(false);
+            ServiceManager.getInstance().setUploadData(false);
+            ServiceManager.getInstance().setDownloadingFiles(false);
             ServiceManager.getInstance().setExporting(false);
             ServiceManager.getInstance().setImporting(false);
-            ServiceManager.getInstance().setDeleteSyncCLoud(false);
             ServiceManager.getInstance().setDeleteOwnCloud(false);
+            ServiceManager.getInstance().setDeleteSyncCLoud(false);
             ServiceManager.getInstance().setDeleteAlbum(false);
             ServiceManager.getInstance().setGetListCategories(false);
             ServiceManager.getInstance().setCategoriesSync(false);
@@ -2700,11 +2399,12 @@ public class ServiceManager implements BaseView {
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action) {
                     case NONE: {
-                        PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_PRESS_HOME.ordinal());
-                        break;
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
                     }
                     default: {
                         Utils.Log(TAG, "Nothing to do ???");
+                        break;
                     }
                 }
                 break;
@@ -2715,20 +2415,22 @@ public class ServiceManager implements BaseView {
             }
             case CONNECTED: {
                 GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(true);
-                ServiceManager.getInstance().onSyncDataOwnServer("0");
-                ServiceManager.getInstance().onCheckingMissData();
                 ServiceManager.getInstance().onGetUserInfo();
                 PremiumManager.getInstance().onStartInAppPurchase();
                 break;
             }
             case DISCONNECTED:{
-                ServiceManager.getInstance().setUploadData(false);
                 ServiceManager.getInstance().setDownloadData(false);
+                ServiceManager.getInstance().setUploadData(false);
+                ServiceManager.getInstance().setDownloadingFiles(false);
+                ServiceManager.getInstance().setExporting(false);
+                ServiceManager.getInstance().setImporting(false);
                 ServiceManager.getInstance().setDeleteOwnCloud(false);
                 ServiceManager.getInstance().setDeleteSyncCLoud(false);
+                ServiceManager.getInstance().setDeleteAlbum(false);
                 ServiceManager.getInstance().setGetListCategories(false);
                 ServiceManager.getInstance().setCategoriesSync(false);
-                ServiceManager.getInstance().setDeleteAlbum(false);
+                Utils.Log(TAG,"Disconnect");
                 break;
             }
             case USER_INFO: {
@@ -2745,6 +2447,8 @@ public class ServiceManager implements BaseView {
                     }
                 }, 5000);
                 Utils.Log(TAG, "Get info successful");
+                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                ServiceManager.getInstance().onCheckingMissData();
                 break;
             }
             case UPDATE_USER_TOKEN:{
@@ -2756,10 +2460,13 @@ public class ServiceManager implements BaseView {
 
     public interface ServiceManagerSyncDataListener {
         void onCompleted();
-
         void onError();
-
         void onCancel();
+    }
+
+    public interface ServiceManagerShortListener{
+        void onError(String message, EnumStatus status);
+        void onSuccessful(String message,EnumStatus status);
     }
 
     public interface ServiceManagerGalleySyncDataListener {
@@ -2770,21 +2477,15 @@ public class ServiceManager implements BaseView {
     /*Upload Service*/
     public interface UploadServiceListener {
         void onProgressUpdate(int percentage);
-
         void onFinish();
-
         void onResponseData(final DriveResponse response);
-
         void onError(String message, EnumStatus status);
     }
 
     public interface DownloadServiceListener {
         void onProgressDownload(int percentage);
-
         void onSaved();
-
         void onDownLoadCompleted(File file_name, DownloadFileRequest request);
-
         void onError(String message, EnumStatus status);
     }
 

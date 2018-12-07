@@ -175,7 +175,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         onSwitchToBasic();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
         presenter.onGetUserInfo();
         Utils.Log(TAG,"onResume");
     }

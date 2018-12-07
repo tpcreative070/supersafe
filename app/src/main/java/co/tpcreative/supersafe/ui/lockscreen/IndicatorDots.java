@@ -59,9 +59,7 @@ public class IndicatorDots extends LinearLayout {
 
     public IndicatorDots(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PinLockView);
-
         try {
             mDotDiameter = (int) typedArray.getDimension(R.styleable.PinLockView_dotDiameter, ResourceUtils.getDimensionInPx(getContext(), R.dimen.dot_diameter));
             mDotSpacing = (int) typedArray.getDimension(R.styleable.PinLockView_dotSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.dot_spacing));
@@ -75,7 +73,6 @@ public class IndicatorDots extends LinearLayout {
         } finally {
             typedArray.recycle();
         }
-
         initView(context);
     }
 
@@ -84,13 +81,10 @@ public class IndicatorDots extends LinearLayout {
             for (int i = 0; i < mPinLength; i++) {
                 View dot = new View(context);
                 emptyDot(dot);
-
-
                 LayoutParams params = new LayoutParams(mDotDiameter,
                         mDotDiameter);
                 params.setMargins(mDotSpacing, 0, mDotSpacing, 0);
                 dot.setLayoutParams(params);
-
                 addView(dot);
             }
         } else if (mIndicatorType == 2) {

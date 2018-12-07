@@ -63,7 +63,7 @@ public class BreakInAlertsDetailActivity extends BaseActivity{
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(BreakInAlertsDetailActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(BreakInAlertsDetailActivity.class.getSimpleName());
     }
 
     @Override

@@ -170,7 +170,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
         final boolean isPremium = User.getInstance().isPremium();
         if (!isPremium){
             SingletonPremiumTimer.getInstance().setListener(this);

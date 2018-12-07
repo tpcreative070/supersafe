@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.util.Utils;
 
 /**
  * Created by aritraroy on 31/05/16.
@@ -86,13 +87,8 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (mCustomizationOptionsBundle != null) {
                 holder.mNumberButton.setTextColor(mCustomizationOptionsBundle.getTextColor());
                 if (mCustomizationOptionsBundle.getButtonBackgroundDrawable() != null) {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        holder.mNumberButton.setBackgroundDrawable(
-                                mCustomizationOptionsBundle.getButtonBackgroundDrawable());
-                    } else {
-                        holder.mNumberButton.setBackground(
-                                mCustomizationOptionsBundle.getButtonBackgroundDrawable());
-                    }
+                    holder.mNumberButton.setBackground(
+                            mCustomizationOptionsBundle.getButtonBackgroundDrawable());
                 }
                 holder.mNumberButton.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                         mCustomizationOptionsBundle.getTextSize());
@@ -112,15 +108,14 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (mCustomizationOptionsBundle.getVerifyButtonDrawable() != null) {
                     holder.mButtonImage.setImageDrawable(mCustomizationOptionsBundle.getVerifyButtonDrawable());
                 }
-                Log.d(TAG,"onVerify changed color");
-                holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getTextColorVerify(),PorterDuff.Mode.SRC_ATOP);
+                Log.d(TAG, "onVerify changed color");
+                holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getTextColorVerify(), PorterDuff.Mode.SRC_ATOP);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         mCustomizationOptionsBundle.getVerifyButtonWidthSize(),
                         mCustomizationOptionsBundle.getVerifyButtonHeightSize());
                 holder.mButtonImage.setLayoutParams(params);
-            }
-            else{
-                holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getVerifyButtonNormalColor(),PorterDuff.Mode.SRC_ATOP);
+            } else {
+                holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getVerifyButtonNormalColor(), PorterDuff.Mode.SRC_ATOP);
             }
         }
     }
@@ -177,7 +172,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-    public void setOnVerifyClickListener(OnVerifyClickListener onVerifyClickListener){
+    public void setOnVerifyClickListener(OnVerifyClickListener onVerifyClickListener) {
         this.mOnVerifyClickListener = onVerifyClickListener;
     }
 
@@ -193,7 +188,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onNumberClicked(int keyValue);
     }
 
-    public interface OnVerifyClickListener{
+    public interface OnVerifyClickListener {
         void onVerifyClicked();
     }
 
@@ -239,37 +234,44 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             mVerifyButton = (LinearLayout) itemView.findViewById(R.id.button);
             mButtonImage = (ImageView) itemView.findViewById(R.id.buttonImage);
 
-
-            if (mCustomizationOptionsBundle.isShowVerifyButton() && mPinLength > 0) {
-                mVerifyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            mVerifyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCustomizationOptionsBundle.isShowVerifyButton() && mPinLength > 0) {
                         if (mOnVerifyClickListener != null) {
                             mOnVerifyClickListener.onVerifyClicked();
+                            Utils.Log(TAG, "Verified button");
+                        } else {
+                            Utils.Log(TAG, "mOnVerifyClickListener Null");
                         }
+                    } else {
+                        Utils.Log(TAG, "Pin length Null");
                     }
-                });
+                }
+            });
 
-                mVerifyButton.setOnTouchListener(new View.OnTouchListener() {
-
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mVerifyButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        if (mCustomizationOptionsBundle.isShowVerifyButton() && mPinLength > 0) {
                             mVerifyButton.startAnimation(scale());
+                        } else {
+                            Utils.Log(TAG, "Pin length Null");
                         }
-                        return false;
                     }
-                });
-
-            }
+                    return false;
+                }
+            });
         }
     }
 
-    private Animation scale(){
+    private Animation scale() {
         ScaleAnimation scaleAnimation = new ScaleAnimation(.75F, 1f, .75F, 1f,
                 Animation.RELATIVE_TO_SELF, .5F, Animation.RELATIVE_TO_SELF, .5F);
         scaleAnimation.setDuration(BUTTON_ANIMATION_DURATION);
         scaleAnimation.setFillAfter(true);
-        return  scaleAnimation;
+        return scaleAnimation;
     }
+
 }

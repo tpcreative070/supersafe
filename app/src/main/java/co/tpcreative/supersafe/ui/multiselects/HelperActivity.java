@@ -139,7 +139,7 @@ public class HelperActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(HelperActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(HelperActivity.class.getSimpleName());
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 
 /**
@@ -68,6 +69,9 @@ public class PinLockView extends RecyclerView {
                         mPinLockListener.onPinChange(mPin.length(), mPin);
                     }
                 }
+                else{
+                    Utils.Log(TAG,"mPinLockListener is null");
+                }
 
             } else {
                 if (!isShowDeleteButton()) {
@@ -85,6 +89,9 @@ public class PinLockView extends RecyclerView {
                 } else {
                     if (mPinLockListener != null) {
                         mPinLockListener.onComplete(mPin);
+                    }
+                    else{
+                        Utils.Log(TAG,"mPinLockListener is null");
                     }
                 }
             }
@@ -131,6 +138,9 @@ public class PinLockView extends RecyclerView {
             Log.d(TAG, "onVerify");
             if (mPinLockListener != null) {
                 mPinLockListener.onComplete(mPin);
+            }
+            else {
+                Utils.Log(TAG,"mPinLockListener is null");
             }
         }
     };

@@ -107,7 +107,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(CheckSystemActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(CheckSystemActivity.class.getSimpleName());
     }
 
     @Override

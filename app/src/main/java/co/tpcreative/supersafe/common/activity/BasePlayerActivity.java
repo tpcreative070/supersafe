@@ -131,7 +131,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                 return;
             }
         }
-
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
@@ -140,8 +139,8 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
-                        break;
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
                     }
                     default:{
                         Utils.Log(TAG,"Nothing to do");

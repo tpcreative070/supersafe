@@ -270,7 +270,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(PremiumActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(PremiumActivity.class.getSimpleName());
         final boolean isPremium = User.getInstance().isPremium();
         if (!isPremium){
             SingletonPremiumTimer.getInstance().setListener(this);

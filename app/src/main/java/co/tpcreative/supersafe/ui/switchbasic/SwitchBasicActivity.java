@@ -69,7 +69,7 @@ public class SwitchBasicActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        SuperSafeApplication.getInstance().writeKeyHomePressed(SwitchBasicActivity.class.getSimpleName());
+        //SuperSafeApplication.getInstance().writeKeyHomePressed(SwitchBasicActivity.class.getSimpleName());
     }
 
     @Override

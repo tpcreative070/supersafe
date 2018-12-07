@@ -54,6 +54,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener{
@@ -212,8 +213,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_PRESS_HOME.ordinal());
-                        Utils.Log(TAG,"Pressed home button");
+                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
                         break;
                     }
                     default:{
@@ -458,7 +459,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                             public void onSuccessful(String message, EnumStatus status) {
                                 Utils.Log(TAG,"onSuccessful " +message + " - " +status.name());
                                 final User mUser = User.getInstance().getUserInfo();
-                                ServiceManager.getInstance().onGetListCategoriesSync();
+                                //ServiceManager.getInstance().onGetListCategoriesSync();
                                 if (mUser != null) {
                                     if (mUser.driveAbout == null) {
                                         ServiceManager.getInstance().onGetDriveAbout();
@@ -468,7 +469,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                                     Utils.Log(TAG,"Call onDriveClientReady");
                                     onDriveClientReady();
                                 }
-
                             }
                         });
                     }
