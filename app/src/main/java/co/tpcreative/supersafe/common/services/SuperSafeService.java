@@ -8,9 +8,7 @@ import android.os.IBinder;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -178,17 +176,14 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             }
             return;
         }
-
         Log.d(TAG,"onGetUserInfo 2");
         if (subscriptions == null) {
             return;
         }
-
         final User mUser = User.getInstance().getUserInfo();
         if (mUser==null){
             return;
         }
-
         String email = mUser.email;
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),email);
@@ -296,7 +291,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }));
     }
 
-
     public void getDriveAbout() {
         BaseView view = view();
         if (view == null) {
@@ -393,7 +387,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("No Drive connected", EnumStatus.GET_LIST_FILES_IN_APP);
             return;
         }
-
         String access_token = user.access_token;
         Log.d(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
@@ -1396,14 +1389,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         list.add(getString(R.string.key_appDataFolder));
         content.put(getString(R.string.key_parents), list);
         MultipartBody.Part metaPart = MultipartBody.Part.create(RequestBody.create(contentType, new Gson().toJson(content)));
-
         ProgressRequestBody fileBody = new ProgressRequestBody(file, new ProgressRequestBody.UploadCallbacks() {
             @Override
             public void onProgressUpdate(int percentage) {
                 Utils.Log(TAG, "Progressing uploaded " + percentage + "%");
                 listener.onProgressUpdate(percentage);
             }
-
             @Override
             public void onError() {
                 Utils.Log(TAG, "onError");
@@ -1411,7 +1402,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     listener.onError("Error upload", EnumStatus.UPLOAD);
                 }
             }
-
             @Override
             public void onFinish() {
                 listener.onFinish();
@@ -1588,7 +1578,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }));
     }
 
-
     public void onSyncAuthorDevice(){
         Log.d(TAG,"onSyncAuthorDevice");
         BaseView view = view();
@@ -1607,7 +1596,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (user!=null){
             user_id = user.email;
         }
-
 
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());

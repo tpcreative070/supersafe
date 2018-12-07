@@ -26,7 +26,6 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -44,7 +43,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
     public static final String TAG = BaseActivity.class.getSimpleName();
     private SlidrConfig mConfig;
     protected Storage storage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

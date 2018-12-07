@@ -72,7 +72,6 @@ public class ServiceManager implements BaseView {
     private List<ExportFiles> mListExport = new ArrayList<>();
     private List<Items> mListDownLoadFiles = new ArrayList<>();
 
-
     ServiceConnection myConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             Log.d(TAG, "connected");
@@ -119,7 +118,6 @@ public class ServiceManager implements BaseView {
         }
         return instance;
     }
-
 
     public boolean isImporting() {
         return isImporting;
@@ -308,7 +306,6 @@ public class ServiceManager implements BaseView {
         }
     }
 
-
     /*Check Version App*/
     public void onSyncCheckVersion() {
         if (myService != null) {
@@ -317,7 +314,6 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "My services is null");
         }
     }
-
 
     public void onGetListCategoriesSync() {
         if (myService == null) {
@@ -771,12 +767,10 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "No Found data to delete on cloud items!!!");
             return;
         }
-
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             Utils.Log(TAG, "Check network connection");
             return;
         }
-
         final List<Items> mList = new ArrayList<>();
         totalList = 0;
         countSyncData = 0;
@@ -787,7 +781,6 @@ public class ServiceManager implements BaseView {
                 mList.add(item);
             }
         }
-
         for (Items index : lists) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[index.formatType];
             if (index.global_thumbnail_id != null && (formatTypeFile != EnumFormatType.AUDIO && formatTypeFile != EnumFormatType.FILES)) {
@@ -796,7 +789,6 @@ public class ServiceManager implements BaseView {
                 mList.add(item);
             }
         }
-
         totalList = mList.size();
         isDeleteSyncCLoud = true;
         if (mList.size() == 0) {
@@ -832,26 +824,21 @@ public class ServiceManager implements BaseView {
 
     }
 
-
     public void onDownloadFilesFromDriveStore() {
         if (isDownloadData) {
             Utils.Log(TAG, "Downloading sync item from cloud !!!");
             return;
         }
-
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             Utils.Log(TAG, "Check network connection");
             return;
         }
-
         final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
         final List<Items> lists = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
-
         if (list == null) {
             Utils.Log(TAG, "No Found data from Cloud!!!");
             return;
         }
-
         final List<Items> mList = new ArrayList<>();
         totalList = 0;
         countSyncData = 0;
@@ -1775,7 +1762,6 @@ public class ServiceManager implements BaseView {
 
             final byte[] data = mData;
             try {
-
                 String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                 String currentTime = Utils.getCurrentDateTime();
                 String uuId = Utils.getUUId();
@@ -1783,8 +1769,6 @@ public class ServiceManager implements BaseView {
                 storage.createDirectory(pathContent);
                 String thumbnailPath = pathContent + "thumbnail_" + currentTime;
                 String originalPath = pathContent + currentTime;
-
-
 
                 Items items = new Items();
                 items.fileExtension = getString(R.string.key_jpg);
@@ -1818,17 +1802,14 @@ public class ServiceManager implements BaseView {
                 items.isSyncOwnServer = false;
                 items.statusAction = EnumStatus.UPLOAD.ordinal();
 
-
                 final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
                 items.isSaver = isSaver;
-
 
                 storage.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance(), data, new OnStorageListener() {
                     @Override
                     public void onSuccessful() {
 
                     }
-
                     @Override
                     public void onSuccessful(String path) {
                         try {
@@ -1874,12 +1855,10 @@ public class ServiceManager implements BaseView {
                         subscriber.onNext(response);
                         subscriber.onComplete();
                     }
-
                     @Override
                     public void onSuccessful(int position) {
 
                     }
-
                 });
             } catch (Exception e) {
                 final ResponseRXJava response = new ResponseRXJava();
@@ -1941,7 +1920,6 @@ public class ServiceManager implements BaseView {
     public void onExportingFiles() {
         Utils.Log(TAG, "Export amount files :" + mListExport.size());
         subscriptions = Observable.create(subscriber -> {
-
             setExporting(true);
             boolean isWorking = false;
             ExportFiles exportFiles = null;
@@ -1954,7 +1932,6 @@ public class ServiceManager implements BaseView {
                     break;
                 }
             }
-
             if (isWorking) {
                 final File mInput = exportFiles.input;
                 final File mOutPut = exportFiles.output;
@@ -1968,18 +1945,15 @@ public class ServiceManager implements BaseView {
                             @Override
                             public void onSuccessful() {
                             }
-
                             @Override
                             public void onFailed() {
                                 Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT);
                                 Utils.Log(TAG, "Exporting failed");
                             }
-
                             @Override
                             public void onSuccessful(String path) {
 
                             }
-
                             @Override
                             public void onSuccessful(int position) {
                                 Utils.Log(TAG, "Exporting large file...............................Successful " +position);
@@ -1993,18 +1967,15 @@ public class ServiceManager implements BaseView {
                             @Override
                             public void onSuccessful() {
                             }
-
                             @Override
                             public void onFailed() {
                                 Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT);
                                 Utils.Log(TAG, "Exporting failed");
                             }
-
                             @Override
                             public void onSuccessful(String path) {
 
                             }
-
                             @Override
                             public void onSuccessful(int position) {
                                 Utils.Log(TAG, "Exporting file...............................Successful " +position);
@@ -2013,8 +1984,6 @@ public class ServiceManager implements BaseView {
                             }
                         });
                     }
-
-
                 } catch (Exception e) {
                     Log.w(TAG, "Cannot write to " + e);
                 } finally {
@@ -2051,7 +2020,6 @@ public class ServiceManager implements BaseView {
                     break;
                 }
             }
-
             if (isWorking) {
                 ServiceManager.getInstance().onSaveDataOnGallery(importFiles, new ServiceManager.ServiceManagerGalleySyncDataListener() {
                     @Override
@@ -2091,12 +2059,10 @@ public class ServiceManager implements BaseView {
                 public void onProgressDownload(int percentage) {
                     Utils.Log(TAG, "Percentage " + percentage);
                 }
-
                 @Override
                 public void onSaved() {
 
                 }
-
                 @Override
                 public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                     mListDownLoadFiles.get(position).isSaver = false;
@@ -2105,7 +2071,6 @@ public class ServiceManager implements BaseView {
                     subscriber.onNext(items);
                     subscriber.onComplete();
                 }
-
                 @Override
                 public void onError(String message, EnumStatus status) {
                     Utils.Log(TAG, message + "--" + status.name());
@@ -2132,7 +2097,6 @@ public class ServiceManager implements BaseView {
                 break;
             }
         }
-
         if (isWorking) {
             final User user = User.getInstance().getUserInfo();
             if (user != null) {
@@ -2175,7 +2139,6 @@ public class ServiceManager implements BaseView {
             mListDownLoadFiles.clear();
         }
     }
-
 
     public void onUpdateSyncDataStatus(EnumStatus enumStatus) {
         switch (enumStatus) {
@@ -2238,7 +2201,6 @@ public class ServiceManager implements BaseView {
                     onWriteLog(messageDone, EnumStatus.DELETE_SYNC_OWN_DATA);
                     Utils.Log(TAG, message);
                     Utils.Log(TAG, messageDone);
-
                     onWriteLog("Request own syn data on download", EnumStatus.DELETE_SYNC_OWN_DATA);
                     Utils.Log(TAG, "Request own syn data on download.........");
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
@@ -2390,7 +2352,6 @@ public class ServiceManager implements BaseView {
         return null;
     }
 
-
     @Override
     public void onSuccessful(String message, EnumStatus status) {
         switch (status) {
@@ -2481,14 +2442,12 @@ public class ServiceManager implements BaseView {
         void onResponseData(final DriveResponse response);
         void onError(String message, EnumStatus status);
     }
-
     public interface DownloadServiceListener {
         void onProgressDownload(int percentage);
         void onSaved();
         void onDownLoadCompleted(File file_name, DownloadFileRequest request);
         void onError(String message, EnumStatus status);
     }
-
     public interface DeleteServiceListener {
         void onDone();
     }
