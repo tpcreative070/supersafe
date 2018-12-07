@@ -817,8 +817,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }));
     }
-
-
+    
     /*Get List Categories*/
 
     public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final ServiceManager.ServiceManagerShortListener view) {
