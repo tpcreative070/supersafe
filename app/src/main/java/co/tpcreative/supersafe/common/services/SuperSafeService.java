@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
+import com.snatik.storage.security.SecurityUtil;
+
 import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -24,6 +27,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
+import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
@@ -33,6 +37,7 @@ import co.tpcreative.supersafe.model.Authorization;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveEvent;
+import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -198,12 +203,14 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         view.onError(onResponse.message,EnumStatus.USER_INFO);
                     }
                     else{
-                        if (onResponse.premium!=null){
+                        if (onResponse.premium!=null && onResponse.email_token!=null){
                             mUser.premium = onResponse.premium;
+                            mUser.email_token = onResponse.email_token;
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                             view.onSuccessful("Successful",EnumStatus.USER_INFO);
                         }
                     }
+                    Log.d(TAG,"onGetUserInfo 3");
                     Log.d(TAG, "Body user info : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -353,6 +360,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
+                            Utils.Log(TAG,"Exception....");
                             view.onError("Exception " + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         }
                     } else {
@@ -817,7 +825,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }));
     }
-    
+
     /*Get List Categories*/
 
     public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final ServiceManager.ServiceManagerShortListener view) {
@@ -1488,6 +1496,9 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
+                            if (view==null){
+                                return;
+                            }
                             final String value = bodys.string();
                             final DriveAbout driveAbout = new Gson().fromJson(value, DriveAbout.class);
                             if (driveAbout != null) {
@@ -1633,6 +1644,159 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     view.onStopLoading(EnumStatus.AUTHOR_SYNC);
                 }));
     }
+
+
+    /*Email token*/
+
+    public void onSendMail(EmailToken request){
+        Log.d(TAG, "onSendMail.....");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+        Call<ResponseBody> response = SuperSafeApplication.serviceGraphMicrosoft.onSendMail(request.access_token, request);
+        response.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    final int code = response.code();
+                    if (code == 401) {
+                        Utils.Log(TAG, "code " + code);
+                        onRefreshEmailToken(request);
+                        final String errorMessage = response.errorBody().string();
+                        Log.d(TAG, "error" + errorMessage);
+                        view.onError(errorMessage, EnumStatus.SEND_EMAIL);
+                    } else if (code == 202) {
+                        Utils.Log(TAG, "code " + code);
+                        view.onSuccessful("successful", EnumStatus.SEND_EMAIL);
+                        Log.d(TAG, "Body : Send email Successful");
+                    } else {
+                        Utils.Log(TAG, "code " + code);
+                        Utils.Log(TAG, "Nothing to do");
+                        view.onError("Null", EnumStatus.SEND_EMAIL);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Utils.Log(TAG, "response failed :" + t.getMessage());
+            }
+        });
+    }
+
+    public void onRefreshEmailToken(EmailToken request) {
+        Log.d(TAG, "onRefreshEmailToken.....");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+        final User mUser = User.getInstance().getUserInfo();
+        Map<String, Object> hash = new HashMap<>();
+        hash.put(getString(R.string.key_client_id), request.client_id);
+        hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
+        hash.put(getString(R.string.key_grant_type), request.grant_type);
+        hash.put(getString(R.string.key_refresh_token), request.refresh_token);
+        subscriptions.add(SuperSafeApplication.serviceGraphMicrosoft.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onResponse -> {
+                    if (onResponse != null) {
+                        EmailToken token = mUser.email_token;
+                        token.access_token = onResponse.token_type + " " + onResponse.access_token;
+                        token.refresh_token = onResponse.refresh_token;
+                        token.token_type = onResponse.token_type;
+                        mUser.email_token = token;
+                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        onAddEmailToken(token);
+                    }
+                    view.onSuccessful("successful", EnumStatus.REFRESH);
+                    Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code = ((HttpException) throwable).response().code();
+                        try {
+                            if (code == 401) {
+                                Utils.Log(TAG, "code " + code);
+                            }
+                            Log.d(TAG, "error" + bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            view.onError(msg, EnumStatus.SEND_EMAIL);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                }));
+    }
+
+
+    public void onAddEmailToken(final EmailToken emailToken) {
+        Log.d(TAG, "onSignIn.....");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        final User mUser = User.getInstance().getUserInfo();
+        Map<String, Object> hash = new HashMap<>();
+        hash.put(getString(R.string.key_user_id), mUser.email);
+        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_refresh_token), mUser.email_token.refresh_token);
+        hash.put(getString(R.string.key_access_token), mUser.email_token.access_token);
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onResponse -> {
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    emailToken.access_token = mUser.email_token.access_token;
+                    emailToken.refresh_token = mUser.email_token.refresh_token;
+                    mUser.email_token = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
+                    onSendMail(emailToken);
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code = ((HttpException) throwable).response().code();
+                        try {
+                            if (code == 403) {
+                                Utils.Log(TAG, "code " + code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
+                            final String errorMessage = bodys.string();
+                            Log.d(TAG, "error" + errorMessage);
+                            view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                }));
+    }
+
 
     /**
      * Class used for the client Binder.  Because we know this service always

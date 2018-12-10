@@ -489,7 +489,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
      * user's account.
      */
 
-
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mSignInAccount = signInAccount;
         Log.d(TAG,"Google client ready");

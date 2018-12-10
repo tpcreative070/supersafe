@@ -11,9 +11,11 @@ import co.tpcreative.supersafe.common.response.SyncResponse;
 import co.tpcreative.supersafe.common.response.UserCloudResponse;
 import co.tpcreative.supersafe.common.response.VerifyCodeResponse;
 import co.tpcreative.supersafe.model.DriveAbout;
+import co.tpcreative.supersafe.model.EmailToken;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -31,6 +33,11 @@ import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface RootAPI{
+
+
+    String REFRESH_TOKEN = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+    String SEND_MAIL = "/v1.0/me/sendMail";
+    String ADD_EMAIL_TOKEN = "/api/user/addEmailToken";
 
     String SIGN_UP = "/api/user/signup";
     String SIGN_IN = "/api/user/signin";
@@ -143,6 +150,19 @@ public interface RootAPI{
     @Headers({"Accept: application/json"})
     @GET(GET_DRIVE_ABOUT)
     Observable<DriveAbout> onGetDriveAbout(@Header("Authorization") String token);
+
+    @Headers({"Accept: application/json"})
+    @POST(SEND_MAIL)
+    Call<ResponseBody> onSendMail(@Header("Authorization") String token, @Body EmailToken body);
+
+    @FormUrlEncoded
+    @POST()
+    Observable<EmailToken> onRefreshEmailToken(@Url String url,@FieldMap Map<String,Object>request);
+
+    @FormUrlEncoded
+    @POST(ADD_EMAIL_TOKEN)
+    Observable<BaseResponse> onAddEmailToken(@FieldMap Map<String,Object>request);
+
 
     @Headers({"Accept: application/json"})
     @POST(CREATE_FOLDER)

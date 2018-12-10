@@ -56,6 +56,8 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     private boolean isNext;
     private Boolean isRestoreFiles;
 
+    private static final String TAG = ResetPinActivity.class.getCanonicalName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +86,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         catch (Exception e){
             e.printStackTrace();
         }
+        onStartLoading(EnumStatus.OTHER);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -124,7 +127,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         Theme theme = Theme.getInstance().getThemeInfo();
         CircularProgressDrawable circularProgressDrawable;
         CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
-                .color(getResources().getColor(theme.getAccentColor()))
+                .colors(getResources().getIntArray(R.array.gplus_colors))
                 .sweepSpeed(2)
                 .rotationSpeed(2)
                 .strokeWidth(Utils.dpToPx(3))
@@ -136,9 +139,11 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
                 mCircularProgressBar.getWidth(),
                 mCircularProgressBar.getHeight());
 
-//        mCircularProgressBar.getIndeterminateDrawable().setColorFilter(.getResources().getColor(theme.getAccentColor()),
-//                PorterDuff.Mode.SRC_IN);
+        //mCircularProgressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(theme.getAccentColor()),
+        //        PorterDuff.Mode.SRC_IN);
+        mCircularProgressBar.setVisibility(View.INVISIBLE);
         mCircularProgressBar.setVisibility(View.VISIBLE);
+        Utils.Log(TAG,"Action here set progress");
     }
 
     private TextWatcher mTextWatcher = new TextWatcher() {
@@ -221,6 +226,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
 
     @Override
     public void onStopLoading(EnumStatus status) {
+        Utils.Log(TAG,"Stop progressing");
         if (mCircularProgressBar!=null){
             mCircularProgressBar.progressiveStop();
         }

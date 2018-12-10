@@ -93,6 +93,8 @@ public enum EnumStatus {
         COMPLETED_RECREATE,
         PRIVATE_DONE,
         ME_DONE,
+        REFRESH_EMAIL_TOKEN,
+        ADD_EMAIL_TOKEN,
         OTHER
 
 }

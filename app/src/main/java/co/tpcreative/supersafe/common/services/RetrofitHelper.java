@@ -18,8 +18,8 @@ public class RetrofitHelper {
     /**
      * The CityService communicates with the json api of the city provider.
      */
-    public RootAPI getCityService() {
-        final Retrofit retrofit = createRetrofit();
+    public RootAPI getCityService(String url) {
+        final Retrofit retrofit = createRetrofit(url);
         return retrofit.create(RootAPI.class);
     }
 
@@ -49,9 +49,9 @@ public class RetrofitHelper {
     /**
      * Creates a pre configured Retrofit instance
      */
-    private Retrofit createRetrofit() {
+    private Retrofit createRetrofit(String url) {
         return new Retrofit.Builder()
-                .baseUrl("https://www.googleapis.com/")
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // <- add this
                 .client(createOkHttpClient())

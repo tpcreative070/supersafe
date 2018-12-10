@@ -257,6 +257,9 @@ public class ServiceManager implements BaseView {
     }
 
     public SuperSafeService getMyService() {
+        if (myService==null){
+            ServiceManager.getInstance().onStartService();
+        }
         return myService;
     }
 
@@ -2360,8 +2363,12 @@ public class ServiceManager implements BaseView {
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action) {
                     case NONE: {
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
+                        String key  = SuperSafeApplication.getInstance().readKey();
+                        if (!"".equals(key)){
+                            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+                            Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
+                        }
+                        break;
                     }
                     default: {
                         Utils.Log(TAG, "Nothing to do ???");

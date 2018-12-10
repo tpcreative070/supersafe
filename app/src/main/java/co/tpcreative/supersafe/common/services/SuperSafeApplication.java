@@ -73,6 +73,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     protected static Dependencies dependencies;
     public static RootAPI serverAPI;
     public static RootAPI serverDriveApi;
+    public static RootAPI serviceGraphMicrosoft;
     private String authorization = null;
 
     private GoogleSignInOptions.Builder options;
@@ -100,9 +101,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         serverAPI = (RootAPI) Dependencies.serverAPI;
 
         /*Init Drive api*/
+        serverDriveApi = new RetrofitHelper().getCityService(getString(R.string.url_google));
 
-        serverDriveApi = new RetrofitHelper().getCityService();
-
+        /*Init GraphMicrosoft*/
+        serviceGraphMicrosoft = new RetrofitHelper().getCityService(getString(R.string.url_graph_microsoft));
 
         ServiceManager.getInstance().setContext(this);
 

@@ -25,11 +25,15 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.Email;
+import co.tpcreative.supersafe.model.EmailToken;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
@@ -54,6 +58,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
         edtEmail.addTextChangedListener(mTextWatcher);
         presenter = new SignInPresenter();
         presenter.bindView(this);
+        ServiceManager.getInstance().onStartService();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -168,13 +173,15 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     public void onStopLoading(EnumStatus status) {
         progressBarCircularIndeterminate.setVisibility(View.INVISIBLE);
         btnNext.setVisibility(View.VISIBLE);
+        Utils.Log(TAG,"Stop");
     }
-
 
     @Override
     public void onError(String message, EnumStatus status) {
+        Utils.Log(TAG,message +" " + status.name());
         switch (status){
             case SIGN_IN:{
+                onStopLoading(EnumStatus.SIGN_IN);
                 edtEmail.setError(message);
                 break;
             }
@@ -193,16 +200,24 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-
+        Utils.Log(TAG,message +" " + status.name());
+        switch (status){
+            case SEND_EMAIL:{
+                final User mUser = User.getInstance().getUserInfo();
+                Navigator.onMoveToVerify(this,mUser);
+                onStopLoading(EnumStatus.SIGN_IN);
+                break;
+            }
+        }
     }
 
     @Override
     public void onSuccessful(String message, EnumStatus status, User object) {
         switch (status){
             case SIGN_IN:{
-                Log.d(TAG,"user : " + new Gson().toJson(object));
-                Navigator.onMoveToVerify(this,object);
-                presenter.onSendGmail(object.email,object.code);
+                final User mUser = User.getInstance().getUserInfo();
+                final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
+                presenter.onSendMail(emailToken);
                 break;
             }
         }

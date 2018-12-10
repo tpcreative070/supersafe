@@ -136,11 +136,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
     protected void onResume() {
         Utils.Log(TAG,"onResume....");
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        if (mHomeWatcher!=null){
-            if (!mHomeWatcher.isRegistered){
-                onRegisterHomeWatcher();
-            }
-        }
         super.onResume();
     }
 

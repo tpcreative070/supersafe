@@ -117,11 +117,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     protected void onResume() {
         Utils.Log(TAG,"onResume....");
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        if (mHomeWatcher!=null){
-            if (!mHomeWatcher.isRegistered){
-                onRegisterHomeWatcher();
-            }
-        }
         super.onResume();
     }
 
@@ -156,7 +151,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         });
         mHomeWatcher.startWatch();
     }
-
 
     @Override
     public void onBackPressed() {

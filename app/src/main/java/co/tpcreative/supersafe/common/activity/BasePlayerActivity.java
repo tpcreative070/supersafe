@@ -116,11 +116,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
     protected void onResume() {
         Utils.Log(TAG,"onResume....");
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        if (mHomeWatcher!=null){
-            if (!mHomeWatcher.isRegistered){
-                onRegisterHomeWatcher();
-            }
-        }
         super.onResume();
     }
 

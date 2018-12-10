@@ -149,11 +149,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     protected void onResume() {
         Utils.Log(TAG,"Action here........onResume");
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
-        if (mHomeWatcher!=null){
-            if (!mHomeWatcher.isRegistered){
-                onRegisterHomeWatcher();
-            }
-        }
         super.onResume();
     }
 

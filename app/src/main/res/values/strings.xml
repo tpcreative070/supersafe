@@ -601,4 +601,19 @@
     <string name="interstitial_full_screen_test">ca-app-pub-3940256099942544/1033173712</string>
 
 
+    <!--Email Token -->
+
+    <string name="key_refresh_token">refresh_token</string>
+    <string name="key_access_token">access_token</string>
+    <string name="key_client_id">client_id</string>
+    <string name="key_redirect_uri">redirect_uri</string>
+    <string name="key_grant_type">grant_type</string>
+    <string name="url_graph_microsoft">https://graph.microsoft.com/</string>
+
+
+    <!--Google Drive -->
+    <string name="url_google">https://www.googleapis.com/</string>
+
+
+
 </resources>
