@@ -161,7 +161,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         return (float) (Math.random() * range) + startsfrom;
     }
 
-
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         try {

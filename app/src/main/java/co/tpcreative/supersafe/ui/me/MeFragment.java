@@ -214,11 +214,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     public void onResume() {
         super.onResume();
-        if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
-            Utils.Log(TAG,"isEnterPinWorking");
-            return;
-        }
-
         Log.d(TAG,"onResume");
         presenter.onCalculate();
         presenter.onShowUserInfo();

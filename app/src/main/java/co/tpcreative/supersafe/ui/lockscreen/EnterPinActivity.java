@@ -303,7 +303,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         switch (action){
             case NONE:{
                 ServiceManager.getInstance().onStartService();
-                SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
                 break;
             }
             default:{
@@ -348,7 +347,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         if (mFingerPrintAuthHelper != null) {
             mFingerPrintAuthHelper.startAuth();
         }
-        SingletonEnterPinManager.getInstance().setEnterPinWorking(true);
     }
 
 

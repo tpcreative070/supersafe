@@ -165,11 +165,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             EventBus.getDefault().register(this);
         }
         onCallLockScreen();
-        if (SingletonEnterPinManager.getInstance().isEnterPinWorking()){
-            Utils.Log(TAG,"isEnterPinWorking");
-            SingletonEnterPinManager.getInstance().setEnterPinWorking(false);
-            return;
-        }
         onSwitchToBasic();
         GoogleDriveConnectionManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
