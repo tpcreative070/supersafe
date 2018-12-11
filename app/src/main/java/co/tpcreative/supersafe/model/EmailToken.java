@@ -54,6 +54,10 @@ public class EmailToken implements Serializable {
                 content =   Email.getInstance().getValue(code, "Reset");
                 break;
             }
+            case UNLOCK_ALBUMS:{
+                content =   Email.getInstance().getValue(code, "Unlock albums");
+                break;
+            }
         }
 
         body.content = content;

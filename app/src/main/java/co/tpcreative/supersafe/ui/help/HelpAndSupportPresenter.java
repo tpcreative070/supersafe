@@ -231,36 +231,4 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
     }
 
 
-    public void onSendGmail(String email,String content){
-        BaseView view = view();
-        String body = String.format(getString(R.string.support_help_email),email,content);
-        String title = String.format(getString(R.string.support_help_title));
-        BackgroundMail.newBuilder(view.getActivity())
-                .withUsername(SecurityUtil.user_name)
-                .withPassword(SecurityUtil.password)
-                .withMailto(SecurityUtil.tpcreative)
-                .withType(BackgroundMail.TYPE_PLAIN)
-                .withSubject(title)
-                .withBody(body)
-                .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
-                    @Override
-                    public void onSuccess() {
-                        //do some magic
-                        Log.d(TAG,"Successful");
-                        view.onSuccessful("Successful",EnumStatus.SEND_EMAIL);
-                    }
-                })
-                .withOnFailCallback(new BackgroundMail.OnFailCallback() {
-                    @Override
-                    public void onFail() {
-                        //do some magic
-                        Log.d(TAG,"Failed");
-                        view.onError("Error",EnumStatus.SEND_EMAIL);
-                    }
-                })
-                .send();
-    }
-
-
-
 }
