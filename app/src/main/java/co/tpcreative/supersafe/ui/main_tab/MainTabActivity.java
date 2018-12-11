@@ -104,11 +104,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
         SingletonPremiumTimer.getInstance().onStartTimer();
-
-
-        EmailToken request = new EmailToken();
-
-
     }
 
     public void onShowSuggestion(){
@@ -482,7 +477,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                             e.printStackTrace();
                         }
                     }
-
                     ServiceManager.getInstance().setmListImport(mListImportFiles);
                     ServiceManager.getInstance().onImportingFiles();
                 } else {
@@ -603,19 +597,16 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         previousStatus = status;
         animation = AnimationsContainer.getInstance().createSplashAnim(item, status);
         animation.start();
-
     }
 
     /*MainTab View*/
 
     @Override
     public void onStartLoading(EnumStatus status) {
-
     }
 
     @Override
     public void onStopLoading(EnumStatus status) {
-
     }
 
     @Override
@@ -625,7 +616,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     protected void onDriveClientReady() {
-
     }
 
     @Override
@@ -635,12 +625,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     protected void onDriveSuccessful() {
-
     }
 
     @Override
     protected void onDriveError() {
-
     }
 
     @Override
@@ -650,13 +638,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     protected void onDriveRevokeAccess() {
-
     }
-
 
     @Override
     public void onError(String message, EnumStatus status) {
-
     }
 
     @Override

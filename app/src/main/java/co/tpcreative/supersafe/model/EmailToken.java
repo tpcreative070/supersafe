@@ -72,6 +72,43 @@ public class EmailToken implements Serializable {
         return token;
     }
 
+    public EmailToken convertTextObject(final User mUser,final String content){
+        final EmailToken token = new EmailToken();
+        token.access_token = mUser.email_token.access_token;
+        token.refresh_token = mUser.email_token.refresh_token;
+        token.grant_type = mUser.email_token.grant_type;
+        token.client_id = mUser.email_token.client_id;
+        token.redirect_uri = mUser.email_token.redirect_uri;
+        token.saveToSentItems = false;
+
+        EmailToken.Message messages = new EmailToken.Message();
+
+        String subject = String.format(SuperSafeApplication.getInstance().getString(R.string.support_help_title));
+        String result_content = String.format(SuperSafeApplication.getInstance().getString(R.string.support_help_email),mUser.email,content);
+
+        messages.subject = subject;
+
+        EmailToken.Body body = new EmailToken.Body();
+        body.contentType = "TEXT";
+
+
+        body.content = result_content;
+        messages.body = body;
+
+        EmailToken.EmailAddress emailAddress = new EmailToken.EmailAddress();
+        emailAddress.address = SuperSafeApplication.getInstance().getString(R.string.care_email);
+
+        EmailToken.EmailObject emailObject = new EmailToken.EmailObject();
+        emailObject.emailAddress = emailAddress;
+
+        messages.toRecipients.add(emailObject);
+
+        token.message = messages;
+        token.code = mUser.code;
+        return token;
+    }
+
+
 
     public static class Message implements Serializable{
         public String subject;

@@ -257,9 +257,6 @@ public class ServiceManager implements BaseView {
     }
 
     public SuperSafeService getMyService() {
-        if (myService==null){
-            ServiceManager.getInstance().onStartService();
-        }
         return myService;
     }
 

@@ -609,6 +609,7 @@
     <string name="key_redirect_uri">redirect_uri</string>
     <string name="key_grant_type">grant_type</string>
     <string name="url_graph_microsoft">https://graph.microsoft.com/</string>
+    <string name="care_email">care@tpcreative.me</string>
 
 
     <!--Google Drive -->

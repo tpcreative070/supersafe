@@ -28,6 +28,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AdvancedWebView;
+import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import dmax.dialog.SpotsDialog;
@@ -197,7 +198,9 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             if (isNext){
                 onStartProgressing();
                 String content = edtEmail.getText().toString();
-                presenter.onSendGmail(mUser.email,content);
+
+                final EmailToken emailToken = EmailToken.getInstance().convertTextObject(mUser,content);
+                presenter.onSendMail(emailToken,content);
                 Utils.hideKeyboard(edtEmail);
                 return true;
             }
@@ -253,7 +256,8 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             case R.id.menu_item_send:{
                 if (isNext){
                     String content = edtEmail.getText().toString();
-                    presenter.onSendGmail(mUser.email,content);
+                    final EmailToken emailToken = EmailToken.getInstance().convertTextObject(mUser,content);
+                    presenter.onSendMail(emailToken,content);
                     onStartProgressing();
                     Utils.hideKeyboard(edtEmail);
                 }
