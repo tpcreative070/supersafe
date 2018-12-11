@@ -241,7 +241,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
             player.prepare(concatenatedSource,!haveStartPosition,false);
             player.setPlayWhenReady(true);
-
+            player.setRepeatMode(Player.REPEAT_MODE_ALL);
 
             player.addListener(new Player.EventListener() {
                 @Override
