@@ -170,6 +170,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             long result  = currentDatetime - device_milliseconds;
                             mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            Utils.Log(TAG,"onStartTimer");
                             SingletonPremiumTimer.getInstance().onStartTimer();
                             Log.d(TAG,"onGetUserInfo 3");
                         }

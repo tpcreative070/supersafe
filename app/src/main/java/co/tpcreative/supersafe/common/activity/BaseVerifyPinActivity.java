@@ -137,30 +137,33 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mHomeWatcher!=null){
             mHomeWatcher.stopWatch();
         }
-        if (unbinder != null)
+        if (unbinder != null){
             unbinder.unbind();
-        super.onDestroy();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        if (mCameraPreview != null) mCameraPreview.stopPreviewAndFreeCamera();
+        if (mCameraPreview != null){
+            mCameraPreview.stopPreviewAndFreeCamera();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
     protected void onResume() {
         SensorFaceUpDownChangeNotifier.getInstance().addListener(this);
         Utils.Log(TAG,"Action here........onResume");
-        if (mHomeWatcher!=null){
-            if (!mHomeWatcher.isRegistered){
-                onRegisterHomeWatcher();
-            }
-        }
         if (mCachedCameraConfig != null) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {

@@ -180,14 +180,20 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mHomeWatcher!=null){
             Utils.Log(TAG,"Stop home watcher....");
             mHomeWatcher.stopWatch();
         }
-        if (unbinder != null)
+        if (unbinder != null){
             unbinder.unbind();
-        super.onDestroy();
+        }
     }
 
     @Override
@@ -299,6 +305,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 Utils.onWriteLog("Sign-in failed on Google drive..",EnumStatus.SIGN_IN);
             }
         }
+        Utils.Log(TAG,"onStart..........");
+
     }
 
     /**

@@ -7,6 +7,7 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
@@ -18,6 +19,7 @@ public class PlayerPresenter extends Presenter<BaseView>{
     protected MainCategories mainCategories;
     protected List<Items>mList ;
     protected List<MediaSource> mListSource;
+
 
     public PlayerPresenter(){
         mList = new ArrayList<>();

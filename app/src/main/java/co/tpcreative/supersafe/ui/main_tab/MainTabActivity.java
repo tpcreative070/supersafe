@@ -103,6 +103,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Log.d(TAG,"User....." +new Gson().toJson(mUser));
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
+        Utils.Log(TAG,"onStartTimer");
         SingletonPremiumTimer.getInstance().onStartTimer();
     }
 

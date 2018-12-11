@@ -2408,6 +2408,7 @@ public class ServiceManager implements BaseView {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        Utils.Log(TAG,"onStartTimer");
                         SingletonPremiumTimer.getInstance().onStartTimer();
                     }
                 }, 5000);

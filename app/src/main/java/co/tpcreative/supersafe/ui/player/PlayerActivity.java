@@ -378,14 +378,15 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
                         animationPlayer.startNotesFall();
                         animationPlayer.setVisibility(View.VISIBLE);
                         playerView.setBackgroundResource(R.color.yellow_700);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         break;
                     }
                     case VIDEO: {
                         playerView.setBackgroundColor(getResources().getColor(R.color.black));
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         break;
                     }
                 }
-
                 tvTitle.setText(presenter.mItems.title);
                 adapter.setDataSource(presenter.mList);
                 playVideo();
