@@ -18,11 +18,15 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.github.kratorius.circleprogress.CircleProgressView;
 import com.google.gson.Gson;
 import com.multidots.fingerprintauth.FingerPrintAuthCallback;
 import com.multidots.fingerprintauth.FingerPrintAuthHelper;
@@ -37,6 +41,7 @@ import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
+import co.tpcreative.supersafe.common.controller.SingletonScreenLock;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
@@ -57,7 +62,7 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>, FingerPrintAuthCallback, SingletonMultipleListener.Listener {
+public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>, FingerPrintAuthCallback, SingletonMultipleListener.Listener,SingletonScreenLock.SingletonScreenLockListener {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -85,8 +90,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     RelativeLayout rlButton;
     @BindView(R.id.rlDots)
     RelativeLayout rlDots;
-    @BindView(R.id.includeLayout)
-    RelativeLayout includeLayout;
+    @BindView(R.id.rlSecretDoor)
+    RelativeLayout rlSecretDoor;
     @BindView(R.id.btnDone)
     Button btnDone;
     @BindView(R.id.imgFingerprint)
@@ -99,11 +104,22 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     Toolbar toolbar;
     @BindView(R.id.llLockScreen_1)
     LinearLayout llLockScreen_1;
+    @BindView(R.id.rlAttempt)
+    RelativeLayout rlAttempt;
+    @BindView(R.id.crc_standard)
+    CircleProgressView circleProgressView;
+    @BindView(R.id.tvAttempt)
+    TextView tvAttempt;
+
+
+
     private int count = 0;
+    private int countAttempt=0;
     private boolean isFingerprint;
 
 
     private static EnumPinAction mPinAction;
+    private static EnumPinAction enumPinPreviousAction;
     private static EnumPinAction mPinActionNext;
     private String mFirstPin = "";
     private static LockScreenPresenter presenter;
@@ -120,25 +136,21 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enterpin);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
-//        Theme theme = Theme.getInstance().getThemeInfo();
-//        rlLockScreen.setBackgroundColor(getResources().getColor(theme.getPrimaryColor()));
-//        setStatusBarColored(this, theme.getPrimaryColor(), theme.getPrimaryDarkColor());
-
         presenter = new LockScreenPresenter();
         presenter.bindView(this);
         int result = getIntent().getIntExtra(EXTRA_SET_PIN, 0);
         mPinAction = EnumPinAction.values()[result];
         int resultNext = getIntent().getIntExtra(EXTRA_ENUM_ACTION, 0);
         mPinActionNext = EnumPinAction.values()[resultNext];
-
+        SingletonScreenLock.getInstance().setListener(this);
+        enumPinPreviousAction = mPinAction;
         switch (mPinAction) {
             case SET: {
                 onDisplayView();
@@ -276,6 +288,23 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     };
 
+
+    @Override
+    public void onAttemptTimer(String seconds) {
+        if (seconds.equals("0")){
+            mPinAction = enumPinPreviousAction;
+            onDisplayView();
+        }
+        else{
+            double response = Double.parseDouble(seconds);
+            Utils.Log(TAG,"Seconds "+response);
+            double remain = (response/countAttempt) * 100;
+            int result = (int)remain;
+            Utils.Log(TAG,"Result "+result);
+            circleProgressView.setValue(result);
+            circleProgressView.setText(seconds);
+        }
+    }
 
     @Override
     public void onNotifier(EnumStatus status) {
@@ -571,15 +600,25 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         switch (mPinAction) {
             case VERIFY: {
                 count += 1;
-                if (count >= 4) {
-                    onSetVisitableForgotPin(View.VISIBLE);
+                onSetVisitableForgotPin(View.VISIBLE);
+                if (count >= 3) {
+                    countAttempt = count*10;
+                    final long attemptWaiting = count * 10000;
+                    SingletonScreenLock.getInstance().onStartTimer(attemptWaiting);
+                    mPinAction = EnumPinAction.ATTEMPT;
+                    onDisplayView();
                 }
                 break;
             }
             case VERIFY_TO_CHANGE: {
                 count += 1;
-                if (count >= 4) {
-                    onSetVisitableForgotPin(View.VISIBLE);
+                onSetVisitableForgotPin(View.VISIBLE);
+                if (count >= 3) {
+                    countAttempt = count*10;
+                    final long attemptWaiting = count * 10000;
+                    SingletonScreenLock.getInstance().onStartTimer(attemptWaiting);
+                    mPinAction = EnumPinAction.ATTEMPT;
+                    onDisplayView();
                 }
                 break;
             }
@@ -648,15 +687,14 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             rlDots.setVisibility(View.INVISIBLE);
             mTextAttempts.setVisibility(View.INVISIBLE);
             imgLauncher.setVisibility(View.VISIBLE);
-            includeLayout.setVisibility(View.VISIBLE);
+            rlSecretDoor.setVisibility(View.VISIBLE);
         } else {
             mTextTitle.setVisibility(View.VISIBLE);
             rlButton.setVisibility(View.VISIBLE);
             rlDots.setVisibility(View.VISIBLE);
             mTextAttempts.setVisibility(View.INVISIBLE);
             imgLauncher.setVisibility(View.INVISIBLE);
-            includeLayout.setVisibility(View.GONE);
-
+            rlSecretDoor.setVisibility(View.GONE);
             if (Utils.isSensorAvailable()) {
                 boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
                 if (isFingerPrintUnLock) {
@@ -671,7 +709,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public void onHideUI(){
         rlLockScreen.setVisibility(View.GONE);
         llLockScreen_1.setVisibility(View.GONE);
-        includeLayout.setVisibility(View.GONE);
+        rlSecretDoor.setVisibility(View.GONE);
         toolbar.setVisibility(View.GONE);
         rlPreference.setVisibility(View.GONE);
     }
@@ -681,6 +719,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         Utils.Log(TAG, "EnumPinAction 1:...." + action.name());
         switch (status) {
             case VERIFY: {
+                mTextAttempts.setText("");
                 Utils.Log(TAG, "Result here");
                 mPinAction = action;
                 switch (action) {
@@ -852,6 +891,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 finish();
                 break;
             }
+            case ATTEMPT:{
+                break;
+            }
             default: {
                 super.onBackPressed();
                 break;
@@ -865,36 +907,51 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             case SET: {
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
                 break;
             }
             case VERIFY: {
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
                 break;
             }
             case VERIFY_TO_CHANGE: {
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
                 break;
             }
             case CHANGE: {
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
                 break;
             }
             case INIT_PREFERENCE: {
                 rlLockScreen.setVisibility(View.INVISIBLE);
                 rlPreference.setVisibility(View.VISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
                 break;
             }
             case VERIFY_TO_CHANGE_FAKE_PIN: {
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
                 break;
             }
             case FAKE_PIN: {
                 rlLockScreen.setVisibility(View.VISIBLE);
                 rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case ATTEMPT:{
+                rlLockScreen.setVisibility(View.INVISIBLE);
+                rlPreference.setVisibility(View.INVISIBLE);
+                rlAttempt.setVisibility(View.VISIBLE);
+                String result = String.format(getString(R.string.in_correct_pin),count+"",countAttempt+"");
+                tvAttempt.setText(result);
                 break;
             }
         }
@@ -1075,6 +1132,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     if (preference instanceof Preference) {
                         if (preference.getKey().equals(getString(R.string.key_change_pin))) {
                             Utils.Log(TAG, "Action here!!!");
+                            enumPinPreviousAction = EnumPinAction.VERIFY_TO_CHANGE;
                             presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.VERIFY_TO_CHANGE);
                         }
                     }

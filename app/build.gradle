@@ -230,6 +230,9 @@ dependencies {
     /*dialogsuccessprogresslibrary*/
     implementation project(':dialogsuccessprogresslibrary')
 
+    /*Circle progress*/
+    implementation project(':library-circleprogress')
+
     /*Even Bus*/
     implementation 'org.greenrobot:eventbus:3.1.1'
 

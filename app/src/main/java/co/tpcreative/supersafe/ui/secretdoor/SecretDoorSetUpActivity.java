@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.secretdoor;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +10,7 @@ import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -36,18 +38,17 @@ public class SecretDoorSetUpActivity extends BaseActivity {
 
     @BindView(R.id.imgLauncher)
     ImageView imgLauncher;
+    @BindView(R.id.rlSecretDoor)
+    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_secret_door_set_up);
-        final Drawable droid = ContextCompat.getDrawable(this,R.mipmap.ic_launcher);
-        // You don't always need a sequence, and for that there's a single time tap target
+        relativeLayout.setVisibility(View.VISIBLE);
         final SpannableString spannedDesc = new SpannableString(getString(R.string.long_press_the_log));
         TapTargetView.showFor(this, TapTarget.forView(imgLauncher, getString(R.string.try_it_now), spannedDesc)
                 .cancelable(false)
-                .icon(droid)
-                .targetCircleColor(R.color.colorButton)
                 .titleTextDimen(R.dimen.text_size_title)
                 .titleTypeface(Typeface.DEFAULT_BOLD)
                 .tintTarget(true), new TapTargetView.Listener() {
@@ -66,7 +67,6 @@ public class SecretDoorSetUpActivity extends BaseActivity {
             @Override
             public void onOuterCircleClick(TapTargetView view) {
                 super.onOuterCircleClick(view);
-                Toast.makeText(view.getContext(), "You clicked the outer circle!", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
@@ -122,7 +122,6 @@ public class SecretDoorSetUpActivity extends BaseActivity {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         PrefsController.putBoolean(getString(R.string.key_secret_door),true);
-                        onBackPressed();
                     }
                 })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {

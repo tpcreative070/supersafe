@@ -1,43 +1,48 @@
 package co.tpcreative.supersafe.ui.resetpin;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.snatik.storage.security.SecurityUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity;
-import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -52,6 +57,11 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     Button btnReset;
     @BindView(R.id.progressbar_circular)
     CircularProgressBar mCircularProgressBar;
+    @BindView(R.id.llSupport)
+    LinearLayout llSupport;
+    @BindView(R.id.tvSupport)
+    TextView tvSupport;
+
     private ResetPinPresenter presenter;
     private boolean isNext;
     private Boolean isRestoreFiles;
@@ -67,13 +77,15 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         presenter = new ResetPinPresenter();
         presenter.bindView(this);
-
         if (presenter.mUser!=null){
             String email = presenter.mUser.email;
             if (email!=null){
                 String result = Utils.getFontString(R.string.request_an_access_code,email);
                 tvStep1.setText(Html.fromHtml(result));
                 tvStep1.setText(Html.fromHtml(result));
+
+                String support = Utils.getFontString(R.string.send_an_email_to,SecurityUtil.MAIL);
+                tvSupport.setText(Html.fromHtml(support));
             }
         }
         edtCode.addTextChangedListener(mTextWatcher);
@@ -86,6 +98,8 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         catch (Exception e){
             e.printStackTrace();
         }
+
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -218,6 +232,18 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         }
     }
 
+    @OnClick(R.id.llSupport)
+    public void onSupport(){
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + SecurityUtil.MAIL));
+            intent.putExtra(Intent.EXTRA_SUBJECT, "SuperSafe App Support");
+            intent.putExtra(Intent.EXTRA_TEXT, "");
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onStartLoading(EnumStatus status) {
         setProgressValue();
@@ -245,17 +271,13 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     public void onError(String message, EnumStatus status) {
         onStopLoading(EnumStatus.OTHER);
         switch (status){
-            case REQUEST_CODE_ERROR:{
+            case REQUEST_CODE:{
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 btnSendRequest.setEnabled(true);
                 Utils.showGotItSnackbar(tvStep1,R.string.request_code_occurred_error);
                 break;
             }
-            case SEND_EMAIL_ERROR:{
-                Utils.showGotItSnackbar(tvStep1,R.string.sent_email_occurred_error);
-                break;
-            }
-            case VERIFIED_ERROR:{
+            case VERIFY:{
                 Utils.showGotItSnackbar(tvStep1,R.string.verify_occurred_error);
                 break;
             }
@@ -270,19 +292,16 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     @Override
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
-            case REQUEST_CODE_SUCCESSFUL:{
-                btnSendRequest.setEnabled(false);
-                break;
-            }
-            case SEND_EMAIL_SUCCESSFUL:{
-                onStopLoading(EnumStatus.OTHER);
+            case REQUEST_CODE:{
                 btnSendRequest.setText(getString(R.string.send_verification_code));
-                Utils.showGotItSnackbar(tvStep1,R.string.we_sent_access_code_to_your_email);
+                btnSendRequest.setEnabled(false);
+                onStopLoading(EnumStatus.OTHER);
+                onShowDialogWaitingCode();
                 break;
             }
-            case VERIFIED_SUCCESSFUL:{
+            case VERIFY:{
                 if (isRestoreFiles){
-                    Navigator.onMoveToResetPin(this, EnumPinAction.RESTORE);
+                    Navigator.onMoveToResetPin(this,EnumPinAction.RESTORE);
                 }
                 else {
                     Navigator.onMoveToResetPin(this,EnumPinAction.NONE);
@@ -306,4 +325,34 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }
+
+    public void onShowDialogWaitingCode(){
+        Theme theme = Theme.getInstance().getThemeInfo();
+        new MaterialStyledDialog.Builder(this)
+                .setTitle(R.string.send_code_later)
+                .setDescription(R.string.send_code_later_detail)
+                .setHeaderDrawable(R.drawable.baseline_email_white_48)
+                .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
+                .setHeaderColor(theme.getPrimaryColor())
+                .setCancelable(true)
+                .setPositiveText(R.string.continue_value)
+                .setNegativeText(R.string.cancel)
+                .setCheckBox(false,R.string.enable_cloud)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Log.d(TAG,"positive");
+                        SingletonResetPin.getInstance().onStartTimer(300000);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        finish();
+                    }
+                })
+                .show();
+    }
+
+
 }

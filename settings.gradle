@@ -21,6 +21,7 @@ include ':app',
         'fingerprint-auth-library',
         'checkoutlibrary',
         'bungeelibrary',
-        'dialogsuccessprogresslibrary'
+        'dialogsuccessprogresslibrary',
+        'library-circleprogress'
 
 

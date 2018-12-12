@@ -70,6 +70,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
             Bundle bundle = activity.getIntent().getExtras();
             content = (HelpAndSupport) bundle.get(HelpAndSupport.class.getSimpleName());
             view.onSuccessful("Successful", EnumStatus.RELOAD);
+            Utils.Log(TAG,new Gson().toJson(content));
         }
         catch (Exception e){
             e.printStackTrace();

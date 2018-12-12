@@ -91,7 +91,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         }
         Utils.hideSoftKeyboard(this);
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportContentActivity.class.getSimpleName());
     }
 
     @Override

@@ -21,5 +21,6 @@ public enum EnumPinAction {
     SCREEN_UNLOCK,
     STILL_SCREEN_LOCK,
     SPLASH_SCREEN,
-    SIGN_IN_SIGN_UP
+    SIGN_IN_SIGN_UP,
+    ATTEMPT
 }

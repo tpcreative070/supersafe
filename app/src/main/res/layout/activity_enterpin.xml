@@ -32,6 +32,44 @@
 
 
     <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/rlAttempt"
+        android:background="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.kratorius.circleprogress.CircleProgressView
+            app:circleProgressColor="#ffff8800"
+            android:layout_centerInParent="true"
+            android:id="@+id/crc_standard"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            app:circleProgressText="40"
+            app:circleProgressTextSize="@dimen/icon_size_60"
+            app:circleProgressTextColor="@color/white"
+            app:circleProgressValue="100"/>
+
+        <TextView
+            android:textSize="@dimen/text_size_normal"
+            android:textColor="@color/material_gray_200"
+            android:layout_marginTop="20dp"
+            android:id="@+id/tvAttempt"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_below="@+id/crc_standard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
         android:background="?attr/colorPrimary"
         android:id="@+id/rlLockScreen"
         android:layout_width="match_parent"
@@ -190,11 +228,9 @@
         </LinearLayout>
 
         <include
-            android:visibility="invisible"
             android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:id="@+id/includeLayout"
             layout="@layout/footer_layout"/>
     </RelativeLayout>
 

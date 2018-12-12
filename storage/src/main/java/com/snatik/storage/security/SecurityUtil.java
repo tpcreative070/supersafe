@@ -41,6 +41,7 @@ public class SecurityUtil {
     /*Encrypt key*/
     public static final String IVX = "1234567891234567"; // 16 lenght - not secret
     public static final String SECRET_KEY = "secret@123456789"; // 16 lenght - secret
+    public static final String MAIL = "care@tpcreative.me";
     public static final byte[] SALT = "0000111100001111".getBytes(); // random 16 bytes array
 
 

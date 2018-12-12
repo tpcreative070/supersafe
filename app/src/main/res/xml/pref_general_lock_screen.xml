@@ -7,18 +7,21 @@
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_change_pin"
             android:title="@string/key_change_pin"/>
+
+
         <co.tpcreative.supersafe.common.preference.MySwitchPreference
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_face_down_lock"
             android:summary="@string/key_face_down_lock_detail"
             android:title="@string/key_face_down_lock"/>
 
-
         <co.tpcreative.supersafe.common.preference.MySwitchPreference
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_fingerprint_unlock"
             android:summary="@string/key_fingerprint_unlock_detail"
             android:title="@string/key_fingerprint_unlock"/>
+
+
 
     </co.tpcreative.supersafe.common.preference.MyPreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

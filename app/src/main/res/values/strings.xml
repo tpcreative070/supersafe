@@ -174,6 +174,9 @@
     <string name="enable_cloud_sync">Enable Cloud Sync</string>
     <string name="message_prompt">All your files will be sync to cloud. They will never lost.</string>
     <string name="enable_now">ENABLE NOW</string>
+    <string name="continue_value">Continue</string>
+    <string name="did_not_receive_code">Did\'s receive your code?</string>
+    <string name="send_an_email_to">Send an email to %1$s</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
     <string name="upgrade">UPGRADE</string>
     <string name="upgrade_to_premium">Upgrade to Premium</string>
@@ -187,7 +190,7 @@
     <string name="cancel">CANCEL</string>
     <string name="save">SAVE</string>
     <string name="signin_with_google">SignIn with Google</string>
-    <string name="choose_google_account">Choose your Google account to sign in SupperSafe</string>
+    <string name="choose_google_account">Choose your Google account to sign in SuperSafe</string>
     <string name="ok">OK</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading</string>
@@ -210,7 +213,7 @@
     <string name="cloud_manager">Cloud Manager</string>
     <string name="monthly_used">Monthly Usage: %1$s/%2$s</string>
     <string name="choose_an_account">Please select %1$s to link to Google Drive</string>
-    <string name="choose_an_new_account">Please select or add your Google account to sign in with SupperSafe</string>
+    <string name="choose_an_new_account">Please select or add your Google account to sign in with SuperSafe</string>
     <string name="not_the_same_account">Not the same account</string>
     <string name="choose_the_same_account">Please select %1$s</string>
     <string name="select_again">SELECT AGAIN</string>
@@ -409,7 +412,7 @@
     <string name="key_parents">parents</string>
     <string name="key_appDataFolder">appDataFolder</string>
     <string name="key_specific_fields">files(id,name,kind,mimeType,description)</string>
-    <string name="key_supper_safe">SupperSafe</string>
+    <string name="key_supper_safe">SuperSafe</string>
     <string name="key_mime_type_folder">"mimeType = 'application/vnd.google-apps.folder'"</string>
     <string name="key_mime_type_all_files">"mimeType != 'application/vnd.google-apps.folder'"</string>
     <string name="key_mime_type_image">"mimeType = 'image/jpeg'"</string>
@@ -530,6 +533,9 @@
     <string name="tv_life_time">Lifetime</string>
     <string name="use_every_feature">Use every feature</string>
     <string name="it_top_shelf_supersafe">It\'s top-shelf SuperSafe</string>
+    <string name="in_correct_pin">That\'s %1$s incorrect entries in a row. Please wait %2$s seconds before you try again. (We do this to obstruct possible break-in attempts.)</string>
+    <string name="send_code_later">We\'ll send an access code soon.</string>
+    <string name="send_code_later_detail">For extra security, We wait 5 minutes before we send the email with your access code.</string>
     <string name="never_lost_files">Never lost files</string>
     <string name="trash_recovery">Trash recovery</string>
     <string name="trash_recovery_detail">Get deleted items back.</string>

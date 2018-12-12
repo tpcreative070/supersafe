@@ -49,11 +49,11 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         Log.d(TAG,"info");
         BaseView view = view();
         if (view == null) {
-            view.onError("View is null", EnumStatus.VERIFIED_ERROR);
+            view.onError("View is null", EnumStatus.VERIFY);
             return;
         }
         if (NetworkUtil.pingIpAddress(view.getContext())) {
-            view.onError("NO internet", EnumStatus.VERIFIED_ERROR);
+            view.onError("NO internet", EnumStatus.VERIFY);
             return;
         }
         if (subscriptions == null) {
@@ -69,18 +69,18 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.OTHER))
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFIED_ERROR);
+                        view.onError(onResponse.message,EnumStatus.VERIFY);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.VERIFIED_SUCCESSFUL);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         }
+                        view.onSuccessful(onResponse.message,EnumStatus.VERIFY);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
@@ -260,11 +260,11 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         Log.d(TAG,"info");
         BaseView view = view();
         if (view == null) {
-            view.onError("View is null", EnumStatus.REQUEST_CODE_ERROR);
+            view.onError("View is null", EnumStatus.REQUEST_CODE);
             return;
         }
         if (NetworkUtil.pingIpAddress(view.getContext())) {
-            view.onError("NO internet", EnumStatus.REQUEST_CODE_ERROR);
+            view.onError("NO internet", EnumStatus.REQUEST_CODE);
             return;
         }
 
@@ -281,14 +281,12 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                 .doOnSubscribe(__ ->view.onStartLoading(EnumStatus.OTHER) )
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.REQUEST_CODE_ERROR);
+                        view.onError(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE_SUCCESSFUL);
+                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                         mUser.code = onResponse.code;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                        final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.RESET);
-                        onSendMail(emailToken);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

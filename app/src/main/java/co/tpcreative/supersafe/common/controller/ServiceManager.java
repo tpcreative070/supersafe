@@ -37,6 +37,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeService;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveEvent;
+import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -110,6 +111,7 @@ public class ServiceManager implements BaseView {
     private boolean isImporting;
     private boolean isExporting;
     private boolean isDownloadingFiles;
+    private boolean isWaitingSendMail;
     private int countSyncData = 0;
     private int totalList = 0;
 
@@ -126,6 +128,14 @@ public class ServiceManager implements BaseView {
 
     public void setImporting(boolean importing) {
         isImporting = importing;
+    }
+
+    public boolean isWaitingSendMail() {
+        return isWaitingSendMail;
+    }
+
+    public void setIsWaitingSendMail(boolean isWaitingSendMail) {
+        this.isWaitingSendMail =  isWaitingSendMail;
     }
 
     public void setmListImport(List<ImportFiles> mListImport) {
@@ -254,6 +264,14 @@ public class ServiceManager implements BaseView {
         if (myService != null) {
             mContext.unbindService(myConnection);
             myService = null;
+        }
+    }
+
+    public void onSendEmail(){
+        if (myService!=null){
+            final User mUser = User.getInstance().getUserInfo();
+            EmailToken emailToken  = EmailToken.getInstance().convertObject(mUser,EnumStatus.RESET);
+            myService.onSendMail(emailToken);
         }
     }
 
@@ -2269,7 +2287,7 @@ public class ServiceManager implements BaseView {
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail) {
             Utils.Log(TAG, "Progress isDownloadData is :" + isDownloadData);
             Utils.Log(TAG, "Progress isUploadData is :" + isUploadData);
             Utils.Log(TAG, "Progress isDownloadingFiles is :" + isDownloadingFiles);
@@ -2280,6 +2298,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Progress isDeleteAlbum is :" + isDeleteAlbum);
             Utils.Log(TAG, "Progress isGetListCategories is :" + isGetListCategories);
             Utils.Log(TAG, "Progress isCategoriesSync is :" + isCategoriesSync);
+            Utils.Log(TAG, "Progress isWaitingSendMail is :" + isWaitingSendMail);
         }
         else {
             onStopService();
@@ -2294,6 +2313,7 @@ public class ServiceManager implements BaseView {
             ServiceManager.getInstance().setDeleteAlbum(false);
             ServiceManager.getInstance().setGetListCategories(false);
             ServiceManager.getInstance().setCategoriesSync(false);
+            ServiceManager.getInstance().setIsWaitingSendMail(false);
             if (myService != null) {
                 myService.unbindView();
             }
@@ -2397,6 +2417,7 @@ public class ServiceManager implements BaseView {
                 ServiceManager.getInstance().setDeleteAlbum(false);
                 ServiceManager.getInstance().setGetListCategories(false);
                 ServiceManager.getInstance().setCategoriesSync(false);
+                ServiceManager.getInstance().setIsWaitingSendMail(false);
                 Utils.Log(TAG,"Disconnect");
                 break;
             }

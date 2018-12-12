@@ -1724,7 +1724,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         token.token_type = onResponse.token_type;
                         mUser.email_token = token;
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
-                        onAddEmailToken(token);
+                        onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
                     Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
@@ -1749,7 +1749,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
 
-    public void onAddEmailToken(final EmailToken emailToken) {
+    public void onAddEmailToken() {
         Log.d(TAG, "onSignIn.....");
         BaseView view = view();
         if (view == null) {
@@ -1773,9 +1773,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
-                    emailToken.access_token = mUser.email_token.access_token;
-                    emailToken.refresh_token = mUser.email_token.refresh_token;
-                    mUser.email_token = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
+                    final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.RESET);
                     onSendMail(emailToken);
                 }, throwable -> {
                     if (throwable instanceof HttpException) {

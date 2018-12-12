@@ -305,7 +305,7 @@ public class Email {
                 "                                        <h4>" + code + "</h4>\n" +
                 "                                        <p>Didn’t request an access code? Then you can ignore this email.</p>\n" +
                 "                                        <p>Your Friends</p>\n" +
-                "                                        <p>The SupperSafe Team</p>\n" +
+                "                                        <p>The SuperSafe Team</p>\n" +
                 "\n" +
                 "                                    </td>\n" +
                 "                                </tr>\n" +
