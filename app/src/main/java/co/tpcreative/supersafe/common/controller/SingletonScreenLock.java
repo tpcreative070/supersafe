@@ -12,10 +12,12 @@ public class SingletonScreenLock {
     private static final String TAG = SingletonScreenLock.class.getSimpleName();
     long current_milliseconds = 0;
     public static SingletonScreenLock getInstance(){
-        if (instance==null){
-            instance = new SingletonScreenLock();
+        synchronized (SingletonScreenLock.class){
+            if (instance==null){
+                instance = new SingletonScreenLock();
+            }
+            return instance;
         }
-        return instance;
     }
 
     private CountDownTimer mCountDownTimer;
@@ -35,17 +37,14 @@ public class SingletonScreenLock {
         mCountDownTimer = new CountDownTimer(value, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                current_milliseconds = current_milliseconds-1;
-                Long serverUptimeSeconds =
-                        (millisUntilFinished - current_milliseconds) / 1000;
-                String secondsLeft = String.format("%d", ((serverUptimeSeconds % 86400) % 3600) % 60);
-                onAttemptTimer(secondsLeft);
+                long secondsRemaining = millisUntilFinished / 1000;
+                SingletonScreenLock.getInstance().onAttemptTimer(""+secondsRemaining);
             }
             @Override
             public void onFinish() {
                 Utils.Log(TAG,"Finish :");
                 mCountDownTimer= null;
-                onAttemptTimer("0");
+                SingletonScreenLock.getInstance().onAttemptTimerFinish();
             }
         }.start();
     }
@@ -64,8 +63,15 @@ public class SingletonScreenLock {
         }
     }
 
+    public void onAttemptTimerFinish(){
+        if (ls!=null){
+            ls.onAttemptTimerFinish();
+        }
+    }
+
     public interface SingletonScreenLockListener{
         void onAttemptTimer(String seconds);
+        void onAttemptTimerFinish();
     }
 
 }

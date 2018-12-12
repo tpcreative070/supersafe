@@ -5,7 +5,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class SingletonResetPin {
     private static SingletonResetPin instance ;
     private static final String TAG = SingletonResetPin.class.getSimpleName();
-    long current_milliseconds = 0;
     public static SingletonResetPin getInstance(){
         if (instance==null){
             instance = new SingletonResetPin();
@@ -26,11 +25,6 @@ public class SingletonResetPin {
         mCountDownTimer = new CountDownTimer(value, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                current_milliseconds = current_milliseconds-1;
-                Long serverUptimeSeconds =
-                        (millisUntilFinished - current_milliseconds) / 1000;
-                String secondsLeft = String.format("%d", ((serverUptimeSeconds % 86400) % 3600) % 60);
-                Utils.Log(TAG,secondsLeft);
             }
             @Override
             public void onFinish() {
@@ -49,5 +43,6 @@ public class SingletonResetPin {
             mCountDownTimer = null;
         }
     }
+
 
 }

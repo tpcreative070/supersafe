@@ -291,19 +291,30 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     @Override
     public void onAttemptTimer(String seconds) {
-        if (seconds.equals("0")){
-            mPinAction = enumPinPreviousAction;
-            onDisplayView();
-        }
-        else{
-            double response = Double.parseDouble(seconds);
-            Utils.Log(TAG,"Seconds "+response);
-            double remain = (response/countAttempt) * 100;
-            int result = (int)remain;
-            Utils.Log(TAG,"Result "+result);
-            circleProgressView.setValue(result);
-            circleProgressView.setText(seconds);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                double response = Double.parseDouble(seconds);
+                Utils.Log(TAG,"Timer  " +"Attempt "+ countAttempt + " Count "+count);
+                double remain = (response/countAttempt) * 100;
+                int result = (int)remain;
+                Utils.Log(TAG,"Result "+result);
+                circleProgressView.setValue(result);
+                circleProgressView.setText(seconds);
+            }
+        });
+    }
+
+    @Override
+    public void onAttemptTimerFinish() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mPinAction = enumPinPreviousAction;
+                onDisplayView();
+                Utils.Log(TAG,"onAttemptTimerFinish");
+            }
+        });
     }
 
     @Override
@@ -604,9 +615,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 if (count >= 3) {
                     countAttempt = count*10;
                     final long attemptWaiting = count * 10000;
-                    SingletonScreenLock.getInstance().onStartTimer(attemptWaiting);
                     mPinAction = EnumPinAction.ATTEMPT;
                     onDisplayView();
+                    SingletonScreenLock.getInstance().onStartTimer(attemptWaiting);
                 }
                 break;
             }
@@ -616,9 +627,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 if (count >= 3) {
                     countAttempt = count*10;
                     final long attemptWaiting = count * 10000;
-                    SingletonScreenLock.getInstance().onStartTimer(attemptWaiting);
                     mPinAction = EnumPinAction.ATTEMPT;
                     onDisplayView();
+                    SingletonScreenLock.getInstance().onStartTimer(attemptWaiting);
                 }
                 break;
             }
@@ -952,6 +963,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 rlAttempt.setVisibility(View.VISIBLE);
                 String result = String.format(getString(R.string.in_correct_pin),count+"",countAttempt+"");
                 tvAttempt.setText(result);
+                Utils.Log(TAG,mPinAction.name());
                 break;
             }
         }
