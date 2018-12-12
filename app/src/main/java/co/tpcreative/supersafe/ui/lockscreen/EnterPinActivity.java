@@ -347,7 +347,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-
     public void onInitPin(){
         mIndicatorDots.setActivity(this);
         mPinLockView.attachIndicatorDots(mIndicatorDots);
