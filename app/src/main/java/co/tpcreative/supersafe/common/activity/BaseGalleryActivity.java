@@ -35,6 +35,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment;
 
 
@@ -89,17 +90,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     }
 
 
-    protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
-        context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
-                .getColor(colorPrimary)));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
-        }
-    }
-
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
@@ -108,10 +98,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }
         return theme;
-    }
-
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
     }
 
     @Override
@@ -129,13 +115,18 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
             }
         }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop....");
+    }
+
     @Override
     protected void onDestroy() {
-        if (mHomeWatcher!=null){
-            mHomeWatcher.stopWatch();
-        }
-        if (unbinder != null)
+        if (unbinder != null){
             unbinder.unbind();
+        }
         super.onDestroy();
     }
 
@@ -143,6 +134,11 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     protected void onPause() {
         super.onPause();
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        Utils.Log(TAG,"onPause");
+        if (mHomeWatcher!=null){
+            Utils.Log(TAG,"Stop home watcher....");
+            mHomeWatcher.stopWatch();
+        }
     }
 
     @Override
@@ -159,7 +155,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
                 return;
             }
         }
-
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
@@ -169,16 +164,19 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
                 switch (action){
                     case NONE:{
                         PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
+                        Utils.Log(TAG,"Pressed home button");
+                        break;
                     }
                     default:{
-                        Utils.Log(TAG,"Nothing to do");
+                        Utils.Log(TAG,"Nothing to do on home " +action.name());
+                        break;
                     }
                 }
                 mHomeWatcher.stopWatch();
             }
             @Override
             public void onHomeLongPressed() {
+                Utils.Log(TAG,"Pressed long home button");
             }
         });
         mHomeWatcher.startWatch();
@@ -213,25 +211,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
         actionBar.setDisplayHomeAsUpEnabled(check);
     }
 
-    protected void setNoTitle(){
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setFullScreen(){
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setAdjustScreen(){
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        /*android:windowSoftInputMode="adjustPan|adjustResize"*/
-    }
-
-    protected String getResourceString(int code) {
-        return getResources().getString(code);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -246,6 +225,25 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     @Override
     protected void onStart() {
         super.onStart();
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action){
+            case SCREEN_LOCK:{
+                if (!EnterPinActivity.isVisible){
+                    Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
+                    EnterPinActivity.isVisible = true;
+                    Utils.Log(TAG,"Verify pin");
+                }else{
+                    Utils.Log(TAG,"Verify pin already");
+                }
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do on start " +action.name());
+                break;
+            }
+        }
+
         if (onStartCount > 1) {
             this.overridePendingTransition(R.animator.anim_slide_in_right,
                     R.animator.anim_slide_out_right);

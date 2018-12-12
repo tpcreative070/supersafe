@@ -3,37 +3,30 @@ import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import com.r0adkll.slidr.model.SlidrConfig;
 import com.snatik.storage.Storage;
 import java.io.File;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.hiddencamera.CameraCallbacks;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -43,7 +36,6 @@ import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.Theme;
 
 public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener{
@@ -51,9 +43,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     protected ActionBar actionBar ;
     int onStartCount = 0;
     private Toast mToast;
-    private HomeWatcher mHomeWatcher;
     public static final String TAG = BaseVerifyPinActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
     protected Storage storage;
 
     /*Hidden camera*/
@@ -79,16 +69,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         mCameraPreview = addPreView();
     }
 
-    protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
-        context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
-                .getColor(colorPrimary)));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
-        }
-    }
 
     @Override
     public Resources.Theme getTheme() {
@@ -100,21 +80,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         return theme;
     }
 
-    public void onCallLockScreen(){
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action){
-            case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                break;
-            }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
-            }
-        }
-    }
-
     protected void onFaceDown(final boolean isFaceDown){
         if (isFaceDown){
             final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
@@ -122,10 +87,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
                 Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
             }
         }
-    }
-
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
     }
 
     @Override
@@ -138,9 +99,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mHomeWatcher!=null){
-            mHomeWatcher.stopWatch();
-        }
+        stopCamera();
         if (unbinder != null){
             unbinder.unbind();
         }
@@ -150,9 +109,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
-        if (mCameraPreview != null){
-            mCameraPreview.stopPreviewAndFreeCamera();
-        }
+        stopCamera();
     }
 
     @Override
@@ -174,39 +131,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         }
         super.onResume();
     }
-
-    protected void onRegisterHomeWatcher(){
-        /*Home action*/
-        if (mHomeWatcher!=null){
-            if (mHomeWatcher.isRegistered){
-                return;
-            }
-        }
-
-        mHomeWatcher = new HomeWatcher(this);
-        mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
-            @Override
-            public void onHomePressed() {
-                int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
-                EnumPinAction action = EnumPinAction.values()[value];
-                switch (action){
-                    case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
-                    }
-                    default:{
-                        Utils.Log(TAG,"Nothing to do");
-                    }
-                }
-                mHomeWatcher.stopWatch();
-            }
-            @Override
-            public void onHomeLongPressed() {
-            }
-        });
-        mHomeWatcher.startWatch();
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -234,25 +158,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
 
     protected void setDisplayHomeAsUpEnabled(boolean check){
         actionBar.setDisplayHomeAsUpEnabled(check);
-    }
-
-    protected void setNoTitle(){
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setFullScreen(){
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setAdjustScreen(){
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        /*android:windowSoftInputMode="adjustPan|adjustResize"*/
-    }
-
-    protected String getResourceString(int code) {
-        return getResources().getString(code);
     }
 
     @Override
@@ -315,7 +220,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     }
 
 
-
     /**
      * Start the hidden camera. Make sure that you check for the runtime permissions before you start
      * the camera.
@@ -356,7 +260,9 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
      */
     protected void stopCamera() {
         mCachedCameraConfig = null;    //Remove config.
-        if (mCameraPreview != null) mCameraPreview.stopPreviewAndFreeCamera();
+        if (mCameraPreview != null){
+            mCameraPreview.stopPreviewAndFreeCamera();
+        }
     }
 
     @Override
@@ -368,6 +274,5 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     public void onCameraError(int errorCode) {
 
     }
-
 
 }

@@ -1,17 +1,12 @@
 package co.tpcreative.supersafe.common.activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
@@ -26,6 +21,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
 
@@ -63,18 +59,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         return theme;
     }
 
-    protected void setStatusBarColored(AppCompatActivity context, int colorPrimary,int colorPrimaryDark) {
-        context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
-                .getColor(colorPrimary)));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
-        }
-    }
-
-
     protected void onFaceDown(final boolean isFaceDown){
         if (isFaceDown){
             final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
@@ -82,10 +66,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
             }
         }
-    }
-
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
     }
 
     @Override
@@ -96,11 +76,14 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop....");
+    }
+
+    @Override
     protected void onDestroy() {
         Utils.Log(TAG,"onDestroy....");
-        if (mHomeWatcher!=null){
-            mHomeWatcher.stopWatch();
-        }
         if (unbinder != null){
             unbinder.unbind();
         }
@@ -111,6 +94,11 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        Utils.Log(TAG,"onPause");
+        if (mHomeWatcher!=null){
+            Utils.Log(TAG,"Stop home watcher....");
+            mHomeWatcher.stopWatch();
+        }
     }
 
     @Override
@@ -137,16 +125,19 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
                 switch (action){
                     case NONE:{
                         PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        break;
+                        Utils.Log(TAG,"Pressed home button");
+                        break;
                     }
                     default:{
-                        Utils.Log(TAG,"Nothing to do");
+                        Utils.Log(TAG,"Nothing to do on home " +action.name());
+                        break;
                     }
                 }
                 mHomeWatcher.stopWatch();
             }
             @Override
             public void onHomeLongPressed() {
+                Utils.Log(TAG,"Pressed long home button");
             }
         });
         mHomeWatcher.startWatch();
@@ -176,24 +167,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    protected void setNoTitle(){
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setFullScreen(){
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setAdjustScreen(){
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        /*android:windowSoftInputMode="adjustPan|adjustResize"*/
-    }
-
-    protected String getResourceString(int code) {
-        return getResources().getString(code);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -209,6 +182,25 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action){
+            case SCREEN_LOCK:{
+                if (!EnterPinActivity.isVisible){
+                    Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
+                    EnterPinActivity.isVisible = true;
+                    Utils.Log(TAG,"Verify pin");
+                }else{
+                    Utils.Log(TAG,"Verify pin already");
+                }
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do on start " +action.name());
+                break;
+            }
+        }
+
         if (onStartCount > 1) {
             Bungee.fade(this);
         } else if (onStartCount == 1) {

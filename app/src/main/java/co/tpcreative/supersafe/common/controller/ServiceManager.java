@@ -51,6 +51,7 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ResponseRXJava;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -2364,6 +2365,7 @@ public class ServiceManager implements BaseView {
                         if (!"".equals(key)){
                             PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
                             Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
+                            EnterPinActivity.isVisible = true;
                         }
                         break;
                     }

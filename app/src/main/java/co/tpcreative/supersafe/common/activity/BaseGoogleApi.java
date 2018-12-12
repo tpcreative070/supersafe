@@ -1,4 +1,3 @@
-
 package co.tpcreative.supersafe.common.activity;
 import android.accounts.Account;
 import android.app.Activity;
@@ -11,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -45,7 +43,6 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
@@ -54,7 +51,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener{
@@ -127,15 +124,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         }
     }
 
-    protected void setStatusBarColored(Activity context, int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = context.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(context,color));
-        }
-    }
-
     protected void onDrawOverLay(Activity activity){
         final Theme theme = Theme.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
@@ -157,10 +145,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         }
     }
 
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
-    }
-
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         try {
@@ -177,20 +161,22 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     protected void onPause() {
         super.onPause();
         SensorFaceUpDownChangeNotifier.getInstance().remove(this);
+        Utils.Log(TAG,"onPause");
+        if (mHomeWatcher!=null){
+            Utils.Log(TAG,"Stop home watcher....");
+            mHomeWatcher.stopWatch();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Utils.Log(TAG,"onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mHomeWatcher!=null){
-            Utils.Log(TAG,"Stop home watcher....");
-            mHomeWatcher.stopWatch();
-        }
         if (unbinder != null){
             unbinder.unbind();
         }
@@ -219,11 +205,12 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 switch (action){
                     case NONE:{
                         PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
+                        Utils.Log(TAG,"Pressed home button");
                         break;
                     }
                     default:{
-                        Utils.Log(TAG,"Nothing to do on home" +action.name());
+                        Utils.Log(TAG,"Nothing to do on home " +action.name());
+                        break;
                     }
                 }
                 mHomeWatcher.stopWatch();
@@ -250,25 +237,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         actionBar.setDisplayHomeAsUpEnabled(check);
     }
 
-    protected void setNoTitle(){
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setFullScreen(){
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    protected void setAdjustScreen(){
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        /*android:windowSoftInputMode="adjustPan|adjustResize"*/
-    }
-
-    protected String getResourceString(int code) {
-        return getResources().getString(code);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -283,6 +251,26 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     @Override
     protected void onStart() {
         super.onStart();
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action){
+            case SCREEN_LOCK:{
+                if (!EnterPinActivity.isVisible){
+                    Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
+                    EnterPinActivity.isVisible = true;
+                    Utils.Log(TAG,"Verify pin");
+                }else{
+                    Utils.Log(TAG,"Verify pin already");
+                }
+                break;
+            }
+            default:{
+                Utils.Log(TAG,"Nothing to do on start " +action.name());
+                break;
+            }
+        }
+
+
         if (onStartCount > 1) {
             this.overridePendingTransition(R.animator.anim_slide_in_right,
                     R.animator.anim_slide_out_right);
@@ -409,6 +397,10 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                     final User mUser = User.getInstance().getUserInfo();
                     if (mUser != null) {
                         //Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
+                        if (ServiceManager.getInstance().getMyService()==null){
+                            Utils.Log(TAG,"SuperSafeService is null");
+                            return;
+                        }
                         ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
                             @Override
                             public void onError(String message, EnumStatus status) {

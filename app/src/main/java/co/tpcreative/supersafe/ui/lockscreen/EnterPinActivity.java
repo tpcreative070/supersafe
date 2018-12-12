@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.lockscreen;
 import android.Manifest;
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -19,8 +18,6 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,7 +36,6 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonEnterPinManager;
 import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -56,7 +52,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
@@ -114,6 +109,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private static LockScreenPresenter presenter;
     private CameraConfig mCameraConfig;
     private FingerPrintAuthHelper mFingerPrintAuthHelper;
+    public static boolean isVisible ;
 
     public static Intent getIntent(Context context, int action, int actionNext) {
         Intent intent = new Intent(context, EnterPinActivity.class);
@@ -298,6 +294,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        isVisible = false;
         int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
@@ -338,6 +335,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onResume() {
         super.onResume();
+        isVisible = true;
         Utils.Log(TAG,"onResume");
         if (mPinLockView != null) {
             mPinLockView.resetPinLockView();

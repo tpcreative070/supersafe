@@ -86,7 +86,6 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         catch (Exception e){
             e.printStackTrace();
         }
-        onStartLoading(EnumStatus.OTHER);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
