@@ -189,8 +189,20 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Utils.Log(TAG,"onDestroy");
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Utils.Log(TAG,"onPause");
+    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
