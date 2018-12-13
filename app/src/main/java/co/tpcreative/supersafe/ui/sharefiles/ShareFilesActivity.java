@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -28,10 +27,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.PathUtil;
@@ -43,7 +40,6 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity;
 import dmax.dialog.SpotsDialog;
 
 public class ShareFilesActivity extends BaseActivity implements GalleryCameraMediaManager.AlbumDetailManagerListener{
@@ -103,12 +99,12 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         }
                         else{
                             finish();
-                            Log.d(TAG,"Permission is denied");
+                            Utils.Log(TAG,"Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
                     @Override
@@ -120,7 +116,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }
@@ -195,7 +191,8 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         final String name = mFile.getName();
                         final String fileExtension = Utils.getFileExtension(path);
                         final String mimeType = intent.getType();
-                        Log.d(TAG, "file extension " + fileExtension);
+                        Utils.Log(TAG, "file extension " + fileExtension);
+                        Utils.Log(TAG,"Path file :"+path);
 
                         MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
 
@@ -254,7 +251,8 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                             final String name = mFile.getName();
                             final String mimeType = intent.getType();
                             String fileExtension = Utils.getFileExtension(path);
-                            Log.d(TAG, "file extension " + fileExtension);
+                            Utils.Log(TAG, "file extension " + fileExtension);
+                            Utils.Log(TAG,"Path file :"+path);
 
                             MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             if (mimeTypeFile==null){
