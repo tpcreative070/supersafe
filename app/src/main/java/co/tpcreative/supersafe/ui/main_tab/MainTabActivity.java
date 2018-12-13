@@ -80,6 +80,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private MenuItem menuItem;
     private EnumStatus previousStatus;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

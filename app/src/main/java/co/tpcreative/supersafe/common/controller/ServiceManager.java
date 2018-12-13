@@ -53,6 +53,7 @@ import co.tpcreative.supersafe.model.ResponseRXJava;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.Observer;

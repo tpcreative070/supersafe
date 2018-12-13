@@ -56,6 +56,12 @@ public class SingletonResetPin {
             mUser.isWaitingSendMail = false;
             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
         }
+        else{
+            ServiceManager.getInstance().setIsWaitingSendMail(false);
+            final User mUser = User.getInstance().getUserInfo();
+            mUser.isWaitingSendMail = false;
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+        }
     }
 
 
