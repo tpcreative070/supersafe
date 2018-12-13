@@ -91,6 +91,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void onInitReceiver() {
+        Utils.Log(TAG,"onInitReceiver");
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -106,6 +107,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (androidReceiver != null) {
             unregisterReceiver(androidReceiver);
         }
+        stopSelf();
+        stopForeground(true);
     }
 
     @Override
@@ -1661,6 +1664,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (subscriptions == null) {
             return;
         }
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser==null){
+            return;
+        }
         Call<ResponseBody> response = SuperSafeApplication.serviceGraphMicrosoft.onSendMail(request.access_token, request);
         response.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -1673,9 +1680,15 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         final String errorMessage = response.errorBody().string();
                         Log.d(TAG, "error" + errorMessage);
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL);
+                        mUser.isWaitingSendMail = false;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("successful", EnumStatus.SEND_EMAIL);
+                        final User mUser = User.getInstance().getUserInfo();
+                        mUser.isWaitingSendMail = false;
+                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        ServiceManager.getInstance().onDismissServices();
                         Log.d(TAG, "Body : Send email Successful");
                     } else {
                         Utils.Log(TAG, "code " + code);

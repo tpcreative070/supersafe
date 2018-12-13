@@ -41,6 +41,7 @@ import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
+import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -340,6 +341,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         switch (action){
             case NONE:{
                 ServiceManager.getInstance().onStartService();
+                SingletonResetPin.getInstance().onStop();
                 break;
             }
             default:{

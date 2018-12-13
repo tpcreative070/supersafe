@@ -2301,7 +2301,6 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Progress isWaitingSendMail is :" + isWaitingSendMail);
         }
         else {
-            onStopService();
             SingletonPremiumTimer.getInstance().onStop();
             ServiceManager.getInstance().setDownloadData(false);
             ServiceManager.getInstance().setUploadData(false);
@@ -2320,6 +2319,7 @@ public class ServiceManager implements BaseView {
             if (subscriptions != null) {
                 subscriptions.dispose();
             }
+            onStopService();
             Utils.Log(TAG, "Dismiss Service manager");
         }
     }
@@ -2438,6 +2438,10 @@ public class ServiceManager implements BaseView {
                 Utils.Log(TAG, "Get info successful");
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
                 ServiceManager.getInstance().onCheckingMissData();
+                final User mUser = User.getInstance().getUserInfo();
+                if (mUser.isWaitingSendMail){
+                    ServiceManager.getInstance().onSendEmail();
+                }
                 break;
             }
             case UPDATE_USER_TOKEN:{
