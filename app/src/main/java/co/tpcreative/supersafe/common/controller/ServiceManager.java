@@ -15,6 +15,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
@@ -1976,9 +1979,18 @@ public class ServiceManager implements BaseView {
                             }
                             @Override
                             public void onSuccessful(int position) {
-                                Utils.Log(TAG, "Exporting large file...............................Successful " +position);
-                                mListExport.get(position).isExport = true;
-                                onExportingFiles();
+                                try {
+                                    Utils.Log(TAG, "Exporting large file...............................Successful " +position);
+                                    mListExport.get(position).isExport = true;
+                                    onExportingFiles();
+                                }
+                                catch (Exception e){
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName("Exporting error")
+                                            .putContentType("Content error "+e.getMessage())
+                                            .putContentId("Exporting "+System.currentTimeMillis()));
+                                    e.printStackTrace();
+                                }
                             }
                         });
                     }
@@ -1998,9 +2010,18 @@ public class ServiceManager implements BaseView {
                             }
                             @Override
                             public void onSuccessful(int position) {
-                                Utils.Log(TAG, "Exporting file...............................Successful " +position);
-                                mListExport.get(position).isExport = true;
-                                onExportingFiles();
+                                try {
+                                    Utils.Log(TAG, "Exporting file...............................Successful " +position);
+                                    mListExport.get(position).isExport = true;
+                                    onExportingFiles();
+                                }
+                                catch (Exception e){
+                                    Answers.getInstance().logContentView(new ContentViewEvent()
+                                            .putContentName("Exporting error")
+                                            .putContentType("Content error "+e.getMessage())
+                                            .putContentId("Exporting "+System.currentTimeMillis()));
+                                    e.printStackTrace();
+                                }
                             }
                         });
                     }
@@ -2044,15 +2065,33 @@ public class ServiceManager implements BaseView {
                 ServiceManager.getInstance().onSaveDataOnGallery(importFiles, new ServiceManager.ServiceManagerGalleySyncDataListener() {
                     @Override
                     public void onCompleted(ImportFiles importFiles) {
-                        mListImport.get(importFiles.position).isImport = true;
-                        Utils.Log(TAG, "Importing file............................Successful "+importFiles.position);
-                        onImportingFiles();
+                        try {
+                            mListImport.get(importFiles.position).isImport = true;
+                            Utils.Log(TAG, "Importing file............................Successful "+importFiles.position);
+                            onImportingFiles();
+                        }
+                        catch (Exception e){
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName("Importing error")
+                                    .putContentType("Content error "+e.getMessage())
+                                    .putContentId("Importing "+System.currentTimeMillis()));
+                            e.printStackTrace();
+                        }
                     }
                     @Override
                     public void onFailed(ImportFiles importFiles) {
-                        mListImport.get(importFiles.position).isImport = true;
-                        onImportingFiles();
-                        Utils.Log(TAG, "Importing file............................Failed "+importFiles.position);
+                        try {
+                            mListImport.get(importFiles.position).isImport = true;
+                            onImportingFiles();
+                            Utils.Log(TAG, "Importing file............................Failed "+importFiles.position);
+                        }
+                        catch (Exception e){
+                            Answers.getInstance().logContentView(new ContentViewEvent()
+                                    .putContentName("Importing error")
+                                    .putContentType("Content error "+e.getMessage())
+                                    .putContentId("Importing "+System.currentTimeMillis()));
+                            e.printStackTrace();
+                        }
                     }
                 });
             } else {

@@ -224,7 +224,7 @@
                 <TextView
                     android:paddingBottom="20dp"
                     android:paddingTop="20dp"
-                    android:text="@string/key_primary_email_address_detail"
+                    android:text="@string/key_primary_email_address_detail_v1"
                     android:gravity="left"
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tvStatus"

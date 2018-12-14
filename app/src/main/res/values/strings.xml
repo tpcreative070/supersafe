@@ -460,6 +460,7 @@
     <string name="key_change_pin">Change PIN</string>
     <string name="key_primary_email_address">Primary email address</string>
     <string name="key_primary_email_address_detail">We will send all email, Including PIN resets to your primary email. or You can also use other email addresses add below.</string>
+    <string name="key_primary_email_address_detail_v1">We will send all verification codes, Including PIN resets to your primary email.</string>
     <string name="key_account_type">Account type</string>
     <string name="key_add_an_email">Add an email</string>
     <string name="key_not_updated">Not updated</string>
