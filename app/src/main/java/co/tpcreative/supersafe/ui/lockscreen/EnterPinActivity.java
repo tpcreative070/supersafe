@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.github.kratorius.circleprogress.CircleProgressView;
 import com.google.gson.Gson;
 import com.multidots.fingerprintauth.FingerPrintAuthCallback;
@@ -112,12 +111,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @BindView(R.id.tvAttempt)
     TextView tvAttempt;
 
-
-
     private int count = 0;
     private int countAttempt=0;
     private boolean isFingerprint;
-
 
     private static EnumPinAction mPinAction;
     private static EnumPinAction enumPinPreviousAction;
@@ -219,7 +215,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
         onInitPin();
     }
-
 
     final PinLockListener pinLockListener = new PinLockListener() {
         @Override
@@ -340,8 +335,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case NONE:{
-                ServiceManager.getInstance().onStartService();
-                SingletonResetPin.getInstance().onStop();
+                final User mUser = User.getInstance().getUserInfo();
+                if (mUser!=null){
+                    ServiceManager.getInstance().onStartService();
+                    SingletonResetPin.getInstance().onStop();
+                }
                 break;
             }
             default:{

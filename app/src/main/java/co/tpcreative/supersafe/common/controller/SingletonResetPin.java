@@ -1,5 +1,8 @@
 package co.tpcreative.supersafe.common.controller;
 import android.os.CountDownTimer;
+
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -55,10 +58,18 @@ public class SingletonResetPin {
             PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
         }
         else{
-            ServiceManager.getInstance().setIsWaitingSendMail(false);
-            final User mUser = User.getInstance().getUserInfo();
-            mUser.isWaitingSendMail = false;
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+            try {
+                ServiceManager.getInstance().setIsWaitingSendMail(false);
+                final User mUser = User.getInstance().getUserInfo();
+                mUser.isWaitingSendMail = false;
+                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+            }
+            catch (Exception e){
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName(SingletonResetPin.class.getSimpleName()+" error")
+                        .putContentType("Content error "+e.getMessage())
+                        .putContentId(SingletonResetPin.class.getSimpleName()+" "+System.currentTimeMillis()));
+            }
         }
     }
 
