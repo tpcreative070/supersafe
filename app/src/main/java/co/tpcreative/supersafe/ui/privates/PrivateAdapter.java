@@ -156,6 +156,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
         @OnClick(R.id.rlHome)
         public void onClicked(View view) {
+            Utils.Log(TAG,"Position "+ mPosition);
             if (itemSelectedListener != null) {
                 itemSelectedListener.onClickItem(mPosition);
             }
@@ -229,6 +230,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         void onDeleteAlbum(int position);
 
         void onEmptyTrash(int position);
+
     }
 
 }

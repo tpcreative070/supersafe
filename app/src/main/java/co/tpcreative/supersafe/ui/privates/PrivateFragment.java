@@ -116,6 +116,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     @Override
     public void onClickItem(int position) {
         if (isClicked){
+            Utils.Log(TAG,"Deny onClick "+ position);
             return;
         }
         Log.d(TAG, "Position :" + position);
@@ -271,16 +272,19 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
                 .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
                 .negativeText(getString(R.string.cancel))
                 .autoDismiss(false)
+                .canceledOnTouchOutside(false)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         dialog.dismiss();
+                        isClicked = false;
                     }
                 })
                 .positiveText(getString(R.string.open))
                 .input(null, null, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        isClicked = false;
                         if (mainCategories.pin.equals(input.toString())) {
 //                            mainCategories.pin = "";
 //                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);

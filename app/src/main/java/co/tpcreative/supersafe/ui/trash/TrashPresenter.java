@@ -98,7 +98,9 @@ public class TrashPresenter extends Presenter<BaseView>{
             }
             else{
                 mList.get(i).isDeleteLocal = false;
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                if (mList.get(i).isChecked){
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                }
             }
         }
         view.onSuccessful("Done",EnumStatus.DONE);

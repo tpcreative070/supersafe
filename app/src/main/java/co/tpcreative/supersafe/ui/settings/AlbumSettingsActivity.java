@@ -176,7 +176,10 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                             onShowChangeCategoriesNameDialog(EnumStatus.SET,null);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_cover))){
-                            Navigator.onMoveAlbumCover(getActivity(),presenter.mMainCategories);
+                            final MainCategories main = presenter.mMainCategories;
+                            if (main.pin.equals("")) {
+                                Navigator.onMoveAlbumCover(getActivity(),presenter.mMainCategories);
+                            }
                         }
                     }
                     return true;

@@ -20,11 +20,9 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -34,12 +32,10 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 
 
 public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
@@ -315,7 +311,6 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
 
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
 
                 adapter.setDataSource(presenter.mList);
                 break;
