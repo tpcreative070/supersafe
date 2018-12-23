@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +23,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.snatik.storage.security.SecurityUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -34,6 +32,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -46,7 +45,7 @@ import co.tpcreative.supersafe.model.Theme;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
-public class ResetPinActivity extends BaseActivity implements BaseView, TextView.OnEditorActionListener{
+public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView, TextView.OnEditorActionListener{
     @BindView(R.id.tvStep1)
     TextView tvStep1;
     @BindView(R.id.edtCode)
@@ -98,8 +97,6 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         catch (Exception e){
             e.printStackTrace();
         }
-
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -118,7 +115,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        onRegisterHomeWatcher();
+        //onRegisterHomeWatcher();
         //SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
     }
 
@@ -220,6 +217,7 @@ public class ResetPinActivity extends BaseActivity implements BaseView, TextView
 
     @OnClick(R.id.btnSendRequest)
     public void onSentRequest(){
+        ServiceManager.getInstance().onStartService();
         btnSendRequest.setEnabled(false);
         btnSendRequest.setText("");
         onStartLoading(EnumStatus.OTHER);

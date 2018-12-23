@@ -9,6 +9,7 @@ import java.util.List;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
@@ -33,6 +34,7 @@ public class MePresenter extends Presenter<BaseView>{
     public void onShowUserInfo(){
        mUser = User.getInstance().getUserInfo();
        Log.d(TAG,new Gson().toJson(mUser));
+       Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.USER_INFO);
     }
 
     public void onCalculate(){

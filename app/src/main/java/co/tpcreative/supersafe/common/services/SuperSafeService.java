@@ -239,7 +239,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void onUpdateUserToken(){
-        Log.d(TAG,"onUpdateUserToken");
+        Utils.onWriteLog("onUpdateUserToken",EnumStatus.UPDATE_USER_TOKEN);
         BaseView view = view();
         if (view == null) {
             return;
@@ -264,6 +264,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         hash.put(getString(R.string.key_active),""+mUser.active);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
 
+        Utils.onWriteLog(new Gson().toJson(hash),EnumStatus.REFRESH_EMAIL_TOKEN);
         subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -281,6 +282,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 mUser.author = authorization;
                                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
+                                Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
                             }
                         }
                     }
@@ -288,10 +290,16 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
                         try {
-                            Utils.Log(TAG,"error " +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            if (code==403){
+                                Utils.Log(TAG,"code "+code);
+                                ServiceManager.getInstance().onUpdatedUserToken();
+                            }
+                            final String errorMessage = bodys.string();
+                            Log.d(TAG, "error" + errorMessage);
+                            view.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN);
+                            Utils.onWriteLog(errorMessage,EnumStatus.UPDATE_USER_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

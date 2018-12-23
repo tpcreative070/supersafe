@@ -197,7 +197,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                             }
                             Log.d(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            view.onError(msg, EnumStatus.SEND_EMAIL);
+                            view.onError(msg, EnumStatus.REFRESH);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -298,9 +298,9 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            final String errorMessage = bodys.string();
+                            Log.d(TAG, "error" + errorMessage);
+                            view.onError(errorMessage, EnumStatus.REQUEST_CODE);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

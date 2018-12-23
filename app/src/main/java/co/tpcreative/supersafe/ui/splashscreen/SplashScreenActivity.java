@@ -67,7 +67,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         int version = Build.VERSION.SDK_INT;
         String versionRelease = Build.VERSION.RELEASE;
 
-        Log.e(TAG, "manufacturer " + manufacturer
+        Utils.Log(TAG, "manufacturer " + manufacturer
                 + " \n model " + model
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease

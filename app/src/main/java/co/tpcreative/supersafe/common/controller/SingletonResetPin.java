@@ -26,7 +26,6 @@ public class SingletonResetPin {
             Utils.Log(TAG,"Running............");
             return;
         }
-        ServiceManager.getInstance().onStartService();
         ServiceManager.getInstance().setIsWaitingSendMail(true);
         Utils.Log(TAG,"Start");
         mCountDownTimer = new CountDownTimer(value, 1000) {

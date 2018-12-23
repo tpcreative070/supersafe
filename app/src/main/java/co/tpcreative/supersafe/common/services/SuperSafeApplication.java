@@ -88,7 +88,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        isLive = false;
+        isLive = true;
 
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -519,6 +519,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             User user = new Gson().fromJson(value, User.class);
             if (user != null) {
                 authorization = user.author.session_token;
+                Utils.onWriteLog(authorization,EnumStatus.REQUEST_ACCESS_TOKEN);
             }
             else{
                 user = readUseSecret();

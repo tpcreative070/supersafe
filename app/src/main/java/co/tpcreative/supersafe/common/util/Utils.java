@@ -46,6 +46,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
+import com.snatik.storage.helpers.SizeUnit;
+
 import org.apache.commons.io.FilenameUtils;
 import org.solovyev.android.checkout.Purchase;
 import java.io.ByteArrayInputStream;
@@ -94,6 +96,8 @@ public class Utils {
 
     final public static int THUMB_SIZE_HEIGHT = 600;
     final public static int THUMB_SIZE_WIDTH = 400;
+
+    private  static  Storage storage = new Storage(SuperSafeApplication.getInstance());
 
 
     private static final String TAG = Utils.class.getSimpleName();
@@ -168,6 +172,10 @@ public class Utils {
         final String newLine = System.getProperty("line.separator");
         try{
             File root = new File(path_folder_name+ "/" + fileName);
+            double saved  = storage.getSize(root,SizeUnit.MB);
+            if (saved>=1){
+                storage.deleteFile(root.getAbsolutePath());
+            }
             if (!root.exists()){
                 File parentFolder = new File(path_folder_name);
                 if (!parentFolder.exists()) {
@@ -175,6 +183,7 @@ public class Utils {
                 }
                 root.createNewFile();
             }
+
             FileWriter file = new FileWriter(root,append);
             file.write("\r\n");
             file.write(responseJson);
