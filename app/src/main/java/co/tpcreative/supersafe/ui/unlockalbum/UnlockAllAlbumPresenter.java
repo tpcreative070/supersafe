@@ -38,17 +38,12 @@ import retrofit2.Response;
 public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
 
     private static final String TAG = UnlockAllAlbumPresenter.class.getSimpleName();
-    protected User mUser ;
+
 
     protected List<MainCategories> mListCategories;
 
     public UnlockAllAlbumPresenter(){
-        mUser = new User();
-        final User user = User.getInstance().getUserInfo();
         mListCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
-        if (user!=null){
-            this.mUser = user;
-        }
     }
 
     public void onVerifyCode(VerifyCodeRequest request){
@@ -187,7 +182,6 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         token.access_token = onResponse.token_type + " " + onResponse.access_token;
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
-                        this.mUser = mUser;
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
                         onAddEmailToken();
                     }
@@ -290,11 +284,12 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         view.onError(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
+                        final User mUser = User.getInstance().getUserInfo();
                         mUser.code = onResponse.code;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.UNLOCK_ALBUMS);
                         onSendMail(emailToken);
+                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

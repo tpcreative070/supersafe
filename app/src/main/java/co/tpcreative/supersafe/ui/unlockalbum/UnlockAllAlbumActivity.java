@@ -33,6 +33,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.resetpin.ResetPinPresenter;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
@@ -68,9 +69,9 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         presenter = new UnlockAllAlbumPresenter();
         presenter.bindView(this);
-
-        if (presenter.mUser!=null){
-            String email = presenter.mUser.email;
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            String email = mUser.email;
             if (email!=null){
                 String result = Utils.getFontString(R.string.request_an_access_code,email);
                 tvStep1.setText(Html.fromHtml(result));
@@ -187,10 +188,13 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         if (isNext){
             String code = edtCode.getText().toString().trim();
             final VerifyCodeRequest request = new VerifyCodeRequest();
-            request.code = code;
-            request.email = presenter.mUser.email;
-            request._id = presenter.mUser._id;
-            presenter.onVerifyCode(request);
+            final User mUser = User.getInstance().getUserInfo();
+            if (mUser!=null){
+                request.code = code;
+                request.email = mUser.email;
+                request._id =  mUser._id;
+                presenter.onVerifyCode(request);
+            }
         }
     }
 
@@ -223,10 +227,11 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         btnSendRequest.setEnabled(false);
         btnSendRequest.setText("");
         onStartLoading(EnumStatus.REQUEST_CODE);
-        if (presenter.mUser!=null){
-            if (presenter.mUser.email!=null){
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser!=null){
+            if (mUser.email!=null){
                 final VerifyCodeRequest request = new VerifyCodeRequest();
-                request.email = presenter.mUser.email;
+                request.email = mUser.email;
                 presenter.onRequestCode(request);
             }
             else{

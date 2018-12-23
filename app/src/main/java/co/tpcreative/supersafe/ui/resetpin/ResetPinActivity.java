@@ -32,13 +32,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -67,7 +64,6 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
     private ResetPinPresenter presenter;
     private boolean isNext;
     private Boolean isRestoreFiles;
-
     private static final String TAG = ResetPinActivity.class.getCanonicalName();
 
     @Override

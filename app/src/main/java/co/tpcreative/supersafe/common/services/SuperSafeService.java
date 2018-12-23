@@ -239,7 +239,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void onUpdateUserToken(){
-        Utils.onWriteLog("onUpdateUserToken",EnumStatus.UPDATE_USER_TOKEN);
         BaseView view = view();
         if (view == null) {
             return;
