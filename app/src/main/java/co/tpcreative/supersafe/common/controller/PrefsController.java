@@ -10,12 +10,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import co.tpcreative.supersafe.common.util.Utils;
+
 public final class PrefsController {
 
     private static final String DEFAULT_SUFFIX = "_preferences";
     private static final String LENGTH = "#LENGTH";
     private static SharedPreferences mPrefs;
     private static Context mContext;
+    private static final String TAG = PrefsController.class.getSimpleName();
 
     /**
      * Initialize the Prefs helper class to keep a reference to the SharedPreference for this
@@ -253,6 +256,7 @@ public final class PrefsController {
      * @see Editor#putString(String, String)
      */
     public static void putString(final String key, final String value) {
+        Utils.Log(TAG,value);
         final Editor editor = getPreferences().edit();
         editor.putString(key, value);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {

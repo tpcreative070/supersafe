@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,11 +38,13 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.User;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -217,7 +220,6 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
 
     @OnClick(R.id.btnSendRequest)
     public void onSentRequest(){
-        ServiceManager.getInstance().onStartService();
         btnSendRequest.setEnabled(false);
         btnSendRequest.setText("");
         onStartLoading(EnumStatus.OTHER);
@@ -291,6 +293,8 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case REQUEST_CODE:{
+                final User mUser = User.getInstance().getUserInfo();
+                Utils.Log(TAG,new Gson().toJson(mUser));
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 btnSendRequest.setEnabled(false);
                 onStopLoading(EnumStatus.OTHER);
@@ -326,6 +330,8 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
 
     public void onShowDialogWaitingCode(){
         Theme theme = Theme.getInstance().getThemeInfo();
+        final User mUser = User.getInstance().getUserInfo();
+        Utils.Log(TAG,"Preparing "+ new Gson().toJson(mUser));
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.send_code_later)
                 .setDescription(R.string.send_code_later_detail)
@@ -340,6 +346,8 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Log.d(TAG,"positive");
+                        final User mUser = User.getInstance().getUserInfo();
+                        Utils.Log(TAG,"Pressed "+ new Gson().toJson(mUser));
                         SingletonResetPin.getInstance().onStartTimer(300000);
                     }
                 })

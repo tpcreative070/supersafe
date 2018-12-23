@@ -284,9 +284,11 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         view.onError(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     else{
-                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                         mUser.code = onResponse.code;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
+                        mUser = User.getInstance().getUserInfo();
+                        Utils.Log(TAG,new Gson().toJson(mUser));
                     }
                     Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {

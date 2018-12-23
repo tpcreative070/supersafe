@@ -26,8 +26,10 @@ public class SingletonResetPin {
             Utils.Log(TAG,"Running............");
             return;
         }
+        ServiceManager.getInstance().onStartService();
         ServiceManager.getInstance().setIsWaitingSendMail(true);
-        Utils.Log(TAG,"Start");
+        final User mUser = User.getInstance().getUserInfo();
+        Utils.Log(TAG,"Start " +new Gson().toJson(mUser));
         mCountDownTimer = new CountDownTimer(value, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -38,6 +40,7 @@ public class SingletonResetPin {
             public void onFinish() {
                 Utils.Log(TAG,"Finish :");
                 final User mUser = User.getInstance().getUserInfo();
+                Utils.Log(TAG,new Gson().toJson(mUser));
                 mUser.isWaitingSendMail = true;
                 PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
                 mCountDownTimer= null;

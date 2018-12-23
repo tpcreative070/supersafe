@@ -305,6 +305,7 @@ public class ServiceManager implements BaseView {
         if (myService != null) {
             myService.onUpdateUserToken();
         } else {
+            ServiceManager.getInstance().onStartService();
             Utils.Log(TAG, "My services is null");
         }
     }

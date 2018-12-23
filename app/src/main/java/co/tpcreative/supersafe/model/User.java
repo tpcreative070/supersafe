@@ -39,13 +39,15 @@ public class User extends BaseResponse implements Serializable{
     private static User instance ;
 
     public static User getInstance(){
-        if (instance==null){
-            instance = new User();
+        synchronized (User.class){
+            if (instance==null){
+                instance = new User();
+            }
+            return instance;
         }
-        return instance;
     }
 
-    public User getUserInfo(){
+    public synchronized User getUserInfo(){
         try{
             String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user),null);
             if (value!=null){
