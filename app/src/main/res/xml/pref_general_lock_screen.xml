@@ -4,18 +4,21 @@
     <co.tpcreative.supersafe.common.preference.MyPreferenceCategory android:title="@string/key_lock_screen"
         android:layout="@layout/preference_category_layout">
         <co.tpcreative.supersafe.common.preference.MyPreference
+            android:icon="@drawable/baseline_fiber_pin_white_48"
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_change_pin"
             android:title="@string/key_change_pin"/>
 
-
+\
         <co.tpcreative.supersafe.common.preference.MySwitchPreference
+            android:icon="@drawable/baseline_face_white_48"
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_face_down_lock"
             android:summary="@string/key_face_down_lock_detail"
             android:title="@string/key_face_down_lock"/>
 
         <co.tpcreative.supersafe.common.preference.MySwitchPreference
+            android:icon="@drawable/baseline_fingerprint_white_48"
             android:layout="@layout/custom_preferences_item"
             android:key="@string/key_fingerprint_unlock"
             android:summary="@string/key_fingerprint_unlock_detail"

@@ -170,6 +170,7 @@
 
     <string name="verify_change">Verify/Change Account</string>
     <string name="view_change">View/Change Account</string>
+    <string name="view_user_info">View user info</string>
     <string name="cloud">Cloud</string>
     <string name="enable_cloud_sync">Enable Cloud Sync</string>
     <string name="message_prompt">All your files will be sync to cloud. They will never lost.</string>
@@ -527,8 +528,8 @@
     <string name="your_complimentary_premium_remaining">You have %1$s more days of complimentary Premium remaining. Upgrade now to keep using Premium without interruption.</string>
     <string name="your_complimentary_premium">You have %1$s more days of complimentary Premium remaining.</string>
     <string name="monthly">Monthly</string>
-    <string name="per_month">per month</string>
-    <string name="per_year">per year</string>
+    <string name="per_month">6 Months</string>
+    <string name="per_year">1 Year</string>
     <string name="most_popular">MOST POPULAR</string>
     <string name="yearly">Yearly</string>
     <string name="tv_life_time">Lifetime</string>

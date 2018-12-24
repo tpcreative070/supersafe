@@ -108,7 +108,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
 
         if (presenter.mUser!=null){
             if (presenter.mUser.verified){
-                tvStatus.setText(getString(R.string.view_change));
+                tvStatus.setText(getString(R.string.view_user_info));
             }
             else{
                 tvStatus.setText(getString(R.string.verify_change));
@@ -231,7 +231,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         try {
             if (presenter.mUser != null) {
                 if (presenter.mUser.verified) {
-                    tvStatus.setText(getString(R.string.view_change));
+                    tvStatus.setText(getString(R.string.view_user_info));
                 } else {
                     tvStatus.setText(getString(R.string.verify_change));
                 }

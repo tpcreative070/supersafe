@@ -45,7 +45,6 @@
             <TextView
                 android:layout_marginTop="5dp"
                 android:textAllCaps="false"
-                android:visibility="gone"
                 android:textSize="@dimen/text_size_preference_item_summary"
                 android:id="@android:id/summary"
                 android:layout_width="match_parent"
