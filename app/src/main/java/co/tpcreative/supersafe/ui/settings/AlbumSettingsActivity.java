@@ -268,13 +268,25 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                 }
                             } else {
                                 mAlbumCover.getImageView().setImageResource(0);
-                                mAlbumCover.getImgIcon().setImageDrawable(MainCategories.getInstance().getDrawable(getContext(), main.icon));
-                                mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
-                                try {
-                                    int myColor = Color.parseColor(main.image);
-                                    mAlbumCover.getImageView().setBackgroundColor(myColor);
-                                } catch (Exception e) {
-
+                                final MainCategories mainCategories = MainCategories.getInstance().getCategoriesPosition(main.mainCategories_Local_Id);
+                                if (mainCategories!=null){
+                                    mAlbumCover.getImgIcon().setImageDrawable(MainCategories.getInstance().getDrawable(getContext(), mainCategories.icon));
+                                    mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
+                                    try {
+                                        int myColor = Color.parseColor(mainCategories.image);
+                                        mAlbumCover.getImageView().setBackgroundColor(myColor);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }else{
+                                    mAlbumCover.getImgIcon().setImageDrawable(MainCategories.getInstance().getDrawable(getContext(), main.icon));
+                                    mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
+                                    try {
+                                        int myColor = Color.parseColor(main.image);
+                                        mAlbumCover.getImageView().setBackgroundColor(myColor);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }

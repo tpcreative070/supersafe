@@ -3,6 +3,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +27,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.ui.multiselects.HelperActivity;
@@ -123,7 +127,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
             cells.add(cell);
         }
         recyclerView.addCells(cells);
-
     }
 
     @Override

@@ -90,8 +90,6 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-
                     <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                         android:id="@+id/progressBarCircularIndeterminateVerifyCode"
                         android:layout_width="25dp"
@@ -111,7 +109,18 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_normal" />
 
+
                 </RelativeLayout>
+
+
+                <TextView
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="@dimen/text_size_normal"
+                    android:layout_marginTop="40dp"
+                    android:layout_below="@+id/btnSendVerifyCode"
+                    android:text="@string/verify_code_to_sync_files_to_cloud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
 
                 <RelativeLayout

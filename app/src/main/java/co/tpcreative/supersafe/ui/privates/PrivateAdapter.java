@@ -129,13 +129,26 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     }
                 } else {
                     imgAlbum.setImageResource(0);
-                    imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
-                    imgIcon.setVisibility(View.VISIBLE);
-                    try {
-                        int myColor = Color.parseColor(data.image);
-                        imgAlbum.setBackgroundColor(myColor);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    final MainCategories mainCategories = MainCategories.getInstance().getCategoriesPosition(data.mainCategories_Local_Id);
+                    if (mainCategories!=null){
+                        imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(SuperSafeApplication.getInstance(), mainCategories.icon));
+                        imgIcon.setVisibility(View.VISIBLE);
+                        try {
+                            int myColor = Color.parseColor(mainCategories.image);
+                            imgAlbum.setBackgroundColor(myColor);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        imgAlbum.setImageResource(0);
+                        imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
+                        imgIcon.setVisibility(View.VISIBLE);
+                        try {
+                            int myColor = Color.parseColor(data.image);
+                            imgAlbum.setBackgroundColor(myColor);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

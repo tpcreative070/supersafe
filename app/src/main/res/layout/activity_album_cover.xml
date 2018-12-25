@@ -68,6 +68,7 @@
                 android:layout_centerInParent="true" />
         </RelativeLayout>
 
+        <!--
 
         <LinearLayout
             android:id="@+id/llRecyclerView"
@@ -85,10 +86,13 @@
 
         </LinearLayout>
 
-        <!--
+        !-->
+
+
 
 
         <ScrollView
+            android:id="@+id/scrollView"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -133,7 +137,6 @@
             </LinearLayout>
         </ScrollView>
 
-        -->
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

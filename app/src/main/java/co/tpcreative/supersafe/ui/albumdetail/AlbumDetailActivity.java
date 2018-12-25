@@ -73,6 +73,7 @@ import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -182,12 +183,22 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
         } else {
             backdrop.setImageResource(0);
-            try {
-                int myColor = Color.parseColor(presenter.mainCategories.image);
-                backdrop.setBackgroundColor(myColor);
-            }
-            catch (Exception e){
-                e.printStackTrace();
+            final MainCategories mainCategories = MainCategories.getInstance().getCategoriesPosition(presenter.mainCategories.mainCategories_Local_Id);
+            if (mainCategories!=null){
+                try {
+                    int myColor = Color.parseColor(mainCategories.image);
+                    backdrop.setBackgroundColor(myColor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    int myColor = Color.parseColor(presenter.mainCategories.image);
+                    backdrop.setBackgroundColor(myColor);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
         GalleryCameraMediaManager.getInstance().setListener(this);

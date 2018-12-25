@@ -11,11 +11,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
-import java.security.NoSuchAlgorithmException;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -35,9 +33,9 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
             .priority(Priority.HIGH);
     private Context context;
     private ItemSelectedListener itemSelectedListener;
-    private Encrypter encrypter;
     private Storage storage;
     private MainCategories categories;
+    Theme theme = Theme.getInstance().getThemeInfo();
     private String TAG = AlbumCoverAdapter.class.getSimpleName();
 
     public AlbumCoverAdapter(LayoutInflater inflater, Context context,MainCategories mainCategories, ItemSelectedListener itemSelectedListener) {
@@ -46,11 +44,7 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
         storage = new Storage(context);
         this.categories = mainCategories;
         this.itemSelectedListener = itemSelectedListener;
-        try {
-            encrypter = new Encrypter();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
     }
 
     @Override
@@ -99,13 +93,10 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                 view_alpha.setAlpha(0.0f);
                 imgSelect.setVisibility(View.INVISIBLE);
             }
-
             try {
-                storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
                     case AUDIO: {
-                        Theme theme = Theme.getInstance().getThemeInfo();
                         Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
@@ -115,7 +106,6 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                         break;
                     }
                     case FILES:{
-                        Theme theme = Theme.getInstance().getThemeInfo();
                         Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
@@ -152,7 +142,6 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
         @OnClick(R.id.rlHome)
@@ -161,7 +150,6 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                 itemSelectedListener.onClickItem(mPosition);
             }
         }
-
     }
 
 }

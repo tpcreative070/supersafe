@@ -173,7 +173,7 @@
     <string name="view_user_info">View user info</string>
     <string name="cloud">Cloud</string>
     <string name="enable_cloud_sync">Enable Cloud Sync</string>
-    <string name="message_prompt">All your files will be sync to cloud. They will never lost.</string>
+    <string name="message_prompt">All your files will be sync to cloud. They will never lose.</string>
     <string name="enable_now">ENABLE NOW</string>
     <string name="continue_value">Continue</string>
     <string name="did_not_receive_code">Did\'s receive your code?</string>
@@ -275,6 +275,7 @@
     <string name="request_an_access_code">Request an account code. We\'ll send it to your primary email address: %1$s</string>
     <string name="request_enter_code">Enter the access code below. We\'ll begin the reset process so you can create a new PIN</string>
     <string name="access_code">Access code</string>
+    <string name="verify_code_to_sync_files_to_cloud">Verify account to sync files to Cloud. You are never lost files</string>
     <string name="reset_pin">Reset PIN</string>
     <string name="premium_feature">Premium feature</string>
     <string name="premium">Premium</string>

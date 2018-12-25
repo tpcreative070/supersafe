@@ -13,8 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -24,19 +24,18 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-public class AlbumCoverActivity extends BaseActivity implements BaseView,CompoundButton.OnCheckedChangeListener ,AlbumCoverAdapter.ItemSelectedListener{
+public class AlbumCoverActivity extends BaseActivity implements BaseView,CompoundButton.OnCheckedChangeListener ,AlbumCoverAdapter.ItemSelectedListener,AlbumCoverDefaultAdapter.ItemSelectedListener{
 
     private AlbumCoverPresenter presenter;
     @BindView(R.id.btnSwitch)
     SwitchCompat btnSwitch;
-    //@BindView(R.id.recyclerViewDefault)
-    //RecyclerView recyclerViewDefault;
+    @BindView(R.id.recyclerViewDefault)
+    RecyclerView recyclerViewDefault;
 
     @BindView(R.id.recyclerViewCustom)
     RecyclerView recyclerViewCustom;
@@ -45,7 +44,10 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     LinearLayout llRecyclerView;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
-   // private AlbumCoverAdapter adapterDefault;
+
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
+    private AlbumCoverDefaultAdapter adapterDefault;
     private AlbumCoverAdapter adapterCustom;
     private boolean isReload;
     private static final String TAG = AlbumCoverActivity.class.getSimpleName();
@@ -57,7 +59,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         presenter = new AlbumCoverPresenter();
         presenter.bindView(this);
         presenter.getData(this);
-       // initRecycleViewDefault(getLayoutInflater());
+        initRecycleViewDefault(getLayoutInflater());
         initRecycleViewCustom(getLayoutInflater());
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,16 +70,16 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         tvPremiumDescription.setText(getString(R.string.premium_cover_description));
     }
 
-//    public void initRecycleViewDefault(LayoutInflater layoutInflater) {
-//        adapterDefault = new AlbumCoverAdapter(layoutInflater, getApplicationContext(), presenter.mMainCategories,this);
-//        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
-//        recyclerViewDefault.setLayoutManager(mLayoutManager);
-//        recyclerViewDefault.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
-//        recyclerViewDefault.setItemAnimator(new DefaultItemAnimator());
-//        recyclerViewDefault.setAdapter(adapterDefault);
-//        recyclerViewDefault.setNestedScrollingEnabled(false);
-//
-//    }
+    public void initRecycleViewDefault(LayoutInflater layoutInflater) {
+        adapterDefault = new AlbumCoverDefaultAdapter(layoutInflater, getApplicationContext(),this);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+        recyclerViewDefault.setLayoutManager(mLayoutManager);
+        recyclerViewDefault.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
+        recyclerViewDefault.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewDefault.setAdapter(adapterDefault);
+        recyclerViewDefault.setNestedScrollingEnabled(false);
+
+    }
 
     public void initRecycleViewCustom(LayoutInflater layoutInflater) {
         adapterCustom = new AlbumCoverAdapter(layoutInflater, getApplicationContext(), presenter.mMainCategories,this);
@@ -86,7 +88,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         recyclerViewCustom.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
         recyclerViewCustom.setItemAnimator(new DefaultItemAnimator());
         recyclerViewCustom.setAdapter(adapterCustom);
-        //recyclerViewCustom.setNestedScrollingEnabled(false);
+        recyclerViewCustom.setNestedScrollingEnabled(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -127,6 +129,22 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         Utils.Log(TAG,"position..."+position);
         try {
             presenter.mMainCategories.items_id = presenter.mList.get(position).items_id;
+            presenter.mMainCategories.mainCategories_Local_Id = "";
+            InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
+            presenter.getData();
+            isReload = true;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onClickedDefaultItem(int position) {
+        Utils.Log(TAG,"position..."+position);
+        try {
+            presenter.mMainCategories.items_id = "";
+            presenter.mMainCategories.mainCategories_Local_Id = presenter.mListMainCategories.get(position).mainCategories_Local_Id;
             InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
             presenter.getData();
             isReload = true;
@@ -196,7 +214,12 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
             }
             case GET_LIST_FILE:{
                 Utils.Log(TAG,"load data");
-                //adapterDefault.setDataSource(presenter.mList);
+                if (presenter.mList!=null){
+                    if (presenter.mList.size()>0 || presenter.mListMainCategories.size()>0){
+                        scrollView.setVisibility(View.VISIBLE);
+                    }
+                }
+                adapterDefault.setDataSource(presenter.mListMainCategories);
                 adapterCustom.setDataSource(presenter.mList);
                 break;
             }

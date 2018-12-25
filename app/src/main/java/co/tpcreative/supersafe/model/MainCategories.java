@@ -49,19 +49,24 @@ public class MainCategories implements Serializable{
     private static MainCategories instance ;
 
     @Ignore
-    public static final transient String []ListIcon =new  String[]{"baseline_photo_white_48",
+    public static final transient String []ListIcon =new  String[]{
+            "baseline_photo_white_48",
             "baseline_how_to_vote_white_48",
             "baseline_local_movies_white_48",
             "baseline_favorite_border_white_48",
-            "baseline_delete_white_48"};
+            "baseline_delete_white_48",
+            "baseline_cake_white_48",
+            "baseline_school_white_48"};
 
     @Ignore
-    public static final transient String []ListColor =new  String[]{"#34bdb7",
+    public static final transient String []ListColor =new  String[]{
+            "#34bdb7",
             "#03A9F4",
             "#9E9D24",
             "#AA00FF",
             "#371989",
-            "#FF9800"};
+            "#E040FB",
+            "#9E9E9E"};
 
     @Ignore
     public transient String []ListDefaultIcon = new String[]{
@@ -113,6 +118,7 @@ public class MainCategories implements Serializable{
         this.items_id = items_id;
         this.mainCategories_Local_Id = mainCategories_Local_Id;
         this.isCustom_Cover = isCustom_Cover;
+        this.isSyncOwnServer = isSyncOwnServer;
 
     }
 
@@ -213,10 +219,12 @@ public class MainCategories implements Serializable{
     @Ignore
     public List<MainCategories> getCategoriesDefault(){
         List<MainCategories> list = new ArrayList<>();
-        list.add(new MainCategories("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,null,false));
-        list.add(new MainCategories("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,null,false));
-        list.add(new MainCategories("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,null,false));
-        list.add(new MainCategories("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,null,false));
+        list.add(new MainCategories("null",null,null, null,ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,Utils.getHexCode("1234"),false));
+        list.add(new MainCategories("null",null,null,null, ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,Utils.getHexCode("1235"),false));
+        list.add(new MainCategories("null",null,null,null, ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,Utils.getHexCode("1236"),false));
+        list.add(new MainCategories("null",null,null,null,ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,Utils.getHexCode("1237"),false));
+        list.add(new MainCategories("null",null,null,null,ListColor[5],ListIcon[5], 5,false,false,false,false,"",null,Utils.getHexCode("1238"),false));
+        list.add(new MainCategories("null",null,null,null,ListColor[6],ListIcon[6], 6,false,false,false,false,"",null,Utils.getHexCode("1239"),false));
         return list;
     }
 
@@ -322,6 +330,19 @@ public class MainCategories implements Serializable{
         }
         catch (Exception e){
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public MainCategories getCategoriesPosition(final String mainCategories_Local_Id){
+        final List<MainCategories> data = getCategoriesDefault();
+        if (mainCategories_Local_Id==null){
+            return null;
+        }
+        for (MainCategories index : data){
+            if (index.mainCategories_Local_Id.equals(mainCategories_Local_Id)){
+                return index;
+            }
         }
         return null;
     }

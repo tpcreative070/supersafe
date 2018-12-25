@@ -30,7 +30,6 @@
     </android.support.design.widget.AppBarLayout>
 
 
-
     <RelativeLayout
         android:visibility="invisible"
         android:id="@+id/rlAttempt"
