@@ -192,22 +192,24 @@
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:textStyle="bold"
-                        android:inputType="textCapCharacters"
                         android:text="@string/account"
                         android:textSize="@dimen/text_size_normal"
                         android:layout_width="0dp"
                         android:layout_weight="0.7"
                         android:id="@+id/tvEmail"
                         android:gravity="left"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
+
                     <TextView
                         android:textColor="@color/ColorBlueV1"
                         android:id="@+id/tvStatusAccount"

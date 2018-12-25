@@ -272,7 +272,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     public void onChangedEmail(){
-        final String email = edtEmail.getText().toString().trim();
+        final String email = edtEmail.getText().toString().toLowerCase().trim();
         tvEmail.setText(email);
         String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + email +"</font>");
         tvTitle.setText(Html.fromHtml(sourceString));
@@ -286,11 +286,9 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         request.user_id = presenter.mUser.email;
         request._id = presenter.mUser._id;
 
-
         presenter.onChangeEmail(request);
         Utils.hideSoftKeyboard(this);
         Utils.hideKeyboard(edtEmail);
-
     }
 
     @OnClick(R.id.btnReSend)

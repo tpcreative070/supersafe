@@ -120,7 +120,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     }
 
     public void onSignIn(){
-        String email = edtEmail.getText().toString().toLowerCase();
+        String email = edtEmail.getText().toString().toLowerCase().trim();
         SignInRequest request = new SignInRequest();
         request.email = email;
         presenter.onSignIn(request);

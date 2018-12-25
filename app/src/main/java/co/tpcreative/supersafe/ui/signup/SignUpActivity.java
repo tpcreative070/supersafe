@@ -186,7 +186,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
     }
 
     public void onSignUp(){
-        String email = edtEmail.getText().toString().trim();
+        String email = edtEmail.getText().toString().toLowerCase().trim();
         String name = edtName.getText().toString().trim();
         SignUpRequest request = new SignUpRequest();
         request.email = email;
