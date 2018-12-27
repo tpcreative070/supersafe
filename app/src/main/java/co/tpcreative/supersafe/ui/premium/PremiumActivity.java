@@ -133,8 +133,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         onUpdatedView();
         scrollView.smoothScrollTo(0,0);
 
-        final List<Items> items = InstanceGenerator.getInstance(this).getListAllItemsSaved(EnumFormatType.IMAGE.ordinal());
-        Utils.Log(TAG,new Gson().toJson(items));
     }
 
 

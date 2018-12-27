@@ -47,7 +47,6 @@ public class PremiumPresenter extends Presenter<BaseView>{
                 spaceAvailable +=Long.parseLong(items.size);
             }
         }
-
         Utils.Log(TAG,new Gson().toJson(mList));
     }
 

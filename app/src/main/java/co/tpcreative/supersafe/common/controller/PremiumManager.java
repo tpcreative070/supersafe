@@ -71,12 +71,12 @@ public class PremiumManager {
                                     if (user != null) {
                                         if (user.checkout != null) {
                                             user.checkout.isPurchasedSixMonths = false;
-                                            PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
+                                            //PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                         }
                                         else{
                                             CheckoutItems checkoutItems = new CheckoutItems();
                                             checkoutItems.isPurchasedSixMonths = false;
-                                            PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
+                                            //PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                             user.checkout = checkoutItems;
                                         }
                                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
@@ -120,12 +120,12 @@ public class PremiumManager {
                                     if (user != null) {
                                         if (user.checkout != null) {
                                             user.checkout.isPurchasedOneYears = false;
-                                            PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
+                                            //PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                         }
                                         else{
                                             CheckoutItems checkoutItems = new CheckoutItems();
                                             checkoutItems.isPurchasedOneYears = false;
-                                            PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
+                                            //PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                             user.checkout = checkoutItems;
                                         }
                                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
