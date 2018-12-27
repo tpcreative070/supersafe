@@ -1360,12 +1360,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 if (listener != null) {
                     final Items mItem = request.items;
                     if (mItem != null) {
-                        mItem.isDeleteLocal = true;
-                        mItem.originalSync = true;
-                        mItem.thumbnailSync = true;
-                        mItem.deleteAction = EnumDelete.DELETE_WAITING.ordinal();
                         /*Not Found file*/
                         if (code == 404) {
+                            Utils.Log(TAG,"isDelete local id error");
+                            mItem.isDeleteLocal = true;
+                            mItem.originalSync = true;
+                            mItem.thumbnailSync = true;
+                            mItem.deleteAction = EnumDelete.DELETE_WAITING.ordinal();
                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                         }
                     }

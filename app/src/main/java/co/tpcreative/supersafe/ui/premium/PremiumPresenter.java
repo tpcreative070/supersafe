@@ -3,9 +3,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 import org.solovyev.android.checkout.Purchase;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-
-import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -16,7 +16,9 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -26,12 +28,43 @@ public class PremiumPresenter extends Presenter<BaseView>{
 
     private static final String TAG = PremiumPresenter.class.getSimpleName();
     protected User mUser;
+    protected List<Items> mList ;
+    protected long spaceAvailable=0;
+    protected boolean isSaver;
 
     public PremiumPresenter(){
         mUser = User.getInstance().getUserInfo();
+        mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(true,true);
+        if (mList==null){
+            mList = new ArrayList<>();
+        }
+
+        if (mList.size()>0){
+            spaceAvailable = 0;
+            for (int i = 0;i<mList.size();i++){
+                final Items items = mList.get(i);
+                items.isChecked = true;
+                spaceAvailable +=Long.parseLong(items.size);
+            }
+        }
+
+        Utils.Log(TAG,new Gson().toJson(mList));
     }
 
 
+    public void onUpdatedItems(){
+        if (mList==null){
+            mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(true,true);
+            if (mList==null){
+                mList = new ArrayList<>();
+            }
+        }
+        for (int i =0;i<mList.size();i++){
+            final Items index = mList.get(i);
+            index.isSaver = false;
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(index);
+        }
+    }
 
     public void onAddCheckout(final Purchase purchase){
         BaseView view = view();
@@ -137,7 +170,5 @@ public class PremiumPresenter extends Presenter<BaseView>{
         String value = view.getContext().getString(res);
         return value;
     }
-
-
 
 }

@@ -201,6 +201,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:singleLine="true"
                         android:textStyle="bold"
                         android:text="@string/account"
                         android:textSize="@dimen/text_size_normal"

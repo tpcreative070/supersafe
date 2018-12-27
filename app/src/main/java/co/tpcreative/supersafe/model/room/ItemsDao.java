@@ -89,5 +89,11 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ")
     List<Items> loadAll(boolean isDeleteLocal,boolean isFakePin);
 
+    @Query("Select * FROM items WHERE isSaver =:isSaver AND isSyncCloud =:isSyncCloud")
+    List<Items> loadAllSaved(boolean isSaver,boolean isSyncCloud);
+
+    @Query("Select * FROM items WHERE formatType =:formatType ORDER BY id DESC LIMIT 2")
+    List<Items> loadAllSaved(int formatType);
+
 
 }

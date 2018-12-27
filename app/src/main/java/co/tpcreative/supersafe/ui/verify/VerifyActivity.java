@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -58,7 +59,8 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
         presenter = new VerifyPresenter();
         presenter.bindView(this);
         presenter.getIntent(this);
-        tvTitle.setText(getString(R.string.verify_title,presenter.user.email));
+        String result = Utils.getFontString(R.string.verify_title,presenter.user.email);
+        tvTitle.setText(Html.fromHtml(result));
         edtCode.setOnEditorActionListener(this);
         edtCode.addTextChangedListener(mTextWatcher);
     }

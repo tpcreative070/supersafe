@@ -354,8 +354,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 final Items items = presenter.mList.get(i);
                 if (items.isSaver && items.isChecked){
                     isSaver = true;
+                    spaceAvailable +=Long.parseLong(items.size);;
                 }
-                spaceAvailable +=Long.parseLong(items.size);;
             }
 
             long availableSpaceOS =  Utils.getAvailableSpaceInBytes();
@@ -805,7 +805,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 else{
                     onDialogDownloadFile();
                     ServiceManager.getInstance().setListDownloadFile(presenter.mList);
-                    ServiceManager.getInstance().getObservableDownload();
+                    ServiceManager.getInstance().getObservableDownload(true);
                 }
             }
             else{

@@ -521,7 +521,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     items.isChecked = true;
                     list.add(items);
                     ServiceManager.getInstance().setListDownloadFile(list);
-                    ServiceManager.getInstance().getObservableDownload();
+                    ServiceManager.getInstance().getObservableDownload(true);
                 }
             }
             else{

@@ -71,6 +71,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     public synchronized void onUpdate(Items cTalkManager){
         try {
+            Utils.Log(TAG,"isDelete local id "+cTalkManager.isDeleteLocal);
             if (cTalkManager==null){
                 Utils.Log(TAG,"Null???? ");
                 return;
@@ -146,6 +147,27 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return null;
     }
+
+    public final synchronized List<Items> getListAllItemsSaved(boolean isSaved,boolean isSyncCloud){
+        try{
+            return instance.itemsDao().loadAllSaved(isSaved,isSyncCloud);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getListAllItemsSaved(int  formatType){
+        try{
+            return instance.itemsDao().loadAllSaved(formatType);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
 
     public final synchronized List<Items> getListAllItems(boolean isDeleteLocal,boolean isFakePin){
         try{

@@ -25,6 +25,9 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -531,6 +534,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Pause Cloud Sync is Enabled...----------------*******************************-----------");
             return;
         }
+
 
         final User mUser = User.getInstance().getUserInfo();
         if (mUser == null) {
@@ -2141,7 +2145,7 @@ public class ServiceManager implements BaseView {
         });
     }
 
-    public void getObservableDownload() {
+    public void getObservableDownload(boolean isExporting) {
         Utils.Log(TAG, "Preparing download.....");
         Utils.Log(TAG, "Download amount files :" + mListDownLoadFiles.size());
         setDownloadingFiles(true);
@@ -2178,12 +2182,17 @@ public class ServiceManager implements BaseView {
                         @Override
                         public void onComplete() {
                             Utils.Log(TAG, "Downloading completed............."+next);
-                            getObservableDownload();
+                            getObservableDownload(isExporting);
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.ERROR);
+                            if (isExporting){
+                                GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.ERROR);
+                            }
+                            else{
+                                EventBus.getDefault().post(EnumStatus.DownLoadDone);
+                            }
                         }
 
                         @Override
@@ -2194,7 +2203,12 @@ public class ServiceManager implements BaseView {
 
                     });
         } else {
-            GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.DONE);
+            if (isExporting){
+                GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.DONE);
+            }
+            else{
+                EventBus.getDefault().post(EnumStatus.DownLoadDone);
+            }
             setDownloadingFiles(false);
             mListDownLoadFiles.clear();
         }

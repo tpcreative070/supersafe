@@ -56,6 +56,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
@@ -166,8 +167,17 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
+
         onCallLockScreen();
-        onSwitchToBasic();
+        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
+        EnumPinAction action = EnumPinAction.values()[value];
+        switch (action) {
+            case NONE: {
+                onSwitchToBasic();
+                break;
+            }
+        }
+
         GoogleDriveConnectionManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
         //SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
@@ -519,6 +529,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Utils.Log(TAG,"is premium "+ isPremium);
         Utils.Log(TAG,"is complimentary "+ isComplimentary);
         Utils.Log(TAG,"User info "+ new Gson().toJson(User.getInstance().getUserInfo()));
+
     }
 
     @Override

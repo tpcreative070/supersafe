@@ -312,6 +312,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 break;
             }
             case R.id.switch_SaveSpace: {
+                if (User.getInstance().isPremiumExpired()){
+                    onShowDialog(getString(R.string.your_premium_has_expired));
+                    PrefsController.putBoolean(getString(R.string.key_saving_space), false);
+                    switch_SaveSpace.setChecked(false);
+                    break;
+                }
                 if (b) {
                     isDownload = false;
                     isSpaceSaver = true;
@@ -335,6 +341,23 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             }
         }
     };
+
+    public void onShowDialog(String message){
+        MaterialDialog.Builder builder =  new MaterialDialog.Builder(getContext())
+                .title(getString(R.string.confirm))
+                .theme(Theme.LIGHT)
+                .content(message)
+                .titleColor(getResources().getColor(R.color.black))
+                .negativeText(getString(R.string.cancel))
+                .positiveText(getString(R.string.ok))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        Navigator.onMoveToPremium(getContext());
+                    }
+                });
+        builder.show();
+    }
 
     @Override
     protected void onResume() {

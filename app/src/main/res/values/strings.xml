@@ -176,11 +176,12 @@
     <string name="message_prompt">All your files will be sync to cloud. They will never lose.</string>
     <string name="enable_now">ENABLE NOW</string>
     <string name="continue_value">Continue</string>
-    <string name="did_not_receive_code">Did\'s receive your code?</string>
+    <string name="did_not_receive_code">Did\'t receive your code?</string>
     <string name="send_an_email_to">Send an email to %1$s</string>
     <string name="upgrade_to_pro">Upgrade To Pro</string>
     <string name="upgrade">UPGRADE</string>
     <string name="upgrade_to_premium">Upgrade to Premium</string>
+    <string name="when_you__downgrade_to_basic">When you downgrade to Basic, you forfeit Space Saver, which keeps compressed files on your device, and high-res versions in Google Drive. We\'re restoring those high-res files to this device.</string>
     <string name="verify">Verify</string>
     <string name="verified">Verified</string>
     <string name="unverified">Unverified</string>

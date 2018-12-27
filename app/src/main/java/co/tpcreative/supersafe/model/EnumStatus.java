@@ -95,6 +95,7 @@ public enum EnumStatus {
         ME_DONE,
         REFRESH_EMAIL_TOKEN,
         ADD_EMAIL_TOKEN,
+        DownLoadDone,
         OTHER
 
 }
