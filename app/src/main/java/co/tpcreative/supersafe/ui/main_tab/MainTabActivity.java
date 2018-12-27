@@ -89,6 +89,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
+        initSpeedDial(true);
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.main_tab);
         final ActionBar ab = getSupportActionBar();
@@ -101,11 +102,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter = new MainTabPresenter();
         presenter.bindView(this);
         presenter.onGetUserInfo();
-        final User mUser = User.getInstance().getUserInfo();
-        Log.d(TAG,"User....." +new Gson().toJson(mUser));
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
-        Utils.Log(TAG,"onStartTimer");
         SingletonPremiumTimer.getInstance().onStartTimer();
     }
 
@@ -163,7 +161,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     protected void onResume() {
         super.onResume();
-        initSpeedDial(true);
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
@@ -200,6 +197,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Utils.Log(TAG,"sync value "+ enumStatus.name());
                             onAnimationIcon(enumStatus);
                         }
                     });

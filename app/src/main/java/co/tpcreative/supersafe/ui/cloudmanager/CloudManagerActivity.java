@@ -216,6 +216,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_refresh: {
+                final boolean isExpired = User.getInstance().isPremiumExpired();
+                if (isExpired) {
+                    if (!User.getInstance().isCheckAllowUpload()){
+                        break;
+                    }
+                }
                 presenter.onGetDriveAbout();
                 isRefresh = true;
                 break;

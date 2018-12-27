@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
-
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -25,9 +24,7 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -2477,10 +2474,14 @@ public class ServiceManager implements BaseView {
                 break;
             }
             case USER_INFO: {
-                final boolean isPremiumComplimentary = User.getInstance().isPremiumComplimentary();
-                if (!isPremiumComplimentary) {
-                    return;
+                final boolean isExpired = User.getInstance().isPremiumExpired();
+                if (isExpired) {
+                    if (!User.getInstance().isCheckAllowUpload()){
+                        return;
+                    }
+
                 }
+
                 SingletonPremiumTimer.getInstance().onStop();
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {

@@ -162,8 +162,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
     }
 
     private String getString(int res){
-        BaseView view = view();
-        String value = view.getContext().getString(res);
+        String value = SuperSafeApplication.getInstance().getString(res);
         return value;
     }
 

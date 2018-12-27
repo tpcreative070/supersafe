@@ -71,7 +71,6 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     public synchronized void onUpdate(Items cTalkManager){
         try {
-            Utils.Log(TAG,"isDelete local id "+cTalkManager.isDeleteLocal);
             if (cTalkManager==null){
                 Utils.Log(TAG,"Null???? ");
                 return;
