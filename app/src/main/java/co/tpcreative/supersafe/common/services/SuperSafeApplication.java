@@ -88,7 +88,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-        isLive = true;
+        isLive = false;
 
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);

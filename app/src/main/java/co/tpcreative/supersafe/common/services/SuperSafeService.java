@@ -9,7 +9,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +26,6 @@ import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
-import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
@@ -35,14 +33,12 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Authorization;
 import co.tpcreative.supersafe.model.DriveAbout;
-import co.tpcreative.supersafe.model.DriveDescription;
 import co.tpcreative.supersafe.model.DriveEvent;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Premium;
@@ -295,6 +291,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
+                            else if (code == 401){
+                                final User user = User.getInstance().getUserInfo();
+                                if (user!=null){
+                                    onSignIn(user);
+                                }
+                            }
                             final String errorMessage = bodys.string();
                             Log.d(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN);
@@ -308,6 +310,67 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     view.onStopLoading(EnumStatus.UPDATE_USER_TOKEN);
                 }));
     }
+
+
+
+    public void onSignIn(final User request) {
+        Log.d(TAG, "onSignIn");
+        BaseView view = view();
+        if (view == null) {
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(view.getContext())) {
+            return;
+        }
+        if (subscriptions == null) {
+            return;
+        }
+
+        Map<String, String> hash = new HashMap<>();
+        hash.put(getString(R.string.key_email), request.email);
+        hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
+        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
+        hash.put(getString(R.string.key_device_type), getString(R.string.device_type));
+        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
+        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
+        hash.put(getString(R.string.key_version).toLowerCase(), "" + SuperSafeApplication.getInstance().getVersion());
+        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
+        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
+        subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_IN))
+                .subscribe(onResponse -> {
+                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    if (onResponse.error) {
+                        view.onError(onResponse.message, EnumStatus.SIGN_IN);
+                    } else {
+                        final User user = User.getInstance().getUserInfo();
+                        if (onResponse.user!=null){
+                            final Authorization authorization = user.author;
+                            authorization.session_token = onResponse.user.author.session_token;
+                            user.author = authorization;
+                        }
+                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                    }
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        try {
+                            Log.d(TAG, "error" + bodys.string());
+                            String msg = new Gson().toJson(bodys.string());
+                            Log.d(TAG, msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                    }
+                    view.onStopLoading(EnumStatus.SIGN_IN);
+                }));
+    }
+
+
 
     public void getDriveAbout() {
         BaseView view = view();

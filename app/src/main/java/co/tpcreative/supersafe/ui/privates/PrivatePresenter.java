@@ -37,7 +37,6 @@ public class PrivatePresenter extends Presenter<BaseView> {
         Utils.Log(TAG,new Gson().toJson(mList));
     }
 
-
     public void onDeleteAlbum(int position){
         BaseView view = view();
         try {

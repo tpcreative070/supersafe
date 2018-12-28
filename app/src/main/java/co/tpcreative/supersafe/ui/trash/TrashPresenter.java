@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class TrashPresenter extends Presenter<BaseView>{
@@ -97,9 +98,15 @@ public class TrashPresenter extends Presenter<BaseView>{
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).items_id);
             }
             else{
-                mList.get(i).isDeleteLocal = false;
+               final Items items =  mList.get(i);
+               items.isDeleteLocal = false;
                 if (mList.get(i).isChecked){
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                    final MainCategories mainCategories  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(items.categories_local_id);
+                    if (mainCategories!=null){
+                        mainCategories.isDelete = false;
+                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+                    }
+                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                 }
             }
         }
