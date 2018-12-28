@@ -777,7 +777,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     if (dialog==null){
                         dialog = new SpotsDialog.Builder()
                                 .setContext(PhotoSlideShowActivity.this)
-                                .setMessage(getString(R.string.progressing))
+                                .setMessage(getString(R.string.exporting))
                                 .setCancelable(true)
                                 .build();
                     }

@@ -436,7 +436,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         dialog = new SpotsDialog.Builder()
                                 .setContext(AlbumDetailActivity.this)
                                 .setDotColor(theme.getAccentColor())
-                                .setMessage(getString(R.string.progressing))
+                                .setMessage(getString(R.string.exporting))
                                 .setCancelable(true)
                                 .build();
                     }

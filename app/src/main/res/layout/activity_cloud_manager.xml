@@ -76,7 +76,7 @@
                         android:padding="30dp"
                         android:text="@string/you_are_in_premium_features"
                         android:textColor="?attr/colorPrimary"
-                        android:textSize="@dimen/medium"
+                        android:textSize="@dimen/medium_x"
                         android:textStyle="bold" />
 
                 </LinearLayout>

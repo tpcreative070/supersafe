@@ -241,6 +241,7 @@
     <string name="are_you_sure_you_want_to_empty_trash">Are you sure you want to empty Trash?</string>
     <string name="progressing">Progressing...</string>
     <string name="importing">Importing...</string>
+    <string name="exporting">Exporting...</string>
     <string name="Sending">Sending</string>
     <string name="done">Done</string>
     <string name="create_album">Create Album</string>
