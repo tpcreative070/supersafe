@@ -443,6 +443,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data");
                     SingletonPrivateFragment.getInstance().onUpdateView();
+
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera");
                 }

@@ -403,12 +403,20 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             Utils.Log(TAG, "Re-Download file");
         }
+
         if (isSpaceSaver){
             final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, true, false);
             for (Items index : mList){
-                storage.deleteFile(index.originalPath);
+                EnumFormatType formatType = EnumFormatType.values()[index.formatType];
+                switch (formatType) {
+                    case IMAGE: {
+                        storage.deleteFile(index.originalPath);
+                        break;
+                    }
+                }
             }
         }
+
         if (isRefresh){
             ServiceManager.getInstance().onGetListCategoriesSync();
         }

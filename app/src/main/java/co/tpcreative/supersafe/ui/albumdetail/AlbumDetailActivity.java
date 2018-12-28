@@ -629,6 +629,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 .titleColor(getResources().getColor(R.color.black))
                 .negativeText(getString(R.string.cancel))
                 .positiveText(getString(R.string.ok))
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        presenter.status = EnumStatus.CANCEL;
+                    }
+                })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -1076,6 +1082,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     private void deselectAll() {
         boolean isExport = false;
+        final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
         for (int i = 0, l = presenter.mList.size(); i < l; i++) {
             switch (presenter.status){
                 case EXPORT:{
@@ -1085,6 +1092,25 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(i));
                     }
                     isExport = true;
+                    break;
+                }
+                case CANCEL:{
+                    final Items items = presenter.mList.get(i);
+                    if (items.isChecked){
+                        items.isChecked = false;
+                        EnumFormatType formatType = EnumFormatType.values()[items.formatType];
+                        switch (formatType) {
+                            case IMAGE: {
+                                items.isSaver = isSaver;
+                                InstanceGenerator.getInstance(this).onUpdate(items);
+                                if (isSaver){
+                                    storage.deleteFile(items.originalPath);
+                                }
+                                break;
+                            }
+                        }
+                        adapter.notifyItemChanged(i);
+                    }
                     break;
                 }
                 default:{
