@@ -187,7 +187,8 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         switch (action){
             case SCREEN_LOCK:{
                 if (!EnterPinActivity.isVisible){
-                    Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
+                    Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
+                    Utils.Log(TAG,"Pressed home button");
                     EnterPinActivity.isVisible = true;
                     Utils.Log(TAG,"Verify pin");
                 }else{

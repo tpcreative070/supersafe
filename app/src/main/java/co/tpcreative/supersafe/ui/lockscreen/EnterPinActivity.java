@@ -828,6 +828,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                                 Navigator.onMoveFakePinComponent(EnterPinActivity.this);
                                 Bungee.fade(EnterPinActivity.this);
                                 finish();
+                                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
                             }
                         },100);
                         break;

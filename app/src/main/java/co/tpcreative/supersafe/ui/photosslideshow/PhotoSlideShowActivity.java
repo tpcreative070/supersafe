@@ -578,7 +578,19 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        presenter.status = EnumStatus.CANCEL;
+                        final Items items = presenter.mList.get(position);
+                        final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
+                        EnumFormatType formatType = EnumFormatType.values()[items.formatType];
+                        switch (formatType) {
+                            case IMAGE: {
+                                items.isSaver = isSaver;
+                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                                if (isSaver){
+                                    storage.deleteFile(items.originalPath);
+                                }
+                                break;
+                            }
+                        }
                     }
                 })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -825,25 +837,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 presenter.mList.get(position).isDeleteLocal = true;
                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(position));
                 onCheckDelete();
-                break;
-            }
-            case CANCEL:{
-                final Items items = presenter.mList.get(position);
-                if (items.isChecked){
-                    items.isChecked = false;
-                    final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
-                    EnumFormatType formatType = EnumFormatType.values()[items.formatType];
-                    switch (formatType) {
-                        case IMAGE: {
-                            items.isSaver = isSaver;
-                            InstanceGenerator.getInstance(this).onUpdate(items);
-                            if (isSaver){
-                                storage.deleteFile(items.originalPath);
-                            }
-                            break;
-                        }
-                    }
-                }
                 break;
             }
         }

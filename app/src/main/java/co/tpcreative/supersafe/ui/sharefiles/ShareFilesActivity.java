@@ -79,7 +79,6 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
             finish();
             return;
         }
-        onDrawOverLay(this);
         storage = new Storage(this);
         onShowUI(View.GONE);
         onAddPermission();
@@ -395,11 +394,15 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tvTitle.setVisibility(res);
-                imgChecked.setVisibility(res);
-                btnGotIt.setVisibility(res);
-                rlProgress.setVisibility(res);
-                tvTitle.setText(String.format(getString(R.string.imported_file_successful),""+count));
+                try {
+                    tvTitle.setVisibility(res);
+                    imgChecked.setVisibility(res);
+                    btnGotIt.setVisibility(res);
+                    rlProgress.setVisibility(res);
+                    tvTitle.setText(String.format(getString(R.string.imported_file_successful),""+count));
+                }catch (Exception e){
+                    finish();
+                }
             }
         });
     }
