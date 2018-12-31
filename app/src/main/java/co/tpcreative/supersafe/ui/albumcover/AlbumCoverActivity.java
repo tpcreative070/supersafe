@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,8 +46,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
 
-    @BindView(R.id.scrollView)
-    ScrollView scrollView;
     private AlbumCoverDefaultAdapter adapterDefault;
     private AlbumCoverAdapter adapterCustom;
     private boolean isReload;
@@ -214,11 +213,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
             }
             case GET_LIST_FILE:{
                 Utils.Log(TAG,"load data");
-                if (presenter.mList!=null){
-                    if (presenter.mList.size()>0 || presenter.mListMainCategories.size()>0){
-                        scrollView.setVisibility(View.VISIBLE);
-                    }
-                }
                 adapterDefault.setDataSource(presenter.mListMainCategories);
                 adapterCustom.setDataSource(presenter.mList);
                 break;

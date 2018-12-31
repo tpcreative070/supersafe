@@ -81,7 +81,7 @@ public class Navigator {
     public static final String INTENT_EXTRA_ALBUM = "album";
     public static final String INTENT_EXTRA_IMAGES = "images";
     public static final String INTENT_EXTRA_LIMIT = "limit";
-    public static final int DEFAULT_LIMIT = 10;
+    public static final int DEFAULT_LIMIT = 20;
     public static int limit;
 
 
@@ -169,7 +169,7 @@ public class Navigator {
 
     public static void onMoveToAlbum(Activity activity){
         Intent intent = new Intent(activity, AlbumSelectActivity.class);
-        intent.putExtra(Navigator.INTENT_EXTRA_LIMIT, 10);
+        intent.putExtra(Navigator.INTENT_EXTRA_LIMIT, 20);
         activity.startActivityForResult(intent, Navigator.REQUEST_CODE);
     }
 

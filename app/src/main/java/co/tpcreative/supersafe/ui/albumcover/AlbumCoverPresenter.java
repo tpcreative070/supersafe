@@ -24,16 +24,12 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
     protected MainCategories mMainCategories;
     protected List<Items> mList;
     protected List<MainCategories> mListMainCategories;
-    protected List<ListItem> mListItem;
     private static final String TAG = AlbumCoverPresenter.class.getSimpleName();
-
 
     public AlbumCoverPresenter() {
         mMainCategories = new MainCategories();
         mList = new ArrayList<>();
-        mListItem = new ArrayList<>();
     }
-
 
     public void getData(Activity activity) {
         BaseView view = view();
@@ -73,6 +69,8 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
             }
         }
 
+
+        Utils.Log(TAG,"Count list "+ mList.size());
 
         //Utils.Log(TAG,"Categories "+new Gson().toJson(mMainCategories));
         final MainCategories oldMainCategories = MainCategories.getInstance().getCategoriesPosition(mMainCategories.mainCategories_Local_Id);

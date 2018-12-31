@@ -1196,6 +1196,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                         break;
                                                     }
                                                 }
+
                                                 final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                                 if (main != null) {
                                                     itemsResponse.categories_local_id = main.categories_local_id;
@@ -1203,6 +1204,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                 } else {
                                                     Utils.Log(TAG,"..................categories_id is nul.............");
                                                 }
+
                                             } else {
                                                 items.global_original_id = index.global_original_id;
                                                 items.global_thumbnail_id = index.global_thumbnail_id;
