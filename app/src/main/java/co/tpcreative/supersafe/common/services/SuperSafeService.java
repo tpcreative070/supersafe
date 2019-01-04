@@ -1218,7 +1218,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         boolean isNewCategories = false;
                         if (onResponse.nextPage == null) {
                             try {
-                                Utils.Log(TAG,"Special values "+new Gson().toJson(listCategories));
+                                //Utils.Log(TAG,"Special values "+new Gson().toJson(listCategories));
                                 for (MainCategories index : listCategories) {
                                     hashMapGlobalCategories.put(index.categories_id, index.categories_id);
                                     MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
@@ -1307,7 +1307,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                     itemsResponse.categories_local_id = main.categories_local_id;
                                                     onSaveItem(itemsResponse);
                                                 } else {
-                                                    Utils.Log(TAG,"..................categories_id is nul.............");
+                                                    Utils.Log(TAG,"..................categories_id is nul............."+index.categories_id);
                                                 }
 
                                             } else {
