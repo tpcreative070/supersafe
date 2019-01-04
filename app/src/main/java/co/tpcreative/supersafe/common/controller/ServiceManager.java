@@ -115,6 +115,7 @@ public class ServiceManager implements BaseView {
     private boolean isExporting;
     private boolean isDownloadingFiles;
     private boolean isWaitingSendMail;
+    private boolean isUpdate;
     private int countSyncData = 0;
     private int totalList = 0;
 
@@ -177,6 +178,10 @@ public class ServiceManager implements BaseView {
 
     public void setDeleteAlbum(boolean deleteAlbum) {
         isDeleteAlbum = deleteAlbum;
+    }
+
+    public void setUpdate(boolean update) {
+        isUpdate = update;
     }
 
     public void setCategoriesSync(boolean categoriesSync) {
@@ -520,6 +525,17 @@ public class ServiceManager implements BaseView {
             return;
         }
 
+        final List<Items> mUpdateListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLoadListItemUpdate(true,true, true,false);
+        if (isUpdate) {
+            Utils.Log(TAG, "List categories is updating...----------------*******************************-----------");
+            return;
+        }
+        else{
+            if (mUpdateListItem!=null && mUpdateListItem.size()>0){
+                onUpdateOnOwnItems();
+            }
+        }
+
         if (isGetListCategories) {
             Utils.Log(TAG, "Getting list categories...----------------*******************************-----------");
             return;
@@ -560,8 +576,12 @@ public class ServiceManager implements BaseView {
                         isLoadingData = false;
                         Utils.Log(TAG, "next page on onSyncDataOwnServer " + nextPage);
                         onSyncDataOwnServer(nextPage);
-                    } else if (status == EnumStatus.SYNC_READY) {
-
+                    }
+                    else if (status == EnumStatus.RELOAD){
+                        isLoadingData = false;
+                        onSyncDataOwnServer("0");
+                    }
+                    else if (status == EnumStatus.SYNC_READY) {
                         isLoadingData = false;
                         final List<Items> itemsDownload = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncDownloadDataItems(false);
 
@@ -616,6 +636,7 @@ public class ServiceManager implements BaseView {
                             }
                         }
 
+
                         if (mainCategories != null && mainCategories.size() > 0) {
                             getObservable();
                             Utils.Log(TAG, "Preparing categories sync on own cloud...");
@@ -644,7 +665,8 @@ public class ServiceManager implements BaseView {
                                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                                 }
                             });
-                        } else if (itemsDownload != null) {
+                        }
+                        else if (itemsDownload != null) {
                             if (itemsDownload.size() > 0) {
                                 Utils.Log(TAG, "Preparing downloading..."+new Gson().toJson(itemsDownload));
                                 onDownloadFilesFromDriveStore();
@@ -671,6 +693,58 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "My service is null");
         }
     }
+
+
+    public void onUpdateOnOwnItems() {
+        if (myService == null) {
+            Utils.Log(TAG, "Service is null on " + EnumStatus.UPDATE);
+            return;
+        }
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            Utils.Log(TAG, "Check network connection");
+            return;
+        }
+
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLoadListItemUpdate(true,true, true,false);
+
+        if (mList == null) {
+            Utils.Log(TAG, "No Found data to delete on own items!!!");
+            return;
+        }
+
+        countSyncData = 0;
+        isUpdate = true;
+        totalList = mList.size();
+        if (mList.size() == 0) {
+            Utils.Log(TAG, "Not Found own data id to update");
+            isUpdate = false;
+            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            return;
+        }
+        subscriptions = Observable.fromIterable(mList)
+                .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
+                .doOnNext(i -> {
+                    Utils.Log(TAG, "Starting Updating items on own cloud.......");
+                    final Items mItem = i;
+                    isUpdate = true;
+                    myService.onUpdateItems(mItem, new ServiceManagerShortListener() {
+                        @Override
+                        public void onError(String message, EnumStatus status) {
+                            Utils.Log(TAG, "Result updated "+ message + "--" + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.UPDATE);
+                        }
+                        @Override
+                        public void onSuccessful(String message, EnumStatus status) {
+                            Utils.Log(TAG,"Result updated "+ message + " -- " + status.name());
+                            onUpdateSyncDataStatus(EnumStatus.UPDATE);
+                        }
+                    });
+                })
+                .doOnComplete(() -> {
+                })
+                .subscribe();
+    }
+
 
     public void onDeleteOnOwnItems() {
         if (myService == null) {
@@ -1378,6 +1452,7 @@ public class ServiceManager implements BaseView {
 
                         itemsPhoto.isSyncCloud = false;
                         itemsPhoto.isSyncOwnServer = false;
+                        itemsPhoto.isUpdate = false;
                         itemsPhoto.statusAction = EnumStatus.UPLOAD.ordinal();
 
 
@@ -1491,6 +1566,7 @@ public class ServiceManager implements BaseView {
 
                         itemsVideo.isSyncCloud = false;
                         itemsVideo.isSyncOwnServer = false;
+                        itemsVideo.isUpdate = false;
                         itemsVideo.statusAction = EnumStatus.UPLOAD.ordinal();
 
 
@@ -1572,6 +1648,7 @@ public class ServiceManager implements BaseView {
 
                         itemsAudio.isSyncCloud = false;
                         itemsAudio.isSyncOwnServer = false;
+                        itemsAudio.isUpdate = false;
                         itemsAudio.statusAction = EnumStatus.UPLOAD.ordinal();
 
 
@@ -1649,6 +1726,7 @@ public class ServiceManager implements BaseView {
 
                         itemsFile.isSyncCloud = false;
                         itemsFile.isSyncOwnServer = false;
+                        itemsFile.isUpdate = false;
                         itemsFile.statusAction = EnumStatus.UPLOAD.ordinal();
 
 
@@ -1779,10 +1857,13 @@ public class ServiceManager implements BaseView {
 
     public void onSaveDataOnCamera(final byte[] mData, final MainCategories mainCategories) {
         subscriptions = Observable.create(subscriber -> {
+
             final MainCategories mMainCategories = mainCategories;
             final String categories_id = mMainCategories.categories_id;
             final String categories_local_id = mMainCategories.categories_local_id;
             final boolean isFakePin = mMainCategories.isFakePin;
+
+            Utils.Log(TAG,"categories_local_id " +categories_local_id );
 
             final byte[] data = mData;
             try {
@@ -1824,6 +1905,7 @@ public class ServiceManager implements BaseView {
                 items.custom_items = 0;
                 items.isSyncCloud = false;
                 items.isSyncOwnServer = false;
+                items.isUpdate = false;
                 items.statusAction = EnumStatus.UPLOAD.ordinal();
 
                 final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
@@ -2330,6 +2412,19 @@ public class ServiceManager implements BaseView {
                 }
                 break;
             }
+            case UPDATE:{
+                countSyncData += 1;
+                if (countSyncData == totalList) {
+                    isUpdate = false;
+                    String message = "Completed update own...................items " + countSyncData + "/" + totalList;
+                    Utils.Log(TAG,message);
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                } else {
+                    String message = "Completed delete count item...................updated " + countSyncData + "/" + totalList;
+                    Utils.Log(TAG, message);
+                }
+                break;
+            }
         }
     }
 
@@ -2338,7 +2433,7 @@ public class ServiceManager implements BaseView {
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail || isUpdate) {
             Utils.Log(TAG, "Progress isDownloadData is :" + isDownloadData);
             Utils.Log(TAG, "Progress isUploadData is :" + isUploadData);
             Utils.Log(TAG, "Progress isDownloadingFiles is :" + isDownloadingFiles);
@@ -2350,6 +2445,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Progress isGetListCategories is :" + isGetListCategories);
             Utils.Log(TAG, "Progress isCategoriesSync is :" + isCategoriesSync);
             Utils.Log(TAG, "Progress isWaitingSendMail is :" + isWaitingSendMail);
+            Utils.Log(TAG, "Progress isUpdate is :" + isUpdate);
         }
         else {
             SingletonPremiumTimer.getInstance().onStop();
@@ -2364,6 +2460,7 @@ public class ServiceManager implements BaseView {
             ServiceManager.getInstance().setGetListCategories(false);
             ServiceManager.getInstance().setCategoriesSync(false);
             ServiceManager.getInstance().setIsWaitingSendMail(false);
+            ServiceManager.getInstance().setUpdate(false);
             if (myService != null) {
                 myService.unbindView();
             }
@@ -2469,6 +2566,7 @@ public class ServiceManager implements BaseView {
                 ServiceManager.getInstance().setGetListCategories(false);
                 ServiceManager.getInstance().setCategoriesSync(false);
                 ServiceManager.getInstance().setIsWaitingSendMail(false);
+                ServiceManager.getInstance().setUpdate(false);
                 Utils.Log(TAG,"Disconnect");
                 break;
             }

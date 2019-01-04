@@ -95,5 +95,9 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE formatType =:formatType ORDER BY id DESC LIMIT 2")
     List<Items> loadAllSaved(int formatType);
 
+    @Query("Select * FROM items WHERE isUpdate =:isUpdate AND  isSyncCloud = :isSyncCloud AND isSyncOwnServer =:isSyncOwnServer AND isFakePin =:isFakePin")
+    List<Items> loadListItemUpdate(boolean isUpdate,boolean isSyncCloud,boolean isSyncOwnServer,boolean isFakePin);
+
+
 
 }

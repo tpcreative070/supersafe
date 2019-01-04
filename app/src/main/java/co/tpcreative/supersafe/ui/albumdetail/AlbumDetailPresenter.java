@@ -1,6 +1,9 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.app.Activity;
 import android.os.Bundle;
+
+import com.google.gson.Gson;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,9 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
         mListHashExporting = new ArrayList<>();
         String result =  ConvertUtils.byte2FitMemorySize(Utils.getAvailableSpaceInBytes());
         Utils.Log(TAG,result);
+
+       // List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(false);
+       // Utils.onWriteLog(new Gson().toJson(mList),EnumStatus.GET_LIST_FILE);
     }
 
     public void  getData(Activity activity){
@@ -51,6 +57,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
                 if (data!=null){
                     mList = data;
                     onCalculate();
+                    Utils.Log(TAG,"Result list "+ new Gson().toJson(data));
                 }
                 view.onSuccessful("Successful",EnumStatus.RELOAD);
             }

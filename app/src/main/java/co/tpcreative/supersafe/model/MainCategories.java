@@ -347,4 +347,20 @@ public class MainCategories implements Serializable{
         return null;
     }
 
+
+    public HashMap<String,MainCategories> getMainCurrentCategories(){
+        final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
+        final HashMap<String,MainCategories>hashMap = new HashMap<>();
+        if (list!=null){
+            for (int i = 0;i< list.size();i++){
+               final MainCategories main  = list.get(i);
+               final String categories_id = main.categories_id;
+               if (categories_id!=null){
+                   hashMap.put(categories_id,main);
+               }
+            }
+        }
+        return hashMap;
+    }
+
 }

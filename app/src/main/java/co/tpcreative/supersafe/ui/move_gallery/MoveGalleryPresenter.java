@@ -74,6 +74,10 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 final Items item = mList.get(i);
                 if (item.isChecked){
                     item.categories_local_id = gallery.main.categories_local_id;
+                    item.categories_id = gallery.main.categories_id;
+                    if (item.isSyncCloud && item.isSyncOwnServer){
+                        item.isUpdate = true;
+                    }
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(item);
                 }
             }

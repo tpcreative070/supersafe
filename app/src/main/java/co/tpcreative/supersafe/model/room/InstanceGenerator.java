@@ -17,7 +17,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 
-@Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 4, exportSchema = false)
+@Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 5, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
     @Ignore
@@ -35,16 +35,44 @@ public abstract class InstanceGenerator extends RoomDatabase {
     @Ignore
     public static final String TAG = InstanceGenerator.class.getSimpleName();
 
+
+    static final Migration MIGRATION_4_5 = new Migration(4,5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isUpdate' INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+
     public static InstanceGenerator getInstance(Context context) {
         if (instance == null) {
-            instance = Room.databaseBuilder(context.getApplicationContext(),
-                    InstanceGenerator.class,
-                    SuperSafeApplication.getInstance().getString(R.string.key_database))
+//            instance = Room.databaseBuilder(context,
+//                     InstanceGenerator.class,
+//                     context.getString(R.string.database_name))
+//                     .allowMainThreadQueries()
+//                     .build();
+
+            instance = Room.databaseBuilder(context,
+                    InstanceGenerator.class,context.getString(R.string.key_database))
+                    .addMigrations(MIGRATION_4_5)
                     .allowMainThreadQueries()
                     .build();
         }
         return instance;
     }
+
+
+
+//    public static InstanceGenerator getInstance(Context context) {
+//        if (instance == null) {
+//            instance = Room.databaseBuilder(context.getApplicationContext(),
+//                    InstanceGenerator.class,
+//                    SuperSafeApplication.getInstance().getString(R.string.key_database))
+//                    .allowMainThreadQueries()
+//                    .build();
+//        }
+//        return instance;
+//    }
 
     public String getUUId(){
         try {
@@ -325,6 +353,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     public final synchronized List<Items> getListItemId(boolean isSyncCloud,boolean isFakePin){
         try{
             return instance.itemsDao().loadListItemId(isSyncCloud,isFakePin);
+        }
+        catch (Exception e){
+            Log.d(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<Items> getLoadListItemUpdate(boolean isUpdate,boolean isSyncCloud,boolean isSyncOwnServer,boolean isFakePin){
+        try{
+            return instance.itemsDao().loadListItemUpdate(isUpdate,isSyncCloud,isSyncOwnServer,isFakePin);
         }
         catch (Exception e){
             Log.d(TAG,e.getMessage());

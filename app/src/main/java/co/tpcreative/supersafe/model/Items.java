@@ -48,6 +48,7 @@ public class Items implements Serializable {
     public boolean isExport;
     public boolean isWaitingForExporting;
     public int custom_items;
+    public boolean isUpdate;
 
     @Ignore
     public boolean isChecked;
@@ -105,9 +106,10 @@ public class Items implements Serializable {
         this.isExport = items.isExport;
         this.isWaitingForExporting = items.isWaitingForExporting;
         this.custom_items = items.custom_items;
+        this.isUpdate = items.isUpdate;
     }
 
-    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items){
+    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items,boolean isUpdate){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -138,6 +140,7 @@ public class Items implements Serializable {
         this.isExport = isExport;
         this.isWaitingForExporting = isWaitingForExporting;
         this.custom_items = custom_items;
+        this.isUpdate = isUpdate;
     }
 
     public Items(){
@@ -145,6 +148,7 @@ public class Items implements Serializable {
         this.isSyncCloud = false;
         this.isSyncOwnServer = false;
         this.isOriginalGlobalId = false;
+        this.isUpdate = false;
     }
 
     @Ignore
