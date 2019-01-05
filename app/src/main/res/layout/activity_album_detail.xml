@@ -138,4 +138,9 @@
         android:layout_gravity="bottom|end"
         layout="@layout/footer_items_detail_album"/>
 
+
+
+
+
+
 </android.support.design.widget.CoordinatorLayout>

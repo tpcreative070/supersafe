@@ -236,6 +236,8 @@ dependencies {
     /*Even Bus*/
     implementation 'org.greenrobot:eventbus:3.1.1'
 
+
+
 }
 
 /*Resolved duplicated for Google api client*/

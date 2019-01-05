@@ -30,4 +30,19 @@
     <attr name="preference_summary" format="reference"/>
     <attr name="preference_icon" format="reference"/>
 
+
+    <declare-styleable name="CircleProgressBar">
+        <attr name="progressColor" format="color"/>
+        <attr name="backgroundColor" format="color"/>
+        <attr name="strokeWidths" format="float"/>
+        <attr name="backgroundWidth" format="float"/>
+        <attr name="roundedCorners" format="boolean"/>
+        <attr name="maxValue" format="float"/>
+        <attr name="progressTextColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="progressText" format="string"/>
+        <attr name="suffix" format="string"/>
+        <attr name="prefix" format="string"/>
+    </declare-styleable>
+
 </resources>

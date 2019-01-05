@@ -17,4 +17,5 @@
         </attr>
         <attr name="circleProgressStartAnimationDuration" format="integer" />
     </declare-styleable>
+
 </resources>
