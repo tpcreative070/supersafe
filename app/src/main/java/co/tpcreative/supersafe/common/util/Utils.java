@@ -987,6 +987,9 @@ public class Utils {
     }
 
     public static void onWriteLog(String message, EnumStatus status) {
+        if (!BuildConfig.DEBUG){
+            return;
+        }
         if (status==null){
             Utils.mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + Utils.getCurrentDateTimeFormat() +" ----Content--- :" + message, true);
         }

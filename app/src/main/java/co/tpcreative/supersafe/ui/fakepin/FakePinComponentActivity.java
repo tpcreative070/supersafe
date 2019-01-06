@@ -37,13 +37,16 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
+import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlideFakePin;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
@@ -52,15 +55,16 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.Theme;
 
 
-public class FakePinComponentActivity extends BaseActivityNoneSlide implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
+public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
 
+    private static final String TAG = FakePinComponentActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     private FakePinComponentAdapter adapter;
     private FakePinComponentPresenter presenter;
-    private static final String TAG = FakePinComponentActivity.class.getSimpleName();
+    public static boolean isVisit ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -308,7 +312,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlide implements B
         presenter.getData();
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinComponentActivity.class.getSimpleName());
+        isVisit = true;
     }
 
     @Override
@@ -317,8 +321,8 @@ public class FakePinComponentActivity extends BaseActivityNoneSlide implements B
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+        isVisit = false;
     }
-
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

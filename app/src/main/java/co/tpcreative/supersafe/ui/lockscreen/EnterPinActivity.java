@@ -59,6 +59,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
@@ -825,10 +826,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                Navigator.onMoveFakePinComponent(EnterPinActivity.this);
-                                Bungee.fade(EnterPinActivity.this);
-                                finish();
                                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+                                if (FakePinComponentActivity.isVisit){
+                                    finish();
+                                }
+                                else{
+                                    Navigator.onMoveFakePinComponent(EnterPinActivity.this);
+                                }
                             }
                         },100);
                         break;

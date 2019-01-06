@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.ui.me;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -27,6 +29,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.User;
+import spencerstudios.com.bungeelib.Bungee;
 
 public class MeFragment extends BaseFragment implements BaseView,SingletonPremiumTimer.SingletonPremiumTimerListener{
 
@@ -249,7 +252,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         Navigator.onSettings(getActivity());
     }
 
-
     @OnClick(R.id.llAccount)
     public void onVerifyAccount(View view){
        if (presenter.mUser!=null){
@@ -261,6 +263,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
            }
        }
     }
+
 
     @OnClick(R.id.llEnableCloud)
     public void onEnableCloud(View view){

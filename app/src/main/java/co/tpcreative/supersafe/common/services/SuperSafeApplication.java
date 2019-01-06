@@ -90,7 +90,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         super.onCreate();
         InstanceGenerator.getInstance(this);
         mInstance = this;
-        isLive = true;
+        isLive = false;
 
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
@@ -251,25 +251,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityResumed(Activity activity) {
-//        String currentActivity = activity.getClass().getSimpleName();
-//        String hashValue = getKeyHomePressed().get(currentActivity);
-//        if (hashValue != null && hashValue.equals(currentActivity)) {
-//            int value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
-//            EnumPinAction action = EnumPinAction.values()[value];
-//            switch (action) {
-//                case SCREEN_PRESS_HOME: {
-//                    Utils.Log(TAG, "Start screen off.................:" + activity.getClass().getSimpleName());
-//                    PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal());
-//                    Navigator.onMoveToVerifyPin(activity,EnumPinAction.NONE);
-//                    break;
-//                }
-//                default: {
-//                    Utils.Log(TAG, "Nothing to do "+ action.name());
-//                }
-//            }
-//        } else {
-//            Utils.Log(TAG, "Exception activity " + currentActivity);
-//        }
         ++resumed;
     }
 

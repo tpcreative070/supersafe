@@ -77,6 +77,7 @@ public class Navigator {
     public static final int FETCH_STARTED = 2001;
     public static final int FETCH_COMPLETED = 2002;
     public static final int ERROR = 2005;
+    public static final int COMPLETED_RECREATE = 2006;
     public static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 23;
     public static final String INTENT_EXTRA_ALBUM = "album";
     public static final String INTENT_EXTRA_IMAGES = "images";
@@ -191,9 +192,9 @@ public class Navigator {
         context.startActivityForResult(intent,PHOTO_SLIDE_SHOW);
     }
 
-    public static void onSettings(Context context){
+    public static void onSettings(Activity context){
         Intent intent = new Intent(context, SettingsActivity.class);
-        context.startActivity(intent);
+        context.startActivityForResult(intent,COMPLETED_RECREATE);
     }
 
     public static void onVerifyAccount(Context context){

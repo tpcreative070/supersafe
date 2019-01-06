@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
@@ -54,6 +55,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -65,6 +67,7 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import spencerstudios.com.bungeelib.Bungee;
 
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
@@ -82,6 +85,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     AnimationsContainer.FramesSequenceAnimation animation;
     private MenuItem menuItem;
     private EnumStatus previousStatus;
+    public static boolean isVisit ;
 
 
     @Override
@@ -138,7 +142,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public void onMessageEvent(EnumStatus event) {
         switch (event){
             case COMPLETED_RECREATE:{
-                recreate();
+                Navigator.onMoveToMainTab(this);
+                Bungee.fade(this);
                 break;
             }
             case UNLOCK:{
@@ -164,7 +169,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-
         onCallLockScreen();
         int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];
@@ -174,11 +178,22 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 break;
             }
         }
-
         GoogleDriveConnectionManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(MainTabActivity.class.getSimpleName());
         presenter.onGetUserInfo();
+        isVisit = true;
+        if (presenter.mUser.driveConnected){
+            if (NetworkUtil.pingIpAddress(this)) {
+                return;
+            }
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onAnimationIcon(EnumStatus.DONE);
+                }
+            },3000);
+        }
         Utils.Log(TAG,"onResume");
     }
 
@@ -187,6 +202,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
+        isVisit = false;
     }
 
     @Override
@@ -430,6 +446,16 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "Selected album :");
         switch (requestCode) {
+            case Navigator.COMPLETED_RECREATE :{
+                if (resultCode == Activity.RESULT_OK) {
+                    Navigator.onMoveToMainTab(this);
+                    Bungee.fade(this);
+                    Utils.Log(TAG,"New Activity");
+                } else {
+                    Utils.Log(TAG, "Nothing Updated theme");
+                }
+                break;
+            }
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data");
@@ -582,6 +608,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public void onAnimationIcon(final EnumStatus status){
         Utils.Log(TAG,"value : "+ status.name());
         if (getMenuItem()==null){
+            Utils.Log(TAG,"Menu is nulll");
             return;
         }
 

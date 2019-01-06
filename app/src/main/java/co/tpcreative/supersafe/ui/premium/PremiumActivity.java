@@ -117,7 +117,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
 
-        if (!User.getInstance().isPremiumExpired()){
+        if (User.getInstance().isPremiumExpired()){
             final boolean value  = PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false);
             if (value){
                 onDrawOverLay(this);

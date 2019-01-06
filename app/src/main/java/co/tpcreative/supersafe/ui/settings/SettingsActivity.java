@@ -20,6 +20,8 @@ import android.view.WindowManager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.google.gson.Gson;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -27,6 +29,7 @@ import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -40,6 +43,7 @@ public class SettingsActivity extends BaseActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     private static Activity activity;
+    private boolean isChangedTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +91,7 @@ public class SettingsActivity extends BaseActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.content_frame, fragment);
                 transaction.commit();
-                EventBus.getDefault().post(EnumStatus.COMPLETED_RECREATE);
+                isChangedTheme = true;
                 break;
             }
             case FINISH:{
@@ -104,7 +108,6 @@ public class SettingsActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(SettingsActivity.class.getSimpleName());
     }
 
     @Override
@@ -155,6 +158,10 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        if (isChangedTheme){
+            Intent intent = getIntent();
+            setResult(RESULT_OK,intent);
+        }
         super.onBackPressed();
     }
 

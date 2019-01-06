@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.activity;
+
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
@@ -8,7 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.snatik.storage.Storage;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import co.tpcreative.supersafe.R;
@@ -24,24 +27,19 @@ import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
-public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
+public abstract class BaseActivityNoneSlideFakePin extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
 
     Unbinder unbinder;
     int onStartCount = 0;
     private Toast mToast;
     private HomeWatcher mHomeWatcher;
-    public static final String TAG = BaseActivityNoneSlide.class.getSimpleName();
+    public static final String TAG = BaseActivityNoneSlideFakePin.class.getSimpleName();
     protected Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onStartCount = 1;
-        if (savedInstanceState == null) {
-            Bungee.fade(this);
-        } else {
-            onStartCount = 2;
-        }
         storage = new Storage(this);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
