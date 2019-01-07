@@ -447,7 +447,6 @@ public class ServiceManager implements BaseView {
                 });
     }
 
-
     public void onCheckingMissData() {
         Utils.Log(TAG, "Preparing checking miss data ###########################");
         if (myService == null) {
@@ -850,7 +849,6 @@ public class ServiceManager implements BaseView {
                 .subscribe();
     }
 
-
     public void onDeleteCloud() {
         if (myService == null) {
             Utils.Log(TAG, "Service is null on " + EnumStatus.DELETE_SYNC_CLOUD_DATA);
@@ -913,7 +911,6 @@ public class ServiceManager implements BaseView {
                             onUpdateSyncDataStatus(EnumStatus.DELETE_SYNC_CLOUD_DATA);
                         }
                     });
-
                 })
                 .doOnComplete(() -> {
                 })

@@ -65,7 +65,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.util.Configuration;
-import co.tpcreative.supersafe.common.views.CircleProgressBar;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -79,7 +78,6 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
-
 
 public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
 
@@ -104,7 +102,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     Toolbar toolbar;
     @BindView(R.id.llBottom)
     LinearLayout llBottom;
-
 
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
@@ -821,7 +818,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
         }
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
