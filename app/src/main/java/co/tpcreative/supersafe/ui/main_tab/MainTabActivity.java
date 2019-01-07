@@ -549,12 +549,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         else{
             Utils.Log(TAG,"Premium!!!!!!");
         }
-
         Utils.Log(TAG,"is expired "+ User.getInstance().isPremiumExpired());
         Utils.Log(TAG,"is premium "+ isPremium);
         Utils.Log(TAG,"is complimentary "+ isComplimentary);
-        Utils.Log(TAG,"User info "+ new Gson().toJson(User.getInstance().getUserInfo()));
-
+        //Utils.Log(TAG,"User info "+ new Gson().toJson(User.getInstance().getUserInfo()));
     }
 
     @Override

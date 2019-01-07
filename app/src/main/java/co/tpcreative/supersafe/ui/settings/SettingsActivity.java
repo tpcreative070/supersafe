@@ -98,6 +98,13 @@ public class SettingsActivity extends BaseActivity {
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case CLOSED:{
+                if (isChangedTheme){
+                    Intent intent = getIntent();
+                    setResult(RESULT_OK,intent);
+                }
+                break;
+            }
         }
     };
 

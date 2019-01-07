@@ -97,6 +97,7 @@ public enum EnumStatus {
         ADD_EMAIL_TOKEN,
         DownLoadDone,
         CANCEL,
-        OTHER
+        OTHER,
+        CLOSED
 
 }
