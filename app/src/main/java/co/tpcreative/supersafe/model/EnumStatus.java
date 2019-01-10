@@ -98,6 +98,8 @@ public enum EnumStatus {
         DownLoadDone,
         CANCEL,
         OTHER,
-        CLOSED
+        CLOSED,
+        SECRET_USER,
+        SECRET_PIN
 
 }

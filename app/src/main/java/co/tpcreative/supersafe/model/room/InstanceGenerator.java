@@ -10,12 +10,12 @@ import android.util.Log;
 import java.util.List;
 import java.util.UUID;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
+//import co.tpcreative.supersafe.model.Secret;
 
 @Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 5, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
@@ -32,16 +32,31 @@ public abstract class InstanceGenerator extends RoomDatabase {
     @Ignore
     public abstract BreakInAlertsDao breakInAlertsDao();
 
+//    @Ignore
+//    public abstract SecretDao secretDao();
+
     @Ignore
     public static final String TAG = InstanceGenerator.class.getSimpleName();
-
 
     static final Migration MIGRATION_4_5 = new Migration(4,5) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isUpdate' INTEGER NOT NULL DEFAULT 0");
+            //database.execSQL("CREATE TABLE 'secret' ('id' INTEGER, "+" 'content' TEXT NOT NULL,"+" 'action_name' INTEGER NOT NULL , PRIMARY KEY('id'))");
+            //database.execSQL("CREATE TABLE IF NOT EXISTS 'secret' ('id' INTEGER, "+" 'content' TEXT,"+" 'action_name' INTEGER , PRIMARY KEY('id'))");
+            //database.execSQL("CREATE TABLE IF NOT EXISTS 'secret' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'action_name' INTEGER NOT NULL, 'content' TEXT NOT NULL )");
         }
     };
+
+//    static final Migration MIGRATION_5_6 = new Migration(5,6) {
+//        @Override
+//        public void migrate(SupportSQLiteDatabase database) {
+//            database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isUpdate' INTEGER NOT NULL DEFAULT 0");
+//            database.execSQL("CREATE TABLE IF NOT EXISTS 'secret' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'action_name' INTEGER NOT NULL, 'content' TEXT NOT NULL)");
+//            //database.execSQL("CREATE TABLE 'secret' ('id' INTEGER, "+" 'content' TEXT,"+" 'action_name' INTEGER, PRIMARY KEY('id'))");
+//            // database.execSQL("CREATE TABLE IF NOT EXISTS 'secret' ('id' INTEGER, "+" 'content' TEXT,"+" 'action_name' INTEGER , PRIMARY KEY('id'))");
+//        }
+//    };
 
 
     public static InstanceGenerator getInstance(Context context) {
@@ -60,8 +75,6 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return instance;
     }
-
-
 
 //    public static InstanceGenerator getInstance(Context context) {
 //        if (instance == null) {
@@ -631,6 +644,63 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return null;
     }
+
+
+
+    /*Secret*/
+
+//    public synchronized void onInsert(Secret secret){
+//        try {
+//            if (secret==null){
+//                return;
+//            }
+//            instance.secretDao().insert(secret);
+//        }
+//        catch (Exception e){
+//            Log.d(TAG,e.getMessage());
+//        }
+//    }
+//
+//    public synchronized void onUpdate(Secret secret){
+//        try {
+//            if (secret==null){
+//                Utils.Log(TAG,"Null???? ");
+//                return;
+//            }
+//            instance.secretDao().update(secret);
+//        }
+//        catch (Exception e){
+//            Log.d(TAG,e.getMessage());
+//        }
+//    }
+//
+//    public synchronized void onDelete(Secret secret){
+//        try {
+//            if (secret==null){
+//                Utils.Log(TAG,"Null???? ");
+//                return;
+//            }
+//            instance.secretDao().delete(secret);
+//        }
+//        catch (Exception e){
+//            Log.d(TAG,e.getMessage());
+//        }
+//    }
+//
+//    public final synchronized Secret loadSecret(int action_name){
+//        try{
+//            final Secret secret =  instance.secretDao().loadSecretName(action_name);
+//            if (secret!=null){
+//                if (secret.content!=null){
+//                    return secret;
+//                }
+//            }
+//        }
+//        catch (Exception e){
+//            Log.d(TAG,e.getMessage());
+//        }
+//        return null;
+//    }
 
 }
 

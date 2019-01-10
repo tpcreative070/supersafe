@@ -23,7 +23,6 @@ import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import org.solovyev.android.checkout.Billing;
-import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;

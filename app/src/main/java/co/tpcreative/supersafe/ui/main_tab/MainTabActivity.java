@@ -109,6 +109,21 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
         SingletonPremiumTimer.getInstance().onStartTimer();
+
+
+        if (presenter.mUser.driveConnected){
+            if (NetworkUtil.pingIpAddress(this)) {
+                return;
+            }
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onAnimationIcon(EnumStatus.DONE);
+                }
+            },2000);
+        }
+
     }
 
     public void onShowSuggestion(){
@@ -182,18 +197,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         onRegisterHomeWatcher();
         presenter.onGetUserInfo();
         isVisit = true;
-        if (presenter.mUser.driveConnected){
-            if (NetworkUtil.pingIpAddress(this)) {
-                return;
-            }
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onAnimationIcon(EnumStatus.DONE);
-                }
-            },3000);
-        }
         Utils.Log(TAG,"onResume");
     }
 
