@@ -1782,10 +1782,13 @@ public class ServiceManager implements BaseView {
                                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
 
                                         if (!mResponse.categories.isCustom_Cover) {
-                                            final MainCategories main = mResponse.categories;
-                                            main.items_id = items.items_id;
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                            if (enumFormatType==EnumFormatType.IMAGE){
+                                                final MainCategories main = mResponse.categories;
+                                                main.items_id = items.items_id;
+                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                            }
                                         }
+
                                     }
                                     break;
                                 }

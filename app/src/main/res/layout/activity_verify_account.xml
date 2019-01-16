@@ -108,20 +108,17 @@
                         android:text="@string/send_verification_code"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_normal" />
-
-
                 </RelativeLayout>
 
 
                 <TextView
                     android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_size_normal"
+                    android:textSize="@dimen/medium_17"
                     android:layout_marginTop="30dp"
                     android:layout_below="@+id/btnSendVerifyCode"
                     android:text="@string/verify_code_to_sync_files_to_cloud"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
 
                 <RelativeLayout
                     android:visibility="gone"
