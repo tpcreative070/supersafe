@@ -108,38 +108,15 @@ public class Theme implements Serializable {
         return new Theme(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
     }
 
-
-    public List<Theme> getDefaultThemeList(){
-        try{
-            String result = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_theme_list),null);
-            Type listType = new TypeToken<ArrayList<Theme>>(){}.getType();
-            List<Theme> mList = new Gson().fromJson(result, listType);
-            return mList;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public List<Theme> getList(){
         try{
-            final List<Theme> value = getDefaultThemeList();
-            if (value!=null){
-                return value;
-            }
-            else{
-               final List<Theme> mList = new ArrayList<>();
-               mList.addAll(ThemeUtil.getThemeList());
-               PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_list),new Gson().toJson(mList));
-               return mList;
-            }
+            final List<Theme> mList = ThemeUtil.getThemeList();
+            return mList;
         }
         catch (Exception e){
             e.printStackTrace();
         }
         return new ArrayList<>();
     }
-
 
 }
