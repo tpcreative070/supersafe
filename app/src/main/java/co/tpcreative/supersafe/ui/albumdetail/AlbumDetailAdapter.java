@@ -169,7 +169,13 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                         break;
                     }
                     case DONE:{
-                        imgCheck.setVisibility(View.VISIBLE);
+                        if (data.isSaver){
+                            imgCheck.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_attach_money_white_48));
+                            imgCheck.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            imgCheck.setVisibility(View.VISIBLE);
+                        }
                         progressingBar.setVisibility(View.INVISIBLE);
                         break;
                     }
