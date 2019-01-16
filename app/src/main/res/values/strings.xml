@@ -500,6 +500,11 @@
     <string name="your_premium_has_expired">Your premium has expired. Do you want to upgrade to continue to use services?</string>
     <string name="default_icon">Default Items</string>
     <string name="custom_icon">Custom Items</string>
+    <string name="this_is_premium_feature">This is Premium feature</string>
+    <string name="upgrade_now">Upgrade now to access this feature and more.</string>
+    <string name="later">Later</string>
+    <string name="get_premium">Get premium</string>
+
 
     <!--Help and Support -->
     <string name="faq">FAQ</string>

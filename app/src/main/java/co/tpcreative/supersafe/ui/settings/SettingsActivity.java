@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -17,6 +18,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -241,28 +245,32 @@ public class SettingsActivity extends BaseActivity {
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
                             if (User.getInstance().isPremiumExpired()){
-                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                                onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveThemeSettings(activity);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
                             if (User.getInstance().isPremiumExpired()){
-                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                                onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveBreakInAlerts(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
                             if (User.getInstance().isPremiumExpired()){
-                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                                onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveFakePin(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_secret_door))){
                             if (User.getInstance().isPremiumExpired()){
-                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                                onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveSecretDoor(getContext());
@@ -291,7 +299,8 @@ public class SettingsActivity extends BaseActivity {
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
                             if (User.getInstance().isPremiumExpired()){
-                                onShowDialog(getString(R.string.your_premium_has_expired));
+                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                                onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveUnlockAllAlbums(getContext());
@@ -381,22 +390,53 @@ public class SettingsActivity extends BaseActivity {
             addPreferencesFromResource(R.xml.pref_general);
         }
 
-        public void onShowDialog(String message){
-            MaterialDialog.Builder builder =  new MaterialDialog.Builder(getContext())
-                    .title(getString(R.string.confirm))
-                    .theme(Theme.LIGHT)
-                    .content(message)
-                    .titleColor(getResources().getColor(R.color.black))
-                    .negativeText(getString(R.string.cancel))
-                    .positiveText(getString(R.string.ok))
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Navigator.onMoveToPremium(getContext());
+
+        public void onShowPremium(){
+            try {
+                de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(getContext());
+                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                builder.setHeaderBackground(theme.getAccentColor());
+                builder.setTitle(getString(R.string.this_is_premium_feature));
+                builder.setMessage(getString(R.string.upgrade_now));
+                builder.setCustomHeader(R.layout.custom_header);
+                builder.setPadding(40,40,40,0);
+                builder.setMargin(60,0,60,0);
+                builder.showHeader(true);
+                builder.setPositiveButton(getString(R.string.get_premium), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Navigator.onMoveToPremium(getContext());
+                    }
+                });
+
+                builder.setNegativeButton(getText(R.string.later), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
+                builder.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        Button positive = dialog.findViewById(android.R.id.button1);
+                        Button negative = dialog.findViewById(android.R.id.button2);
+                        TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+
+                        if (positive!=null && negative!=null && textView!=null){
+                            positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                            negative.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                            textView.setTextSize(16);
                         }
-                    });
-            builder.show();
+                    }
+                });
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
     }
 
 }

@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.premium;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -50,11 +52,8 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
 public class PremiumActivity extends BaseActivity implements SingletonPremiumTimer.SingletonPremiumTimerListener,BaseView{
@@ -180,7 +179,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     }
 
     @OnClick(R.id.btnSwitchToBasic)
-    public void onClickedSwitchToBasic(View view){
+    public void onClickedSwitchToBasic(){
         if (User.getInstance().isPremiumExpired()){
             if (presenter.mList.size()>0){
                 onShowDialog();
@@ -611,13 +610,15 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     public void onSwitchToBasic(){
         if (User.getInstance().isPremiumExpired()){
             if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
-               Navigator.onMoveToFaceDown(getApplicationContext());
+               onShowPremium();
             }
             else{
+                Utils.Log(TAG,"Action 1");
                 finish();
             }
         }
         else {
+            Utils.Log(TAG,"Action 2");
             finish();
         }
     }
@@ -626,6 +627,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:{
+                Utils.Log(TAG,"home action");
                 onSwitchToBasic();
                 return true;
             }
@@ -635,7 +637,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         onSwitchToBasic();
     }
 
@@ -706,5 +707,52 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         mDialogProgress.show();
         mDialogProgress.setCancelable(false);
     }
+
+
+    public void onShowPremium(){
+        try {
+            de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(this);
+            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+            builder.setHeaderBackground(theme.getAccentColor());
+            builder.setMessage(getString(R.string.premium_expired));
+            builder.setCustomHeader(R.layout.custom_header);
+            builder.setPadding(40,40,40,0);
+            builder.setMargin(60,0,60,0);
+            builder.showHeader(true);
+            builder.setPositiveButton(getString(R.string.get_premium), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            builder.setNegativeButton(getText(R.string.switch_to_basic), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    onClickedSwitchToBasic();
+                }
+            });
+
+            de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
+            builder.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    Button positive = dialog.findViewById(android.R.id.button1);
+                    Button negative = dialog.findViewById(android.R.id.button2);
+                    TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+
+                    if (positive!=null && negative!=null && textView!=null){
+                        positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                        negative.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                        textView.setTextSize(16);
+                    }
+                }
+            });
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

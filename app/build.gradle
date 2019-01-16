@@ -237,6 +237,9 @@ dependencies {
     /*Even Bus*/
     implementation 'org.greenrobot:eventbus:3.1.1'
 
+    /*Material style dialog*/
+    implementation project(':materialdialoglibrary')
+
 }
 
 /*Resolved duplicated for Google api client*/
