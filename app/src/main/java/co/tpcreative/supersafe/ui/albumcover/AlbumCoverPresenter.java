@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.ListItem;
@@ -49,7 +50,7 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
     public List<Items> getData() {
         BaseView view = view();
         mList.clear();
-        final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mMainCategories.categories_local_id, false, mMainCategories.isFakePin);
+        final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mMainCategories.categories_local_id, EnumFormatType.IMAGE.ordinal(),false, mMainCategories.isFakePin);
         if (data != null) {
             mList = data;
             final Items oldItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(mMainCategories.items_id);
@@ -68,7 +69,6 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
                 }
             }
         }
-
 
         Utils.Log(TAG,"Count list "+ mList.size());
 

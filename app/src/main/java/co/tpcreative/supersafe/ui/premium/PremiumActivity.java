@@ -230,7 +230,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 }
             }
         }
-
     }
 
     @OnClick(R.id.llYears)
@@ -546,7 +545,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         mCheckoutLifeTime.loadInventory(request, mInventoryCallbackLifeTime);
     }
 
-
     /*Presenter*/
 
     @Override
@@ -640,7 +638,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         super.onBackPressed();
         onSwitchToBasic();
     }
-
 
     public void onShowDialog() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
