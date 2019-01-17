@@ -753,6 +753,4 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             e.printStackTrace();
         }
     }
-
-
 }
