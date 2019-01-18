@@ -302,7 +302,7 @@
                         android:background="@drawable/bg_button_premium_rounded"
                         android:id="@+id/btnSwitchToBasic"
                         android:textStyle="bold"
-                        android:textColor="?attr/colorAccent"
+                        android:textColor="@color/white"
                         android:text="@string/switch_to_basic"
                         android:layout_marginTop="20dp"
                         android:layout_width="wrap_content"

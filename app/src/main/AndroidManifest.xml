@@ -147,7 +147,8 @@
         <activity
             android:name=".ui.fakepin.FakePinActivity"
             android:label="@string/key_fake_pin" />
-        <activity android:name=".ui.secretdoor.SecretDoorActivity" />
+        <activity android:name=".ui.secretdoor.SecretDoorActivity"
+            android:label="@string/key_secret_door"/>
         <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity" />
         <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
         <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity" />

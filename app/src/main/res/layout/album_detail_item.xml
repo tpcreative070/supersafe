@@ -46,18 +46,18 @@
 
             <ImageView
                 android:id="@+id/imgVideoCam"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:src="@drawable/baseline_videocam_white_36"
                 android:layout_marginBottom="5dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="5dp"
                 android:layout_alignParentBottom="true"
                 android:layout_width="@dimen/image_size_video_cam"
                 android:layout_height="@dimen/image_size_video_cam"/>
 
 
             <RelativeLayout
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"

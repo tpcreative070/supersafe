@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/frame_layout_album_select"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="1dp"
     android:paddingTop="1dp"
     android:paddingRight="1dp"
-    android:paddingBottom="1dp"
-    android:paddingLeft="1dp">
+    android:paddingBottom="1dp">
 
-    <ImageView
-        android:id="@+id/image_view_album_image"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:layout_marginBottom="30dp">
 
-    <ImageView
-        android:id="@+id/imgAudioVideo"
-        android:src="@drawable/baseline_music_note_white_48"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:layout_width="30dp"
-        android:layout_height="30dp"/>
+        <ImageView
+            android:id="@+id/image_view_album_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/imgAudioVideo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:src="@drawable/baseline_music_note_white_48" />
+
+    </RelativeLayout>
 
     <TextView
-        android:padding="3dp"
         android:id="@+id/text_view_album_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
         android:background="@color/multiple_image_select_primaryText"
-        android:textColor="@color/multiple_image_select_buttonText"
-        android:textSize="20dp"
+        android:gravity="center"
         android:lines="1"
-        android:gravity="center"/>
+        android:padding="3dp"
+        android:textColor="@color/multiple_image_select_buttonText"
+        android:textSize="20dp" />
 
 </FrameLayout>
