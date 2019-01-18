@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -50,7 +53,7 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
         final User mUser = SuperSafeApplication.getInstance().readUseSecret();
         Log.d(TAG,new Gson().toJson(mUser));
         if (mUser!=null){
-            onShowDialog();
+            onShowRestore();
         }
     }
 
@@ -64,42 +67,60 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
         super.onBackPressed();
     }
 
-    public void onShowDialog(){
-        MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
-                .title(getString(R.string.key_restore))
-                .theme(Theme.LIGHT)
-                .content(getString(R.string.restore_detail))
-                .titleColor(getResources().getColor(R.color.black))
-                .negativeText(getString(R.string.key_delete))
-                .positiveText(getString(R.string.key_restore))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Navigator.onMoveRestore(DashBoardActivity.this);
-                        isCancel = false;
-                    }
-                })
-                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SuperSafeApplication.getInstance().deleteFolder();
-                        SuperSafeApplication.getInstance().initFolder();
-                        isCancel = false;
-                    }
-                })
-                .dismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        Utils.Log(TAG,"Dismiss");
-                        if (isCancel){
-                            finish();
-                        }
-                    }
-                });
 
-        builder.show();
+    public void onShowRestore(){
+        try {
+            de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(this);
+            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+            builder.setHeaderBackground(theme.getAccentColor());
+            builder.setTitle(getString(R.string.key_restore));
+            builder.setMessage(getString(R.string.restore_detail));
+            builder.setCustomHeader(R.layout.custom_header_restore);
+            builder.setPadding(40,40,40,0);
+            builder.setMargin(60,0,60,0);
+            builder.showHeader(true);
+            builder.setPositiveButton(getString(R.string.key_restore), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Navigator.onMoveRestore(DashBoardActivity.this);
+                    isCancel = false;
+                }
+            });
+            builder.setNegativeButton(getText(R.string.key_delete), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    SuperSafeApplication.getInstance().deleteFolder();
+                    SuperSafeApplication.getInstance().initFolder();
+                    isCancel = false;
+                }
+            })
+            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    Utils.Log(TAG,"Dismiss");
+                    if (isCancel){
+                        finish();
+                    }
+                }
+            });
+            de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
+            builder.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    Button positive = dialog.findViewById(android.R.id.button1);
+                    Button negative = dialog.findViewById(android.R.id.button2);
+                    TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+                    if (positive!=null && negative!=null && textView!=null){
+                        positive.setTextColor(getResources().getColor(theme.getAccentColor()));
+                        negative.setTextColor(getResources().getColor(theme.getAccentColor()));
+                        textView.setTextSize(16);
+                    }
+                }
+            });
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
-
-
 
 }

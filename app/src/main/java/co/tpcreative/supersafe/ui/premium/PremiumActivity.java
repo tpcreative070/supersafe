@@ -209,10 +209,11 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
     @OnClick(R.id.llMonths)
     public void onClickedMonths(View view){
-        if (User.getInstance().isPremium()){
+        if (mProduct==null){
             return;
         }
-        if (mProduct==null){
+
+        if (User.getInstance().isPremium()){
             return;
         }
 
@@ -234,6 +235,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @OnClick(R.id.llYears)
     public void onClickedYears(View view){
         Utils.Log(TAG,"Years");
+
         if (mProduct==null){
             return;
         }
@@ -278,6 +280,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 }
             }
         }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -348,27 +351,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
         private Preference mAccount;
-
-        private Preference.OnPreferenceChangeListener createChangeListener() {
-            return new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(final Preference preference, final Object newValue) {
-                    return true;
-                }
-            };
-        }
-
-        private Preference.OnPreferenceClickListener createActionPreferenceClickListener() {
-            return new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    if (preference instanceof Preference){
-
-                    }
-                    return true;
-                }
-            };
-        }
 
         @Override
         public final void onCreate(Bundle savedInstanceState) {
@@ -580,7 +562,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case CHECKOUT:{
-                Toast.makeText(getApplicationContext(),"Message "+ message,Toast.LENGTH_SHORT).show();
                 onUpdatedView();
                 break;
             }

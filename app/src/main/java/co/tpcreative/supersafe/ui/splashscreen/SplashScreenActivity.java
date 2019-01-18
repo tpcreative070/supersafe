@@ -46,6 +46,14 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+
+        /*Black list*/
+        if (SuperSafeApplication.getInstance().getDeviceId().equals("66801ac00252fe84")){
+            finish();
+        }
+
+
         Theme theme  = Theme.getInstance().getThemeInfo();
         rlScreen.setBackgroundColor(getResources().getColor(theme.getPrimaryColor()));
 

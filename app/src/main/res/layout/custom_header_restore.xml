@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
-            android:src="@drawable/ic_premium_icon"
+            android:src="@drawable/baseline_restore_white_48"
             android:tint="@color/white"
             android:gravity="center"
             android:layout_centerInParent="true"
