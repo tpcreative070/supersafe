@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.multiselects.adapter;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -11,14 +12,25 @@ import com.bumptech.glide.request.RequestOptions;
 import org.apache.commons.io.FilenameUtils;
 import java.util.ArrayList;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.Theme;
 
 public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
     private static final String TAG = CustomImageSelectAdapter.class.getSimpleName();
     private Context context;
+
+    RequestOptions options = new RequestOptions()
+            .centerCrop()
+            .override(200 ,200)
+            .placeholder(R.drawable.image_placeholder)
+            .priority(Priority.HIGH);
+    final Theme theme = Theme.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
+
     public CustomImageSelectAdapter(Context context, ArrayList<Image> images) {
         super(context, images);
         this.context = context;
@@ -54,10 +66,6 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
             ((FrameLayout) convertView).setForeground(null);
         }
 
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .placeholder(R.drawable.image_placeholder)
-                .priority(Priority.HIGH);
 
 
         final Image data = arrayList.get(position);
@@ -66,7 +74,6 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
             if (mimeTypeFile != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
-
                 switch (formatTypeFile){
                     case AUDIO:{
                         viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
@@ -74,7 +81,7 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
                         viewHolder.tvTitle.setVisibility(View.VISIBLE);
                         viewHolder.tvTitle.setText(data.name);
                         Glide.with(context)
-                                .load(R.drawable.image_background_audio_video)
+                                .load(note1)
                                 .apply(options).into(viewHolder.imageView);
                         break;
                     }
@@ -84,7 +91,7 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
                         viewHolder.tvTitle.setVisibility(View.VISIBLE);
                         viewHolder.tvTitle.setText(data.name);
                         Glide.with(context)
-                                .load(R.drawable.image_background_audio_video)
+                                .load(note1)
                                 .apply(options).into(viewHolder.imageView);
                         break;
                     }

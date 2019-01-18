@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -1038,6 +1041,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             menuInflater.inflate(R.menu.menu_select, menu);
             actionMode = mode;
             countSelected = 0;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                Window window = getWindow();
+                window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.material_orange_900));
+            }
             return true;
         }
 
@@ -1063,6 +1072,11 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 deselectAll();
             }
             actionMode = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                Window window = getWindow();
+                window.setStatusBarColor(ContextCompat.getColor(getContext(),theme.getPrimaryDarkColor()));
+            }
         }
     };
 

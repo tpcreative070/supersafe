@@ -827,7 +827,7 @@
     </style>
 
     <style name="CustomActionModeStyle" parent="Base.Widget.AppCompat.ActionMode">
-        <item name="background">@color/material_gray_400</item>
+        <item name="background">@color/material_orange_700</item>
         <item name="actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
         <item name="android:actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
     </style>

@@ -5,11 +5,13 @@ import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -19,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -105,6 +108,7 @@ public class ImageSelectActivity extends HelperActivity {
                 }
             }
         });
+        onDrawOverLay(this);
     }
 
     @Override
@@ -251,10 +255,14 @@ public class ImageSelectActivity extends HelperActivity {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater menuInflater = mode.getMenuInflater();
             menuInflater.inflate(R.menu.menu_contextual_action_bar, menu);
-
             actionMode = mode;
             countSelected = 0;
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                Window window = getWindow();
+                window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.material_orange_900));
+            }
             return true;
         }
 
@@ -278,6 +286,11 @@ public class ImageSelectActivity extends HelperActivity {
                 deselectAll();
             }
             actionMode = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                Window window = getWindow();
+                window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),theme.getPrimaryDarkColor()));
+            }
         }
     };
 

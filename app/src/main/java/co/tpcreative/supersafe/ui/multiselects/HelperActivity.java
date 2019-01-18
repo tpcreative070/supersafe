@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.multiselects;
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,6 +12,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.ftinc.kit.util.SizeUtils;
+import com.r0adkll.slidr.Slidr;
+import com.r0adkll.slidr.model.SlidrConfig;
+import com.r0adkll.slidr.model.SlidrListener;
+import com.r0adkll.slidr.model.SlidrPosition;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -21,6 +28,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity;
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
@@ -29,6 +37,7 @@ public class HelperActivity extends BaseActivity {
     protected View view;
 
     private final int maxLines = 4;
+    private SlidrConfig mConfig;
     private final String[] permissions = new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
     protected void checkPermission() {
@@ -68,6 +77,41 @@ public class HelperActivity extends BaseActivity {
         /*((TextView) snackbar.getView()
                 .findViewById(android.support.design.R.id.snackbar_text)).setMaxLines(maxLines);*/
         snackbar.show();
+    }
+
+    protected void onDrawOverLay(Activity activity){
+        final Theme theme = Theme.getInstance().getThemeInfo();
+        mConfig = new SlidrConfig.Builder()
+                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
+                .position(SlidrPosition.LEFT)
+                .velocityThreshold(2400)
+                .touchSize(SizeUtils.dpToPx(this, 32))
+                .listener(new SlidrListener(){
+                    @Override
+                    public void onSlideStateChanged(int state) {
+
+                    }
+
+                    @Override
+                    public void onSlideChange(float percent) {
+
+                    }
+
+                    @Override
+                    public void onSlideOpened() {
+
+                    }
+
+                    @Override
+                    public boolean onSlideClosed() {
+                        Utils.Log(TAG,"Closed.....");
+                        EventBus.getDefault().post(EnumStatus.CLOSED);
+                        return false;
+                    }
+                })
+                .build();
+        Slidr.attach(activity, mConfig);
     }
 
     private void showAppPermissionSettings() {

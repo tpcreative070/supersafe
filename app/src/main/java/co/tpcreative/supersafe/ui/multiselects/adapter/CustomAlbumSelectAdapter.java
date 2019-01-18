@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.multiselects.adapter;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +12,27 @@ import com.bumptech.glide.request.RequestOptions;
 import org.apache.commons.io.FilenameUtils;
 import java.util.ArrayList;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AlbumMultiItems;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.Theme;
 
 
 public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiItems> {
+
+    RequestOptions options = new RequestOptions()
+            .centerCrop()
+            .override(200 ,200)
+            .placeholder(R.drawable.image_placeholder)
+            .error(R.drawable.ic_music)
+            .priority(Priority.HIGH);
+
+    final Theme theme = Theme.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
+
+
     public CustomAlbumSelectAdapter(Context context, ArrayList<AlbumMultiItems> albums) {
         super(context, albums);
     }
@@ -44,11 +59,6 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
         viewHolder.imageView.getLayoutParams().height = size;
 
         viewHolder.textView.setText(arrayList.get(position).name);
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .placeholder(R.drawable.image_placeholder)
-                .error(R.drawable.ic_music)
-                .priority(Priority.HIGH);
 
 
         final AlbumMultiItems data = arrayList.get(position);
@@ -65,7 +75,7 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
                         viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
                         viewHolder.imgAudioVideo.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_music_note_white_48));
                         Glide.with(context)
-                                .load(R.drawable.image_background_audio_video)
+                                .load(note1)
                                 .apply(options).into(viewHolder.imageView);
                         break;
                     }
@@ -73,7 +83,7 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
                         viewHolder.imgAudioVideo.setVisibility(View.VISIBLE);
                         viewHolder.imgAudioVideo.setImageDrawable(context.getResources().getDrawable(R.drawable.baseline_insert_drive_file_white_48));
                         Glide.with(context)
-                                .load(R.drawable.image_background_audio_video)
+                                .load(note1)
                                 .apply(options).into(viewHolder.imageView);
                         break;
                     }

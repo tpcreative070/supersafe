@@ -94,6 +94,7 @@ public class AlbumSelectActivity extends HelperActivity {
                 startActivityForResult(intent, Navigator.REQUEST_CODE);
             }
         });
+        onDrawOverLay(this);
     }
 
     @Override
