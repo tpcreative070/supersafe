@@ -143,7 +143,7 @@
                     app:met_baseColor="?attr/colorAccent"
                     app:met_floatingLabel="highlight"
                     app:met_primaryColor="?attr/colorAccent"
-                    app:met_textColor="?attr/colorAccent"
+                    app:met_textColor="@color/material_gray_700"
                     app:met_textColorHint="?attr/colorAccent"/>
 
                 <RelativeLayout

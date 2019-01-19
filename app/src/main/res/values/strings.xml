@@ -338,7 +338,7 @@
     <string name="share_items">Share %1$s items...</string>
     <string name="export_items">Export %1$s items...</string>
     <string name="space_saver">Space Saver</string>
-    <string name="smart_storage">Smart storage. compressed files. on your phone, originals in your Private Cloud.</string>
+    <string name="smart_storage">Smart storage. compressed files on your phone, originals in your Private Cloud.</string>
     <string name="save_space">Save space</string>
     <string name="device_storage_saved">Device storage saved:</string>
 
