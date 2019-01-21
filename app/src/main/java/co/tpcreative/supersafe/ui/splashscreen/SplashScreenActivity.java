@@ -65,7 +65,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         }
         SuperSafeApplication.getInstance().initFolder();
 
-        Log.d(TAG,"" + SuperSafeApplication.getInstance().getDeviceId());
+        Log.d(TAG,"Key "+ value);
 
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
