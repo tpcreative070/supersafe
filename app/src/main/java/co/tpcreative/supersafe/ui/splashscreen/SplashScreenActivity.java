@@ -8,17 +8,14 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -26,7 +23,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.switchbasic.SwitchBasicActivity;
+
 
 public class SplashScreenActivity extends BaseActivityNoneSlide {
 
