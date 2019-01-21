@@ -117,6 +117,8 @@
     <string name="login_action">SIGN IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
+    <string name="key_sign_up">Sign Up</string>
+    <string name="key_sign_in">Sign In</string>
     <string name="welcome">Welcome to SuperSafe</string>
     <string name="safe_detail">A safe place for your photos or videos</string>
     <string name="title_forget">Add an email in the case you forget</string>

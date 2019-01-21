@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -56,6 +57,9 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         presenter = new VerifyPresenter();
         presenter.bindView(this);
         presenter.getIntent(this);
@@ -91,15 +95,9 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
         presenter.unbindView();
     }
 
-
     @Override
     public void onOrientationChange(boolean isFaceDown) {
 
-    }
-
-    @OnClick(R.id.imgBack)
-    public void onClickedBack(){
-        onBackPressed();
     }
 
     @OnClick(R.id.btnLogin)
@@ -168,11 +166,6 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
 
         }
     };
-
-    @Override
-    public void onBackPressed() {
-
-    }
 
     @Override
     public void onStartLoading(EnumStatus status) {

@@ -3,6 +3,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,28 +14,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.switchbasic.SwitchBasicActivity;
 
 public class SignUpActivity extends BaseActivityNoneSlide implements TextView.OnEditorActionListener, BaseView<User>{
 
@@ -56,6 +51,9 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         edtName.addTextChangedListener(mTextWatcher);
         edtEmail.addTextChangedListener(mTextWatcher);
         edtEmail.setOnEditorActionListener(this);
@@ -66,7 +64,6 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         isName = true;
         edtName.setText(getString(R.string.free));
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -178,11 +175,6 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         if (isName && isEmail){
            onSignUp();
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-
     }
 
     public void onSignUp(){
