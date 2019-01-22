@@ -1043,7 +1043,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             countSelected = 0;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
                 Window window = getWindow();
                 window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.material_orange_900));
             }

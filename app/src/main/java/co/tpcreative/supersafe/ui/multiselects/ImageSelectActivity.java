@@ -12,7 +12,6 @@ import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,36 +31,33 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter;
-import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
 
 
 public class ImageSelectActivity extends HelperActivity {
-
     private static final String TAG = ImageSelectActivity.class.getSimpleName();
     private ArrayList<Image> images;
     private String album;
-
-    private TextView errorDisplay;
-
-    private ProgressBar progressBar;
-    private GridView gridView;
     private CustomImageSelectAdapter adapter;
-
-    private ActionBar actionBar;
-
     private ActionMode actionMode;
     private int countSelected;
-
     private ContentObserver observer;
     private Handler handler;
     private Thread thread;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.text_view_error)
+    TextView errorDisplay;
+    @BindView(R.id.progress_bar_image_select)
+    ProgressBar progressBar;
+    GridView gridView;
 
     private final String[] projection = new String[]{ MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA };
 
@@ -70,42 +66,24 @@ public class ImageSelectActivity extends HelperActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_select);
         setView(findViewById(R.id.layout_image_select));
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
-
-            actionBar.setDisplayShowTitleEnabled(true);
-            actionBar.setTitle(R.string.image_view);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         if (intent == null) {
             finish();
         }
         album = intent.getStringExtra(Navigator.INTENT_EXTRA_ALBUM);
-
-        errorDisplay = (TextView) findViewById(R.id.text_view_error);
         errorDisplay.setVisibility(View.INVISIBLE);
-
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar_image_select);
-        gridView = (GridView) findViewById(R.id.grid_view_image_select);
+        gridView = findViewById(R.id.grid_view_image_select);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (actionMode == null) {
-                    actionMode = ImageSelectActivity.this.startActionMode(callback);
+                    actionMode = toolbar.startActionMode(callback);
                 }
                 toggleSelection(position);
                 actionMode.setTitle(countSelected + " " + getString(R.string.selected));
-
-                if (countSelected == 0) {
-                    actionMode.finish();
-                }
             }
         });
         onDrawOverLay(this);
@@ -207,7 +185,6 @@ public class ImageSelectActivity extends HelperActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(null);
         }
@@ -257,9 +234,7 @@ public class ImageSelectActivity extends HelperActivity {
             menuInflater.inflate(R.menu.menu_contextual_action_bar, menu);
             actionMode = mode;
             countSelected = 0;
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
                 Window window = getWindow();
                 window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.material_orange_900));
             }
