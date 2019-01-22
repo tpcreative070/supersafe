@@ -704,6 +704,14 @@ public abstract class InstanceGenerator extends RoomDatabase {
 //        return null;
 //    }
 
+
+
+    public void onCleanDatabase(){
+        instance.breakInAlertsDao().deleteBreakInAlerts();
+        instance.itemsDao().deleteAllItems();
+        instance.mainCategoriesDao().deleteAllCategories();
+    }
+
 }
 
 

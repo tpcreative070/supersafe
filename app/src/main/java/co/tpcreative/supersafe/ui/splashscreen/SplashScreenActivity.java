@@ -8,6 +8,9 @@ import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import com.google.gson.Gson;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -22,6 +25,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
@@ -100,7 +104,13 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                             Navigator.onMoveToMainTab(SplashScreenActivity.this);
                         }
                         else{
-                            Navigator.onMoveSetPin(SplashScreenActivity.this,EnumPinAction.NONE);
+                            SuperSafeApplication.getInstance().deleteFolder();
+                            SuperSafeApplication.getInstance().initFolder();
+                            InstanceGenerator.getInstance(SplashScreenActivity.this).onCleanDatabase();
+                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(new User()));
+                            MainCategories.getInstance().getList();
+                            PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive),true);
+                            Navigator.onMoveToDashBoard(SplashScreenActivity.this);
                         }
                     }
                     else{

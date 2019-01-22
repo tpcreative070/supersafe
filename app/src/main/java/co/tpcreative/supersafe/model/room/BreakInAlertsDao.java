@@ -25,4 +25,7 @@ public interface BreakInAlertsDao {
     @Query("Select * FROM breakinalerts")
     List<BreakInAlerts> loadAll();
 
+    @Query("DELETE FROM breakinalerts")
+    public void deleteBreakInAlerts();
+
 }

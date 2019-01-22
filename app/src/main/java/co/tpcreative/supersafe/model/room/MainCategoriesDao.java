@@ -18,6 +18,10 @@ public interface MainCategoriesDao {
     @Delete
     void delete(MainCategories... items);
 
+    @Query("DELETE FROM maincategories")
+    public void deleteAllCategories();
+
+
     @Query("Delete from maincategories  WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
     void deleteAll(String categories_local_id,boolean isFakePin);
 

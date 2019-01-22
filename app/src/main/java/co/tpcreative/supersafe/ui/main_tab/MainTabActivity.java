@@ -658,6 +658,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     protected void onDriveSuccessful() {
+        onCheckRequestSignOut();
     }
 
     @Override

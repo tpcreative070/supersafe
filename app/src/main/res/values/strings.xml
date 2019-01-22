@@ -506,7 +506,7 @@
     <string name="upgrade_now">Upgrade now to access this feature and more.</string>
     <string name="later">Later</string>
     <string name="get_premium">Get premium</string>
-
+    <string name="key_request_sign_out_google_drive">request_sign_out_google_drive</string>
 
     <!--Help and Support -->
     <string name="faq">FAQ</string>

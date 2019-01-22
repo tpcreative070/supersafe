@@ -107,6 +107,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 SignInRequest request = new SignInRequest();
                                 request.email = email;
                                 onSignIn(request);
+                                Utils.Log(TAG,"Login");
                             }
                             Log.d(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
