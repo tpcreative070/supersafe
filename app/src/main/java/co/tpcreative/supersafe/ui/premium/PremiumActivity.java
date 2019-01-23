@@ -186,6 +186,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             }
             else {
                 PrefsController.putBoolean(getString(R.string.key_switch_to_basic),true);
+                PrefsController.putBoolean(getString(R.string.key_saving_space),false);
+                PrefsController.putBoolean(getString(R.string.key_break_in_alert),false);
+                PrefsController.putBoolean(getString(R.string.key_fake_pin),false);
+                PrefsController.putBoolean(getString(R.string.key_secret_door),false);
                 finish();
             }
         }
@@ -301,6 +305,9 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                         sweetAlertDialog.dismiss();
                         PrefsController.putBoolean(getString(R.string.key_switch_to_basic),true);
                         PrefsController.putBoolean(getString(R.string.key_saving_space), false);
+                        PrefsController.putBoolean(getString(R.string.key_break_in_alert),false);
+                        PrefsController.putBoolean(getString(R.string.key_fake_pin),false);
+                        PrefsController.putBoolean(getString(R.string.key_secret_door),false);
                         finish();
                         Utils.Log(TAG,"Do something here");
                     }
