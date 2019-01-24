@@ -17,10 +17,16 @@ import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.getkeepsafe.taptargetview.TapTarget;
@@ -41,6 +47,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
@@ -53,6 +60,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
@@ -65,6 +73,7 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
@@ -122,6 +131,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
         long current_time = System.currentTimeMillis();
         Utils.Log(TAG,"current time "+ current_time);
+        onRateApp();
     }
 
     public void onShowSuggestion(){
@@ -820,6 +830,46 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 Navigator.onVerifyAccount(this);
             }
         }
+    }
+
+
+
+    public void onRateApp() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.custom_view_rate_app_dialog, null);
+        TextView happy = view.findViewById(R.id.tvHappy);
+        TextView unhappy = view.findViewById(R.id.tvUnhappy);
+        Button love = view.findViewById(R.id.btnILoveIt);
+        Button not_love = view.findViewById(R.id.btnReportProblem);
+
+        love.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.Log(TAG,"Love");
+            }
+        });
+        not_love.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.Log(TAG,"Not love");
+            }
+        });
+
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .title(getString(R.string.how_are_we_doing))
+                .customView(view, false)
+                .theme(Theme.LIGHT)
+                .cancelable(false)
+                .titleColor(getResources().getColor(R.color.black))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .positiveText(getString(R.string.close))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                      Utils.Log(TAG,"Positive");
+                    }
+                });
+        builder.show();
     }
 
 }

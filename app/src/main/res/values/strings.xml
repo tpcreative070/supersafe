@@ -197,6 +197,7 @@
     <string name="choose_google_account">Choose your Google account to sign in SuperSafe</string>
     <string name="ok">OK</string>
     <string name="download">Download</string>
+    <string name="close">Close</string>
     <string name="downloading">Downloading</string>
     <string name="enable_cloud">Enable cloud sync after sign in</string>
     <string name="local">Local</string>
@@ -507,6 +508,13 @@
     <string name="later">Later</string>
     <string name="get_premium">Get premium</string>
     <string name="key_request_sign_out_google_drive">request_sign_out_google_drive</string>
+    <string name="how_are_we_doing">How are we doing?</string>
+    <string name="happy">If you are happy with this app, please rate us and let us know what SuperSafe help you</string>
+    <string name="unhappy">If you are unhappy, please send us feedback about your issues. We need your support in order make SuperSafe butter.</string>
+    <string name="thank_you_feedback">Thank Your</string>
+    <string name="i_love_it">I love it</string>
+    <string name="report_problem">Report problem</string>
+
 
     <!--Help and Support -->
     <string name="faq">FAQ</string>
