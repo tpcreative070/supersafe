@@ -323,6 +323,15 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    public static void onMoveReportProblem(Context context, HelpAndSupport helpAndSupport){
+        Intent intent = new Intent(context, HelpAndSupportContentActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(HelpAndSupport.class.getSimpleName(),helpAndSupport);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
+    }
+
     public static void onMoveToPremium(Context context){
         Intent intent = new Intent(context, PremiumActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

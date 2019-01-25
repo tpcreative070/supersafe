@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.main_tab;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -64,8 +65,10 @@ import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
+import co.tpcreative.supersafe.model.Categories;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
@@ -131,7 +134,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
         long current_time = System.currentTimeMillis();
         Utils.Log(TAG,"current time "+ current_time);
-        onRateApp();
+        //onRateApp();
     }
 
     public void onShowSuggestion(){
@@ -833,6 +836,61 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     }
 
 
+    public void onShowRateApp(){
+        try {
+            de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(this);
+            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+            builder.setPadding(40,40,40,0);
+            builder.setMargin(60,0,60,0);
+            builder.showHeader(false);
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.custom_view_rate_app_dialog, null);
+            TextView happy = view.findViewById(R.id.tvHappy);
+            TextView unhappy = view.findViewById(R.id.tvUnhappy);
+            Button love = view.findViewById(R.id.btnILoveIt);
+            Button not_love = view.findViewById(R.id.btnReportProblem);
+            builder.setTitle(getString(R.string.how_are_we_doing));
+            builder.setCustomMessage(R.layout.custom_view_rate_app_dialog);
+            builder.setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+
+            love.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.Log(TAG,"Love");
+                }
+            });
+            not_love.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Categories categories = new Categories(1,getString(R.string.contact_support));
+                    HelpAndSupport support = new HelpAndSupport(categories,getString(R.string.contact_support),getString(R.string.contact_support_content),null);
+                    builder.show().dismiss();
+                    Navigator.onMoveReportProblem(getContext(),support);
+                    Utils.Log(TAG,"Not love");
+                }
+            });
+
+            de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
+            builder.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    Button positive = dialog.findViewById(android.R.id.button1);
+                    if (positive!=null){
+                        positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                    }
+                }
+            });
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     public void onRateApp() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -841,7 +899,19 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         TextView unhappy = view.findViewById(R.id.tvUnhappy);
         Button love = view.findViewById(R.id.btnILoveIt);
         Button not_love = view.findViewById(R.id.btnReportProblem);
-
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                .title(getString(R.string.how_are_we_doing))
+                .customView(view, true)
+                .theme(Theme.LIGHT)
+                .cancelable(false)
+                .titleColor(getResources().getColor(R.color.black))
+                .positiveText(getString(R.string.close))
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                      Utils.Log(TAG,"Positive");
+                    }
+                });
         love.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -851,24 +921,13 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         not_love.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Categories categories = new Categories(1,getString(R.string.contact_support));
+                HelpAndSupport support = new HelpAndSupport(categories,getString(R.string.contact_support),getString(R.string.contact_support_content),null);
+                builder.show().dismiss();
+                Navigator.onMoveReportProblem(getContext(),support);
                 Utils.Log(TAG,"Not love");
             }
         });
-
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
-                .title(getString(R.string.how_are_we_doing))
-                .customView(view, false)
-                .theme(Theme.LIGHT)
-                .cancelable(false)
-                .titleColor(getResources().getColor(R.color.black))
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .positiveText(getString(R.string.close))
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                      Utils.Log(TAG,"Positive");
-                    }
-                });
         builder.show();
     }
 

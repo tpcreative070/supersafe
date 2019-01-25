@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -213,6 +214,8 @@ public class SettingsActivity extends BaseActivity {
 
         private Preference mVersion;
 
+        private Preference mRateApp;
+
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
          * corresponding preference has been changed.
@@ -313,6 +316,9 @@ public class SettingsActivity extends BaseActivity {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.tvPrimacyPolicy)));
                             startActivity(intent);
                         }
+                        else if (preference.getKey().equals(getString(R.string.key_rate))){
+                            onRateApp();
+                        }
                     }
                     return true;
                 }
@@ -383,11 +389,32 @@ public class SettingsActivity extends BaseActivity {
             mVersion.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mVersion.setSummary(String.format(getString(R.string.key_super_safe_version),BuildConfig.VERSION_NAME));
 
+
+            /*Rate app*/
+            mRateApp = findPreference(getString(R.string.key_rate));
+            mRateApp.setOnPreferenceChangeListener(createChangeListener());
+            mRateApp.setOnPreferenceClickListener(createActionPreferenceClickListener());
         }
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general);
+        }
+
+        public void onRateApp() {
+            Uri uri = Uri.parse("market://details?id=" + getString(R.string.supersafe_live));
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+            // To count with Play market backstack, After pressing back button,
+            // to taken back to our application, we need to add following flags to intent.
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            try {
+                startActivity(goToMarket);
+            } catch (ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://play.google.com/store/apps/details?id=" + getString(R.string.supersafe_live))));
+            }
         }
 
 

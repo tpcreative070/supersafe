@@ -510,7 +510,7 @@
     <string name="key_request_sign_out_google_drive">request_sign_out_google_drive</string>
     <string name="how_are_we_doing">How are we doing?</string>
     <string name="happy">If you are happy with this app, please rate us and let us know what SuperSafe help you</string>
-    <string name="unhappy">If you are unhappy, please send us feedback about your issues. We need your support in order make SuperSafe butter.</string>
+    <string name="unhappy">If you are unhappy, please send us feedback about your issues. We need your support in order to make SuperSafe butter.</string>
     <string name="thank_you_feedback">Thank Your</string>
     <string name="i_love_it">I love it</string>
     <string name="report_problem">Report problem</string>
@@ -582,6 +582,10 @@
 
     <string name="gpsspeed_link">https://play.google.com/store/apps/details?id=tpcreative.co.gpsspeedkm</string>
     <string name="gpsspeed_package_name">tpcreative.co.gpsspeedkm</string>
+    <string name="supersafe_live">co.tpcreative.supersafe</string>
+    <string name="key_rate">rate</string>
+    <string name="give_rate">Rate 5 stars</string>
+
 
     <!--Multi selects -->
     <string name="album_view">Select photo album</string>
