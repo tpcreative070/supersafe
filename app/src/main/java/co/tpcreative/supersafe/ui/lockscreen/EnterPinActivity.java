@@ -168,6 +168,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             imgSwitchTypeUnClock.setVisibility(View.VISIBLE);
                             isFingerprint = isFingerPrintUnLock;
                             onSetVisitFingerprintView(isFingerprint);
+                            Utils.Log(TAG,"Action find fingerPrint");
                         }
                     }
                     final boolean value = PrefsController.getBoolean(getString(R.string.key_secret_door), false);
@@ -382,7 +383,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             mPinLockView.resetPinLockView();
         }
         onSetVisitableForgotPin(View.GONE);
-        mTextAttempts.setText("");
         if (mFingerPrintAuthHelper != null) {
             mFingerPrintAuthHelper.startAuth();
         }

@@ -71,7 +71,6 @@ public class ServiceManager implements BaseView {
     private static ServiceManager instance;
     private SuperSafeService myService;
     private Context mContext;
-    private boolean isUploadData;
     private Disposable subscriptions;
     private Storage storage = new Storage(SuperSafeApplication.getInstance());
     private Storage mStorage = new Storage(SuperSafeApplication.getInstance());
@@ -106,7 +105,9 @@ public class ServiceManager implements BaseView {
     }
 
     private Cipher mCiphers;
+
     private boolean isDownloadData;
+    private boolean isUploadData;
     private boolean isLoadingData;
     private boolean isDeleteSyncCLoud;
     private boolean isDeleteOwnCloud;
@@ -118,6 +119,8 @@ public class ServiceManager implements BaseView {
     private boolean isDownloadingFiles;
     private boolean isWaitingSendMail;
     private boolean isUpdate;
+
+
     private int countSyncData = 0;
     private int totalList = 0;
 
@@ -128,16 +131,12 @@ public class ServiceManager implements BaseView {
         return instance;
     }
 
-    public boolean isImporting() {
-        return isImporting;
+    public void setLoadingData(boolean loadingData) {
+        isLoadingData = loadingData;
     }
 
     public void setImporting(boolean importing) {
         isImporting = importing;
-    }
-
-    public boolean isWaitingSendMail() {
-        return isWaitingSendMail;
     }
 
     public void setIsWaitingSendMail(boolean isWaitingSendMail) {
@@ -172,10 +171,6 @@ public class ServiceManager implements BaseView {
 
     public void setExporting(boolean exporting) {
         isExporting = exporting;
-    }
-
-    public boolean isDeleteAlbum() {
-        return isDeleteAlbum;
     }
 
     public void setDeleteAlbum(boolean deleteAlbum) {
@@ -2396,8 +2391,9 @@ public class ServiceManager implements BaseView {
 
 
 
+
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail || isUpdate) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail || isUpdate || isLoadingData) {
             Utils.Log(TAG, "Progress isDownloadData is :" + isDownloadData);
             Utils.Log(TAG, "Progress isUploadData is :" + isUploadData);
             Utils.Log(TAG, "Progress isDownloadingFiles is :" + isDownloadingFiles);
@@ -2410,6 +2406,7 @@ public class ServiceManager implements BaseView {
             Utils.Log(TAG, "Progress isCategoriesSync is :" + isCategoriesSync);
             Utils.Log(TAG, "Progress isWaitingSendMail is :" + isWaitingSendMail);
             Utils.Log(TAG, "Progress isUpdate is :" + isUpdate);
+            Utils.Log(TAG, "Progress isLoadingData is :" + isLoadingData);
         }
         else {
             SingletonPremiumTimer.getInstance().onStop();
@@ -2425,6 +2422,7 @@ public class ServiceManager implements BaseView {
             ServiceManager.getInstance().setCategoriesSync(false);
             ServiceManager.getInstance().setIsWaitingSendMail(false);
             ServiceManager.getInstance().setUpdate(false);
+            ServiceManager.getInstance().setLoadingData(false);
             if (myService != null) {
                 myService.unbindView();
             }
@@ -2536,6 +2534,7 @@ public class ServiceManager implements BaseView {
                 ServiceManager.getInstance().setCategoriesSync(false);
                 ServiceManager.getInstance().setIsWaitingSendMail(false);
                 ServiceManager.getInstance().setUpdate(false);
+                ServiceManager.getInstance().setLoadingData(false);
                 Utils.Log(TAG,"Disconnect");
                 break;
             }
