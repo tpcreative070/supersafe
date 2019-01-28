@@ -585,6 +585,7 @@
     <string name="supersafe_live">co.tpcreative.supersafe</string>
     <string name="key_rate">rate</string>
     <string name="give_rate">Rate 5 stars</string>
+    <string name="key_vertical_adapter">isVertical</string>
 
 
     <!--Multi selects -->

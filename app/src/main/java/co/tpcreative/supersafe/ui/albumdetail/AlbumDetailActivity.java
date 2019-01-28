@@ -10,12 +10,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -82,15 +83,13 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 
-public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
 
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
-    @BindView(R.id.main_content)
-    CoordinatorLayout main_content;
     @BindView(R.id.backdrop)
     ImageView backdrop;
     @BindView(R.id.tv_Photos)
@@ -108,6 +107,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
+    private AlbumDetailVerticalAdapter vericalAdapter;
     private boolean isReload;
     private Storage storage;
     private ActionMode actionMode;
@@ -115,6 +115,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     private boolean isSelectAll = false;
     private AlertDialog dialog;
     SweetAlertDialog mDialogProgress;
+
+    private MenuItem menuItem;
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -134,9 +136,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
-        presenter.getData(this);
-        initRecycleView(getLayoutInflater());
-
+        onInit();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -222,6 +222,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     }
 
+
+    public void onInit(){
+        presenter.getData(this);
+        initRecycleView(getLayoutInflater());
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
         switch (event){
@@ -254,7 +260,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumDetailActivity.class.getSimpleName());
     }
 
     @Override
@@ -276,8 +281,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_album_detail, menu);
-        return super.onCreateOptionsMenu(menu);
+        toolbar.inflateMenu(R.menu.menu_album_detail);
+        this.menuItem = toolbar.getMenu().getItem(0);
+        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+        if (isVertical){
+            menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_view_comfy_white_48));
+        }
+        else{
+            menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_format_list_bulleted_white_48));
+        }
+        return true;
     }
 
     @Override
@@ -295,6 +308,21 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 actionMode.setTitle(countSelected + " " + getString(R.string.selected));
                 Utils.Log(TAG,"Action here");
                 return true;
+            }
+            case R.id.action_view :{
+               if (menuItem!=null){
+                   boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                   if (isVertical){
+                       menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_format_list_bulleted_white_48));
+                       PrefsController.putBoolean(getString(R.string.key_vertical_adapter),false);
+                       onInit();
+                   }
+                   else{
+                       menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_view_comfy_white_48));
+                       PrefsController.putBoolean(getString(R.string.key_vertical_adapter),true);
+                       onInit();
+                   }
+               }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -595,13 +623,30 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
-        adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
-        adapter.setDataSource(presenter.mList);
+        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+        if (isVertical){
+            vericalAdapter = new AlbumDetailVerticalAdapter(getLayoutInflater(),this,this);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(mLayoutManager);
+            while (recyclerView.getItemDecorationCount() > 0) {
+                recyclerView.removeItemDecorationAt(0);
+            }
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));
+            recyclerView.setAdapter(vericalAdapter);
+            vericalAdapter.setDataSource(presenter.mList);
+        }
+        else{
+            adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
+            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+            recyclerView.setLayoutManager(mLayoutManager);
+            while (recyclerView.getItemDecorationCount() > 0) {
+                recyclerView.removeItemDecorationAt(0);
+            }
+            recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(adapter);
+            adapter.setDataSource(presenter.mList);
+        }
     }
 
     public void onShowDialog(EnumStatus status){
@@ -978,7 +1023,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     llBottom.setVisibility(View.GONE);
                     isReload = true;
                 }
-                adapter.setDataSource(presenter.mList);
+
+                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                if (isVertical){
+                    vericalAdapter.setDataSource(presenter.mList);
+                }
+                else{
+                    adapter.setDataSource(presenter.mList);
+                }
+
                 break;
             }
             case REFRESH:{
@@ -993,8 +1046,17 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-                adapter.getDataSource().clear();
-                adapter.getDataSource().addAll(presenter.mList);
+
+
+                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                if (isVertical){
+                    vericalAdapter.getDataSource().clear();
+                    vericalAdapter.getDataSource().addAll(presenter.mList);
+                }
+                else{
+                    adapter.getDataSource().clear();
+                    adapter.getDataSource().addAll(presenter.mList);
+                }
                 break;
             }
             case DELETE:{
@@ -1014,7 +1076,13 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         switch (status){
             case DELETE:{
                 Utils.Log(TAG,"Position "+ object);
-                adapter.removeAt(object);
+                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                if (isVertical){
+                    vericalAdapter.removeAt(object);
+                }
+                else{
+                    adapter.removeAt(object);
+                }
                 break;
             }
         }
@@ -1087,8 +1155,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             countSelected--;
         }
         onShowUI();
-        adapter.notifyItemChanged(position);
-        //adapter.notifyDataSetChanged();
+
+        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+        if (isVertical){
+            vericalAdapter.notifyItemChanged(position);
+        }
+        else{
+            adapter.notifyItemChanged(position);
+        }
     }
 
     private void deselectAll() {
@@ -1120,14 +1194,31 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 break;
                             }
                         }
-                        adapter.notifyItemChanged(i);
+
+
+                        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                        if (isVertical){
+                            vericalAdapter.notifyItemChanged(i);
+                        }
+                        else{
+                            adapter.notifyItemChanged(i);
+                        }
+
                     }
                     break;
                 }
                 default:{
                     if (presenter.mList.get(i).isChecked){
                         presenter.mList.get(i).isChecked = false;
-                        adapter.notifyItemChanged(i);
+
+                        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                        if (isVertical){
+                            vericalAdapter.notifyItemChanged(i);
+                        }
+                        else{
+
+                            adapter.notifyItemChanged(i);
+                        }
                     }
                     break;
                 }
@@ -1157,7 +1248,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     Utils.Log(TAG, "ServiceManager waiting for delete");
                 }
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).items_id);
-                adapter.removeAt(i);
+
+                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                if (isVertical){
+                    vericalAdapter.removeAt(i);
+                }
+                else{
+                    adapter.removeAt(i);
+                }
+
             }
         }
         presenter.getData(EnumStatus.REFRESH);
@@ -1174,7 +1273,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
             countSelected = countSelect;
             onShowUI();
-            adapter.notifyDataSetChanged();
+
+            boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+            if (isVertical){
+                vericalAdapter.notifyDataSetChanged();
+            }
+            else{
+                adapter.notifyDataSetChanged();
+            }
             actionMode.setTitle(countSelected + " " + getString(R.string.selected));
         }
         catch (Exception e){

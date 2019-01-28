@@ -42,6 +42,8 @@ public abstract class InstanceGenerator extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isUpdate' INTEGER NOT NULL DEFAULT 0");
+            //database.execSQL("ALTER TABLE 'items' ADD COLUMN  'createDatetime' TEXT NOT NULL DEFAULT '"+Utils.getCurrentDate()+"'");
+            //database.execSQL("ALTER TABLE 'items' ADD COLUMN  'updatedDateTime' TEXT NOT NULL DEFAULT '"+Utils.getCurrentDateTimeSort()+"'");
             //database.execSQL("CREATE TABLE 'secret' ('id' INTEGER, "+" 'content' TEXT NOT NULL,"+" 'action_name' INTEGER NOT NULL , PRIMARY KEY('id'))");
             //database.execSQL("CREATE TABLE IF NOT EXISTS 'secret' ('id' INTEGER, "+" 'content' TEXT,"+" 'action_name' INTEGER , PRIMARY KEY('id'))");
             //database.execSQL("CREATE TABLE IF NOT EXISTS 'secret' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'action_name' INTEGER NOT NULL, 'content' TEXT NOT NULL )");

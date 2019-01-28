@@ -167,6 +167,21 @@ public class Utils {
         builder .show();
     }
 
+    public static String getCurrentDate() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EE dd MMM, yyyy", Locale.getDefault());
+        String result = dateFormat.format(date);
+        return result;
+    }
+
+    public static String getCurrentDateTimeSort() {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String result = dateFormat.format(date);
+        return result;
+    }
+
+
     public static boolean mCreateAndSaveFileOverride(String fileName,String path_folder_name,String responseJson, boolean append) {
         Utils.Log(TAG,"path "+ path_folder_name);
         final String newLine = System.getProperty("line.separator");

@@ -50,6 +50,9 @@ public class Items implements Serializable {
     public int custom_items;
     public boolean isUpdate;
 
+    //public String createDatetime;
+   // public String updatedDateTime;
+
     @Ignore
     public boolean isChecked;
     @Ignore
@@ -107,6 +110,8 @@ public class Items implements Serializable {
         this.isWaitingForExporting = items.isWaitingForExporting;
         this.custom_items = items.custom_items;
         this.isUpdate = items.isUpdate;
+       // this.createDatetime = Utils.getCurrentDate();
+       // this.updatedDateTime = Utils.getCurrentDateTimeSort();
     }
 
     public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items,boolean isUpdate){
@@ -141,6 +146,8 @@ public class Items implements Serializable {
         this.isWaitingForExporting = isWaitingForExporting;
         this.custom_items = custom_items;
         this.isUpdate = isUpdate;
+       // this.createDatetime = Utils.getCurrentDate();
+       // this.updatedDateTime = Utils.getCurrentDateTimeSort();
     }
 
     public Items(){
@@ -149,6 +156,8 @@ public class Items implements Serializable {
         this.isSyncOwnServer = false;
         this.isOriginalGlobalId = false;
         this.isUpdate = false;
+        //this.createDatetime = Utils.getCurrentDate();
+        //this.updatedDateTime = Utils.getCurrentDateTimeSort();
     }
 
     @Ignore
