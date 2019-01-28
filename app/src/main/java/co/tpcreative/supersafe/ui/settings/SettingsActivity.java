@@ -394,6 +394,8 @@ public class SettingsActivity extends BaseActivity {
             mRateApp = findPreference(getString(R.string.key_rate));
             mRateApp.setOnPreferenceChangeListener(createChangeListener());
             mRateApp.setOnPreferenceClickListener(createActionPreferenceClickListener());
+            mRateApp.setVisible(false);
+
         }
 
         @Override
