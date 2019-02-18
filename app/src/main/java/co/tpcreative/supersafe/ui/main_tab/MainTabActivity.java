@@ -135,6 +135,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         long current_time = System.currentTimeMillis();
         Utils.Log(TAG,"current time "+ current_time);
         //onRateApp();
+
     }
 
     public void onShowSuggestion(){

@@ -292,13 +292,18 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                double response = Double.parseDouble(seconds);
-                Utils.Log(TAG,"Timer  " +"Attempt "+ countAttempt + " Count "+count);
-                double remain = (response/countAttempt) * 100;
-                int result = (int)remain;
-                Utils.Log(TAG,"Result "+result);
-                circleProgressView.setValue(result);
-                circleProgressView.setText(seconds);
+                try {
+                    double response = Double.parseDouble(seconds);
+                    Utils.Log(TAG,"Timer  " +"Attempt "+ countAttempt + " Count "+count);
+                    double remain = (response/countAttempt) * 100;
+                    int result = (int)remain;
+                    Utils.Log(TAG,"Result "+result);
+                    circleProgressView.setValue(result);
+                    circleProgressView.setText(seconds);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
     }

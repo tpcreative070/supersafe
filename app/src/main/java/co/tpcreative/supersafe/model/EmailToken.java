@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.model;
 import java.io.Serializable;
 import java.util.ArrayList;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 
@@ -47,15 +46,18 @@ public class EmailToken implements Serializable {
         String content = "";
         switch (status){
             case SIGN_IN:{
-                content =   Email.getInstance().getValue(code, "SignIn");
+                //content =   Email.getInstance().getValue(code, "SignIn");
+                content = String.format(SuperSafeApplication.getInstance().getString(R.string.use_your_code),code,"SignIn");
                 break;
             }
             case RESET:{
-                content =   Email.getInstance().getValue(code, "Reset");
+                //content =   Email.getInstance().getValue(code, "Reset");
+                content = String.format(SuperSafeApplication.getInstance().getString(R.string.use_your_code),code,"Reset");
                 break;
             }
             case UNLOCK_ALBUMS:{
-                content =   Email.getInstance().getValue(code, "Unlock albums");
+                //content =   Email.getInstance().getValue(code, "Unlock albums");
+                content = String.format(SuperSafeApplication.getInstance().getString(R.string.use_your_code),code,"Unlock albums");
                 break;
             }
         }

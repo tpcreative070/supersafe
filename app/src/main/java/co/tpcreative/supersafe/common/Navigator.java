@@ -54,8 +54,7 @@ import spencerstudios.com.bungeelib.Bungee;
 
 public class Navigator {
 
-    public static final int LIMIT_UPLOAD = 100;
-
+    public static final int LIMIT_UPLOAD = 50;
     public static final int PHOTO_SLIDE_SHOW = 100;
     public static final int CAMERA_ACTION = 1001;
     public static final int ALBUM_DETAIL = 1002;

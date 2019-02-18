@@ -102,7 +102,7 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[data.formatType];
                 tvTitle.setText(data.title);
                 String value = ConvertUtils.byte2FitMemorySize(Long.parseLong(data.size));
-                tvSizeCreatedDate.setText(value);
+                tvSizeCreatedDate.setText(value+" created "+ Utils.getCurrentDate(data.originalName));
                 switch (formatTypeFile) {
                     case AUDIO: {
                         Glide.with(context)

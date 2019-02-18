@@ -28,11 +28,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -50,7 +48,9 @@ import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.Theme;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
+
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
+
     @BindView(R.id.imgEdit)
     ImageView imgEdit;
     @BindView(R.id.tvTitle)

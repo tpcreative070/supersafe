@@ -67,6 +67,7 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -633,6 +634,20 @@ public class Utils {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
         String result = dateFormat.format(date);
         return result;
+    }
+
+    public static String getCurrentDate(String value) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        try {
+            Date mDate = sdf.parse(value);
+            long timeInMilliseconds = mDate.getTime();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("EE dd MMM, yyyy", Locale.getDefault());
+            String result = dateFormat.format(mDate);
+            return result;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+      return "";
     }
 
     public static String getCurrentDateTimeFormat() {
