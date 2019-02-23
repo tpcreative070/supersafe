@@ -70,6 +70,7 @@ import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
+import co.tpcreative.supersafe.common.views.NpaGridLayoutManager;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -637,7 +638,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
         else{
             adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
-            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+            RecyclerView.LayoutManager mLayoutManager = new NpaGridLayoutManager(getApplicationContext(), 3);
             recyclerView.setLayoutManager(mLayoutManager);
             while (recyclerView.getItemDecorationCount() > 0) {
                 recyclerView.removeItemDecorationAt(0);
