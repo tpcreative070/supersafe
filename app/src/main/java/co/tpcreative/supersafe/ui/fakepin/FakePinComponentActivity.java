@@ -146,11 +146,9 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         onShowDialog();
                         return false; // false will close it without animation
                     case R.id.fab_photo:
-                        showMessage(actionItem.getLabel(getApplicationContext()) + " Photo");
                         Navigator.onMoveToAlbum(FakePinComponentActivity.this);
                         return false; // closes without animation (same as mSpeedDialView.close(false); return false;)
                     case R.id.fab_camera:
-                        showMessage(actionItem.getLabel(getApplicationContext()) + " Camera");
                         onAddPermissionCamera();
                         return false;
                 }
