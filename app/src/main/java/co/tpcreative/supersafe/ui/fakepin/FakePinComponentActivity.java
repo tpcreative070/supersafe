@@ -412,7 +412,6 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
         }
     }
 
-
     @Override
     public void onSetting(int position) {
         Navigator.onAlbumSettings(getActivity(),presenter.mList.get(position));

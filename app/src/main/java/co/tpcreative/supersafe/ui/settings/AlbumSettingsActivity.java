@@ -23,17 +23,14 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -45,6 +42,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
@@ -102,7 +100,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSettingsActivity.class.getSimpleName());
         presenter.getData();
     }
 
@@ -308,6 +305,13 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     }
                 }
             });
+
+
+            if(FakePinComponentActivity.isVisit){
+                mLockAlbum.setVisible(false);
+                mAlbumCover.setVisible(false);
+            }
+
         }
 
         @Override

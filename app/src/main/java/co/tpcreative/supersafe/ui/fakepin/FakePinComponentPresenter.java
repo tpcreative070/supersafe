@@ -21,11 +21,16 @@ public class FakePinComponentPresenter extends Presenter<BaseView> {
     }
 
     public void  getData(){
-        BaseView view = view();
-        mList = MainCategories.getInstance().getListFakePin();
-        storage = new Storage(SuperSafeApplication.getInstance());
-        view.onSuccessful("Successful", EnumStatus.RELOAD);
-        Utils.Log(TAG,new Gson().toJson(mList));
+        try {
+            BaseView view = view();
+            mList = MainCategories.getInstance().getListFakePin();
+            storage = new Storage(SuperSafeApplication.getInstance());
+            view.onSuccessful("Successful", EnumStatus.RELOAD);
+            Utils.Log(TAG,new Gson().toJson(mList));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void onDeleteAlbum(int position){
