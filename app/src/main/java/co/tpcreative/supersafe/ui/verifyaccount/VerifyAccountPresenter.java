@@ -168,9 +168,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG,"error" +bodys.string());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

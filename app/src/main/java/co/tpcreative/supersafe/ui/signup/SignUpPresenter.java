@@ -78,13 +78,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                         ResponseBody body = ((HttpException) throwable).response().errorBody();
                         try {
                             final String value = body.string();
-                            Utils.Log(TAG, "Value :" + value);
-                            final BaseResponse baseResponse = new Gson().fromJson(value, BaseResponse.class);
-                            if (baseResponse != null) {
-                                Utils.Log(TAG, "Error occurred " + new Gson().toJson(baseResponse));
-                            } else {
-                                Utils.Log(TAG, "Error occurred is null");
-                            }
+                            Utils.Log(TAG,value);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
