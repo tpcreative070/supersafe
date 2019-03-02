@@ -644,7 +644,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 recyclerView.removeItemDecorationAt(0);
             }
             recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(adapter);
             adapter.setDataSource(presenter.mList);
         }
