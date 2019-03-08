@@ -32,6 +32,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -49,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
@@ -95,6 +99,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private MenuItem menuItem;
     private EnumStatus previousStatus;
     public static boolean isVisit ;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +141,18 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Utils.Log(TAG,"current time "+ current_time);
         //onRateApp();
 
+
+
+
+
     }
+
+    private void showInterstitial() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
+    }
+
 
     public void onShowSuggestion(){
         final boolean isFirstFile = PrefsController.getBoolean(getString(R.string.key_is_first_files),false);
@@ -175,6 +191,31 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
             case UNLOCK:{
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.freedevelop))) {
+                    mInterstitialAd = new InterstitialAd(this);
+                    mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen_test));
+                    mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                    mInterstitialAd.setAdListener(new AdListener() {
+                        public void onAdLoaded() {
+                            showInterstitial();
+                        }
+                    });
+                }
+                else if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.release))) {
+                    if (User.getInstance().isPremiumExpired()){
+                        mInterstitialAd = new InterstitialAd(this);
+                        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                        mInterstitialAd.setAdListener(new AdListener() {
+                            public void onAdLoaded() {
+                                showInterstitial();
+                            }
+                        });
+                    }
+                }
+
+
                 break;
             }
             case FINISH:{

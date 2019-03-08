@@ -14,6 +14,7 @@ import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
@@ -87,6 +88,8 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
+        MobileAds.initialize(this, getString(R.string.admob_app_id));
+
         InstanceGenerator.getInstance(this);
         mInstance = this;
         isLive = false;

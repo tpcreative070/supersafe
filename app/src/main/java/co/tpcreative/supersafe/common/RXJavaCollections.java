@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common;
+import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.util.Utils;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -56,6 +57,23 @@ public class RXJavaCollections {
                     .subscribe(response -> {
 
                     });
+    }
+
+    Observable<BaseResponse> login(String email, String password){
+        return null;
+    }
+
+    Observable<BaseResponse> fetchUserInfo(String userId){
+        return null;
+    }
+
+    public void onFinished(){
+        login("", "")
+                .flatMap(response ->
+                        fetchUserInfo(response.message))
+                .subscribe(userInfo -> {
+                    // get user info and you update ui now
+                });
     }
 
 
