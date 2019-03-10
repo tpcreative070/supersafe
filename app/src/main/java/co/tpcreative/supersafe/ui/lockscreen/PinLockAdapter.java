@@ -79,6 +79,9 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (position == 9) {
                 holder.mNumberButton.setVisibility(View.GONE);
             } else {
+                if(position > mKeyValues.length || position == mKeyValues.length){
+                    return;
+                }
                 holder.mNumberButton.setText(String.valueOf(mKeyValues[position]));
                 holder.mNumberButton.setVisibility(View.VISIBLE);
                 holder.mNumberButton.setTag(mKeyValues[position]);
