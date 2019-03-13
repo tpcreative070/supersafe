@@ -136,12 +136,22 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
                                 PrefsController.putBoolean(getString(R.string.key_calculator),false);
                                 tvOptionItems.setText(getString(R.string.virus_scanner));
                                 imgIcons.setImageResource(R.drawable.baseline_donut_large_white_48);
+                                final boolean isFirstScanVirus = PrefsController.getBoolean(getString(R.string.is_first_scan_virus),false);
+                                if (!isFirstScanVirus){
+                                    Navigator.onMoveSecretDoorSetUp(SecretDoorActivity.this);
+                                    PrefsController.putBoolean(getString(R.string.is_first_scan_virus),true);
+                                }
                                 break;
                             }
                             default:{
                                 PrefsController.putBoolean(getString(R.string.key_calculator),true);
                                 tvOptionItems.setText(getString(R.string.calculator));
                                 imgIcons.setImageResource(R.drawable.ic_calculator);
+                                final boolean isFirstCalculator = PrefsController.getBoolean(getString(R.string.is_first_calculator),false);
+                                if (!isFirstCalculator){
+                                    Navigator.onMoveSecretDoorSetUp(SecretDoorActivity.this);
+                                    PrefsController.putBoolean(getString(R.string.is_first_calculator),true);
+                                }
                                 break;
                             }
                         }
