@@ -374,19 +374,20 @@ public class ImageSelectActivity extends HelperActivity {
                         tempCountSelected++;
                     }
 
-                    file = new File(path);
-                    if (file.exists()) {
-                        String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
-                        final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
-                        if (mimeTypeFile != null) {
-                            temp.add(new Image(id, name, path, isSelected));
-                            //EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
+                    if (path!=null){
+                        file = new File(path);
+                        if (file.exists()) {
+                            String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
+                            final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
+                            if (mimeTypeFile != null) {
+                                temp.add(new Image(id, name, path, isSelected));
+                                //EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
+                            }
+                        }
+                        else{
+                            Log.d(TAG,"value "+file.getAbsolutePath());
                         }
                     }
-                    else{
-                        Log.d(TAG,"value "+file.getAbsolutePath());
-                    }
-
                 } while (cursor.moveToPrevious());
             }
             cursor.close();

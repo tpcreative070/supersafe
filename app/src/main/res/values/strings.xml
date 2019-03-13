@@ -322,6 +322,7 @@
     <string name="status_ok">status: OK</string>
     <string name="secret_door_app">Secret Door App</string>
     <string name="virus_scanner">Virus scanner</string>
+    <string name="calculator">Calculator</string>
     <string name="sync_completed">Sync Completed</string>
     <string name="monthly_usage">MONTHLY USAGE</string>
     <string name="uploaded">Updated %1$s</string>
@@ -459,6 +460,7 @@
     <string name="key_break_in_alert">Break-In alerts</string>
     <string name="key_fake_pin">Fake PIN</string>
     <string name="key_secret_door">Secret Door</string>
+    <string name="key_calculator">calculator</string>
     <string name="key_album_lock">Album Lock</string>
     <string name="key_album_all_lock">Album Lock</string>
     <string name="key_help_support">Help &amp; Support</string>
@@ -648,6 +650,12 @@
     <string name="url_google">https://www.googleapis.com/</string>
     <string name="freedevelop">freedevelop</string>
     <string name="release">release</string>
+
+
+    <string-array name="select_option">
+        <item>Virus Scanner</item>
+        <item>Calculator</item>
+    </string-array>
 
 
 

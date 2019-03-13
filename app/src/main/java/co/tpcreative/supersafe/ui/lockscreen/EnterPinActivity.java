@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
@@ -53,6 +54,10 @@ import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.preference.MySwitchPreference;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Calculator;
+import co.tpcreative.supersafe.common.util.CalculatorImpl;
+import co.tpcreative.supersafe.common.util.Constants;
+import co.tpcreative.supersafe.common.util.Formatter;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -61,9 +66,10 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
+import me.grantland.widget.AutofitHelper;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>, FingerPrintAuthCallback, SingletonMultipleListener.Listener,SingletonScreenLock.SingletonScreenLockListener {
+public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>,Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener,SingletonScreenLock.SingletonScreenLockListener {
 
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -81,6 +87,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     TextView mTextAttempts;
     @BindView(R.id.imgLauncher)
     ImageView imgLauncher;
+    @BindView(R.id.ic_SuperSafe)
+    ImageView ic_SuperSafe;
     @BindView(R.id.rlLockScreen)
     RelativeLayout rlLockScreen;
     @BindView(R.id.rlPreference)
@@ -93,6 +101,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     RelativeLayout rlDots;
     @BindView(R.id.rlSecretDoor)
     RelativeLayout rlSecretDoor;
+    @BindView(R.id.calculator_holder)
+    LinearLayout calculator_holder;
     @BindView(R.id.btnDone)
     Button btnDone;
     @BindView(R.id.imgFingerprint)
@@ -111,6 +121,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     CircleProgressView circleProgressView;
     @BindView(R.id.tvAttempt)
     TextView tvAttempt;
+    @BindView(R.id.result) TextView mResult;
+    @BindView(R.id.formula) TextView mFormula;
+    private static CalculatorImpl mCalc;
 
     private int count = 0;
     private int countAttempt=0;
@@ -176,6 +189,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         imgSwitchTypeUnClock.setVisibility(View.INVISIBLE);
                         changeLayoutSecretDoor(true);
                     } else {
+                        calculator_holder.setVisibility(View.INVISIBLE);
                         onDisplayView();
                         onDisplayText();
                     }
@@ -212,10 +226,27 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 return false;
             }
         });
+
+        ic_SuperSafe.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                changeLayoutSecretDoor(false);
+                return false;
+            }
+        });
+
+
+
         if (Utils.isSensorAvailable()) {
             mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this);
         }
         onInitPin();
+
+        /*Calculator init*/
+        mCalc = new CalculatorImpl(this);
+        AutofitHelper.create(mResult);
+        AutofitHelper.create(mFormula);
+
     }
 
     final PinLockListener pinLockListener = new PinLockListener() {
@@ -703,15 +734,27 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             rlButton.setVisibility(View.INVISIBLE);
             rlDots.setVisibility(View.INVISIBLE);
             mTextAttempts.setVisibility(View.INVISIBLE);
-            imgLauncher.setVisibility(View.VISIBLE);
-            rlSecretDoor.setVisibility(View.VISIBLE);
+
+            final boolean options = PrefsController.getBoolean(getString(R.string.key_calculator),false);
+            if (options){
+                imgLauncher.setVisibility(View.INVISIBLE);
+                rlSecretDoor.setVisibility(View.INVISIBLE);
+                calculator_holder.setVisibility(View.VISIBLE);
+            }
+            else {
+                imgLauncher.setVisibility(View.VISIBLE);
+                rlSecretDoor.setVisibility(View.VISIBLE);
+                calculator_holder.setVisibility(View.INVISIBLE);
+            }
         } else {
             mTextTitle.setVisibility(View.VISIBLE);
             rlButton.setVisibility(View.VISIBLE);
             rlDots.setVisibility(View.VISIBLE);
-            mTextAttempts.setVisibility(View.INVISIBLE);
+            mTextAttempts.setVisibility(View.VISIBLE);
+            mTextAttempts.setText("");
             imgLauncher.setVisibility(View.INVISIBLE);
-            rlSecretDoor.setVisibility(View.GONE);
+            rlSecretDoor.setVisibility(View.INVISIBLE);
+            calculator_holder.setVisibility(View.INVISIBLE);
             if (Utils.isSensorAvailable()) {
                 boolean isFingerPrintUnLock = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
                 if (isFingerPrintUnLock) {
@@ -719,6 +762,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     isFingerprint = isFingerPrintUnLock;
                     onSetVisitFingerprintView(isFingerprint);
                 }
+                else{
+                    imgSwitchTypeUnClock.setVisibility(View.GONE);
+                }
+            }
+            else{
+                imgSwitchTypeUnClock.setVisibility(View.GONE);
             }
         }
     }
@@ -1296,5 +1345,87 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 setImageFile(SuperSafeApplication.getInstance().getDefaultStorageFile(CameraImageFormat.FORMAT_JPEG));
         takePicture();
     }
+
+
+
+    /*Calculator action*/
+    @Override
+    public void setValue(String value) {
+        mResult.setText(value);
+    }
+
+    // used only by Robolectric
+    @Override
+    public void setValueDouble(double d) {
+        mCalc.setValue(Formatter.doubleToString(d));
+        mCalc.setLastKey(Constants.DIGIT);
+    }
+
+    public void setFormula(String value) {
+        mFormula.setText(value);
+    }
+
+
+    @OnClick(R.id.btn_plus)
+    public void plusClicked() {
+        mCalc.handleOperation(Constants.PLUS);
+    }
+
+    @OnClick(R.id.btn_minus)
+    public void minusClicked() {
+        mCalc.handleOperation(Constants.MINUS);
+    }
+
+    @OnClick(R.id.btn_multiply)
+    public void multiplyClicked() {
+        mCalc.handleOperation(Constants.MULTIPLY);
+    }
+
+    @OnClick(R.id.btn_divide)
+    public void divideClicked() {
+        mCalc.handleOperation(Constants.DIVIDE);
+    }
+
+    @OnClick(R.id.btn_modulo)
+    public void moduloClicked() {
+        mCalc.handleOperation(Constants.MODULO);
+    }
+
+    @OnClick(R.id.btn_power)
+    public void powerClicked() {
+        mCalc.handleOperation(Constants.POWER);
+    }
+
+    @OnClick(R.id.btn_root)
+    public void rootClicked() {
+        mCalc.handleOperation(Constants.ROOT);
+    }
+
+    @OnClick(R.id.btn_clear)
+    public void clearClicked() {
+        mCalc.handleClear();
+    }
+
+    @OnLongClick(R.id.btn_clear)
+    public boolean clearLongClicked() {
+        mCalc.handleReset();
+        return true;
+    }
+
+    @OnClick(R.id.btn_equals)
+    public void equalsClicked() {
+        mCalc.handleEquals();
+    }
+
+    @OnClick({R.id.btn_decimal, R.id.btn_0, R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4, R.id.btn_5, R.id.btn_6, R.id.btn_7, R.id.btn_8,
+            R.id.btn_9})
+    public void numpadClick(View view) {
+        numpadClicked(view.getId());
+    }
+
+    public void numpadClicked(int id) {
+        mCalc.numpadClicked(id);
+    }
+
 
 }

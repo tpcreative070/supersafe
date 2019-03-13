@@ -30,6 +30,8 @@
     <color name="colorTextDark">#FFE0B2</color>
     <color name="colorTransparent">#11ffffff</color>
     <color name="colorTransparentNew">#80000000</color>
+    <color name="text_grey">#77000000</color>
+    <color name="dark_grey_pressed_mask">#11000000</color>
 
 
     <color name="colorPrimaryV1">#3F51B5</color>

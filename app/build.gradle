@@ -240,6 +240,9 @@ dependencies {
     /*Material style dialog*/
     implementation project(':materialdialoglibrary')
 
+    /*Animation textview*/
+    implementation 'me.grantland:autofittextview:0.2.1'
+
 }
 
 /*Resolved duplicated for Google api client*/
