@@ -181,26 +181,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action){
-            case SCREEN_LOCK:{
-                if (!EnterPinActivity.isVisible){
-                    Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
-                    Utils.Log(TAG,"Pressed home button");
-                    EnterPinActivity.isVisible = true;
-                    Utils.Log(TAG,"Verify pin");
-                }else{
-                    Utils.Log(TAG,"Verify pin already");
-                }
-                break;
-            }
-            default:{
-                Utils.Log(TAG,"Nothing to do on start " +action.name());
-                break;
-            }
-        }
-
         if (onStartCount > 1) {
             Bungee.fade(this);
         } else if (onStartCount == 1) {

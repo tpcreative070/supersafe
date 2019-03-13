@@ -776,6 +776,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         rlLockScreen.setVisibility(View.GONE);
         llLockScreen_1.setVisibility(View.GONE);
         rlSecretDoor.setVisibility(View.GONE);
+        calculator_holder.setVisibility(View.GONE);
         toolbar.setVisibility(View.GONE);
         rlPreference.setVisibility(View.GONE);
     }
@@ -921,9 +922,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action) {
                     case SCREEN_LOCK: {
-                        //PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.STILL_SCREEN_LOCK.ordinal());
                         EventBus.getDefault().post(EnumStatus.FINISH);
-                        Utils.Log(TAG, "onStillScreenLock");
+                        Utils.Log(TAG, "onStillScreenLock ???");
                     }
                 }
                 super.onBackPressed();
@@ -966,6 +966,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             }
             default: {
                 super.onBackPressed();
+                Utils.Log(TAG,"onBackPressed");
                 break;
             }
         }
