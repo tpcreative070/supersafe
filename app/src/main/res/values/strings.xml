@@ -630,9 +630,9 @@
 
 
     <!-- Google ads -->
-    <string name="admob_app_id">ca-app-pub-3419088836759997~1511026405</string>
+    <string name="admob_app_id">ca-app-pub-7128322465619540~8251047779</string>
     <string name="banner_home_footer">ca-app-pub-7476107722193302/1275614300</string>
-    <string name="interstitial_full_screen">ca-app-pub-3419088836759997/3151411136</string>
+    <string name="interstitial_full_screen">ca-app-pub-7128322465619540/1685639421</string>
     <string name="banner_home_footer_test">ca-app-pub-3940256099942544/6300978111</string>
     <string name="interstitial_full_screen_test">ca-app-pub-3940256099942544/1033173712</string>
 
