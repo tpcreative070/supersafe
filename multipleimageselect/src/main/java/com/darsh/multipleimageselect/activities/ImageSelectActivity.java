@@ -379,7 +379,7 @@ public class ImageSelectActivity extends HelperActivity {
 
                     file = new File(path);
                     if (file.exists()) {
-                        String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
+                        String extensionFile = Utils.getFileExtension(file.getAbsolutePath());
                         final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
                         if (mimeTypeFile != null) {
                             temp.add(new Image(id, name, path, isSelected));

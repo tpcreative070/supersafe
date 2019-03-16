@@ -65,7 +65,7 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
 
 
         try {
-            String extensionFile = FilenameUtils.getExtension(data.cover);
+            String extensionFile = Utils.getFileExtension(data.cover);
             Log.d("value customer",extensionFile);
             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
             if (mimeTypeFile != null) {

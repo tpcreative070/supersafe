@@ -66,7 +66,7 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
 
         final Image data = arrayList.get(position);
         try {
-            String extensionFile = FilenameUtils.getExtension(data.path);
+            String extensionFile = Utils.getFileExtension(data.path);
             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
             if (mimeTypeFile != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];

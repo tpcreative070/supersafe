@@ -287,7 +287,7 @@ public class AlbumSelectActivity extends HelperActivity {
                          */
                         file = new File(image);
                         if (file.exists()) {
-                            String extensionFile = FilenameUtils.getExtension(file.getAbsolutePath());
+                            String extensionFile = Utils.getFileExtension(file.getAbsolutePath());
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
                             if (mimeTypeFile != null) {
                                 temp.add(new Album(album, image));

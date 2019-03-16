@@ -140,11 +140,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         long current_time = System.currentTimeMillis();
         Utils.Log(TAG,"current time "+ current_time);
         //onRateApp();
-
-
-
-
-
     }
 
     private void showInterstitial() {
@@ -191,7 +186,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             }
             case UNLOCK:{
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
                 if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.freedevelop))) {
                     mInterstitialAd = new InterstitialAd(this);
                     mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen_test));
@@ -214,8 +208,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         });
                     }
                 }
-
-
                 break;
             }
             case FINISH:{

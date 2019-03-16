@@ -606,7 +606,7 @@ public class Utils {
     }
 
     public static String getFileExtension(String url){
-        String fileExt = FilenameUtils.getExtension(url);
+        String fileExt = FilenameUtils.getExtension(url).toLowerCase();
         return fileExt;
     }
 
