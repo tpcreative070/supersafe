@@ -52,6 +52,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
 
         Categories categories = new Categories(0,getString(R.string.faq));
         mList.add(new HelpAndSupport(categories,getString(R.string.i_have_a_new_phone),getString(R.string.i_have_a_new_phone_content),null));
+        mList.add(new HelpAndSupport(categories,getString(R.string.what_about_google_drive),getString(R.string.what_about_google_drive_content),null));
 
         mList.add(new HelpAndSupport(categories,getString(R.string.how_do_export_my_files),getString(R.string.how_do_export_my_files_content),null));
         mList.add(new HelpAndSupport(categories,getString(R.string.how_do_i_recover_items_from_trash),getString(R.string.how_do_i_recover_items_from_trash_content),null));

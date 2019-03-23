@@ -528,6 +528,9 @@
     <string name="i_have_a_new_phone">I have a new phone</string>
     <string name="i_have_a_new_phone_content">file:///android_asset/new_phone.html</string>
 
+    <string name="what_about_google_drive">What about Cloud(Google Drive)</string>
+    <string name="what_about_google_drive_content">file:///android_asset/what_about_google_drive.html</string>
+
     <string name="how_do_export_my_files">How do I export my files?</string>
     <string name="how_do_export_my_files_content">file:///android_asset/export_files.html</string>
 
