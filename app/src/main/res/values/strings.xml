@@ -280,7 +280,7 @@
     <string name="request_an_access_code">Request an account code. We\'ll send it to your primary email address: %1$s</string>
     <string name="request_enter_code">Enter the access code below. We\'ll begin the reset process so you can create a new PIN</string>
     <string name="access_code">Access code</string>
-    <string name="verify_code_to_sync_files_to_cloud">Verify account and then enable Google Drive to sync files to Google Drive. You are never lost files</string>
+    <string name="verify_code_to_sync_files_to_cloud">Verify account and then enable Google Drive to sync files to your Google Drive. You never lost files</string>
     <string name="reset_pin">Reset PIN</string>
     <string name="premium_feature">Premium feature</string>
     <string name="premium">Premium</string>
@@ -524,11 +524,12 @@
     <!--Help and Support -->
     <string name="faq">FAQ</string>
     <string name="Support">Support</string>
+    <string name="more_about_private_cloud">More detail Private Cloud(Google Drive)</string>
 
     <string name="i_have_a_new_phone">I have a new phone</string>
     <string name="i_have_a_new_phone_content">file:///android_asset/new_phone.html</string>
 
-    <string name="what_about_google_drive">What about Cloud(Google Drive)</string>
+    <string name="what_about_google_drive">What about Private Cloud(Google Drive)</string>
     <string name="what_about_google_drive_content">file:///android_asset/what_about_google_drive.html</string>
 
     <string name="how_do_export_my_files">How do I export my files?</string>

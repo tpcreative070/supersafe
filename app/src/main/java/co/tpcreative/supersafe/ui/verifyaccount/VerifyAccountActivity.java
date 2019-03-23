@@ -31,6 +31,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -43,8 +45,10 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.Categories;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
+import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.model.Theme;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
@@ -269,6 +273,14 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
            onChangedEmail();
             /*Do something here*/
         }
+    }
+
+    @OnClick(R.id.tvPrivateCloud)
+    public void onPrivateCloud(){
+        Categories categories = new Categories(0,getString(R.string.faq));
+        List<HelpAndSupport> mList = new ArrayList<>();
+        mList.add(new HelpAndSupport(categories,getString(R.string.what_about_google_drive),getString(R.string.what_about_google_drive_content),null));
+        Navigator.onMoveHelpAndSupportContent(this,mList.get(0));
     }
 
     public void onChangedEmail(){

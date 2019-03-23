@@ -160,7 +160,8 @@
         <activity
             android:name=".ui.unlockalbum.UnlockAllAlbumActivity"
             android:label="@string/unlock_all_albums" />
-        <activity android:name=".ui.help.HelpAndSupportContentActivity" />
+        <activity android:name=".ui.help.HelpAndSupportContentActivity"
+            android:label="@string/help"/>
         <activity android:name=".ui.sharefiles.ShareFilesActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
