@@ -184,6 +184,10 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 Bungee.fade(this);
                 break;
             }
+            case REGISTER_OR_LOGIN:{
+                rlOverLay.setVisibility(View.INVISIBLE);
+                break;
+            }
             case UNLOCK:{
                 rlOverLay.setVisibility(View.INVISIBLE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

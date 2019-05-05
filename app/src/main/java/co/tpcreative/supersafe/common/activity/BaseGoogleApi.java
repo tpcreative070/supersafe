@@ -33,6 +33,9 @@ import com.google.gson.Gson;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.List;
 import butterknife.ButterKnife;
@@ -119,6 +122,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 break;
             }
             default:{
+                EventBus.getDefault().post(EnumStatus.REGISTER_OR_LOGIN);
                 Utils.Log(TAG,"Nothing to do " +action.name());
             }
         }
