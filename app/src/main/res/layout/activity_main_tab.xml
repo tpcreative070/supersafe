@@ -54,7 +54,6 @@
     <RelativeLayout
         android:id="@+id/rlOverLay"
         android:background="?attr/colorPrimary"
-        app:layout_behavior="@string/speeddial_scrolling_view_snackbar_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </RelativeLayout>
