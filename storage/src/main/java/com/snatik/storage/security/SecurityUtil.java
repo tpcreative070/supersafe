@@ -32,7 +32,7 @@ public class SecurityUtil {
     public static final int iterationCount = 1000; // recommended by PKCS#5
     public static final int keyLength = 128;
 
-    public static final String url_developer = "http://192.168.1.4:8081";
+    public static final String url_developer = "http://192.168.1.3:8081";
     public static final String url_live = "http://tpcreative.me:8081";
 
     public static final String key_password_default = "tpcreative.co";
