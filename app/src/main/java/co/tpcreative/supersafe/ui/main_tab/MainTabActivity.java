@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,6 +94,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     Toolbar toolbar;
     @BindView(R.id.tabs)
     TabLayout tabLayout;
+    @BindView(R.id.rlOverLay)
+    RelativeLayout rlOverLay;
     private MainViewPagerAdapter adapter;
     private MainTabPresenter presenter;
     AnimationsContainer.FramesSequenceAnimation animation;
@@ -122,8 +125,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
         SingletonPremiumTimer.getInstance().onStartTimer();
-
-
         if (presenter.mUser.driveConnected){
             if (NetworkUtil.pingIpAddress(this)) {
                 return;
@@ -147,7 +148,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             mInterstitialAd.show();
         }
     }
-
 
     public void onShowSuggestion(){
         final boolean isFirstFile = PrefsController.getBoolean(getString(R.string.key_is_first_files),false);
@@ -185,6 +185,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 break;
             }
             case UNLOCK:{
+                rlOverLay.setVisibility(View.INVISIBLE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.freedevelop))) {
                     mInterstitialAd = new InterstitialAd(this);
@@ -379,7 +380,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                             getTheme()))
                     .create());
            mSpeedDialView.show();
-
         }
 
         //Set main action clicklistener.

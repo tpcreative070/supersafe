@@ -137,6 +137,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private CameraConfig mCameraConfig;
     private FingerPrintAuthHelper mFingerPrintAuthHelper;
     public static boolean isVisible ;
+    Handler handler =  new Handler();
 
     public static Intent getIntent(Context context, int action, int actionNext) {
         Intent intent = new Intent(context, EnterPinActivity.class);
@@ -368,6 +369,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(handler!=null){
+            handler.removeCallbacks(null);
+        }
         isVisible = false;
         int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];
@@ -810,12 +814,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     }
                     case DONE: {
                         onHideUI();
-                        Handler handler =  new Handler();
+                        EventBus.getDefault().post(EnumStatus.UNLOCK);
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                               onBackPressed();
-                              EventBus.getDefault().post(EnumStatus.UNLOCK);
                             }
                         },100);
                         Utils.Log(TAG, "Action ...................done");
