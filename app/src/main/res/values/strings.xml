@@ -143,6 +143,7 @@
     <string name="pinlock_secondtry">Wrong Pin Code: Second Try</string>
     <string name="pinlock_wrongpin">Wrong Pin code</string>
     <string name="pinlock_secondPin">Enter Pin Code Again</string>
+    <string name="pinlock_original_fake_pin_not_the_same">Original and Fake PIN Is Not The Same</string>
     <string name="pinlock_tryagain">Pin Codes Are Not The Same</string>
     <string name="pinlock_fingerprint">Use Fingerprint</string>
     <string name="pinlock_confirm_your_pin">Please confirm your pin to continue</string>
@@ -515,8 +516,8 @@
     <string name="key_request_sign_out_google_drive">request_sign_out_google_drive</string>
     <string name="how_are_we_doing">How are we doing?</string>
     <string name="happy">If you are happy with this app, please rate us and let us know what SuperSafe help you</string>
-    <string name="unhappy">If you are unhappy, please send us feedback about your issues. We need your support in order to make SuperSafe butter.</string>
-    <string name="thank_you_feedback">Thank Your</string>
+    <string name="unhappy">If you are unhappy, please send us feedback about your issues. We need your support in order to make SuperSafe better.</string>
+    <string name="thank_you_feedback">Thank You for using our services</string>
     <string name="i_love_it">I love it</string>
     <string name="report_problem">Report problem</string>
 
@@ -595,7 +596,10 @@
     <string name="key_rate">rate</string>
     <string name="give_rate">Rate 5 stars</string>
     <string name="key_vertical_adapter">isVertical</string>
-
+    <string name="we_are_a_team">We_Are_A_Team</string>
+    <string name="we_are_a_team_positive">We_Are_A_Team</string>
+    <string name="second_loads">second loads</string>
+    <string name="current_code_version">current_code_version</string>
 
     <!--Multi selects -->
     <string name="album_view">Select photo album</string>

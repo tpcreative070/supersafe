@@ -24,7 +24,6 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AdvancedWebView;
@@ -45,8 +44,8 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     LinearLayout llEmail;
     @BindView(R.id.tvEmail)
     TextView tvEmail;
-    @BindView(R.id.edtEmail)
-    MaterialEditText edtEmail;
+    @BindView(R.id.edtSupport)
+    MaterialEditText edtSupport;
     private boolean isNext ;
     private User mUser;
     private AlertDialog dialog;
@@ -68,8 +67,8 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         mUser = User.getInstance().getUserInfo();
         tvEmail.setText(mUser.email);
 
-        edtEmail.addTextChangedListener(mTextWatcher);
-        edtEmail.setOnEditorActionListener(this);
+        edtSupport.addTextChangedListener(mTextWatcher);
+        edtSupport.setOnEditorActionListener(this);
 
     }
 
@@ -127,7 +126,7 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             case SEND_EMAIL:{
                 onStopProgressing();
                 Utils.showGotItSnackbar(getCurrentFocus(),R.string.send_email_failed);
-                edtEmail.setText("");
+                edtSupport.setText("");
                 break;
             }
         }
@@ -145,13 +144,13 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             case RELOAD:{
                 if (presenter.content.content.equals(getString(R.string.contact_support_content))){
                     llEmail.setVisibility(View.VISIBLE);
-                    edtEmail.setVisibility(View.VISIBLE);
+                    edtSupport.setVisibility(View.VISIBLE);
                     webview.setVisibility(View.GONE);
                 }
                 else{
                     tvTitle.setText(presenter.content.title);
                     llEmail.setVisibility(View.GONE);
-                    edtEmail.setVisibility(View.GONE);
+                    edtSupport.setVisibility(View.GONE);
                     webview.setVisibility(View.VISIBLE);
                     webview.loadUrl(presenter.content.content);
                 }
@@ -160,7 +159,7 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             case SEND_EMAIL:{
                 onStopProgressing();
                 Utils.showInfoSnackbar(getCurrentFocus(),R.string.thank_you,true);
-                edtEmail.setText("");
+                edtSupport.setText("");
                 break;
             }
         }
@@ -196,11 +195,11 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             }
             if (isNext){
                 onStartProgressing();
-                String content = edtEmail.getText().toString();
+                String content = edtSupport.getText().toString();
 
                 final EmailToken emailToken = EmailToken.getInstance().convertTextObject(mUser,content);
                 presenter.onSendMail(emailToken,content);
-                Utils.hideKeyboard(edtEmail);
+                Utils.hideKeyboard(edtSupport);
                 return true;
             }
             return false;
@@ -254,11 +253,11 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         switch (item.getItemId()){
             case R.id.menu_item_send:{
                 if (isNext){
-                    String content = edtEmail.getText().toString();
+                    String content = edtSupport.getText().toString();
                     final EmailToken emailToken = EmailToken.getInstance().convertTextObject(mUser,content);
                     presenter.onSendMail(emailToken,content);
                     onStartProgressing();
-                    Utils.hideKeyboard(edtEmail);
+                    Utils.hideKeyboard(edtSupport);
                 }
                 break;
             }
@@ -305,6 +304,4 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             Utils.Log(TAG,e.getMessage());
         }
     }
-
-
 }

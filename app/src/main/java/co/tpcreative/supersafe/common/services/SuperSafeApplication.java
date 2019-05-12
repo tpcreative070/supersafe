@@ -70,7 +70,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private static int stopped;
     private static String url;
     private int Orientation = 0;
-
     protected static Dependencies dependencies;
     public static RootAPI serverAPI;
     public static RootAPI serverDriveApi;
@@ -89,29 +88,21 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public void onCreate() {
         super.onCreate();
         MobileAds.initialize(this, getString(R.string.admob_app_id));
-
         InstanceGenerator.getInstance(this);
         mInstance = this;
         isLive = false;
-
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
-
         /*Init own service api*/
-
         dependencies = Dependencies.getsInstance(getApplicationContext(), getUrl());
         dependencies.dependenciesListener(this);
         dependencies.init();
         serverAPI = (RootAPI) Dependencies.serverAPI;
-
         /*Init Drive api*/
         serverDriveApi = new RetrofitHelper().getCityService(getString(R.string.url_google));
-
         /*Init GraphMicrosoft*/
         serviceGraphMicrosoft = new RetrofitHelper().getCityService(getString(R.string.url_graph_microsoft));
-
         ServiceManager.getInstance().setContext(this);
-
         new PrefsController.Builder()
                 .setContext(getApplicationContext())
                 .setMode(ContextWrapper.MODE_PRIVATE)
@@ -136,7 +127,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         storage = new Storage(getApplicationContext());
         supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/";
 
-
         key = ".encrypt_key";
         fake_key = ".encrypt_fake_key";
         userSecret = ".userSecret";
@@ -151,7 +141,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         registerActivityLifecycleCallbacks(this);
         Log.d(TAG, supersafe);
 
-
         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(Drive.SCOPE_FILE)
@@ -164,7 +153,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString = new ArrayList<>();
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
-
+        Utils.onCheckNewVersion();
     }
 
     public String getSecretKey() {
@@ -602,5 +591,4 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             e.printStackTrace();
         }
     }
-
 }

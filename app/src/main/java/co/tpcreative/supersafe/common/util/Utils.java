@@ -79,6 +79,7 @@ import java.util.UUID;
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -1261,5 +1262,52 @@ public class Utils {
         return availableSpace/SIZE_GB;
     }
 
+    public static void writePinToSharedPreferences(String pin) {
+        //PrefsController.putString(getString(R.string.key_pin),Utils.sha256(pin));
+        SuperSafeApplication.getInstance().writeKey(pin);
+    }
 
+    public static String getPinFromSharedPreferences() {
+        //PrefsController.getString(getString(R.string.key_pin), "");
+        return SuperSafeApplication.getInstance().readKey();
+    }
+
+    public static void writeFakePinToSharedPreferences(String pin) {
+        //PrefsController.putString(getString(R.string.key_pin),Utils.sha256(pin));
+        SuperSafeApplication.getInstance().writeFakeKey(pin);
+    }
+
+    public static String getFakePinFromSharedPreferences() {
+        //PrefsController.getString(getString(R.string.key_pin), "");
+        return SuperSafeApplication.getInstance().readFakeKey();
+    }
+
+    public static boolean isExistingFakePin(String pin) {
+        final String value = getFakePinFromSharedPreferences();
+        if (pin.equals(value)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isExistingRealPin(String pin) {
+        final String value = getPinFromSharedPreferences();
+        if (pin.equals(value)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void onCheckNewVersion(){
+        final int current_code_version = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version),0);
+        if (current_code_version == BuildConfig.VERSION_CODE){
+            Utils.Log(TAG,"Already install this version");
+            return ;
+        }
+        else{
+            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version),BuildConfig.VERSION_CODE);
+            PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.we_are_a_team),false);
+            Utils.Log(TAG,"New install this version");
+        }
+    }
 }

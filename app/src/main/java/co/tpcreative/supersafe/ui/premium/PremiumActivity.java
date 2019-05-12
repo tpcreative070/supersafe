@@ -106,8 +106,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         presenter = new PremiumPresenter();
         presenter.bindView(this);
-
-
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
             fragment = Fragment.instantiate(this, PremiumActivity.SettingsFragment.class.getName());
@@ -126,12 +124,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         else{
             onDrawOverLay(this);
         }
-
         /*Init In app purchase*/
         onStartInAppPurchase();
         onUpdatedView();
         scrollView.smoothScrollTo(0,0);
-
     }
 
 

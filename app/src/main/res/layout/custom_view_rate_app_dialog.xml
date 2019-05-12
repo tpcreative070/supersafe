@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:background="@color/light_green_a700"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
@@ -59,10 +60,10 @@
                 android:background="@null"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high" />
-
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:background="@color/ColorRedV1"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"

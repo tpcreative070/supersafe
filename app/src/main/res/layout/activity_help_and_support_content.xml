@@ -62,7 +62,7 @@
                     android:id="@+id/llEmail"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
 
                     <TextView
                         android:textSize="@dimen/text_size_normal"
@@ -85,19 +85,16 @@
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:layout_marginTop="20dp"
-                    android:id="@+id/edtEmail"
+                    android:id="@+id/edtSupport"
                     android:textSize="@dimen/text_size_normal"
                     android:hint="@string/how_we_can_help_you"
-                    android:singleLine="true"
-                    android:inputType="text"
-                    android:imeOptions="actionDone"
                     app:met_floatingLabel="highlight"
                     app:met_baseColor="?attr/colorAccent"
                     app:met_primaryColor="?attr/colorAccent"
                     app:met_textColorHint="?attr/colorAccent"
                     app:met_textColor="@color/material_gray_700"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="match_parent"/>
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>

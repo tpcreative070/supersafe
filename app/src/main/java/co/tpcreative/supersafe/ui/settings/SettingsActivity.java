@@ -69,7 +69,6 @@ public class SettingsActivity extends BaseActivity {
         transaction.commit();
     }
 
-
     protected void setStatusBarColored(AppCompatActivity context, int colorPrimary, int colorPrimaryDark) {
         context.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources()
                 .getColor(colorPrimary)));
@@ -80,8 +79,6 @@ public class SettingsActivity extends BaseActivity {
             window.setStatusBarColor(ContextCompat.getColor(context,colorPrimaryDark));
         }
     }
-
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -133,7 +130,6 @@ public class SettingsActivity extends BaseActivity {
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

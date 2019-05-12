@@ -97,7 +97,6 @@ public class User extends BaseResponse implements Serializable{
         return false;
     }
 
-
     public boolean isCheckAllowUpload(){
         final boolean expired = isPremiumExpired();
         if (expired){
