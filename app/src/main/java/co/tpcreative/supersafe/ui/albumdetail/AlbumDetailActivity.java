@@ -332,6 +332,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public void onClickItem(int position) {
         Utils.Log(TAG,"On clicked item");
+        if (position>=presenter.mList.size()){
+            return;
+        }
         if (actionMode!=null){
             toggleSelection(position);
             actionMode.setTitle(countSelected + " " + getString(R.string.selected));
@@ -358,6 +361,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public void onLongClickItem(int position) {
         Utils.Log(TAG,"On long clicked item");
+        if (position>=presenter.mList.size()){
+            return;
+        }
         if (actionMode == null) {
             actionMode = toolbar.startActionMode(callback);
         }
@@ -1031,7 +1037,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 else{
                     adapter.setDataSource(presenter.mList);
                 }
-
                 break;
             }
             case REFRESH:{
@@ -1046,7 +1051,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
 
                 boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
                 if (isVertical){
@@ -1088,7 +1092,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     @Override
     public Activity getActivity() {
         return this;
@@ -1109,7 +1112,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             menuInflater.inflate(R.menu.menu_select, menu);
             actionMode = mode;
             countSelected = 0;
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Window window = getWindow();
                 window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.material_orange_900));
@@ -1155,7 +1157,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             countSelected--;
         }
         onShowUI();
-
         boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
         if (isVertical){
             vericalAdapter.notifyItemChanged(position);
@@ -1216,7 +1217,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                             vericalAdapter.notifyItemChanged(i);
                         }
                         else{
-
                             adapter.notifyItemChanged(i);
                         }
                     }
