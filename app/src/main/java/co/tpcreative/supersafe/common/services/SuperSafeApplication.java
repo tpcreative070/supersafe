@@ -75,15 +75,13 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public static RootAPI serverDriveApi;
     public static RootAPI serviceGraphMicrosoft;
     private String authorization = null;
-
     private GoogleSignInOptions.Builder options;
     private Set<Scope> requiredScopes;
     private List<String> requiredScopesString;
     private boolean isLive = false;
     private String secretKey;
     private Activity activity;
-
-
+    
     @Override
     public void onCreate() {
         super.onCreate();
