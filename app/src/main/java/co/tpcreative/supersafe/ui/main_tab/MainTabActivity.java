@@ -905,6 +905,14 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 .titleColor(getResources().getColor(R.color.black))
                 .positiveText(getString(R.string.i_love_it))
                 .negativeText(getString(R.string.report_problem))
+                .neutralText(getString(R.string.no_thanks))
+                .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        PrefsController.putBoolean(getString(R.string.we_are_a_team),true);
+                        finish();
+                    }
+                })
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
