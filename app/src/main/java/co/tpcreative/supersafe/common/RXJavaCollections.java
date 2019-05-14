@@ -8,10 +8,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class RXJavaCollections {
-
     private static final String TAG = RXJavaCollections.class.getSimpleName();
-
-
     private Observable<Integer> getObservableItems() {
         return Observable.create(subscriber -> {
             for (int i = 0;i<10;i++) {
