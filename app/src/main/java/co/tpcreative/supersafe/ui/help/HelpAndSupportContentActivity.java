@@ -196,7 +196,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
             if (isNext){
                 onStartProgressing();
                 String content = edtSupport.getText().toString();
-
                 final EmailToken emailToken = EmailToken.getInstance().convertTextObject(mUser,content);
                 presenter.onSendMail(emailToken,content);
                 Utils.hideKeyboard(edtSupport);

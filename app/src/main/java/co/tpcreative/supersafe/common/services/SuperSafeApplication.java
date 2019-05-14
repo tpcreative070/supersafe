@@ -81,7 +81,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     private boolean isLive = false;
     private String secretKey;
     private Activity activity;
-    
+
     @Override
     public void onCreate() {
         super.onCreate();
