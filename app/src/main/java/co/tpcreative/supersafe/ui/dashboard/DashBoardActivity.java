@@ -122,5 +122,4 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
             e.printStackTrace();
         }
     }
-
 }
