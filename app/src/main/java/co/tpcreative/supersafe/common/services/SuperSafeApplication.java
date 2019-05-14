@@ -152,6 +152,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
         Utils.onCheckNewVersion();
+        /*SP-100*/
     }
 
     public String getSecretKey() {
