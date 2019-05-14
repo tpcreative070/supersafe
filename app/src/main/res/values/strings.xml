@@ -485,6 +485,7 @@
     <string name="key_theme_list">theme_list</string>
     <string name="key_pause_cloud_sync">pause_cloud_sync</string>
     <string name="key_saving_space">saving_space</string>
+    <string name="key_count_to_rate">count_to_rate</string>
     <string name="download_private_cloud_files">Download Private Cloud Files</string>
     <string name="download_pricate_cloud_files_detail">When you give up Space Saver, We will restore your full-size files to your device</string>
     <string name="key_cloud_sync_only_wifi">cloud_sync_only_wifi</string>

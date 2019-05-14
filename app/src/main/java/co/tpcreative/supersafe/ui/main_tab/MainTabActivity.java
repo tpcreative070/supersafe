@@ -105,6 +105,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     private EnumStatus previousStatus;
     public static boolean isVisit ;
     private InterstitialAd mInterstitialAd;
+    private int  mCountToRate = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,6 +256,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        Utils.onUpdatedCountRate();
         EventBus.getDefault().unregister(this);
         isVisit = false;
         PrefsController.putBoolean(getString(R.string.second_loads),true);
@@ -651,7 +653,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 final boolean  isSecondLoad = PrefsController.getBoolean(getString(R.string.second_loads),false);
                 if (isSecondLoad){
                     final boolean isPositive = PrefsController.getBoolean(getString(R.string.we_are_a_team_positive),false);
-                    if (!isPositive){
+                    mCountToRate = PrefsController.getInt(getString(R.string.key_count_to_rate),0);
+                    if (!isPositive && mCountToRate>Utils.COUNT_RATE){
                        onAskingRateApp();
                     }
                     else {

@@ -98,6 +98,7 @@ public class Utils {
 
     final public static int THUMB_SIZE_HEIGHT = 600;
     final public static int THUMB_SIZE_WIDTH = 400;
+    final public static int COUNT_RATE = 9;
 
     private  static  Storage storage = new Storage(SuperSafeApplication.getInstance());
 
@@ -1309,5 +1310,15 @@ public class Utils {
             PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.we_are_a_team),false);
             Utils.Log(TAG,"New install this version");
         }
+    }
+
+    public static void onUpdatedCountRate(){
+        int count = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate),0);
+        if(count>999){
+            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate),0);
+        }else{
+            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate),count+1);
+        }
+
     }
 }
