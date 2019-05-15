@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -45,9 +43,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
-
 public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener, BaseView<Long> {
-
     private static String TAG = CloudManagerActivity.class.getSimpleName();
     @BindView(R.id.tvUploaded)
     TextView tvUploaded;
@@ -72,26 +68,20 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     TextView tvValueOtherSpace;
     @BindView(R.id.tvValueFreeSpace)
     TextView tvValueFreeSpace;
-
     @BindView(R.id.btnSwitchPauseSync)
     SwitchCompat btnSwitchPauseSync;
     @BindView(R.id.tvDriveAccount)
     TextView tvDriveAccount;
-
-
     @BindView(R.id.tvDeviceSaving)
     TextView tvDeviceSaving;
     @BindView(R.id.switch_SaveSpace)
-    SwitchCompat switch_SaveSpace;
-
-
+    SwitchCompat btnSwitchSaveSpace;
     private CloudManagerPresenter presenter;
     private boolean isPauseCloudSync = true;
     private boolean isDownload;
     private boolean isSpaceSaver;
     private Storage storage;
     private boolean isRefresh ;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,27 +91,20 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
-
         storage = new Storage(this);
-
-
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
         btnSwitchPauseSync.setOnCheckedChangeListener(this);
-        switch_SaveSpace.setOnCheckedChangeListener(this);
-
+        btnSwitchSaveSpace.setOnCheckedChangeListener(this);
         String lefFiles = String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD);
         tvLeft.setText(lefFiles);
-
         String updated = String.format(getString(R.string.left), "0");
         tvUploaded.setText(updated);
         onShowUI();
         onUpdatedView();
         presenter.onGetDriveAbout();
         onStartOverridePendingTransition();
-
     }
-
 
     public void onUpdatedView() {
         if (User.getInstance().isPremiumExpired()) {
@@ -131,6 +114,16 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             llPremium.setVisibility(View.GONE);
             llTitle.setVisibility(View.VISIBLE);
         }
+    }
+
+    @OnClick(R.id.llPause)
+    public void onActionPause(View view){
+        btnSwitchPauseSync.setChecked(!btnSwitchPauseSync.isChecked());
+    }
+
+    @OnClick(R.id.rlSaveSpace)
+    public void onActionSaveSpace(View view){
+        btnSwitchSaveSpace.setChecked(!btnSwitchSaveSpace.isChecked());
     }
 
     public void onShowUI() {
@@ -164,7 +157,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 tvValueFreeSpace.setText(getString(R.string.calculating));
                 isThrow = true;
             }
-
             try {
                 if (mUser.syncData != null) {
                     String lefFiles = String.format(getString(R.string.left), "" + mUser.syncData.left);
@@ -175,7 +167,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 tvLeft.setText(lefFiles);
                 isThrow = true;
             }
-
             try {
                 if (mUser.syncData != null) {
                     String uploadedFiles = String.format(getString(R.string.uploaded), "" + (Navigator.LIMIT_UPLOAD - mUser.syncData.left));
@@ -198,9 +189,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onShowSwitch() {
         final boolean pause_cloud_sync = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync), false);
         btnSwitchPauseSync.setChecked(pause_cloud_sync);
-
         final boolean saving_space = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
-        switch_SaveSpace.setChecked(saving_space);
+        btnSwitchSaveSpace.setChecked(saving_space);
         if (saving_space) {
             presenter.onGetSaveData();
         }
@@ -266,7 +256,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
 
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @Override
@@ -325,7 +314,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 if (User.getInstance().isPremiumExpired()){
                     onShowPremium();
                     PrefsController.putBoolean(getString(R.string.key_saving_space), false);
-                    switch_SaveSpace.setChecked(false);
+                    btnSwitchSaveSpace.setChecked(false);
                     break;
                 }
                 if (b) {
@@ -369,13 +358,11 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                     Navigator.onMoveToPremium(getContext());
                 }
             });
-
             builder.setNegativeButton(getText(R.string.later), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                 }
             });
-
             de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
             builder.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
@@ -397,7 +384,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             e.printStackTrace();
         }
     }
-
 
     @Override
     protected void onResume() {
@@ -437,7 +423,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             Utils.Log(TAG, "Re-Download file");
         }
-
         if (isSpaceSaver){
             final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, true, false);
             for (Items index : mList){
@@ -450,7 +435,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 }
             }
         }
-
         if (isRefresh){
             ServiceManager.getInstance().onGetListCategoriesSync();
         }
@@ -461,43 +445,32 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
-
     @OnClick(R.id.btnRemoveLimit)
     public void onRemoveLimit(View view) {
         Navigator.onMoveToPremium(this);
     }
-
-
     @Override
     protected void onDriveError() {
         Log.d(TAG, "onDriveError");
     }
-
     @Override
     protected void onDriveSignOut() {
         Log.d(TAG, "onDriveSignOut");
     }
-
     @Override
     protected void onDriveRevokeAccess() {
         Log.d(TAG, "onDriveRevokeAccess");
     }
-
     @Override
     protected void onDriveClientReady() {
-
     }
-
     @Override
     protected boolean isSignIn() {
         return false;
     }
-
     @Override
     protected void onDriveSuccessful() {
-
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -520,7 +493,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Utils.Log(TAG, "negative");
-                        switch_SaveSpace.setChecked(true);
+                        btnSwitchSaveSpace.setChecked(true);
                     }
                 })
                 .positiveText(getString(R.string.download))
@@ -534,6 +507,4 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 });
         builder.show();
     }
-
-
 }

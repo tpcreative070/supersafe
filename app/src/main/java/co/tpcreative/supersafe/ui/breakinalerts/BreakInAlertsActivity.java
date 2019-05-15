@@ -28,6 +28,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
@@ -68,7 +69,6 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
         final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert),false);
         btnSwitch.setChecked(value);
         initRecycleView();
-
         presenter = new BreakInAlertsPresenter();
         presenter.bindView(this);
         presenter.onGetData();
@@ -92,7 +92,6 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(BreakInAlertsActivity.class.getSimpleName());
     }
 
     @Override
@@ -102,7 +101,6 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
     }
-
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
@@ -140,6 +138,11 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.rlBreakInAlerts)
+    public void onActionBreak(View view){
+        btnSwitch.setChecked(!btnSwitch.isChecked());
     }
 
     @Override
