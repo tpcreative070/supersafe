@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.verifyaccount;
 import android.util.Log;
-import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Email;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
@@ -508,5 +506,4 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         String value = view.getContext().getString(res);
         return value;
     }
-
 }

@@ -1,14 +1,10 @@
 package co.tpcreative.supersafe.ui.resetpin;
 import android.util.Log;
-import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
-import com.snatik.storage.security.SecurityUtil;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -17,17 +13,13 @@ import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Email;
-import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.HttpException;
-import retrofit2.Response;
+
 
 public class ResetPinPresenter extends Presenter<BaseView> {
 
