@@ -1,18 +1,13 @@
 package co.tpcreative.supersafe.ui.signin;
-
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
-
-import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
@@ -38,10 +33,7 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 
 public class SignInPresenter extends Presenter<BaseView<User>> {
-
     private static final String TAG = SignInPresenter.class.getSimpleName();
-
-
     public void onSignIn(SignInRequest request) {
         Log.d(TAG, "onSignIn");
         BaseView view = view();
@@ -201,7 +193,6 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                 }));
     }
 
-
     public void onAddEmailToken(){
         Log.d(TAG, "onSignIn.....");
         BaseView view = view();
@@ -214,7 +205,6 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
         if (subscriptions == null) {
             return;
         }
-
         final User mUser = User.getInstance().getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id), mUser.email);
@@ -249,7 +239,6 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                 }));
     }
 
-
     private Spanned getSpannedText(String text) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(text, Html.FROM_HTML_MODE_COMPACT);
@@ -257,6 +246,4 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
             return Html.fromHtml(text);
         }
     }
-
-
 }

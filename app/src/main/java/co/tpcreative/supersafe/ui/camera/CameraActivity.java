@@ -10,11 +10,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.google.android.cameraview.CameraView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -27,8 +25,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity;
-
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback{
@@ -47,10 +43,8 @@ public class CameraActivity extends BaseActivity implements
             R.drawable.ic_flash_on,
     };
 
-
     private int mCurrentFlash;
     private boolean isReload;
-
     @BindView(R.id.camera)
     CameraView mCameraView;
     @BindView(R.id.btnSwitch)
@@ -186,7 +180,6 @@ public class CameraActivity extends BaseActivity implements
 
     }
 
-
     @Override
     protected void onPause() {
         mCameraView.stop();
@@ -228,6 +221,4 @@ public class CameraActivity extends BaseActivity implements
             ServiceManager.getInstance().onSaveDataOnCamera(data,mainCategories);
         }
     };
-
-
 }

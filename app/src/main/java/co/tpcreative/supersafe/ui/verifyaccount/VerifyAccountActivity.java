@@ -31,7 +31,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -54,7 +53,6 @@ import co.tpcreative.supersafe.model.Theme;
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
 
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
-
     @BindView(R.id.imgEdit)
     ImageView imgEdit;
     @BindView(R.id.tvTitle)
@@ -529,7 +527,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @Override
     public void onError(String message) {
-
     }
 
     @Override
@@ -556,15 +553,10 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             }
         }
     }
-
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {
-
     }
-
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-
     }
-
 }

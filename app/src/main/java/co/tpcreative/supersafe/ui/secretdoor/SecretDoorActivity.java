@@ -74,6 +74,11 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
         }
     }
 
+    @OnClick(R.id.rlSwitch)
+    public void onActionSwitch(View view){
+        btnSwitch.setChecked(!btnSwitch.isChecked());
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
         switch (event){

@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.ui.checksystem;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.IOException;
