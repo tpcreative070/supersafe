@@ -193,6 +193,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             case UNLOCK:{
                 rlOverLay.setVisibility(View.INVISIBLE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                /*
                 if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.freedevelop))) {
                     mInterstitialAd = new InterstitialAd(this);
                     mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen_test));
@@ -215,6 +216,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         });
                     }
                 }
+                */
                 break;
             }
             case FINISH:{
