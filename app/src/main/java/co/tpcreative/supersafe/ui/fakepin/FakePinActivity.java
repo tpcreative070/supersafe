@@ -74,7 +74,6 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(FakePinActivity.class.getSimpleName());
     }
 
     @Override
@@ -113,6 +112,11 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     @OnClick(R.id.imgView)
     public void onViewComponent(View view){
         Navigator.onMoveFakePinComponentInside(this);
+    }
+
+    @OnClick(R.id.rlSwitch)
+    public void onActionSwitch(View view){
+        btnSwitch.setChecked(!btnSwitch.isChecked());
     }
 
 }

@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import butterknife.BindView;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
@@ -188,6 +189,11 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
                 break;
             }
         }
+    }
+
+    @OnClick(R.id.rlSwitch)
+    public void onActionSwitch(View view){
+        btnSwitch.setChecked(!btnSwitch.isChecked());
     }
 
     @Override

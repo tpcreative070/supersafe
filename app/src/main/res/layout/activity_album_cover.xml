@@ -44,6 +44,7 @@
             android:layout_height="wrap_content"></include>
 
         <RelativeLayout
+            android:id="@+id/rlSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/material_gray_100"
