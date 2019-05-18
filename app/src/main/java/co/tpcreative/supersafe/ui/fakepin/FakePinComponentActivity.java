@@ -36,23 +36,18 @@ import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlideFakePin;
-import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
-import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 
 public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
@@ -90,11 +85,11 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     }
 
     private void initSpeedDial() {
-        final Theme mTheme = Theme.getInstance().getThemeInfo();
+        final ThemeApp mThemeApp = ThemeApp.getInstance().getThemeInfo();
         Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
         mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
                 .fab_camera, drawable)
-                .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                         getTheme()))
 
                 .setLabel(getString(R.string.camera))
@@ -105,7 +100,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
         drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
         mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                         getTheme()))
                 .setLabel(R.string.photo)
                 .setLabelColor(getResources().getColor(R.color.white))
@@ -115,7 +110,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
         mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_album, R.drawable
                 .baseline_add_to_photos_white_36)
-                .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                         getTheme()))
                 .setLabel(getString(R.string.album))
                 .setLabelColor(getResources().getColor(R.color.white))

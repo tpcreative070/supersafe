@@ -15,7 +15,7 @@ import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 
 public class PlayerAdapter extends BaseAdapter<Items, BaseHolder> {
@@ -24,7 +24,7 @@ public class PlayerAdapter extends BaseAdapter<Items, BaseHolder> {
     private Storage storage;
     private PlayerAdapter.ItemSelectedListener ls;
     private String TAG = PlayerAdapter.class.getSimpleName();
-    private Theme theme = Theme.getInstance().getThemeInfo();
+    private ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
 
 
 
@@ -78,7 +78,7 @@ public class PlayerAdapter extends BaseAdapter<Items, BaseHolder> {
             else{
                 imgPlaying.setVisibility(View.INVISIBLE);
             }
-            imgPlaying.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(theme.getAccentColor()), PorterDuff.Mode.SRC_IN);
+            imgPlaying.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), PorterDuff.Mode.SRC_IN);
 
             Utils.Log(TAG,"position :"+ data.isChecked);
             tvTitle.setText(data.title);

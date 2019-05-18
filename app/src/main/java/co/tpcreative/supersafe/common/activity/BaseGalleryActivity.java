@@ -4,17 +4,13 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.ftinc.kit.util.SizeUtils;
@@ -29,12 +25,11 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment;
 
@@ -78,10 +73,10 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     }
 
     protected void onDrawOverLay(Activity activity){
-        final Theme theme = Theme.getInstance().getThemeInfo();
+        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
+                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
                 .position(SlidrPosition.LEFT)
                 .velocityThreshold(2400)
                 .touchSize(SizeUtils.dpToPx(this, 32))
@@ -93,7 +88,7 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
-        final Theme result = Theme.getInstance().getThemeInfo();
+        final ThemeApp result = ThemeApp.getInstance().getThemeInfo();
         if (result!=null){
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }

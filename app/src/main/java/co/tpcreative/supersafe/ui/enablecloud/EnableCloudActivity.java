@@ -15,11 +15,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -30,12 +28,10 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.fakepin.FakePinActivity;
 
 public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
@@ -283,13 +279,13 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         builder.append("\n");
         builder.append("2. All of your local files will be synced to the new Google Drive");
 
-        Theme theme = Theme.getInstance().getThemeInfo();
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.user_another_google_drive_title)
                 .setDescription(builder.toString())
                 .setHeaderDrawable(R.drawable.ic_drive_cloud)
                 .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                .setHeaderColor(theme.getAccentColor())
+                .setHeaderColor(themeApp.getAccentColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.user_another)
                 .setNegativeText(R.string.cancel)

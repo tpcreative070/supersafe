@@ -27,7 +27,7 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -38,6 +38,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter;
 
 
@@ -262,9 +263,9 @@ public class ImageSelectActivity extends HelperActivity {
             }
             actionMode = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
                 Window window = getWindow();
-                window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),theme.getPrimaryDarkColor()));
+                window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), themeApp.getPrimaryDarkColor()));
             }
         }
     };

@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.ftinc.kit.util.SizeUtils;
@@ -25,12 +24,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity;
-import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 
 public class HelperActivity extends BaseActivity {
@@ -80,10 +76,10 @@ public class HelperActivity extends BaseActivity {
     }
 
     protected void onDrawOverLay(Activity activity){
-        final Theme theme = Theme.getInstance().getThemeInfo();
+        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
+                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
                 .position(SlidrPosition.LEFT)
                 .velocityThreshold(2400)
                 .touchSize(SizeUtils.dpToPx(this, 32))

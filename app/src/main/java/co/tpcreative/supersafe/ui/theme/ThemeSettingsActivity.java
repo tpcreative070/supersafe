@@ -24,15 +24,10 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.ui.settings.SettingsActivity;
-import co.tpcreative.supersafe.ui.trash.TrashActivity;
-import spencerstudios.com.bungeelib.Bungee;
 
 
 public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
@@ -115,11 +110,11 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     @Override
     public void onClickItem(int position) {
         isUpdated = true;
-        presenter.mTheme = presenter.mList.get(position);
-        setStatusBarColored(this,presenter.mTheme.getPrimaryColor(),presenter.mTheme.getPrimaryDarkColor());
-        tvTitle.setTextColor(getContext().getResources().getColor(presenter.mTheme.getAccentColor()));
-        imgIcon.setColorFilter(getContext().getResources().getColor(presenter.mTheme.getAccentColor()), PorterDuff.Mode.SRC_ATOP);
-        PrefsController.putString(getString(R.string.key_theme_object),new Gson().toJson(presenter.mTheme));
+        presenter.mThemeApp = presenter.mList.get(position);
+        setStatusBarColored(this,presenter.mThemeApp.getPrimaryColor(),presenter.mThemeApp.getPrimaryDarkColor());
+        tvTitle.setTextColor(getContext().getResources().getColor(presenter.mThemeApp.getAccentColor()));
+        imgIcon.setColorFilter(getContext().getResources().getColor(presenter.mThemeApp.getAccentColor()), PorterDuff.Mode.SRC_ATOP);
+        PrefsController.putString(getString(R.string.key_theme_object),new Gson().toJson(presenter.mThemeApp));
         adapter.notifyItemChanged(position);
     }
 

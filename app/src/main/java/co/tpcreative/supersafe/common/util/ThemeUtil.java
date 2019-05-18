@@ -1,7 +1,7 @@
 package co.tpcreative.supersafe.common.util;
 import java.util.ArrayList;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 /**
  * Created by Pankaj on 12-11-2017.
@@ -116,21 +116,21 @@ public class ThemeUtil {
         return themeId;
     }
     
-    public static ArrayList<Theme> getThemeList(){
-        ArrayList<Theme> themeArrayList = new ArrayList<>();
-        themeArrayList.add(new Theme(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA"));
-        themeArrayList.add(new Theme(1,R.color.primaryColorPink, R.color.primaryDarkColorPink, R.color.secondaryColorPink,"#448AFF"));
-        themeArrayList.add(new Theme(2,R.color.primaryColorPurple, R.color.primaryDarkColorPurple, R.color.secondaryDarkColorPurple,"#b4c320"));
-        themeArrayList.add(new Theme(3,R.color.primaryColorDeepPurple, R.color.primaryDarkColorDeepPurple, R.color.primaryColorPurple,"#9C27B0"));
-        themeArrayList.add(new Theme(4,R.color.primaryColorCyan, R.color.primaryDarkColorCyan, R.color.primaryColorBrown,"#795548"));
-        themeArrayList.add(new Theme(5,R.color.primaryColorTeal, R.color.primaryDarkColorTeal, R.color.secondaryDarkColorTeal,"#caa052"));
-        themeArrayList.add(new Theme(6,R.color.primaryColorLightGreen, R.color.primaryDarkColorLightGreen, R.color.secondaryColorLightGreen,"#448AFF"));
-        themeArrayList.add(new Theme(7,R.color.primaryColorLime, R.color.primaryDarkColorLime, R.color.primaryColorBlueGray,"#607D8B"));
-        themeArrayList.add(new Theme(8,R.color.primaryColorAmber, R.color.primaryDarkColorAmber, R.color.secondaryColorAmber,"#03A9F4"));
-        themeArrayList.add(new Theme(9,R.color.primaryColorBrown, R.color.primaryDarkColorBrown, R.color.md_teal_500,"#009688"));
-        themeArrayList.add(new Theme(10,R.color.primaryColorGray, R.color.primaryDarkColorGray, R.color.secondaryColorGray,"#536DFE"));
-        themeArrayList.add(new Theme(11,R.color.primaryColorBlueGray, R.color.primaryDarkColorBlueGray, R.color.secondaryDarkColorBlueGray,"#a6b320"));
-        return themeArrayList;
+    public static ArrayList<ThemeApp> getThemeList(){
+        ArrayList<ThemeApp> themeAppArrayList = new ArrayList<>();
+        themeAppArrayList.add(new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA"));
+        themeAppArrayList.add(new ThemeApp(1,R.color.primaryColorPink, R.color.primaryDarkColorPink, R.color.secondaryColorPink,"#448AFF"));
+        themeAppArrayList.add(new ThemeApp(2,R.color.primaryColorPurple, R.color.primaryDarkColorPurple, R.color.secondaryDarkColorPurple,"#b4c320"));
+        themeAppArrayList.add(new ThemeApp(3,R.color.primaryColorDeepPurple, R.color.primaryDarkColorDeepPurple, R.color.primaryColorPurple,"#9C27B0"));
+        themeAppArrayList.add(new ThemeApp(4,R.color.primaryColorCyan, R.color.primaryDarkColorCyan, R.color.primaryColorBrown,"#795548"));
+        themeAppArrayList.add(new ThemeApp(5,R.color.primaryColorTeal, R.color.primaryDarkColorTeal, R.color.secondaryDarkColorTeal,"#caa052"));
+        themeAppArrayList.add(new ThemeApp(6,R.color.primaryColorLightGreen, R.color.primaryDarkColorLightGreen, R.color.secondaryColorLightGreen,"#448AFF"));
+        themeAppArrayList.add(new ThemeApp(7,R.color.primaryColorLime, R.color.primaryDarkColorLime, R.color.primaryColorBlueGray,"#607D8B"));
+        themeAppArrayList.add(new ThemeApp(8,R.color.primaryColorAmber, R.color.primaryDarkColorAmber, R.color.secondaryColorAmber,"#03A9F4"));
+        themeAppArrayList.add(new ThemeApp(9,R.color.primaryColorBrown, R.color.primaryDarkColorBrown, R.color.md_teal_500,"#009688"));
+        themeAppArrayList.add(new ThemeApp(10,R.color.primaryColorGray, R.color.primaryDarkColorGray, R.color.secondaryColorGray,"#536DFE"));
+        themeAppArrayList.add(new ThemeApp(11,R.color.primaryColorBlueGray, R.color.primaryDarkColorBlueGray, R.color.secondaryDarkColorBlueGray,"#a6b320"));
+        return themeAppArrayList;
     }
 
 }

@@ -20,7 +20,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class FakePinActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
 
@@ -90,12 +90,12 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        final Theme mTheme = Theme.getInstance().getThemeInfo();
+        final ThemeApp mThemeApp = ThemeApp.getInstance().getThemeInfo();
         PrefsController.putBoolean(getString(R.string.key_fake_pin),b);
         if (b){
-            tvCreatePin.setTextColor(getResources().getColor(mTheme.getPrimaryColor()));
+            tvCreatePin.setTextColor(getResources().getColor(mThemeApp.getPrimaryColor()));
             tvCreatePin.setEnabled(b);
-            //imgView.setColorFilter(getResources().getColor(mTheme.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
+            //imgView.setColorFilter(getResources().getColor(mThemeApp.getPrimaryColor()), PorterDuff.Mode.SRC_ATOP);
         }
         else{
             tvCreatePin.setTextColor(getResources().getColor(R.color.material_gray_500));

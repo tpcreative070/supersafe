@@ -19,13 +19,8 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * Created by aritraroy on 01/06/16.
  */
-
-
 public class IndicatorDots extends LinearLayout {
-
-
     private static final String TAG = IndicatorDots.class.getSimpleName();
-
     @IntDef({IndicatorType.FIXED, IndicatorType.FILL, IndicatorType.FILL_WITH_ANIMATION})
     @Retention(RetentionPolicy.SOURCE)
     public @interface IndicatorType {
@@ -33,30 +28,22 @@ public class IndicatorDots extends LinearLayout {
         int FILL = 1;
         int FILL_WITH_ANIMATION = 2;
     }
-
     private static final int DEFAULT_PIN_LENGTH = 4;
     private static final int DEFAULT_ANIMATION_DURATION = 200;
-
     private int mDotDiameter;
     private int mDotSpacing;
     private int mFillDrawable;
     private int mEmptyDrawable;
     private int mPinLength;
     private int mIndicatorType;
-
     private Activity activity;
-
-
     private int mPreviousLength;
-
     public IndicatorDots(Context context) {
         this(context, null);
     }
-
     public IndicatorDots(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
     public IndicatorDots(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PinLockView);
@@ -146,26 +133,20 @@ public class IndicatorDots extends LinearLayout {
             }
         }
     }
-
-
     private void emptyDot(View dot) {
         dot.setBackgroundResource(mEmptyDrawable);
     }
-
     private void fillDot(View dot) {
         dot.setBackgroundResource(mFillDrawable);
     }
-
     public int getPinLength() {
         return mPinLength;
     }
-
     public void setPinLength(int pinLength) {
         this.mPinLength = pinLength;
         removeAllViews();
         initView(getContext());
     }
-
     public
     @IndicatorType
     int getIndicatorType() {
@@ -177,12 +158,9 @@ public class IndicatorDots extends LinearLayout {
         removeAllViews();
         initView(getContext());
     }
-
-
     public Activity getActivity() {
         return activity;
     }
-
     public void setActivity(Activity activity) {
         this.activity = activity;
     }

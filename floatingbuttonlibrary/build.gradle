@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 apply plugin: 'com.android.library'
-
 android {
     compileSdkVersion appCompileSdkVersion
     buildToolsVersion appBuildToolsVersion
@@ -27,7 +25,6 @@ android {
         versionName "0.0.9"
         consumerProguardFiles 'consumer-proguard-rules.pro'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -41,7 +38,6 @@ android {
         }
     }
 
-
     compileOptions {
         sourceCompatibility build_versions_java_version
         targetCompatibility build_versions_java_version
@@ -49,12 +45,10 @@ android {
 }
 
 dependencies {
-
     implementation 'com.android.support:appcompat-v7:' + appSupportVersion
     implementation 'com.android.support:support-annotations:' + appSupportVersion
     implementation 'com.android.support:design:' + appSupportVersion
     implementation 'com.android.support:cardview-v7:' + appSupportVersion
-
 }
 
 

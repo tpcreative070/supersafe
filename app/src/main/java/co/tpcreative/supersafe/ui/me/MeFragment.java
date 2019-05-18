@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.ui.me;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -27,9 +25,8 @@ import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.SyncData;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import spencerstudios.com.bungeelib.Bungee;
 
 public class MeFragment extends BaseFragment implements BaseView,SingletonPremiumTimer.SingletonPremiumTimerListener{
 
@@ -125,8 +122,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){
             tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
-            Theme theme = Theme.getInstance().getThemeInfo();
-            tvPremiumLeft.setTextColor(getResources().getColor(theme.getPrimaryColor()));
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            tvPremiumLeft.setTextColor(getResources().getColor(themeApp.getPrimaryColor()));
             if (presenter.mUser.driveConnected) {
                 tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
             } else {

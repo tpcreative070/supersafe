@@ -1,11 +1,8 @@
 package co.tpcreative.supersafe.model;
 import android.view.View;
-
 import com.google.gson.Gson;
-
 import java.io.Serializable;
 import java.util.Comparator;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.controller.PrefsController;

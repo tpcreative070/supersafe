@@ -35,7 +35,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 
 
@@ -68,10 +68,10 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
     }
 
     protected void onDrawOverLay(Activity activity){
-        final Theme theme = Theme.getInstance().getThemeInfo();
+        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
+                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
                 .position(SlidrPosition.LEFT)
                 .velocityThreshold(2400)
                 .touchSize(SizeUtils.dpToPx(this, 32))
@@ -116,7 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
-        final Theme result = Theme.getInstance().getThemeInfo();
+        final ThemeApp result = ThemeApp.getInstance().getThemeInfo();
         if (result!=null){
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }

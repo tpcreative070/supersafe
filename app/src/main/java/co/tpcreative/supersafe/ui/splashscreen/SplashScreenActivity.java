@@ -24,7 +24,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
@@ -55,8 +55,8 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         }
 
 
-        Theme theme  = Theme.getInstance().getThemeInfo();
-        rlScreen.setBackgroundColor(getResources().getColor(theme.getPrimaryColor()));
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+        rlScreen.setBackgroundColor(getResources().getColor(themeApp.getPrimaryColor()));
 
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);

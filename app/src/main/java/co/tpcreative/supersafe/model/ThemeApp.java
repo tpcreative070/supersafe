@@ -1,10 +1,8 @@
 package co.tpcreative.supersafe.model;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +15,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
  * Created by Pankaj on 03-11-2017.
  */
 
-public class Theme implements Serializable {
+public class ThemeApp implements Serializable {
     private int id;
     private int primaryColor;
     private int primaryDarkColor;
@@ -25,27 +23,27 @@ public class Theme implements Serializable {
     private String accentColorHex;
     public boolean isCheck;
 
-    private static Theme instance ;
+    private static ThemeApp instance ;
 
-    public static Theme getInstance(){
+    public static ThemeApp getInstance(){
         if (instance==null){
-            instance = new Theme();
+            instance = new ThemeApp();
         }
         return instance;
     }
 
-    public Theme(){
+    public ThemeApp(){
 
     }
 
-    public Theme(int primaryColor, int primaryDarkColor, int accentColor) {
+    public ThemeApp(int primaryColor, int primaryDarkColor, int accentColor) {
         this.primaryColor = primaryColor;
         this.primaryDarkColor = primaryDarkColor;
         this.accentColor = accentColor;
         this.isCheck = false;
     }
 
-    public Theme(int id , int primaryColor, int primaryDarkColor, int accentColor,String accentColorHex) {
+    public ThemeApp(int id , int primaryColor, int primaryDarkColor, int accentColor, String accentColorHex) {
         this.id = id;
         this.primaryColor = primaryColor;
         this.primaryDarkColor = primaryDarkColor;
@@ -92,25 +90,25 @@ public class Theme implements Serializable {
     }
 
 
-    public Theme getThemeInfo(){
+    public ThemeApp getThemeInfo(){
         try{
             String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),null);
             if (value!=null){
-                final Theme mTheme = new Gson().fromJson(value,Theme.class);
-                if (mTheme!=null){
-                    return mTheme;
+                final ThemeApp mThemeApp = new Gson().fromJson(value,ThemeApp.class);
+                if (mThemeApp !=null){
+                    return mThemeApp;
                 }
             }
         }
         catch (Exception e){
             e.printStackTrace();
         }
-        return new Theme(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+        return new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
     }
 
-    public List<Theme> getList(){
+    public List<ThemeApp> getList(){
         try{
-            final List<Theme> mList = ThemeUtil.getThemeList();
+            final List<ThemeApp> mList = ThemeUtil.getThemeList();
             return mList;
         }
         catch (Exception e){

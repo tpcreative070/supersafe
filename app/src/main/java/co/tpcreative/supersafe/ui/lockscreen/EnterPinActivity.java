@@ -76,7 +76,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public static final String EXTRA_SET_PIN = "SET_PIN";
     public static final String EXTRA_ENUM_ACTION = "ENUM_ACTION";
     private static final int PIN_LENGTH = 20;
-
     @BindView(R.id.pinlockView)
     PinLockView mPinLockView;
     @BindView(R.id.indicator_dots)
@@ -124,11 +123,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @BindView(R.id.result) TextView mResult;
     @BindView(R.id.formula) TextView mFormula;
     private static CalculatorImpl mCalc;
-
     private int count = 0;
     private int countAttempt=0;
     private boolean isFingerprint;
-
     private static EnumPinAction mPinAction;
     private static EnumPinAction enumPinPreviousAction;
     private static EnumPinAction mPinActionNext;
@@ -219,7 +216,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
         }
-
         imgLauncher.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -227,7 +223,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 return false;
             }
         });
-
         ic_SuperSafe.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -236,18 +231,14 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             }
         });
 
-
-
         if (Utils.isSensorAvailable()) {
             mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this);
         }
         onInitPin();
-
         /*Calculator init*/
         mCalc = new CalculatorImpl(this);
         AutofitHelper.create(mResult);
         AutofitHelper.create(mFormula);
-
     }
 
     final PinLockListener pinLockListener = new PinLockListener() {
@@ -317,7 +308,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
         }
     };
-
 
     @Override
     public void onAttemptTimer(String seconds) {
@@ -1008,7 +998,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-
     public void onDisplayText() {
         Utils.Log(TAG, "EnumPinAction 3:...." + mPinAction.name());
         switch (mPinAction) {
@@ -1066,20 +1055,16 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     }
 
     /*Call back finger print*/
-
     @Override
     public void onNoFingerPrintHardwareFound() {
-
     }
 
     @Override
     public void onNoFingerPrintRegistered() {
-
     }
 
     @Override
     public void onBelowMarshmallow() {
-
     }
 
     @Override
@@ -1099,11 +1084,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     @Override
     public void onAuthFailed(int errorCode, String errorMessage) {
-
     }
 
     /*Call back end at finger print*/
-
     public void initActionBar(boolean isInit) {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -1112,12 +1095,10 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     @Override
     public void onStartLoading(EnumStatus status) {
-
     }
 
     @Override
     public void onStopLoading(EnumStatus status) {
-
     }
 
     @Override
@@ -1153,7 +1134,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     }
 
     /*Settings preference*/
-
     public static class SettingsFragment extends PreferenceFragmentCompat {
         private MyPreference mChangePin;
         private MySwitchPreference mFaceDown;
@@ -1199,23 +1179,19 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             mChangePin = (MyPreference) findPreference(getString(R.string.key_change_pin));
             mChangePin.setOnPreferenceChangeListener(createChangeListener());
             mChangePin.setOnPreferenceClickListener(createActionPreferenceClickListener());
-
             /*Face down*/
-
             mFaceDown = (MySwitchPreference) findPreference(getString(R.string.key_face_down_lock));
             boolean switchFaceDown = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false);
             mFaceDown.setOnPreferenceChangeListener(createChangeListener());
             mFaceDown.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mFaceDown.setDefaultValue(switchFaceDown);
             Utils.Log(TAG, "default " + switchFaceDown);
-
             /*FingerPrint*/
             mFingerPrint = (MySwitchPreference) findPreference(getString(R.string.key_fingerprint_unlock));
             boolean switchFingerPrint = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false);
             mFingerPrint.setOnPreferenceChangeListener(createChangeListener());
             mFingerPrint.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mFingerPrint.setDefaultValue(switchFingerPrint);
-
         }
 
         @Override
@@ -1326,8 +1302,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         takePicture();
     }
 
-
-
     /*Calculator action*/
     @Override
     public void setValue(String value) {
@@ -1344,7 +1318,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public void setFormula(String value) {
         mFormula.setText(value);
     }
-
 
     @OnClick(R.id.btn_plus)
     public void plusClicked() {
@@ -1406,6 +1379,4 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public void numpadClicked(int id) {
         mCalc.numpadClicked(id);
     }
-
-
 }

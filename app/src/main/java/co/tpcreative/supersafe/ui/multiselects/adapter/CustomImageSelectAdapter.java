@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import org.apache.commons.io.FilenameUtils;
+
 import java.util.ArrayList;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -17,7 +17,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
     private static final String TAG = CustomImageSelectAdapter.class.getSimpleName();
@@ -28,8 +28,8 @@ public class CustomImageSelectAdapter extends CustomGenericAdapter<Image> {
             .override(200 ,200)
             .placeholder(R.drawable.image_placeholder)
             .priority(Priority.HIGH);
-    final Theme theme = Theme.getInstance().getThemeInfo();
-    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
+    final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
 
     public CustomImageSelectAdapter(Context context, ArrayList<Image> images) {
         super(context, images);

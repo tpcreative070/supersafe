@@ -53,6 +53,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
@@ -696,8 +697,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     public void onShowPremium(){
         try {
             de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(this);
-            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-            builder.setHeaderBackground(theme.getAccentColor());
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            builder.setHeaderBackground(themeApp.getAccentColor());
             builder.setMessage(getString(R.string.premium_expired));
             builder.setCustomHeader(R.layout.custom_header);
             builder.setPadding(40,40,40,0);
@@ -726,8 +727,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                     TextView textView = (TextView) dialog.findViewById(android.R.id.message);
 
                     if (positive!=null && negative!=null && textView!=null){
-                        positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
-                        negative.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                        positive.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
+                        negative.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
                         textView.setTextSize(16);
                     }
                 }

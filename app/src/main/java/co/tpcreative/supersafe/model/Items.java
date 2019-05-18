@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import co.tpcreative.supersafe.common.util.Utils;
-
 @Entity(tableName = "items")
 public class Items implements Serializable {
 

@@ -4,13 +4,9 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -19,20 +15,16 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
 
-import java.security.NoSuchAlgorithmException;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
 
@@ -46,8 +38,8 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private Storage storage;
     private String TAG = TrashAdapter.class.getSimpleName();
-    Theme theme = Theme.getInstance().getThemeInfo();
-    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
+    ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
 
     public TrashAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
@@ -158,7 +150,7 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
                     }
                 }
 
-                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(theme.getAccentColor()),
+                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(themeApp.getAccentColor()),
                         PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
                 switch (progress){
