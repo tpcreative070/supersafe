@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
@@ -56,7 +55,6 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 
 public class SuperSafeService extends PresenterService<BaseView> implements SuperSafeReceiver.ConnectivityReceiverListener {
-
     private static final String TAG = SuperSafeService.class.getSimpleName();
     private final IBinder mBinder = new LocalBinder(); // Binder given to clients
     protected Storage storage;
@@ -75,7 +73,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+        Utils.Log(TAG, "onCreate");
         downloadService = new DownloadService(this);
         storage = new Storage(this);
         onInitReceiver();
@@ -99,7 +97,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
+        Utils.Log(TAG, "onDestroy");
         if (androidReceiver != null) {
             unregisterReceiver(androidReceiver);
         }
@@ -132,23 +130,23 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // If we get killed, after returning from here, restart
-        Log.d(TAG, "onStartCommand");
+        Utils.Log(TAG, "onStartCommand");
         return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         Bundle extras = intent.getExtras();
-        Log.d(TAG, "onBind");
+        Utils.Log(TAG, "onBind");
         // Get messager from the Activity
         if (extras != null) {
-            Log.d("service", "onBind with extra");
+            Utils.Log("service", "onBind with extra");
         }
         return mBinder;
     }
 
     public void onGetUserInfo(){
-        Log.d(TAG,"onGetUserInfo 1");
+        Utils.Log(TAG,"onGetUserInfo 1");
         BaseView view = view();
         if (view == null) {
             return;
@@ -171,17 +169,17 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                             Utils.Log(TAG,"onStartTimer");
                             SingletonPremiumTimer.getInstance().onStartTimer();
-                            Log.d(TAG,"onGetUserInfo 3");
+                            Utils.Log(TAG,"onGetUserInfo 3");
                         }
-                        Log.d(TAG,"onGetUserInfo 4");
+                        Utils.Log(TAG,"onGetUserInfo 4");
                     }
-                    Log.d(TAG,"onGetUserInfo 5");
+                    Utils.Log(TAG,"onGetUserInfo 5");
                 }
-                Log.d(TAG,"onGetUserInfo 6");
+                Utils.Log(TAG,"onGetUserInfo 6");
             }
             return;
         }
-        Log.d(TAG,"onGetUserInfo 2");
+        Utils.Log(TAG,"onGetUserInfo 2");
         if (subscriptions == null) {
             return;
         }
@@ -210,8 +208,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onSuccessful("Successful",EnumStatus.USER_INFO);
                         }
                     }
-                    Log.d(TAG,"onGetUserInfo 3");
-                    Log.d(TAG, "Body user info : " + new Gson().toJson(mUser));
+                    Utils.Log(TAG,"onGetUserInfo 3");
+                    Utils.Log(TAG, "Body user info : " + new Gson().toJson(mUser));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -223,12 +221,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             }
                             Utils.Log(TAG,"error " +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.USER_INFO);
                 }));
@@ -242,23 +240,19 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return;
         }
-
         if (subscriptions == null) {
             return;
         }
-
         final User mUser = User.getInstance().getUserInfo();
         if (mUser==null){
             return;
         }
-
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),mUser.email);
         hash.put(getString(R.string.key_other_email),mUser.other_email);
         hash.put(getString(R.string.key_change_email),""+mUser.change);
         hash.put(getString(R.string.key_active),""+mUser.active);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-
         Utils.onWriteLog(new Gson().toJson(hash),EnumStatus.REFRESH_EMAIL_TOKEN);
         subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(hash)
                 .subscribeOn(Schedulers.io())
@@ -281,7 +275,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             }
                         }
                     }
-                    Log.d(TAG, "Body Update token: " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body Update token: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -298,23 +292,21 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 }
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN);
                             Utils.onWriteLog(errorMessage,EnumStatus.UPDATE_USER_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.UPDATE_USER_TOKEN);
                 }));
     }
 
-
-
     public void onSignIn(final User request) {
-        Log.d(TAG, "onSignIn");
+        Utils.Log(TAG, "onSignIn");
         BaseView view = view();
         if (view == null) {
             return;
@@ -325,7 +317,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (subscriptions == null) {
             return;
         }
-
         Map<String, String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email), request.email);
         hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
@@ -341,7 +332,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_IN))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_IN);
                     } else {
@@ -357,20 +348,18 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.SIGN_IN);
                 }));
     }
-
-
 
     public void getDriveAbout() {
         BaseView view = view();
@@ -392,9 +381,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("access token is null", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
-
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         view.onSuccessful(access_token, EnumStatus.GET_DRIVE_ABOUT);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
@@ -414,7 +402,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
                         view.onSuccessful(new Gson().toJson(onResponse), EnumStatus.GET_DRIVE_ABOUT);
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
                         view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
@@ -438,7 +426,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("Exception " + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error ^^:" + throwable.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                     }
                     view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
@@ -470,7 +458,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             return;
         }
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetListFileInAppFolder(access_token,SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -478,12 +466,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Response data from items " + new Gson().toJson(onResponse));
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     view.onStopLoading(EnumStatus.GET_LIST_FILES_IN_APP);
                     if (onResponse.error != null) {
-                        Log.d(TAG, "onError:" + new Gson().toJson(onResponse));
+                        Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
                         view.onError("Not found this id.... :" + new Gson().toJson(onResponse.error), EnumStatus.GET_LIST_FILES_IN_APP);
                     } else {
                         final int count = onResponse.files.size();
@@ -492,7 +480,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -517,7 +505,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("Exception " + e.getMessage(), EnumStatus.GET_LIST_FILES_IN_APP);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error ^^:" + throwable.getMessage(), EnumStatus.GET_LIST_FILES_IN_APP);
                     }
                     view.onStopLoading(EnumStatus.GET_LIST_FILES_IN_APP);
@@ -525,7 +513,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     /*Network request*/
-
     public void onCategoriesSync(MainCategories mainCategories, ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onCategoriesSync");
         if (view == null) {
@@ -545,30 +532,28 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.CATEGORIES_SYNC);
             return;
         }
-
         if (user.access_token == null) {
             view.onError("no access_token", EnumStatus.CATEGORIES_SYNC);
             return;
         }
-
         Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
         hashMap.put(getString(R.string.key_categories_max), mainCategories.categories_max + "");
         hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.CATEGORIES_SYNC);
                         return;
                     }
                     if (onResponse.error) {
-                        Log.d(TAG, "onError 1");
+                        Utils.Log(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
                     } else {
                         if (onResponse != null) {
@@ -588,7 +573,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.CATEGORIES_SYNC);
                         return;
                     }
@@ -600,16 +585,16 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                             view.onError("" + msg, EnumStatus.CATEGORIES_SYNC);
                         } catch (IOException e) {
                             e.printStackTrace();
                             view.onError("" + e.getMessage(), EnumStatus.CATEGORIES_SYNC);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.CATEGORIES_SYNC);
                     }
                 }));
@@ -634,29 +619,27 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.DELETE_CATEGORIES);
             return;
         }
-
         if (user.access_token == null) {
             view.onError("no access_token", EnumStatus.DELETE_CATEGORIES);
             return;
         }
-
         Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
         hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.DELETE_CATEGORIES);
                         return;
                     }
                     if (onResponse.error) {
-                        Log.d(TAG, "onError 1");
+                        Utils.Log(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES);
                     } else {
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mainCategories);
@@ -664,7 +647,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.DELETE_CATEGORIES);
                         return;
                     }
@@ -676,23 +659,22 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                             view.onError("" + msg, EnumStatus.DELETE_CATEGORIES);
                         } catch (IOException e) {
                             e.printStackTrace();
                             view.onError("" + e.getMessage(), EnumStatus.DELETE_CATEGORIES);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.DELETE_CATEGORIES);
                     }
                 }));
     }
 
     /*Create/Update for Categories*/
-
     public void onGetListCategoriesSync(ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onGetListCategoriesSync");
         if (view == null) {
@@ -712,34 +694,31 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.LIST_CATEGORIES_SYNC);
             return;
         }
-
         if (user.access_token == null) {
             view.onError("no access_token", EnumStatus.LIST_CATEGORIES_SYNC);
             return;
         }
-
         if (user.cloud_id==null){
             view.onError("cloud id null", EnumStatus.LIST_CATEGORIES_SYNC);
             return;
         }
-
         Map<String, Object> hashMap = new HashMap<>();
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
         hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
                         return;
                     }
                     if (onResponse.error) {
-                        Log.d(TAG, "onError 1");
+                        Utils.Log(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
                     } else {
                         try {
@@ -783,7 +762,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
                         return;
                     }
@@ -795,21 +774,20 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                             view.onError("" + msg, EnumStatus.LIST_CATEGORIES_SYNC);
                         } catch (IOException e) {
                             e.printStackTrace();
                             view.onError("" + e.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
                     }
                 }));
     }
-
 
     public void onUpdateItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
         final Items items = mItem;
@@ -831,18 +809,14 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.UPDATE);
             return;
         }
-
         if (!user.driveConnected) {
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-
         if (items.categories_id == null || items.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.UPDATE);
         }
-
         // Map<String, Object> hashMap = new HashMap<>();
-
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         if (hashMap != null) {
             hashMap.put(getString(R.string.key_user_id), user.email);
@@ -854,19 +828,18 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             hashMap.put(getString(R.string.key_name), hex);
             hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         }
-
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (onResponse.error) {
-                        Log.d(TAG, "onError:" + new Gson().toJson(onResponse));
+                        Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
                         mItem.isUpdate = false;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                         view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.UPDATE);
@@ -878,7 +851,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     Utils.Log(TAG,"Adding item Response "+ new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -889,7 +862,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             Utils.Log(TAG,"Adding item Response error"+ bodys.string());
                             view.onError("" +  bodys.string(), EnumStatus.UPDATE);
                         } catch (IOException e) {
@@ -897,15 +870,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("" + e.getMessage(), EnumStatus.UPDATE);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.UPDATE);
                     }
                 }));
     }
 
-
     /*Date for Categories*/
-
     public void onAddItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
         final Items items = mItem;
         Utils.Log(TAG, "onAddItems");
@@ -926,18 +897,14 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.ADD_ITEMS);
             return;
         }
-
         if (!user.driveConnected) {
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-
         if (items.categories_id == null || items.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.ADD_ITEMS);
         }
-
         // Map<String, Object> hashMap = new HashMap<>();
-
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         if (hashMap != null) {
             hashMap.put(getString(R.string.key_user_id), user.email);
@@ -949,19 +916,18 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             hashMap.put(getString(R.string.key_name), hex);
             hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         }
-
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (onResponse.error) {
-                        Log.d(TAG, "onError:" + new Gson().toJson(onResponse));
+                        Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
                         view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     } else {
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
@@ -969,7 +935,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     Utils.Log(TAG,"Adding item Response "+ new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -980,7 +946,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             Utils.Log(TAG,"Adding item Response error"+ bodys.string());
                             view.onError("" +  bodys.string(), EnumStatus.ADD_ITEMS);
                         } catch (IOException e) {
@@ -988,14 +954,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("" + e.getMessage(), EnumStatus.ADD_ITEMS);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.ADD_ITEMS);
                     }
                 }));
     }
 
     /*Get List Categories*/
-
     public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onDeleteCloudItems");
         if (view == null) {
@@ -1020,9 +985,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         String id = "";
         if (isOriginalGlobalId) {
             id = items.global_original_id;
@@ -1054,7 +1018,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -1074,7 +1038,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("Exception " + e.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error 0:" + throwable.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
                     }
                 }));
@@ -1099,24 +1063,22 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.DELETE_SYNC_OWN_DATA);
             return;
         }
-
         if (!user.driveConnected) {
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         hashMap.put(getString(R.string.key_user_id), user.email);
         hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Response data from items " + new Gson().toJson(onResponse));
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (onResponse.error) {
@@ -1129,7 +1091,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -1151,7 +1113,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("Exception " + e.getMessage(), EnumStatus.DELETE_SYNC_OWN_DATA);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.DELETE_SYNC_OWN_DATA);
                     }
                 }));
@@ -1176,12 +1138,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("no user", EnumStatus.GET_LIST_FILE);
             return;
         }
-
         if (user.access_token == null) {
             view.onError("no access_token", EnumStatus.GET_LIST_FILES_IN_APP);
             return;
         }
-
         if (!user.driveConnected) {
             view.onError("no driveConnected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
@@ -1196,20 +1156,19 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         hashMap.put(getString(R.string.key_next_page), nextPage);
         hashMap.put(getString(R.string.key_isSyncCloud), true);
         hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         subscriptions.add(SuperSafeApplication.serverAPI.onListFilesSync(hashMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.GET_LIST_FILE);
                         return;
                     }
                     if (onResponse.error) {
-                        Log.d(TAG, "onError 1");
+                        Utils.Log(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
                         final List<MainCategories> listCategories = onResponse.listCategories;
@@ -1267,7 +1226,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                     PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                     Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.GET_LIST_FILE);
                                 }
-                                Log.d(TAG, "Ready for sync");
+                                Utils.Log(TAG, "Ready for sync");
                                 if (isNewCategories){
                                     view.onSuccessful(onResponse.nextPage, EnumStatus.RELOAD);
                                 }
@@ -1301,7 +1260,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                         break;
                                                     }
                                                 }
-
                                                 final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                                 if (main != null) {
                                                     itemsResponse.categories_local_id = main.categories_local_id;
@@ -1309,13 +1267,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                 } else {
                                                     Utils.Log(TAG,"..................categories_id is nul............."+index.categories_id);
                                                 }
-
                                             } else {
-
                                                 items.global_original_id = index.global_original_id;
                                                 items.global_thumbnail_id = index.global_thumbnail_id;
                                                 items.categories_id = index.categories_id;
-
                                                 if (currentCategories!=null){
                                                     final MainCategories main = currentCategories.get(index.categories_id);
                                                     if (main!=null){
@@ -1325,27 +1280,26 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                                         }
                                                     }
                                                 }
-
                                                 InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
-                                                Log.d(TAG, "This item is existing");
+                                                Utils.Log(TAG, "This item is existing");
                                             }
                                         } else {
                                             view.onError("Can not convert item", EnumStatus.GET_LIST_FILE);
-                                            Log.d(TAG, "Can not convert item");
+                                            Utils.Log(TAG, "Can not convert item");
                                         }
                                 }
                             } catch (Exception e) {
                                 view.onError("Error "+e.getMessage(), EnumStatus.GET_LIST_FILE);
                                 e.printStackTrace();
                             } finally {
-                                Log.d(TAG, "Load more");
+                                Utils.Log(TAG, "Load more");
                                 view.onSuccessful(onResponse.nextPage, EnumStatus.LOAD_MORE);
                             }
                         }
                     }
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.GET_LIST_FILE);
                         return;
                     }
@@ -1357,7 +1311,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             Utils.Log(TAG, msg);
                             view.onError("" + msg, EnumStatus.GET_LIST_FILE);
@@ -1366,7 +1320,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("" + e.getMessage(), EnumStatus.GET_LIST_FILE);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.GET_LIST_FILE);
                     }
                 }));
@@ -1455,11 +1409,9 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             listener.onError("No Drive api connected", EnumStatus.DOWNLOAD);
             return;
         }
-
         if (mUser.access_token==null){
             listener.onError("No Access token", EnumStatus.DOWNLOAD);
         }
-
         final DownloadFileRequest request = new DownloadFileRequest();
         String id = "";
         if (items.isOriginalGlobalId) {
@@ -1472,14 +1424,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         request.items = items;
         request.api_name = String.format(getString(R.string.url_drive_download), id);
         request.Authorization = mUser.access_token;
-
         if (destination==null){
             String path = SuperSafeApplication.getInstance().getSupersafePrivate();
             String pathFolder = path + items.items_id + "/";
             destination = pathFolder;
         }
         request.path_folder_output = destination;
-
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override
             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
@@ -1493,43 +1443,32 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     listener.onError("Error download ", EnumStatus.DOWNLOAD);
                 }
             }
-
             @Override
             public void onProgressingDownloading(int percent) {
                 listener.onProgressDownload(percent);
                 Utils.Log(TAG, "Progressing downloaded " + percent + "%");
             }
-
             @Override
             public void onAttachmentElapsedTime(long elapsed) {
-
             }
-
             @Override
             public void onAttachmentAllTimeForDownloading(long all) {
-
             }
-
             @Override
             public void onAttachmentRemainingTime(long all) {
-
             }
-
             @Override
             public void onAttachmentSpeedPerSecond(double all) {
 
             }
-
             @Override
             public void onAttachmentTotalDownload(long totalByte, long totalByteDownloaded) {
 
             }
-
             @Override
             public void onSavedCompleted() {
                 Utils.Log(TAG, "onSavedCompleted ");
             }
-
             @Override
             public void onErrorSave(String name) {
                 Utils.Log(TAG, "onErrorSave");
@@ -1537,7 +1476,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     listener.onError("Error download save ", EnumStatus.DOWNLOAD);
                 }
             }
-
             @Override
             public void onCodeResponse(int code, DownloadFileRequest request) {
                 if (listener != null) {
@@ -1562,12 +1500,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void onUploadFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
-        Log.d(TAG, "onUploadFileInAppFolder");
+        Utils.Log(TAG, "onUploadFileInAppFolder");
         final User mUser = User.getInstance().getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
         HashMap<String, Object> content = new HashMap<>();
-
-
         DriveEvent contentEvent = new DriveEvent();
         File file = null;
         if (items.isOriginalGlobalId) {
@@ -1577,13 +1513,11 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             contentEvent.fileType = EnumFileType.THUMBNAIL.ordinal();
             file = new File(items.thumbnailPath);
         }
-
         if (!storage.isFileExist(file.getAbsolutePath())) {
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
             listener.onError("This path is not found", EnumStatus.UPLOAD);
             return;
         }
-
         contentEvent.items_id = items.items_id;
         String hex = DriveEvent.getInstance().convertToHex(new Gson().toJson(contentEvent));
         content.put(getString(R.string.key_name), hex);
@@ -1610,10 +1544,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 Utils.Log(TAG, "onFinish");
             }
         });
-
         fileBody.setContentType(items.mimeType);
         MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
-
         Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload), mUser.access_token, metaPart, dataPart, items.mimeType);
         request.enqueue(new Callback<DriveResponse>() {
             @Override
@@ -1621,7 +1553,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 Utils.Log(TAG, "response successful :" + new Gson().toJson(response.body()));
                 listener.onResponseData(response.body());
             }
-
             @Override
             public void onFailure(Call<DriveResponse> call, Throwable t) {
                 Utils.Log(TAG, "response failed :" + t.getMessage());
@@ -1633,7 +1564,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void getDriveAbout(BaseView view) {
-        Log.d(TAG, "getDriveAbout");
+        Utils.Log(TAG, "getDriveAbout");
         if (view == null) {
             return;
         }
@@ -1648,14 +1579,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             view.onError("User is null",EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
-
         if (user.access_token == null) {
             view.onError("Access token is null",EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
-
         String access_token = user.access_token;
-        Log.d(TAG, "access_token : " + access_token);
+        Utils.Log(TAG, "access_token : " + access_token);
         view.onSuccessful(access_token);
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
@@ -1682,10 +1611,10 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onSuccessful("Successful",EnumStatus.GET_DRIVE_ABOUT);
                         }
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -1722,7 +1651,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             view.onError("Error IOException " + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
@@ -1734,12 +1663,9 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 }));
     }
 
-
     /*TrackHandler*/
-
-
     public void onCheckVersion(){
-        Log.d(TAG,"onCheckVersion");
+        Utils.Log(TAG,"onCheckVersion");
         BaseView view = view();
         if (view == null) {
             return;
@@ -1750,7 +1676,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (subscriptions == null) {
             return;
         }
-
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckVersion()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1765,26 +1690,26 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         }
                     }
                     view.onStopLoading(EnumStatus.CHECK_VERSION);
-                    Log.d(TAG, "Body check version: " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body check version: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.CHECK_VERSION);
                 }));
     }
 
     public void onSyncAuthorDevice(){
-        Log.d(TAG,"onSyncAuthorDevice");
+        Utils.Log(TAG,"onSyncAuthorDevice");
         BaseView view = view();
         if (view == null) {
             return;
@@ -1795,13 +1720,11 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (subscriptions == null) {
             return;
         }
-
         final User user = User.getInstance().getUserInfo();
         String user_id = "null@gmail.com";
         if (user!=null){
             user_id = user.email;
         }
-
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
@@ -1817,7 +1740,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.AUTHOR_SYNC))
                 .subscribe(onResponse -> {
                     view.onStopLoading(EnumStatus.AUTHOR_SYNC);
-                    Log.d(TAG, "Body author device: " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body author device: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -1827,24 +1750,22 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"Author error" +bodys.string());
+                            Utils.Log(TAG,"Author error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Author Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Author Can not call" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.AUTHOR_SYNC);
                 }));
     }
 
-
     /*Email token*/
-
     public void onSendMail(EmailToken request){
-        Log.d(TAG, "onSendMail.....");
+        Utils.Log(TAG, "onSendMail.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -1869,7 +1790,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         Utils.Log(TAG, "code " + code);
                         onRefreshEmailToken(request);
                         final String errorMessage = response.errorBody().string();
-                        Log.d(TAG, "error" + errorMessage);
+                        Utils.Log(TAG, "error" + errorMessage);
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL);
                         mUser.isWaitingSendMail = false;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
@@ -1880,7 +1801,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         mUser.isWaitingSendMail = false;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         ServiceManager.getInstance().onDismissServices();
-                        Log.d(TAG, "Body : Send email Successful");
+                        Utils.Log(TAG, "Body : Send email Successful");
                     } else {
                         Utils.Log(TAG, "code " + code);
                         Utils.Log(TAG, "Nothing to do");
@@ -1891,7 +1812,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Utils.Log(TAG, "response failed :" + t.getMessage());
@@ -1900,7 +1820,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     }
 
     public void onRefreshEmailToken(EmailToken request) {
-        Log.d(TAG, "onRefreshEmailToken.....");
+        Utils.Log(TAG, "onRefreshEmailToken.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -1931,7 +1851,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
-                    Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body refresh : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -1940,21 +1860,20 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             if (code == 401) {
                                 Utils.Log(TAG, "code " + code);
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             view.onError(msg, EnumStatus.SEND_EMAIL);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
-
     public void onAddEmailToken() {
-        Log.d(TAG, "onSignIn.....");
+        Utils.Log(TAG, "onSignIn.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -1965,7 +1884,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         if (subscriptions == null) {
             return;
         }
-
         final User mUser = User.getInstance().getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id), mUser.email);
@@ -1976,7 +1894,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.RESET);
                     onSendMail(emailToken);
                 }, throwable -> {
@@ -1989,23 +1907,21 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
-
 
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
      */
-
     public class LocalBinder extends Binder {
         public SuperSafeService getService() {
             // Return this instance of SignalRService so clients can call public methods
@@ -2015,6 +1931,4 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             mIntent = intent;
         }
     }
-
-
 }
