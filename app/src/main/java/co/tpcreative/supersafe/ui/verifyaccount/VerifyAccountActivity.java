@@ -48,7 +48,7 @@ import co.tpcreative.supersafe.model.Categories;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.HelpAndSupport;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
 
@@ -128,7 +128,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
            }
         }
 
-        Theme theme = Theme.getInstance().getThemeInfo();
+        ThemeApp theme = ThemeApp.getInstance().getThemeInfo();
         progressBarCircularIndeterminateSignIn.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
         progressBarCircularIndeterminateReSend.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
         progressBarCircularIndeterminateVerifyCode.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
@@ -394,7 +394,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     public void onShowDialog(){
-        Theme theme = Theme.getInstance().getThemeInfo();
+        ThemeApp theme = ThemeApp.getInstance().getThemeInfo();
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.signin_with_google)
                 .setDescription(R.string.choose_google_account)
@@ -422,7 +422,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     public void onShowDialogEnableSync(){
-        Theme theme = Theme.getInstance().getThemeInfo();
+        ThemeApp theme = ThemeApp.getInstance().getThemeInfo();
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.enable_cloud_sync)
                 .setDescription(R.string.message_prompt)

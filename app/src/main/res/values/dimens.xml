@@ -157,7 +157,7 @@
     <dimen name="medium_16">16sp</dimen>
     <dimen name="medium_x">20sp</dimen>
     <dimen name="large">22sp</dimen>
-    
+    <dimen name="floating_action_button_size_large_80">80dp</dimen>
 
 
 </resources>

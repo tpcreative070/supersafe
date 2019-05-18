@@ -13,14 +13,14 @@ import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 
 public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     private Context context;
     private ItemSelectedListener itemSelectedListener;
-    private Theme theme = Theme.getInstance().getThemeInfo();
+    private ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
 
     private String TAG = AlbumCoverDefaultAdapter.class.getSimpleName();
 
@@ -68,7 +68,7 @@ public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategories, BaseHo
             categories = data;
             if (data.isChecked) {
                 view_alpha.setAlpha(0.5f);
-                imgIcon.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(theme.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
+                imgIcon.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
                 imgSelect.setVisibility(View.VISIBLE);
 
             } else {

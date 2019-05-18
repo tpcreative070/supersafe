@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -15,17 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,14 +28,11 @@ import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.switchbasic.SwitchBasicActivity;
-import spencerstudios.com.bungeelib.Bungee;
 
 
 public class SettingsActivity extends BaseActivity {
@@ -84,8 +75,8 @@ public class SettingsActivity extends BaseActivity {
     public void onMessageEvent(EnumStatus event) {
         switch (event){
             case RECREATE:{
-                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-                setStatusBarColored(this,theme.getPrimaryColor(),theme.getPrimaryDarkColor());
+                ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+                setStatusBarColored(this, themeApp.getPrimaryColor(), themeApp.getPrimaryDarkColor());
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
                 if (fragment == null) {
                     fragment = Fragment.instantiate(this, SettingsFragment.class.getName());
@@ -334,7 +325,7 @@ public class SettingsActivity extends BaseActivity {
             mLockScreen.setOnPreferenceChangeListener(createChangeListener());
             mLockScreen.setOnPreferenceClickListener(createActionPreferenceClickListener());
 
-            /*Update Theme*/
+            /*Update ThemeApp*/
             mTheme = findPreference(getString(R.string.key_theme));
             mTheme.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mTheme.setOnPreferenceChangeListener(createChangeListener());
@@ -419,8 +410,8 @@ public class SettingsActivity extends BaseActivity {
         public void onShowPremium(){
             try {
                 de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(getContext());
-                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-                builder.setHeaderBackground(theme.getAccentColor());
+                ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+                builder.setHeaderBackground(themeApp.getAccentColor());
                 builder.setTitle(getString(R.string.this_is_premium_feature));
                 builder.setMessage(getString(R.string.upgrade_now));
                 builder.setCustomHeader(R.layout.custom_header);
@@ -450,8 +441,8 @@ public class SettingsActivity extends BaseActivity {
                         TextView textView = (TextView) dialog.findViewById(android.R.id.message);
 
                         if (positive!=null && negative!=null && textView!=null){
-                            positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
-                            negative.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                            positive.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
+                            negative.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
                             textView.setTextSize(16);
                         }
                     }

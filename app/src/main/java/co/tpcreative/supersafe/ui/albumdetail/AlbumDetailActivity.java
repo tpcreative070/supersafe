@@ -13,9 +13,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -80,6 +78,7 @@ import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
@@ -469,10 +468,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 @Override
                 public void run() {
                     if (dialog==null){
-                        co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
                         dialog = new SpotsDialog.Builder()
                                 .setContext(AlbumDetailActivity.this)
-                                .setDotColor(theme.getAccentColor())
+                                .setDotColor(themeApp.getAccentColor())
                                 .setMessage(getString(R.string.exporting))
                                 .setCancelable(true)
                                 .build();
@@ -526,12 +525,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     /*Init Floating View*/
 
     private void initSpeedDial(boolean addActionItems) {
-        final co.tpcreative.supersafe.model.Theme mTheme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+        final ThemeApp mThemeApp = ThemeApp.getInstance().getThemeInfo();
         if (addActionItems) {
             Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
                     .fab_camera, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                             getTheme()))
                     .setLabel(getString(R.string.camera))
                     .setLabelColor(Color.WHITE)
@@ -541,7 +540,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
             drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                             getTheme()))
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
@@ -1142,9 +1141,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
             actionMode = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+                ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
                 Window window = getWindow();
-                window.setStatusBarColor(ContextCompat.getColor(getContext(),theme.getPrimaryDarkColor()));
+                window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
             }
         }
     };

@@ -38,7 +38,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import dmax.dialog.SpotsDialog;
 
@@ -348,10 +348,10 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 @Override
                 public void run() {
                     if (dialog==null){
-                        Theme theme = Theme.getInstance().getThemeInfo();
+                        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
                         dialog = new SpotsDialog.Builder()
                                 .setContext(ShareFilesActivity.this)
-                                .setDotColor(theme.getAccentColor())
+                                .setDotColor(themeApp.getAccentColor())
                                 .setMessage(getString(R.string.importing))
                                 .setCancelable(true)
                                 .build();

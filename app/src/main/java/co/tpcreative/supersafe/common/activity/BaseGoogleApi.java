@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 import com.ftinc.kit.util.SizeUtils;
@@ -33,9 +32,7 @@ import com.google.gson.Gson;
 import com.r0adkll.slidr.Slidr;
 import com.r0adkll.slidr.model.SlidrConfig;
 import com.r0adkll.slidr.model.SlidrPosition;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.IOException;
 import java.util.List;
 import butterknife.ButterKnife;
@@ -52,7 +49,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 
@@ -102,7 +99,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
-        final Theme result = Theme.getInstance().getThemeInfo();
+        final ThemeApp result = ThemeApp.getInstance().getThemeInfo();
         if (result!=null){
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }
@@ -129,10 +126,10 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     }
 
     protected void onDrawOverLay(Activity activity){
-        final Theme theme = Theme.getInstance().getThemeInfo();
+        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(theme.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(theme.getPrimaryDarkColor()))
+                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
+                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
                 .position(SlidrPosition.LEFT)
                 .velocityThreshold(2400)
                 .touchSize(SizeUtils.dpToPx(this, 32))
@@ -283,7 +280,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             onStartCount++;
         }
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null && GoogleSignIn.hasPermissions(account, Drive.SCOPE_FILE,Drive.SCOPE_APPFOLDER)) {
+        if (account != null && GoogleSignIn.hasPermissions(account,Drive.SCOPE_FILE,Drive.SCOPE_APPFOLDER)) {
             getGoogleSignInClient(account.getAccount());
             initializeDriveClient(account);
             mSignInAccount = account;

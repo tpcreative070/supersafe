@@ -6,12 +6,12 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class ThemeSettingsPresenter extends Presenter<BaseView>{
 
-    protected List<Theme>mList;
-    protected Theme mTheme;
+    protected List<ThemeApp>mList;
+    protected ThemeApp mThemeApp;
     private static final String TAG = ThemeSettingsPresenter.class.getSimpleName();
 
     public ThemeSettingsPresenter(){
@@ -20,11 +20,11 @@ public class ThemeSettingsPresenter extends Presenter<BaseView>{
 
     public void getData(){
         BaseView view = view();
-        mList = Theme.getInstance().getList();
-        mTheme = Theme.getInstance().getThemeInfo();
-        if (mTheme!=null){
+        mList = ThemeApp.getInstance().getList();
+        mThemeApp = ThemeApp.getInstance().getThemeInfo();
+        if (mThemeApp !=null){
             for(int i = 0;i <mList.size() ;i++){
-                if (mTheme.getId()==mList.get(i).getId()){
+                if (mThemeApp.getId()==mList.get(i).getId()){
                     mList.get(i).isCheck = true;
                 }
                 else{
@@ -38,11 +38,11 @@ public class ThemeSettingsPresenter extends Presenter<BaseView>{
 
     public void getDataReload(){
         BaseView view = view();
-        mList = Theme.getInstance().getList();
-        mTheme = Theme.getInstance().getThemeInfo();
-        if (mTheme!=null){
+        mList = ThemeApp.getInstance().getList();
+        mThemeApp = ThemeApp.getInstance().getThemeInfo();
+        if (mThemeApp !=null){
             for(int i = 0;i <mList.size() ;i++){
-                if (mTheme.getId()==mList.get(i).getId()){
+                if (mThemeApp.getId()==mList.get(i).getId()){
                     mList.get(i).isCheck = true;
                 }
                 else{

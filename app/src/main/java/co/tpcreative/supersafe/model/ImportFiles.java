@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.model;
-
 import java.io.Serializable;
-
 public class ImportFiles implements Serializable{
     public MainCategories mainCategories;
     public String path ;

@@ -19,7 +19,6 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-
 @Entity(tableName = "maincategories")
 public class MainCategories implements Serializable{
 

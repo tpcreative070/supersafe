@@ -3,18 +3,14 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
 import butterknife.BindView;
@@ -28,7 +24,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
 
@@ -42,8 +38,8 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private Storage storage;
     private String TAG = AlbumDetailAdapter.class.getSimpleName();
-    final Theme theme = Theme.getInstance().getThemeInfo();
-    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( theme.getAccentColor());
+    final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
 
 
     public AlbumDetailAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
@@ -159,7 +155,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
                     }
                 }
 
-                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(theme.getAccentColor()),
+                progressingBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(themeApp.getAccentColor()),
                         PorterDuff.Mode.SRC_IN);
                 EnumStatusProgress progress = EnumStatusProgress.values()[data.statusProgress];
                 switch (progress){

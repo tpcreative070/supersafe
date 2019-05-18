@@ -24,7 +24,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class CameraActivity extends BaseActivity implements
         ActivityCompat.OnRequestPermissionsResultCallback{
@@ -57,7 +57,7 @@ public class CameraActivity extends BaseActivity implements
     ImageButton btnAutoFocus;
     @BindView(R.id.take_picture)
     FloatingActionButton take_picture;
-    private Theme theme = Theme.getInstance().getThemeInfo();
+    private ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
@@ -134,7 +134,7 @@ public class CameraActivity extends BaseActivity implements
                 mCameraView.setAutoFocus(false);
             }
             else {
-                btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(theme.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
+                btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
                 mCameraView.setAutoFocus(true);
             }
         }
@@ -158,7 +158,7 @@ public class CameraActivity extends BaseActivity implements
         }
         mCameraView.start();
         if (mCameraView.getAutoFocus()){
-            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(theme.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
+            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
         }
         else{
             btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);

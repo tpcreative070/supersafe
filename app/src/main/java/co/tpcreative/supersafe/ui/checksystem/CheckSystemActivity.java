@@ -34,13 +34,9 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
 
@@ -86,8 +82,8 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             }, 5000);
         }
         onStartOverridePendingTransition();
-        co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-        progressBarCircularIndeterminate.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+        progressBarCircularIndeterminate.setBackgroundColor(getResources().getColor(themeApp.getAccentColor()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
