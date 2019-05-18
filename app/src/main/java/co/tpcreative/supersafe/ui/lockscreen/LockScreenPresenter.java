@@ -5,14 +5,11 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class LockScreenPresenter extends Presenter<BaseView<EnumPinAction>>{
-
     public LockScreenPresenter(){
-
     }
 
     public void onChangeStatus(EnumStatus status,EnumPinAction action){
         BaseView view = view();
         view.onSuccessful("Successful",status,action);
     }
-
 }
