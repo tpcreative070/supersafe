@@ -90,6 +90,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     TabLayout tabLayout;
     @BindView(R.id.rlOverLay)
     RelativeLayout rlOverLay;
+    @BindView(R.id.viewFloatingButton)
+    View viewFloatingButton;
     private MainViewPagerAdapter adapter;
     private MainTabPresenter presenter;
     AnimationsContainer.FramesSequenceAnimation animation;
@@ -132,9 +134,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 }
             },2000);
         }
-
-        long current_time = System.currentTimeMillis();
-        Utils.Log(TAG,"current time "+ current_time);
     }
 
     private void showInterstitial() {
@@ -151,6 +150,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                 return;
             }
+            viewFloatingButton.setVisibility(View.VISIBLE);
             onSuggestionAddFiles();
         }
         else{
@@ -381,7 +381,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                             getTheme()))
                     .create());
-           mSpeedDialView.show();
+            mSpeedDialView.show();
         }
 
         //Set main action clicklistener.
@@ -778,7 +778,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     public void onSuggestionAddFiles(){
         TapTargetView.showFor(this,                 // `this` is an Activity
-                TapTarget.forView(mSpeedDialView, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
+                TapTarget.forView(viewFloatingButton, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
                         .titleTextSize(25)
                         .titleTextColor(R.color.white)
                         .descriptionTextColor(R.color.md_light_blue_200)
@@ -787,13 +787,15 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         .transparentTarget(true)
                         .targetCircleColor(R.color.white)
                         .cancelable(true)
-                        .dimColor(R.color.white),
+                        .transparentTarget(true)
+                        .dimColor(R.color.transparent),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
                     @Override
                     public void onTargetClick(TapTargetView view) {
                         super.onTargetClick(view);      // This call is optional
                         mSpeedDialView.open();
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                     }
 
@@ -802,6 +804,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         super.onOuterCircleClick(view);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         Utils.Log(TAG,"onOuterCircleClick");
                     }
 
@@ -810,6 +813,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         super.onTargetDismissed(view, userInitiated);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         Utils.Log(TAG,"onTargetDismissed");
                     }
 
@@ -818,6 +822,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         super.onTargetCancel(view);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         Utils.Log(TAG,"onTargetCancel");
                     }
                 });
