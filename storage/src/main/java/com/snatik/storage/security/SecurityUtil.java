@@ -1,17 +1,12 @@
 package com.snatik.storage.security;
-
 import android.util.Log;
-
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -23,7 +18,6 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Roman Kushnarenko - sromku (sromku@gmail.com)
  */
 public class SecurityUtil {
-
     private static final String TAG = "SecurityUtil";
     public static final String AES_ALGORITHM = "AES";
     public static final String AES_TRANSFORMATION = "AES/CTR/NoPadding";
@@ -31,13 +25,10 @@ public class SecurityUtil {
     public static final String SHA1 = "PBKDF2WithHmacSHA1";
     public static final int iterationCount = 1000; // recommended by PKCS#5
     public static final int keyLength = 128;
-
-    public static final String url_developer = "http://192.168.1.2:8081";
+    public static final String url_developer = "http://192.168.1.4:8081";
     public static final String url_live = "http://tpcreative.me:8081";
-
     public static final String key_password_default = "tpcreative.co";
     public static final String DEFAULT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRwY3JlYXRpdmUuY29AZ21haWwuY29tIiwibmFtZSI6IkZyZWUiLCJyb2xlIjoiMCIsImNyZWF0ZWRfZGF0ZSI6IjExLzEzLzIwMTggMTA6NDg6MDAgUE0iLCJfaWQiOiI1YmVhZjIzMDQ2NGEwNzNmNjUzNDVjYmUiLCJpYXQiOjE1NDIxMjQwODB9.oEfdmeOTYxGnJtl1ZJtC71AELyLcNz6w6FhlTizVJdE";
-
     /*Encrypt key*/
     public static final String IVX = "1234567891234567"; // 16 lenght - not secret
     public static final String SECRET_KEY = "secret@123456789"; // 16 lenght - secret
@@ -97,7 +88,6 @@ public class SecurityUtil {
             return null;
         }
     }
-
     /**
      * Do xor operation on the string with the key
      *
@@ -123,7 +113,5 @@ public class SecurityUtil {
         }
         return null;
     }
-
-
 
 }

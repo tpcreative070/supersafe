@@ -1,21 +1,17 @@
 package dyanamitechetan.vusikview;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.PorterDuff;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-
 import java.util.Random;
 
-
 public class VusikView extends View {
-
     private FallNotesThread mFallNotesThread;
     private Notes[] mNotes;
     private int mNotesIconHeight;
@@ -26,20 +22,14 @@ public class VusikView extends View {
     private Drawable[] myImageList;
     private float mFallSpeed;
     private int mNotesCount;
-
     private enum FallNotesState {START, PAUSE, RUNNING, STOP}
-
     private FallNotesState mFallNotesState;
-
-
     public VusikView(Context context) {
         this(context, null);
     }
-
     public VusikView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
     public VusikView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initAttrs(context, attrs, defStyleAttr);
@@ -57,21 +47,17 @@ public class VusikView extends View {
     }
 
     public VusikView start(){
-
             this.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mFallNotesState = FallNotesState.START;
-
                     if (mFallNotesThread == null) {
                         mFallNotesThread = new FallNotesThread();
                     }
-
                     mNotes = new Notes[mNotesCount];
                     for (int i = 0; i < mNotes.length; i++) {
                         mNotes[i] = new Notes();
                     }
-
                     if (mFallNotesState == FallNotesState.START) {
                         if(!mFallNotesThread.isAlive()) {
                             mFallNotesThread.start();
@@ -115,11 +101,9 @@ public class VusikView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         if (mNotes == null) {
             return;
         }
-
         for (Notes notes : mNotes) {
             canvas.save();
             notes.mNotesIconDrawable.setBounds((int) notes.X, (int) notes.Y, (int) (notes.X + mNotesIconHeight * notes.scale), (int) (notes.Y + mNotesIconHeight * notes.scale));
@@ -129,7 +113,6 @@ public class VusikView extends View {
         }
 
     }
-
 
     private void calculateNotesNextAttr() {
         for (Notes notes : mNotes) {
@@ -148,10 +131,22 @@ public class VusikView extends View {
      */
     private Drawable resize(Drawable image) {
         Bitmap b = ((BitmapDrawable)image).getBitmap();
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 96, 96, false);
-        return new BitmapDrawable(getResources(), bitmapResized);
+        Matrix matrix = new Matrix();
+        int width = b.getWidth();
+        int height = b.getHeight();
+        int newWidth = 96;
+        int newHeight = 96;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            newWidth = 35;
+            newHeight = 35;
+        }
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        matrix.postScale(scaleWidth, scaleHeight);
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(b, 0, 0, width, height, matrix, false);
+        return new BitmapDrawable(getResources(), resizedBitmap);
     }
-
 
     private class Notes {
         public float scale;
@@ -159,36 +154,27 @@ public class VusikView extends View {
         public float X;
         public float Y;
         private Drawable mNotesIconDrawable;
-
         public Notes() {
             init();
         }
-
         private void init() {
-            
             /**
             TO INITIATE myImageList WITH SOME VALUES IF NONE WAS PROVIDED
             */
-
             Drawable note1 = getResources().getDrawable( R.drawable.note1 );
             Drawable note2 = getResources().getDrawable( R.drawable.note2 );
-
             if(myImageList==null){
                          myImageList = new Drawable[]{note1,note2};
                 images = new Drawable[myImageList.length];
-
                 for(int i=0;i<myImageList.length;i++){
-
                             images[i] = resize(myImageList[i]);
                         }
 
             }
-
             alpha = mRandom.nextInt(200) + 55; //get a random Aplha 55~255
             scale = (mRandom.nextFloat() + 1) / 2;  //random Sizes 0.5~1.5
             X = mRandom.nextInt(mNotesViewWidth);
             Y = randInt(-mNotesIconHeight-2000,0);
-            
             if(images.length==1){
                 mNotesIconDrawable = images[0];
             }
@@ -204,7 +190,6 @@ public class VusikView extends View {
             }
             mNotesIconHeight = mNotesIconDrawable.getIntrinsicHeight();
         }
-
         public void calculateNextStep() {
             if (Y > mNotesViewHeight / scale) {
                 init();
@@ -219,22 +204,18 @@ public class VusikView extends View {
         }
     }
 
-
     public void startNotesFall() {
         this.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mFallNotesState = FallNotesState.START;
-
                 if (mFallNotesThread == null) {
                     mFallNotesThread = new FallNotesThread();
                 }
-
                 mNotes = new Notes[mNotesCount];
                 for (int i = 0; i < mNotes.length; i++) {
                     mNotes[i] = new Notes();
                 }
-
                 if (mFallNotesState == FallNotesState.START) {
 
                         mFallNotesState = FallNotesState.RUNNING;
@@ -293,5 +274,4 @@ public class VusikView extends View {
             }
         }
     }
-
 }

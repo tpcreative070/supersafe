@@ -66,7 +66,6 @@ import co.tpcreative.supersafe.model.ThemeApp;
 import dyanamitechetan.vusikview.VusikView;
 
 public class PlayerActivity extends BasePlayerActivity implements BaseView, PlayerAdapter.ItemSelectedListener {
-
     private static final String TAG = PlayerActivity.class.getSimpleName();
     @BindView(R.id.simpleexoplayerview)
     PlayerView playerView;
@@ -108,24 +107,18 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         seekTo = PrefsController.getLong(getString(R.string.key_seek_to),0);
         lastWindowIndex = PrefsController.getInt(getString(R.string.key_lastWindowIndex),0);
         if (mCipher != null) {
             initRecycleView(getLayoutInflater());
             presenter.onGetIntent(this);
         }
-
-        Utils.Log(TAG,"Create PlayerActivity");
-
         Drawable note1 = getResources().getDrawable(R.drawable.music_1);
-        Drawable note2 = getResources().getDrawable(R.drawable.music_2);
+        Drawable note2 = getResources().getDrawable(R.drawable.ic_music_5);
         Drawable note3 = getResources().getDrawable(R.drawable.music_3);
         Drawable note4 = getResources().getDrawable(R.drawable.music_4);
         Drawable[] myImageList = new Drawable[]{note1, note2, note3, note4};
         animationPlayer.setImages(myImageList).start();
-
         playerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
@@ -184,7 +177,6 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(PlayerActivity.class.getSimpleName());
     }
 
     @Override
@@ -213,13 +205,9 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
         playerView.setPlayer(player);
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-
         DataSource.Factory dataSourceFactory = new EncryptedFileDataSourceFactory(mCipher, mSecretKeySpec, mIvParameterSpec, bandwidthMeter);
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-
-        //Uri uri = Uri.fromFile(mEncryptedFile);
         try {
-            //MediaSource videoSource = new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri);
             presenter.mListSource.clear();
             for (Items index : presenter.mList) {
                 mEncryptedFile = new File(index.originalPath);
@@ -239,43 +227,35 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             player.prepare(concatenatedSource,!haveStartPosition,false);
             player.setPlayWhenReady(true);
             player.setRepeatMode(Player.REPEAT_MODE_ALL);
-
             player.addListener(new Player.EventListener() {
                 @Override
                 public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
                     Utils.Log(TAG, "1");
                 }
-
                 @Override
                 public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
                     Utils.Log(TAG, "2");
                 }
-
                 @Override
                 public void onLoadingChanged(boolean isLoading) {
                     Utils.Log(TAG, "3");
                 }
-
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                     Utils.Log(TAG, "4 " +playbackState);
                 }
-
                 @Override
                 public void onRepeatModeChanged(int repeatMode) {
                     Utils.Log(TAG, "5");
                 }
-
                 @Override
                 public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
                     Utils.Log(TAG, "6");
                 }
-
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
                     Utils.Log(TAG, "7");
                 }
-
                 @Override
                 public void onPositionDiscontinuity(int reason) {
                     int latestWindowIndex = player.getCurrentWindowIndex();
@@ -286,12 +266,10 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
                     onUpdatedUI(lastWindowIndex);
                     Utils.Log(TAG, "position ???????" + lastWindowIndex);
                 }
-
                 @Override
                 public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
                     Utils.Log(TAG, "9");
                 }
-
                 @Override
                 public void onSeekProcessed() {
                     Utils.Log(TAG, "10");
@@ -305,31 +283,22 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
 
     @Override
     public void onStartLoading(EnumStatus status) {
-
     }
-
     @Override
     public void onStopLoading(EnumStatus status) {
     }
-
     @Override
     public Context getContext() {
         return getApplicationContext();
     }
-
     @Override
     public void onError(String message, EnumStatus status) {
-
     }
-
     @Override
     public void onError(String message) {
-
     }
-
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @OnClick(R.id.imgArrowBack)
@@ -399,12 +368,10 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {
-
     }
 
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-
     }
 
     @Override
@@ -423,6 +390,4 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         isPortrait = savedInstanceState.getBoolean(getString(R.string.key_rotate),false);
         Utils.Log(TAG, "Restore "+seekTo);
     }
-
-
 }

@@ -11,15 +11,11 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-
 public class PlayerPresenter extends Presenter<BaseView>{
-
     protected Items mItems ;
     protected MainCategories mainCategories;
     protected List<Items>mList ;
     protected List<MediaSource> mListSource;
-
-
     public PlayerPresenter(){
         mList = new ArrayList<>();
         mListSource = new ArrayList<>();
@@ -53,5 +49,4 @@ public class PlayerPresenter extends Presenter<BaseView>{
             e.printStackTrace();
         }
     }
-
 }
