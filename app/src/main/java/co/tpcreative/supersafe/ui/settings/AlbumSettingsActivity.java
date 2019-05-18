@@ -40,7 +40,7 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 
@@ -222,8 +222,8 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                                 switch (formatTypeFile) {
                                     case AUDIO: {
-                                        Theme theme = Theme.getInstance().getThemeInfo();
-                                        Drawable note1 = getContext().getResources().getDrawable(theme.getAccentColor());
+                                        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+                                        Drawable note1 = getContext().getResources().getDrawable(themeApp.getAccentColor());
                                         Glide.with(getContext())
                                                 .load(note1)
                                                 .apply(options)
@@ -232,8 +232,8 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                         break;
                                     }
                                     case FILES:{
-                                        Theme theme = Theme.getInstance().getThemeInfo();
-                                        Drawable note1 = getContext().getResources().getDrawable(theme.getAccentColor());
+                                        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+                                        Drawable note1 = getContext().getResources().getDrawable(themeApp.getAccentColor());
                                         Glide.with(getContext())
                                                 .load(note1)
                                                 .apply(options)

@@ -55,7 +55,6 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -63,9 +62,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.premium.PremiumActivity;
+import co.tpcreative.supersafe.model.ThemeApp;
 import dyanamitechetan.vusikview.VusikView;
 
 public class PlayerActivity extends BasePlayerActivity implements BaseView, PlayerAdapter.ItemSelectedListener {
@@ -92,7 +89,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     int lastWindowIndex = 0;
     private boolean isPortrait ;
     private long seekTo = 0;
-    private Theme theme = Theme.getInstance().getThemeInfo();
+    private ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +137,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
         });
         isPortrait = true;
-        tvTitle.setTextColor(getResources().getColor(theme.getAccentColor()));
+        tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {

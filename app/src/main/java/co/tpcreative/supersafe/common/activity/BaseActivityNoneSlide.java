@@ -20,8 +20,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.Theme;
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
+import co.tpcreative.supersafe.model.ThemeApp;
 import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
@@ -51,7 +50,7 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     public Resources.Theme getTheme() {
         Resources.Theme theme = super.getTheme();
-        final Theme result = Theme.getInstance().getThemeInfo();
+        final ThemeApp result = ThemeApp.getInstance().getThemeInfo();
         if (result!=null){
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true);
         }

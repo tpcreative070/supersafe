@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import dmax.dialog.SpotsDialog;
 
 public class SingletonManagerProcessing {
@@ -27,10 +27,10 @@ public class SingletonManagerProcessing {
                 @Override
                 public void run() {
                     if (dialog==null){
-                        Theme theme = Theme.getInstance().getThemeInfo();
+                        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
                         dialog = new SpotsDialog.Builder()
                                 .setContext(activity)
-                                .setDotColor(theme.getAccentColor())
+                                .setDotColor(themeApp.getAccentColor())
                                 .setTheme(R.style.CustomDialog)
                                 .setMessage(SuperSafeApplication.getInstance().getString(res))
                                 .setCancelable(true)

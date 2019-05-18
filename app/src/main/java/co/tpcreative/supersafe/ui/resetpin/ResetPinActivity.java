@@ -40,7 +40,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
@@ -133,7 +133,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
 
 
     public void setProgressValue(){
-        Theme theme = Theme.getInstance().getThemeInfo();
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         CircularProgressDrawable circularProgressDrawable;
         CircularProgressDrawable.Builder b = new CircularProgressDrawable.Builder(this)
                 .colors(getResources().getIntArray(R.array.gplus_colors))
@@ -148,7 +148,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                 mCircularProgressBar.getWidth(),
                 mCircularProgressBar.getHeight());
 
-        //mCircularProgressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(theme.getAccentColor()),
+        //mCircularProgressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(themeApp.getAccentColor()),
         //        PorterDuff.Mode.SRC_IN);
         mCircularProgressBar.setVisibility(View.INVISIBLE);
         mCircularProgressBar.setVisibility(View.VISIBLE);
@@ -325,7 +325,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
     }
 
     public void onShowDialogWaitingCode(){
-        Theme theme = Theme.getInstance().getThemeInfo();
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         final User mUser = User.getInstance().getUserInfo();
         Utils.Log(TAG,"Preparing "+ new Gson().toJson(mUser));
         new MaterialStyledDialog.Builder(this)
@@ -333,7 +333,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                 .setDescription(R.string.send_code_later_detail)
                 .setHeaderDrawable(R.drawable.baseline_email_white_48)
                 .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
-                .setHeaderColor(theme.getPrimaryColor())
+                .setHeaderColor(themeApp.getPrimaryColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.continue_value)
                 .setNegativeText(R.string.cancel)

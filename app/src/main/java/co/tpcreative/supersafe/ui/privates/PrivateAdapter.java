@@ -25,7 +25,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 
@@ -35,15 +35,15 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     private Storage storage;
     private ItemSelectedListener itemSelectedListener;
     private String TAG = PrivateAdapter.class.getSimpleName();
-    Theme theme = Theme.getInstance().getThemeInfo();
-    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable(theme.getAccentColor());
+    ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+    Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable(themeApp.getAccentColor());
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(400, 400)
-            .placeholder(theme.getPrimaryColor())
+            .placeholder(themeApp.getPrimaryColor())
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .error(theme.getAccentColor())
+            .error(themeApp.getAccentColor())
             .priority(Priority.HIGH);
 
     public PrivateAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {

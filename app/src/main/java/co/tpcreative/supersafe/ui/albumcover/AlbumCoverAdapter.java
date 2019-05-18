@@ -21,7 +21,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
 
@@ -35,7 +35,7 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private Storage storage;
     private MainCategories categories;
-    Theme theme = Theme.getInstance().getThemeInfo();
+    ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
     private String TAG = AlbumCoverAdapter.class.getSimpleName();
 
     public AlbumCoverAdapter(LayoutInflater inflater, Context context,MainCategories mainCategories, ItemSelectedListener itemSelectedListener) {
@@ -97,7 +97,7 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
                     case AUDIO: {
-                        Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                        Drawable note1 = context.getResources().getDrawable(themeApp.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options)
@@ -106,7 +106,7 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                         break;
                     }
                     case FILES:{
-                        Drawable note1 = context.getResources().getDrawable(theme.getAccentColor());
+                        Drawable note1 = context.getResources().getDrawable(themeApp.getAccentColor());
                         Glide.with(context)
                                 .load(note1)
                                 .apply(options)

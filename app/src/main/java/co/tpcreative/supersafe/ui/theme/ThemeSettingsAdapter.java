@@ -13,10 +13,10 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ThemeSettingsAdapter extends BaseAdapter<Theme, BaseHolder> {
+public class ThemeSettingsAdapter extends BaseAdapter<ThemeApp, BaseHolder> {
     private Context context;
     private ItemSelectedListener itemSelectedListener;
     private String TAG = ThemeSettingsAdapter.class.getSimpleName();
@@ -45,28 +45,28 @@ public class ThemeSettingsAdapter extends BaseAdapter<Theme, BaseHolder> {
         void onClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<Theme> {
+    public class ItemHolder extends BaseHolder<ThemeApp> {
 
         @BindView(R.id.imgTheme)
         CircleImageView imgTheme;
         @BindView(R.id.imgChecked)
         ImageView imgChecked;
         int mPosition;
-        Theme theme;
+        ThemeApp themeApp;
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
 
         @Override
-        public void bind(Theme data, int position) {
+        public void bind(ThemeApp data, int position) {
             super.bind(data, position);
             mPosition = position;
             //imgTheme.setBackgroundColor(data.getPrimaryColor());
             Glide.with(context)
                     .load(context.getResources().getDrawable(data.getPrimaryColor()))
                     .apply(options).into(imgTheme);
-            theme = data;
+            themeApp = data;
             if (data.isCheck){
                 imgChecked.setVisibility(View.VISIBLE);
             }

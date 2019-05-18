@@ -83,8 +83,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:15.0.1'
 
     // Dependencies for the REST API example
-    implementation 'com.google.api-client:google-api-client:1.23.0'
-    implementation 'com.google.api-client:google-api-client-gson:1.23.0'
     implementation 'com.google.api-client:google-api-client-android:1.23.0'
 
     /*Google drive*/
@@ -95,32 +93,29 @@ dependencies {
     implementation project(':floatingbuttonlibrary')
 
     /*Add butter knife*/
-
     implementation 'com.jakewharton:butterknife:8.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 
     /*Adding Edittext Android Material*/
-
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
 
-    /*Material Design Dialog*/
+    /*Waiting for progress*/
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
 
     /*Gson*/
     implementation 'com.google.code.gson:gson:2.8.5'
 
     /*Room**/
-
     implementation "android.arch.persistence.room:runtime:" + appRoomVersion
     annotationProcessor "android.arch.persistence.room:compiler:" + appRoomVersion
 
     /*Camera*/
-
     implementation project(':cameralibrary')
 
     /*Material Design*/
     implementation 'com.github.bumptech.glide:glide:' + glide
     annotationProcessor 'com.github.bumptech.glide:compiler:'+glide
+    /*Circle for image theme*/
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     /*Retrofit and RXJava 2*/
@@ -137,9 +132,6 @@ dependencies {
         exclude group: 'stax', module: 'stax'
     }
 
-    /*Progress dialog*/
-    implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
-
     /*Swipe activity*/
     implementation project(':slibrlibrary')
     implementation 'com.52inc:52Kit-core:0.5.1'
@@ -152,19 +144,14 @@ dependencies {
     implementation project(':library-common')
 
     /*Progress bar*/
-
     implementation project(':library-circular')
     implementation project(':library-progress')
 
     /*Apache*/
-
     implementation files('libs/httpmime-4.3.6.jar')
     implementation files('libs/httpcore-4.3.3.jar')
     implementation files('libs/httpclient-4.3.6.jar')
     implementation files('libs/systembartint-1.0.3.jar')
-
-    /*Choose File*/
-    implementation 'com.obsez.android.lib.filechooser:filechooser:1.1.10'
 
     /*Android Storage*/
     implementation project(':storage')
@@ -198,9 +185,6 @@ dependencies {
 
     /*Tap Target tap*/
     implementation project(':taptargetviewlibrary')
-
-    /*CircleImageView*/
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     /*Animation player music*/
     implementation project(':vusikviewlibrary')

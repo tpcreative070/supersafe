@@ -85,7 +85,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.Theme;
+import co.tpcreative.supersafe.model.ThemeApp;
 
 /**
  * Created by pc on 07/16/2017.
@@ -1102,14 +1102,14 @@ public class Utils {
     }
 
     public static String getFontString(final int content,String value){
-        Theme theme = Theme.getInstance().getThemeInfo();
-        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font color='"+theme.getAccentColorHex()+"'>"+"<b>" + value +"</b>"+"</font>");
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font color='"+ themeApp.getAccentColorHex()+"'>"+"<b>" + value +"</b>"+"</font>");
         return sourceString;
     }
 
     public static String getFontString(final int content,String value,int fontSize){
-        Theme theme = Theme.getInstance().getThemeInfo();
-        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font size='"+fontSize+"' color='"+theme.getAccentColorHex()+"'>"+"<b>" + value +"</b>"+"</font>");
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+        String sourceString = SuperSafeApplication.getInstance().getString(content, "<font size='"+fontSize+"' color='"+ themeApp.getAccentColorHex()+"'>"+"<b>" + value +"</b>"+"</font>");
         return sourceString;
     }
 

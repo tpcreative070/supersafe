@@ -3,7 +3,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
@@ -25,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,10 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -54,8 +49,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
-import butterknife.OnClick;
-import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
@@ -68,7 +61,6 @@ import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
@@ -81,9 +73,9 @@ import co.tpcreative.supersafe.model.ImportFiles;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.premium.PremiumActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
 public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
@@ -98,6 +90,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     TabLayout tabLayout;
     @BindView(R.id.rlOverLay)
     RelativeLayout rlOverLay;
+    @BindView(R.id.viewFloatingButton)
+    View viewFloatingButton;
     private MainViewPagerAdapter adapter;
     private MainTabPresenter presenter;
     AnimationsContainer.FramesSequenceAnimation animation;
@@ -140,9 +134,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 }
             },2000);
         }
-
-        long current_time = System.currentTimeMillis();
-        Utils.Log(TAG,"current time "+ current_time);
     }
 
     private void showInterstitial() {
@@ -159,6 +150,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                 return;
             }
+            viewFloatingButton.setVisibility(View.VISIBLE);
             onSuggestionAddFiles();
         }
         else{
@@ -356,12 +348,12 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     private void initSpeedDial(boolean addActionItems) {
         Utils.Log(TAG,"Init floating button");
-        final co.tpcreative.supersafe.model.Theme mTheme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
+        final ThemeApp mThemeApp = ThemeApp.getInstance().getThemeInfo();
         if (addActionItems) {
             Drawable drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24);
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id
                     .fab_camera, drawable)
-                   .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                   .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                            getTheme()))
 
                     .setLabel(getString(R.string.camera))
@@ -372,7 +364,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
             drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24);
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                            getTheme()))
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
@@ -382,14 +374,14 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
             mSpeedDialView.addActionItem(new SpeedDialActionItem.Builder(R.id.fab_album, R.drawable
                     .baseline_add_to_photos_white_36)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mTheme.getPrimaryColor(),
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
                             getTheme()))
                     .setLabel(getString(R.string.album))
                     .setLabelColor(getResources().getColor(R.color.white))
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                             getTheme()))
                     .create());
-           mSpeedDialView.show();
+            mSpeedDialView.show();
         }
 
         //Set main action clicklistener.
@@ -786,7 +778,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     public void onSuggestionAddFiles(){
         TapTargetView.showFor(this,                 // `this` is an Activity
-                TapTarget.forView(mSpeedDialView, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
+                TapTarget.forView(viewFloatingButton, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
                         .titleTextSize(25)
                         .titleTextColor(R.color.white)
                         .descriptionTextColor(R.color.md_light_blue_200)
@@ -795,13 +787,15 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         .transparentTarget(true)
                         .targetCircleColor(R.color.white)
                         .cancelable(true)
-                        .dimColor(R.color.white),
+                        .transparentTarget(true)
+                        .dimColor(R.color.transparent),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
                     @Override
                     public void onTargetClick(TapTargetView view) {
                         super.onTargetClick(view);      // This call is optional
                         mSpeedDialView.open();
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                     }
 
@@ -810,6 +804,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         super.onOuterCircleClick(view);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         Utils.Log(TAG,"onOuterCircleClick");
                     }
 
@@ -818,6 +813,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         super.onTargetDismissed(view, userInitiated);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         Utils.Log(TAG,"onTargetDismissed");
                     }
 
@@ -826,6 +822,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         super.onTargetCancel(view);
                         PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                         view.dismiss(true);
+                        viewFloatingButton.setVisibility(View.GONE);
                         Utils.Log(TAG,"onTargetCancel");
                     }
                 });

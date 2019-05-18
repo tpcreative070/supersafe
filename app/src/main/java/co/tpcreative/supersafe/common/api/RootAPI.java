@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.common.api;
-
 import java.util.Map;
-
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.request.DriveApiRequest;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -33,12 +31,9 @@ import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface RootAPI{
-
-
     String REFRESH_TOKEN = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
     String SEND_MAIL = "/v1.0/me/sendMail";
     String ADD_EMAIL_TOKEN = "/api/user/addEmailToken";
-
     String SIGN_UP = "/api/user/signup";
     String SIGN_IN = "/api/user/signin";
     String UPDATE = "/api/user/update";
@@ -209,5 +204,4 @@ public interface RootAPI{
     Call<DriveResponse> uploadFileMutil(@Url String url,
                                         @Header("Authorization") String authToken,
                                         @Body RequestBody requestBody);
-
 }

@@ -49,7 +49,17 @@
         app:sdMainFabAnimationRotateAngle="180"
         app:sdMainFabClosedSrc="@drawable/baseline_add_white_24"
         app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
-        app:sdOverlayLayout="@id/overlay"/>
+        app:sdOverlayLayout="@id/overlay">
+    </com.leinardi.android.speeddial.SpeedDialView>
+
+  <View
+      android:visibility="gone"
+      android:id="@+id/viewFloatingButton"
+      android:layout_marginBottom="35dp"
+      android:layout_marginRight="35dp"
+      android:layout_gravity="bottom|end"
+      android:layout_width="20dp"
+      android:layout_height="20dp"/>
 
     <RelativeLayout
         android:id="@+id/rlOverLay"

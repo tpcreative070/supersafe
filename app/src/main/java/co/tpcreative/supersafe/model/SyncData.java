@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.model;
-
 import java.io.Serializable;
 
 public class SyncData implements Serializable {

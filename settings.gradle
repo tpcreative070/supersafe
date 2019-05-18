@@ -12,7 +12,6 @@ include ':app',
         'library-progress-dialog',
         'compressorlibrary',
         'image-picker-library',
-        'preferenceslibrary',
         'time_ago_library',
         'taptargetviewlibrary',
         'vusikviewlibrary',
@@ -23,5 +22,3 @@ include ':app',
         'dialogsuccessprogresslibrary',
         'library-circleprogress',
         'materialdialoglibrary'
-
-

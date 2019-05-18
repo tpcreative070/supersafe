@@ -40,6 +40,7 @@ import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
@@ -344,8 +345,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public void onShowPremium(){
         try {
             de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(getContext());
-            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-            builder.setHeaderBackground(theme.getAccentColor());
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            builder.setHeaderBackground(themeApp.getAccentColor());
             builder.setTitle(getString(R.string.this_is_premium_feature));
             builder.setMessage(getString(R.string.upgrade_now));
             builder.setCustomHeader(R.layout.custom_header);
@@ -372,8 +373,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                     TextView textView = (TextView) dialog.findViewById(android.R.id.message);
 
                     if (positive!=null && negative!=null && textView!=null){
-                        positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
-                        negative.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                        positive.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
+                        negative.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
                         textView.setTextSize(16);
                     }
                 }

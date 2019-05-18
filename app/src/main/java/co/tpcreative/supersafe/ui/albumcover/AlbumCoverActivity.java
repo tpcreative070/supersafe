@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,13 +25,14 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import de.mrapp.android.dialog.MaterialDialog;
 
 public class AlbumCoverActivity extends BaseActivity implements BaseView,CompoundButton.OnCheckedChangeListener ,AlbumCoverAdapter.ItemSelectedListener,AlbumCoverDefaultAdapter.ItemSelectedListener{
 
@@ -281,9 +280,9 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
 
     public void onShowPremium(){
         try {
-            de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(getContext());
-            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-            builder.setHeaderBackground(theme.getAccentColor());
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(getContext());
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            builder.setHeaderBackground(themeApp.getAccentColor());
             builder.setTitle(getString(R.string.this_is_premium_feature));
             builder.setMessage(getString(R.string.upgrade_now));
             builder.setCustomHeader(R.layout.custom_header);
@@ -303,7 +302,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
                 }
             });
 
-            de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
+            MaterialDialog dialog = builder.show();
             builder.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
@@ -312,8 +311,8 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
                     TextView textView = (TextView) dialog.findViewById(android.R.id.message);
 
                     if (positive!=null && negative!=null && textView!=null){
-                        positive.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
-                        negative.setTextColor(getContext().getResources().getColor(theme.getAccentColor()));
+                        positive.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
+                        negative.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
                         textView.setTextSize(16);
                     }
                 }
@@ -324,5 +323,4 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
             e.printStackTrace();
         }
     }
-
 }

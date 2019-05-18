@@ -2,25 +2,20 @@ package co.tpcreative.supersafe.ui.dashboard;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.google.gson.Gson;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
-import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 
 public class DashBoardActivity extends BaseActivityNoneSlide {
@@ -71,8 +66,8 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
     public void onShowRestore(){
         try {
             de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(this);
-            co.tpcreative.supersafe.model.Theme theme = co.tpcreative.supersafe.model.Theme.getInstance().getThemeInfo();
-            builder.setHeaderBackground(theme.getAccentColor());
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            builder.setHeaderBackground(themeApp.getAccentColor());
             builder.setTitle(getString(R.string.key_restore));
             builder.setMessage(getString(R.string.restore_detail));
             builder.setCustomHeader(R.layout.custom_header_restore);
@@ -111,8 +106,8 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
                     Button negative = dialog.findViewById(android.R.id.button2);
                     TextView textView = (TextView) dialog.findViewById(android.R.id.message);
                     if (positive!=null && negative!=null && textView!=null){
-                        positive.setTextColor(getResources().getColor(theme.getAccentColor()));
-                        negative.setTextColor(getResources().getColor(theme.getAccentColor()));
+                        positive.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+                        negative.setTextColor(getResources().getColor(themeApp.getAccentColor()));
                         textView.setTextSize(16);
                     }
                 }
