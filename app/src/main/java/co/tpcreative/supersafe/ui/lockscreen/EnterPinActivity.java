@@ -386,7 +386,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         onBackPressed();
     }
 
-
     public void onDelete(View view) {
         Log.d(TAG, "onDelete here");
         if (mPinLockView != null) {
@@ -548,15 +547,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     presenter.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE);
                 }
             }
-
             @Override
             public void onError() {
                 Utils.Log(TAG, "Exporting error");
             }
-
             @Override
             public void onCancel() {
-
             }
         });
     }
@@ -1085,27 +1081,22 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     public void onAuthFailed(int errorCode, String errorMessage) {
     }
-
     /*Call back end at finger print*/
     public void initActionBar(boolean isInit) {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(isInit);
     }
-
     @Override
     public void onStartLoading(EnumStatus status) {
     }
-
     @Override
     public void onStopLoading(EnumStatus status) {
     }
-
     @Override
     public Context getContext() {
         return getApplicationContext();
     }
-
     @OnClick(R.id.imgSwitchTypeUnClock)
     public void onClickedSwitchTypeUnlock(View view) {
         if (isFingerprint) {
@@ -1115,7 +1106,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
         onSetVisitFingerprintView(isFingerprint);
     }
-
     public void onSetVisitFingerprintView(boolean isFingerprint) {
         if (isFingerprint) {
             mPinLockView.setVisibility(View.INVISIBLE);
@@ -1132,20 +1122,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             mTextTitle.setText(getString(R.string.pinlock_title));
         }
     }
-
     /*Settings preference*/
     public static class SettingsFragment extends PreferenceFragmentCompat {
         private MyPreference mChangePin;
         private MySwitchPreference mFaceDown;
         private MySwitchPreference mFingerPrint;
-        /**
-         * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
-         * corresponding preference has been changed.
-         *
-         * @return The listener, which has been created, as an instance of the type {@link
-         * Preference.OnPreferenceChangeListener}
-         */
-
         private Preference.OnPreferenceChangeListener createChangeListener() {
             return new Preference.OnPreferenceChangeListener() {
                 @Override
@@ -1155,7 +1136,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 }
             };
         }
-
         private Preference.OnPreferenceClickListener createActionPreferenceClickListener() {
             return new Preference.OnPreferenceClickListener() {
                 @Override
@@ -1171,7 +1151,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 }
             };
         }
-
         @Override
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -1193,7 +1172,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             mFingerPrint.setOnPreferenceClickListener(createActionPreferenceClickListener());
             mFingerPrint.setDefaultValue(switchFingerPrint);
         }
-
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general_lock_screen);
@@ -1209,36 +1187,25 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
     }
-
     @Override
     public void onError(String message, EnumStatus status) {
-
     }
-
     @Override
     public void onError(String message) {
-
     }
-
     @Override
     public void onSuccessful(String message) {
-
     }
-
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-
     }
-
     @Override
     public Activity getActivity() {
         return this;
     }
-
     @Override
     public void onSuccessful(String message, EnumStatus status, List<EnumPinAction> list) {
     }
-
     @Override
     public void onImageCapture(@NonNull File imageFile, @NonNull String pin) {
         super.onImageCapture(imageFile, pin);
@@ -1248,7 +1215,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         inAlerts.time = System.currentTimeMillis();
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(inAlerts);
     }
-
     @Override
     public void onCameraError(int errorCode) {
         super.onCameraError(errorCode);
@@ -1269,7 +1235,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
         }
     }
-
     public void onInitHiddenCamera() {
         final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false);
         if (!value) {
@@ -1289,7 +1254,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
             startCamera(mCameraConfig);
         }
     }
-
     public void onTakePicture(String pin) {
         final boolean value = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false);
         if (!value) {
@@ -1307,75 +1271,61 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     public void setValue(String value) {
         mResult.setText(value);
     }
-
     // used only by Robolectric
     @Override
     public void setValueDouble(double d) {
         mCalc.setValue(Formatter.doubleToString(d));
         mCalc.setLastKey(Constants.DIGIT);
     }
-
     public void setFormula(String value) {
         mFormula.setText(value);
     }
-
     @OnClick(R.id.btn_plus)
     public void plusClicked() {
         mCalc.handleOperation(Constants.PLUS);
     }
-
     @OnClick(R.id.btn_minus)
     public void minusClicked() {
         mCalc.handleOperation(Constants.MINUS);
     }
-
     @OnClick(R.id.btn_multiply)
     public void multiplyClicked() {
         mCalc.handleOperation(Constants.MULTIPLY);
     }
-
     @OnClick(R.id.btn_divide)
     public void divideClicked() {
         mCalc.handleOperation(Constants.DIVIDE);
     }
-
     @OnClick(R.id.btn_modulo)
     public void moduloClicked() {
         mCalc.handleOperation(Constants.MODULO);
     }
-
     @OnClick(R.id.btn_power)
     public void powerClicked() {
         mCalc.handleOperation(Constants.POWER);
     }
-
     @OnClick(R.id.btn_root)
     public void rootClicked() {
         mCalc.handleOperation(Constants.ROOT);
     }
-
     @OnClick(R.id.btn_clear)
     public void clearClicked() {
         mCalc.handleClear();
     }
-
     @OnLongClick(R.id.btn_clear)
     public boolean clearLongClicked() {
         mCalc.handleReset();
         return true;
     }
-
     @OnClick(R.id.btn_equals)
     public void equalsClicked() {
         mCalc.handleEquals();
     }
-
     @OnClick({R.id.btn_decimal, R.id.btn_0, R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4, R.id.btn_5, R.id.btn_6, R.id.btn_7, R.id.btn_8,
             R.id.btn_9})
     public void numpadClick(View view) {
         numpadClicked(view.getId());
     }
-
     public void numpadClicked(int id) {
         mCalc.numpadClicked(id);
     }
