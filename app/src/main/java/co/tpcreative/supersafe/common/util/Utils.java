@@ -1283,16 +1283,21 @@ public class Utils {
         return SuperSafeApplication.getInstance().readFakeKey();
     }
 
-    public static boolean isExistingFakePin(String pin) {
-        final String value = getFakePinFromSharedPreferences();
+    public static boolean  isEnabledFakePin(){
+       final boolean result =  PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fake_pin), false);
+       return result;
+    }
+
+    public static boolean isExistingFakePin(String pin,String currentPin) {
+        final String value = currentPin;
         if (pin.equals(value)) {
             return true;
         }
         return false;
     }
 
-    public static boolean isExistingRealPin(String pin) {
-        final String value = getPinFromSharedPreferences();
+    public static boolean isExistingRealPin(String pin,String currentPin) {
+        final String value = currentPin;
         if (pin.equals(value)) {
             return true;
         }

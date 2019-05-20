@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.ui.lockscreen;
-
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,7 +13,6 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.util.Utils;
 
@@ -25,19 +22,14 @@ import co.tpcreative.supersafe.common.util.Utils;
 public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = PinLockAdapter.class.getSimpleName();
-
     private static final int VIEW_TYPE_NUMBER = 0;
     private static final int VIEW_TYPE_DELETE = 1;
-
     private CustomizationOptionsBundle mCustomizationOptionsBundle;
     private OnNumberClickListener mOnNumberClickListener;
     private OnVerifyClickListener mOnVerifyClickListener;
-
     private int mPinLength;
     private int BUTTON_ANIMATION_DURATION = 150;
-
     private int[] mKeyValues;
-
     private Typeface mTypeface = null;
 
     public PinLockAdapter() {
@@ -276,5 +268,4 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         scaleAnimation.setFillAfter(true);
         return scaleAnimation;
     }
-
 }

@@ -75,7 +75,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     public static final String EXTRA_SET_PIN = "SET_PIN";
     public static final String EXTRA_ENUM_ACTION = "ENUM_ACTION";
-    private static final int PIN_LENGTH = 20;
+    private static final int PIN_LENGTH = 100;
     @BindView(R.id.pinlockView)
     PinLockView mPinLockView;
     @BindView(R.id.indicator_dots)
@@ -135,6 +135,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private FingerPrintAuthHelper mFingerPrintAuthHelper;
     public static boolean isVisible ;
     Handler handler =  new Handler();
+    private String mRealPin = Utils.getPinFromSharedPreferences();
+    private String mFakePin = Utils.getFakePinFromSharedPreferences();
+    private boolean isFakePinEnabled = Utils.isEnabledFakePin();
 
     public static Intent getIntent(Context context, int action, int actionNext) {
         Intent intent = new Intent(context, EnterPinActivity.class);
@@ -167,8 +170,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
             case VERIFY: {
-                String pin = Utils.getPinFromSharedPreferences();
-                if (pin.equals("")) {
+                if (mRealPin.equals("")) {
                     mPinAction = EnumPinAction.SET;
                     onDisplayView();
                     onDisplayText();
@@ -415,6 +417,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         if (mFingerPrintAuthHelper != null) {
             mFingerPrintAuthHelper.startAuth();
         }
+        mRealPin = Utils.getPinFromSharedPreferences();
+        mFakePin = Utils.getFakePinFromSharedPreferences();
+        isFakePinEnabled = Utils.isEnabledFakePin();
     }
 
     public void onInitPin(){
@@ -441,7 +446,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     mFirstPin = pin;
                     mTextTitle.setText(getString(R.string.pinlock_secondPin));
                     mPinLockView.resetPinLockView();
-                } else {
+                }
+                else {
                     if (pin.equals(mFirstPin)) {
                         Utils.writePinToSharedPreferences(pin);
                         switch (mPinActionNext) {
@@ -469,7 +475,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     mPinLockView.resetPinLockView();
                 } else {
                     if (pin.equals(mFirstPin)) {
-                        if (Utils.isExistingFakePin(pin)) {
+                        if (Utils.isExistingFakePin(pin,mFakePin)) {
                             onAlertWarning(getString(R.string.pin_lock_replace));
                         } else {
                             Utils.writePinToSharedPreferences(pin);
@@ -488,7 +494,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     mPinLockView.resetPinLockView();
                 } else {
                     if (pin.equals(mFirstPin)) {
-                        if (Utils.isExistingRealPin(pin)) {
+                        if (Utils.isExistingRealPin(pin,mRealPin)) {
                             onAlertWarning(getString(R.string.pin_lock_replace));
                         } else {
                             Utils.writeFakePinToSharedPreferences(pin);
@@ -507,7 +513,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     mPinLockView.resetPinLockView();
                 } else {
                     if (pin.equals(mFirstPin)) {
-                        if (Utils.isExistingFakePin(pin)) {
+                        if (Utils.isExistingFakePin(pin,mFakePin)) {
                             onAlertWarning(getString(R.string.pin_lock_replace));
                         } else {
                             switch (mPinActionNext) {
@@ -560,15 +566,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private void checkPin(String pin, boolean isCompleted) {
         switch (mPinAction) {
             case VERIFY: {
-                final boolean isFakePinEnabled = PrefsController.getBoolean(getString(R.string.key_fake_pin), false);
-                if (pin.equals(Utils.getPinFromSharedPreferences())) {
+                if (pin.equals(mRealPin)) {
                     presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.DONE);
-                } else if (pin.equals(Utils.getFakePinFromSharedPreferences()) && isFakePinEnabled) {
+                } else if (pin.equals(mFakePin) && isFakePinEnabled) {
                     presenter.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE);
-                } else if (pin.length() > Utils.getPinFromSharedPreferences().length()) {
-                    onTakePicture(pin);
-                    onAlertWarning("");
-                } else {
+                }else {
                     if (isCompleted) {
                         onTakePicture(pin);
                         onAlertWarning("");
@@ -577,11 +579,8 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
             case VERIFY_TO_CHANGE: {
-                if (pin.equals(Utils.getPinFromSharedPreferences())) {
+                if (pin.equals(mRealPin)) {
                     presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.CHANGE);
-                } else if (pin.length() > Utils.getPinFromSharedPreferences().length()) {
-                    onTakePicture(pin);
-                    onAlertWarning("");
                 } else {
                     if (isCompleted) {
                         onTakePicture(pin);
@@ -591,12 +590,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
             case VERIFY_TO_CHANGE_FAKE_PIN: {
-                if (pin.equals(Utils.getPinFromSharedPreferences())) {
+                if (pin.equals(mRealPin)) {
                     presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.FAKE_PIN);
-                } else if (pin.length() > Utils.getPinFromSharedPreferences().length()) {
-                    onTakePicture(pin);
-                    onAlertWarning("");
-                } else {
+                }else {
                     if (isCompleted) {
                         onTakePicture(pin);
                         onAlertWarning("");
