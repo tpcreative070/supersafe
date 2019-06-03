@@ -2980,3 +2980,17 @@ taptargetviewlibrary/build/intermediates/merged_manifests/debug/output.json
 taptargetviewlibrary/build/intermediates/merged_manifests/debugAndroidTest/AndroidManifest.xml
 taptargetviewlibrary/build/intermediates/merged_manifests/debugAndroidTest/output.json
 taptargetviewlibrary/build/outputs/logs/manifest-merger-debug-report.txt
+checkoutlibrary/build/generated/source/buildConfig/androidTest/debug/org/solovyev/android/checkout/test/BuildConfig.java
+checkoutlibrary/build/intermediates/merged_manifests/debugAndroidTest/AndroidManifest.xml
+checkoutlibrary/build/intermediates/merged_manifests/debugAndroidTest/output.json
+dialogsuccessprogresslibrary/build/generated/source/buildConfig/debug/cn/pedant/SweetAlert/BuildConfig.java
+fingerprint-auth-library/build/generated/source/buildConfig/androidTest/debug/com/multidots/fingerprintauth/test/BuildConfig.java
+fingerprint-auth-library/build/intermediates/merged_manifests/debugAndroidTest/AndroidManifest.xml
+fingerprint-auth-library/build/intermediates/merged_manifests/debugAndroidTest/output.json
+library-circular/build/generated/source/buildConfig/androidTest/debug/fr/castorflex/android/circularprogressbar/test/BuildConfig.java
+library-circular/build/generated/source/buildConfig/debug/fr/castorflex/android/circularprogressbar/BuildConfig.java
+library-circular/build/intermediates/merged_manifests/debugAndroidTest/AndroidManifest.xml
+library-circular/build/intermediates/merged_manifests/debugAndroidTest/output.json
+library-progress/build/generated/source/buildConfig/debug/fr/castorflex/android/smoothprogressbar/BuildConfig.java
+photoview/build/generated/source/buildConfig/debug/com/github/chrisbanes/photoview/BuildConfig.java
+taptargetviewlibrary/build/generated/source/buildConfig/debug/com/getkeepsafe/taptargetview/BuildConfig.java
