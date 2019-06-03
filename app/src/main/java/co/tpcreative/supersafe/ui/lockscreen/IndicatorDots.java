@@ -115,12 +115,10 @@ public class IndicatorDots extends LinearLayout {
                 if (length > mPreviousLength) {
                     View dot = new View(getContext());
                     fillDot(dot);
-
                     LayoutParams params = new LayoutParams(mDotDiameter,
                             mDotDiameter);
                     params.setMargins(mDotSpacing, 0, mDotSpacing, 0);
                     dot.setLayoutParams(params);
-
                     addView(dot, length-1);
                     Utils.Log(TAG, "mDotSpacing: " + length);
                 } else {
