@@ -67,40 +67,9 @@ public class MainCategories implements Serializable{
             "#E040FB",
             "#9E9E9E"};
 
-    @Ignore
-    public transient String []ListDefaultIcon = new String[]{
-            "baseline_account_circle_white_48",
-            "baseline_local_movies_white_48",
-            "baseline_favorite_border_white_48",
-            "baseline_favorite_border_white_48",
-            "baseline_theaters_white_48",
-            "baseline_library_music_white_48",
-            "baseline_weekend_white_48",
-            "baseline_insert_photo_white_48",
-            "baseline_cast_for_education_white_48"
-    };
-
-    @Ignore
-    public transient String []ListDefaultBackground = new String[]{
-            "#9C27B0",
-            "#cf7b00",
-            "#1e88e5",
-            "#CDDC39",
-            "#00acc1",
-            "#007c91",
-            "#6cd1de",
-            "#448AFF",
-            "#8BC34A"
-    };
-
     /*Send data to camera action*/
 
     private static final String TAG = MainCategories.class.getSimpleName();
-
-    public MainCategories(String defaultBackground,String defaultIcon){
-        this.image = defaultBackground;
-        this.icon = defaultIcon;
-    }
 
     public MainCategories(String categories_id,String categories_local_id,String categories_hex_name, String categories_name, String image, String icon, long categories_max,boolean isDelete,boolean isChange,boolean isSyncOwnServer,boolean isFakePin,String pin,String items_id,String mainCategories_Local_Id,boolean isCustom_Cover) {
         this.categories_name = categories_name;
@@ -118,9 +87,9 @@ public class MainCategories implements Serializable{
         this.mainCategories_Local_Id = mainCategories_Local_Id;
         this.isCustom_Cover = isCustom_Cover;
         this.isSyncOwnServer = isSyncOwnServer;
-
     }
 
+    @Ignore
     public MainCategories(){
         this.image = null;
         this.categories_name = null;
@@ -333,6 +302,7 @@ public class MainCategories implements Serializable{
         return null;
     }
 
+    @Ignore
     public MainCategories getCategoriesPosition(final String mainCategories_Local_Id){
         final List<MainCategories> data = getCategoriesDefault();
         if (mainCategories_Local_Id==null){
@@ -346,7 +316,7 @@ public class MainCategories implements Serializable{
         return null;
     }
 
-
+    @Ignore
     public HashMap<String,MainCategories> getMainCurrentCategories(){
         final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
         final HashMap<String,MainCategories>hashMap = new HashMap<>();
@@ -361,5 +331,4 @@ public class MainCategories implements Serializable{
         }
         return hashMap;
     }
-
 }

@@ -120,15 +120,14 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                 }).onSameThread().check();
     }
 
-
-    void onHandlerIntent(){
+    public void onHandlerIntent(){
         try {
             Intent intent = getIntent();
             String action = intent.getAction();
             String type = intent.getType();
             Utils.Log(TAG,"original type :"+ type);
             if (Intent.ACTION_SEND.equals(action) && type != null ) {
-                handleSendSingleItem(intent,EnumFormatType.FILES);
+                handleSendSingleItem(intent);
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
                 handleSendMultipleFiles(intent,EnumFormatType.FILES);
             } else {
@@ -141,7 +140,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         }
     }
 
-    void handleSendSingleItem(Intent intent,EnumFormatType enumFormatType) {
+    public void handleSendSingleItem(Intent intent) {
         try {
             Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             final List<MainCategories> list = MainCategories.getInstance().getList();
@@ -164,7 +163,6 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         response = PathUtil.getFilePathFromURI(this,imageUri);
                     }
                 }
-
                 if (response==null){
                     onStopProgressing();
                     Utils.showGotItSnackbar(imgChecked, R.string.error_occurred, new ServiceManager.ServiceManagerSyncDataListener() {
@@ -172,15 +170,11 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         public void onCompleted() {
                             finish();
                         }
-
                         @Override
                         public void onError() {
-
                         }
-
                         @Override
                         public void onCancel() {
-
                         }
                     });
                 }else {
@@ -192,14 +186,11 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
                         final String mimeType = intent.getType();
                         Utils.Log(TAG, "file extension " + fileExtension);
                         Utils.Log(TAG,"Path file :"+path);
-
                         MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-
                         if (mimeTypeFile == null) {
                             mimeTypeFile = new MimeTypeFile("." + fileExtension, EnumFormatType.FILES, mimeType);
                             mimeTypeFile.name = name;
                         }
-
                         mimeTypeFile.name = name;
                         count +=1;
                         ImportFiles importFiles = new ImportFiles(mainCategories,mimeTypeFile,path,0,false);
@@ -221,7 +212,7 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         }
     }
 
-    void handleSendMultipleFiles(Intent intent, EnumFormatType enumFormatType) {
+    public void handleSendMultipleFiles(Intent intent, EnumFormatType enumFormatType) {
         try {
             ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             final List<MainCategories> list = MainCategories.getInstance().getList();
@@ -406,10 +397,8 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
             }
         });
     }
-
     @OnClick(R.id.btnGotIt)
     public void onClickedGotIt(View view){
         finish();
     }
-
 }

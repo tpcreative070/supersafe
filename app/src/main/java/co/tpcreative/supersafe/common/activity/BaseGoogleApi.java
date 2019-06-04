@@ -395,6 +395,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                         //Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
                         if (ServiceManager.getInstance().getMyService()==null){
                             Utils.Log(TAG,"SuperSafeService is null");
+                            startServiceNow();
                             return;
                         }
                         ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
@@ -513,6 +514,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     protected abstract void onDriveRevokeAccess();
 
     protected abstract boolean isSignIn();
+
+    protected abstract void startServiceNow();
 
     protected void signOut() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {

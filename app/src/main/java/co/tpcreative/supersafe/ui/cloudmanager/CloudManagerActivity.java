@@ -479,6 +479,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     @Override
     protected void onDriveSuccessful() {
     }
+
+    @Override
+    protected void startServiceNow() {
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

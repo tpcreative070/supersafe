@@ -201,7 +201,6 @@ dependencies {
     /*Google ads*/
     implementation 'com.google.android.gms:play-services-ads:15.0.1'
 
-
     /*bungeelibrary*/
     implementation project (':bungeelibrary')
 

@@ -377,6 +377,11 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
     }
 
     @Override
+    protected void startServiceNow() {
+
+    }
+
+    @Override
     protected boolean isSignIn() {
         return true;
     }
