@@ -40,6 +40,7 @@ import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.StorageQuota;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
@@ -144,16 +145,22 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 isThrow = true;
             }
             try {
-                String superSafeSpace = ConvertUtils.byte2FitMemorySize(driveAbout.quotaBytesUsedAggregate);
-                tvValueOtherSpace.setText(superSafeSpace);
+                final StorageQuota storageQuota = driveAbout.storageQuota;
+                if (storageQuota!=null){
+                    String superSafeSpace = ConvertUtils.byte2FitMemorySize(storageQuota.usage);
+                    tvValueOtherSpace.setText(superSafeSpace);
+                }
             } catch (Exception e) {
                 tvValueOtherSpace.setText(getString(R.string.calculating));
                 isThrow = true;
             }
             try {
-                final long result = driveAbout.quotaBytesTotal - driveAbout.quotaBytesUsedAggregate;
-                String superSafeSpace = ConvertUtils.byte2FitMemorySize(result);
-                tvValueFreeSpace.setText(superSafeSpace);
+                final StorageQuota storageQuota = driveAbout.storageQuota;
+                if (storageQuota!=null){
+                    final long result = storageQuota.limit - storageQuota.usage;
+                    String superSafeSpace = ConvertUtils.byte2FitMemorySize(result);
+                    tvValueFreeSpace.setText(superSafeSpace);
+                }
             } catch (Exception e) {
                 tvValueFreeSpace.setText(getString(R.string.calculating));
                 isThrow = true;

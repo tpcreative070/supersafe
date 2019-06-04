@@ -104,68 +104,52 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
             view.onError("No internet connection", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
-
         if (ServiceManager.getInstance().getMyService() == null) {
             view.onError("Service is null", EnumStatus.GET_DRIVE_ABOUT);
             return;
         }
-
         ServiceManager.getInstance().getMyService().getDriveAbout(new BaseView() {
             @Override
             public void onStartLoading(EnumStatus status) {
-
             }
-
             @Override
             public void onStopLoading(EnumStatus status) {
-
             }
-
             @Override
             public void onError(String message) {
-
                 Utils.Log(TAG,message);
             }
-
             @Override
             public void onError(String message, EnumStatus status) {
                 Utils.Log(TAG, message + "--" + status.name());
                 view.onError(message, status);
             }
-
             @Override
             public void onSuccessful(String message) {
 
             }
-
             @Override
             public void onSuccessful(String message, EnumStatus status) {
                 onGetList();
                 view.onSuccessful(message, status);
                 Utils.Log(TAG, message + "--" + status.name());
             }
-
             @Override
             public void onSuccessful(String message, EnumStatus status, Object object) {
                 Utils.Log(TAG, message + "--" + status.name());
             }
-
             @Override
             public void onSuccessful(String message, EnumStatus status, List list) {
-
             }
-
             @Override
             public Context getContext() {
                 return null;
             }
-
             @Override
             public Activity getActivity() {
                 return null;
             }
         });
-
     }
 
     private void onGetList() {

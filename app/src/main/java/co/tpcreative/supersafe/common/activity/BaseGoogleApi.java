@@ -270,8 +270,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 break;
             }
         }
-
-
         if (onStartCount > 1) {
             this.overridePendingTransition(R.animator.anim_slide_in_right,
                     R.animator.anim_slide_out_right);
@@ -295,13 +293,10 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             }
         }
         Utils.Log(TAG,"onStart..........");
-
     }
-
     /**
      * Handles resolution callbacks.
      */
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
