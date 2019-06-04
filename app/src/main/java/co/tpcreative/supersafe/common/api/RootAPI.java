@@ -51,7 +51,7 @@ public interface RootAPI{
     String DELETE_CATEGORIES = "/api/category/onDelete";
     String SYNC_DATA = "/api/items/syncData";
     String DELETE_OWN_ITEMS = "/api/items/onDelete";
-    String GET_DRIVE_ABOUT = "/drive/v2/about";
+    String GET_DRIVE_ABOUT = "/drive/v3/about?fields=user,storageQuota,kind";
     String CREATE_FOLDER = "/drive/v3/files";
     String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
     String GET_LIST_FILE_IN_APP_FOLDER = "/drive/v3/files";
