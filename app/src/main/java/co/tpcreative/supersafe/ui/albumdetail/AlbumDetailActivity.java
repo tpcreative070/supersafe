@@ -1194,8 +1194,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 break;
                             }
                         }
-
-
                         boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
                         if (isVertical){
                             vericalAdapter.notifyItemChanged(i);

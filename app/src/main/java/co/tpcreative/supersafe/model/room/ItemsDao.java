@@ -21,27 +21,26 @@ public interface ItemsDao {
     @Query("DELETE FROM items")
     public void deleteAllItems();
 
-
     @Query("Delete from items  WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
     void deleteAll(String categories_local_id,boolean isFakePin);
 
     @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
     List<Items> loadAll(String categories_local_id,boolean isFakePin);
 
-    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND formatType =:formatType AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC")
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND formatType =:formatType AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY originalName DESC")
     List<Items> loadAll(String categories_local_id,int formatType,boolean isDeleteLocal,boolean isFakePin);
 
 
-    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isExport =:isExport AND isFakePin =:isFakePin ORDER BY id DESC")
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isExport =:isExport AND isFakePin =:isFakePin ORDER BY originalName DESC")
     List<Items> loadAll(String categories_local_id,boolean isDeleteLocal,boolean isExport,boolean isFakePin);
 
-    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC")
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY originalName DESC")
     List<Items> loadAll(String categories_local_id,boolean isDeleteLocal,boolean isFakePin);
 
-    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY id DESC LIMIT 1")
+    @Query("Select * FROM items WHERE categories_local_id = :categories_local_id AND isDeleteLocal =:isDeleteLocal AND isFakePin =:isFakePin ORDER BY originalName DESC LIMIT 1")
     Items getLatestId(String categories_local_id,boolean isDeleteLocal,boolean isFakePin);
 
-    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin  ORDER BY id DESC LIMIT 3")
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin  ORDER BY originalName DESC LIMIT 3")
     List<Items> loadSyncDataItems(boolean isSyncCloud,boolean isDeleteLocal,int statusAction,boolean isFakePin);
 
 
@@ -60,7 +59,7 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isFakePin =:isFakePin")
     List<Items> loadSyncData(boolean isSyncCloud,boolean isFakePin);
 
-    @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isSaver =:isSaver AND isWaitingForExporting =:isWaitingForExporting AND isFakePin =:isFakePin ORDER BY id DESC LIMIT 1")
+    @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isSaver =:isSaver AND isWaitingForExporting =:isWaitingForExporting AND isFakePin =:isFakePin ORDER BY originalName DESC LIMIT 1")
     List<Items> loadSyncData(boolean isSyncCloud,boolean isSaver,boolean isWaitingForExporting,boolean isFakePin);
 
     @Query("Select * FROM items WHERE  isSyncCloud = :isSyncCloud AND isSaver =:isSaver AND isFakePin =:isFakePin")
@@ -96,12 +95,9 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE isSaver =:isSaver AND isSyncCloud =:isSyncCloud")
     List<Items> loadAllSaved(boolean isSaver,boolean isSyncCloud);
 
-    @Query("Select * FROM items WHERE formatType =:formatType ORDER BY id DESC LIMIT 2")
+    @Query("Select * FROM items WHERE formatType =:formatType ORDER BY originalName DESC LIMIT 2")
     List<Items> loadAllSaved(int formatType);
 
     @Query("Select * FROM items WHERE isUpdate =:isUpdate AND  isSyncCloud = :isSyncCloud AND isSyncOwnServer =:isSyncOwnServer AND isFakePin =:isFakePin")
     List<Items> loadListItemUpdate(boolean isUpdate,boolean isSyncCloud,boolean isSyncOwnServer,boolean isFakePin);
-
-
-
 }

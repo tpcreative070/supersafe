@@ -1,9 +1,7 @@
 package co.tpcreative.supersafe.ui.albumdetail;
 import android.app.Activity;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +19,7 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
-
     private final static String TAG = AlbumDetailPresenter.class.getSimpleName();
-
     protected List<Items> mList;
     protected MainCategories mainCategories;
     protected int videos = 0;
@@ -41,9 +37,6 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
         mListHashExporting = new ArrayList<>();
         String result =  ConvertUtils.byte2FitMemorySize(Utils.getAvailableSpaceInBytes());
         Utils.Log(TAG,result);
-
-       // List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(false);
-       // Utils.onWriteLog(new Gson().toJson(mList),EnumStatus.GET_LIST_FILE);
     }
 
     public void  getData(Activity activity){
@@ -132,5 +125,4 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
         view.onSuccessful("Successful",EnumStatus.DELETE);
         getData(EnumStatus.REFRESH);
     }
-
 }
