@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.restore;
-
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,12 +13,10 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
+import org.greenrobot.eventbus.EventBus;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -27,11 +24,14 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import dmax.dialog.SpotsDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -81,8 +81,10 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
                 @Override
                 public void run() {
                     if (dialog == null) {
+                        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
                         dialog = new SpotsDialog.Builder()
                                 .setContext(RestoreActivity.this)
+                                .setDotColor(themeApp.getAccentColor())
                                 .setMessage(getString(R.string.progressing))
                                 .setCancelable(true)
                                 .build();
@@ -126,7 +128,12 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
                 if (pin.equals(edtPreviousPIN.getText().toString())) {
                     Utils.hideKeyboard(getCurrentFocus());
                     onStartProgressing();
-                    onRestore();
+                    Utils.onObserveData(2000, new Listener() {
+                        @Override
+                        public void onStart() {
+                            onRestore();
+                        }
+                    });
                 } else {
                     edtPreviousPIN.setText("");
                     tvWrongPin.setVisibility(View.VISIBLE);
@@ -150,7 +157,13 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
         if (pin.equals(edtPreviousPIN.getText().toString())) {
             Utils.hideKeyboard(getCurrentFocus());
             onStartProgressing();
-            onRestore();
+            Utils.onObserveData(2000, new Listener() {
+                @Override
+                public void onStart() {
+                    onRestore();
+                }
+            });
+
         } else {
             edtPreviousPIN.setText("");
             tvWrongPin.setVisibility(View.VISIBLE);
@@ -173,20 +186,18 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
             Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeBackup(), SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), new ServiceManager.ServiceManagerSyncDataListener() {
                 @Override
                 public void onCompleted() {
+                    subscriber.onNext(true);
+                    subscriber.onComplete();
                     Utils.Log(TAG, "Exporting successful");
                     PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
                     Navigator.onMoveToMainTab(RestoreActivity.this);
-                    subscriber.onNext(true);
-                    subscriber.onComplete();
                 }
-
                 @Override
                 public void onError() {
                     Utils.Log(TAG, "Exporting error");
                     subscriber.onNext(true);
                     subscriber.onComplete();
                 }
-
                 @Override
                 public void onCancel() {
                     subscriber.onNext(true);
@@ -198,6 +209,7 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
+                    ServiceManager.getInstance().onStartService();
                     onStopProgressing();
                 });
     }

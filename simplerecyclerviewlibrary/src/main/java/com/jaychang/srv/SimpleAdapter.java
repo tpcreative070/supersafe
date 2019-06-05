@@ -1,5 +1,4 @@
 package com.jaychang.srv;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MotionEventCompat;
@@ -10,11 +9,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.jaychang.srv.behavior.DragAndDropHelper;
 import com.jaychang.srv.behavior.OnItemDismissListener;
 import com.jaychang.srv.behavior.OnItemMoveListener;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +19,7 @@ import java.util.List;
 
 @SuppressWarnings("unchecked")
 public class SimpleAdapter extends RecyclerView.Adapter<SimpleViewHolder>
-  implements OnItemMoveListener, OnItemDismissListener, CellOperations {
+        implements OnItemMoveListener, OnItemDismissListener, CellOperations {
 
   private List<SimpleCell> cells;
   private SparseArray<SimpleCell> cellTypeMap;
@@ -309,5 +306,4 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleViewHolder>
     cells.remove(position);
     notifyItemRemoved(position);
   }
-
 }

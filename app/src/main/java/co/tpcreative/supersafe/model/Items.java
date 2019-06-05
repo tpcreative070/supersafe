@@ -62,9 +62,7 @@ public class Items implements Serializable {
     public Date date;
     @Ignore
     public String name ;
-
     private static Items instance;
-
     @Ignore
     private static final String TAG = Items.class.getSimpleName();
 
@@ -109,8 +107,6 @@ public class Items implements Serializable {
         this.isWaitingForExporting = items.isWaitingForExporting;
         this.custom_items = items.custom_items;
         this.isUpdate = items.isUpdate;
-       // this.createDatetime = Utils.getCurrentDate();
-       // this.updatedDateTime = Utils.getCurrentDateTimeSort();
     }
 
     public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items,boolean isUpdate){
@@ -145,8 +141,6 @@ public class Items implements Serializable {
         this.isWaitingForExporting = isWaitingForExporting;
         this.custom_items = custom_items;
         this.isUpdate = isUpdate;
-       // this.createDatetime = Utils.getCurrentDate();
-       // this.updatedDateTime = Utils.getCurrentDateTimeSort();
     }
 
     public Items(){
@@ -155,8 +149,70 @@ public class Items implements Serializable {
         this.isSyncOwnServer = false;
         this.isOriginalGlobalId = false;
         this.isUpdate = false;
-        //this.createDatetime = Utils.getCurrentDate();
-        //this.updatedDateTime = Utils.getCurrentDateTimeSort();
+    }
+    public Items(String fileExtension,
+                 String originalPath,
+                 String thumbnailPath,
+                 String categories_id,
+                 String categories_local_id,
+                 String mimeType,
+                 String uuId,
+                 EnumFormatType formatType,
+                 int degrees,
+                 boolean thumbnailSync,
+                 boolean originalSync,
+                 String global_original_id,
+                 String global_thumbnail_id,
+                 EnumFileType fileType,
+                 String originalName,
+                 String name,
+                 String thumbnailName,
+                 String size,
+                 EnumStatusProgress progress,
+                 boolean isDeleteLocal,
+                 boolean isDeleteGlobal,
+                 EnumDelete deleteAction,
+                 boolean isFakePin,
+                 boolean isSaver,
+                 boolean isExport,
+                 boolean isWaitingForExporting,
+                 int custom_items,
+                 boolean isSyncCloud,
+                 boolean isSyncOwnServer,
+                 boolean isUpdate,
+                 EnumStatus statusAction
+                 ){
+        this.fileExtension = fileExtension;
+        this.originalPath = originalPath;
+        this.thumbnailPath = thumbnailPath;
+        this.categories_id = categories_id;
+        this.categories_local_id = categories_local_id;
+        this.mimeType = mimeType;
+        this.items_id = uuId;
+        this.formatType = formatType.ordinal();
+        this.degrees = degrees;
+        this.thumbnailSync = thumbnailSync;
+        this.originalSync = originalSync;
+        this.global_original_id = global_original_id;
+        this.global_thumbnail_id = global_thumbnail_id;
+        this.fileType = fileType.ordinal();
+        this.originalName = originalName;
+        this.title = name;
+        this.thumbnailName = thumbnailName;
+        this.size = size;
+        this.statusProgress = progress.ordinal();
+        this.isDeleteLocal = isDeleteLocal;
+        this.isDeleteGlobal = isDeleteGlobal;
+        this.deleteAction = deleteAction.ordinal();
+        this.isFakePin = isFakePin;
+        this.isSaver = isSaver;
+        this.isExport = isExport;
+        this.isWaitingForExporting = isWaitingForExporting;
+        this.custom_items = custom_items;
+        this.isSyncCloud = isSyncCloud;
+        this.isSyncOwnServer = isSyncOwnServer;
+        this.isUpdate = isUpdate;
+        this.statusAction = statusAction.ordinal();
     }
 
     @Ignore

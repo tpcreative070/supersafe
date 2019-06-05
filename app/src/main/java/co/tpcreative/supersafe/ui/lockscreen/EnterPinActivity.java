@@ -50,6 +50,7 @@ import co.tpcreative.supersafe.common.hiddencamera.config.CameraFocus;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraResolution;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraRotation;
+import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.preference.MyPreference;
 import co.tpcreative.supersafe.common.preference.MySwitchPreference;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -134,7 +135,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private CameraConfig mCameraConfig;
     private FingerPrintAuthHelper mFingerPrintAuthHelper;
     public static boolean isVisible ;
-    Handler handler =  new Handler();
     private String mRealPin = Utils.getPinFromSharedPreferences();
     private String mFakePin = Utils.getFakePinFromSharedPreferences();
     private boolean isFakePinEnabled = Utils.isEnabledFakePin();
@@ -361,9 +361,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(handler!=null){
-            handler.removeCallbacks(null);
-        }
         isVisible = false;
         int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];
@@ -773,12 +770,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     case DONE: {
                         onHideUI();
                         EventBus.getDefault().post(EnumStatus.UNLOCK);
-                        handler.postDelayed(new Runnable() {
+                        Utils.onObserveData(100, new Listener() {
                             @Override
-                            public void run() {
-                              onBackPressed();
+                            public void onStart() {
+                                onBackPressed();
                             }
-                        },100);
+                        });
                         Utils.Log(TAG, "Action ...................done");
                         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
                         break;
@@ -838,10 +835,9 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 mPinAction = action;
                 switch (action) {
                     case DONE: {
-                        Handler handler =  new Handler();
-                        handler.postDelayed(new Runnable() {
+                        Utils.onObserveData(100, new Listener() {
                             @Override
-                            public void run() {
+                            public void onStart() {
                                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
                                 if (FakePinComponentActivity.isVisit){
                                     finish();
@@ -850,7 +846,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                                     Navigator.onMoveFakePinComponent(EnterPinActivity.this);
                                 }
                             }
-                        },100);
+                        });
                         break;
                     }
                 }

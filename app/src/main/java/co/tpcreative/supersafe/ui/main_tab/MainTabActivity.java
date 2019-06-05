@@ -772,6 +772,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     }
 
     @Override
+    protected void startServiceNow() {
+
+    }
+
+    @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
 
     }

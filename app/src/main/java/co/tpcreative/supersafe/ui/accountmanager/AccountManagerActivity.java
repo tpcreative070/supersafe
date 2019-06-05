@@ -276,6 +276,11 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     }
 
     @Override
+    protected void startServiceNow() {
+
+    }
+
+    @Override
     public Context getContext() {
         return getApplicationContext();
     }

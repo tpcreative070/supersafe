@@ -23,6 +23,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
 import co.tpcreative.supersafe.common.response.DriveResponse;
@@ -54,11 +55,10 @@ import retrofit2.Callback;
 import retrofit2.HttpException;
 import retrofit2.Response;
 
-public class SuperSafeService extends PresenterService<BaseView> implements SuperSafeReceiver.ConnectivityReceiverListener {
+public class SuperSafeService extends PresenterService<BaseServiceView> implements SuperSafeReceiver.ConnectivityReceiverListener {
     private static final String TAG = SuperSafeService.class.getSimpleName();
     private final IBinder mBinder = new LocalBinder(); // Binder given to clients
     protected Storage storage;
-    private Intent mIntent;
     private SuperSafeReceiver androidReceiver;
     private DownloadService downloadService;
     private HashMap<String, String> hashMapGlobal = new HashMap<>();
@@ -108,7 +108,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         Utils.Log(TAG, "Connected :" + isConnected);
-        BaseView view = view();
+        BaseServiceView view = view();
         if (view != null) {
             if (isConnected){
                 view.onSuccessful("Connected network",EnumStatus.CONNECTED);
@@ -121,7 +121,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     @Override
     public void onActionScreenOff() {
-        BaseView view = view();
+        BaseServiceView view = view();
         if (view != null) {
             view.onSuccessful("Screen Off",EnumStatus.SCREEN_OFF);
         }
@@ -147,7 +147,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onGetUserInfo(){
         Utils.Log(TAG,"onGetUserInfo 1");
-        BaseView view = view();
+        BaseServiceView view = view();
         if (view == null) {
             return;
         }
@@ -194,9 +194,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         subscriptions.add(SuperSafeApplication.serverAPI.onUserInfo(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.USER_INFO))
                 .subscribe(onResponse -> {
-                    view.onStopLoading(EnumStatus.USER_INFO);
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.USER_INFO);
                     }
@@ -228,19 +226,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
-                    view.onStopLoading(EnumStatus.USER_INFO);
                 }));
     }
 
     public void onUpdateUserToken(){
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.UPDATE_USER_TOKEN)){
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
@@ -257,9 +248,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.UPDATE_USER_TOKEN))
                 .subscribe(onResponse -> {
-                    view.onStopLoading(EnumStatus.UPDATE_USER_TOKEN);
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                     }
@@ -301,20 +290,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
-                    view.onStopLoading(EnumStatus.UPDATE_USER_TOKEN);
                 }));
     }
 
     public void onSignIn(final User request) {
         Utils.Log(TAG, "onSignIn");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.SIGN_IN)){
             return;
         }
         Map<String, String> hash = new HashMap<>();
@@ -330,7 +312,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_IN))
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error) {
@@ -357,18 +338,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
-                    view.onStopLoading(EnumStatus.SIGN_IN);
                 }));
     }
 
     public void getDriveAbout() {
-        BaseView view = view();
-        if (view == null) {
-            view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("No connection", EnumStatus.GET_DRIVE_ABOUT);
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.GET_DRIVE_ABOUT)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -387,13 +362,11 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         subscriptions.add(SuperSafeApplication.serverDriveApi.onGetDriveAbout(access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.GET_DRIVE_ABOUT))
                 .subscribe(onResponse -> {
                     if (view == null) {
                         view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
                         return;
                     }
-                    view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                     if (onResponse.error != null) {
                         view.onError("Error " + new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
@@ -429,22 +402,12 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         view.onError("Error ^^:" + throwable.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                     }
-                    view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                 }));
     }
 
     public void onGetListFileInApp(BaseView<Integer> view) {
         Utils.Log(TAG, "onGetListFolderInApp");
-        if (view == null) {
-            view.onError("no view", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.GET_LIST_FILES_IN_APP);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.GET_LIST_FILES_IN_APP);
+        if (isCheckNull(view, EnumStatus.GET_LIST_FILES_IN_APP)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -515,16 +478,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     /*Network request*/
     public void onCategoriesSync(MainCategories mainCategories, ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onCategoriesSync");
-        if (view == null) {
-            view.onError("no view", EnumStatus.CATEGORIES_SYNC);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.CATEGORIES_SYNC);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.CATEGORIES_SYNC);
+        if (isCheckNull(view,EnumStatus.CATEGORIES_SYNC)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -602,16 +556,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onDeleteCategoriesSync(MainCategories mainCategories, ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onDeleteCategoriesSync");
-        if (view == null) {
-            view.onError("no view", EnumStatus.DELETE_CATEGORIES);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.DELETE_CATEGORIES);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.DELETE_CATEGORIES);
+        if (isCheckNull(view,EnumStatus.DELETE_CATEGORIES)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -677,16 +622,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     /*Create/Update for Categories*/
     public void onGetListCategoriesSync(ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onGetListCategoriesSync");
-        if (view == null) {
-            view.onError("no view", EnumStatus.LIST_CATEGORIES_SYNC);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.LIST_CATEGORIES_SYNC);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.LIST_CATEGORIES_SYNC);
+        if (isCheckNull(view,EnumStatus.LIST_CATEGORIES_SYNC)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -792,16 +728,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     public void onUpdateItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
         final Items items = mItem;
         Utils.Log(TAG, "onAddItems");
-        if (view == null) {
-            view.onError("no view", EnumStatus.UPDATE);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.UPDATE);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.UPDATE);
+        if (isCheckNull(view,EnumStatus.UPDATE)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -880,16 +807,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     public void onAddItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
         final Items items = mItem;
         Utils.Log(TAG, "onAddItems");
-        if (view == null) {
-            view.onError("no view", EnumStatus.ADD_ITEMS);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.ADD_ITEMS);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.ADD_ITEMS);
+        if (isCheckNull(view,EnumStatus.ADD_ITEMS)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -963,16 +881,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     /*Get List Categories*/
     public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onDeleteCloudItems");
-        if (view == null) {
-            view.onError("no view", EnumStatus.DELETE_SYNC_CLOUD_DATA);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.DELETE_SYNC_CLOUD_DATA);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+        if (isCheckNull(view, EnumStatus.DELETE_SYNC_CLOUD_DATA)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -1046,16 +955,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onDeleteOwnSystem(final Items items, final ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onDeleteOwnSystem");
-        if (view == null) {
-            view.onError("no view", EnumStatus.DELETE_SYNC_OWN_DATA);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.DELETE_SYNC_OWN_DATA);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.DELETE_SYNC_OWN_DATA);
+        if (isCheckNull(view,EnumStatus.DELETE_SYNC_OWN_DATA)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -1121,16 +1021,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onGetListSync(String nextPage, ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onGetListSync");
-        if (view == null) {
-            view.onError("no view", EnumStatus.GET_LIST_FILE);
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            view.onError("no connection", EnumStatus.GET_LIST_FILE);
-            return;
-        }
-        if (subscriptions == null) {
-            view.onError("no subscriptions", EnumStatus.GET_LIST_FILE);
+        if (isCheckNull(view,EnumStatus.GET_LIST_FILE)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -1565,13 +1456,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void getDriveAbout(BaseView view) {
         Utils.Log(TAG, "getDriveAbout");
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            return;
-        }
-        if (subscriptions == null) {
+        if (isCheckNull(view,EnumStatus.GET_DRIVE_ABOUT)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -1666,20 +1551,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
     /*TrackHandler*/
     public void onCheckVersion(){
         Utils.Log(TAG,"onCheckVersion");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.CHECK_VERSION)){
             return;
         }
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckVersion()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CHECK_VERSION))
                 .subscribe(onResponse -> {
                     if (onResponse!=null){
                         if (onResponse.version!=null){
@@ -1689,7 +1567,6 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user) );
                         }
                     }
-                    view.onStopLoading(EnumStatus.CHECK_VERSION);
                     Utils.Log(TAG, "Body check version: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -1704,20 +1581,13 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     } else {
                         Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
-                    view.onStopLoading(EnumStatus.CHECK_VERSION);
                 }));
     }
 
     public void onSyncAuthorDevice(){
         Utils.Log(TAG,"onSyncAuthorDevice");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.AUTHOR_SYNC)){
             return;
         }
         final User user = User.getInstance().getUserInfo();
@@ -1737,9 +1607,7 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
         subscriptions.add(SuperSafeApplication.serverAPI.onAuthor(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.AUTHOR_SYNC))
                 .subscribe(onResponse -> {
-                    view.onStopLoading(EnumStatus.AUTHOR_SYNC);
                     Utils.Log(TAG, "Body author device: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -1759,21 +1627,14 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
                     } else {
                         Utils.Log(TAG, "Author Can not call" + throwable.getMessage());
                     }
-                    view.onStopLoading(EnumStatus.AUTHOR_SYNC);
                 }));
     }
 
     /*Email token*/
     public void onSendMail(EmailToken request){
         Utils.Log(TAG, "onSendMail.....");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.SEND_EMAIL)){
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
@@ -1821,14 +1682,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onRefreshEmailToken(EmailToken request) {
         Utils.Log(TAG, "onRefreshEmailToken.....");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.REFRESH)){
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
@@ -1874,14 +1729,8 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
 
     public void onAddEmailToken() {
         Utils.Log(TAG, "onSignIn.....");
-        BaseView view = view();
-        if (view == null) {
-            return;
-        }
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            return;
-        }
-        if (subscriptions == null) {
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.ADD_EMAIL_TOKEN)){
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
@@ -1928,7 +1777,22 @@ public class SuperSafeService extends PresenterService<BaseView> implements Supe
             return SuperSafeService.this;
         }
         public void setIntent(Intent intent) {
-            mIntent = intent;
         }
+    }
+
+    public <T> boolean isCheckNull(T view,EnumStatus status){
+        if(subscriptions==null){
+            Utils.Log(TAG,"Subscriptions is null " + status.name());
+            return true;
+        }
+        else if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            Utils.Log(TAG,"No connection " + status.name());
+            return true;
+        }
+        else if(view==null){
+            Utils.Log(TAG,"View is null " + status.name());
+            return true;
+        }
+        return false;
     }
 }

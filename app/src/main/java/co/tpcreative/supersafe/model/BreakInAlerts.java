@@ -23,7 +23,6 @@ public class BreakInAlerts implements Serializable{
     public String fileName;
     public long time;
     public String pin;
-
     private static BreakInAlerts instance;
 
     @Ignore
@@ -50,5 +49,4 @@ public class BreakInAlerts implements Serializable{
         });
         return mList;
     }
-
 }

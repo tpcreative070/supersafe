@@ -373,6 +373,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         }
     }
 
+    @Override
+    protected void startServiceNow() {
+        ServiceManager.getInstance().onStartService();
+        onStopProgressDialog();
+    }
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
