@@ -101,6 +101,5 @@ public enum EnumStatus {
         CLOSED,
         SECRET_USER,
         SECRET_PIN,
-        REGISTER_OR_LOGIN
-
+        REGISTER_OR_LOGIN,
 }

@@ -1822,6 +1822,14 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void getObservableDownload(boolean isExporting) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            if (isExporting){
+                GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.ERROR);
+            }else{
+                EventBus.getDefault().post(EnumStatus.ERROR);
+            }
+            return;
+        }
         Utils.Log(TAG, "Preparing download.....");
         setDownloadingFiles(true);
         int position = 0;
@@ -1864,7 +1872,7 @@ public class ServiceManager implements BaseServiceView {
                                 GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.ERROR);
                             }
                             else{
-                                EventBus.getDefault().post(EnumStatus.DownLoadDone);
+                                EventBus.getDefault().post(EnumStatus.ERROR);
                             }
                         }
                         @Override

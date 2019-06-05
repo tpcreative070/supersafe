@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -73,15 +72,12 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     TextView tvLifeTime;
     @BindView(R.id.tvTitle)
     TextView tvTitle;
-
     @BindView(R.id.llOne)
     LinearLayout llOne;
     @BindView(R.id.llTwo)
     LinearLayout llTwo;
     @BindView(R.id.llSwitchToBasic)
     LinearLayout llSwitchToBasic;
-
-
     /*In app purchase*/
     private ActivityCheckout mCheckout;
     private ActivityCheckout mCheckoutLifeTime;
@@ -94,9 +90,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     private Sku mLifeTime;
     private boolean isPurchased;
     private PremiumPresenter presenter;
-
     private SweetAlertDialog mDialogProgress;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +152,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 llSwitchToBasic.setVisibility(View.VISIBLE);
             }
         }
-
         if (User.getInstance().isPremiumExpired()){
             if (PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
                 llOne.setVisibility(View.VISIBLE);
@@ -169,10 +162,8 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 llOne.setVisibility(View.GONE);
                 llTwo.setVisibility(View.GONE);
                 llSwitchToBasic.setVisibility(View.VISIBLE);
-
             }
         }
-
     }
 
     @OnClick(R.id.btnSwitchToBasic)
@@ -213,11 +204,9 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         if (mProduct==null){
             return;
         }
-
         if (User.getInstance().isPremium()){
             return;
         }
-
         Utils.Log(TAG,"Months");
         if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
             if (mMonths!=null){
@@ -236,15 +225,12 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @OnClick(R.id.llYears)
     public void onClickedYears(View view){
         Utils.Log(TAG,"Years");
-
         if (mProduct==null){
             return;
         }
-
         if (User.getInstance().isPremium()){
             return;
         }
-
         if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
             if (mYears!=null){
                 final Purchase purchase = mProduct.getPurchaseInState(mYears, Purchase.State.PURCHASED);
@@ -264,11 +250,9 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         if (mProductLifeTime==null){
             return;
         }
-
         if (User.getInstance().isPremium()){
             return;
         }
-
         if (mProductLifeTime.getSkus()!=null && mProductLifeTime.getSkus().size()>0){
             if (mLifeTime!=null){
                 //final Purchase purchase = mProductLifeTime.getPurchaseInState(mLifeTime, Purchase.State.PURCHASED);
@@ -281,7 +265,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 }
             }
         }
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -292,7 +275,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 break;
             }
             case DownLoadDone:{
-
                 mDialogProgress.setTitleText("Success!")
                         .setConfirmText("OK")
                         .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
@@ -312,6 +294,12 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 Utils.Log(TAG,"Download done");
                 break;
             }
+            case ERROR:{
+                mDialogProgress.setTitleText("No connection, Try again")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                break;
+            }
         }
     };
 
@@ -322,7 +310,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(PremiumActivity.class.getSimpleName());
         final boolean isPremium = User.getInstance().isPremium();
         if (!isPremium){
             SingletonPremiumTimer.getInstance().setListener(this);
@@ -345,7 +332,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         SingletonPremiumTimer.getInstance().setListener(null);
     }
 
-
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
@@ -353,15 +339,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
-
-        private Preference mAccount;
-
         @Override
         public final void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-
         }
-
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general_premium);
@@ -369,7 +350,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     }
 
     /* Start in app purchase */
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mCheckout.onActivityResult(requestCode, resultCode, data);
@@ -483,14 +463,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         final Billing billing = SuperSafeApplication.getInstance().getBilling();
         mCheckout = Checkout.forActivity(this, billing);
         mCheckoutLifeTime = Checkout.forActivity(this,billing);
-
         mInventoryCallback = new InventoryCallback();
         mInventoryCallbackLifeTime  = new InventoryCallbackLifeTime();
-
-
         mCheckout.start();
         mCheckoutLifeTime.start();
-
         reloadInventory();
         reloadInventoryLifeTime();
     }
@@ -510,7 +486,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         mList.add(getString(R.string.six_months));
         mList.add(getString(R.string.one_years));
         //mList.add(getString(R.string.life_time));
-
         final Inventory.Request request = Inventory.Request.create();
         // load purchase info
         request.loadAllPurchases();
@@ -531,20 +506,16 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     }
 
     /*Presenter*/
-
     @Override
     public void onStartLoading(EnumStatus status) {
-
     }
 
     @Override
     public void onStopLoading(EnumStatus status) {
-
     }
 
     @Override
     public void onError(String message) {
-
     }
 
     @Override
@@ -559,7 +530,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @Override
@@ -574,12 +544,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
 
     @Override
     public void onSuccessful(String message, EnumStatus status, Object object) {
-
     }
 
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-
     }
 
     @Override
@@ -693,7 +661,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         mDialogProgress.setCancelable(false);
     }
 
-
     public void onShowPremium(){
         try {
             de.mrapp.android.dialog.MaterialDialog.Builder builder = new de.mrapp.android.dialog.MaterialDialog.Builder(this);
@@ -707,17 +674,14 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             builder.setPositiveButton(getString(R.string.get_premium), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-
                 }
             });
-
             builder.setNegativeButton(getText(R.string.switch_to_basic), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     onClickedSwitchToBasic();
                 }
             });
-
             de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
             builder.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
@@ -725,7 +689,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                     Button positive = dialog.findViewById(android.R.id.button1);
                     Button negative = dialog.findViewById(android.R.id.button2);
                     TextView textView = (TextView) dialog.findViewById(android.R.id.message);
-
                     if (positive!=null && negative!=null && textView!=null){
                         positive.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));
                         negative.setTextColor(getContext().getResources().getColor(themeApp.getAccentColor()));

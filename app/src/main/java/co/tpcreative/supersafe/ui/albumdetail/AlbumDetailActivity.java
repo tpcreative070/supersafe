@@ -205,10 +205,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         GalleryCameraMediaManager.getInstance().setListener(this);
         onDrawOverLay(this);
         llBottom.setVisibility(View.GONE);
-
         /*Root Fragment*/
         attachFragment(R.id.gallery_root);
-
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -219,9 +217,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
             }
         });
-
     }
-
 
     public void onInit(){
         presenter.getData(this);
@@ -828,11 +824,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                         }
                                     }
                                 }
-
                                 onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
-
                                 break;
                             }
                             case DELETE:{
@@ -968,20 +962,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 break;
             }
             case ERROR:{
-                final User mUser = User.getInstance().getUserInfo();
-                if (mUser!=null){
-                    mUser.driveConnected = false;
-                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                }
-                mDialogProgress.setTitleText("Success!")
+                mDialogProgress.setTitleText("No connection, Try again")
                         .setConfirmText("OK")
                         .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                });
                 break;
             }
         }

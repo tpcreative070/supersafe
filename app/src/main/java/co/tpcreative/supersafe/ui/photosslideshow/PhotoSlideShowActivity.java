@@ -95,22 +95,17 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     @BindView(R.id.imgDelete)
     ImageView imgDelete;
     private boolean isHide;
-
     private PhotoSlideShowPresenter presenter;
     private Storage storage;
     private ViewPager viewPager;
     private SamplePagerAdapter adapter;
     private boolean isReload;
     private AlertDialog dialog;
-    private Cipher mCipher;
-
     private Disposable subscriptions;
     private boolean isProgressing;
     private  int position = 0;
     private  PhotoView photoView;
     SweetAlertDialog mDialogProgress;
-
-
     private Handler handler;
     private int delay = 2000; //milliseconds
     private int page = 0;
@@ -126,7 +121,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -138,8 +132,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         presenter = new PhotoSlideShowPresenter();
         presenter.bindView(this);
         presenter.getIntent(this);
-
-        //Utils.showGotItSnackbar(findViewById(R.id.coordinator), R.string.custom_objects_hint);
         viewPager = findViewById(R.id.view_pager);
         adapter = new SamplePagerAdapter(this);
         viewPager.setAdapter(adapter);
@@ -152,16 +144,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         imgMove.setOnClickListener(this);
         GalleryCameraMediaManager.getInstance().setListener(this);
         attachFragment(R.id.gallery_root);
-
         /*Auto slide*/
-
         handler = new Handler();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
-
             @Override
             public void onPageSelected(int position) {
                 page = position;
@@ -169,7 +157,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
     }
@@ -282,13 +269,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         return null;
     }
 
-
     class SamplePagerAdapter extends PagerAdapter {
         private Context context;
         SamplePagerAdapter(Context context){
             this.context = context;
         }
-
         @Override
         public int getCount() {
             return presenter.mList.size();
@@ -297,16 +282,12 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             //PhotoView photoView = new PhotoView(container.getContext());
-
             LayoutInflater inflater = getLayoutInflater();
             View myView = inflater.inflate(R.layout.content_view, null);
             photoView = myView.findViewById(R.id.imgPhoto);
             ImageView imgPlayer = myView.findViewById(R.id.imgPlayer);
-
-
             final Items mItems = presenter.mList.get(position);
             EnumFormatType enumTypeFile = EnumFormatType.values()[mItems.formatType];
-
             photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
                 public void onPhotoTap(ImageView view, float x, float y) {
@@ -316,7 +297,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     onHideView();
                 }
             });
-
             imgPlayer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -324,7 +304,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     Navigator.onPlayer(PhotoSlideShowActivity.this,items,presenter.mainCategories);
                 }
             });
-
             try{
                 String path = mItems.thumbnailPath;
                 File file = new File(""+path);
@@ -339,7 +318,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             catch (Exception e){
                 e.printStackTrace();
             }
-
             switch (enumTypeFile){
                 case VIDEO:{
                     imgPlayer.setVisibility(View.VISIBLE);
@@ -564,7 +542,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 break;
             }
         }
-
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))
                 .theme(Theme.LIGHT)
@@ -657,7 +634,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                         }
 
                                 }
-
                                 onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
@@ -901,20 +877,9 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 break;
             }
             case ERROR:{
-                final User mUser = User.getInstance().getUserInfo();
-                if (mUser!=null){
-                    mUser.driveConnected = false;
-                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                }
-                mDialogProgress.setTitleText("Success!")
+                mDialogProgress.setTitleText("No connection, Try again")
                         .setConfirmText("OK")
                         .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                });
                 break;
             }
         }
