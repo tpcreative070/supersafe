@@ -14,7 +14,6 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,11 +26,9 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -344,7 +341,6 @@ public class ImageSelectActivity extends HelperActivity {
                 }
             }
 
-
             Uri queryUri = MediaStore.Files.getContentUri("external");
             Cursor cursor = getContentResolver().query(queryUri, projection,
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?", new String[]{ album }, MediaStore.Images.Media.DATE_ADDED);
@@ -386,7 +382,7 @@ public class ImageSelectActivity extends HelperActivity {
                             }
                         }
                         else{
-                            Log.d(TAG,"value "+file.getAbsolutePath());
+                            Utils.Log(TAG,"value "+file.getAbsolutePath());
                         }
                     }
                 } while (cursor.moveToPrevious());
@@ -413,7 +409,6 @@ public class ImageSelectActivity extends HelperActivity {
         if (thread == null || !thread.isAlive()) {
             return;
         }
-
         thread.interrupt();
         try {
             thread.join();
@@ -430,7 +425,6 @@ public class ImageSelectActivity extends HelperActivity {
         if (handler == null) {
             return;
         }
-
         Message message = handler.obtainMessage();
         message.what = what;
         message.arg1 = arg1;

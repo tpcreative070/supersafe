@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -60,7 +59,6 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
     LinearLayout llSupport;
     @BindView(R.id.tvSupport)
     TextView tvSupport;
-
     private ResetPinPresenter presenter;
     private boolean isNext;
     private Boolean isRestoreFiles;
@@ -341,7 +339,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Log.d(TAG,"positive");
+                        Utils.Log(TAG,"positive");
                         final User mUser = User.getInstance().getUserInfo();
                         Utils.Log(TAG,"Pressed "+ new Gson().toJson(mUser));
                         SingletonResetPin.getInstance().onStartTimer(300000);

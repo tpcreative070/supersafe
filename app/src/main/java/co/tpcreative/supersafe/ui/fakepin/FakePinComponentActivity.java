@@ -15,7 +15,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -128,7 +127,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
             @Override
             public void onToggleChanged(boolean isOpen) {
-                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+                Utils.Log(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
 
@@ -197,12 +196,12 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                                 Navigator.onMoveCamera(FakePinComponentActivity.this, list.get(0));
                             }
                         } else {
-                            Log.d(TAG, "Permission is denied");
+                            Utils.Log(TAG, "Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
 
@@ -215,7 +214,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }
@@ -224,7 +223,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "Selected album :");
+        Utils.Log(TAG, "Selected album :");
         switch (requestCode) {
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
@@ -244,19 +243,16 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
-                        Log.d(TAG, "mimeType " + mimeType);
-                        Log.d(TAG, "name " + name);
-                        Log.d(TAG, "path " + path);
+                        Utils.Log(TAG, "mimeType " + mimeType);
+                        Utils.Log(TAG, "name " + name);
+                        Utils.Log(TAG, "path " + path);
                         String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
-
+                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path));
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-
                             if (mimeTypeFile==null){
                                 return;
                             }
-
                             mimeTypeFile.name = name;
                             final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
                             if (list == null) {
@@ -269,10 +265,8 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                             e.printStackTrace();
                         }
                     }
-
                     ServiceManager.getInstance().setmListImport(mListImport);
                     ServiceManager.getInstance().onImportingFiles();
-
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }
@@ -284,7 +278,6 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
             }
         }
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -389,7 +382,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
     @Override
     public void onClickItem(int position) {
-        Log.d(TAG,"Position :"+ position);
+        Utils.Log(TAG,"Position :"+ position);
         try {
             String value  = Utils.getHexCode(getString(R.string.key_trash));
             if (value.equals(presenter.mList.get(position).categories_hex_name)){
@@ -429,6 +422,4 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
             super.onBackPressed();
         }
     }
-
-
 }

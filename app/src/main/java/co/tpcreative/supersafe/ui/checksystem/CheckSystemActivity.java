@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -18,11 +17,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
@@ -139,19 +136,19 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         switch (requestCode) {
             case Navigator.ENABLE_CLOUD:
                 if (resultCode == Activity.RESULT_OK) {
-                    Log.d(TAG, "onBackPressed onActivity Result");
+                    Utils.Log(TAG, "onBackPressed onActivity Result");
                     onBackPressed();
                 }
                 break;
             default:
-                Log.d(TAG, "Nothing action");
+                Utils.Log(TAG, "Nothing action");
                 break;
         }
     }
 
     @Override
     protected void onDriveClientReady() {
-        Log.d(TAG, "onDriveClient");
+        Utils.Log(TAG, "onDriveClient");
         presenter.mUser.driveConnected = true;
         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
         UserCloudRequest request = new UserCloudRequest();
@@ -181,7 +178,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             dialog.input(getString(R.string.pin_code), null, false, new MaterialDialog.InputCallback() {
                 @Override
                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
-                    Log.d(TAG, "call input code");
+                    Utils.Log(TAG, "call input code");
                     VerifyCodeRequest request = new VerifyCodeRequest();
                     request.email = presenter.mUser.email;
                     request.code = input.toString().trim();
@@ -263,7 +260,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             case CLOUD_ID_EXISTING: {
                 if (presenter.mUser != null) {
                     presenter.mUser.cloud_id = message;
-                    Log.d(TAG, "CLOUD_ID_EXISTING : " + message);
+                    Utils.Log(TAG, "CLOUD_ID_EXISTING : " + message);
                     PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
                 }
                 Navigator.onEnableCloud(this);
@@ -281,7 +278,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 break;
             }
             case USER_ID_EXISTING: {
-                Log.d(TAG, "USER_ID_EXISTING : " + message);
+                Utils.Log(TAG, "USER_ID_EXISTING : " + message);
                 break;
             }
             case CHANGE_EMAIL:{
@@ -292,7 +289,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 Utils.Log(TAG, "VERIFY_CODE...........action here");
                 if (presenter.googleOauth != null) {
                     if (presenter.googleOauth.isEnableSync) {
-                        Log.d(TAG, "Syn google drive");
+                        Utils.Log(TAG, "Syn google drive");
                         signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                             @Override
                             public void onCompleted() {
@@ -312,7 +309,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                             }
                         });
                     } else {
-                        Log.d(TAG, "Google drive Sync is disable");
+                        Utils.Log(TAG, "Google drive Sync is disable");
                         onStopLoading(status);
                         onBackPressed();
                     }

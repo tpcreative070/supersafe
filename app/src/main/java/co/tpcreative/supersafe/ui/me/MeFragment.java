@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,9 +95,9 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY > oldScrollY) {
-                    Log.d(TAG,"hide");
+                    Utils.Log(TAG,"hide");
                 } else {
-                    Log.d(TAG,"show");
+                    Utils.Log(TAG,"show");
                 }
             }
         });
@@ -207,7 +206,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.d(TAG,"visit :"+isVisibleToUser);
+        Utils.Log(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
             SingletonManagerTab.getInstance().setVisetFloatingButton(View.INVISIBLE);
             final boolean isPremium = User.getInstance().isPremium();
@@ -224,7 +223,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Utils.Log(TAG,"onResume");
         presenter.onCalculate();
         presenter.onShowUserInfo();
         onUpdatedView();
@@ -241,7 +240,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         catch (Exception e){
             e.printStackTrace();
         }
-        Log.d(TAG,"OnResume");
+        Utils.Log(TAG,"OnResume");
     }
 
     @OnClick(R.id.llSettings)

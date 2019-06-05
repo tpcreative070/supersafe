@@ -74,7 +74,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     public void onCreate() {
         super.onCreate();
         Utils.Log(TAG, "onCreate");
-        downloadService = new DownloadService(this);
+        downloadService = new DownloadService();
         storage = new Storage(this);
         onInitReceiver();
         SuperSafeApplication.getInstance().setConnectivityListener(this);
@@ -1313,8 +1313,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             request.file_name = items.thumbnailName;
         }
         request.items = items;
-        request.api_name = String.format(getString(R.string.url_drive_download), id);
         request.Authorization = mUser.access_token;
+        request.id = id;
         if (destination==null){
             String path = SuperSafeApplication.getInstance().getSupersafePrivate();
             String pathFolder = path + items.items_id + "/";
@@ -1350,11 +1350,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             }
             @Override
             public void onAttachmentSpeedPerSecond(double all) {
-
             }
             @Override
             public void onAttachmentTotalDownload(long totalByte, long totalByteDownloaded) {
-
             }
             @Override
             public void onSavedCompleted() {
@@ -1384,10 +1382,12 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                 }
             }
-        }, getString(R.string.drive_api));
-        request.mapHeader = new HashMap<>();
-        request.mapObject = new HashMap<>();
-        downloadService.downloadDriveFileByGET(request);
+            @Override
+            public Map<String, String> onHeader() {
+                return new HashMap<>();
+            }
+        });
+        downloadService.downloadFileFromGoogleDrive(request);
     }
 
     public void onUploadFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
@@ -1437,7 +1437,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         });
         fileBody.setContentType(items.mimeType);
         MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
-        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload), mUser.access_token, metaPart, dataPart, items.mimeType);
+        Call<DriveResponse> request = SuperSafeApplication.serverDriveApi.uploadFileMultipleInAppFolder(mUser.access_token, metaPart, dataPart, items.mimeType);
         request.enqueue(new Callback<DriveResponse>() {
             @Override
             public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {

@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package co.tpcreative.supersafe.ui.camera;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,13 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.google.android.cameraview.AspectRatio;
-
 import java.util.Arrays;
 import java.util.Set;
-
-
 /**
  * A simple dialog that allows user to pick an aspect ratio.
  */

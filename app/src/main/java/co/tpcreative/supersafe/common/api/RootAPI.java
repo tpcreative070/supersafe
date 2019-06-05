@@ -28,9 +28,11 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 public interface RootAPI{
+    String ROOT_GOOGLE_DRIVE = "https://www.googleapis.com/";
     String REFRESH_TOKEN = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
     String SEND_MAIL = "/v1.0/me/sendMail";
     String ADD_EMAIL_TOKEN = "/api/user/addEmailToken";
@@ -57,6 +59,8 @@ public interface RootAPI{
     String GET_LIST_FILE_IN_APP_FOLDER = "/drive/v3/files";
     String GET_FILES_INFO = "/drive/v3/files/{id}";
     String DELETE_CLOUD_ITEM = "/drive/v3/files/{id}";
+    String UPLOAD_FILE_TO_GOOGLE_DRIVE = "/upload/drive/v3/files?uploadType=multipart";
+    String DOWNLOAD_FILE_FROM_GOOGLE_DRIVE = "/drive/v3/files/{id}?alt=media";
     String CHECKOUT = "/api/checkout";
 
     String AUTHOR = "/api/track/syncDevices";
@@ -184,24 +188,16 @@ public interface RootAPI{
     @GET(GET_LIST_FILE_IN_APP_FOLDER)
     Observable<DriveAbout> onGetListFileInAppFolder(@Header("Authorization") String token,@Query("spaces")String value);
 
-    @POST()
-    @Multipart
-    Call<DriveResponse> uploadFileMutil(@Url String url,
-                                        @Header("Authorization") String authToken,
-                                        @Part MultipartBody.Part metaPart,
-                                        @Part MultipartBody.Part dataPart,
-                                        @Query("type") String videoType);
 
-    @POST()
+    @POST(UPLOAD_FILE_TO_GOOGLE_DRIVE)
     @Multipart
-    Call<DriveResponse> uploadFileMultipleInAppFolder(@Url String url,
+    Call<DriveResponse> uploadFileMultipleInAppFolder(
                                         @Header("Authorization") String authToken,
                                         @Part MultipartBody.Part metaPart,
                                         @Part MultipartBody.Part dataPart,
                                         @Query("type") String type);
 
-    @POST()
-    Call<DriveResponse> uploadFileMutil(@Url String url,
-                                        @Header("Authorization") String authToken,
-                                        @Body RequestBody requestBody);
+    @GET(DOWNLOAD_FILE_FROM_GOOGLE_DRIVE)
+    @Streaming
+    Observable<Response<ResponseBody>> downloadDriveFile(@Header("Authorization") String authToken,@Path("id") String id);
 }

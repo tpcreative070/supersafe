@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -60,7 +59,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         edtName.setOnEditorActionListener(this);
         presenter = new SignUpPresenter();
         presenter.bindView(this);
-        Log.d(TAG,"onCreate");
+        Utils.Log(TAG,"onCreate");
         isName = true;
         edtName.setText(getString(R.string.free));
     }
@@ -104,7 +103,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
                 return false;
             }
             if (isEmail && isName){
-                Log.d(TAG,"Next");
+                Utils.Log(TAG,"Next");
                 Utils.hideSoftKeyboard(this);
                 onSignUp();
                 return true;
@@ -185,7 +184,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         request.name = name;
         presenter.onSignUp(request);
         Utils.hideSoftKeyboard(this);
-        Log.d(TAG,"onFished");
+        Utils.Log(TAG,"onFished");
     }
 
     @Override

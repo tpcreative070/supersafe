@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,7 +62,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     LinearLayout llPremium;
     @BindView(R.id.llTitle)
     LinearLayout llTitle;
-
     @BindView(R.id.tvValueSupersafeSpace)
     TextView tvValueSupersafeSpace;
     @BindView(R.id.tvValueOtherSpace)
@@ -459,15 +457,15 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
     @Override
     protected void onDriveError() {
-        Log.d(TAG, "onDriveError");
+        Utils.Log(TAG, "onDriveError");
     }
     @Override
     protected void onDriveSignOut() {
-        Log.d(TAG, "onDriveSignOut");
+        Utils.Log(TAG, "onDriveSignOut");
     }
     @Override
     protected void onDriveRevokeAccess() {
-        Log.d(TAG, "onDriveRevokeAccess");
+        Utils.Log(TAG, "onDriveRevokeAccess");
     }
     @Override
     protected void onDriveClientReady() {

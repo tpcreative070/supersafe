@@ -4,7 +4,6 @@ package co.tpcreative.supersafe.ui.help;
  * Created by Oclemy on 2017 for ProgrammingWizards TV Channel and http://www.camposha.info.
  - Our galaxycell class
  */
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;

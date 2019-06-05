@@ -3,7 +3,6 @@ import android.app.Activity;
 import android.content.Context;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
@@ -25,7 +24,6 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
     protected long sizeFile = 0;
     protected long sizeSaverFiles = 0;
     protected Storage storage;
-
     public CloudManagerPresenter() {
         storage = new Storage(SuperSafeApplication.getInstance());
     }

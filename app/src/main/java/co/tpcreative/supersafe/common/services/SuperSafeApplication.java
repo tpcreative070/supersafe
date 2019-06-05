@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.content.PermissionChecker;
-import android.util.Log;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.MobileAds;
@@ -137,7 +136,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
         supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/";
         registerActivityLifecycleCallbacks(this);
-        Log.d(TAG, supersafe);
+        Utils.Log(TAG, supersafe);
 
         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
@@ -247,7 +246,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityPaused(Activity activity) {
         ++paused;
-        Log.d(TAG, "application is in foreground: " + (resumed > paused));
+        Utils.Log(TAG, "application is in foreground: " + (resumed > paused));
     }
 
     @Override
@@ -259,7 +258,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityStopped(Activity activity) {
         ++stopped;
-        Log.d(TAG, "application is visible: " + (started > stopped));
+        Utils.Log(TAG, "application is visible: " + (started > stopped));
     }
 
     public boolean isApplicationVisible() {
@@ -312,14 +311,14 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void initFolder() {
         if (storage.isDirectoryExists(supersafe) & storage.isDirectoryExists(supersafePrivate) & storage.isDirectoryExists(supersafeBackup) & storage.isDirectoryExists(supersafeLog) & storage.isDirectoryExists(supersafeBreakInAlerts)) {
-            Log.d(TAG, "SuperSafe is existing");
+            Utils.Log(TAG, "SuperSafe is existing");
         } else {
             storage.createDirectory(supersafe);
             storage.createDirectory(supersafePrivate);
             storage.createDirectory(supersafeBackup);
             storage.createDirectory(supersafeLog);
             storage.createDirectory(supersafeBreakInAlerts);
-            Log.d(TAG, "SuperSafe was created");
+            Utils.Log(TAG, "SuperSafe was created");
         }
     }
 
@@ -329,25 +328,25 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void writeKey(String value) {
         if (!isPermissionWrite()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + key, value);
-        Log.d(TAG, "Created key :" + value);
+        Utils.Log(TAG, "Created key :" + value);
     }
 
     public String readKey() {
         try {
             if (!isPermissionRead()) {
-                Log.d(TAG, "Please grant access permission");
+                Utils.Log(TAG, "Please grant access permission");
                 return "";
             }
             storage.setEncryptConfiguration(configurationPin);
             boolean isFile = storage.isFileExist(getSuperSafe() + key);
             if (isFile) {
                 String value = storage.readTextFile(getSuperSafe() + key);
-                Log.d(TAG, "Key value is : " + value);
+                Utils.Log(TAG, "Key value is : " + value);
                 return value;
             }
         }
@@ -360,7 +359,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void writeUserSecret(final User user) {
         if (!isPermissionWrite()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         storage.setEncryptConfiguration(configurationPin);
@@ -370,7 +369,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public User readUseSecret() {
         try {
             if (!isPermissionRead()) {
-                Log.d(TAG, "Please grant access permission");
+                Utils.Log(TAG, "Please grant access permission");
                 return null;
             }
             storage.setEncryptConfiguration(configurationPin);
@@ -395,24 +394,24 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void writeFakeKey(String value) {
         if (!isPermissionWrite()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + fake_key, value);
-        Log.d(TAG, "Created key :" + value);
+        Utils.Log(TAG, "Created key :" + value);
     }
 
     public String readFakeKey() {
         if (!isPermissionRead()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return "";
         }
         storage.setEncryptConfiguration(configurationPin);
         boolean isFile = storage.isFileExist(getSuperSafe() + fake_key);
         if (isFile) {
             String value = storage.readTextFile(getSuperSafe() + fake_key);
-            Log.d(TAG, "Key value is : " + value);
+            Utils.Log(TAG, "Key value is : " + value);
             return value;
         }
         return "";
@@ -420,7 +419,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void onDeleteKey() {
         if (!isPermissionRead()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         boolean isFile = storage.isFileExist(getSuperSafe() + key);

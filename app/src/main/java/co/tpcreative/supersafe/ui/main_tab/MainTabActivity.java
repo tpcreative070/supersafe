@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +58,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
@@ -126,13 +126,12 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             if (NetworkUtil.pingIpAddress(this)) {
                 return;
             }
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            Utils.onObserveData(2000, new Listener() {
                 @Override
-                public void run() {
+                public void onStart() {
                     onAnimationIcon(EnumStatus.DONE);
                 }
-            },2000);
+            });
         }
     }
 
@@ -296,7 +295,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:{
-                Log.d(TAG,"Home action");
+                Utils.Log(TAG,"Home action");
                 if (presenter!=null){
                     if (presenter.mUser.verified){
                         Navigator.onManagerAccount(getActivity());
@@ -394,7 +393,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             public void onToggleChanged(boolean isOpen) {
                 //mSpeedDialView.setMainFabOpenedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
                 //mSpeedDialView.setMainFabClosedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
-                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+                Utils.Log(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
 
@@ -469,12 +468,12 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                             }
                         }
                         else{
-                            Log.d(TAG,"Permission is denied");
+                            Utils.Log(TAG,"Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
                     @Override
@@ -486,7 +485,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }
@@ -494,7 +493,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "Selected album :");
+        Utils.Log(TAG, "Selected album :");
         switch (requestCode) {
             case Navigator.COMPLETED_RECREATE :{
                 if (resultCode == Activity.RESULT_OK) {
@@ -534,12 +533,11 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                         String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
-                        Log.d(TAG, "mimeType " + mimeType);
-                        Log.d(TAG, "name " + name);
-                        Log.d(TAG, "path " + path);
+                        Utils.Log(TAG, "mimeType " + mimeType);
+                        Utils.Log(TAG, "name " + name);
+                        Utils.Log(TAG, "path " + path);
                         String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
-
+                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path));
                         try {
                             MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             if (mimeTypeFile==null){
@@ -551,7 +549,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-
                             ImportFiles importFiles = new ImportFiles(list.get(0),mimeTypeFile,path,i,false);
                             mListImportFiles.add(importFiles);
 

@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.resetpin;
-import android.util.Log;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.HttpException;
 
-
 public class ResetPinPresenter extends Presenter<BaseView> {
 
     private static final String TAG = ResetPinPresenter.class.getSimpleName();
@@ -39,7 +37,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
     }
 
     public void onVerifyCode(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             view.onError("View is null", EnumStatus.VERIFY);
@@ -74,7 +72,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         }
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY);
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -84,20 +82,20 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                 }));
     }
 
     public void onRequestCode(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             view.onError("View is null", EnumStatus.REQUEST_CODE);
@@ -107,11 +105,9 @@ public class ResetPinPresenter extends Presenter<BaseView> {
             view.onError("NO internet", EnumStatus.REQUEST_CODE);
             return;
         }
-
         if (subscriptions == null) {
             return;
         }
-
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),request.email);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
@@ -131,7 +127,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                         Utils.Log(TAG,new Gson().toJson(mUser));
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -142,13 +138,13 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.REQUEST_CODE);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                 }));
     }
@@ -157,5 +153,4 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         String value = SuperSafeApplication.getInstance().getString(res);
         return value;
     }
-
 }

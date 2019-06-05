@@ -18,9 +18,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.snatik.storage.Storage;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
@@ -35,7 +33,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class PrivateFragment extends BaseFragment implements BaseView, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
 
@@ -286,9 +283,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         isClicked = false;
                         if (mainCategories.pin.equals(input.toString())) {
-//                            mainCategories.pin = "";
-//                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
-//                            SingletonPrivateFragment.getInstance().onUpdateView();
                             Navigator.onMoveAlbumDetail(getActivity(), mainCategories);
                             dialog.dismiss();
                         } else {

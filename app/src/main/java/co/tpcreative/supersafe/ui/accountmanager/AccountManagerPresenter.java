@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.accountmanager;
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;

@@ -203,13 +203,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     }
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
         int position;
-
         public MyMenuItemClickListener(int position) {
             this.position = position;
         }
-
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
@@ -237,13 +234,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
-
         void onSetting(int position);
-
         void onDeleteAlbum(int position);
-
         void onEmptyTrash(int position);
-
     }
-
 }

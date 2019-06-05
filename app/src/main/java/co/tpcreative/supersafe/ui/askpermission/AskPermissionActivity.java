@@ -23,7 +23,6 @@ import co.tpcreative.supersafe.model.EnumStatus;
 public class AskPermissionActivity extends BaseActivityNoneSlide {
 
     private static final String TAG = AskPermissionActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

@@ -2,11 +2,9 @@ package co.tpcreative.supersafe.ui.dashboard;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -28,7 +26,7 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
-        Log.d(TAG,"PIN " +SuperSafeApplication.getInstance().readKey());
+        Utils.Log(TAG,"PIN " +SuperSafeApplication.getInstance().readKey());
     }
 
     @OnClick(R.id.btnLogin)
@@ -46,7 +44,7 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
     protected void onResume() {
         super.onResume();
         final User mUser = SuperSafeApplication.getInstance().readUseSecret();
-        Log.d(TAG,new Gson().toJson(mUser));
+        Utils.Log(TAG,new Gson().toJson(mUser));
         if (mUser!=null){
             onShowRestore();
         }

@@ -13,7 +13,6 @@ import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.util.Log;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -934,9 +933,9 @@ public class ServiceManager implements BaseServiceView {
                                                     mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                     if (itemsRequest.isOriginalGlobalId) {
                                                         mItem.originalSync = true;
-                                                        Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
                                                     } else {
-                                                        Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
                                                         mItem.thumbnailSync = true;
                                                     }
 
@@ -1117,11 +1116,11 @@ public class ServiceManager implements BaseServiceView {
                                                     if (type == EnumFileType.ORIGINAL) {
                                                         mItem.originalSync = true;
                                                         mItem.global_original_id = response.id;
-                                                        Log.d(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                     } else {
                                                         mItem.thumbnailSync = true;
                                                         mItem.global_thumbnail_id = response.id;
-                                                        Log.d(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                     }
                                                     mItem.fileType = contentTitle.fileType;
                                                     if (mItem.thumbnailSync && mItem.originalSync) {
@@ -1277,7 +1276,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.Log(TAG, "CreatedFile failed");
                         }
                     } catch (Exception e) {
-                        Log.w(TAG, "Cannot write to " + e);
+                        Utils.Log(TAG, "Cannot write to " + e);
                         Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         final ResponseRXJava response = new ResponseRXJava();
                         response.isWorking = false;
@@ -1296,7 +1295,7 @@ public class ServiceManager implements BaseServiceView {
                                     MediaStore.Video.Thumbnails.MINI_KIND);
                             ExifInterface exifInterface = new ExifInterface(mPath);
                             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                            Log.d("EXIF", "Exif: " + orientation);
+                            Utils.Log("EXIF", "Exif: " + orientation);
                             Matrix matrix = new Matrix();
                             if (orientation == 6) {
                                 matrix.postRotate(90);
@@ -1310,7 +1309,7 @@ public class ServiceManager implements BaseServiceView {
                         catch (Exception e){
                             thumbnail  = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().getResources(),
                                     R.drawable.ic_default_video);
-                            Log.w(TAG, "Cannot write to " + e);
+                            Utils.Log(TAG, "Cannot write to " + e);
                         }
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1380,7 +1379,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.Log(TAG, "CreatedFile failed");
                         }
                     } catch (Exception e) {
-                        Log.w(TAG, "Cannot write to " + e);
+                        Utils.Log(TAG, "Cannot write to " + e);
                         Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         final ResponseRXJava response = new ResponseRXJava();
                         response.isWorking = false;
@@ -1580,7 +1579,7 @@ public class ServiceManager implements BaseServiceView {
                 subscriber.onNext(response);
                 subscriber.onComplete();
                 Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                Log.w(TAG, "Cannot write to " + e);
+                Utils.Log(TAG, "Cannot write to " + e);
             } finally {
                 Utils.Log(TAG, "Finally");
             }
@@ -1713,7 +1712,7 @@ public class ServiceManager implements BaseServiceView {
                         });
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "Cannot write to " + e);
+                    Utils.Log(TAG, "Cannot write to " + e);
                 } finally {
                     Utils.Log(TAG, "Finally");
                 }

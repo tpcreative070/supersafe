@@ -2,13 +2,11 @@ package co.tpcreative.supersafe.ui.signin;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.controller.PrefsController;
@@ -16,11 +14,9 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignInRequest;
-import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Email;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
@@ -35,7 +31,7 @@ import retrofit2.Response;
 public class SignInPresenter extends Presenter<BaseView<User>> {
     private static final String TAG = SignInPresenter.class.getSimpleName();
     public void onSignIn(SignInRequest request) {
-        Log.d(TAG, "onSignIn");
+        Utils.Log(TAG, "onSignIn");
         BaseView view = view();
         if (view == null) {
             return;
@@ -62,7 +58,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_IN))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_IN);
                     } else {
@@ -74,14 +70,14 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.OTHER);
                 }));
@@ -96,7 +92,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
     /*Email token*/
 
     public void onSendMail(EmailToken request){
-        Log.d(TAG, "onSendMail.....");
+        Utils.Log(TAG, "onSendMail.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -117,12 +113,12 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                         Utils.Log(TAG, "code " + code);
                         onRefreshEmailToken(request);
                         final String errorMessage = response.errorBody().string();
-                        Log.d(TAG, "error" + errorMessage);
+                        Utils.Log(TAG, "error" + errorMessage);
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL);
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("successful", EnumStatus.SEND_EMAIL);
-                        Log.d(TAG, "Body : Send email Successful");
+                        Utils.Log(TAG, "Body : Send email Successful");
                     } else {
                         Utils.Log(TAG, "code " + code);
                         Utils.Log(TAG, "Nothing to do");
@@ -142,7 +138,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
     }
 
     public void onRefreshEmailToken(EmailToken request) {
-        Log.d(TAG, "onRefreshEmailToken.....");
+        Utils.Log(TAG, "onRefreshEmailToken.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -172,7 +168,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
-                    Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body refresh : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -181,20 +177,20 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                             if (code == 401) {
                                 Utils.Log(TAG, "code " + code);
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             view.onError(msg, EnumStatus.SEND_EMAIL);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
     public void onAddEmailToken(){
-        Log.d(TAG, "onSignIn.....");
+        Utils.Log(TAG, "onSignIn.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -215,7 +211,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                     onSendMail(emailToken);
                 }, throwable -> {
@@ -228,13 +224,13 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }

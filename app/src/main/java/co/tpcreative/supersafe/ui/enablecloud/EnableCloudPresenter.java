@@ -1,12 +1,8 @@
 package co.tpcreative.supersafe.ui.enablecloud;
-import android.util.Log;
-
 import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -26,7 +22,6 @@ import retrofit2.HttpException;
 public class EnableCloudPresenter extends Presenter<BaseView>{
 
     private static final String TAG = EnableCloudPresenter.class.getSimpleName();
-
     protected User mUser;
     public EnableCloudPresenter(){
         mUser = new User();
@@ -46,9 +41,8 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
         return value;
     }
 
-
     public void onAddUserCloud(UserCloudRequest cloudRequest){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             return;
@@ -59,7 +53,6 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
         if (subscriptions == null) {
             return;
         }
-
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),cloudRequest.user_id);
         hash.put(getString(R.string.key_cloud_id),cloudRequest.cloud_id);
@@ -69,7 +62,7 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.CREATE);
                     }
@@ -86,19 +79,17 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.CREATE);
                 }));
-
     }
-
 
 }

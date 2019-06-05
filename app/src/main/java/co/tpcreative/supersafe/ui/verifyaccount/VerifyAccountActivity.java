@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,7 +100,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_account);
-
         //android O fix bug orientation
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -111,15 +109,12 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onDrawOverLay(this);
         imgEdit.setColorFilter(getResources().getColor(R.color.colorBackground), PorterDuff.Mode.SRC_ATOP);
-
         edtCode.addTextChangedListener(mTextWatcher);
         edtEmail.addTextChangedListener(mTextWatcher);
         edtCode.setOnEditorActionListener(this);
         edtEmail.setOnEditorActionListener(this);
-
         presenter = new VerifyAccountPresenter();
         presenter.bindView(this);
-
         if (presenter.mUser!=null){
            if (presenter.mUser.email!=null){
                tvEmail.setText(presenter.mUser.email);
@@ -127,12 +122,10 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                tvTitle.setText(Html.fromHtml(sourceString));
            }
         }
-
         ThemeApp theme = ThemeApp.getInstance().getThemeInfo();
         progressBarCircularIndeterminateSignIn.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
         progressBarCircularIndeterminateReSend.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
         progressBarCircularIndeterminateVerifyCode.setBackgroundColor(getResources().getColor(theme.getAccentColor()));
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -178,7 +171,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 return false;
             }
             if (isNext){
-                Log.d(TAG,"Next");
+                Utils.Log(TAG,"Next");
                 if (getCurrentFocus() == edtCode){
                     onVerifyCode();
                 }
@@ -213,7 +206,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 }
             }
             else if (getCurrentFocus() == edtCode){
-                Log.d(TAG,"code");
+                Utils.Log(TAG,"code");
                 if (Utils.isValid(value)){
                     btnSignIn.setBackground(getResources().getDrawable(R.drawable.bg_button_rounded));
                     btnSignIn.setTextColor(getResources().getColor(R.color.white));
@@ -243,7 +236,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @OnClick(R.id.imgEdit)
     public void onClickedEdit(View view){
-        Log.d(TAG,"edit");
+        Utils.Log(TAG,"edit");
         onShowView(view);
         edtEmail.requestFocus();
         edtEmail.setText(presenter.mUser.email);
@@ -252,21 +245,21 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @OnClick(R.id.btnSendVerifyCode)
     public void onClickedSendVerifyCode(View view){
-        Log.d(TAG,"Verify code");
+        Utils.Log(TAG,"Verify code");
         SingletonManagerProcessing.getInstance().onStartProgressing(this,R.string.progressing);
         presenter.onCheckUser(presenter.mUser.email,presenter.mUser.other_email);
     }
 
     @OnClick(R.id.btnCancel)
     public void onClickedCancel(View view){
-        Log.d(TAG,"onCancel");
+        Utils.Log(TAG,"onCancel");
         Utils.hideSoftKeyboard(this);
         onShowView(llAction);
     }
 
     @OnClick(R.id.btnSave)
     public void onClickedSave(){
-        Log.d(TAG,"onSave");
+        Utils.Log(TAG,"onSave");
         if (isNext){
            onChangedEmail();
             /*Do something here*/
@@ -309,7 +302,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             VerifyCodeRequest request = new VerifyCodeRequest();
             request.email = presenter.mUser.email;
             presenter.onResendCode(request);
-            Log.d(TAG,"onResend");
+            Utils.Log(TAG,"onResend");
         }catch (Exception e){
 
         }
@@ -317,7 +310,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @OnClick(R.id.btnSignIn)
     public void onClickedSignIn(View view){
-        Log.d(TAG,"onSignIn");
+        Utils.Log(TAG,"onSignIn");
         if (isNext){
             /*Do something here*/
             onVerifyCode();
@@ -337,7 +330,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home :{
-                Log.d(TAG,"home");
+                Utils.Log(TAG,"home");
                 if (isBack){
                     finish();
                     return true;
@@ -353,7 +346,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG,"home");
+        Utils.Log(TAG,"home");
         if (isBack){
             super.onBackPressed();
         }
@@ -407,14 +400,14 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 .setCheckBox(true,R.string.enable_cloud, new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        Log.d(TAG,"checked :" + b);
+                        Utils.Log(TAG,"checked :" + b);
                        isSync = b;
                     }
                 })
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Log.d(TAG,"positive");
+                        Utils.Log(TAG,"positive");
                         ServiceManager.getInstance().onPickUpNewEmail(VerifyAccountActivity.this);
                     }
                 })
@@ -436,7 +429,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Log.d(TAG,"positive");
+                        Utils.Log(TAG,"positive");
                         Navigator.onCheckSystem(VerifyAccountActivity.this,null);
                     }
                 })
@@ -472,7 +465,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             case Navigator.REQUEST_CODE_EMAIL :
                 if (resultCode == Activity.RESULT_OK) {
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                    Log.d(TAG,"accountName : " + accountName);
+                    Utils.Log(TAG,"accountName : " + accountName);
                     GoogleOauth googleOauth = new GoogleOauth();
                     googleOauth.email = accountName;
                     googleOauth.isEnableSync = isSync;
@@ -480,7 +473,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 }
                 break;
              default:
-                 Log.d(TAG,"Nothing action");
+                 Utils.Log(TAG,"Nothing action");
                  break;
         }
     }

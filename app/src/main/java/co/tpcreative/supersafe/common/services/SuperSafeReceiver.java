@@ -7,10 +7,8 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 public class SuperSafeReceiver extends BroadcastReceiver {
-
     public static final String TAG = SuperSafeReceiver.class.getSimpleName();
     public static ConnectivityReceiverListener connectivityReceiverListener;
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG,"onReceive");
@@ -26,13 +24,11 @@ public class SuperSafeReceiver extends BroadcastReceiver {
                 connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
             }
         }
-
         if (action.equalsIgnoreCase(Intent.ACTION_SCREEN_OFF)){
             if (connectivityReceiverListener !=null){
                 connectivityReceiverListener.onActionScreenOff();
             }
         }
-
     }
 
     public static boolean isConnected() {
@@ -48,7 +44,5 @@ public class SuperSafeReceiver extends BroadcastReceiver {
         void onNetworkConnectionChanged(boolean isConnected);
         void onActionScreenOff();
     }
-
-
 }
 

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
@@ -16,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -285,7 +283,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
         @Override
         public void onEmpty() {
-            Log.d(TAG, "Pin empty");
+            Utils.Log(TAG, "Pin empty");
         }
 
         @Override
@@ -307,7 +305,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     break;
                 }
             }
-            Log.d(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
+            Utils.Log(TAG, "Pin changed, new length " + pinLength + " with intermediate pin " + intermediatePin);
         }
     };
 
@@ -386,7 +384,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     }
 
     public void onDelete(View view) {
-        Log.d(TAG, "onDelete here");
+        Utils.Log(TAG, "onDelete here");
         if (mPinLockView != null) {
             mPinLockView.onDeleteClicked();
         }

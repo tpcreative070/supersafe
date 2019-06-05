@@ -3,18 +3,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 import android.view.ViewGroup;
 import java.util.ArrayList;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.ui.me.MeFragment;
 import co.tpcreative.supersafe.ui.privates.PrivateFragment;
-
-
 /**
  *
  */
-
-
 public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
 	private ArrayList<Fragment> fragments = new ArrayList<>();
@@ -34,7 +30,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-        Log.d(TAG,"position :" + position);
+		Utils.Log(TAG,"position :" + position);
 		return fragments.get(position);
 		//return fragments.get(position);
 	}
@@ -49,12 +45,12 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
 		if (getCurrentFragment() != object) {
 			currentFragment = ((Fragment) object);
 			if (currentFragment instanceof PrivateFragment){
-				Log.d(TAG,"history");
+				Utils.Log(TAG,"history");
 				currentFragment.onResume();
 				fragments.get(0).onPause();
 			}
 			else if (currentFragment instanceof MeFragment){
-				Log.d(TAG,"generate");
+				Utils.Log(TAG,"generate");
 				currentFragment.onResume();
 				fragments.get(1).onPause();
 			}

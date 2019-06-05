@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.premium;
-import android.util.Log;
 import com.google.gson.Gson;
 import org.solovyev.android.checkout.Purchase;
 import java.io.IOException;
@@ -121,7 +120,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CHECKOUT))
                 .subscribe(onResponse -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (onResponse.error){
@@ -133,7 +132,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
                     Utils.onWriteLog(new Gson().toJson(onResponse),EnumStatus.CHECKOUT);
                 }, throwable -> {
                     if (view == null) {
-                        Log.d(TAG, "View is null");
+                        Utils.Log(TAG, "View is null");
                         return;
                     }
                     if (throwable instanceof HttpException) {
@@ -144,9 +143,9 @@ public class PremiumPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                             Utils.onWriteLog("Line 1 "+msg,EnumStatus.CHECKOUT);
                             view.onError("" + msg, EnumStatus.CHECKOUT);
                         } catch (IOException e) {
@@ -155,7 +154,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
                             view.onError("" + e.getMessage(), EnumStatus.CHECKOUT);
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                         Utils.onWriteLog("Line 3 "+throwable.getMessage(),EnumStatus.CHECKOUT);
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.CHECKOUT);
                     }
@@ -169,5 +168,4 @@ public class PremiumPresenter extends Presenter<BaseView>{
         String value = view.getContext().getString(res);
         return value;
     }
-
 }

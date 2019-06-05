@@ -9,18 +9,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -216,7 +213,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
 
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){
-        Log.d(TAG,"sign out");
+        Utils.Log(TAG,"sign out");
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
             signOut(new ServiceManager.ServiceManagerSyncDataListener() {
@@ -246,23 +243,23 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
 
     @Override
     protected void onDriveSuccessful() {
-        Log.d(TAG,"onDriveSuccessful");
+        Utils.Log(TAG,"onDriveSuccessful");
         btnSignOut.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onDriveError() {
-        Log.d(TAG,"onDriveError");
+        Utils.Log(TAG,"onDriveError");
     }
 
     @Override
     protected void onDriveSignOut() {
-        Log.d(TAG,"onDriveSignOut");
+        Utils.Log(TAG,"onDriveSignOut");
     }
 
     @Override
     protected void onDriveRevokeAccess() {
-        Log.d(TAG,"onDriveRevokeAccess");
+        Utils.Log(TAG,"onDriveRevokeAccess");
     }
 
     @Override
