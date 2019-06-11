@@ -38,8 +38,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
-
         presenter = new HelpAndSupportPresenter();
         presenter.bindView(this);
         presenter.onGetList();

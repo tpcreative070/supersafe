@@ -132,10 +132,10 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         else if (User.getInstance().isPremiumComplimentary()){
             String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
             if (dayLeft!=null){
-                String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
+                String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
                 tvPremiumLeft.setText(Html.fromHtml(sourceString));
             }
-            if (presenter.mUser.driveConnected) {
+            if (presenter.mUser.driveConnected){
                 tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
             } else {
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
@@ -155,10 +155,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             } else {
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
-            if (presenter.mUser.verified){
-                tvPremiumLeft.setText(getString(R.string.premium_expired));
-                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
-            }
+            String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
+            tvPremiumLeft.setText(Html.fromHtml(sourceString));
         }
     }
 
@@ -173,7 +171,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                         tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
                     }
                     else{
-                        String sourceString = Utils.getFontString(R.string.premium_left,days);
+                        String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
                         tvPremiumLeft.setText(Html.fromHtml(sourceString));
                     }
                 }

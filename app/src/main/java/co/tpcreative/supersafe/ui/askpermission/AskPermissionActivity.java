@@ -25,7 +25,6 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
     private static final String TAG = AskPermissionActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_permission);
     }

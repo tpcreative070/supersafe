@@ -84,7 +84,6 @@ public class ImageSelectActivity extends HelperActivity {
                 actionMode.setTitle(countSelected + " " + getString(R.string.selected));
             }
         });
-        onDrawOverLay(this);
     }
 
     @Override

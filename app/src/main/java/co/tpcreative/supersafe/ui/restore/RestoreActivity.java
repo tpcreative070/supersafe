@@ -65,7 +65,6 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
         presenter = new RestorePresenter();
         presenter.bindView(this);
         presenter.onGetData();
-        onDrawOverLay(this);
     }
 
     @Override

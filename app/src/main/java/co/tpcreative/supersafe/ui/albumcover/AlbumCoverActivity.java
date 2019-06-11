@@ -67,7 +67,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         btnSwitch.setOnCheckedChangeListener(this);
         presenter.getData();
         tvPremiumDescription.setText(getString(R.string.premium_cover_description));
@@ -81,7 +80,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         recyclerViewDefault.setItemAnimator(new DefaultItemAnimator());
         recyclerViewDefault.setAdapter(adapterDefault);
         recyclerViewDefault.setNestedScrollingEnabled(false);
-
     }
 
     public void initRecycleViewCustom(LayoutInflater layoutInflater) {
@@ -174,7 +172,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.btnSwitch: {
-                if (User.getInstance().isPremiumExpired()) {
+                if (!User.getInstance().isPremium()) {
                     btnSwitch.setChecked(false);
                     onShowPremium();
                     break;

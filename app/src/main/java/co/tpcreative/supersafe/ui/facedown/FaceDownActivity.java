@@ -1,11 +1,11 @@
 package co.tpcreative.supersafe.ui.facedown;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import co.tpcreative.supersafe.R;
-import spencerstudios.com.bungeelib.Bungee;
+import co.tpcreative.supersafe.common.activity.BaseActivityNone;
+import co.tpcreative.supersafe.common.util.Utils;
 
-public class FaceDownActivity extends AppCompatActivity {
-
+public class FaceDownActivity extends BaseActivityNone {
+    private static String TAG = FaceDownActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,6 +16,6 @@ public class FaceDownActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         finish();
-        Bungee.fade(this);
+        Utils.Log(TAG,"Finish");
     }
 }

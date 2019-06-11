@@ -90,7 +90,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         storage = new Storage(this);
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
@@ -317,7 +316,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 break;
             }
             case R.id.switch_SaveSpace: {
-                if (User.getInstance().isPremiumExpired()){
+                if (!User.getInstance().isPremium()){
                     onShowPremium();
                     PrefsController.putBoolean(getString(R.string.key_saving_space), false);
                     btnSwitchSaveSpace.setChecked(false);
@@ -367,6 +366,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             builder.setNegativeButton(getText(R.string.later), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    PrefsController.putBoolean(getString(R.string.key_saving_space), false);
                 }
             });
             de.mrapp.android.dialog.MaterialDialog dialog = builder.show();

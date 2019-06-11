@@ -34,11 +34,10 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
     private static final String TAG = SplashScreenActivity.class.getSimpleName();
     @BindView(R.id.rlScreen)
     RelativeLayout rlScreen;
-    private int DELAY = 500;
+    private int DELAY = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);

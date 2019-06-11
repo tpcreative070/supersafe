@@ -132,10 +132,6 @@ dependencies {
         exclude group: 'stax', module: 'stax'
     }
 
-    /*Swipe activity*/
-    implementation project(':slibrlibrary')
-    implementation 'com.52inc:52Kit-core:0.5.1'
-
     /*Material Dialog*/
     implementation project(':materialstyledialoglibrary')
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'

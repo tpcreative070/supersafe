@@ -27,7 +27,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.activity.BaseActivityNone;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -42,8 +42,7 @@ import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import dmax.dialog.SpotsDialog;
 
-public class ShareFilesActivity extends BaseActivity implements GalleryCameraMediaManager.AlbumDetailManagerListener{
-
+public class ShareFilesActivity extends BaseActivityNone implements GalleryCameraMediaManager.AlbumDetailManagerListener{
     private static final String TAG = ShareFilesActivity.class.getSimpleName();
     final List<Integer> mListFile = new ArrayList<>();
     private AlertDialog dialog;
@@ -82,6 +81,10 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         storage = new Storage(this);
         onShowUI(View.GONE);
         onAddPermission();
+        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+        if (themeApp!=null){
+            tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+        }
     }
 
     public void onAddPermission() {
@@ -305,11 +308,6 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
     protected void onDestroy() {
         super.onDestroy();
         Utils.onDeleteTemporaryFile();
-    }
-
-    @Override
-    public void onOrientationChange(boolean isFaceDown) {
-
     }
 
     @Override

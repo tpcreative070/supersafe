@@ -348,7 +348,9 @@
     <string name="smart_storage">Smart storage. compressed files on your phone, originals in your Private Cloud.</string>
     <string name="save_space">Save space</string>
     <string name="device_storage_saved">Device storage saved:</string>
-
+    <string name="upgrade_premium_to_use_full_features">Upgrade %1$s to use full features</string>
+    <string name="premium_uppercase">PREMIUM</string>
+    <string name="choose_your_plans">Choose your plans</string>
     <string name="key_user">user</string>
     <string name="key_items">items</string>
     <string name="key_list_items">list_items</string>
@@ -574,7 +576,7 @@
     <string name="no_advertisement">No advertisements</string>
     <string name="get_rid_of_those_ugly_ads">Get rid of those ugly ads!</string>
     <string name="what_if_i_do_not_want_premium">What if I don\'t want Premium</string>
-    <string name="what_if_i_do_not_want_premium_detail">That\'s fine. When your complimentary Premium expires, You can switch to Basic</string>
+    <string name="what_if_i_do_not_want_premium_detail">That\'s fine. When your Premium expires, You can switch to Basic</string>
     <string name="what_is_basic">What\'s basic?</string>
     <string name="what_is_basic_detail">It\'s the free version of SuperSafe. It still protect your important files and you still can upload file to Google Drive 50 files per month. All of them behind a lock screen and gives you good privacy features</string>
     <string name="default_covers">Default covers</string>

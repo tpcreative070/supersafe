@@ -203,7 +203,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
         }
         GalleryCameraMediaManager.getInstance().setListener(this);
-        onDrawOverLay(this);
         llBottom.setVisibility(View.GONE);
         /*Root Fragment*/
         attachFragment(R.id.gallery_root);
@@ -277,6 +276,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (toolbar==null){
+            return false;
+        }
         toolbar.inflateMenu(R.menu.menu_album_detail);
         this.menuItem = toolbar.getMenu().getItem(0);
         boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
@@ -965,6 +967,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 mDialogProgress.setTitleText("No connection, Try again")
                         .setConfirmText("OK")
                         .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                break;
+            }
+            case PROGRESS:{
                 break;
             }
         }

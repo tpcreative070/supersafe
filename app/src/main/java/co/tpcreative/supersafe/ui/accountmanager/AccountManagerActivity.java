@@ -73,7 +73,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         onUpdatedView();
         onStartOverridePendingTransition();
         scrollView.smoothScrollTo(0,0);
@@ -108,15 +107,14 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
                 tvLicenseStatus.setText(getString(R.string.premium));
                 if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-                    String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-                    String sourceString = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
+                    String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
                     tvPremiumLeft.setText(Html.fromHtml(sourceString));
                 }
             }
             else{
                 tvLicenseStatus.setText(getString(R.string.free));
-                tvPremiumLeft.setText(getString(R.string.premium_expired));
-                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
+                String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
+                tvPremiumLeft.setText(Html.fromHtml(sourceString));
             }
         }
     }
@@ -194,8 +192,8 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String value =Utils.getFontString(R.string.your_complimentary_premium_remaining,days);
-                    tvPremiumLeft.setText(Html.fromHtml(value));
+                    String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
+                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
                 }
             });
         }
@@ -209,7 +207,10 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         Navigator.onMoveToPremium(this);
     }
 
-
+    @OnClick(R.id.rlPremiumComplimentary)
+    public void onClickedUpgrade(){
+        Navigator.onMoveToPremium(this);
+    }
 
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
-import com.ftinc.kit.util.SizeUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -29,9 +27,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.gson.Gson;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.util.List;
@@ -75,20 +70,19 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     protected ActionBar actionBar ;
     private HomeWatcher mHomeWatcher;
     private int onStartCount = 0;
-    private SlidrConfig mConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         actionBar = getSupportActionBar();
         onStartCount = 1;
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            this.overridePendingTransition(R.animator.anim_slide_in_left,
+                    R.animator.anim_slide_out_left);
+        } else {
             onStartCount = 2;
         }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
     }
 
     protected void onStartOverridePendingTransition(){
@@ -123,18 +117,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 Utils.Log(TAG,"Nothing to do " +action.name());
             }
         }
-    }
-
-    protected void onDrawOverLay(Activity activity){
-        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(activity, mConfig);
     }
 
     protected void onFaceDown(final boolean isFaceDown){

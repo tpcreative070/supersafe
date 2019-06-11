@@ -10,11 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrListener;
-import com.r0adkll.slidr.model.SlidrPosition;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -23,12 +18,10 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.ThemeApp;
 
 public class HelperActivity extends BaseActivity {
     protected View view;
     private final int maxLines = 4;
-    private SlidrConfig mConfig;
     private final String[] permissions = new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
     protected void checkPermission() {
@@ -65,38 +58,6 @@ public class HelperActivity extends BaseActivity {
                     }
                 });
         snackbar.show();
-    }
-
-    protected void onDrawOverLay(Activity activity){
-        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .listener(new SlidrListener(){
-                    @Override
-                    public void onSlideStateChanged(int state) {
-
-                    }
-                    @Override
-                    public void onSlideChange(float percent) {
-
-                    }
-                    @Override
-                    public void onSlideOpened() {
-
-                    }
-                    @Override
-                    public boolean onSlideClosed() {
-                        Utils.Log(TAG,"Closed.....");
-                        EventBus.getDefault().post(EnumStatus.CLOSED);
-                        return false;
-                    }
-                })
-                .build();
-        Slidr.attach(activity, mConfig);
     }
 
     private void showAppPermissionSettings() {

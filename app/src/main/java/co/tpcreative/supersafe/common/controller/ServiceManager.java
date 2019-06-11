@@ -75,6 +75,7 @@ public class ServiceManager implements BaseServiceView {
     private List<ImportFiles> mListImport = new ArrayList<>();
     private List<ExportFiles> mListExport = new ArrayList<>();
     private List<Items> mListDownLoadFiles = new ArrayList<>();
+    private String mProgress;
     ServiceConnection myConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             Utils.Log(TAG, "connected");
@@ -119,6 +120,14 @@ public class ServiceManager implements BaseServiceView {
 
     public void setIsWaitingSendMail(boolean isWaitingSendMail) {
         this.isWaitingSendMail =  isWaitingSendMail;
+    }
+
+    public void setProgress(String mProgress) {
+        this.mProgress = mProgress;
+    }
+
+    public String getProgress() {
+        return mProgress;
     }
 
     public void setmListImport(List<ImportFiles> mListImport) {
@@ -1864,6 +1873,13 @@ public class ServiceManager implements BaseServiceView {
                         @Override
                         public void onComplete() {
                             Utils.Log(TAG, "Downloading completed............."+next);
+
+                            if (isExporting){
+                                GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.PROGRESS);
+                            }
+                            else{
+                                EventBus.getDefault().post(EnumStatus.PROGRESS);
+                            }
                             getObservableDownload(isExporting);
                         }
                         @Override

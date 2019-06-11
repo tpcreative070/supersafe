@@ -41,9 +41,6 @@ public abstract class BaseActivityNoneSlideFakePin extends AppCompatActivity imp
         super.onCreate(savedInstanceState);
         onStartCount = 1;
         storage = new Storage(this);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
     }
 
     @Override

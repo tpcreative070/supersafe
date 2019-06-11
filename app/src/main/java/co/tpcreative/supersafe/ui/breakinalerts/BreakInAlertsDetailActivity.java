@@ -33,7 +33,6 @@ public class BreakInAlertsDetailActivity extends BaseActivity{
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_break_in_alerts_detail);
-        onDrawOverLay(this);
         Bundle bundle = getIntent().getExtras();
         final BreakInAlerts inAlerts = (BreakInAlerts) bundle.get(getString(R.string.key_break_in_alert));
         if (inAlerts!=null){

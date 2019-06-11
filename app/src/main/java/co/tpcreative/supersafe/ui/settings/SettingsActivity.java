@@ -43,7 +43,6 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         activity = this;
-        onDrawOverLay(this);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -231,7 +230,7 @@ public class SettingsActivity extends BaseActivity {
                             Utils.Log(TAG,"Action here");
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
-                            if (User.getInstance().isPremiumExpired()){
+                            if (!User.getInstance().isPremium()){
                                 //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
@@ -239,7 +238,7 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onMoveThemeSettings(activity);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
-                            if (User.getInstance().isPremiumExpired()){
+                            if (!User.getInstance().isPremium()){
                                 //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
@@ -247,7 +246,7 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onMoveBreakInAlerts(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
-                            if (User.getInstance().isPremiumExpired()){
+                            if (!User.getInstance().isPremium()){
                                 //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
@@ -255,7 +254,7 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onMoveFakePin(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_secret_door))){
-                            if (User.getInstance().isPremiumExpired()){
+                            if (!User.getInstance().isPremium()){
                                 //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
@@ -285,7 +284,7 @@ public class SettingsActivity extends BaseActivity {
                             }
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
-                            if (User.getInstance().isPremiumExpired()){
+                            if (!User.getInstance().isPremium()){
                                 //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;

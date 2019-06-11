@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.common.activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.AppCompatActivity;
@@ -42,9 +41,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
             onStartCount = 2;
         }
         storage = new Storage(this);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
     }
 
     @Override
@@ -113,7 +109,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
                 return;
             }
         }
-
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
@@ -186,5 +181,4 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
             onStartCount++;
         }
     }
-
 }

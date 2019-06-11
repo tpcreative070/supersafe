@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.activity;
-
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.ActionBar;
@@ -20,7 +19,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 
-
 public abstract class BasePlayerActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
@@ -29,7 +27,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
     private HomeWatcher mHomeWatcher;
     public static final String TAG = BasePlayerActivity.class.getSimpleName();
     protected Storage storage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,26 +42,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         storage = new Storage(this);
     }
 
-    protected void onStartOverridePendingTransition(){
-        this.overridePendingTransition(R.animator.anim_slide_in_left,
-                R.animator.anim_slide_out_left);
-    }
-
-    public void onCallLockScreen(){
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action){
-            case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                break;
-            }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
-            }
-        }
-    }
-
     protected void onFaceDown(final boolean isFaceDown){
         if (isFaceDown){
             final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
@@ -72,10 +49,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
             }
         }
-    }
-
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
     }
 
     @Override
@@ -175,11 +148,9 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         mToast.show();
     }
 
-
     protected void setDisplayHomeAsUpEnabled(boolean check){
         actionBar.setDisplayHomeAsUpEnabled(check);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -214,8 +185,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
             }
         }
 
-
-
         if (onStartCount > 1) {
             this.overridePendingTransition(R.animator.anim_slide_in_right,
                     R.animator.anim_slide_out_right);
@@ -223,5 +192,4 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
             onStartCount++;
         }
     }
-
 }

@@ -29,7 +29,7 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
             .centerCrop()
             .override(200 ,200)
             .placeholder(R.color.material_gray_100)
-            .error(R.color.red_100)
+            .error(R.color.red_200)
             .priority(Priority.HIGH);
     private Context context;
     private ItemSelectedListener itemSelectedListener;

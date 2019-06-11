@@ -102,4 +102,5 @@ public enum EnumStatus {
         SECRET_USER,
         SECRET_PIN,
         REGISTER_OR_LOGIN,
+        PROGRESS
 }

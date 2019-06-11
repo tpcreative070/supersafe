@@ -1,10 +1,7 @@
 package co.tpcreative.supersafe.common.activity;
-
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.ActionBar;
@@ -12,11 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrPosition;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -41,7 +33,6 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
     private Toast mToast;
     private HomeWatcher mHomeWatcher;
     public static final String TAG = BaseGalleryActivity.class.getSimpleName();
-    private SlidrConfig mConfig;
     protected Storage storage;
     private MoveGalleryFragment fragment;
 
@@ -67,23 +58,7 @@ public abstract class BaseGalleryActivity extends AppCompatActivity implements  
             onStartCount = 2;
         }
         storage = new Storage(this);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
     }
-
-    protected void onDrawOverLay(Activity activity){
-        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .build();
-        Slidr.attach(activity, mConfig);
-    }
-
 
     @Override
     public Resources.Theme getTheme() {

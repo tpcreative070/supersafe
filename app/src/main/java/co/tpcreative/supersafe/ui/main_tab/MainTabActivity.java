@@ -103,7 +103,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
         initSpeedDial(true);
@@ -132,7 +131,7 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     onAnimationIcon(EnumStatus.DONE);
                 }
             });
-        }
+        };
     }
 
     private void showInterstitial() {
@@ -224,20 +223,12 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     };
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
         onCallLockScreen();
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action) {
-            case NONE: {
-                onSwitchToBasic();
-                break;
-            }
-        }
         GoogleDriveConnectionManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
         presenter.onGetUserInfo();
@@ -580,26 +571,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
 
     public MenuItem getMenuItem() {
         return menuItem;
-    }
-
-
-    public void onSwitchToBasic(){
-        final User mUser  = User.getInstance().getUserInfo();
-        boolean isPremium = User.getInstance().isPremium();
-        boolean isComplimentary = User.getInstance().isPremiumComplimentary();
-        if (User.getInstance().isPremiumExpired() && mUser.verified){
-            Utils.Log(TAG,"Switch to basic");
-            if (!PrefsController.getBoolean(getString(R.string.key_switch_to_basic),false)){
-                Navigator.onMoveToPremium(getContext());
-            }
-        }
-        else{
-            Utils.Log(TAG,"Premium!!!!!!");
-        }
-        Utils.Log(TAG,"is expired "+ User.getInstance().isPremiumExpired());
-        Utils.Log(TAG,"is premium "+ isPremium);
-        Utils.Log(TAG,"is complimentary "+ isComplimentary);
-        //Utils.Log(TAG,"User info "+ new Gson().toJson(User.getInstance().getUserInfo()));
     }
 
     @Override

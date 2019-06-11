@@ -6,21 +6,12 @@
     android:layout_height="match_parent"
     android:background="@color/material_gray_300"
     tools:context=".ui.premium.PremiumActivity">
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
@@ -29,15 +20,20 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        </android.support.design.widget.CollapsingToolbarLayout>>
     </android.support.design.widget.AppBarLayout>
-
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
@@ -68,11 +64,10 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="20dp"
                         android:gravity="center"
-                        android:text="@string/your_premium_expires_soon"
+                        android:text="@string/choose_your_plans"
                         android:textColor="@color/white"
                         android:textSize="@dimen/medium" />
                 </LinearLayout>
-
                 <LinearLayout
                     android:layout_marginTop="30dp"
                     android:layout_marginLeft="10dp"
@@ -80,21 +75,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
                     <TextView
-
                         android:id="@+id/tvPremiumLeft"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/your_complimentary_premium_remaining" />
-
                     <LinearLayout
                         android:layout_marginTop="20dp"
                         android:weightSum="3"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
                         <LinearLayout
                             android:id="@+id/llMonths"
                             android:layout_marginRight="5dp"
@@ -104,7 +95,6 @@
                             android:orientation="vertical"
                             android:layout_weight="1"
                             android:layout_width="0dp">
-
                             <TextView
                                 android:padding="10dp"
                                 android:gravity="center"
@@ -130,8 +120,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
-
-
                         <LinearLayout
                             android:id="@+id/llYears"
                             android:layout_marginRight="5dp"
@@ -141,7 +129,6 @@
                             android:orientation="vertical"
                             android:layout_weight="1"
                             android:layout_width="0dp">
-
                             <TextView
                                 android:padding="10dp"
                                 android:gravity="center"
@@ -159,7 +146,6 @@
                                 android:text="$9.99"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
-
                             <TextView
                                 android:text="@string/per_year"
                                 android:layout_gravity="center"
@@ -167,7 +153,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
-
                         <LinearLayout
                             android:id="@+id/llLifeTime"
                             android:layout_marginRight="5dp"
@@ -177,7 +162,6 @@
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="130dp">
-
                             <TextView
                                 android:padding="10dp"
                                 android:gravity="center"
@@ -197,9 +181,7 @@
                                 android:layout_height="match_parent"/>
                         </LinearLayout>
                     </LinearLayout>
-
                 </LinearLayout>
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -208,36 +190,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </RelativeLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/llOne"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="@string/what_if_i_do_not_want_premium"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/text_size_preference_item_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:textColor="?attr/preference_title"
-                        android:ellipsize="marquee"
-                        android:fadingEdge="horizontal" />
-                    <TextView
-                        android:text="@string/what_if_i_do_not_want_premium_detail"
-                        android:textSize="@dimen/text_size_preference_item_summary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@android:id/title"
-                        android:layout_alignStart="@android:id/title"
-                        android:textColor="?attr/preference_summary"/>
-                </LinearLayout>
-
                 <LinearLayout
                     android:id="@+id/llTwo"
                     android:layout_marginBottom="20dp"
@@ -265,49 +217,6 @@
                         android:layout_below="@android:id/title"
                         android:layout_alignStart="@android:id/title"
                         android:textColor="?attr/preference_summary"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:visibility="gone"
-                    android:id="@+id/llSwitchToBasic"
-                    android:layout_marginBottom="20dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:text="@string/switch_to_supersafe_basic"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="@dimen/text_size_preference_item_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:textColor="?attr/preference_title"
-                        android:ellipsize="marquee"
-                        android:fadingEdge="horizontal" />
-                    <TextView
-                        android:text="@string/switch_to_supersafe_basic_detail"
-                        android:textSize="@dimen/text_size_preference_item_summary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@android:id/title"
-                        android:layout_alignStart="@android:id/title"
-                        android:textColor="?attr/preference_summary"/>
-
-                    <Button
-                        android:paddingRight="7dp"
-                        android:paddingLeft="7dp"
-                        android:background="@drawable/bg_button_premium_rounded"
-                        android:id="@+id/btnSwitchToBasic"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:text="@string/switch_to_basic"
-                        android:layout_marginTop="20dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="45dp" />
-
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

@@ -75,7 +75,6 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         setContentView(R.layout.activity_trash);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         initRecycleView(getLayoutInflater());
         presenter = new TrashPresenter();
         presenter.bindView(this);
@@ -84,7 +83,7 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
 
 
     public void onUpdatedView(){
-        if (User.getInstance().isPremiumExpired()){
+        if (!User.getInstance().isPremium()){
             llUpgrade.setVisibility(View.VISIBLE);
             rlEmptyTrash.setVisibility(View.GONE);
             rlRecyclerView.setVisibility(View.GONE);

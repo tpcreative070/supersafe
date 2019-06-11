@@ -68,12 +68,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         presenter = new AlbumSettingsPresenter();
         presenter.bindView(this);
         presenter.getData(this);
-        onDrawOverLay(this);
-        //android O fix bug orientation
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

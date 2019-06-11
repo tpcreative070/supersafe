@@ -62,7 +62,6 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fake_pin_component);
         final Toolbar toolbar = findViewById(R.id.toolbar);

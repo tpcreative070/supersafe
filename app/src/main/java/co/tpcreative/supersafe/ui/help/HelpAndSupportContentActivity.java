@@ -59,7 +59,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         presenter = new HelpAndSupportPresenter();
         presenter.bindView(this);
         presenter.onGetDataIntent(this);

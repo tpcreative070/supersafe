@@ -51,7 +51,6 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
         final Toolbar toolbar = findViewById(R.id.toolbar);

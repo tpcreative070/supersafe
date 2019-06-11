@@ -51,7 +51,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         initRecycleView(getLayoutInflater());
         presenter = new ThemeSettingsPresenter();
         presenter.bindView(this);

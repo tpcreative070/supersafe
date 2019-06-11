@@ -47,7 +47,6 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         final Toolbar toolbar = findViewById(R.id.toolbar);

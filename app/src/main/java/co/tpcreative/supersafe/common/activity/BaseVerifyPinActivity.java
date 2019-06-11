@@ -3,7 +3,6 @@ import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -37,38 +36,32 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.ThemeApp;
+import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
-    int onStartCount = 0;
     private Toast mToast;
     public static final String TAG = BaseVerifyPinActivity.class.getSimpleName();
     protected Storage storage;
-
     /*Hidden camera*/
     private CameraPreview mCameraPreview;
     private CameraConfig mCachedCameraConfig;
+    int onStartCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         actionBar = getSupportActionBar();
-        onStartCount = 1;
-        if (savedInstanceState == null) {
-            this.overridePendingTransition(android.R.anim.fade_in,
-                    android.R.anim.fade_in);
-        } else {
-            onStartCount = 2;
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
         storage = new Storage(this);
         //Add the camera preview surface to the root of the activity view.
         mCameraPreview = addPreView();
+        if (savedInstanceState == null) {
+            Bungee.fade(this);
+        } else {
+            onStartCount = 2;
+        }
     }
-
 
     @Override
     public Resources.Theme getTheme() {
@@ -151,7 +144,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         mToast.show();
     }
 
-
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
@@ -175,15 +167,13 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
         if (onStartCount > 1) {
-            this.overridePendingTransition(android.R.anim.fade_in,
-                    android.R.anim.fade_out);
+            Bungee.fade(this);
         } else if (onStartCount == 1) {
             onStartCount++;
         }
     }
 
     /*Hidden camera*/
-
     /**
      * Add camera preview to the root of the activity layout.
      *
@@ -193,9 +183,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         //create fake camera view
         CameraPreview cameraSourceCameraPreview = new CameraPreview(this, this);
         cameraSourceCameraPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
         View view = ((ViewGroup) getWindow().getDecorView().getRootView()).getChildAt(0);
-
         if (view instanceof LinearLayout) {
             LinearLayout linearLayout = (LinearLayout) view;
 
@@ -218,7 +206,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         }
         return cameraSourceCameraPreview;
     }
-
 
     /**
      * Start the hidden camera. Make sure that you check for the runtime permissions before you start
@@ -244,7 +231,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
      * Call this method to capture the image using the camera you initialized. Don't forget to
      * initialize the camera using {@link #startCamera(CameraConfig)} before using this function.
      */
-
     protected void takePicture() {
         if (mCameraPreview != null) {
             if (mCameraPreview.isSafeToTakePictureInternal()) {
@@ -267,12 +253,9 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
 
     @Override
     public void onImageCapture(@NonNull File imageFile, @NonNull String pin) {
-
     }
 
     @Override
     public void onCameraError(int errorCode) {
-
     }
-
 }

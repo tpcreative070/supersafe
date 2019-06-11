@@ -75,7 +75,6 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         edtCode.addTextChangedListener(mTextWatcher);
         edtCode.setOnEditorActionListener(this);
         tvPremiumDescription.setText(getString(R.string.unlock_all_album_title));
-        onDrawOverLay(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

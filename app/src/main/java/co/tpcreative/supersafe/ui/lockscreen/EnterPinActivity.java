@@ -69,7 +69,6 @@ import me.grantland.widget.AutofitHelper;
 import spencerstudios.com.bungeelib.Bungee;
 
 public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>,Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener,SingletonScreenLock.SingletonScreenLockListener {
-
     public static final String TAG = EnterPinActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     public static final String EXTRA_SET_PIN = "SET_PIN";
@@ -452,7 +451,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                             }
                             default: {
                                 Navigator.onMoveToMainTab(this);
-                                Bungee.fade(this);
                                 presenter.onChangeStatus(EnumStatus.SET, EnumPinAction.DONE);
                                 break;
                             }
@@ -520,7 +518,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                                 default: {
                                     Utils.writePinToSharedPreferences(pin);
                                     Navigator.onMoveToMainTab(this);
-                                    Bungee.fade(this);
                                     presenter.onChangeStatus(EnumStatus.RESET, EnumPinAction.DONE);
                                     break;
                                 }
@@ -544,7 +541,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 if (mUser != null) {
                     PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
                     Navigator.onMoveToMainTab(EnterPinActivity.this);
-                    Bungee.fade(EnterPinActivity.this);
                     presenter.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE);
                 }
             }
@@ -766,7 +762,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         break;
                     }
                     case DONE: {
-                        onHideUI();
                         EventBus.getDefault().post(EnumStatus.UNLOCK);
                         Utils.onObserveData(100, new Listener() {
                             @Override
