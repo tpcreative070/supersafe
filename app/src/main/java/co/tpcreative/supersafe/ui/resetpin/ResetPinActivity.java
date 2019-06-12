@@ -112,8 +112,6 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        //onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
     }
 
     @Override

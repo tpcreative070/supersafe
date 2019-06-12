@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -21,12 +23,19 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.snatik.storage.Storage;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNone;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
@@ -40,9 +49,10 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
+import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity;
 import dmax.dialog.SpotsDialog;
 
-public class ShareFilesActivity extends BaseActivityNone implements GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class ShareFilesActivity extends BaseActivityNone{
     private static final String TAG = ShareFilesActivity.class.getSimpleName();
     final List<Integer> mListFile = new ArrayList<>();
     private AlertDialog dialog;
@@ -298,38 +308,47 @@ public class ShareFilesActivity extends BaseActivityNone implements GalleryCamer
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        GalleryCameraMediaManager.getInstance().setListener(this);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         Utils.onDeleteTemporaryFile();
     }
 
     @Override
-    public void onUpdatedView() {
-
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void onStartProgress() {
-
-    }
-
-    @Override
-    public void onStopProgress() {
-        try {
-            onStopProgressing();
-            onShowUI(View.VISIBLE);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
+                break;
+            }
+            case STOP_PROGRESS:{
+                try {
+                    onStopProgressing();
+                    onShowUI(View.VISIBLE);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+    };
 
     private void onStartProgressing(){
         try{
@@ -355,11 +374,6 @@ public class ShareFilesActivity extends BaseActivityNone implements GalleryCamer
         catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onCompletedDownload(EnumStatus status) {
-
     }
 
     private void onStopProgressing(){

@@ -102,5 +102,14 @@ public enum EnumStatus {
         SECRET_USER,
         SECRET_PIN,
         REGISTER_OR_LOGIN,
-        PROGRESS
+        PROGRESS,
+        PREMIUM,
+        SHOW_FLOATING_BUTTON,
+        HIDE_FLOATING_BUTTON,
+        DOWNLOAD_COMPLETED,
+        DOWNLOAD_FAILED,
+        DOWNLOADING,
+        UPDATEDUIView_DETAIL_ALBUM,
+        START_PROGRESS,
+        STOP_PROGRESS
 }

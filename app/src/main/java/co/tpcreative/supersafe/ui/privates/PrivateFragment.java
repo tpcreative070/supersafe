@@ -23,7 +23,6 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.dialog.DialogListener;
 import co.tpcreative.supersafe.common.dialog.DialogManager;
@@ -40,7 +39,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     private RecyclerView recyclerView;
     private PrivatePresenter presenter;
     private PrivateAdapter adapter;
-    private Storage storage;
     public boolean isClicked;
 
     public static PrivateFragment newInstance(int index) {
@@ -52,7 +50,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     }
 
     public PrivateFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -67,7 +64,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         recyclerView = view.findViewById(R.id.recyclerView);
         initRecycleView(inflater);
         SingletonPrivateFragment.getInstance().setListener(this);
-        storage = new Storage(SuperSafeApplication.getInstance());
         return view;
     }
 
@@ -194,6 +190,12 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop");
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
     }
@@ -208,7 +210,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(TAG, "visit :" + isVisibleToUser);
         if (isVisibleToUser) {
-            SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
+            EventBus.getDefault().post(EnumStatus.SHOW_FLOATING_BUTTON);
         }
     }
 

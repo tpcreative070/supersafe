@@ -20,6 +20,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
@@ -244,7 +247,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
             }
             case MOVE:{
                 dialog.dismiss();
-                GalleryCameraMediaManager.getInstance().onUpdatedView();
+                EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
                 if (mListener!=null){
                     mListener.onMoveAlbumSuccessful();
                 }

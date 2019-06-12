@@ -38,6 +38,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock;
@@ -66,7 +67,6 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import me.grantland.widget.AutofitHelper;
-import spencerstudios.com.bungeelib.Bungee;
 
 public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<EnumPinAction>,Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener,SingletonScreenLock.SingletonScreenLockListener {
     public static final String TAG = EnterPinActivity.class.getSimpleName();
@@ -238,6 +238,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         mCalc = new CalculatorImpl(this);
         AutofitHelper.create(mResult);
         AutofitHelper.create(mFormula);
+        Utils.Log(TAG,"onCreated->EnterPinActivity");
     }
 
     final PinLockListener pinLockListener = new PinLockListener() {
@@ -379,7 +380,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
 
     @OnClick(R.id.btnDone)
     public void onClickedDone() {
-        onBackPressed();
+       finish();
     }
 
     public void onDelete(View view) {
@@ -557,14 +558,26 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private void checkPin(String pin, boolean isCompleted) {
         switch (mPinAction) {
             case VERIFY: {
-                if (pin.equals(mRealPin)) {
-                    presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.DONE);
-                } else if (pin.equals(mFakePin) && isFakePinEnabled) {
-                    presenter.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE);
-                }else {
-                    if (isCompleted) {
-                        onTakePicture(pin);
-                        onAlertWarning("");
+              if (FakePinComponentActivity.isVisit){
+                    if (pin.equals(mFakePin) && isFakePinEnabled) {
+                        presenter.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE);
+                    }else{
+                        if (isCompleted) {
+                            onTakePicture(pin);
+                            onAlertWarning("");
+                        }
+                    }
+              }else {
+                    if (pin.equals(mRealPin)) {
+                        presenter.onChangeStatus(EnumStatus.VERIFY, EnumPinAction.DONE);
+                    } else if (pin.equals(mFakePin) && isFakePinEnabled) {
+                        presenter.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE);
+                    }
+                    else {
+                        if (isCompleted) {
+                            onTakePicture(pin);
+                            onAlertWarning("");
+                        }
                     }
                 }
                 break;
@@ -762,11 +775,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                         break;
                     }
                     case DONE: {
+                        /*Unlock for real pin*/
+                        SingletonBaseActivity.getInstance().setAnimation(false);
                         EventBus.getDefault().post(EnumStatus.UNLOCK);
                         Utils.onObserveData(100, new Listener() {
                             @Override
                             public void onStart() {
-                                onBackPressed();
+                                finish();
                             }
                         });
                         Utils.Log(TAG, "Action ...................done");
@@ -825,9 +840,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 break;
             }
             case FAKE_PIN: {
+                /*UnLock for fake pin*/
                 mPinAction = action;
                 switch (action) {
                     case DONE: {
+                        SingletonBaseActivity.getInstance().setAnimation(false);
                         Utils.onObserveData(100, new Listener() {
                             @Override
                             public void onStart() {
@@ -877,46 +894,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     }
                 }
                 super.onBackPressed();
-                break;
-            }
-            case CHANGE: {
-                super.onBackPressed();
-                break;
-            }
-            case DONE: {
-                super.onBackPressed();
-                Bungee.fade(this);
-                break;
-            }
-            case VERIFY_TO_CHANGE: {
-                super.onBackPressed();
-                break;
-            }
-            case RESET: {
-                break;
-            }
-            case SET: {
-                switch (mPinActionNext) {
-                    case SIGN_UP: {
-                        super.onBackPressed();
-                        break;
-                    }
-                    default: {
-                        break;
-                    }
-                }
-                break;
-            }
-            case FAKE_PIN: {
-                finish();
-                break;
-            }
-            case ATTEMPT:{
-                break;
-            }
-            default: {
-                super.onBackPressed();
-                Utils.Log(TAG,"onBackPressed");
                 break;
             }
         }

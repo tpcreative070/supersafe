@@ -35,7 +35,6 @@ import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -58,7 +57,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
@@ -83,7 +81,7 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 
-public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener{
 
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
@@ -129,17 +127,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_detail);
-
         storage = new Storage(this);
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         initSpeedDial(true);
-
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         onInit();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
         final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mainCategories.items_id);
@@ -202,7 +197,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
             }
         }
-        GalleryCameraMediaManager.getInstance().setListener(this);
         llBottom.setVisibility(View.GONE);
         /*Root Fragment*/
         attachFragment(R.id.gallery_root);
@@ -230,22 +224,78 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case UPDATEDUIView_DETAIL_ALBUM:{
+                try {
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            presenter.getData(EnumStatus.RELOAD);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+            case START_PROGRESS:{
+                onStartProgressing();
+                break;
+            }
+            case STOP_PROGRESS:{
+                try {
+                    Utils.Log(TAG,"onStopProgress");
+                    onStopProgressing();
+                    switch (presenter.status){
+                        case SHARE:{
+                            if (presenter.mListShare!=null){
+                                if (presenter.mListShare.size()>0){
+                                    Utils.shareMultiple(presenter.mListShare,this);
+                                }
+                            }
+                            break;
+                        }
+                        case EXPORT:{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(AlbumDetailActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e){
+                    Utils.Log(TAG,e.getMessage());
+                }
+                break;
+            }
+            case DOWNLOAD_COMPLETED:{
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        onClickedExport();
+                    }
+                });
+                Utils.Log(TAG, " already sync");
+                break;
+            }
+            case DOWNLOAD_FAILED:{
+                mDialogProgress.setTitleText("No connection, Try again")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                break;
+            }
+            case PROGRESS:{
+                break;
+            }
         }
     };
 
-    @Override
-    public void onUpdatedView() {
-        try {
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    presenter.getData(EnumStatus.RELOAD);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -253,7 +303,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        GalleryCameraMediaManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
     }
 
@@ -267,6 +316,17 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
         storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop Album");
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -421,43 +481,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @OnClick(R.id.imgMove)
     public void onClickedMove(View view){
         openAlbum();
-    }
-
-    /*Exporting....*/
-    @Override
-    public void onStartProgress() {
-        onStartProgressing();
-    }
-
-    /*Exporting*/
-    @Override
-    public void onStopProgress() {
-        try {
-                Utils.Log(TAG,"onStopProgress");
-                onStopProgressing();
-                switch (presenter.status){
-                    case SHARE:{
-                        if (presenter.mListShare!=null){
-                            if (presenter.mListShare.size()>0){
-                                Utils.shareMultiple(presenter.mListShare,this);
-                            }
-                        }
-                        break;
-                    }
-                    case EXPORT:{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(AlbumDetailActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        break;
-                    }
-                }
-        }
-        catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
-        }
     }
 
     private void onStartProgressing(){
@@ -691,7 +714,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         List<ExportFiles> mListExporting = new ArrayList<>();
                         switch (status){
                             case SHARE:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 for (int i = 0; i< presenter.mList.size();i++){
                                     Items index = presenter.mList.get(i);
@@ -760,7 +783,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 break;
                             }
                             case EXPORT:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
 
                                 for (int i = 0;i< presenter.mList.size();i++){
@@ -859,7 +882,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 else{
                     onDialogDownloadFile();
                     ServiceManager.getInstance().setListDownloadFile(presenter.mList);
-                    ServiceManager.getInstance().getObservableDownload(true);
+                    ServiceManager.getInstance().getObservableDownload();
                 }
             }
             else{
@@ -941,35 +964,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
             default: {
                 Utils.Log(TAG, "Nothing to do");
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void onCompletedDownload(EnumStatus status) {
-        switch (status){
-            case DONE:{
-                mDialogProgress.setTitleText("Success!")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        onClickedExport();
-                    }
-                });
-                Utils.Log(TAG, " already sync");
-                break;
-            }
-            case ERROR:{
-                mDialogProgress.setTitleText("No connection, Try again")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                break;
-            }
-            case PROGRESS:{
                 break;
             }
         }

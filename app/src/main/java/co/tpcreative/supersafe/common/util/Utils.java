@@ -42,6 +42,7 @@ import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
 import org.apache.commons.io.FilenameUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.solovyev.android.checkout.Purchase;
 import java.io.File;
 import java.io.FileWriter;
@@ -69,6 +70,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -81,11 +83,7 @@ public class Utils {
     // utility function
     final public static int COUNT_RATE = 9;
     final public static long START_TIMER = 5000;
-    final public static long SnackBar = 200;
-
     private  static  Storage storage = new Storage(SuperSafeApplication.getInstance());
-
-
     private static final String TAG = Utils.class.getSimpleName();
     private static String bytesToHexString(byte[] bytes) {
         // http://stackoverflow.com/questions/332079
@@ -692,6 +690,31 @@ public class Utils {
                     public void onError(Throwable e) {
                     }
                 });
+    }
+
+    public static void onHomePressed(){
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+        Utils.Log(TAG,"Pressed home button");
+        if (!EnterPinActivity.isVisible){
+            Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
+            EnterPinActivity.isVisible = true;
+            Utils.Log(TAG,"Verify pin");
+        }else{
+            Utils.Log(TAG,"Verify pin already");
+        }
+    }
+
+    public static boolean isLockedScreen(){
+        try {
+            int  value = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
+            EnumPinAction action = EnumPinAction.values()[value];
+            if (action==EnumPinAction.SCREEN_LOCK){
+                return true;
+            }
+            return false;
+        }catch (Exception e){
+            return false;
+        }
     }
 
 }

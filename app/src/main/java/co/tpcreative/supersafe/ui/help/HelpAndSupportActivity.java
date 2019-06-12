@@ -43,7 +43,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
         presenter.onGetList();
         addRecyclerHeaders();
         bindData();
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -63,7 +62,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportActivity.class.getSimpleName());
     }
 
     @Override
@@ -74,11 +72,14 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
-
-
 
     private void addRecyclerHeaders() {
         SectionHeaderProvider<HelpAndSupport> sh = new SimpleSectionHeaderProvider<HelpAndSupport>() {
@@ -96,7 +97,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
                 return history.getCategoryId() == nextHistory.getCategoryId();
             }
 
-            // Optional, whether the header is sticky, default false
             @Override
             public boolean isSticky() {
                 return false;

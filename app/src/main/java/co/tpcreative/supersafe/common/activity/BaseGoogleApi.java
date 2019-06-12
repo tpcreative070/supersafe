@@ -3,7 +3,6 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,10 +10,8 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.Toast;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -38,6 +35,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
@@ -47,24 +45,13 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
+import spencerstudios.com.bungeelib.Bungee;
 
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener{
-
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
-
-    /**
-     * Request code for Google Sign-in
-     */
     protected static final int REQUEST_CODE_SIGN_IN = 0;
-
     private GoogleSignInAccount mSignInAccount;
-
-    /*
-     * Handle GoogleSignInClient
-     *
-     * */
-
     private GoogleSignInClient mGoogleSignInClient;
     Unbinder unbinder;
     protected ActionBar actionBar ;
@@ -129,10 +116,10 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     }
 
     @Override
-    public void setContentView(@LayoutRes int layoutResID) {
+    public void setContentView(@LayoutRes int layoutResID){
         try {
             super.setContentView(layoutResID);
-            Log.d(TAG,"action here");
+            Utils.Log(TAG,"action here");
             unbinder = ButterKnife.bind(this);
         }
         catch (Exception e){
@@ -187,8 +174,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Utils.Log(TAG,"Pressed home button");
+                        Utils.onHomePressed();
+                        onStopListenerAWhile();
                         break;
                     }
                     default:{
@@ -252,13 +239,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 break;
             }
         }
-        if (onStartCount > 1) {
-            this.overridePendingTransition(R.animator.anim_slide_in_right,
-                    R.animator.anim_slide_out_right);
-            Utils.Log(TAG,"2");
-        } else if (onStartCount == 1) {
-            onStartCount++;
-        }
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null && GoogleSignIn.hasPermissions(account,Drive.SCOPE_FILE,Drive.SCOPE_APPFOLDER)) {
             getGoogleSignInClient(account.getAccount());
@@ -275,6 +255,17 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             }
         }
         Utils.Log(TAG,"onStart..........");
+        if (SingletonBaseActivity.getInstance().isAnimation()){
+            if (onStartCount > 1) {
+                this.overridePendingTransition(R.animator.anim_slide_in_right,
+                        R.animator.anim_slide_out_right);
+            } else if (onStartCount == 1) {
+                onStartCount++;
+            }
+        }else{
+            Bungee.zoom(this);
+            SingletonBaseActivity.getInstance().setAnimation(true);
+        }
     }
     /**
      * Handles resolution callbacks.
@@ -288,7 +279,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                     // Sign-in may fail or be cancelled by the user. For this sample, sign-in is
                     // required and is fatal. For apps where sign-in is optional, handle
                     // appropriately
-                    Log.e(TAG, "Sign-in failed.");
+                    Utils.Log(TAG, "Sign-in failed.");
                     Utils.onWriteLog("Sign-in failed on Google drive ?..",EnumStatus.SIGN_IN);
                     onDriveError();
                     return;
@@ -296,12 +287,12 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 Task<GoogleSignInAccount> getAccountTask =
                         GoogleSignIn.getSignedInAccountFromIntent(data);
                 if (getAccountTask.isSuccessful()) {
-                    Log.d(TAG, "sign in successful");
+                    Utils.Log(TAG, "sign in successful");
                     initializeDriveClient(getAccountTask.getResult());
                     onDriveSuccessful();
                 } else {
                     onDriveError();
-                    Log.e(TAG, "Sign-in failed..");
+                    Utils.Log(TAG, "Sign-in failed..");
                     Utils.onWriteLog("Sign-in failed on Google drive..",EnumStatus.SIGN_IN);
                 }
                 break;
@@ -310,7 +301,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     }
 
     protected void signIn(final String email) {
-        Log.d(TAG,"Sign in");
+        Utils.Log(TAG,"Sign in");
         Account account = new Account(email, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(account));
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
@@ -343,7 +334,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 }
                 GoogleAccountCredential credential = GoogleAccountCredential.usingOAuth2(
                         SuperSafeApplication.getInstance(), SuperSafeApplication.getInstance().getRequiredScopesString());
-                Log.d(TAG,"Account :"+ new Gson().toJson(accounts));
+                Utils.Log(TAG,"Account :"+ new Gson().toJson(accounts));
                 credential.setSelectedAccount(accounts[0]);
                 try {
                     String value = credential.getToken();
@@ -358,12 +349,12 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                     return value;
                 }
                 catch (GoogleAuthException e){
-                    Log.d(TAG,"Error occurred on GoogleAuthException");
+                    Utils.Log(TAG,"Error occurred on GoogleAuthException");
                 }
             } catch (UserRecoverableAuthIOException recoverableException) {
-                Log.d(TAG,"Error occurred on UserRecoverableAuthIOException");
+                Utils.Log(TAG,"Error occurred on UserRecoverableAuthIOException");
             } catch (IOException e) {
-                Log.d(TAG,"Error occurred on IOException");
+                Utils.Log(TAG,"Error occurred on IOException");
             }
             return null;
         }
@@ -403,26 +394,21 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                             public void onStartLoading(EnumStatus status) {
 
                             }
-
                             @Override
                             public void onStopLoading(EnumStatus status) {
 
                             }
-
                             @Override
                             public void onError(String message) {
 
                             }
-
                             @Override
                             public void onSuccessful(String message, EnumStatus status, Object object) {
                             }
-
                             @Override
                             public void onSuccessful(String message, EnumStatus status, List list) {
 
                             }
-
                             @Override
                             public Context getContext() {
                                 return getContext();
@@ -461,7 +447,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         }
     }
 
-
     /**
      * Continues the sign-in process, initializing the Drive clients with the current
      * user's account.
@@ -469,18 +454,10 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
 
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
         mSignInAccount = signInAccount;
-        Log.d(TAG,"Google client ready");
-        Log.d(TAG,"Account :"+ mSignInAccount.getAccount());
+        Utils.Log(TAG,"Google client ready");
+        Utils.Log(TAG,"Account :"+ mSignInAccount.getAccount());
         new GetAccessToken().execute(mSignInAccount.getAccount());
     }
-
-    /**
-     * Shows a toast message.
-     */
-    protected void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
     /**
      * Called after the user has signed in and the Drive client has been initialized.
      */
@@ -498,6 +475,8 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
     protected abstract boolean isSignIn();
 
     protected abstract void startServiceNow();
+
+    protected abstract void onStopListenerAWhile();
 
     protected void signOut() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {
@@ -536,7 +515,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         if (mGoogleSignInClient==null){
             return;
         }
-        Log.d(TAG,"onRevokeAccess");
+        Utils.Log(TAG,"onRevokeAccess");
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
                 new OnCompleteListener<Void>() {
                     @Override
@@ -553,5 +532,4 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             revokeAccess();
         }
     }
-
 }

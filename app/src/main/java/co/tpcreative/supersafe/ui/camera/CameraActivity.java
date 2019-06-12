@@ -108,14 +108,12 @@ public class CameraActivity extends BaseActivity implements
         btnDone.setOnClickListener(mOnClickListener);
         btnFlash.setOnClickListener(mOnClickListener);
         btnSwitch.setOnClickListener(mOnClickListener);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-
         try {
             Bundle bundle = getIntent().getExtras();
             mainCategories = (MainCategories) bundle.get(getString(R.string.key_main_categories));
@@ -123,7 +121,6 @@ public class CameraActivity extends BaseActivity implements
         catch (Exception e){
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
         }
-
     }
 
     @OnClick(R.id.btnAutoFocus)
@@ -165,13 +162,17 @@ public class CameraActivity extends BaseActivity implements
         }
         GalleryCameraMediaManager.getInstance().setProgressing(false);
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(CameraActivity.class.getSimpleName());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

@@ -11,14 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -27,7 +28,7 @@ import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 
-public class MeFragment extends BaseFragment implements BaseView,SingletonPremiumTimer.SingletonPremiumTimerListener{
+public class MeFragment extends BaseFragment implements BaseView{
 
     private static final String TAG = MeFragment.class.getSimpleName();
     @BindView(R.id.nsv)
@@ -129,18 +130,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
         }
-        else if (User.getInstance().isPremiumComplimentary()){
-            String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-            if (dayLeft!=null){
-                String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
-                tvPremiumLeft.setText(Html.fromHtml(sourceString));
-            }
-            if (presenter.mUser.driveConnected){
-                tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
-            } else {
-                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
-            }
-        }
         else{
             if (presenter.mUser.driveConnected) {
                 String value;
@@ -157,29 +146,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             }
             String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
             tvPremiumLeft.setText(Html.fromHtml(sourceString));
-        }
-    }
-
-    @Override
-    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
-        try {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final boolean isPremium = User.getInstance().isPremium();
-                    if (isPremium){
-                        tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
-                    }
-                    else{
-                        String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
-                        tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                    }
-                }
-            });
-        }
-        catch (Exception e){
-            SingletonPremiumTimer.getInstance().onStop();
-            e.printStackTrace();
         }
     }
 
@@ -206,15 +172,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         super.setUserVisibleHint(isVisibleToUser);
         Utils.Log(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
-            SingletonManagerTab.getInstance().setVisetFloatingButton(View.INVISIBLE);
-            final boolean isPremium = User.getInstance().isPremium();
-            if (!isPremium){
-                SingletonPremiumTimer.getInstance().setListener(this);
-            }
+            EventBus.getDefault().post(EnumStatus.HIDE_FLOATING_BUTTON);
             onUpdatedView();
-        }
-        else{
-            SingletonPremiumTimer.getInstance().setListener(null);
         }
     }
 

@@ -194,6 +194,11 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }

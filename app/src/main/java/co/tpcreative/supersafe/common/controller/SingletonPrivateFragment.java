@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.controller;
-import co.tpcreative.supersafe.model.EnumStatus;
+
+import co.tpcreative.supersafe.common.util.Utils;
 
 public class SingletonPrivateFragment {
 
@@ -18,20 +19,15 @@ public class SingletonPrivateFragment {
     }
 
     public void onUpdateView(){
+        if (Utils.isLockedScreen()){
+            return;
+        }
         if (ls!=null){
             ls.onUpdateView();
         }
     }
 
-//    public void onPremiumTimer(int days,int months,int minutes,int seconds){
-//        if (ls!=null){
-//            ls.onPremiumTimer(days,months,minutes,seconds);
-//        }
-//    }
-
     public interface SingletonPrivateFragmentListener{
         void onUpdateView();
-        //void onPremiumTimer(int days,int months,int minutes,int seconds);
     }
-
 }

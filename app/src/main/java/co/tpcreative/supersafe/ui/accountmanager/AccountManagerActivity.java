@@ -27,16 +27,13 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AppLists;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity;
 
-public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,SingletonPremiumTimer.SingletonPremiumTimerListener,AccountManagerAdapter.ItemSelectedListener{
+public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,AccountManagerAdapter.ItemSelectedListener{
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
     @BindView(R.id.tvEmail)
@@ -79,7 +76,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
     }
 
     public void onUpdatedView(){
-
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
             tvEmail.setText(mUser.email);
@@ -92,7 +88,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 tvStatusAccount.setText(getString(R.string.unverified));
             }
         }
-
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
@@ -103,19 +98,9 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         else{
             rlPremium.setVisibility(View.GONE);
             rlPremiumComplimentary.setVisibility(View.VISIBLE);
-            if (User.getInstance().isPremiumComplimentary()){
-                tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
-                tvLicenseStatus.setText(getString(R.string.premium));
-                if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-                    String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
-                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                }
-            }
-            else{
-                tvLicenseStatus.setText(getString(R.string.free));
-                String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
-                tvPremiumLeft.setText(Html.fromHtml(sourceString));
-            }
+            tvLicenseStatus.setText(getString(R.string.free));
+            String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
+            tvPremiumLeft.setText(Html.fromHtml(sourceString));
         }
     }
 
@@ -165,11 +150,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
-        final boolean isPremium = User.getInstance().isPremium();
-        if (!isPremium){
-            SingletonPremiumTimer.getInstance().setListener(this);
-        }
     }
 
     @Override
@@ -178,28 +158,16 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
-        SingletonPremiumTimer.getInstance().setListener(null);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
-    }
-
-    @Override
-    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
-        try {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
-                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                }
-            });
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     @OnClick(R.id.btnUpgrade)

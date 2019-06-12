@@ -76,6 +76,10 @@ public class SwitchBasicActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

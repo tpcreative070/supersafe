@@ -75,7 +75,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(EnableCloudActivity.class.getSimpleName());
     }
 
     @Override
@@ -84,6 +83,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

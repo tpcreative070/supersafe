@@ -3,10 +3,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -37,8 +37,6 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
-import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -46,7 +44,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
-public class PremiumActivity extends BaseActivity implements SingletonPremiumTimer.SingletonPremiumTimerListener,BaseView{
+public class PremiumActivity extends BaseActivity implements BaseView{
 
     private static final String TAG = PremiumActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -64,8 +62,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     TextView tvTitle;
     @BindView(R.id.llTwo)
     LinearLayout llTwo;
-    @BindView(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout collapsing_toolbar;
     /*In app purchase*/
     private ActivityCheckout mCheckout;
     private ActivityCheckout mCheckoutLifeTime;
@@ -95,7 +91,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
         transaction.commit();
-
         /*Init In app purchase*/
         onStartInAppPurchase();
         onUpdatedView();
@@ -119,22 +114,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    @Override
-    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
-        try {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
-                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                }
-            });
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     @OnClick(R.id.llMonths)
@@ -212,6 +191,10 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case PREMIUM:{
+                scrollView.smoothScrollTo(0,0);
+                break;
+            }
         }
     };
 
@@ -222,10 +205,6 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        final boolean isPremium = User.getInstance().isPremium();
-        if (!isPremium){
-            SingletonPremiumTimer.getInstance().setListener(this);
-        }
     }
 
     @Override
@@ -241,14 +220,17 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         if (mCheckoutLifeTime!=null){
             mCheckoutLifeTime.stop();
         }
-        SingletonPremiumTimer.getInstance().setListener(null);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
-
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
@@ -258,6 +240,7 @@ public class PremiumActivity extends BaseActivity implements SingletonPremiumTim
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.pref_general_premium);
+            EventBus.getDefault().post(EnumStatus.PREMIUM);
         }
     }
 

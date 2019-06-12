@@ -3,7 +3,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -303,10 +302,16 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ServiceManager.getInstance().onDismissServices();
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
         isVisit = false;
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

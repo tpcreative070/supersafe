@@ -129,6 +129,10 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

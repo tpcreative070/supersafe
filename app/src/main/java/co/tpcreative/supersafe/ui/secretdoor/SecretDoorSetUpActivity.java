@@ -155,6 +155,11 @@ public class SecretDoorSetUpActivity extends BaseActivity implements Calculator 
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
 
     }

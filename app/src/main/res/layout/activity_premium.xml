@@ -6,12 +6,19 @@
     android:layout_height="match_parent"
     android:background="@color/material_gray_300"
     tools:context=".ui.premium.PremiumActivity">
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
@@ -20,14 +27,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-        </android.support.design.widget.CollapsingToolbarLayout>>
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
@@ -48,14 +48,12 @@
                     android:layout_height="wrap_content"
                     android:background="?attr/colorPrimary"
                     android:orientation="vertical">
-
                     <ImageView
                         android:tint="?attr/colorAccent"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_premium_icon" />
-
                     <TextView
                         android:textStyle="bold"
                         android:id="@+id/tvTitle"
@@ -86,6 +84,7 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <LinearLayout
                             android:id="@+id/llMonths"
                             android:layout_marginRight="5dp"
@@ -112,7 +111,6 @@
                                 android:text="$9.99"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
-
                             <TextView
                                 android:text="@string/per_month"
                                 android:layout_gravity="center"
@@ -162,6 +160,7 @@
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="130dp">
+
                             <TextView
                                 android:padding="10dp"
                                 android:gravity="center"

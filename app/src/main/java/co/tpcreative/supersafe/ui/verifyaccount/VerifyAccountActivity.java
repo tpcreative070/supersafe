@@ -152,6 +152,10 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         presenter.unbindView();
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

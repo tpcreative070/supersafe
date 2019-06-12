@@ -21,7 +21,6 @@ import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -41,7 +40,6 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -152,31 +150,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             return;
         }
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            final boolean isPremiumComplimentary  = User.getInstance().isPremiumComplimentary();
-            if (!isPremiumComplimentary){
-                return;
-            }
-            final User mUser = User.getInstance().getUserInfo();
-            if (mUser!=null){
-                final Premium premium = mUser.premium;
-                if (mUser.premium!=null){
-                    if (mUser.premium.status){
-                        long currentDatetime = System.currentTimeMillis();
-                        long device_milliseconds = premium.device_milliseconds;
-                        if (device_milliseconds>0){
-                            long result  = currentDatetime - device_milliseconds;
-                            mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                            Utils.Log(TAG,"onStartTimer");
-                            SingletonPremiumTimer.getInstance().onStartTimer();
-                            Utils.Log(TAG,"onGetUserInfo 3");
-                        }
-                        Utils.Log(TAG,"onGetUserInfo 4");
-                    }
-                    Utils.Log(TAG,"onGetUserInfo 5");
-                }
-                Utils.Log(TAG,"onGetUserInfo 6");
-            }
             return;
         }
         Utils.Log(TAG,"onGetUserInfo 2");
@@ -1668,7 +1641,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "Nothing to do");
                         view.onError("Null", EnumStatus.SEND_EMAIL);
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -1,6 +1,4 @@
 package co.tpcreative.supersafe.common.activity;
-import android.app.Activity;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -22,13 +20,14 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
-
+import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
 
@@ -134,12 +133,13 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
             public void onHomePressed() {
+                Utils.Log(TAG,"HomePressed");
                 int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Utils.Log(TAG,"Pressed home button");
+                        Utils.onHomePressed();
+                        onStopListenerAWhile();
                         break;
                     }
                     default:{
@@ -156,7 +156,6 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
         });
         mHomeWatcher.startWatch();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -209,12 +208,17 @@ public abstract class BaseActivity extends AppCompatActivity implements  SensorF
                 break;
             }
         }
-        if (onStartCount > 1) {
-            this.overridePendingTransition(R.animator.anim_slide_in_right,
-                    R.animator.anim_slide_out_right);
-        } else if (onStartCount == 1) {
-            onStartCount++;
+        if (SingletonBaseActivity.getInstance().isAnimation()){
+            if (onStartCount > 1) {
+                this.overridePendingTransition(R.animator.anim_slide_in_right,
+                        R.animator.anim_slide_out_right);
+            } else if (onStartCount == 1) {
+                onStartCount++;
+            }
+        }else{
+            Bungee.zoom(this);
+            SingletonBaseActivity.getInstance().setAnimation(true);
         }
     }
-
+    protected abstract void onStopListenerAWhile();
 }

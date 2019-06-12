@@ -91,6 +91,11 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
 
     }

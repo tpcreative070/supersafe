@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.activity;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -7,7 +6,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -100,5 +98,4 @@ public abstract class BaseActivityNone extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
     }
-
 }

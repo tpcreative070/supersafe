@@ -111,6 +111,10 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         presenter.unbindView();
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

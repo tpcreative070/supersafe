@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.common.controller;
 
+import co.tpcreative.supersafe.common.util.Utils;
+
 public class SingletonFakePinComponent {
 
     private static SingletonFakePinComponent instance;
@@ -17,6 +19,9 @@ public class SingletonFakePinComponent {
     }
 
     public void onUpdateView(){
+        if (Utils.isLockedScreen()){
+            return;
+        }
         if (ls!=null){
             ls.onUpdateView();
         }

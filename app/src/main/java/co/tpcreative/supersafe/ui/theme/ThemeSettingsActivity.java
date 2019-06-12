@@ -90,6 +90,11 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }

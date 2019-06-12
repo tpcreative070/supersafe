@@ -106,6 +106,11 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }

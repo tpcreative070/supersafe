@@ -106,12 +106,12 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
 
     public void onUpdatedView() {
-        if (User.getInstance().isPremiumExpired()) {
-            llPremium.setVisibility(View.VISIBLE);
-            llTitle.setVisibility(View.GONE);
-        } else {
+        if (User.getInstance().isPremium()) {
             llPremium.setVisibility(View.GONE);
             llTitle.setVisibility(View.VISIBLE);
+        } else {
+            llPremium.setVisibility(View.VISIBLE);
+            llTitle.setVisibility(View.GONE);
         }
     }
 
@@ -215,12 +215,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_refresh: {
-                final boolean isExpired = User.getInstance().isPremiumExpired();
-                if (isExpired) {
-                    if (!User.getInstance().isCheckAllowUpload()){
-                        break;
-                    }
-                }
                 presenter.onGetDriveAbout();
                 isRefresh = true;
                 break;
@@ -445,6 +439,11 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             ServiceManager.getInstance().onGetListCategoriesSync();
         }
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

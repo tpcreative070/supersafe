@@ -10,6 +10,9 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -30,8 +33,11 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
+    protected void onStopListenerAWhile() {
+    }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
     }
 
     public void onAddPermission() {

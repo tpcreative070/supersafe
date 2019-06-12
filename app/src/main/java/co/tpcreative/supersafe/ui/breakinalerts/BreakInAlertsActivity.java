@@ -98,6 +98,11 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }

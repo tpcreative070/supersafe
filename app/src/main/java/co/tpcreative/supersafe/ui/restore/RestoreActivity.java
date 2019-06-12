@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -217,6 +220,10 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
         if (subscriptions!=null){
             subscriptions.dispose();
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
     }
 
     /*Detecting textWatch*/

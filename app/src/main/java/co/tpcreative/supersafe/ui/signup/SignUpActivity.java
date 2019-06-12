@@ -90,6 +90,11 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
 
     }

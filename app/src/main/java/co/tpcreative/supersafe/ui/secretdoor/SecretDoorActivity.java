@@ -107,13 +107,17 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
             tvOptionItems.setText(getString(R.string.virus_scanner));
             imgIcons.setImageResource(R.drawable.baseline_donut_large_white_48);
         }
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
@@ -47,6 +50,10 @@ public class DashBoardActivity extends BaseActivityNoneSlide {
         if (mUser!=null){
             onShowRestore();
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
     }
 
     @Override

@@ -106,6 +106,11 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
@@ -299,13 +304,10 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     }
                 }
             });
-
-
             if(FakePinComponentActivity.isVisit){
                 mLockAlbum.setVisible(false);
                 mAlbumCover.setVisible(false);
             }
-
         }
 
         @Override

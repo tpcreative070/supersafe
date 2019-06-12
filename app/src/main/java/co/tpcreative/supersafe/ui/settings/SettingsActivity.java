@@ -114,6 +114,11 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
@@ -230,32 +235,44 @@ public class SettingsActivity extends BaseActivity {
                             Utils.Log(TAG,"Action here");
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveThemeSettings(activity);
+                                return true;
+                            }
                             if (!User.getInstance().isPremium()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveThemeSettings(activity);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveBreakInAlerts(getContext());
+                                return true;
+                            }
                             if (!User.getInstance().isPremium()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveBreakInAlerts(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveFakePin(getContext());
+                                return true;
+                            }
                             if (!User.getInstance().isPremium()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveFakePin(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_secret_door))){
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveSecretDoor(getContext());
+                                return true;
+                            }
                             if (!User.getInstance().isPremium()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
                             }
@@ -284,8 +301,11 @@ public class SettingsActivity extends BaseActivity {
                             }
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveUnlockAllAlbums(getContext());
+                                return true;
+                            }
                             if (!User.getInstance().isPremium()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
                                 onShowPremium();
                                 return true;
                             }

@@ -37,9 +37,7 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
-
 public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
-
     private static final String TAG = TrashActivity.class.getSimpleName();
     @BindView(R.id.tv_Audios)
     TextView tv_Audios;
@@ -81,15 +79,12 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         presenter.getData(this);
     }
 
-
     public void onUpdatedView(){
         if (!User.getInstance().isPremium()){
             llUpgrade.setVisibility(View.VISIBLE);
-            rlEmptyTrash.setVisibility(View.GONE);
             rlRecyclerView.setVisibility(View.GONE);
         }
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -118,6 +113,11 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -298,19 +298,14 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
-
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
-
                 String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
                 tv_Videos.setText(videos);
-
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
                 adapter.setDataSource(presenter.mList);
                 break;
             }
@@ -320,7 +315,6 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
                 }
                 presenter.getData(this);
                 btnTrash.setText(getString(R.string.key_empty_trash));
-
                 SingletonPrivateFragment.getInstance().onUpdateView();
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
                 break;

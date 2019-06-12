@@ -83,6 +83,11 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }

@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.activity;
 import android.Manifest;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
 import co.tpcreative.supersafe.common.hiddencamera.CameraCallbacks;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -41,7 +41,6 @@ import spencerstudios.com.bungeelib.Bungee;
 public abstract class BaseVerifyPinActivity extends AppCompatActivity implements CameraCallbacks,SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
-    private Toast mToast;
     public static final String TAG = BaseVerifyPinActivity.class.getSimpleName();
     protected Storage storage;
     /*Hidden camera*/
@@ -136,14 +135,6 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         System.gc();
     }
 
-    protected void showToast(String text) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-        mToast.show();
-    }
-
     protected void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
@@ -166,10 +157,15 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (onStartCount > 1) {
-            Bungee.fade(this);
-        } else if (onStartCount == 1) {
-            onStartCount++;
+        if (SingletonBaseActivity.getInstance().isAnimation()){
+            if (onStartCount > 1) {
+                Bungee.fade(this);
+            } else if (onStartCount == 1) {
+                onStartCount++;
+            }
+        }else{
+            Bungee.zoom(this);
+            SingletonBaseActivity.getInstance().setAnimation(true);
         }
     }
 
@@ -186,19 +182,16 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
         View view = ((ViewGroup) getWindow().getDecorView().getRootView()).getChildAt(0);
         if (view instanceof LinearLayout) {
             LinearLayout linearLayout = (LinearLayout) view;
-
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(1, 1);
             linearLayout.addView(cameraSourceCameraPreview, params);
         } else if (view instanceof RelativeLayout) {
             RelativeLayout relativeLayout = (RelativeLayout) view;
-
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(1, 1);
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             relativeLayout.addView(cameraSourceCameraPreview, params);
         } else if (view instanceof FrameLayout) {
             FrameLayout frameLayout = (FrameLayout) view;
-
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(1, 1);
             frameLayout.addView(cameraSourceCameraPreview, params);
         } else {

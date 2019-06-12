@@ -65,7 +65,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.OnClickListener ,BaseView,GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.OnClickListener ,BaseView{
 
     private static final String TAG = PhotoSlideShowActivity.class.getSimpleName();
     private RequestOptions options = new RequestOptions()
@@ -142,7 +142,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         imgRotate.setOnClickListener(this);
         imgShare.setOnClickListener(this);
         imgMove.setOnClickListener(this);
-        GalleryCameraMediaManager.getInstance().setListener(this);
         attachFragment(R.id.gallery_root);
         /*Auto slide*/
         handler = new Handler();
@@ -186,6 +185,59 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case START_PROGRESS:{
+                onStartProgressing();
+                break;
+            }
+            case STOP_PROGRESS:{
+                try {
+                    Utils.Log(TAG,"onStopProgress");
+                    onStopProgressing();
+                    switch (presenter.status){
+                        case SHARE:{
+                            if (presenter.mListShare!=null){
+                                if (presenter.mListShare.size()>0){
+                                    Utils.shareMultiple(presenter.mListShare,this);
+                                }
+                            }
+                            break;
+                        }
+                        case EXPORT:{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(PhotoSlideShowActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e){
+                    Utils.Log(TAG,e.getMessage());
+                }
+                break;
+            }
+            case DOWNLOAD_COMPLETED:{
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        onShowDialog(EnumStatus.EXPORT,position);
+                    }
+                });
+                Utils.Log(TAG, " already sync");
+                break;
+            }
+            case DOWNLOAD_FAILED:{
+                mDialogProgress.setTitleText("No connection, Try again")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                break;
+            }
         }
     };
 
@@ -215,6 +267,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -496,7 +553,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     items.isChecked = true;
                     list.add(items);
                     ServiceManager.getInstance().setListDownloadFile(list);
-                    ServiceManager.getInstance().getObservableDownload(true);
+                    ServiceManager.getInstance().getObservableDownload();
                 }
             }
             else{
@@ -573,7 +630,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                         List<ExportFiles> mListExporting = new ArrayList<>();
                         switch (status){
                             case SHARE:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 final Items index = presenter.mList.get(position);
                                     if (index!=null){
@@ -640,7 +697,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                 break;
                             }
                             case EXPORT:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 final Items index = presenter.mList.get(position);
                                 if (index!=null){
@@ -717,49 +774,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     /*Gallery interface*/
-
-    @Override
-    public void onUpdatedView() {
-
-    }
-
-    /*Exporting....*/
-    @Override
-    public void onStartProgress() {
-        onStartProgressing();
-    }
-
-    /*Exporting*/
-    @Override
-    public void onStopProgress() {
-        try {
-                Utils.Log(TAG,"onStopProgress");
-                onStopProgressing();
-                switch (presenter.status){
-                    case SHARE:{
-                        if (presenter.mListShare!=null){
-                            if (presenter.mListShare.size()>0){
-                                Utils.shareMultiple(presenter.mListShare,this);
-                            }
-                        }
-                        break;
-                    }
-                    case EXPORT:{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(PhotoSlideShowActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        break;
-                    }
-                }
-        }
-        catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
-        }
-    }
-
     private void onStartProgressing(){
         try{
             runOnUiThread(new Runnable() {
@@ -858,33 +872,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         });
         popup.show();
     }
-
-    @Override
-    public void onCompletedDownload(EnumStatus status) {
-        switch (status){
-            case DONE:{
-                mDialogProgress.setTitleText("Success!")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        onShowDialog(EnumStatus.EXPORT,position);
-                    }
-                });
-                Utils.Log(TAG, " already sync");
-                break;
-            }
-            case ERROR:{
-                mDialogProgress.setTitleText("No connection, Try again")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                break;
-            }
-        }
-    }
-
 
     /*ViewPresenter*/
 

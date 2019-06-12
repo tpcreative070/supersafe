@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
@@ -51,12 +49,9 @@ import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
-import co.tpcreative.supersafe.common.controller.GoogleDriveConnectionManager;
 import co.tpcreative.supersafe.common.controller.PremiumManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -65,7 +60,6 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.AnimationsContainer;
 import co.tpcreative.supersafe.model.Categories;
-import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.model.Image;
@@ -78,7 +72,7 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import spencerstudios.com.bungeelib.Bungee;
 
-public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTab.SingleTonResponseListener,BaseView, GoogleDriveConnectionManager.GoogleDriveConnectionManagerListener{
+public class MainTabActivity extends BaseGoogleApi implements BaseView{
     private static final String TAG = MainTabActivity.class.getSimpleName();
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
@@ -97,7 +91,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
     AnimationsContainer.FramesSequenceAnimation animation;
     private MenuItem menuItem;
     private EnumStatus previousStatus;
-    public static boolean isVisit ;
     private InterstitialAd mInterstitialAd;
     private int  mCountToRate = 0;
 
@@ -111,7 +104,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24);
         ab.setDisplayHomeAsUpEnabled(true);
-        SingletonManagerTab.getInstance().setListener(this);
         setupViewPager(viewPager);
         tabLayout.setupWithViewPager(viewPager);
         PrefsController.putBoolean(getString(R.string.key_running),true);
@@ -120,7 +112,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         presenter.onGetUserInfo();
         onShowSuggestion();
         PremiumManager.getInstance().onStartInAppPurchase();
-        SingletonPremiumTimer.getInstance().onStartTimer();
         if (presenter.mUser.driveConnected){
             if (NetworkUtil.pingIpAddress(this)) {
                 return;
@@ -183,30 +174,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             case UNLOCK:{
                 rlOverLay.setVisibility(View.INVISIBLE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                /*
-                if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.freedevelop))) {
-                    mInterstitialAd = new InterstitialAd(this);
-                    mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen_test));
-                    mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                    mInterstitialAd.setAdListener(new AdListener() {
-                        public void onAdLoaded() {
-                            showInterstitial();
-                        }
-                    });
-                }
-                else if (BuildConfig.BUILD_TYPE.equals(getResources().getString(R.string.release))) {
-                    if (User.getInstance().isPremiumExpired()){
-                        mInterstitialAd = new InterstitialAd(this);
-                        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
-                        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                        mInterstitialAd.setAdListener(new AdListener() {
-                            public void onAdLoaded() {
-                                showInterstitial();
-                            }
-                        });
-                    }
-                }
-                */
                 break;
             }
             case FINISH:{
@@ -219,6 +186,78 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                 }
                 break;
             }
+            case DOWNLOAD:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.Log(TAG,"sync value "+ event.name());
+                        onAnimationIcon(event);
+                    }
+                });
+                break;
+            }
+            case UPLOAD:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.Log(TAG,"sync value "+ event.name());
+                        onAnimationIcon(event);
+                    }
+                });
+                break;
+            }
+            case DONE:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.Log(TAG,"sync value "+ event.name());
+                        onAnimationIcon(event);
+                    }
+                });
+                break;
+            }
+            case SYNC_ERROR:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.Log(TAG,"sync value "+ event.name());
+                        onAnimationIcon(event);
+                    }
+                });
+                break;
+            }
+            case REQUEST_ACCESS_TOKEN:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Utils.Log(TAG,"Request token");
+                        getAccessToken();
+                    }
+                });
+                break;
+            }
+            case SHOW_FLOATING_BUTTON:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSpeedDialView.show();
+                    }
+                });
+                break;
+            }
+            case HIDE_FLOATING_BUTTON:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSpeedDialView.hide();
+                    }
+                });
+                break;
+            }
+            case CONNECTED:{
+                getAccessToken();
+                break;
+            }
         }
     };
 
@@ -229,10 +268,8 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
             EventBus.getDefault().register(this);
         }
         onCallLockScreen();
-        GoogleDriveConnectionManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
         presenter.onGetUserInfo();
-        isVisit = true;
         Utils.Log(TAG,"onResume");
     }
 
@@ -242,44 +279,13 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         Utils.Log(TAG,"OnDestroy");
         Utils.onUpdatedCountRate();
         EventBus.getDefault().unregister(this);
-        isVisit = false;
         PrefsController.putBoolean(getString(R.string.second_loads),true);
+        ServiceManager.getInstance().onDismissServices();
     }
 
     @Override
-    public void onAction(EnumStatus enumStatus) {
-        try {
-            switch (enumStatus){
-                default:{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Utils.Log(TAG,"sync value "+ enumStatus.name());
-                            onAnimationIcon(enumStatus);
-                        }
-                    });
-                    break;
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onSyncDone() {
-        SingletonPrivateFragment.getInstance().onUpdateView();
-    }
-
-    @Override
-    public void onRequestAccessToken() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Utils.Log(TAG,"Request token");
-                getAccessToken();
-            }
-        });
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -317,23 +323,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         viewPager.setOffscreenPageLimit(3);
         adapter = new MainViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
-    }
-
-    @Override
-    public void visitFloatingButton(int isVisit) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Utils.Log(TAG,"Visited !!! "+ isVisit);
-                //mSpeedDialView.setVisibility(isVisit);
-                if (isVisit==0){
-                    mSpeedDialView.show();
-                }
-                else{
-                    mSpeedDialView.hide();
-                }
-            }
-        });
     }
 
     private void initSpeedDial(boolean addActionItems) {
@@ -589,7 +578,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
         if (mSpeedDialView.isOpen()){
             mSpeedDialView.close();
         }else {
-            ServiceManager.getInstance().onDismissServices();
             PremiumManager.getInstance().onStop();
             Utils.onDeleteTemporaryFile();
             Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), new ServiceManager.ServiceManagerSyncDataListener() {
@@ -627,16 +615,6 @@ public class MainTabActivity extends BaseGoogleApi implements SingletonManagerTa
                     super.onBackPressed();
                 }
             }
-        }
-    }
-
-    /*GoogleDriveConnectionManagerListener*/
-
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnect) {
-        Utils.Log(TAG,"Is connected :" + isConnect);
-        if (isConnect){
-            getAccessToken();
         }
     }
 

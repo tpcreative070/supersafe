@@ -99,6 +99,11 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
