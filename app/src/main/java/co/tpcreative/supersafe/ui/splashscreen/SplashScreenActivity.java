@@ -46,15 +46,15 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         if (SuperSafeApplication.getInstance().getDeviceId().equals("66801ac00252fe84")){
             finish();
         }
-        try {
+        //try {
             ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
             if (themeApp!=null){
                 rlScreen.setBackgroundColor(getResources().getColor(themeApp.getPrimaryColor()));
             }
-        }catch (Exception e){
-            final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
-        }
+        //}catch (Exception e){
+        //    final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+        //    PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
+        //}
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
         isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);
