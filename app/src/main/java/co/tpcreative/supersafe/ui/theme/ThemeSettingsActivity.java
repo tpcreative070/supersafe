@@ -75,7 +75,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(ThemeSettingsActivity.class.getSimpleName());
     }
 
     @Override
