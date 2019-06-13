@@ -890,6 +890,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 switch (action) {
                     case SCREEN_LOCK: {
                         EventBus.getDefault().post(EnumStatus.FINISH);
+                        Navigator.onMoveToFaceDown(this);
                         Utils.Log(TAG, "onStillScreenLock ???");
                     }
                 }

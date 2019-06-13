@@ -251,16 +251,9 @@ public class ServiceManager implements BaseServiceView {
 
     public void onStopService() {
         if (myService != null) {
-            onDefaultValue();
-            if (myService != null) {
-                myService.unbindView();
-            }
-            if (subscriptions != null) {
-                subscriptions.dispose();
-            }
             mContext.unbindService(myConnection);
             myService = null;
-            Utils.Log(TAG,"Dismiss service....");
+            Utils.Log(TAG,"stop services now");
         }
     }
 

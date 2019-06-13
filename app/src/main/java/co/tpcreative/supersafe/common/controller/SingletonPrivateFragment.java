@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.common.controller;
 
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 
 public class SingletonPrivateFragment {
 
@@ -19,7 +20,7 @@ public class SingletonPrivateFragment {
     }
 
     public void onUpdateView(){
-        if (Utils.isLockedScreen()){
+        if (EnterPinActivity.isVisible){
             return;
         }
         if (ls!=null){

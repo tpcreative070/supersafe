@@ -703,18 +703,4 @@ public class Utils {
             Utils.Log(TAG,"Verify pin already");
         }
     }
-
-    public static boolean isLockedScreen(){
-        try {
-            int  value = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
-            EnumPinAction action = EnumPinAction.values()[value];
-            if (action==EnumPinAction.SCREEN_LOCK){
-                return true;
-            }
-            return false;
-        }catch (Exception e){
-            return false;
-        }
-    }
-
 }

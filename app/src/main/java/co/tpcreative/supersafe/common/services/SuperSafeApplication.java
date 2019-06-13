@@ -111,21 +111,17 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         PrefsController.putLong(getString(R.string.key_seek_to),0);
         PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
-
         /*Config file*/
         configurationFile = new EncryptConfiguration.Builder()
                 .setChuckSize(1024*2)
                 .setEncryptContent(SecurityUtil.IVX,getSecretKey(), SecurityUtil.SALT)
                 .build();
-
         configurationPin = new EncryptConfiguration.Builder()
                 .setChuckSize(1024*2)
                 .setEncryptContent(SecurityUtil.IVX,SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build();
-
         storage = new Storage(getApplicationContext());
         supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/";
-
         key = ".encrypt_key";
         fake_key = ".encrypt_fake_key";
         userSecret = ".userSecret";
@@ -135,20 +131,16 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         supersafeBreakInAlerts = supersafe + "break_in_alerts/";
         supersafeShare = supersafe + "share/";
         supersafeDataBaseFolder = "/data/data/"+SuperSafeApplication.getInstance().getPackageName()+"/databases/";
-
         supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/";
         registerActivityLifecycleCallbacks(this);
         Utils.Log(TAG, supersafe);
-
         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(Drive.SCOPE_FILE)
                 .requestScopes(Drive.SCOPE_APPFOLDER);
-
         requiredScopes = new HashSet<>(2);
         requiredScopes.add(Drive.SCOPE_FILE);
         requiredScopes.add(Drive.SCOPE_APPFOLDER);
-
         requiredScopesString = new ArrayList<>();
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
@@ -231,9 +223,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-        if (!(activity instanceof PlayerActivity)){
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
         if (this.activity==null){
             this.activity = activity;
         }
@@ -359,7 +348,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             deleteFolder();
         }
         return "";
-
     }
 
     public void writeUserSecret(final User user) {

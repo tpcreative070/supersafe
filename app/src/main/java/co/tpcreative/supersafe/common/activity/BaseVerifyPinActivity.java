@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.activity;
 import android.Manifest;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;

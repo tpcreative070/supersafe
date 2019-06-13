@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.activity;
+import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;

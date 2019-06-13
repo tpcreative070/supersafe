@@ -296,7 +296,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     };
 
-
     @Override
     protected void onResume() {
         super.onResume();

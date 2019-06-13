@@ -553,6 +553,9 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        if (toolbar==null){
+            return false ;
+        }
         toolbar.inflateMenu(R.menu.main_tab);
         this.menuItem = toolbar.getMenu().getItem(0);
         return true;

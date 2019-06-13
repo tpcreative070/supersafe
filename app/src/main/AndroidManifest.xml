@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.tpcreative.supersafe">
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,7 +11,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
-
     <application
         android:usesCleartextTraffic="true"
         android:name=".common.services.SuperSafeApplication"
@@ -24,6 +22,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.splashscreen.SplashScreenActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -60,31 +59,41 @@
         <!-- Enter pin code -->
         <activity
             android:name=".ui.lockscreen.EnterPinActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_lock_screen"/>
 
-        <activity android:name=".ui.main_tab.MainTabActivity"/>
+        <activity android:name=".ui.main_tab.MainTabActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.signin.SignInActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_sign_in"/>
         <activity
             android:name=".ui.verify.VerifyActivity"
+            android:screenOrientation="portrait"
             android:label="@string/verify"/>
         <activity
-            android:name=".ui.askpermission.AskPermissionActivity"/>
+            android:name=".ui.askpermission.AskPermissionActivity"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.dashboard.DashBoardActivity"/>
+            android:name=".ui.dashboard.DashBoardActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.signup.SignUpActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_sign_up"/>
-        <activity android:name=".ui.camera.CameraActivity" />
+        <activity android:name=".ui.camera.CameraActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.fakepin.FakePinComponentActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".ui.multiselects.AlbumSelectActivity"
+            android:screenOrientation="portrait"
             android:label="@string/select_album">
             <intent-filter>
                 <category android:name="ANDROID.INTENT.CATEGORY.DEFAULT" />
@@ -92,6 +101,7 @@
         </activity>
         <activity
             android:name=".ui.multiselects.ImageSelectActivity"
+            android:screenOrientation="portrait"
             android:label="@string/album_view">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -99,32 +109,43 @@
         </activity>
         <activity
             android:name=".ui.albumdetail.AlbumDetailActivity"
+            android:screenOrientation="portrait"
             android:label="" />
-        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity" />
+        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.settings.SettingsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/settings" />
         <activity
             android:name=".ui.help.HelpAndSupportActivity"
+            android:screenOrientation="portrait"
             android:label="@string/help" />
         <activity
             android:name=".ui.verifyaccount.VerifyAccountActivity"
+            android:screenOrientation="portrait"
             android:label="@string/verify"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.accountmanager.AccountManagerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/account" />
         <activity
             android:name=".ui.enablecloud.EnableCloudActivity"
+            android:screenOrientation="portrait"
             android:label="@string/enable_cloud_sync" />
         <activity
             android:name=".ui.cloudmanager.CloudManagerActivity"
+            android:screenOrientation="portrait"
             android:label="@string/cloud_manager" />
-        <activity android:name=".ui.checksystem.CheckSystemActivity"/>
+        <activity android:name=".ui.checksystem.CheckSystemActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.trash.TrashActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_trash" />
-        <activity android:name=".ui.settings.AlbumSettingsActivity" />
+        <activity android:name=".ui.settings.AlbumSettingsActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -132,28 +153,40 @@
 
         <activity
             android:name=".ui.resetpin.ResetPinActivity"
+            android:screenOrientation="portrait"
             android:label="@string/reset_pin" />
         <activity
             android:name=".ui.theme.ThemeSettingsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_update_theme" />
         <activity
             android:name=".ui.breakinalerts.BreakInAlertsActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_break_in_alert" />
         <activity
             android:name=".ui.fakepin.FakePinActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_fake_pin" />
         <activity android:name=".ui.secretdoor.SecretDoorActivity"
+            android:screenOrientation="portrait"
             android:label="@string/key_secret_door"/>
-        <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity" />
-        <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity" />
-        <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity" />
-        <activity android:name=".ui.facedown.FaceDownActivity" />
+        <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.facedown.FaceDownActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.unlockalbum.UnlockAllAlbumActivity"
+            android:screenOrientation="portrait"
             android:label="@string/unlock_all_albums" />
         <activity android:name=".ui.help.HelpAndSupportContentActivity"
+            android:screenOrientation="portrait"
             android:label="@string/help"/>
         <activity android:name=".ui.sharefiles.ShareFilesActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Share">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -164,13 +197,16 @@
         </activity>
         <activity
             android:name=".ui.premium.PremiumActivity"
+            android:screenOrientation="portrait"
             android:label="@string/premium" />
-        <activity android:name=".ui.restore.RestoreActivity" />
-        <activity android:name=".ui.albumcover.AlbumCoverActivity"/>
-        <activity android:name=".ui.switchbasic.SwitchBasicActivity"/>
+        <activity android:name=".ui.restore.RestoreActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.albumcover.AlbumCoverActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.switchbasic.SwitchBasicActivity"
+            android:screenOrientation="portrait"/>
         /*Portrait model for special mode*/
         <activity android:name=".ui.player.PlayerActivity"
             android:screenOrientation="portrait"/>
     </application>
-
 </manifest>

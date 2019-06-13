@@ -29,6 +29,7 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -200,8 +201,34 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         return this;
     }
 
-    /*Action mode*/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (User.getInstance().isPremium()){
+            if (toolbar==null){
+                return false;
+            }
+            toolbar.inflateMenu(R.menu.menu_trash);
+        }
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_select_items :{
+                if (actionMode == null) {
+                    actionMode = toolbar.startActionMode(callback);
+                }
+                countSelected = 0;
+                actionMode.setTitle(countSelected + " " + getString(R.string.selected));
+                Utils.Log(TAG,"Action here");
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*Action mode*/
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
