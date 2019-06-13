@@ -47,7 +47,9 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
             finish();
         }
         ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        rlScreen.setBackgroundColor(getResources().getColor(themeApp.getPrimaryColor()));
+        if (themeApp!=null){
+            rlScreen.setBackgroundColor(getResources().getColor(themeApp.getPrimaryColor()));
+        }
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
         isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);

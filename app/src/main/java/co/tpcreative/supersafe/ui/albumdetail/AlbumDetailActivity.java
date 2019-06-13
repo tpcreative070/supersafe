@@ -17,7 +17,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -82,7 +81,6 @@ import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 
 public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener{
-
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -102,10 +100,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     Toolbar toolbar;
     @BindView(R.id.llBottom)
     LinearLayout llBottom;
-
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
-    private AlbumDetailVerticalAdapter vericalAdapter;
+    private AlbumDetailVerticalAdapter verticalAdapter;
     private boolean isReload;
     private Storage storage;
     private ActionMode actionMode;
@@ -113,9 +110,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     private boolean isSelectAll = false;
     private AlertDialog dialog;
     SweetAlertDialog mDialogProgress;
-
     private MenuItem menuItem;
-
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(400, 400)
@@ -224,7 +219,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
-            case UPDATEDUIView_DETAIL_ALBUM:{
+            case UPDATED_VIEW_DETAIL_ALBUM:{
                 try {
                     this.runOnUiThread(new Runnable() {
                         @Override
@@ -281,16 +276,13 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         onClickedExport();
                     }
                 });
-                Utils.Log(TAG, " already sync");
+                Utils.Log(TAG, "already sync ");
                 break;
             }
             case DOWNLOAD_FAILED:{
                 mDialogProgress.setTitleText("No connection, Try again")
                         .setConfirmText("OK")
                         .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                break;
-            }
-            case PROGRESS:{
                 break;
             }
         }
@@ -450,7 +442,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     spaceAvailable +=Long.parseLong(items.size);;
                 }
             }
-
             long availableSpaceOS =  Utils.getAvailableSpaceInBytes();
             if (availableSpaceOS < spaceAvailable){
                 long request_spaces = spaceAvailable - availableSpaceOS;
@@ -543,7 +534,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     /*Init Floating View*/
-
     private void initSpeedDial(boolean addActionItems) {
         final ThemeApp mThemeApp = ThemeApp.getInstance().getThemeInfo();
         if (addActionItems) {
@@ -576,10 +566,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             public boolean onMainActionSelected() {
                 return false; // True to keep the Speed Dial open
             }
-
             @Override
             public void onToggleChanged(boolean isOpen) {
-                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+                Utils.Log(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
 
@@ -614,7 +603,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     /*Init grant permission*/
-
     public void onAddPermissionCamera() {
         Dexter.withActivity(this)
                 .withPermissions(
@@ -625,12 +613,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         if (report.areAllPermissionsGranted()) {
                             Navigator.onMoveCamera(AlbumDetailActivity.this, presenter.mainCategories);
                         } else {
-                            Log.d(TAG, "Permission is denied");
+                            Utils.Log(TAG, "Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
 
@@ -643,34 +631,39 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
-        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-        if (isVertical){
-            vericalAdapter = new AlbumDetailVerticalAdapter(getLayoutInflater(),this,this);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-            recyclerView.setLayoutManager(mLayoutManager);
-            while (recyclerView.getItemDecorationCount() > 0) {
-                recyclerView.removeItemDecorationAt(0);
+        try {
+            boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+            if (isVertical){
+                verticalAdapter = new AlbumDetailVerticalAdapter(getLayoutInflater(),this,this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                while (recyclerView.getItemDecorationCount() > 0) {
+                    recyclerView.removeItemDecorationAt(0);
+                }
+                recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));
+                recyclerView.setAdapter(verticalAdapter);
+                verticalAdapter.setDataSource(presenter.mList);
             }
-            recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));
-            recyclerView.setAdapter(vericalAdapter);
-            vericalAdapter.setDataSource(presenter.mList);
+            else{
+                adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
+                RecyclerView.LayoutManager mLayoutManager = new NpaGridLayoutManager(getApplicationContext(), 3);
+                recyclerView.setLayoutManager(mLayoutManager);
+                while (recyclerView.getItemDecorationCount() > 0) {
+                    recyclerView.removeItemDecorationAt(0);
+                }
+                recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
+                recyclerView.setAdapter(adapter);
+                adapter.setDataSource(presenter.mList);
+            }
         }
-        else{
-            adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
-            RecyclerView.LayoutManager mLayoutManager = new NpaGridLayoutManager(getApplicationContext(), 3);
-            recyclerView.setLayoutManager(mLayoutManager);
-            while (recyclerView.getItemDecorationCount() > 0) {
-                recyclerView.removeItemDecorationAt(0);
-            }
-            recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
-            recyclerView.setAdapter(adapter);
-            adapter.setDataSource(presenter.mList);
+        catch (Exception e){
+            e.getMessage();
         }
     }
 
@@ -693,7 +686,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 break;
             }
         }
-
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))
                 .theme(Theme.LIGHT)
@@ -893,7 +885,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "Selected album :");
+        Utils.Log(TAG, "Selected album :");
         switch (requestCode) {
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
@@ -922,19 +914,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
-                        Log.d(TAG, "mimeType " + mimeType);
-                        Log.d(TAG, "name " + name);
-                        Log.d(TAG, "path " + path);
+                        Utils.Log(TAG, "mimeType " + mimeType);
+                        Utils.Log(TAG, "name " + name);
+                        Utils.Log(TAG, "path " + path);
                         String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
-
+                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path));
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-
                             if (mimeTypeFile==null){
                                 return;
                             }
-
                             mimeTypeFile.name = name;
                             if (presenter.mainCategories == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
@@ -971,21 +960,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     /**
      * Converting dp to pixel
      */
-
-
     @Override
     public void onError(String message, EnumStatus status) {
-
     }
 
     @Override
     public void onError(String message) {
-
     }
 
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @Override
@@ -994,13 +978,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case RELOAD:{
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
-
                 String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
                 tv_Videos.setText(videos);
-
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
                 if (actionMode!=null){
@@ -1009,10 +990,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     llBottom.setVisibility(View.GONE);
                     isReload = true;
                 }
-
                 boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
                 if (isVertical){
-                    vericalAdapter.setDataSource(presenter.mList);
+                    verticalAdapter.setDataSource(presenter.mList);
                 }
                 else{
                     adapter.setDataSource(presenter.mList);
@@ -1022,20 +1002,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case REFRESH:{
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
-
                 String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
                 tv_Videos.setText(videos);
-
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
                 boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
                 if (isVertical){
-                    vericalAdapter.getDataSource().clear();
-                    vericalAdapter.getDataSource().addAll(presenter.mList);
+                    verticalAdapter.getDataSource().clear();
+                    verticalAdapter.getDataSource().addAll(presenter.mList);
                 }
                 else{
                     adapter.getDataSource().clear();
@@ -1054,19 +1030,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     @Override
     public void onSuccessful(String message, EnumStatus status, Integer object) {
         switch (status){
             case DELETE:{
                 Utils.Log(TAG,"Position "+ object);
-                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                if (isVertical){
-                    vericalAdapter.removeAt(object);
-                }
-                else{
-                    adapter.removeAt(object);
-                }
+                onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER,object);
                 break;
             }
         }
@@ -1077,14 +1046,11 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         return this;
     }
 
-
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-
     }
 
     /*Action mode*/
-
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -1137,13 +1103,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             countSelected--;
         }
         onShowUI();
-        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-        if (isVertical){
-            vericalAdapter.notifyItemChanged(position);
-        }
-        else{
-            adapter.notifyItemChanged(position);
-        }
+        onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER,position);
     }
 
     private void deselectAll() {
@@ -1175,28 +1135,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 break;
                             }
                         }
-                        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                        if (isVertical){
-                            vericalAdapter.notifyItemChanged(i);
-                        }
-                        else{
-                            adapter.notifyItemChanged(i);
-                        }
-
+                        onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER,i);
                     }
                     break;
                 }
                 default:{
                     if (presenter.mList.get(i).isChecked){
                         presenter.mList.get(i).isChecked = false;
-
-                        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                        if (isVertical){
-                            vericalAdapter.notifyItemChanged(i);
-                        }
-                        else{
-                            adapter.notifyItemChanged(i);
-                        }
+                        onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER,i);
                     }
                     break;
                 }
@@ -1226,15 +1172,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     Utils.Log(TAG, "ServiceManager waiting for delete");
                 }
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).items_id);
-
-                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                if (isVertical){
-                    vericalAdapter.removeAt(i);
-                }
-                else{
-                    adapter.removeAt(i);
-                }
-
+                onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER,i);
             }
         }
         presenter.getData(EnumStatus.REFRESH);
@@ -1251,14 +1189,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
             countSelected = countSelect;
             onShowUI();
-
-            boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-            if (isVertical){
-                vericalAdapter.notifyDataSetChanged();
-            }
-            else{
-                adapter.notifyDataSetChanged();
-            }
+            onUpdateAdapter(EnumStatus.UPDATE_ENTIRE_ADAPTER,0);
             actionMode.setTitle(countSelected + " " + getString(R.string.selected));
         }
         catch (Exception e){
@@ -1288,7 +1219,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     /*Gallery action*/
-
     @Override
     public Configuration getConfiguration() {
         //default configuration
@@ -1318,7 +1248,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @Override
     public void onMoveAlbumSuccessful() {
-
     }
 
     @Override
@@ -1326,4 +1255,68 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         return presenter.mList;
     }
 
+    public void onUpdateAdapter(EnumStatus status,int position){
+        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+        switch (status){
+            case UPDATE_ENTIRE_ADAPTER:{
+                if (isVertical){
+                    if (verticalAdapter!=null){
+                        if (verticalAdapter.getDataSource()!=null){
+                            verticalAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+                else{
+                    if (adapter!=null){
+                        if (adapter.getDataSource()!=null){
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+                break;
+            }
+            case REMOVE_AT_ADAPTER:{
+                if (isVertical){
+                    if (verticalAdapter!=null){
+                        if (verticalAdapter.getDataSource()!=null){
+                            if (verticalAdapter.getDataSource().size()>position){
+                                verticalAdapter.removeAt(position);
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (adapter!=null){
+                        if (adapter.getDataSource()!=null){
+                            if (adapter.getDataSource().size()>position){
+                                adapter.removeAt(position);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case UPDATE_AT_ADAPTER:{
+                if (isVertical){
+                    if (verticalAdapter!=null){
+                        if (verticalAdapter.getDataSource()!=null){
+                            if (verticalAdapter.getDataSource().size()>position){
+                                verticalAdapter.notifyItemChanged(position);
+                            }
+                        }
+                    }
+                }
+                else{
+                    if (adapter!=null){
+                        if (adapter.getDataSource()!=null){
+                            if (adapter.getDataSource().size()>position){
+                                adapter.notifyItemChanged(position);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 }

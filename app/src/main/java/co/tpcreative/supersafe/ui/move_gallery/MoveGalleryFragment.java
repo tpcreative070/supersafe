@@ -25,7 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -247,7 +246,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
             }
             case MOVE:{
                 dialog.dismiss();
-                EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
+                EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                 if (mListener!=null){
                     mListener.onMoveAlbumSuccessful();
                 }

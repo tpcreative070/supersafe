@@ -1496,7 +1496,7 @@ public class ServiceManager implements BaseServiceView {
                         if (mResponse.isWorking) {
                             final Items items = mResponse.items;
                             GalleryCameraMediaManager.getInstance().setProgressing(false);
-                            EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
+                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                             if (items.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView();
                             } else {
@@ -1624,7 +1624,7 @@ public class ServiceManager implements BaseServiceView {
                         if (mResponse.isWorking) {
                             final Items mItem = mResponse.items;
                             GalleryCameraMediaManager.getInstance().setProgressing(false);
-                            EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
+                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                             if (mItem.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView();
                             } else {
@@ -1818,6 +1818,7 @@ public class ServiceManager implements BaseServiceView {
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                     subscriber.onNext(items);
                     subscriber.onComplete();
+                    EventBus.getDefault().post(EnumStatus.DOWNLOADING_PROGRESSING);
                 }
                 @Override
                 public void onError(String message, EnumStatus status) {
@@ -1881,9 +1882,20 @@ public class ServiceManager implements BaseServiceView {
                         }
                     });
         } else {
-            EventBus.getDefault().post(EnumStatus.DOWNLOAD_COMPLETED);
+            /*Case 1
+            * mListDownLoadFiles.addAll(list)
+            * mListDownLoadFiles.get(position).isSaver = true => object of list will be changed
+            * mListDownLoadFiles.clear() => Not affected to list
+            * mListDownLoadFiles.remove(position) => Not affected to object of list
+            * Case 2
+            * mListDownLoadFiles = list
+            * mListDownLoadFiles.get(position).isSaver = true => object of list will be changed
+            * mListDownLoadFiles.clear() => affected to list
+            * mListDownLoadFiles.remove(position) => affected to object of list
+            * */
             setDownloadingFiles(false);
             mListDownLoadFiles.clear();
+            EventBus.getDefault().post(EnumStatus.DOWNLOAD_COMPLETED);
         }
     }
 
@@ -1894,7 +1906,7 @@ public class ServiceManager implements BaseServiceView {
                 if (countSyncData == totalList) {
                     EventBus.getDefault().post(EnumStatus.DONE);
                     SingletonPrivateFragment.getInstance().onUpdateView();
-                    EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
+                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                     isUploadData = false;
                     String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
                     String messageDone = "Completed upload sync data.......................^^...........^^.......^^........";
@@ -1918,7 +1930,7 @@ public class ServiceManager implements BaseServiceView {
                 if (countSyncData == totalList) {
                     EventBus.getDefault().post(EnumStatus.DONE);
                     SingletonPrivateFragment.getInstance().onUpdateView();
-                    EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
+                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                     isDownloadData = false;
                     String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
                     String messageDone = "Completed downloaded sync data.......................^^...........^^.......^^........";
@@ -1993,7 +2005,7 @@ public class ServiceManager implements BaseServiceView {
                     Utils.Log(TAG, "Request cloud syn data on album.........");
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                     SingletonPrivateFragment.getInstance().onUpdateView();
-                    EventBus.getDefault().post(EnumStatus.UPDATEDUIView_DETAIL_ALBUM);
+                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                     onGetDriveAbout();
                 } else {
                     String message = "Completed delete count album...................deleted " + countSyncData + "/" + totalList;

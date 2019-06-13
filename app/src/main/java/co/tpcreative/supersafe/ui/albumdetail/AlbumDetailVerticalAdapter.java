@@ -24,7 +24,6 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.ThemeApp;
 
 public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
-
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
@@ -37,7 +36,6 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
     private String TAG = AlbumDetailVerticalAdapter.class.getSimpleName();
     final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
     Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
-
 
     public AlbumDetailVerticalAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
@@ -57,14 +55,12 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.custom_item_verical, parent, false));
     }
 
-
     public interface ItemSelectedListener {
         void onClickItem(int position);
         void onLongClickItem(int position);
     }
 
     public class ItemHolder extends BaseHolder<Items> {
-
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -74,28 +70,20 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
         @BindView(R.id.view_alpha)
         View alpha;
         int mPosition;
-
-
         public ItemHolder(View itemView) {
             super(itemView);
         }
-
-
         @Override
         public void bind(Items data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);
-
             if (data.isChecked) {
                 alpha.setAlpha(0.5f);
 
             } else {
                 alpha.setAlpha(0.0f);
             }
-
-            Utils.Log(TAG,"date time "+data);
-
             try {
                 String path = data.thumbnailPath;
                 EnumFormatType formatTypeFile = EnumFormatType.values()[data.formatType];
@@ -153,8 +141,5 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
             }
             return true;
         }
-
     }
-
-
 }
