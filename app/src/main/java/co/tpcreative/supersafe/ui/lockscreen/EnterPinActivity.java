@@ -738,15 +738,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         }
     }
 
-    public void onHideUI(){
-        rlLockScreen.setVisibility(View.GONE);
-        llLockScreen_1.setVisibility(View.GONE);
-        rlSecretDoor.setVisibility(View.GONE);
-        calculator_holder.setVisibility(View.GONE);
-        toolbar.setVisibility(View.GONE);
-        rlPreference.setVisibility(View.GONE);
-    }
-
     @Override
     public void onSuccessful(String message, EnumStatus status, EnumPinAction action) {
         Utils.Log(TAG, "EnumPinAction 1:...." + action.name());

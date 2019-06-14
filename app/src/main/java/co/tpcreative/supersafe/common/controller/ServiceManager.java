@@ -386,6 +386,7 @@ public class ServiceManager implements BaseServiceView {
             isCategoriesSync = false;
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             SingletonPrivateFragment.getInstance().onUpdateView();
+            EventBus.getDefault().post(EnumStatus.UPDATE_MOVE_NEW_ALBUM);
             return;
         }
         getObservableItems(mList).
@@ -1218,6 +1219,10 @@ public class ServiceManager implements BaseServiceView {
        if (isCheckNull(EnumStatus.ADD_ITEMS)){
            return;
        }
+       if (items.categories_id==null || items.categories_id.equals("null")){
+           Utils.Log(TAG, "Added => Warning categories id is null");
+           return;
+       }
         Utils.Log(TAG, "Preparing insert  to own Server");
         myService.onAddItems(items, new ServiceManagerShortListener() {
             @Override
@@ -1629,7 +1634,6 @@ public class ServiceManager implements BaseServiceView {
                                 SingletonFakePinComponent.getInstance().onUpdateView();
                             } else {
                                 SingletonPrivateFragment.getInstance().onUpdateView();
-                                ServiceManager.getInstance().onSyncDataOwnServer("0");
                             }
                         }
                     }

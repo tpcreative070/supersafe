@@ -31,7 +31,6 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
         mList.clear();
         MoveGalleryView view = view();
         final List<MainCategories> list = MainCategories.getInstance().getListMoveGallery(categories_local_id,isFakePIN);
-
         if (isFakePIN) {
             final MainCategories main = MainCategories.getInstance().getMainItemFakePin();
             if (!main.categories_local_id.equals(categories_local_id)){
@@ -46,7 +45,6 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 });
             }
         }
-
         if (list!=null){
             for (MainCategories index : list){
                 final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false,isFakePIN);
@@ -78,7 +76,6 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 mList.add(new GalleryAlbum(index,photos,videos,audios,others));
             }
         }
-
         view.onSuccessful("Successful", EnumStatus.RELOAD);
         Utils.Log(TAG,new Gson().toJson("Main categories "+ list));
     }
@@ -93,6 +90,9 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 if (item.isChecked){
                     item.categories_local_id = gallery.main.categories_local_id;
                     item.categories_id = gallery.main.categories_id;
+                    if (gallery.main.categories_id==null || gallery.main.categories_id.equals("null")){
+                        Utils.Log(TAG,"Moved => Warning categories id is null");
+                    }
                     if (item.isSyncCloud && item.isSyncOwnServer){
                         item.isUpdate = true;
                     }

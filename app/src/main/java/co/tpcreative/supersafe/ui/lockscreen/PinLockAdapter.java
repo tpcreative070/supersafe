@@ -44,7 +44,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-
         if (viewType == VIEW_TYPE_NUMBER) {
             View view = inflater.inflate(R.layout.layout_number_item, parent, false);
             viewHolder = new NumberViewHolder(view, mTypeface);
@@ -78,7 +77,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 holder.mNumberButton.setVisibility(View.VISIBLE);
                 holder.mNumberButton.setTag(mKeyValues[position]);
             }
-
             if (mCustomizationOptionsBundle != null) {
                 holder.mNumberButton.setTextColor(mCustomizationOptionsBundle.getTextColor());
                 if (mCustomizationOptionsBundle.getButtonBackgroundDrawable() != null) {
@@ -189,26 +187,25 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class NumberViewHolder extends RecyclerView.ViewHolder {
         Button mNumberButton;
-
         public NumberViewHolder(final View itemView, Typeface font) {
             super(itemView);
             mNumberButton = (Button) itemView.findViewById(R.id.button);
-
             if (font != null) {
                 mNumberButton.setTypeface(font);
             }
-
             mNumberButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mOnNumberClickListener != null) {
+                        if (v.getTag()==null){
+                            notifyDataSetChanged();
+                            return;
+                        }
                         mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
                     }
                 }
             });
-
             mNumberButton.setOnTouchListener(new View.OnTouchListener() {
-
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -228,7 +225,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             mVerifyButton = (LinearLayout) itemView.findViewById(R.id.button);
             mButtonImage = (ImageView) itemView.findViewById(R.id.buttonImage);
-
             mVerifyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

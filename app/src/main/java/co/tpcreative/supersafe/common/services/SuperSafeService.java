@@ -700,7 +700,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
 
     public void onUpdateItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
         final Items items = mItem;
-        Utils.Log(TAG, "onAddItems");
+        Utils.Log(TAG, "onUpdateItems");
         if (isCheckNull(view,EnumStatus.UPDATE)){
             return;
         }
@@ -715,6 +715,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         if (items.categories_id == null || items.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.UPDATE);
+            Utils.Log(TAG, " Updated => Warning categories id is null");
+            return;
         }
         // Map<String, Object> hashMap = new HashMap<>();
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
@@ -1207,7 +1209,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             Utils.Log(TAG,"Delete everytime..............");
             hashMapGlobal.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
-            //GalleryCameraMediaManager.getInstance().onUpdatedView();
             EventBus.getDefault().post(EnumStatus.RELOAD);
             view.onDone();
             /*Note here*/
@@ -1233,7 +1234,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onDone();
             hashMapGlobalCategories.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
-            //GalleryCameraMediaManager.getInstance().onUpdatedView();
             EventBus.getDefault().post(EnumStatus.RELOAD);
             /*Note here*/
         }

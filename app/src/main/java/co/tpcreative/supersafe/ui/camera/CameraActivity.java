@@ -88,6 +88,7 @@ public class CameraActivity extends BaseActivity implements
                     }
                     break;
                 case R.id.btnDone :
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onBackPressed();
                     break;
             }

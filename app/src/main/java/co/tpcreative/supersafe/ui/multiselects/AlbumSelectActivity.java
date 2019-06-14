@@ -84,7 +84,6 @@ public class AlbumSelectActivity extends HelperActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {

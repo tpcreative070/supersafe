@@ -15,6 +15,9 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -69,7 +72,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public ItemHolder(View itemView) {
             super(itemView);
         }
-
         private MainCategories data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
@@ -84,8 +86,9 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             super.bind(data, position);
             this.data = data;
             if (data.pin.equals("")) {
+                final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(data.categories_local_id,data.isFakePin);
                 final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(data.items_id);
-                if (items != null) {
+                if (items != null && mList!=null && mList.size()>0) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {
                         case AUDIO: {

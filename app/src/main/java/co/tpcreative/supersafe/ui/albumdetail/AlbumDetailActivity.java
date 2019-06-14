@@ -132,8 +132,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(presenter.mainCategories.categories_local_id,presenter.mainCategories.isFakePin);
         final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mainCategories.items_id);
-        if (items != null) {
+        if (items != null && mList != null && mList.size()>0) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             switch (formatTypeFile){
                 case AUDIO:{
