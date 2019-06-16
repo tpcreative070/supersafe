@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import org.greenrobot.eventbus.EventBus;
@@ -130,7 +131,14 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
         });
         isPortrait = true;
-        tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+        try {
+            if (themeApp!=null){
+                tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+            }
+        }catch (Exception e){
+            final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
+        }
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {

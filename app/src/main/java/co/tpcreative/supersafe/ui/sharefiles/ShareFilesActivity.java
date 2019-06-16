@@ -38,6 +38,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNone;
 import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.PathUtil;
@@ -91,9 +92,14 @@ public class ShareFilesActivity extends BaseActivityNone{
         storage = new Storage(this);
         onShowUI(View.GONE);
         onAddPermission();
-        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        if (themeApp!=null){
-            tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+        try {
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            if (themeApp!=null){
+                tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+            }
+        }catch (Exception e){
+            final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
         }
     }
 
