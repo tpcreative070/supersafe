@@ -989,10 +989,6 @@ public class ServiceManager implements BaseServiceView {
                                 public void onProgressDownload(int percentage) {
                                     isDownloadData = true;
                                 }
-                                @Override
-                                public void onSaved() {
-                                    Utils.Log(TAG, "onSaved");
-                                }
                             });
                         }
                     }
@@ -1806,9 +1802,6 @@ public class ServiceManager implements BaseServiceView {
                     Utils.Log(TAG, "Percentage " + percentage);
                 }
                 @Override
-                public void onSaved() {
-                }
-                @Override
                 public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                     mListDownLoadFiles.get(position).isSaver = false;
                     items.isSaver = false;
@@ -2168,7 +2161,6 @@ public class ServiceManager implements BaseServiceView {
     }
     public interface DownloadServiceListener {
         void onProgressDownload(int percentage);
-        void onSaved();
         void onDownLoadCompleted(File file_name, DownloadFileRequest request);
         void onError(String message, EnumStatus status);
     }
