@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.lockscreen;
+import android.annotation.SuppressLint;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
@@ -187,6 +188,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class NumberViewHolder extends RecyclerView.ViewHolder {
         Button mNumberButton;
+        @SuppressLint("ClickableViewAccessibility")
         public NumberViewHolder(final View itemView, Typeface font) {
             super(itemView);
             mNumberButton = (Button) itemView.findViewById(R.id.button);
@@ -197,10 +199,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
                     if (mOnNumberClickListener != null) {
-                        if (v.getTag()==null){
-                            notifyDataSetChanged();
-                            return;
-                        }
                         mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
                     }
                 }
@@ -220,7 +218,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public class VerifyViewHolder extends RecyclerView.ViewHolder {
         LinearLayout mVerifyButton;
         ImageView mButtonImage;
-
+        @SuppressLint("ClickableViewAccessibility")
         public VerifyViewHolder(final View itemView) {
             super(itemView);
             mVerifyButton = (LinearLayout) itemView.findViewById(R.id.button);
