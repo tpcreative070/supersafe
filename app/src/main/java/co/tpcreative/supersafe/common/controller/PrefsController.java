@@ -256,7 +256,6 @@ public final class PrefsController {
      * @see Editor#putString(String, String)
      */
     public static void putString(final String key, final String value) {
-        Utils.Log(TAG,value);
         final Editor editor = getPreferences().edit();
         editor.putString(key, value);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {

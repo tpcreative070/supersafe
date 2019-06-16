@@ -20,7 +20,7 @@ public class SingletonPrivateFragment {
     }
 
     public void onUpdateView(){
-        if (EnterPinActivity.isVisible){
+        if (SingletonManager.getInstance().isVisitLockScreen()){
             return;
         }
         if (ls!=null){

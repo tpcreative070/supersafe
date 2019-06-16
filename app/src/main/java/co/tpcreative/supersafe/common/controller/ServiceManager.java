@@ -662,7 +662,7 @@ public class ServiceManager implements BaseServiceView {
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
-                    Utils.Log(TAG, "Starting Updating items on own cloud.......");
+                    Utils.Log(TAG, "Starting Updating items on own cloud....... "+ mList.size());
                     final Items mItem = i;
                     isUpdate = true;
                     myService.onUpdateItems(mItem, new ServiceManagerShortListener() {
@@ -947,7 +947,6 @@ public class ServiceManager implements BaseServiceView {
                                                         Utils.Log(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
                                                         mItem.thumbnailSync = true;
                                                     }
-
                                                     if (mItem.thumbnailSync && mItem.originalSync) {
                                                         mItem.isSyncCloud = true;
                                                         mItem.isSyncOwnServer = true;
@@ -955,7 +954,6 @@ public class ServiceManager implements BaseServiceView {
                                                     } else {
                                                         mItem.isSyncCloud = false;
                                                     }
-
                                                     /*Custom cover*/
                                                     final MainCategories categories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(mItem.categories_id, false);
                                                     if (categories != null) {
@@ -1028,7 +1026,6 @@ public class ServiceManager implements BaseServiceView {
                     if (main != null) {
                         checkNull.get(i).categories_id = main.categories_id;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
-
                         Utils.Log(TAG, "Update categories id...................^^^???");
                     }
                 }
@@ -1219,14 +1216,11 @@ public class ServiceManager implements BaseServiceView {
        if (isCheckNull(EnumStatus.ADD_ITEMS)){
            return;
        }
-       if (items.categories_id==null || items.categories_id.equals("null")){
-           Utils.Log(TAG, "Added => Warning categories id is null");
-           return;
-       }
-        Utils.Log(TAG, "Preparing insert  to own Server");
+       Utils.Log(TAG, "Preparing insert  to own Server");
         myService.onAddItems(items, new ServiceManagerShortListener() {
             @Override
             public void onError(String message, EnumStatus status) {
+                items.isSyncOwnServer = false;
                 Utils.Log(TAG, message + " status " + status.name());
             }
             @Override
@@ -1619,7 +1613,6 @@ public class ServiceManager implements BaseServiceView {
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                     Utils.Log(TAG, "Special main categories " + new Gson().toJson(main));
                                 }
-
                             }
                         }
                         Utils.Log(TAG, "Insert Successful");
@@ -2068,7 +2061,6 @@ public class ServiceManager implements BaseServiceView {
                 break;
             }
             case GET_DRIVE_ABOUT: {
-                Utils.Log(TAG, "drive about :" + message);
                 break;
             }
             case CONNECTED: {

@@ -71,7 +71,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         onUpdatedView();
-        onStartOverridePendingTransition();
         scrollView.smoothScrollTo(0,0);
     }
 

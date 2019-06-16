@@ -3,6 +3,7 @@ import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -26,7 +27,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.hiddencamera.CameraCallbacks;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
@@ -60,6 +61,9 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             Bungee.fade(this);
         } else {
             onStartCount = 2;
+        }
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
@@ -158,7 +162,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (SingletonBaseActivity.getInstance().isAnimation()){
+        if (SingletonManager.getInstance().isAnimation()){
             if (onStartCount > 1) {
                 Bungee.fade(this);
             } else if (onStartCount == 1) {
@@ -166,7 +170,7 @@ public abstract class BaseVerifyPinActivity extends AppCompatActivity implements
             }
         }else{
             Bungee.zoom(this);
-            SingletonBaseActivity.getInstance().setAnimation(true);
+            SingletonManager.getInstance().setAnimation(true);
         }
     }
 

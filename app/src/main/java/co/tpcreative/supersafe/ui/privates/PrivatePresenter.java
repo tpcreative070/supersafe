@@ -28,7 +28,6 @@ public class PrivatePresenter extends Presenter<BaseView> {
         mList = MainCategories.getInstance().getList();
         storage = new Storage(SuperSafeApplication.getInstance());
         view.onSuccessful("Successful", EnumStatus.RELOAD);
-        Utils.Log(TAG,new Gson().toJson(mList));
     }
 
     public void onDeleteAlbum(int position){

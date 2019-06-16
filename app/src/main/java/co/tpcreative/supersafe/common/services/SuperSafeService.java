@@ -180,7 +180,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         }
                     }
                     Utils.Log(TAG,"onGetUserInfo 3");
-                    Utils.Log(TAG, "Body user info : " + new Gson().toJson(mUser));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -348,7 +347,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
                         view.onSuccessful(new Gson().toJson(onResponse), EnumStatus.GET_DRIVE_ABOUT);
                     }
-                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
                         view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
@@ -718,7 +716,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             Utils.Log(TAG, " Updated => Warning categories id is null");
             return;
         }
-        // Map<String, Object> hashMap = new HashMap<>();
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         if (hashMap != null) {
             hashMap.put(getString(R.string.key_user_id), user.email);
@@ -742,7 +739,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
-                        mItem.isUpdate = false;
+                        mItem.isUpdate = true;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                         view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.UPDATE);
                     } else {
@@ -796,8 +793,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         if (items.categories_id == null || items.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.ADD_ITEMS);
+            return;
         }
-        // Map<String, Object> hashMap = new HashMap<>();
+        items.isSyncOwnServer = true;
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         if (hashMap != null) {
             hashMap.put(getString(R.string.key_user_id), user.email);
@@ -1469,7 +1467,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             view.onSuccessful("Successful",EnumStatus.GET_DRIVE_ABOUT);
                         }
                     }
-                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
                         Utils.Log(TAG, "View is null");
@@ -1540,7 +1537,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user) );
                         }
                     }
-                    Utils.Log(TAG, "Body check version: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -1581,7 +1577,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Utils.Log(TAG, "Body author device: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();

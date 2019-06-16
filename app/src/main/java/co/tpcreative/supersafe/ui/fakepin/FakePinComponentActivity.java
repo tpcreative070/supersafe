@@ -37,6 +37,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlideFakePin;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -47,7 +48,6 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-
 public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
 
     private static final String TAG = FakePinComponentActivity.class.getSimpleName();
@@ -57,7 +57,6 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     RecyclerView recyclerView;
     private FakePinComponentAdapter adapter;
     private FakePinComponentPresenter presenter;
-    public static boolean isVisit ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -296,7 +295,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
         presenter.getData();
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        isVisit = true;
+        SingletonManager.getInstance().setVisitFakePin(true);
     }
 
     @Override
@@ -306,7 +305,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
-        isVisit = false;
+        SingletonManager.getInstance().setVisitFakePin(false);
     }
 
     @Override

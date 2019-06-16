@@ -30,13 +30,10 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
     protected EnumStatus status = EnumStatus.OTHER;
     protected List<HashMap<Integer,Items>> mListHashExporting;
 
-
     public AlbumDetailPresenter(){
         mList = new ArrayList<>();
         mListShare = new ArrayList<>();
         mListHashExporting = new ArrayList<>();
-        String result =  ConvertUtils.byte2FitMemorySize(Utils.getAvailableSpaceInBytes());
-        Utils.Log(TAG,result);
     }
 
     public void  getData(Activity activity){
@@ -50,7 +47,6 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
                 if (data!=null){
                     mList = data;
                     onCalculate();
-                    Utils.Log(TAG,"Result list "+ new Gson().toJson(data));
                 }
                 view.onSuccessful("Successful",EnumStatus.RELOAD);
             }

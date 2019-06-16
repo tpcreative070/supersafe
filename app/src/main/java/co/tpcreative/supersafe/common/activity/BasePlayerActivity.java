@@ -5,7 +5,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -14,8 +13,7 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -26,7 +24,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
-    private Toast mToast;
     private HomeWatcher mHomeWatcher;
     public static final String TAG = BasePlayerActivity.class.getSimpleName();
     protected Storage storage;
@@ -164,9 +161,9 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SCREEN_LOCK:{
-                if (!EnterPinActivity.isVisible){
+                if (!SingletonManager.getInstance().isVisitLockScreen()){
                     Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
-                    EnterPinActivity.isVisible = true;
+                    SingletonManager.getInstance().setVisitLockScreen(true);
                     Utils.Log(TAG,"Verify pin");
                 }else{
                     Utils.Log(TAG,"Verify pin already");
@@ -178,7 +175,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                 break;
             }
         }
-        if (SingletonBaseActivity.getInstance().isAnimation()){
+        if (SingletonManager.getInstance().isAnimation()){
             if (onStartCount > 1) {
                 this.overridePendingTransition(R.animator.anim_slide_in_right,
                         R.animator.anim_slide_out_right);
@@ -187,7 +184,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
             }
         }else{
             Bungee.zoom(this);
-            SingletonBaseActivity.getInstance().setAnimation(true);
+            SingletonManager.getInstance().setAnimation(true);
         }
     }
 

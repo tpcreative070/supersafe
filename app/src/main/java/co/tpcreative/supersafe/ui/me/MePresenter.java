@@ -26,7 +26,6 @@ public class MePresenter extends Presenter<BaseView>{
 
     public void onShowUserInfo(){
        mUser = User.getInstance().getUserInfo();
-        Utils.Log(TAG,new Gson().toJson(mUser));
        Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.USER_INFO);
     }
 

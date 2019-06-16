@@ -63,6 +63,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -695,9 +696,9 @@ public class Utils {
     public static void onHomePressed(){
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
         Utils.Log(TAG,"Pressed home button");
-        if (!EnterPinActivity.isVisible){
+        if (!SingletonManager.getInstance().isVisitLockScreen()){
             Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
-            EnterPinActivity.isVisible = true;
+            SingletonManager.getInstance().setVisitLockScreen(true);
             Utils.Log(TAG,"Verify pin");
         }else{
             Utils.Log(TAG,"Verify pin already");

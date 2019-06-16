@@ -52,6 +52,7 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PremiumManager;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -162,11 +163,6 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
         switch (event){
-            case COMPLETED_RECREATE:{
-                Navigator.onMoveToMainTab(this);
-                Bungee.fade(this);
-                break;
-            }
             case REGISTER_OR_LOGIN:{
                 rlOverLay.setVisibility(View.INVISIBLE);
                 break;
@@ -280,7 +276,11 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         Utils.onUpdatedCountRate();
         EventBus.getDefault().unregister(this);
         PrefsController.putBoolean(getString(R.string.second_loads),true);
-        ServiceManager.getInstance().onDismissServices();
+        if (SingletonManager.getInstance().isReloadMainTab()){
+            SingletonManager.getInstance().setReloadMainTab(false);
+        }else{
+            ServiceManager.getInstance().onDismissServices();
+        }
     }
 
     @Override
@@ -477,8 +477,8 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         switch (requestCode) {
             case Navigator.COMPLETED_RECREATE :{
                 if (resultCode == Activity.RESULT_OK) {
+                    SingletonManager.getInstance().setReloadMainTab(true);
                     Navigator.onMoveToMainTab(this);
-                    Bungee.fade(this);
                     Utils.Log(TAG,"New Activity");
                 } else {
                     Utils.Log(TAG, "Nothing Updated theme");

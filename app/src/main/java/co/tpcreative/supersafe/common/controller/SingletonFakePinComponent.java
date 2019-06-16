@@ -20,7 +20,7 @@ public class SingletonFakePinComponent {
     }
 
     public void onUpdateView(){
-        if (EnterPinActivity.isVisible){
+        if (SingletonManager.getInstance().isVisitLockScreen()){
             return;
         }
         if (ls!=null){

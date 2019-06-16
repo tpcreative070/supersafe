@@ -38,7 +38,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock;
@@ -64,7 +64,6 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import me.grantland.widget.AutofitHelper;
 
@@ -131,7 +130,6 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private static LockScreenPresenter presenter;
     private CameraConfig mCameraConfig;
     private FingerPrintAuthHelper mFingerPrintAuthHelper;
-    public static boolean isVisible ;
     private String mRealPin = Utils.getPinFromSharedPreferences();
     private String mFakePin = Utils.getFakePinFromSharedPreferences();
     private boolean isFakePinEnabled = Utils.isEnabledFakePin();
@@ -359,7 +357,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isVisible = false;
+        SingletonManager.getInstance().setVisitLockScreen(false);
         int  value = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
@@ -403,7 +401,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     protected void onResume() {
         super.onResume();
-        isVisible = true;
+        SingletonManager.getInstance().setVisitLockScreen(true);
         Utils.Log(TAG,"onResume");
         if (mPinLockView != null) {
             mPinLockView.resetPinLockView();
@@ -558,7 +556,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     private void checkPin(String pin, boolean isCompleted) {
         switch (mPinAction) {
             case VERIFY: {
-              if (FakePinComponentActivity.isVisit){
+              if (SingletonManager.getInstance().isVisitFakePin()){
                     if (pin.equals(mFakePin) && isFakePinEnabled) {
                         presenter.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE);
                     }else{
@@ -767,7 +765,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                     }
                     case DONE: {
                         /*Unlock for real pin*/
-                        SingletonBaseActivity.getInstance().setAnimation(false);
+                        SingletonManager.getInstance().setAnimation(false);
                         EventBus.getDefault().post(EnumStatus.UNLOCK);
                         Utils.onObserveData(100, new Listener() {
                             @Override
@@ -835,12 +833,12 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 mPinAction = action;
                 switch (action) {
                     case DONE: {
-                        SingletonBaseActivity.getInstance().setAnimation(false);
+                        SingletonManager.getInstance().setAnimation(false);
                         Utils.onObserveData(100, new Listener() {
                             @Override
                             public void onStart() {
                                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
-                                if (FakePinComponentActivity.isVisit){
+                                if (SingletonManager.getInstance().isVisitFakePin()){
                                     finish();
                                 }
                                 else{

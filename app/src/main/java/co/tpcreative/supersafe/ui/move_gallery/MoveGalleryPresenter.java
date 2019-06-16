@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.move_gallery;
-import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,7 +76,6 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
             }
         }
         view.onSuccessful("Successful", EnumStatus.RELOAD);
-        Utils.Log(TAG,new Gson().toJson("Main categories "+ list));
     }
 
     public void onMoveItemsToAlbum(int position){
@@ -90,12 +88,10 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 if (item.isChecked){
                     item.categories_local_id = gallery.main.categories_local_id;
                     item.categories_id = gallery.main.categories_id;
-                    if (gallery.main.categories_id==null || gallery.main.categories_id.equals("null")){
-                        Utils.Log(TAG,"Moved => Warning categories id is null");
-                    }
                     if (item.isSyncCloud && item.isSyncOwnServer){
                         item.isUpdate = true;
                     }
+                    Utils.Log(TAG,"Warning " +item.isUpdate + "; isSyncCloud "+ item.isSyncCloud + "; isSyncOwnServer " + item.isSyncOwnServer);
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(item);
                 }
             }
@@ -105,5 +101,4 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
             Utils.Log(TAG,"Nulll");
         }
     }
-
 }

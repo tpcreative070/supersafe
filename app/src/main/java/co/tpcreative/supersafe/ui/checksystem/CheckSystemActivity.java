@@ -78,7 +78,6 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 }
             }, 5000);
         }
-        onStartOverridePendingTransition();
         ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
         progressBarCircularIndeterminate.setBackgroundColor(getResources().getColor(themeApp.getAccentColor()));
     }

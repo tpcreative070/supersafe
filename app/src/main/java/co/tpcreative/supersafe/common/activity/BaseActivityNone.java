@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.common.activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v7.app.ActionBar;
@@ -27,6 +28,9 @@ public abstract class BaseActivityNone extends AppCompatActivity{
         actionBar = getSupportActionBar();
         onStartCount = 1;
         storage = new Storage(this);
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     @Override

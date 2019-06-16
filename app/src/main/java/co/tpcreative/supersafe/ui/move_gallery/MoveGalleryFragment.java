@@ -20,14 +20,14 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -209,6 +209,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
                             if (response){
                                 Toast.makeText(getActivity(),"Created album successful",Toast.LENGTH_SHORT).show();
                                 presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
+                                SingletonPrivateFragment.getInstance().onUpdateView();
                                 ServiceManager.getInstance().onGetListCategoriesSync();
                             }
                             else{

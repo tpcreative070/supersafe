@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -36,7 +37,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonBaseActivity;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
@@ -47,7 +48,6 @@ import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import spencerstudios.com.bungeelib.Bungee;
-
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener{
     private static final String TAG = BaseGoogleApi.class.getSimpleName();
@@ -65,12 +65,19 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         actionBar = getSupportActionBar();
         onStartCount = 1;
         if (savedInstanceState == null) {
-            this.overridePendingTransition(R.animator.anim_slide_in_left,
-                    R.animator.anim_slide_out_left);
+            if (SingletonManager.getInstance().isReloadMainTab()){
+                Bungee.fade(this);
+            }else{
+                this.overridePendingTransition(R.animator.anim_slide_in_left,
+                        R.animator.anim_slide_out_left);
+            }
         } else {
             onStartCount = 2;
         }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null));
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
     }
 
     protected void onStartOverridePendingTransition(){
@@ -226,9 +233,9 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SCREEN_LOCK:{
-                if (!EnterPinActivity.isVisible){
+                if (!SingletonManager.getInstance().isVisitLockScreen()){
                     Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
-                    EnterPinActivity.isVisible = true;
+                    SingletonManager.getInstance().setVisitLockScreen(true);
                     Utils.Log(TAG,"Verify pin");
                 }else{
                     Utils.Log(TAG,"Verify pin already");
@@ -256,16 +263,16 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             }
         }
         Utils.Log(TAG,"onStart..........");
-        if (SingletonBaseActivity.getInstance().isAnimation()){
+        if (SingletonManager.getInstance().isAnimation()){
             if (onStartCount > 1) {
                 this.overridePendingTransition(R.animator.anim_slide_in_right,
-                        R.animator.anim_slide_out_right);
+                            R.animator.anim_slide_out_right);
             } else if (onStartCount == 1) {
-                onStartCount++;
+                    onStartCount++;
             }
         }else{
             Bungee.zoom(this);
-            SingletonBaseActivity.getInstance().setAnimation(true);
+            SingletonManager.getInstance().setAnimation(true);
         }
     }
     /**

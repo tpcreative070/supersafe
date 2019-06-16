@@ -2,10 +2,8 @@ package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -31,6 +29,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -42,8 +41,6 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
-
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
@@ -304,7 +301,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     }
                 }
             });
-            if(FakePinComponentActivity.isVisit){
+            if(SingletonManager.getInstance().isVisitFakePin()){
                 mLockAlbum.setVisible(false);
                 mAlbumCover.setVisible(false);
             }
@@ -504,5 +501,4 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             }
         }
     }
-
 }

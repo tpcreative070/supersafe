@@ -123,7 +123,6 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
     }
 
-
     public final synchronized List<Items> getListItems(final String categories_local_id,boolean isDeleteLocal,boolean isExport,boolean isFakePin){
         try{
             if (categories_local_id==null){
