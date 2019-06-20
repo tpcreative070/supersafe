@@ -360,19 +360,19 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 return true;
             }
             case R.id.action_view :{
-               if (menuItem!=null){
-                   boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                   if (isVertical){
-                       menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_format_list_bulleted_white_48));
-                       PrefsController.putBoolean(getString(R.string.key_vertical_adapter),false);
-                       onInit();
-                   }
-                   else{
-                       menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_view_comfy_white_48));
-                       PrefsController.putBoolean(getString(R.string.key_vertical_adapter),true);
-                       onInit();
-                   }
-               }
+                if (menuItem!=null){
+                    boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                    if (isVertical){
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_format_list_bulleted_white_48));
+                        PrefsController.putBoolean(getString(R.string.key_vertical_adapter),false);
+                        onInit();
+                    }
+                    else{
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_view_comfy_white_48));
+                        PrefsController.putBoolean(getString(R.string.key_vertical_adapter),true);
+                        onInit();
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -422,7 +422,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @OnClick(R.id.imgShare)
     public void onClickedShare(View view){
-       if (countSelected>0){
+        if (countSelected>0){
             storage.createDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
             presenter.status = EnumStatus.SHARE;
             onShowDialog(presenter.status);
@@ -463,10 +463,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @OnClick(R.id.imgDelete)
     public void onClickedDelete(View view){
-       if (countSelected>0){
-           presenter.status = EnumStatus.DELETE;
-           onShowDialog(presenter.status);
-       }
+        if (countSelected>0){
+            presenter.status = EnumStatus.DELETE;
+            onShowDialog(presenter.status);
+        }
     }
 
     @OnClick(R.id.imgMove)
@@ -515,7 +515,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             });
         }
         catch (Exception e){
-           Utils.Log(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -1152,7 +1152,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         countSelected = 0;
         onShowUI();
         if (isExport){
-           onCheckDelete();
+            onCheckDelete();
         }
     }
 

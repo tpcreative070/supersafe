@@ -116,5 +116,6 @@ public enum EnumStatus {
         REMOVE_AT_ADAPTER,
         UPDATE_AT_ADAPTER,
         UPDATE_ENTIRE_ADAPTER,
-        UPDATE_MOVE_NEW_ALBUM
+        UPDATE_MOVE_NEW_ALBUM,
+        INIT
 }
