@@ -1090,8 +1090,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             actionMode = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-                Window window = getWindow();
-                window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
+                if (themeApp!=null){
+                    Window window = getWindow();
+                    window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
+                }
             }
         }
     };

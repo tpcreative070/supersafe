@@ -1,8 +1,10 @@
 package co.tpcreative.supersafe.ui.trash;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,6 +39,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 
 public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
@@ -236,6 +240,10 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
             menuInflater.inflate(R.menu.menu_select, menu);
             actionMode = mode;
             countSelected = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.material_orange_900));
+            }
             return true;
         }
 
@@ -260,6 +268,13 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
                 deselectAll();
             }
             actionMode = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+                if (themeApp!=null){
+                    Window window = getWindow();
+                    window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
+                }
+            }
         }
     };
 
