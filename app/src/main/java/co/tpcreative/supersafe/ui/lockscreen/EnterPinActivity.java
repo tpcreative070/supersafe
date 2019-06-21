@@ -886,6 +886,10 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 super.onBackPressed();
                 break;
             }
+            case SET:{
+                super.onBackPressed();
+                break;
+            }
         }
     }
 
