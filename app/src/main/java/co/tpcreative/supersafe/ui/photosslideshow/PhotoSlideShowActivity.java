@@ -366,10 +366,22 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 File file = new File(""+path);
                 if (file.exists() || file.isFile()){
                     photoView.setRotation(mItems.degrees);
-                    Glide.with(context)
-                            .load(storage.readFile(path))
-                            .apply(options)
-                            .into(photoView);
+                    if (mItems.mimeType.equals(getString(R.string.key_gif))){
+                        String mOriginal = mItems.originalPath;
+                        File mFileOriginal = new File(""+mOriginal);
+                        if (mFileOriginal.exists() || mFileOriginal.isFile()){
+                            Glide.with(context)
+                                    .asGif()
+                                    .load(storage.readFile(mOriginal))
+                                    .apply(options)
+                                    .into(photoView);
+                        }
+                    }else{
+                        Glide.with(context)
+                                .load(storage.readFile(path))
+                                .apply(options)
+                                .into(photoView);
+                    }
                 }
             }
             catch (Exception e){
@@ -676,7 +688,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 break;
                                             }
                                             default:{
-                                                File input = new File(index.thumbnailPath);
+                                                String path = "";
+                                                if (index.mimeType.equals(getString(R.string.key_gif))){
+                                                    path = index.originalPath;
+                                                }else{
+                                                    path = index.thumbnailPath;
+                                                }
+                                                File input = new File(path);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(output.getAbsolutePath())){
                                                     output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);

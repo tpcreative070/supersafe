@@ -754,7 +754,13 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 break;
                                             }
                                             default:{
-                                                File input = new File(index.thumbnailPath);
+                                                String path = "";
+                                                if (index.mimeType.equals(getString(R.string.key_gif))){
+                                                    path = index.originalPath;
+                                                }else{
+                                                    path = index.thumbnailPath;
+                                                }
+                                                File input = new File(path);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(output.getAbsolutePath())){
                                                     output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);

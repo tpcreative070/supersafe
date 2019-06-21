@@ -436,6 +436,7 @@
     <string name="key_jpg">.jpg</string>
     <string name="key_mp4">.mp4</string>
     <string name="key_png">.png</string>
+    <string name="key_gif">image/gif</string>
     <string name="key_temporary">.temporary.jpg</string>
     <string name="key_mime_type_sdcard_jpg">image/jpeg</string>
     <string name="key_mime_type_sdcard_png">image/png</string>

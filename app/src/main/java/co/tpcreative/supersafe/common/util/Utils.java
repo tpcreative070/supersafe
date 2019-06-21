@@ -463,6 +463,7 @@ public class Utils {
         hashMap.put("jpg",new MimeTypeFile(".jpg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("jpeg",new MimeTypeFile(".jpeg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
+        hashMap.put("gif",new MimeTypeFile(".gif", EnumFormatType.IMAGE,"image/gif"));
         return hashMap;
     }
 
