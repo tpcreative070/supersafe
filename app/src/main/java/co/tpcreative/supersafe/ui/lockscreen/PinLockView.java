@@ -191,10 +191,6 @@ public class PinLockView extends RecyclerView {
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
-    public void setTypeFace(Typeface typeFace) {
-        mAdapter.setTypeFace(typeFace);
-    }
-
     /**
      * Sets a {@link PinLockListener} to the to listen to pin update events
      *
@@ -412,7 +408,6 @@ public class PinLockView extends RecyclerView {
 
     public void setCustomKeySet(int[] customKeySet) {
         this.mCustomKeySet = customKeySet;
-
         if (mAdapter != null) {
             mAdapter.setKeyValues(customKeySet);
         }
@@ -420,7 +415,6 @@ public class PinLockView extends RecyclerView {
 
     public void enableLayoutShuffling() {
         this.mCustomKeySet = ShuffleArrayUtils.shuffle(DEFAULT_KEY_SET);
-
         if (mAdapter != null) {
             mAdapter.setKeyValues(mCustomKeySet);
         }

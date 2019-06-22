@@ -50,6 +50,8 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     RecyclerView recyclerView;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
+    @BindView(R.id.tvStatus)
+    TextView tvStatus;
     private BreakInAlertsAdapter adapter;
     private BreakInAlertsPresenter presenter;
 
@@ -160,6 +162,7 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
         else{
             showMessage(getString(R.string.error_not_having_camera));
         }
+        tvStatus.setText(b ? getString(R.string.enabled) : getString(R.string.disabled));
     }
 
     public void initRecycleView(){

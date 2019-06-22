@@ -33,6 +33,8 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
     TextView tvOptionItems;
     @BindView(R.id.imgIcons)
     ImageView imgIcons;
+    @BindView(R.id.tvStatus)
+    TextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
         if (!b){
             PrefsController.putBoolean(getString(R.string.key_secret_door),b);
         }
+        tvStatus.setText(b ? getString(R.string.enabled) : getString(R.string.disabled));
     }
 
     @OnClick(R.id.rlSwitch)

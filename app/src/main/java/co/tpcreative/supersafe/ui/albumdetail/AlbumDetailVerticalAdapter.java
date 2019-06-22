@@ -16,6 +16,7 @@ import butterknife.OnLongClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.adapter.FooterViewHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -24,6 +25,7 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.ThemeApp;
 
 public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
+    private static final int FOOTER_VIEW = 1;
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
@@ -47,11 +49,33 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
 
     @Override
     public int getItemCount() {
-        return dataSource.size();
+        if (dataSource == null) {
+            return 0;
+        }
+        if (dataSource.size() == 0) {
+            // Return 1 here to show nothing
+            return 1;
+        }
+        // Add another extra view to show the footer view
+        // So there are two extra views need to be populated
+        return dataSource.size() + 1;
+    }
+
+    // Now define getItemViewType of your own.
+    @Override
+    public int getItemViewType(int position) {
+        if (position == dataSource.size()) {
+            // This is where we'll add footer.
+            return FOOTER_VIEW;
+        }
+        return super.getItemViewType(position);
     }
 
     @Override
     public BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType==FOOTER_VIEW){
+            return new FooterViewHolder(inflater.inflate(R.layout.album_detail_item_footer, parent, false));
+        }
         return new ItemHolder(inflater.inflate(R.layout.custom_item_verical, parent, false));
     }
 

@@ -34,6 +34,8 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     ImageView imgView;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
+    @BindView(R.id.tvStatus)
+    TextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
             tvCreatePin.setEnabled(b);
             //imgView.setColorFilter(getResources().getColor(R.color.material_gray_500), PorterDuff.Mode.SRC_ATOP);
         }
+        tvStatus.setText(b ? getString(R.string.enabled) : getString(R.string.disabled));
     }
 
     @OnClick(R.id.tvCreatePin)

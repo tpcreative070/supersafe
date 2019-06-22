@@ -27,6 +27,9 @@ public class BaseAdapter<V, VH extends BaseHolder> extends RecyclerView.Adapter<
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
+        if (holder instanceof FooterViewHolder){
+            return;
+        }
         holder.bind(dataSource.get(position), position);
         holder.event();
     }
