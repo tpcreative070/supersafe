@@ -1,9 +1,7 @@
 package com.jaychang.srv.behavior;
-
 import android.graphics.Canvas;
-import android.support.annotation.NonNull;
 import android.view.View;
-
+import androidx.annotation.NonNull;
 import com.jaychang.srv.SimpleRecyclerView;
 
 public abstract class SwipeToDismissCallback<T> {

@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.model;
-import android.support.annotation.NonNull;
-
-import java.util.Date;
+import androidx.annotation.NonNull;
 
 public class EventItem extends ListItem {
 

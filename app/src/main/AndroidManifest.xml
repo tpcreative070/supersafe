@@ -43,8 +43,12 @@
         <!-- Upload Google Drive -->
         <service android:name=".common.services.SuperSafeService" />
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id"/>
+
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -156,7 +160,7 @@
         <activity android:name=".ui.restore.RestoreActivity"/>
         <activity android:name=".ui.albumcover.AlbumCoverActivity"/>
         <activity android:name=".ui.switchbasic.SwitchBasicActivity"/>
-        /*Portrait model for special mode*/
+        <!--Portrait model for special mode-->
         <activity android:name=".ui.player.PlayerActivity"/>
     </application>
 </manifest>

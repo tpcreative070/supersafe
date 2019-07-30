@@ -25,8 +25,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -35,7 +33,6 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
@@ -59,6 +56,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Scroller;
 import android.widget.TextView.BufferType;
 import android.widget.TextView.OnEditorActionListener;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.xmlpull.v1.XmlPullParserException;
 

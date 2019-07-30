@@ -1,8 +1,8 @@
 package co.tpcreative.supersafe.common.activity;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import com.snatik.storage.Storage;

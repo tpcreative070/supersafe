@@ -1,18 +1,10 @@
 package com.litao.android.lib;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.litao.android.lib.Utils.GridSpacingItemDecoration;
 import com.litao.android.lib.Utils.Utils;
 import com.litao.android.lib.Utils.VerticalSpaceItemDecoration;
@@ -32,7 +30,6 @@ import com.litao.android.lib.entity.AlbumEntry;
 import com.litao.android.lib.entity.PhotoEntry;
 import com.litao.android.lib.view.MDCheckBox;
 import com.litao.android.lib.view.SquaredView;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

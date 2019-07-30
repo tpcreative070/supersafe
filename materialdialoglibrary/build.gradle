@@ -24,11 +24,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:'+appSupportVersion
-    implementation 'com.android.support:preference-v14:'+appSupportVersion
-    implementation 'com.android.support:design:'+appSupportVersion
-    implementation 'com.android.support:support-annotations:'+appSupportVersion
-    implementation 'com.android.support:support-v4:'+appSupportVersion
-    implementation 'com.android.support:recyclerview-v7:'+appSupportVersion
+    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
+    implementation 'androidx.recyclerview:recyclerview:' + appRecyclerView
+    implementation 'com.google.android.material:material:' + appGoogleMaterial
+    implementation 'androidx.legacy:legacy-preference-v14:' + apppreferenceV14
 }
 

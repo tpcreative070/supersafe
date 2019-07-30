@@ -15,23 +15,18 @@
  */
 
 package co.tpcreative.supersafe.common.hiddencamera;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
+import androidx.annotation.NonNull;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraResolution;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraRotation;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;

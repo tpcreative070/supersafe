@@ -1,7 +1,6 @@
 package com.jaychang.srv.behavior;
-
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SwipeToDismissHelper extends ItemTouchHelper
   implements OnStartDragListener {

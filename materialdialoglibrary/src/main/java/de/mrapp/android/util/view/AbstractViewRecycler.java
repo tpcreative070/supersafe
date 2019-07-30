@@ -12,24 +12,21 @@
  * the License.
  */
 package de.mrapp.android.util.view;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-
 import de.mrapp.android.util.logging.LogLevel;
 import de.mrapp.android.util.logging.Logger;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

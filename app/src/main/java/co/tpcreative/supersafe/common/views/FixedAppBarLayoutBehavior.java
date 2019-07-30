@@ -1,8 +1,8 @@
 package co.tpcreative.supersafe.common.views;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.util.AttributeSet;
+import androidx.annotation.NonNull;
+import com.google.android.material.appbar.AppBarLayout;
 
 public class FixedAppBarLayoutBehavior extends AppBarLayout.Behavior {
 

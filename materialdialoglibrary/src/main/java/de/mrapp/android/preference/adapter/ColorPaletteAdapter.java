@@ -12,23 +12,20 @@
  * the License.
  */
 package de.mrapp.android.preference.adapter;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import de.mrapp.android.preference.AbstractColorPickerPreference.PreviewShape;
 import de.mrapp.android.preference.R;
 import de.mrapp.android.preference.multithreading.ColorPreviewDataBinder;
-
 import static de.mrapp.android.util.Condition.ensureAtLeast;
 import static de.mrapp.android.util.Condition.ensureNotNull;
 

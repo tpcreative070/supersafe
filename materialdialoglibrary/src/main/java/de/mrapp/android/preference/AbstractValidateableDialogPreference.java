@@ -12,25 +12,22 @@
  * the License.
  */
 package de.mrapp.android.preference;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.support.annotation.AttrRes;
-import android.support.annotation.CallSuper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.CallSuper;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
+import androidx.core.content.ContextCompat;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import de.mrapp.android.dialog.DialogValidator;
 import de.mrapp.android.dialog.MaterialDialog;
 import de.mrapp.android.dialog.model.ValidateableDialog;
@@ -38,7 +35,6 @@ import de.mrapp.android.util.datastructure.ListenerList;
 import de.mrapp.android.validation.Validateable;
 import de.mrapp.android.validation.ValidationListener;
 import de.mrapp.android.validation.Validator;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

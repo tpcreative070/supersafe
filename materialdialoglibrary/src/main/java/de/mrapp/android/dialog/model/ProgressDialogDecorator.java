@@ -12,10 +12,8 @@
  * the License.
  */
 package de.mrapp.android.dialog.model;
-
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import de.mrapp.android.dialog.ProgressDialog.ProgressBarPosition;
 
 /**

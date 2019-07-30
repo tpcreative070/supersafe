@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.common.adapter;
-
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.ButterKnife;
 
 public class BaseHolder<V> extends RecyclerView.ViewHolder {

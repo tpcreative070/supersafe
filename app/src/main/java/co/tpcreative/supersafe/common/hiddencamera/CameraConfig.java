@@ -17,15 +17,14 @@
 package co.tpcreative.supersafe.common.hiddencamera;
 import android.content.Context;
 import android.hardware.Camera;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFocus;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraResolution;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraRotation;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-
 import java.io.File;
 
 

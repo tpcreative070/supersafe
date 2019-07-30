@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.model;
 
-import android.arch.persistence.room.Ignore;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 

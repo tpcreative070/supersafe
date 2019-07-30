@@ -1,13 +1,9 @@
 package id.zelory.compressor;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.util.Log;
-
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -115,7 +111,7 @@ class ImageUtil {
 
         //check the rotation of the image and display it properly
         in = new ByteArrayInputStream(data);
-        android.support.media.ExifInterface exif = new android.support.media.ExifInterface(in);
+        androidx.exifinterface.media.ExifInterface exif = new androidx.exifinterface.media.ExifInterface(in);
         int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
         Matrix matrix = new Matrix();
         if (orientation == 6) {

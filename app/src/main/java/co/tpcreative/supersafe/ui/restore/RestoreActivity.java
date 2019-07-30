@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -13,11 +12,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;

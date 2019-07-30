@@ -1,21 +1,11 @@
 package co.tpcreative.supersafe.common.dialog;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-
-import java.io.File;
-
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
-import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.Items;
+
 
 public class DialogManager {
 

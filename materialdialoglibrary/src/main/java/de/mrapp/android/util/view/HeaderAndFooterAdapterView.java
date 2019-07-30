@@ -12,9 +12,8 @@
  * the License.
  */
 package de.mrapp.android.util.view;
-
-import android.support.annotation.NonNull;
 import android.view.View;
+import androidx.annotation.NonNull;
 
 /**
  * Defines the interface an adapter view, e.g. a grid view or recycler view, which allows to display

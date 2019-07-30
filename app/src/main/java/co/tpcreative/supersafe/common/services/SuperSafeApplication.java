@@ -4,17 +4,18 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-import android.support.v4.content.PermissionChecker;
+import androidx.core.content.PermissionChecker;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
@@ -86,10 +87,15 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+            }
+        });
         InstanceGenerator.getInstance(this);
         mInstance = this;
-        isLive = false;
+        isLive = true;
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
         /*Init own service api*/
@@ -136,11 +142,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         Utils.Log(TAG, supersafe);
         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
-                .requestScopes(Drive.SCOPE_FILE)
-                .requestScopes(Drive.SCOPE_APPFOLDER);
+                .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+                .requestScopes(new Scope(DriveScopes.DRIVE_APPDATA));
         requiredScopes = new HashSet<>(2);
-        requiredScopes.add(Drive.SCOPE_FILE);
-        requiredScopes.add(Drive.SCOPE_APPFOLDER);
+        requiredScopes.add(new Scope(DriveScopes.DRIVE_FILE));
+        requiredScopes.add(new Scope(DriveScopes.DRIVE_APPDATA));
         requiredScopesString = new ArrayList<>();
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
@@ -167,7 +173,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
         if (options != null) {
             if (account != null) {
-                options.setAccount(account);
+                options.setAccountName(account.name);
             }
             return options.build();
         }

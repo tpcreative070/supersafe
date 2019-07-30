@@ -1,19 +1,14 @@
 package co.tpcreative.supersafe.common.network;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.convert.AnnotationStrategy;
 import org.simpleframework.xml.core.Persister;
 import org.simpleframework.xml.strategy.Strategy;
-
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;

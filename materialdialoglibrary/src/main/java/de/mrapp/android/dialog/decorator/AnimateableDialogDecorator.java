@@ -19,16 +19,14 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewPropertyAnimator;
 import android.view.Window;
-
 import java.util.Collections;
 import java.util.Map;
-
 import de.mrapp.android.dialog.animation.CircleRevealAnimation;
 import de.mrapp.android.dialog.animation.DialogAnimation;
 import de.mrapp.android.dialog.animation.FadeAnimation;

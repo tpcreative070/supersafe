@@ -12,9 +12,7 @@
  * the License.
  */
 package de.mrapp.android.dialog;
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import de.mrapp.android.dialog.model.ValidateableDialog;
 
 /**

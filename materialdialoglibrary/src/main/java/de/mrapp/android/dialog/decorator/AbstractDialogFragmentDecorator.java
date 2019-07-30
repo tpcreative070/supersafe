@@ -12,10 +12,8 @@
  * the License.
  */
 package de.mrapp.android.dialog.decorator;
-
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import de.mrapp.android.dialog.model.Dialog;
 
 /**

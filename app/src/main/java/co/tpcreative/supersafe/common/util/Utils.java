@@ -12,14 +12,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,8 +24,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -379,7 +379,7 @@ public class Utils {
     }
 
     private static Snackbar multilineSnackbar(Snackbar snackbar) {
-        TextView textView = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = (TextView) snackbar.getView().findViewById(R.id.snackbar_text);
         textView.setMaxLines(5);
         return snackbar;
     }

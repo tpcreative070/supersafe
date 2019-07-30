@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.google.android.cameraview;
-
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Immutable class for describing width and height dimensions in pixels.

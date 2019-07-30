@@ -14,7 +14,7 @@
 package de.mrapp.android.dialog.listener;
 
 import android.app.AlertDialog;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import de.mrapp.android.dialog.model.ValidateableDialog;
 

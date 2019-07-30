@@ -45,10 +45,9 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:' + appSupportVersion
-    implementation 'com.android.support:support-annotations:' + appSupportVersion
-    implementation 'com.android.support:design:' + appSupportVersion
-    implementation 'com.android.support:cardview-v7:' + appSupportVersion
+    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
+    implementation 'com.google.android.material:material:' + appGoogleMaterial
+    implementation 'androidx.cardview:cardview:' + appCardView
 }
 
 

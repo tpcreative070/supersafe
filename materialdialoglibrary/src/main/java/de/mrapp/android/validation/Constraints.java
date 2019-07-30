@@ -12,11 +12,8 @@
  * the License.
  */
 package de.mrapp.android.validation;
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import java.util.regex.Pattern;
-
 import de.mrapp.android.validation.constraints.ConjunctiveConstraint;
 import de.mrapp.android.validation.constraints.DisjunctiveConstraint;
 import de.mrapp.android.validation.constraints.NegateConstraint;

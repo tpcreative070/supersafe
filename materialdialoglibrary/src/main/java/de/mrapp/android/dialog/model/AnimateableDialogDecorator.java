@@ -12,8 +12,7 @@
  * the License.
  */
 package de.mrapp.android.dialog.model;
-
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import de.mrapp.android.dialog.animation.DialogAnimation;
 

@@ -12,22 +12,18 @@
  * the License.
  */
 package de.mrapp.android.util.view;
-
 import android.content.Context;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
-
 import de.mrapp.android.util.ViewUtil;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

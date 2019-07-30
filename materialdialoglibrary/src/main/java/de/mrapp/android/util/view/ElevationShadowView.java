@@ -12,20 +12,17 @@
  * the License.
  */
 package de.mrapp.android.util.view;
-
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
+import androidx.appcompat.widget.AppCompatImageView;
 import de.mrapp.android.util.ElevationUtil;
 import de.mrapp.android.util.ElevationUtil.Orientation;
 import de.mrapp.android.preference.R;
-
 import static de.mrapp.android.util.Condition.ensureAtLeast;
 import static de.mrapp.android.util.Condition.ensureAtMaximum;
 import static de.mrapp.android.util.Condition.ensureNotNull;

@@ -1,15 +1,11 @@
 package com.jaychang.srv.decoration;
-
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.jaychang.srv.SimpleRecyclerView;
-
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
 @SuppressWarnings("unchecked")
 public class SectionHeaderItemDecoration extends RecyclerView.ItemDecoration {
@@ -43,7 +39,7 @@ public class SectionHeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     int position = parent.getChildAdapterPosition(view);
 
-    if (position == NO_POSITION || !isSectionType(position)) {
+    if (position == RecyclerView.NO_POSITION || !isSectionType(position)) {
       return;
     }
 
@@ -73,7 +69,7 @@ public class SectionHeaderItemDecoration extends RecyclerView.ItemDecoration {
       int position = parent.getChildAdapterPosition(view);
       int top = view.getTop() - sectionHeight;
 
-      if (position != NO_POSITION
+      if (position != RecyclerView.NO_POSITION
               && !isSameSection(position)
               && !isItemCoveredBySection(view.getHeight(), top)) {
         if (!isSectionType(position)) {
@@ -122,7 +118,7 @@ public class SectionHeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     int position = layoutManager.findFirstVisibleItemPosition();
 
-    if (position == NO_POSITION) {
+    if (position == RecyclerView.NO_POSITION) {
       return;
     }
 

@@ -15,15 +15,13 @@
  */
 
 package com.google.android.cameraview;
-
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.core.view.ViewCompat;
 
 class SurfaceViewPreview extends PreviewImpl {
 

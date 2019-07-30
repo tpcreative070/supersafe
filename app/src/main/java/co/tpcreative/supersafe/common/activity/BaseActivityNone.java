@@ -3,11 +3,11 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -15,7 +15,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public abstract class BaseActivityNone extends AppCompatActivity{
+public abstract class BaseActivityNone extends AppCompatActivity {
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;

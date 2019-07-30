@@ -1,9 +1,5 @@
 package co.tpcreative.supersafe.model.room;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
+
 
 //import co.tpcreative.supersafe.model.Secret;
 

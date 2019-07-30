@@ -12,7 +12,6 @@
  * the License.
  */
 package de.mrapp.android.preference;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,22 +21,19 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import de.mrapp.android.dialog.MaterialDialog;
 import de.mrapp.android.util.view.AbstractSavedState;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

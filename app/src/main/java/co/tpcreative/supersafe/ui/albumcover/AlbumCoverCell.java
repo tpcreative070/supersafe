@@ -1,17 +1,15 @@
 package co.tpcreative.supersafe.ui.albumcover;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
+import androidx.annotation.NonNull;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.jaychang.srv.SimpleCell;
 import com.jaychang.srv.SimpleViewHolder;
 import com.snatik.storage.Storage;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.tpcreative.supersafe.R;

@@ -1,8 +1,7 @@
 package com.litao.android.lib.Utils;
-
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by 李涛 on 16/4/22.

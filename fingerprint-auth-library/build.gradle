@@ -25,5 +25,5 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:'+appSupportVersion
+    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
 }

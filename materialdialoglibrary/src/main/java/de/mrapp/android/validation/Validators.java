@@ -14,11 +14,9 @@
 package de.mrapp.android.validation;
 import de.mrapp.android.preference.R;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import java.util.regex.Pattern;
-
 import de.mrapp.android.validation.validators.ConjunctiveValidator;
 import de.mrapp.android.validation.validators.DisjunctiveValidator;
 import de.mrapp.android.validation.validators.NegateValidator;

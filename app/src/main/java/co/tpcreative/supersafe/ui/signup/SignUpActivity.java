@@ -1,9 +1,7 @@
 package co.tpcreative.supersafe.ui.signup;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -11,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;

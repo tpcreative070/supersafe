@@ -12,9 +12,8 @@
  * the License.
  */
 package de.mrapp.android.dialog.model;
-
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Defines the interface, all decorators, which allow to modify the view hierarchy of a dialog, must

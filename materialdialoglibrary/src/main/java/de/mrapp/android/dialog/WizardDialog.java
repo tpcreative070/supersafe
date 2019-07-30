@@ -16,21 +16,18 @@ import de.mrapp.android.preference.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.widget.Button;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.tabs.TabLayout;
 import de.mrapp.android.dialog.ScrollableArea.Area;
 import de.mrapp.android.dialog.builder.AbstractHeaderDialogBuilder;
 import de.mrapp.android.dialog.model.WizardDialogDecorator;
@@ -782,7 +779,7 @@ public class WizardDialog extends AbstractHeaderDialogFragment implements Wizard
          * @return The builder, the method has been called upon, as an instance of the class {@link
          * Builder}
          */
-        public final Builder addOnPageChangeListener(@NonNull final OnPageChangeListener listener) {
+        public final Builder addOnPageChangeListener(@NonNull final ViewPager.OnPageChangeListener listener) {
             getProduct().addOnPageChangeListener(listener);
             return self();
         }
@@ -1165,12 +1162,12 @@ public class WizardDialog extends AbstractHeaderDialogFragment implements Wizard
     }
 
     @Override
-    public final void addOnPageChangeListener(@NonNull final OnPageChangeListener listener) {
+    public final void addOnPageChangeListener(@NonNull final ViewPager.OnPageChangeListener listener) {
         decorator.addOnPageChangeListener(listener);
     }
 
     @Override
-    public final void removeOnPageChangeListener(@NonNull final OnPageChangeListener listener) {
+    public final void removeOnPageChangeListener(@NonNull final ViewPager.OnPageChangeListener listener) {
         decorator.removeOnPageChangeListener(listener);
     }
 

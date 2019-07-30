@@ -1,8 +1,6 @@
 package com.litao.android.lib;
-
-
 import android.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by 李涛 on 16/4/22.

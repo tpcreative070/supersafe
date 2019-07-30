@@ -4,15 +4,15 @@ import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -27,7 +27,6 @@ import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.ThemeApp;
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BaseActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{

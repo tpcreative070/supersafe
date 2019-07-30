@@ -8,10 +8,10 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -19,12 +19,14 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
@@ -248,7 +250,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             }
         }
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null && GoogleSignIn.hasPermissions(account,Drive.SCOPE_FILE,Drive.SCOPE_APPFOLDER)) {
+        if (account != null && GoogleSignIn.hasPermissions(account,new Scope(DriveScopes.DRIVE_FILE),new Scope(DriveScopes.DRIVE_APPDATA))) {
             getGoogleSignInClient(account.getAccount());
             initializeDriveClient(account);
             mSignInAccount = account;

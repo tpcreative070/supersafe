@@ -1,11 +1,11 @@
 package co.tpcreative.supersafe.model.room;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
+import androidx.room.Database;
+import androidx.room.Ignore;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.List;
 import java.util.UUID;
 import co.tpcreative.supersafe.R;
@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.model.MainCategories;
 
 @Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 5, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
+
 
     @Ignore
     private static InstanceGenerator instance;

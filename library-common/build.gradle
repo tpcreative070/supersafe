@@ -23,17 +23,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-
-
-
-
     lintOptions {
         abortOnError false
     }
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:' + appSupportVersion
+    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
 }
 
 

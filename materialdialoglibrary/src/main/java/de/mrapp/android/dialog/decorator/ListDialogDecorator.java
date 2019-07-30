@@ -15,10 +15,6 @@ package de.mrapp.android.dialog.decorator;
 import de.mrapp.android.preference.R;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +22,13 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
+import androidx.annotation.ArrayRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import de.mrapp.android.preference.R;
 import de.mrapp.android.dialog.ScrollableArea.Area;
 import de.mrapp.android.dialog.adapter.ArrayAdapter;
 import de.mrapp.android.dialog.listener.OnItemClickListenerWrapper;

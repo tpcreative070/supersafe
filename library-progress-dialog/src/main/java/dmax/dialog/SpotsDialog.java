@@ -1,5 +1,4 @@
 package dmax.dialog;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -8,10 +7,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 
 /**
  * Created by Maxim Dybarsky | maxim.dybarskyy@gmail.com

@@ -2,7 +2,7 @@ package co.tpcreative.supersafe.common.util;
 import android.annotation.TargetApi;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by Arcane on 7/23/2017.

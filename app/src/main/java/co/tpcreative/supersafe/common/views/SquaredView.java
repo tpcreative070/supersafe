@@ -1,12 +1,9 @@
 package co.tpcreative.supersafe.common.views;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-/**
- * Created by 李涛 on 16/5/2.
- */
+
 public class SquaredView extends View {
     public SquaredView(Context context) {
         super(context);

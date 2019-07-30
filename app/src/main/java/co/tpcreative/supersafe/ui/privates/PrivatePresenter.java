@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.privates;
-import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
