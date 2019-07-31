@@ -226,6 +226,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         }
         return super.onOptionsItemSelected(item);
     }
+    
 
     @Override
     protected void onStart() {
