@@ -400,7 +400,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
     }
 
     public void onRefreshEmailToken(EmailToken request) {
-        Utils.Log(TAG, "onRefreshEmailToken.....");
+        Utils.Log(TAG, "onRefreshEmailToken....." + new Gson().toJson(request));
         BaseView view = view();
         if (view == null) {
             return;

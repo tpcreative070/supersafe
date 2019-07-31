@@ -30,7 +30,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.player.PlayerActivity;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         });
         InstanceGenerator.getInstance(this);
         mInstance = this;
-        isLive = true;
+        isLive = false;
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
         /*Init own service api*/
@@ -511,11 +510,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             hashMap.put("Authorization", authorization);
         }
         return hashMap;
-    }
-
-    @Override
-    public boolean isXML() {
-        return false;
     }
 
     public String getDeviceId() {

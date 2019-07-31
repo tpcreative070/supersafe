@@ -48,7 +48,6 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BaseGoogleApi extends AppCompatActivity implements SensorFaceUpDownChangeNotifier.Listener{
@@ -277,6 +276,19 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             SingletonManager.getInstance().setAnimation(true);
         }
     }
+
+    protected void signIn(final String email) {
+        Utils.Log(TAG,"Sign in");
+        Account account = new Account(email, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(account));
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+
+    private GoogleSignInClient getGoogleSignInClient(Account account){
+        mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(account));
+        return mGoogleSignInClient;
+    }
+
     /**
      * Handles resolution callbacks.
      */
@@ -308,18 +320,6 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 break;
             }
         }
-    }
-
-    protected void signIn(final String email) {
-        Utils.Log(TAG,"Sign in");
-        Account account = new Account(email, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(account));
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
-    }
-
-    private GoogleSignInClient getGoogleSignInClient(Account account){
-        mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(account));
-        return mGoogleSignInClient;
     }
 
     protected void getAccessToken(){
