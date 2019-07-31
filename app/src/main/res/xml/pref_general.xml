@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="@string/key_general"
+    <androidx.preference.PreferenceCategory android:title="@string/key_general"
         android:layout="@layout/preference_category_layout">
         <Preference
             android:layout="@layout/custom_preferences_item"
@@ -32,9 +32,9 @@
             android:key="@string/key_theme"
             android:title="@string/key_theme"/>
 
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/key_advanced"
+    <androidx.preference.PreferenceCategory android:title="@string/key_advanced"
         android:layout="@layout/preference_category_layout">
         <Preference
             android:layout="@layout/custom_preferences_item"
@@ -60,13 +60,10 @@
             android:key="@string/key_album_all_lock"
             android:title="@string/key_album_all_lock"/>
 
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/key_info"
+    <androidx.preference.PreferenceCategory android:title="@string/key_info"
         android:layout="@layout/preference_category_layout">
-
-
-
         <Preference
             android:layout="@layout/custom_preferences_item"
             android:title="@string/give_rate"
@@ -95,6 +92,5 @@
             android:key="@string/key_version_app"
             android:title="@string/key_version_app"/>
 
-    </PreferenceCategory>
-
-</PreferenceScreen>
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>

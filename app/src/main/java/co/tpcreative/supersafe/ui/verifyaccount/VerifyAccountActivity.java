@@ -139,7 +139,6 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
         }
         isSync = true;
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(VerifyAccountActivity.class.getSimpleName());
     }
 
     @Override
