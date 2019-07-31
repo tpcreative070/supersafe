@@ -8,7 +8,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-
+apply plugin: 'com.google.gms.google-services'
 repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
@@ -80,10 +80,10 @@ dependencies {
 
     // Dependencies for the REST API example
     implementation 'com.google.api-client:google-api-client-android:1.23.0'
-
     /*Google drive*/
     implementation 'com.google.apis:google-api-services-drive:v3-rev126-1.24.1'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
 
     /*Call Floating button*/
     implementation project(':floatingbuttonlibrary')
@@ -211,7 +211,6 @@ dependencies {
     /*Animation textview*/
     implementation 'me.grantland:autofittextview:0.2.1'
 }
-
 /*Resolved duplicated for Google api client*/
 
 configurations {
