@@ -1,32 +1,25 @@
 package co.tpcreative.supersafe.ui.secretdoor;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
@@ -57,7 +50,6 @@ public class SecretDoorSetUpActivity extends BaseActivity implements Calculator 
     @BindView(R.id.result)
     TextView mResult;
     @BindView(R.id.formula) TextView mFormula;
-
     private static CalculatorImpl mCalc;
 
     @Override
@@ -67,8 +59,6 @@ public class SecretDoorSetUpActivity extends BaseActivity implements Calculator 
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().hide();
-
-
         mCalc = new CalculatorImpl(this);
         AutofitHelper.create(mResult);
         AutofitHelper.create(mFormula);
@@ -102,7 +92,7 @@ public class SecretDoorSetUpActivity extends BaseActivity implements Calculator 
                 }
                 @Override
                 public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
-                    Log.d("TapTargetViewSample", "You dismissed me :(");
+                    Utils.Log("TapTargetViewSample", "You dismissed me :(");
                 }
             });
         }
@@ -134,13 +124,11 @@ public class SecretDoorSetUpActivity extends BaseActivity implements Calculator 
                 }
                 @Override
                 public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
-                    Log.d("TapTargetViewSample", "You dismissed me :(");
+                    Utils.Log("TapTargetViewSample", "You dismissed me :(");
                 }
             });
         }
-
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -165,6 +153,11 @@ public class SecretDoorSetUpActivity extends BaseActivity implements Calculator 
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

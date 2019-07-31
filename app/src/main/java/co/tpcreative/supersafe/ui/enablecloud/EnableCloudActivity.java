@@ -5,12 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -36,11 +35,8 @@ import co.tpcreative.supersafe.model.User;
 public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     private static final String TAG = EnableCloudActivity.class.getSimpleName();
-
     private EnableCloudPresenter presenter;
-
     private ProgressDialog progressDialog;
-
     @BindView(R.id.btnLinkGoogleDrive)
     Button btnLinkGoogleDrive;
     @BindView(R.id.btnUserAnotherAccount)
@@ -58,7 +54,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         presenter.bindView(this);
         presenter.onUserInfo();
         Utils.Log(TAG,"Enable cloud...........");
-        onStartOverridePendingTransition();
     }
 
 
@@ -79,7 +74,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(EnableCloudActivity.class.getSimpleName());
     }
 
     @Override
@@ -88,6 +82,11 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -118,7 +117,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     @OnClick(R.id.btnUserAnotherAccount)
     public void onUserAnotherAccount(View view){
-        Log.d(TAG,"user another account");
+        Utils.Log(TAG,"user another account");
         btnUserAnotherAccount.setEnabled(false);
         btnLinkGoogleDrive.setEnabled(false);
         onShowWarningAnotherAccount();
@@ -258,7 +257,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            Log.d(TAG,"positive");
+                            Utils.Log(TAG,"positive");
                         }
                     })
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
@@ -293,7 +292,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Log.d(TAG,"positive");
+                        Utils.Log(TAG,"positive");
                         final String cloud_id = presenter.mUser.cloud_id;
                         if (cloud_id==null){
                             ServiceManager.getInstance().onPickUpNewEmailNoTitle(EnableCloudActivity.this,presenter.mUser.email);
@@ -333,7 +332,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     @Override
     protected void onDriveSuccessful() {
-        Log.d(TAG,"onDriveSuccessful");
+        Utils.Log(TAG,"onDriveSuccessful");
     }
 
     @Override
@@ -344,12 +343,12 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
 
     @Override
     protected void onDriveSignOut() {
-        Log.d(TAG,"onDriveSignOut");
+        Utils.Log(TAG,"onDriveSignOut");
     }
 
     @Override
     protected void onDriveRevokeAccess() {
-        Log.d(TAG,"onDriveRevokeAccess");
+        Utils.Log(TAG,"onDriveRevokeAccess");
     }
 
     @Override

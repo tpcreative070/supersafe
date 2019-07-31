@@ -50,7 +50,6 @@ import co.tpcreative.supersafe.ui.trash.TrashActivity;
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity;
 import co.tpcreative.supersafe.ui.verify.VerifyActivity;
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity;
-import spencerstudios.com.bungeelib.Bungee;
 
 public class Navigator {
 

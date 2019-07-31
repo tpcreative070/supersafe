@@ -12,18 +12,16 @@
  * the License.
  */
 package de.mrapp.android.preference.multithreading;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import de.mrapp.android.preference.AbstractColorPickerPreference.PreviewShape;
 import de.mrapp.android.util.multithreading.AbstractDataBinder;
-
 import static de.mrapp.android.util.BitmapUtil.clipCircle;
 import static de.mrapp.android.util.BitmapUtil.clipSquare;
 import static de.mrapp.android.util.BitmapUtil.drawableToBitmap;

@@ -12,10 +12,8 @@
  * the License.
  */
 package de.mrapp.android.dialog.animation;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
 
 /**
  * An animation, which can be used to show or hide a dialog by animating its alpha property.

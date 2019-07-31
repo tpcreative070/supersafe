@@ -26,7 +26,6 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:support-annotations:"+appSupportVersion
-    implementation "com.android.support:support-compat:"+appSupportVersion
-    implementation "com.android.support:appcompat-v7:"+appSupportVersion
+    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
+    implementation 'androidx.core:core-ktx:'+appSupportVersion
 }

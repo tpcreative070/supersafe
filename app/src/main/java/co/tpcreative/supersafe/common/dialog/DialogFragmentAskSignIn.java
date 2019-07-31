@@ -1,17 +1,15 @@
 package co.tpcreative.supersafe.common.dialog;
-
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import co.tpcreative.supersafe.R;
 
-public class DialogFragmentAskSignIn extends DialogFragment{
+public class DialogFragmentAskSignIn extends DialogFragment {
     private EditText mEditText;
 
     public DialogFragmentAskSignIn() {

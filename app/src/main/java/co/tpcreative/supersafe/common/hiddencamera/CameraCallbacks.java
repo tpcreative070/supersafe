@@ -15,9 +15,7 @@
  */
 
 package co.tpcreative.supersafe.common.hiddencamera;
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import java.io.File;
 
 /**
@@ -27,6 +25,6 @@ import java.io.File;
  */
 public interface CameraCallbacks {
 
-    void onImageCapture(@NonNull File imageFile,@NonNull String pin);
+    void onImageCapture(@NonNull File imageFile, @NonNull String pin);
     void onCameraError(@CameraError.CameraErrorCodes int errorCode);
 }

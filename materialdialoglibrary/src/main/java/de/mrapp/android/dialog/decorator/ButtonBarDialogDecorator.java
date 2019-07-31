@@ -12,22 +12,20 @@
  * the License.
  */
 package de.mrapp.android.dialog.decorator;
-
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;

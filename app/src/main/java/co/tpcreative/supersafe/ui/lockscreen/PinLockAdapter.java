@@ -1,11 +1,7 @@
 package co.tpcreative.supersafe.ui.lockscreen;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -13,46 +9,39 @@ import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.util.Utils;
 
-/**
- * Created by aritraroy on 31/05/16.
- */
 public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = PinLockAdapter.class.getSimpleName();
     private static final int VIEW_TYPE_NUMBER = 0;
-    private static final int VIEW_TYPE_DELETE = 1;
+    private static final int VIEW_TYPE_VERIFY = 1;
     private CustomizationOptionsBundle mCustomizationOptionsBundle;
     private OnNumberClickListener mOnNumberClickListener;
     private OnVerifyClickListener mOnVerifyClickListener;
     private int mPinLength;
     private int BUTTON_ANIMATION_DURATION = 150;
     private int[] mKeyValues;
-    private Typeface mTypeface = null;
 
     public PinLockAdapter() {
         this.mKeyValues = getAdjustKeyValues(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 0});
     }
 
-    public void setTypeFace(Typeface typeFace) {
-        mTypeface = typeFace;
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-
         if (viewType == VIEW_TYPE_NUMBER) {
             View view = inflater.inflate(R.layout.layout_number_item, parent, false);
-            viewHolder = new NumberViewHolder(view, mTypeface);
-        } else {
+            return new NumberViewHolder(view);
+        }else {
             View view = inflater.inflate(R.layout.layout_verify_item, parent, false);
-            viewHolder = new VerifyViewHolder(view);
+            return new VerifyViewHolder(view);
         }
-        return viewHolder;
     }
 
     @Override
@@ -60,7 +49,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder.getItemViewType() == VIEW_TYPE_NUMBER) {
             NumberViewHolder vh1 = (NumberViewHolder) holder;
             configureNumberButtonHolder(vh1, position);
-        } else if (holder.getItemViewType() == VIEW_TYPE_DELETE) {
+        }else{
             VerifyViewHolder vh2 = (VerifyViewHolder) holder;
             configureDeleteButtonHolder(vh2);
         }
@@ -78,7 +67,6 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 holder.mNumberButton.setVisibility(View.VISIBLE);
                 holder.mNumberButton.setTag(mKeyValues[position]);
             }
-
             if (mCustomizationOptionsBundle != null) {
                 holder.mNumberButton.setTextColor(mCustomizationOptionsBundle.getTextColor());
                 if (mCustomizationOptionsBundle.getButtonBackgroundDrawable() != null) {
@@ -103,7 +91,7 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (mCustomizationOptionsBundle.getVerifyButtonDrawable() != null) {
                     holder.mButtonImage.setImageDrawable(mCustomizationOptionsBundle.getVerifyButtonDrawable());
                 }
-                Log.d(TAG, "onVerify changed color");
+                Utils.Log(TAG, "onVerify changed color");
                 holder.mButtonImage.setColorFilter(mCustomizationOptionsBundle.getTextColorVerify(), PorterDuff.Mode.SRC_ATOP);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         mCustomizationOptionsBundle.getVerifyButtonWidthSize(),
@@ -117,27 +105,19 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return 12;
+        return mKeyValues.length + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getItemCount() - 1) {
-            return VIEW_TYPE_DELETE;
+        if (position == mKeyValues.length) {
+            return VIEW_TYPE_VERIFY;
         }
-        return VIEW_TYPE_NUMBER;
-    }
-
-    public int getPinLength() {
-        return mPinLength;
+        return super.getItemViewType(position);
     }
 
     public void setPinLength(int pinLength) {
         this.mPinLength = pinLength;
-    }
-
-    public int[] getKeyValues() {
-        return mKeyValues;
     }
 
     public void setKeyValues(int[] keyValues) {
@@ -158,21 +138,12 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return adjustedKeyValues;
     }
 
-    public OnNumberClickListener getOnItemClickListener() {
-        return mOnNumberClickListener;
-    }
-
     public void setOnItemClickListener(OnNumberClickListener onNumberClickListener) {
         this.mOnNumberClickListener = onNumberClickListener;
     }
 
-
     public void setOnVerifyClickListener(OnVerifyClickListener onVerifyClickListener) {
         this.mOnVerifyClickListener = onVerifyClickListener;
-    }
-
-    public CustomizationOptionsBundle getCustomizationOptions() {
-        return mCustomizationOptionsBundle;
     }
 
     public void setCustomizationOptions(CustomizationOptionsBundle customizationOptionsBundle) {
@@ -188,76 +159,43 @@ public class PinLockAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public class NumberViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.buttonNumber)
         Button mNumberButton;
-
-        public NumberViewHolder(final View itemView, Typeface font) {
+        public NumberViewHolder(final View itemView) {
             super(itemView);
-            mNumberButton = (Button) itemView.findViewById(R.id.button);
-
-            if (font != null) {
-                mNumberButton.setTypeface(font);
+            ButterKnife.bind(this, itemView);
+        }
+        @OnClick(R.id.buttonNumber)
+        public void onNumberButton(View view){
+            if (mOnNumberClickListener != null) {
+                mOnNumberClickListener.onNumberClicked((Integer) view.getTag());
+                mNumberButton.startAnimation(scale());
             }
-
-            mNumberButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnNumberClickListener != null) {
-                        mOnNumberClickListener.onNumberClicked((Integer) v.getTag());
-                    }
-                }
-            });
-
-            mNumberButton.setOnTouchListener(new View.OnTouchListener() {
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        mNumberButton.startAnimation(scale());
-                    }
-                    return false;
-                }
-            });
         }
     }
 
     public class VerifyViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.buttonVerify)
         LinearLayout mVerifyButton;
+        @BindView(R.id.buttonImage)
         ImageView mButtonImage;
-
         public VerifyViewHolder(final View itemView) {
             super(itemView);
-            mVerifyButton = (LinearLayout) itemView.findViewById(R.id.button);
-            mButtonImage = (ImageView) itemView.findViewById(R.id.buttonImage);
-
-            mVerifyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mCustomizationOptionsBundle.isShowVerifyButton() && mPinLength > 0) {
-                        if (mOnVerifyClickListener != null) {
-                            mOnVerifyClickListener.onVerifyClicked();
-                            Utils.Log(TAG, "Verified button");
-                        } else {
-                            Utils.Log(TAG, "mOnVerifyClickListener Null");
-                        }
-                    } else {
-                        Utils.Log(TAG, "Pin length Null");
-                    }
+            ButterKnife.bind(this, itemView);
+        }
+        @OnClick(R.id.buttonVerify)
+        public void onVerifyButton(){
+            if (mCustomizationOptionsBundle.isShowVerifyButton() && mPinLength > 0) {
+                if (mOnVerifyClickListener != null) {
+                    mOnVerifyClickListener.onVerifyClicked();
+                    mVerifyButton.startAnimation(scale());
+                    Utils.Log(TAG, "Verified button");
+                } else {
+                    Utils.Log(TAG, "mOnVerifyClickListener Null");
                 }
-            });
-
-            mVerifyButton.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        if (mCustomizationOptionsBundle.isShowVerifyButton() && mPinLength > 0) {
-                            mVerifyButton.startAnimation(scale());
-                        } else {
-                            Utils.Log(TAG, "Pin length Null");
-                        }
-                    }
-                    return false;
-                }
-            });
+            } else {
+                Utils.Log(TAG, "Pin length Null");
+            }
         }
     }
 

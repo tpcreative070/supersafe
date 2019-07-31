@@ -5,17 +5,17 @@ import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import org.greenrobot.eventbus.EventBus;
@@ -130,7 +131,14 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
         });
         isPortrait = true;
-        tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+        try {
+            if (themeApp!=null){
+                tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+            }
+        }catch (Exception e){
+            final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
+        }
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
@@ -191,6 +199,11 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             }
             player.stop();
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

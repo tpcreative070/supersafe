@@ -1,10 +1,8 @@
 package co.tpcreative.supersafe.ui.move_gallery;
-import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -32,7 +30,6 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
         mList.clear();
         MoveGalleryView view = view();
         final List<MainCategories> list = MainCategories.getInstance().getListMoveGallery(categories_local_id,isFakePIN);
-
         if (isFakePIN) {
             final MainCategories main = MainCategories.getInstance().getMainItemFakePin();
             if (!main.categories_local_id.equals(categories_local_id)){
@@ -47,7 +44,6 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 });
             }
         }
-
         if (list!=null){
             for (MainCategories index : list){
                 final List<Items> mListItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id,false,isFakePIN);
@@ -79,9 +75,7 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 mList.add(new GalleryAlbum(index,photos,videos,audios,others));
             }
         }
-
         view.onSuccessful("Successful", EnumStatus.RELOAD);
-        Utils.Log(TAG,new Gson().toJson("Main categories "+ list));
     }
 
     public void onMoveItemsToAlbum(int position){
@@ -97,6 +91,7 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                     if (item.isSyncCloud && item.isSyncOwnServer){
                         item.isUpdate = true;
                     }
+                    Utils.Log(TAG,"Warning " +item.isUpdate + "; isSyncCloud "+ item.isSyncCloud + "; isSyncOwnServer " + item.isSyncOwnServer);
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(item);
                 }
             }
@@ -106,5 +101,4 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
             Utils.Log(TAG,"Nulll");
         }
     }
-
 }

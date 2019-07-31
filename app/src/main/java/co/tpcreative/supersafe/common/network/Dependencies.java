@@ -1,24 +1,14 @@
 package co.tpcreative.supersafe.common.network;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.convert.AnnotationStrategy;
-import org.simpleframework.xml.core.Persister;
-import org.simpleframework.xml.strategy.Strategy;
-
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class Dependencies<T> extends BaseDependencies  {
@@ -74,21 +64,17 @@ public class Dependencies<T> extends BaseDependencies  {
             init();
         }
         else {
-            serverAPI = (T)sInstance.reUse(dependenciesListener.onObject(),dependenciesListener.isXML());
+            serverAPI = (T)sInstance.reUse(dependenciesListener.onObject());
         }
     }
 
-    public T reUse(Class<T> tClass, boolean isXML){
+    public T reUse(Class<T> tClass){
         OkHttpClient okHttpClient = provideOkHttpClientDefault();
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL , Modifier.TRANSIENT , Modifier.STATIC).create();
-
-        Strategy strategy = new AnnotationStrategy();
-        Serializer serializer = new Persister(strategy);
-
         retrofitInstance
                 .baseUrl(URL)
                 .client(okHttpClient)
-                .addConverterFactory(isXML ? SimpleXmlConverterFactory.create(serializer): GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         return retrofitInstance.build().create(tClass);
     }
@@ -96,20 +82,16 @@ public class Dependencies<T> extends BaseDependencies  {
     public void init(){
         if (serverAPI == null){
             OkHttpClient okHttpClient = provideOkHttpClientDefault();
-            serverAPI = (T) sInstance.provideRestApi(okHttpClient,dependenciesListener.onObject(),dependenciesListener.isXML());
+            serverAPI = (T) sInstance.provideRestApi(okHttpClient,dependenciesListener.onObject());
         }
     }
 
-    private T provideRestApi(@NonNull OkHttpClient okHttpClient, Class<T> tClass, boolean isXML){
+    private T provideRestApi(@NonNull OkHttpClient okHttpClient, Class<T> tClass){
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL , Modifier.TRANSIENT , Modifier.STATIC).create();
-
-        Strategy strategy = new AnnotationStrategy();
-        Serializer serializer = new Persister(strategy);
-
         retrofitInstance = new Retrofit.Builder()
                 .baseUrl(URL)
                 .client(okHttpClient)
-                .addConverterFactory(isXML ? SimpleXmlConverterFactory.create(serializer): GsonConverterFactory.create(gson))
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
         return  retrofitInstance.build().create(tClass);
     }
@@ -139,7 +121,6 @@ public class Dependencies<T> extends BaseDependencies  {
         Class<T> onObject();
         String onAuthorToken();
         HashMap<String,String> onCustomHeader();
-        boolean isXML();
     }
 
 }

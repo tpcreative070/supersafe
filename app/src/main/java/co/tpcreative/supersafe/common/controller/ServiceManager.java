@@ -13,7 +13,6 @@ import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.util.Log;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -32,7 +31,6 @@ import javax.crypto.Cipher;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
-import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -55,9 +53,6 @@ import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ResponseRXJava;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
-import co.tpcreative.supersafe.ui.main_tab.MainTabActivity;
 import id.zelory.compressor.Compressor;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -76,6 +71,7 @@ public class ServiceManager implements BaseServiceView {
     private List<ImportFiles> mListImport = new ArrayList<>();
     private List<ExportFiles> mListExport = new ArrayList<>();
     private List<Items> mListDownLoadFiles = new ArrayList<>();
+    private String mProgress;
     ServiceConnection myConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             Utils.Log(TAG, "connected");
@@ -120,6 +116,14 @@ public class ServiceManager implements BaseServiceView {
 
     public void setIsWaitingSendMail(boolean isWaitingSendMail) {
         this.isWaitingSendMail =  isWaitingSendMail;
+    }
+
+    public void setProgress(String mProgress) {
+        this.mProgress = mProgress;
+    }
+
+    public String getProgress() {
+        return mProgress;
     }
 
     public void setmListImport(List<ImportFiles> mListImport) {
@@ -241,6 +245,7 @@ public class ServiceManager implements BaseServiceView {
     public void onStartService() {
         if (myService == null) {
             doBindService();
+            Utils.Log(TAG,"start services now");
         }
     }
 
@@ -248,6 +253,7 @@ public class ServiceManager implements BaseServiceView {
         if (myService != null) {
             mContext.unbindService(myConnection);
             myService = null;
+            Utils.Log(TAG,"stop services now");
         }
     }
 
@@ -380,6 +386,7 @@ public class ServiceManager implements BaseServiceView {
             isCategoriesSync = false;
             ServiceManager.getInstance().onSyncDataOwnServer("0");
             SingletonPrivateFragment.getInstance().onUpdateView();
+            EventBus.getDefault().post(EnumStatus.UPDATE_MOVE_NEW_ALBUM);
             return;
         }
         getObservableItems(mList).
@@ -453,12 +460,12 @@ public class ServiceManager implements BaseServiceView {
             return;
         }
         if (isDownloadData) {
-            SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
+            EventBus.getDefault().post(EnumStatus.DOWNLOAD);
             Utils.Log(TAG, "List items is downloading...--------------*******************************-----------");
             return;
         }
         if (isUploadData) {
-            SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
+            EventBus.getDefault().post(EnumStatus.UPLOAD);
             Utils.Log(TAG, "List items is uploading...----------------*******************************-----------");
             return;
         }
@@ -510,7 +517,7 @@ public class ServiceManager implements BaseServiceView {
                 @Override
                 public void onError(String message, EnumStatus status) {
                     if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
-                        SingletonManagerTab.getInstance().onRequestAccessToken();
+                        EventBus.getDefault().post(EnumStatus.REQUEST_ACCESS_TOKEN);
                         Utils.Log(TAG, "Request token on onSyncDataOwnServer");
                     }
                     Utils.Log(TAG, "Error :" + message);
@@ -616,6 +623,7 @@ public class ServiceManager implements BaseServiceView {
                                 if (User.getInstance().isCheckAllowUpload()) {
                                     onUploadDataToStore();
                                 } else {
+                                    EventBus.getDefault().post(EnumStatus.DONE);
                                     Utils.Log(TAG, "Limit uploaded now..----------------*******************************-----------");
                                 }
                             }
@@ -624,13 +632,13 @@ public class ServiceManager implements BaseServiceView {
                             if (User.getInstance().isCheckAllowUpload()) {
                                 onUploadDataToStore();
                             } else {
+                                EventBus.getDefault().post(EnumStatus.DONE);
                                 Utils.Log(TAG, "Limit uploaded now..----------------*******************************-----------");
                             }
                         }
                     }
                 }
             });
-
     }
 
     public void onUpdateOnOwnItems() {
@@ -654,7 +662,7 @@ public class ServiceManager implements BaseServiceView {
         subscriptions = Observable.fromIterable(mList)
                 .concatMap(i -> Observable.just(i).delay(1000, TimeUnit.MILLISECONDS))
                 .doOnNext(i -> {
-                    Utils.Log(TAG, "Starting Updating items on own cloud.......");
+                    Utils.Log(TAG, "Starting Updating items on own cloud....... "+ mList.size());
                     final Items mItem = i;
                     isUpdate = true;
                     myService.onUpdateItems(mItem, new ServiceManagerShortListener() {
@@ -861,11 +869,11 @@ public class ServiceManager implements BaseServiceView {
         isDownloadData = true;
         if (mList.size() == 0) {
             Utils.Log(TAG, "Data items already downloaded from Cloud !!!!");
-            SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+            EventBus.getDefault().post(EnumStatus.DONE);
             isDownloadData = false;
             return;
         } else {
-            SingletonManagerTab.getInstance().onAction(EnumStatus.DOWNLOAD);
+            EventBus.getDefault().post(EnumStatus.DOWNLOAD);
             String message = "Preparing download " + totalList + " items from Cloud";
             Utils.Log(TAG, message);
             Utils.onWriteLog(message, EnumStatus.DOWNLOAD);
@@ -934,12 +942,11 @@ public class ServiceManager implements BaseServiceView {
                                                     mItem.statusAction = EnumStatus.DOWNLOAD.ordinal();
                                                     if (itemsRequest.isOriginalGlobalId) {
                                                         mItem.originalSync = true;
-                                                        Log.d(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Downloaded id original.........................................: global id  " + mItem.global_original_id + " - local id " + mItem.id);
                                                     } else {
-                                                        Log.d(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Downloaded id thumbnail.........................................: global id  " + mItem.global_thumbnail_id + " - local id " + mItem.id);
                                                         mItem.thumbnailSync = true;
                                                     }
-
                                                     if (mItem.thumbnailSync && mItem.originalSync) {
                                                         mItem.isSyncCloud = true;
                                                         mItem.isSyncOwnServer = true;
@@ -947,7 +954,6 @@ public class ServiceManager implements BaseServiceView {
                                                     } else {
                                                         mItem.isSyncCloud = false;
                                                     }
-
                                                     /*Custom cover*/
                                                     final MainCategories categories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(mItem.categories_id, false);
                                                     if (categories != null) {
@@ -983,10 +989,6 @@ public class ServiceManager implements BaseServiceView {
                                 public void onProgressDownload(int percentage) {
                                     isDownloadData = true;
                                 }
-                                @Override
-                                public void onSaved() {
-                                    Utils.Log(TAG, "onSaved");
-                                }
                             });
                         }
                     }
@@ -994,13 +996,13 @@ public class ServiceManager implements BaseServiceView {
                     isDownloadData = false;
                     Utils.Log(TAG, "Drive api not ready");
                     Utils.onWriteLog("Drive api not ready", EnumStatus.DOWNLOAD);
-                    SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
+                    EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
                 }
             } else {
                 isDownloadData = false;
                 Utils.Log(TAG, "User not ready");
                 Utils.onWriteLog("User not ready", EnumStatus.DOWNLOAD);
-                SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
+                EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
             }
     }
 
@@ -1020,7 +1022,6 @@ public class ServiceManager implements BaseServiceView {
                     if (main != null) {
                         checkNull.get(i).categories_id = main.categories_id;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(checkNull.get(i));
-
                         Utils.Log(TAG, "Update categories id...................^^^???");
                     }
                 }
@@ -1056,11 +1057,11 @@ public class ServiceManager implements BaseServiceView {
         if (mList.size() == 0) {
             SingletonPrivateFragment.getInstance().onUpdateView();
             Utils.Log(TAG, "Data items already uploaded to Cloud !!!");
-            SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+            EventBus.getDefault().post(EnumStatus.DONE);
             isUploadData = false;
             return;
         } else {
-            SingletonManagerTab.getInstance().onAction(EnumStatus.UPLOAD);
+            EventBus.getDefault().post(EnumStatus.UPLOAD);
             String message = "Preparing upload " + totalList + " items to Cloud";
             Utils.Log(TAG, message);
             Utils.onWriteLog(message, EnumStatus.UPLOAD);
@@ -1117,11 +1118,11 @@ public class ServiceManager implements BaseServiceView {
                                                     if (type == EnumFileType.ORIGINAL) {
                                                         mItem.originalSync = true;
                                                         mItem.global_original_id = response.id;
-                                                        Log.d(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Uploaded for original.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                     } else {
                                                         mItem.thumbnailSync = true;
                                                         mItem.global_thumbnail_id = response.id;
-                                                        Log.d(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
+                                                        Utils.Log(TAG, "Uploaded for thumbnail.........................................: global id  " + response.id + " - local id " + mItem.id);
                                                     }
                                                     mItem.fileType = contentTitle.fileType;
                                                     if (mItem.thumbnailSync && mItem.originalSync) {
@@ -1197,13 +1198,13 @@ public class ServiceManager implements BaseServiceView {
                     isUploadData = false;
                     Utils.Log(TAG, "Drive api not ready");
                     Utils.onWriteLog("Drive api not ready", EnumStatus.UPLOAD);
-                    SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
+                    EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
                 }
             } else {
                 isUploadData = false;
                 Utils.Log(TAG, "User not ready");
                 Utils.onWriteLog("User not ready", EnumStatus.UPLOAD);
-                SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
+                EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
             }
     }
 
@@ -1211,10 +1212,11 @@ public class ServiceManager implements BaseServiceView {
        if (isCheckNull(EnumStatus.ADD_ITEMS)){
            return;
        }
-        Utils.Log(TAG, "Preparing insert  to own Server");
+       Utils.Log(TAG, "Preparing insert  to own Server");
         myService.onAddItems(items, new ServiceManagerShortListener() {
             @Override
             public void onError(String message, EnumStatus status) {
+                items.isSyncOwnServer = false;
                 Utils.Log(TAG, message + " status " + status.name());
             }
             @Override
@@ -1277,7 +1279,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.Log(TAG, "CreatedFile failed");
                         }
                     } catch (Exception e) {
-                        Log.w(TAG, "Cannot write to " + e);
+                        Utils.Log(TAG, "Cannot write to " + e);
                         Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         final ResponseRXJava response = new ResponseRXJava();
                         response.isWorking = false;
@@ -1296,7 +1298,7 @@ public class ServiceManager implements BaseServiceView {
                                     MediaStore.Video.Thumbnails.MINI_KIND);
                             ExifInterface exifInterface = new ExifInterface(mPath);
                             int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                            Log.d("EXIF", "Exif: " + orientation);
+                            Utils.Log("EXIF", "Exif: " + orientation);
                             Matrix matrix = new Matrix();
                             if (orientation == 6) {
                                 matrix.postRotate(90);
@@ -1310,7 +1312,7 @@ public class ServiceManager implements BaseServiceView {
                         catch (Exception e){
                             thumbnail  = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().getResources(),
                                     R.drawable.ic_default_video);
-                            Log.w(TAG, "Cannot write to " + e);
+                            Utils.Log(TAG, "Cannot write to " + e);
                         }
                         String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
                         String currentTime = Utils.getCurrentDateTime();
@@ -1380,7 +1382,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.Log(TAG, "CreatedFile failed");
                         }
                     } catch (Exception e) {
-                        Log.w(TAG, "Cannot write to " + e);
+                        Utils.Log(TAG, "Cannot write to " + e);
                         Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
                         final ResponseRXJava response = new ResponseRXJava();
                         response.isWorking = false;
@@ -1489,7 +1491,7 @@ public class ServiceManager implements BaseServiceView {
                         if (mResponse.isWorking) {
                             final Items items = mResponse.items;
                             GalleryCameraMediaManager.getInstance().setProgressing(false);
-                            GalleryCameraMediaManager.getInstance().onUpdatedView();
+                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                             if (items.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView();
                             } else {
@@ -1580,7 +1582,7 @@ public class ServiceManager implements BaseServiceView {
                 subscriber.onNext(response);
                 subscriber.onComplete();
                 Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                Log.w(TAG, "Cannot write to " + e);
+                Utils.Log(TAG, "Cannot write to " + e);
             } finally {
                 Utils.Log(TAG, "Finally");
             }
@@ -1607,7 +1609,6 @@ public class ServiceManager implements BaseServiceView {
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                     Utils.Log(TAG, "Special main categories " + new Gson().toJson(main));
                                 }
-
                             }
                         }
                         Utils.Log(TAG, "Insert Successful");
@@ -1617,12 +1618,11 @@ public class ServiceManager implements BaseServiceView {
                         if (mResponse.isWorking) {
                             final Items mItem = mResponse.items;
                             GalleryCameraMediaManager.getInstance().setProgressing(false);
-                            GalleryCameraMediaManager.getInstance().onUpdatedView();
+                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                             if (mItem.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView();
                             } else {
                                 SingletonPrivateFragment.getInstance().onUpdateView();
-                                ServiceManager.getInstance().onSyncDataOwnServer("0");
                             }
                         }
                     }
@@ -1713,13 +1713,13 @@ public class ServiceManager implements BaseServiceView {
                         });
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "Cannot write to " + e);
+                    Utils.Log(TAG, "Cannot write to " + e);
                 } finally {
                     Utils.Log(TAG, "Finally");
                 }
             } else {
                 Utils.Log(TAG, "Exporting file............................Done");
-                GalleryCameraMediaManager.getInstance().onStopProgress();
+                EventBus.getDefault().post(EnumStatus.STOP_PROGRESS);
                 setExporting(false);
                 mListExport.clear();
             }
@@ -1781,7 +1781,7 @@ public class ServiceManager implements BaseServiceView {
                 });
             } else {
                 Utils.Log(TAG, "Importing file............................Done");
-                GalleryCameraMediaManager.getInstance().onStopProgress();
+                EventBus.getDefault().post(EnumStatus.STOP_PROGRESS);
                 setImporting(false);
                 mListImport.clear();
             }
@@ -1802,15 +1802,13 @@ public class ServiceManager implements BaseServiceView {
                     Utils.Log(TAG, "Percentage " + percentage);
                 }
                 @Override
-                public void onSaved() {
-                }
-                @Override
                 public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                     mListDownLoadFiles.get(position).isSaver = false;
                     items.isSaver = false;
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                     subscriber.onNext(items);
                     subscriber.onComplete();
+                    EventBus.getDefault().post(EnumStatus.DOWNLOADING_PROGRESSING);
                 }
                 @Override
                 public void onError(String message, EnumStatus status) {
@@ -1822,7 +1820,11 @@ public class ServiceManager implements BaseServiceView {
         });
     }
 
-    public void getObservableDownload(boolean isExporting) {
+    public void getObservableDownload() {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+            EventBus.getDefault().post(EnumStatus.DOWNLOAD_FAILED);
+            return;
+        }
         Utils.Log(TAG, "Preparing download.....");
         setDownloadingFiles(true);
         int position = 0;
@@ -1857,16 +1859,12 @@ public class ServiceManager implements BaseServiceView {
                         @Override
                         public void onComplete() {
                             Utils.Log(TAG, "Downloading completed............."+next);
-                            getObservableDownload(isExporting);
+                            EventBus.getDefault().post(EnumStatus.DOWNLOADING);
+                            getObservableDownload();
                         }
                         @Override
                         public void onError(Throwable e) {
-                            if (isExporting){
-                                GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.ERROR);
-                            }
-                            else{
-                                EventBus.getDefault().post(EnumStatus.DownLoadDone);
-                            }
+                            EventBus.getDefault().post(EnumStatus.DOWNLOAD_FAILED);
                         }
                         @Override
                         public void onNext(Items object) {
@@ -1874,14 +1872,20 @@ public class ServiceManager implements BaseServiceView {
                         }
                     });
         } else {
-            if (isExporting){
-                GalleryCameraMediaManager.getInstance().onCompletedDownload(EnumStatus.DONE);
-            }
-            else{
-                EventBus.getDefault().post(EnumStatus.DownLoadDone);
-            }
+            /*Case 1
+            * mListDownLoadFiles.addAll(list)
+            * mListDownLoadFiles.get(position).isSaver = true => object of list will be changed
+            * mListDownLoadFiles.clear() => Not affected to list
+            * mListDownLoadFiles.remove(position) => Not affected to object of list
+            * Case 2
+            * mListDownLoadFiles = list
+            * mListDownLoadFiles.get(position).isSaver = true => object of list will be changed
+            * mListDownLoadFiles.clear() => affected to list
+            * mListDownLoadFiles.remove(position) => affected to object of list
+            * */
             setDownloadingFiles(false);
             mListDownLoadFiles.clear();
+            EventBus.getDefault().post(EnumStatus.DOWNLOAD_COMPLETED);
         }
     }
 
@@ -1890,9 +1894,9 @@ public class ServiceManager implements BaseServiceView {
             case UPLOAD: {
                 countSyncData += 1;
                 if (countSyncData == totalList) {
-                    SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+                    EventBus.getDefault().post(EnumStatus.DONE);
                     SingletonPrivateFragment.getInstance().onUpdateView();
-                    GalleryCameraMediaManager.getInstance().onUpdatedView();
+                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                     isUploadData = false;
                     String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
                     String messageDone = "Completed upload sync data.......................^^...........^^.......^^........";
@@ -1914,9 +1918,9 @@ public class ServiceManager implements BaseServiceView {
             case DOWNLOAD: {
                 countSyncData += 1;
                 if (countSyncData == totalList) {
-                    SingletonManagerTab.getInstance().onAction(EnumStatus.DONE);
+                    EventBus.getDefault().post(EnumStatus.DONE);
                     SingletonPrivateFragment.getInstance().onUpdateView();
-                    GalleryCameraMediaManager.getInstance().onUpdatedView();
+                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                     isDownloadData = false;
                     String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
                     String messageDone = "Completed downloaded sync data.......................^^...........^^.......^^........";
@@ -1991,7 +1995,7 @@ public class ServiceManager implements BaseServiceView {
                     Utils.Log(TAG, "Request cloud syn data on album.........");
                     ServiceManager.getInstance().onSyncDataOwnServer("0");
                     SingletonPrivateFragment.getInstance().onUpdateView();
-                    GalleryCameraMediaManager.getInstance().onUpdatedView();
+                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                     onGetDriveAbout();
                 } else {
                     String message = "Completed delete count album...................deleted " + countSyncData + "/" + totalList;
@@ -2016,29 +2020,11 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
-    public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail || isUpdate || isLoadingData) {
-            Utils.Log(TAG, "Progress....................!!!!:");
-        }
-        else {
-            SingletonPremiumTimer.getInstance().onStop();
-            onDefaultValue();
-            if (myService != null) {
-                myService.unbindView();
-            }
-            if (subscriptions != null) {
-                subscriptions.dispose();
-            }
-            onStopService();
-            Utils.Log(TAG, "Dismiss Service manager");
-        }
-    }
-
     @Override
     public void onError(String message, EnumStatus status) {
         Utils.Log(TAG, "onError response :" + message + " - " + status.name());
         if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
-            SingletonManagerTab.getInstance().onRequestAccessToken();
+            EventBus.getDefault().post(EnumStatus.REQUEST_ACCESS_TOKEN);
             Utils.Log(TAG, "Request token on global");
         }
     }
@@ -2056,12 +2042,7 @@ public class ServiceManager implements BaseServiceView {
                     case NONE: {
                         String key  = SuperSafeApplication.getInstance().readKey();
                         if (!"".equals(key)){
-                            if (!MainTabActivity.isVisit && !FakePinComponentActivity.isVisit){
-                                return;
-                            }
-                            PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                            Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
-                            EnterPinActivity.isVisible = true;
+                            Utils.onHomePressed();
                         }
                         break;
                     }
@@ -2073,11 +2054,10 @@ public class ServiceManager implements BaseServiceView {
                 break;
             }
             case GET_DRIVE_ABOUT: {
-                Utils.Log(TAG, "drive about :" + message);
                 break;
             }
             case CONNECTED: {
-                GoogleDriveConnectionManager.getInstance().onNetworkConnectionChanged(true);
+                EventBus.getDefault().post(EnumStatus.CONNECTED);
                 ServiceManager.getInstance().onGetUserInfo();
                 PremiumManager.getInstance().onStartInAppPurchase();
                 break;
@@ -2088,20 +2068,6 @@ public class ServiceManager implements BaseServiceView {
                 break;
             }
             case USER_INFO: {
-                final boolean isExpired = User.getInstance().isPremiumExpired();
-                if (isExpired) {
-                    if (!User.getInstance().isCheckAllowUpload()){
-                        return;
-                    }
-                }
-                SingletonPremiumTimer.getInstance().onStop();
-                Utils.onObserveData(5000, new Listener() {
-                    @Override
-                    public void onStart() {
-                        Utils.Log(TAG,"onStartTimer");
-                        SingletonPremiumTimer.getInstance().onStartTimer();
-                    }
-                });
                 Utils.Log(TAG, "Get info successful");
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
                 ServiceManager.getInstance().onCheckingMissData();
@@ -2123,10 +2089,10 @@ public class ServiceManager implements BaseServiceView {
             Utils.Log(TAG, "Service is null on " + enumStatus.name());
             switch (enumStatus){
                 case UPLOAD:
-                    SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
+                    EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
                     break;
                 case DOWNLOAD:
-                    SingletonManagerTab.getInstance().onAction(EnumStatus.SYNC_ERROR);
+                    EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
                     break;
                  default:
                      break;
@@ -2156,6 +2122,23 @@ public class ServiceManager implements BaseServiceView {
         ServiceManager.getInstance().setLoadingData(false);
     }
 
+    public void onDismissServices() {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail || isUpdate || isLoadingData) {
+            Utils.Log(TAG, "Progress....................!!!!:");
+        }
+        else {
+            onDefaultValue();
+            if (myService != null) {
+                myService.unbindView();
+            }
+            if (subscriptions != null) {
+                subscriptions.dispose();
+            }
+            onStopService();
+            Utils.Log(TAG, "Dismiss Service manager");
+        }
+    }
+
     public interface ServiceManagerSyncDataListener {
         void onCompleted();
         void onError();
@@ -2178,12 +2161,10 @@ public class ServiceManager implements BaseServiceView {
     }
     public interface DownloadServiceListener {
         void onProgressDownload(int percentage);
-        void onSaved();
         void onDownLoadCompleted(File file_name, DownloadFileRequest request);
         void onError(String message, EnumStatus status);
     }
     public interface DeleteServiceListener {
         void onDone();
     }
-
 }

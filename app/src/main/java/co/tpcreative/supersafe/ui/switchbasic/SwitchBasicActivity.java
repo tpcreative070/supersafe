@@ -3,7 +3,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -24,8 +23,6 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity;
-
 
 public class SwitchBasicActivity extends BaseActivity {
 
@@ -79,6 +76,10 @@ public class SwitchBasicActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {
@@ -200,6 +201,4 @@ public class SwitchBasicActivity extends BaseActivity {
         request.loadSkus(ProductTypes.IN_APP,mList);
         mCheckoutLifeTime.loadInventory(request, mInventoryCallbackLifeTime);
     }
-
-
 }

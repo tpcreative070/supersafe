@@ -3,7 +3,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
@@ -59,7 +59,6 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         presenter = new HelpAndSupportPresenter();
         presenter.bindView(this);
         presenter.onGetDataIntent(this);
@@ -96,6 +95,11 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

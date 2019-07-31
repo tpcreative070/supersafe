@@ -1,18 +1,9 @@
 package com.github.javiersantos.materialstyleddialogs;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.annotation.UiThread;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.widget.AppCompatImageView;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +14,14 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.annotation.UiThread;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.res.ResourcesCompat;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.github.javiersantos.materialstyleddialogs.enums.Duration;
@@ -64,16 +62,8 @@ public class MaterialStyledDialog extends DialogBase {
         // Set cancelable
         dialogBuilder.cancelable(builder.isCancelable);
 
-
-
-
-
-
-
         // Set style
         dialogBuilder.customView(initStyle(builder), false);
-
-
 
         // Set positive button
         if (builder.positive != null && builder.positive.length() != 0)

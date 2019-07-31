@@ -12,10 +12,8 @@
  * the License.
  */
 package de.mrapp.android.util.logging;
-
-import android.support.annotation.NonNull;
 import android.util.Log;
-
+import androidx.annotation.NonNull;
 import static de.mrapp.android.util.ClassUtil.getTruncatedName;
 import static de.mrapp.android.util.Condition.ensureNotEmpty;
 import static de.mrapp.android.util.Condition.ensureNotNull;

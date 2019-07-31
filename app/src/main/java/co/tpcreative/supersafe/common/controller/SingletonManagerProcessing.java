@@ -20,7 +20,6 @@ public class SingletonManagerProcessing {
         return instance;
     }
 
-
     public void onStartProgressing(Activity activity,int res){
         try{
             activity.runOnUiThread(new Runnable() {
@@ -65,8 +64,5 @@ public class SingletonManagerProcessing {
             Utils.Log(TAG,e.getMessage());
         }
     }
-
-
-
 
 }

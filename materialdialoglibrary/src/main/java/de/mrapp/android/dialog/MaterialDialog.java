@@ -12,11 +12,9 @@
  * the License.
  */
 package de.mrapp.android.dialog;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 import de.mrapp.android.dialog.builder.AbstractListDialogBuilder;
 
 /**

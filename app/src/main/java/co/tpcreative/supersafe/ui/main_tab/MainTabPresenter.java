@@ -9,10 +9,8 @@ public class MainTabPresenter extends Presenter<BaseView> {
     private static final String TAG = MainTabPresenter.class.getSimpleName();
     protected User mUser ;
     public MainTabPresenter(){
-
     }
     public void onGetUserInfo(){
         mUser = User.getInstance().getUserInfo();
     }
-
 }

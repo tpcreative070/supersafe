@@ -3,21 +3,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
-import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -39,6 +37,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlideFakePin;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -49,7 +48,6 @@ import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-
 public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin implements BaseView ,FakePinComponentAdapter.ItemSelectedListener,SingletonFakePinComponent.SingletonPrivateFragmentListener{
 
     private static final String TAG = FakePinComponentActivity.class.getSimpleName();
@@ -59,11 +57,9 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     RecyclerView recyclerView;
     private FakePinComponentAdapter adapter;
     private FakePinComponentPresenter presenter;
-    public static boolean isVisit ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fake_pin_component);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -128,7 +124,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
             @Override
             public void onToggleChanged(boolean isOpen) {
-                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+                Utils.Log(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
 
@@ -197,12 +193,12 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                                 Navigator.onMoveCamera(FakePinComponentActivity.this, list.get(0));
                             }
                         } else {
-                            Log.d(TAG, "Permission is denied");
+                            Utils.Log(TAG, "Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
 
@@ -215,7 +211,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }
@@ -224,7 +220,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "Selected album :");
+        Utils.Log(TAG, "Selected album :");
         switch (requestCode) {
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
@@ -244,19 +240,16 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
-                        Log.d(TAG, "mimeType " + mimeType);
-                        Log.d(TAG, "name " + name);
-                        Log.d(TAG, "path " + path);
+                        Utils.Log(TAG, "mimeType " + mimeType);
+                        Utils.Log(TAG, "name " + name);
+                        Utils.Log(TAG, "path " + path);
                         String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
-
+                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path));
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-
                             if (mimeTypeFile==null){
                                 return;
                             }
-
                             mimeTypeFile.name = name;
                             final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
                             if (list == null) {
@@ -269,10 +262,8 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                             e.printStackTrace();
                         }
                     }
-
                     ServiceManager.getInstance().setmListImport(mListImport);
                     ServiceManager.getInstance().onImportingFiles();
-
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }
@@ -284,7 +275,6 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
             }
         }
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -305,16 +295,22 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
         presenter.getData();
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
-        isVisit = true;
+        SingletonManager.getInstance().setVisitFakePin(true);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ServiceManager.getInstance().onDismissServices();
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
-        isVisit = false;
+        SingletonManager.getInstance().setVisitFakePin(false);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -389,7 +385,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
 
     @Override
     public void onClickItem(int position) {
-        Log.d(TAG,"Position :"+ position);
+        Utils.Log(TAG,"Position :"+ position);
         try {
             String value  = Utils.getHexCode(getString(R.string.key_trash));
             if (value.equals(presenter.mList.get(position).categories_hex_name)){
@@ -429,6 +425,4 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
             super.onBackPressed();
         }
     }
-
-
 }

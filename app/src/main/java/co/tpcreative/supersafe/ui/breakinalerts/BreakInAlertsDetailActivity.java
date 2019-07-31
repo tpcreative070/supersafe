@@ -6,17 +6,14 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -36,7 +33,6 @@ public class BreakInAlertsDetailActivity extends BaseActivity{
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_break_in_alerts_detail);
-        onDrawOverLay(this);
         Bundle bundle = getIntent().getExtras();
         final BreakInAlerts inAlerts = (BreakInAlerts) bundle.get(getString(R.string.key_break_in_alert));
         if (inAlerts!=null){
@@ -70,6 +66,11 @@ public class BreakInAlertsDetailActivity extends BaseActivity{
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

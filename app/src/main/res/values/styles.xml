@@ -1,4 +1,49 @@
 <resources>
+    <!-- Base application theme. -->
+    <style name="AppThemeLaunch" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorButton</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_800</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="AppTheme.Share" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorButton</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@color/colorButton</item>
+        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="preference_icon">@color/material_gray_600</item>
+        <item name="preference_title">@color/material_gray_800</item>
+        <item name="preference_summary">@color/material_gray_600</item>
+        <item name="android:divider">@color/colorButton</item>
+        <!--Change menu item for text color -->
+        <item name="android:itemTextAppearance">@style/menu_item_color</item>
+        /*Preference theme*/
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!--Action mode -->
+        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -9,13 +54,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-        <item name="android:windowDisablePreview">true</item>
-
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -24,13 +65,7 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-
-        <!--Animation transfer activity-->
-       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-
     </style>
-
 
     <style name="AppTheme.PINK" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -41,11 +76,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -54,11 +87,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-      <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-      -->
-
     </style>
 
     <style name="AppTheme.PURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -70,11 +98,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -83,12 +109,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-
-        <!--Animation transfer activity
-      <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-      -->
-
     </style>
 
     <style name="AppTheme.DEEPPURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -100,11 +120,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -113,13 +131,7 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
     </style>
-
 
     <style name="AppTheme.CYAN" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -130,11 +142,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -143,11 +153,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-       -->
-
     </style>
 
     <style name="AppTheme.TEAL" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -159,11 +164,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -172,12 +175,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-
-        <!--Animation transfer activity
-       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-       -->
-
     </style>
 
 
@@ -190,11 +187,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -203,12 +198,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
     </style>
 
     <style name="AppTheme.LIME" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -220,11 +209,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -233,11 +220,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
     </style>
 
 
@@ -250,11 +232,9 @@
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/colorButton</item>
         <item name="android:textColorSecondary">@color/colorButton</item>
-
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
-
         <item name="android:divider">@color/colorButton</item>
         <!--Change menu item for text color -->
         <item name="android:itemTextAppearance">@style/menu_item_color</item>
@@ -263,11 +243,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-       -->
-
     </style>
 
     <style name="AppTheme.BROWN" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -290,11 +265,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
     </style>
 
     <style name="AppTheme.GRAY" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -317,11 +287,6 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-       -->
-
     </style>
 
     <style name="AppTheme.BLUEGRAY" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -344,416 +309,9 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
     </style>
 
     <!-- End Custom theme -->
-
-    <!-- Slide -->
-
-    <!-- Base application theme. -->
-    <style name="AppTheme.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorButton</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-
-        <!--Animation transfer activity
-       <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-       -->
-
-    </style>
-
-
-    <style name="AppTheme.PINK.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorPink</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorPink</item>
-        <item name="colorAccent">@color/secondaryColorPink</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.PURPLE.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorPurple</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorPurple</item>
-        <item name="colorAccent">@color/secondaryDarkColorPurple</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.DEEPPURPLE.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorDeepPurple</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
-        <item name="colorAccent">@color/primaryColorPurple</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-         -->
-
-    </style>
-
-
-    <style name="AppTheme.CYAN.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorCyan</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
-        <item name="colorAccent">@color/primaryColorBrown</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.TEAL.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorTeal</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorTeal</item>
-        <item name="colorAccent">@color/secondaryDarkColorTeal</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-
-    <style name="AppTheme.LIGHTGREEN.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorLightGreen</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorLightGreen</item>
-        <item name="colorAccent">@color/secondaryColorLightGreen</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.LIME.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorLime</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
-        <item name="colorAccent">@color/primaryColorBlueGray</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-
-    <style name="AppTheme.AMBER.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorAmber</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorAmber</item>
-        <item name="colorAccent">@color/secondaryColorAmber</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.BROWN.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorBrown</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
-        <item name="colorAccent">@color/md_teal_500</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.GRAY.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorGray</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorGray</item>
-        <item name="colorAccent">@color/secondaryColorGray</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-    <style name="AppTheme.BLUEGRAY.Slide" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColorBlueGray</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColorBlueGray</item>
-        <item name="colorAccent">@color/secondaryDarkColorBlueGray</item>
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
-
-        <item name="preference_icon">@color/material_gray_600</item>
-        <item name="preference_title">@color/material_gray_800</item>
-        <item name="preference_summary">@color/material_gray_600</item>
-
-
-        <item name="android:divider">@color/colorButton</item>
-        <!-- These values must be set for this mechanism to work -->
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <!--Change menu item for text color -->
-        <item name="android:itemTextAppearance">@style/menu_item_color</item>
-        /*Preference theme*/
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <!--Action mode -->
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <!--Animation transfer activity
-        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
-        -->
-
-    </style>
-
-
-    <!-- End Custom theme -->
-
     <!--Change menu item for text color -->
     <style name="menu_item_color">
         <item name="android:textColor">@color/material_gray_800</item>
@@ -860,6 +418,4 @@
         <item name="android:textSize">@dimen/text_size_38</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
-
-
 </resources>

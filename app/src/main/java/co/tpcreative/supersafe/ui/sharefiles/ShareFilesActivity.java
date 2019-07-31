@@ -21,14 +21,18 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.snatik.storage.Storage;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.Navigator;
+import co.tpcreative.supersafe.common.activity.BaseActivityNone;
+import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.PathUtil;
@@ -42,8 +46,7 @@ import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import dmax.dialog.SpotsDialog;
 
-public class ShareFilesActivity extends BaseActivity implements GalleryCameraMediaManager.AlbumDetailManagerListener{
-
+public class ShareFilesActivity extends BaseActivityNone{
     private static final String TAG = ShareFilesActivity.class.getSimpleName();
     final List<Integer> mListFile = new ArrayList<>();
     private AlertDialog dialog;
@@ -82,6 +85,15 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         storage = new Storage(this);
         onShowUI(View.GONE);
         onAddPermission();
+        try {
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            if (themeApp!=null){
+                tvTitle.setTextColor(getResources().getColor(themeApp.getAccentColor()));
+            }
+        }catch (Exception e){
+            final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
+        }
     }
 
     public void onAddPermission() {
@@ -295,43 +307,47 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        GalleryCameraMediaManager.getInstance().setListener(this);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         Utils.onDeleteTemporaryFile();
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
-
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
-    @Override
-    public void onUpdatedView() {
-
-    }
-
-    @Override
-    public void onStartProgress() {
-
-    }
-
-    @Override
-    public void onStopProgress() {
-        try {
-            onStopProgressing();
-            onShowUI(View.VISIBLE);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case FINISH:{
+                Navigator.onMoveToFaceDown(this);
+                break;
+            }
+            case STOP_PROGRESS:{
+                try {
+                    onStopProgressing();
+                    onShowUI(View.VISIBLE);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+    };
 
     private void onStartProgressing(){
         try{
@@ -357,11 +373,6 @@ public class ShareFilesActivity extends BaseActivity implements GalleryCameraMed
         catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onCompletedDownload(EnumStatus status) {
-
     }
 
     private void onStopProgressing(){

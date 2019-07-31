@@ -1,19 +1,13 @@
 package co.tpcreative.supersafe.model;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
-
-import com.google.gson.Gson;
-
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 @Entity(tableName = "breakinalerts")

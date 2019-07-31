@@ -12,14 +12,9 @@
  * the License.
  */
 package de.mrapp.android.dialog.model;
-
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.ScrollView;
-
-import de.mrapp.android.dialog.ScrollableArea;
-import de.mrapp.android.dialog.ScrollableArea.Area;
+import androidx.annotation.Nullable;
 
 /**
  * Defines the interface, a dialog, which is designed according to Android 5's Material Design

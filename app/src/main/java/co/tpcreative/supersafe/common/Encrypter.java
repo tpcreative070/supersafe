@@ -100,19 +100,14 @@ public class Encrypter {
 
 
     public void decryptFile(Uri uri, String uriOut, String secretKey) {
-
         File inFile = new File(uri.getPath());
         File outFile = new File(uriOut);
-
         byte[] encodedKey = Base64.decode(secretKey, Base64.DEFAULT);
         SecretKey key2 = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-
         try {
             decrypt(key2, paramSpec, new FileInputStream(inFile), new FileOutputStream(outFile));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }

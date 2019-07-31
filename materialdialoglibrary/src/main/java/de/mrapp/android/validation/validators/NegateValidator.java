@@ -12,13 +12,10 @@
  * the License.
  */
 package de.mrapp.android.validation.validators;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import de.mrapp.android.validation.Validator;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

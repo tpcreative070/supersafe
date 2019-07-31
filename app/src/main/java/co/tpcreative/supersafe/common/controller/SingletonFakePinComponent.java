@@ -1,5 +1,8 @@
 package co.tpcreative.supersafe.common.controller;
 
+import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
+
 public class SingletonFakePinComponent {
 
     private static SingletonFakePinComponent instance;
@@ -17,6 +20,9 @@ public class SingletonFakePinComponent {
     }
 
     public void onUpdateView(){
+        if (SingletonManager.getInstance().isVisitLockScreen()){
+            return;
+        }
         if (ls!=null){
             ls.onUpdateView();
         }
@@ -25,5 +31,4 @@ public class SingletonFakePinComponent {
     public interface SingletonPrivateFragmentListener{
         void onUpdateView();
     }
-
 }

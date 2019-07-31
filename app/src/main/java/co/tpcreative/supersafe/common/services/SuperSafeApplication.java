@@ -8,13 +8,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
-import android.support.v4.content.PermissionChecker;
-import android.util.Log;
+import androidx.core.content.PermissionChecker;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.drive.Drive;
@@ -85,7 +86,12 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onCreate() {
         super.onCreate();
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+            }
+        });
         InstanceGenerator.getInstance(this);
         mInstance = this;
         isLive = false;
@@ -110,21 +116,17 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal());
         PrefsController.putLong(getString(R.string.key_seek_to),0);
         PrefsController.putInt(getString(R.string.key_lastWindowIndex),0);
-
         /*Config file*/
         configurationFile = new EncryptConfiguration.Builder()
                 .setChuckSize(1024*2)
                 .setEncryptContent(SecurityUtil.IVX,getSecretKey(), SecurityUtil.SALT)
                 .build();
-
         configurationPin = new EncryptConfiguration.Builder()
                 .setChuckSize(1024*2)
                 .setEncryptContent(SecurityUtil.IVX,SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build();
-
         storage = new Storage(getApplicationContext());
         supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/";
-
         key = ".encrypt_key";
         fake_key = ".encrypt_fake_key";
         userSecret = ".userSecret";
@@ -134,20 +136,16 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         supersafeBreakInAlerts = supersafe + "break_in_alerts/";
         supersafeShare = supersafe + "share/";
         supersafeDataBaseFolder = "/data/data/"+SuperSafeApplication.getInstance().getPackageName()+"/databases/";
-
         supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/";
         registerActivityLifecycleCallbacks(this);
-        Log.d(TAG, supersafe);
-
+        Utils.Log(TAG, supersafe);
         options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
-                .requestScopes(Drive.SCOPE_FILE)
-                .requestScopes(Drive.SCOPE_APPFOLDER);
-
+                .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
+                .requestScopes(new Scope(DriveScopes.DRIVE_APPDATA));
         requiredScopes = new HashSet<>(2);
-        requiredScopes.add(Drive.SCOPE_FILE);
-        requiredScopes.add(Drive.SCOPE_APPFOLDER);
-
+        requiredScopes.add(new Scope(DriveScopes.DRIVE_FILE));
+        requiredScopes.add(new Scope(DriveScopes.DRIVE_APPDATA));
         requiredScopesString = new ArrayList<>();
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA);
         requiredScopesString.add(DriveScopes.DRIVE_FILE);
@@ -174,7 +172,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public GoogleSignInOptions getGoogleSignInOptions(final Account account) {
         if (options != null) {
             if (account != null) {
-                options.setAccount(account);
+                options.setAccountName(account.name);
             }
             return options.build();
         }
@@ -247,7 +245,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityPaused(Activity activity) {
         ++paused;
-        Log.d(TAG, "application is in foreground: " + (resumed > paused));
+        Utils.Log(TAG, "application is in foreground: " + (resumed > paused));
     }
 
     @Override
@@ -259,7 +257,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public void onActivityStopped(Activity activity) {
         ++stopped;
-        Log.d(TAG, "application is visible: " + (started > stopped));
+        Utils.Log(TAG, "application is visible: " + (started > stopped));
     }
 
     public boolean isApplicationVisible() {
@@ -312,14 +310,14 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void initFolder() {
         if (storage.isDirectoryExists(supersafe) & storage.isDirectoryExists(supersafePrivate) & storage.isDirectoryExists(supersafeBackup) & storage.isDirectoryExists(supersafeLog) & storage.isDirectoryExists(supersafeBreakInAlerts)) {
-            Log.d(TAG, "SuperSafe is existing");
+            Utils.Log(TAG, "SuperSafe is existing");
         } else {
             storage.createDirectory(supersafe);
             storage.createDirectory(supersafePrivate);
             storage.createDirectory(supersafeBackup);
             storage.createDirectory(supersafeLog);
             storage.createDirectory(supersafeBreakInAlerts);
-            Log.d(TAG, "SuperSafe was created");
+            Utils.Log(TAG, "SuperSafe was created");
         }
     }
 
@@ -329,25 +327,25 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void writeKey(String value) {
         if (!isPermissionWrite()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + key, value);
-        Log.d(TAG, "Created key :" + value);
+        Utils.Log(TAG, "Created key :" + value);
     }
 
     public String readKey() {
         try {
             if (!isPermissionRead()) {
-                Log.d(TAG, "Please grant access permission");
+                Utils.Log(TAG, "Please grant access permission");
                 return "";
             }
             storage.setEncryptConfiguration(configurationPin);
             boolean isFile = storage.isFileExist(getSuperSafe() + key);
             if (isFile) {
                 String value = storage.readTextFile(getSuperSafe() + key);
-                Log.d(TAG, "Key value is : " + value);
+                Utils.Log(TAG, "Key value is : " + value);
                 return value;
             }
         }
@@ -355,12 +353,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             deleteFolder();
         }
         return "";
-
     }
 
     public void writeUserSecret(final User user) {
         if (!isPermissionWrite()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         storage.setEncryptConfiguration(configurationPin);
@@ -370,7 +367,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public User readUseSecret() {
         try {
             if (!isPermissionRead()) {
-                Log.d(TAG, "Please grant access permission");
+                Utils.Log(TAG, "Please grant access permission");
                 return null;
             }
             storage.setEncryptConfiguration(configurationPin);
@@ -395,24 +392,24 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void writeFakeKey(String value) {
         if (!isPermissionWrite()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         storage.setEncryptConfiguration(configurationPin);
         storage.createFile(getSuperSafe() + fake_key, value);
-        Log.d(TAG, "Created key :" + value);
+        Utils.Log(TAG, "Created key :" + value);
     }
 
     public String readFakeKey() {
         if (!isPermissionRead()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return "";
         }
         storage.setEncryptConfiguration(configurationPin);
         boolean isFile = storage.isFileExist(getSuperSafe() + fake_key);
         if (isFile) {
             String value = storage.readTextFile(getSuperSafe() + fake_key);
-            Log.d(TAG, "Key value is : " + value);
+            Utils.Log(TAG, "Key value is : " + value);
             return value;
         }
         return "";
@@ -420,7 +417,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public void onDeleteKey() {
         if (!isPermissionRead()) {
-            Log.d(TAG, "Please grant access permission");
+            Utils.Log(TAG, "Please grant access permission");
             return;
         }
         boolean isFile = storage.isFileExist(getSuperSafe() + key);
@@ -513,11 +510,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             hashMap.put("Authorization", authorization);
         }
         return hashMap;
-    }
-
-    @Override
-    public boolean isXML() {
-        return false;
     }
 
     public String getDeviceId() {

@@ -1,12 +1,10 @@
 package co.tpcreative.supersafe.common.activity;
-
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -15,21 +13,20 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
-
+import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BasePlayerActivity extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
     Unbinder unbinder;
     protected ActionBar actionBar ;
     int onStartCount = 0;
-    private Toast mToast;
     private HomeWatcher mHomeWatcher;
     public static final String TAG = BasePlayerActivity.class.getSimpleName();
     protected Storage storage;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,26 +42,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         storage = new Storage(this);
     }
 
-    protected void onStartOverridePendingTransition(){
-        this.overridePendingTransition(R.animator.anim_slide_in_left,
-                R.animator.anim_slide_out_left);
-    }
-
-    public void onCallLockScreen(){
-        int  value = PrefsController.getInt(getString(R.string.key_screen_status),EnumPinAction.NONE.ordinal());
-        EnumPinAction action = EnumPinAction.values()[value];
-        switch (action){
-            case SPLASH_SCREEN:{
-                Navigator.onMoveToVerifyPin(this,EnumPinAction.NONE);
-                PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                break;
-            }
-            default:{
-                Utils.Log(TAG,"Nothing to do");
-            }
-        }
-    }
-
     protected void onFaceDown(final boolean isFaceDown){
         if (isFaceDown){
             final boolean result = PrefsController.getBoolean(getString(R.string.key_face_down_lock),false);
@@ -72,10 +49,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance());
             }
         }
-    }
-
-    protected float getRandom(float range, float startsfrom) {
-        return (float) (Math.random() * range) + startsfrom;
     }
 
     @Override
@@ -136,8 +109,8 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Utils.Log(TAG,"Pressed home button");
+                        Utils.onHomePressed();
+                        onStopListenerAWhile();
                         break;
                     }
                     default:{
@@ -155,7 +128,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         mHomeWatcher.startWatch();
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -167,19 +139,9 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         System.gc();
     }
 
-    protected void showToast(String text) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-        mToast.show();
-    }
-
-
     protected void setDisplayHomeAsUpEnabled(boolean check){
         actionBar.setDisplayHomeAsUpEnabled(check);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -199,9 +161,9 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case SCREEN_LOCK:{
-                if (!EnterPinActivity.isVisible){
+                if (!SingletonManager.getInstance().isVisitLockScreen()){
                     Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);                        Utils.Log(TAG,"Pressed home button");
-                    EnterPinActivity.isVisible = true;
+                    SingletonManager.getInstance().setVisitLockScreen(true);
                     Utils.Log(TAG,"Verify pin");
                 }else{
                     Utils.Log(TAG,"Verify pin already");
@@ -213,15 +175,18 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements  S
                 break;
             }
         }
-
-
-
-        if (onStartCount > 1) {
-            this.overridePendingTransition(R.animator.anim_slide_in_right,
-                    R.animator.anim_slide_out_right);
-        } else if (onStartCount == 1) {
-            onStartCount++;
+        if (SingletonManager.getInstance().isAnimation()){
+            if (onStartCount > 1) {
+                this.overridePendingTransition(R.animator.anim_slide_in_right,
+                        R.animator.anim_slide_out_right);
+            } else if (onStartCount == 1) {
+                onStartCount++;
+            }
+        }else{
+            Bungee.zoom(this);
+            SingletonManager.getInstance().setAnimation(true);
         }
     }
 
+    protected abstract void onStopListenerAWhile();
 }

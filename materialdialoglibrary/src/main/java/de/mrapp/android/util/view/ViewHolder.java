@@ -12,12 +12,11 @@
  * the License.
  */
 package de.mrapp.android.util.view;
-
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * A view holder, which maintains references to previously references views in order to avoid

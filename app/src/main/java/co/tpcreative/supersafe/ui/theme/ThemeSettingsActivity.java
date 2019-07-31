@@ -4,20 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import co.tpcreative.supersafe.R;
@@ -28,7 +26,6 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
-
 
 public class ThemeSettingsActivity extends BaseActivity implements BaseView, ThemeSettingsAdapter.ItemSelectedListener{
 
@@ -54,7 +51,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         initRecycleView(getLayoutInflater());
         presenter = new ThemeSettingsPresenter();
         presenter.bindView(this);
@@ -79,7 +75,6 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(ThemeSettingsActivity.class.getSimpleName());
     }
 
     @Override
@@ -91,6 +86,11 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
         if(isUpdated){
             EventBus.getDefault().post(EnumStatus.RECREATE);
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

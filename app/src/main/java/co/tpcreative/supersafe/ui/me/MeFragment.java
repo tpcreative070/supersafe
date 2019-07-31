@@ -1,25 +1,24 @@
 package co.tpcreative.supersafe.ui.me;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
+import org.greenrobot.eventbus.EventBus;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -28,7 +27,7 @@ import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 
-public class MeFragment extends BaseFragment implements BaseView,SingletonPremiumTimer.SingletonPremiumTimerListener{
+public class MeFragment extends BaseFragment implements BaseView{
 
     private static final String TAG = MeFragment.class.getSimpleName();
     @BindView(R.id.nsv)
@@ -96,9 +95,9 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
                 if (scrollY > oldScrollY) {
-                    Log.d(TAG,"hide");
+                    Utils.Log(TAG,"hide");
                 } else {
-                    Log.d(TAG,"show");
+                    Utils.Log(TAG,"show");
                 }
             }
         });
@@ -130,18 +129,6 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
         }
-        else if (User.getInstance().isPremiumComplimentary()){
-            String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-            if (dayLeft!=null){
-                String sourceString = Utils.getFontString(R.string.premium_left,dayLeft);
-                tvPremiumLeft.setText(Html.fromHtml(sourceString));
-            }
-            if (presenter.mUser.driveConnected) {
-                tvEnableCloud.setText(getString(R.string.no_limited_cloud_sync_storage));
-            } else {
-                tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
-            }
-        }
         else{
             if (presenter.mUser.driveConnected) {
                 String value;
@@ -156,33 +143,8 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
             } else {
                 tvEnableCloud.setText(getString(R.string.enable_cloud_sync));
             }
-            if (presenter.mUser.verified){
-                tvPremiumLeft.setText(getString(R.string.premium_expired));
-                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
-            }
-        }
-    }
-
-    @Override
-    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
-        try {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final boolean isPremium = User.getInstance().isPremium();
-                    if (isPremium){
-                        tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
-                    }
-                    else{
-                        String sourceString = Utils.getFontString(R.string.premium_left,days);
-                        tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                    }
-                }
-            });
-        }
-        catch (Exception e){
-            SingletonPremiumTimer.getInstance().onStop();
-            e.printStackTrace();
+            String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
+            tvPremiumLeft.setText(Html.fromHtml(sourceString));
         }
     }
 
@@ -207,24 +169,17 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        Log.d(TAG,"visit :"+isVisibleToUser);
+        Utils.Log(TAG,"visit :"+isVisibleToUser);
         if (isVisibleToUser) {
-            SingletonManagerTab.getInstance().setVisetFloatingButton(View.INVISIBLE);
-            final boolean isPremium = User.getInstance().isPremium();
-            if (!isPremium){
-                SingletonPremiumTimer.getInstance().setListener(this);
-            }
+            EventBus.getDefault().post(EnumStatus.HIDE_FLOATING_BUTTON);
             onUpdatedView();
-        }
-        else{
-            SingletonPremiumTimer.getInstance().setListener(null);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Utils.Log(TAG,"onResume");
         presenter.onCalculate();
         presenter.onShowUserInfo();
         onUpdatedView();
@@ -241,7 +196,7 @@ public class MeFragment extends BaseFragment implements BaseView,SingletonPremiu
         catch (Exception e){
             e.printStackTrace();
         }
-        Log.d(TAG,"OnResume");
+        Utils.Log(TAG,"OnResume");
     }
 
     @OnClick(R.id.llSettings)

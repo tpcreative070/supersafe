@@ -2,22 +2,17 @@ package co.tpcreative.supersafe.ui.help;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import com.jaychang.srv.SimpleRecyclerView;
 import com.jaychang.srv.decoration.SectionHeaderProvider;
 import com.jaychang.srv.decoration.SimpleSectionHeaderProvider;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -25,13 +20,9 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.HelpAndSupport;
-import co.tpcreative.supersafe.ui.multiselects.HelperActivity;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class HelpAndSupportActivity extends BaseActivity implements BaseView,HelpAndSupportCell.ItemSelectedListener{
 
@@ -47,14 +38,11 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
-
         presenter = new HelpAndSupportPresenter();
         presenter.bindView(this);
         presenter.onGetList();
         addRecyclerHeaders();
         bindData();
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -74,7 +62,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(HelpAndSupportActivity.class.getSimpleName());
     }
 
     @Override
@@ -85,11 +72,14 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
-
-
 
     private void addRecyclerHeaders() {
         SectionHeaderProvider<HelpAndSupport> sh = new SimpleSectionHeaderProvider<HelpAndSupport>() {
@@ -107,7 +97,6 @@ public class HelpAndSupportActivity extends BaseActivity implements BaseView,Hel
                 return history.getCategoryId() == nextHistory.getCategoryId();
             }
 
-            // Optional, whether the header is sticky, default false
             @Override
             public boolean isSticky() {
                 return false;

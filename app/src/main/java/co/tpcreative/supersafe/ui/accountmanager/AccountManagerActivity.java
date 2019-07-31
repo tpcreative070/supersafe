@@ -5,22 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import com.google.gson.Gson;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -30,16 +29,13 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AppLists;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity;
 
-public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,SingletonPremiumTimer.SingletonPremiumTimerListener,AccountManagerAdapter.ItemSelectedListener{
+public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,AccountManagerAdapter.ItemSelectedListener{
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
     @BindView(R.id.tvEmail)
@@ -76,14 +72,11 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         onUpdatedView();
-        onStartOverridePendingTransition();
         scrollView.smoothScrollTo(0,0);
     }
 
     public void onUpdatedView(){
-
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
             tvEmail.setText(mUser.email);
@@ -96,7 +89,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
                 tvStatusAccount.setText(getString(R.string.unverified));
             }
         }
-
         final boolean isPremium = User.getInstance().isPremium();
         if (isPremium){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
@@ -107,20 +99,9 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         else{
             rlPremium.setVisibility(View.GONE);
             rlPremiumComplimentary.setVisibility(View.VISIBLE);
-            if (User.getInstance().isPremiumComplimentary()){
-                tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
-                tvLicenseStatus.setText(getString(R.string.premium));
-                if (SingletonPremiumTimer.getInstance().getDaysLeft()!=null){
-                    String dayLeft = SingletonPremiumTimer.getInstance().getDaysLeft();
-                    String sourceString = Utils.getFontString(R.string.your_complimentary_premium_remaining,dayLeft);
-                    tvPremiumLeft.setText(Html.fromHtml(sourceString));
-                }
-            }
-            else{
-                tvLicenseStatus.setText(getString(R.string.free));
-                tvPremiumLeft.setText(getString(R.string.premium_expired));
-                tvPremiumLeft.setTextColor(getResources().getColor(R.color.red_300));
-            }
+            tvLicenseStatus.setText(getString(R.string.free));
+            String sourceString = Utils.getFontString(R.string.upgrade_premium_to_use_full_features,getString(R.string.premium_uppercase));
+            tvPremiumLeft.setText(Html.fromHtml(sourceString));
         }
     }
 
@@ -170,11 +151,6 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(AccountManagerActivity.class.getSimpleName());
-        final boolean isPremium = User.getInstance().isPremium();
-        if (!isPremium){
-            SingletonPremiumTimer.getInstance().setListener(this);
-        }
     }
 
     @Override
@@ -183,7 +159,11 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
-        SingletonPremiumTimer.getInstance().setListener(null);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -191,32 +171,19 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
         onFaceDown(isFaceDown);
     }
 
-    @Override
-    public void onPremiumTimer(String days, String hours, String minutes, String seconds) {
-        try {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    String value =Utils.getFontString(R.string.your_complimentary_premium_remaining,days);
-                    tvPremiumLeft.setText(Html.fromHtml(value));
-                }
-            });
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     @OnClick(R.id.btnUpgrade)
     public void onClickedUpgrade(View view){
         Navigator.onMoveToPremium(this);
     }
 
-
+    @OnClick(R.id.rlPremiumComplimentary)
+    public void onClickedUpgrade(){
+        Navigator.onMoveToPremium(this);
+    }
 
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){
-        Log.d(TAG,"sign out");
+        Utils.Log(TAG,"sign out");
         final User mUser = User.getInstance().getUserInfo();
         if (mUser!=null){
             signOut(new ServiceManager.ServiceManagerSyncDataListener() {
@@ -246,23 +213,23 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,S
 
     @Override
     protected void onDriveSuccessful() {
-        Log.d(TAG,"onDriveSuccessful");
+        Utils.Log(TAG,"onDriveSuccessful");
         btnSignOut.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onDriveError() {
-        Log.d(TAG,"onDriveError");
+        Utils.Log(TAG,"onDriveError");
     }
 
     @Override
     protected void onDriveSignOut() {
-        Log.d(TAG,"onDriveSignOut");
+        Utils.Log(TAG,"onDriveSignOut");
     }
 
     @Override
     protected void onDriveRevokeAccess() {
-        Log.d(TAG,"onDriveRevokeAccess");
+        Utils.Log(TAG,"onDriveRevokeAccess");
     }
 
     @Override

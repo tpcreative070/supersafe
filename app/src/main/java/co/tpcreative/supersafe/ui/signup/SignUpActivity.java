@@ -1,17 +1,15 @@
 package co.tpcreative.supersafe.ui.signup;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
@@ -48,7 +46,6 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -60,7 +57,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         edtName.setOnEditorActionListener(this);
         presenter = new SignUpPresenter();
         presenter.bindView(this);
-        Log.d(TAG,"onCreate");
+        Utils.Log(TAG,"onCreate");
         isName = true;
         edtName.setText(getString(R.string.free));
     }
@@ -92,6 +89,11 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
 
     }
@@ -104,7 +106,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
                 return false;
             }
             if (isEmail && isName){
-                Log.d(TAG,"Next");
+                Utils.Log(TAG,"Next");
                 Utils.hideSoftKeyboard(this);
                 onSignUp();
                 return true;
@@ -185,7 +187,7 @@ public class SignUpActivity extends BaseActivityNoneSlide implements TextView.On
         request.name = name;
         presenter.onSignUp(request);
         Utils.hideSoftKeyboard(this);
-        Log.d(TAG,"onFished");
+        Utils.Log(TAG,"onFished");
     }
 
     @Override

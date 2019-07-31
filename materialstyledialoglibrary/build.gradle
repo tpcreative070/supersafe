@@ -26,6 +26,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:' + appSupportVersion
+    implementation 'androidx.appcompat:appcompat:'+appSupportVersion
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
 }

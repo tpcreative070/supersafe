@@ -12,7 +12,6 @@
  * the License.
  */
 package de.mrapp.android.util;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -21,13 +20,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
 import android.text.TextUtils;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import java.io.File;
-
 import static de.mrapp.android.util.Condition.ensureFileIsNoDirectory;
 import static de.mrapp.android.util.Condition.ensureNotEmpty;
 import static de.mrapp.android.util.Condition.ensureNotNull;

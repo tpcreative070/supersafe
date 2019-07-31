@@ -12,7 +12,6 @@
  * the License.
  */
 package de.mrapp.android.view.drawable;
-
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
@@ -25,14 +24,12 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
 import android.util.Property;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import de.mrapp.android.view.CircularProgressBar;
-
 import static de.mrapp.android.util.Condition.ensureAtLeast;
 
 /**

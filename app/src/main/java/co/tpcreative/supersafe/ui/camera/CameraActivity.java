@@ -1,15 +1,15 @@
 package co.tpcreative.supersafe.ui.camera;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import com.google.android.cameraview.CameraView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -88,6 +88,7 @@ public class CameraActivity extends BaseActivity implements
                     }
                     break;
                 case R.id.btnDone :
+                    ServiceManager.getInstance().onSyncDataOwnServer("0");
                     onBackPressed();
                     break;
             }
@@ -108,14 +109,12 @@ public class CameraActivity extends BaseActivity implements
         btnDone.setOnClickListener(mOnClickListener);
         btnFlash.setOnClickListener(mOnClickListener);
         btnSwitch.setOnClickListener(mOnClickListener);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-
         try {
             Bundle bundle = getIntent().getExtras();
             mainCategories = (MainCategories) bundle.get(getString(R.string.key_main_categories));
@@ -123,7 +122,6 @@ public class CameraActivity extends BaseActivity implements
         catch (Exception e){
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
         }
-
     }
 
     @OnClick(R.id.btnAutoFocus)
@@ -165,13 +163,17 @@ public class CameraActivity extends BaseActivity implements
         }
         GalleryCameraMediaManager.getInstance().setProgressing(false);
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(CameraActivity.class.getSimpleName());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

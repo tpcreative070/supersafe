@@ -1,7 +1,6 @@
 package com.jaychang.srv.decoration;
-
-import android.support.annotation.NonNull;
 import android.view.View;
+import androidx.annotation.NonNull;
 
 public abstract class SimpleSectionHeaderProvider<T> implements SectionHeaderProvider<T> {
 

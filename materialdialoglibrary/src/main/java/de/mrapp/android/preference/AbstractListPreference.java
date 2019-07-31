@@ -12,23 +12,20 @@
  * the License.
  */
 package de.mrapp.android.preference;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.AttrRes;
-import android.support.annotation.CallSuper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
-
+import androidx.annotation.ArrayRes;
+import androidx.annotation.AttrRes;
+import androidx.annotation.CallSuper;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import de.mrapp.android.dialog.MaterialDialog;
 import de.mrapp.android.dialog.ScrollableArea;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

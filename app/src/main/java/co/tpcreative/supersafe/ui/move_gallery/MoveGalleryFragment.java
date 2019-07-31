@@ -3,26 +3,30 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
+import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -37,17 +41,11 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     private final String  TAG = MoveGalleryFragment.class.getSimpleName();
     private int mAlbumColumnNumber;
     private MoveGalleryAdapter mAdapterAlbumGrid;
-
     private Configuration mConfig;
-
     private BottomSheetDialog dialog;
-
     private BottomSheetBehavior mBehavior;
-
-
     private OnGalleryAttachedListener mListener;
     private MoveGalleryPresenter presenter;
-
     public interface OnGalleryAttachedListener {
         Configuration getConfiguration();
         List<Items> getListItems();
@@ -68,9 +66,35 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
         mAdapterAlbumGrid = new MoveGalleryAdapter(getActivity().getLayoutInflater(),getActivity(),this);
         presenter = new MoveGalleryPresenter();
         presenter.bindView(this);
-
         Utils.Log(TAG,new Gson().toJson(mConfig));
         presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(EnumStatus event) {
+        switch (event){
+            case UPDATE_MOVE_NEW_ALBUM:{
+                if (mConfig!=null){
+                    presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
+                    Utils.Log(TAG,"Updated UI => Warning categories id is null");
+                }
+                break;
+            }
+        }
     }
 
     @Nullable
@@ -174,7 +198,6 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         String value = input.toString();
                         String base64Code = Utils.getHexCode(value);
-
                         MainCategories item = MainCategories.getInstance().getTrashItem();
                         String result = item.categories_hex_name;
                         if (base64Code.equals(result)){
@@ -185,6 +208,8 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
                             if (response){
                                 Toast.makeText(getActivity(),"Created album successful",Toast.LENGTH_SHORT).show();
                                 presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
+                                SingletonPrivateFragment.getInstance().onUpdateView();
+                                ServiceManager.getInstance().onGetListCategoriesSync();
                             }
                             else{
                                 Toast.makeText(getActivity(),"Album name already existing",Toast.LENGTH_SHORT).show();
@@ -244,7 +269,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
             }
             case MOVE:{
                 dialog.dismiss();
-                GalleryCameraMediaManager.getInstance().onUpdatedView();
+                EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
                 if (mListener!=null){
                     mListener.onMoveAlbumSuccessful();
                 }

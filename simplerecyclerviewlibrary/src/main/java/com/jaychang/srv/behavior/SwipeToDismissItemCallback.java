@@ -1,12 +1,8 @@
 package com.jaychang.srv.behavior;
-
 import android.graphics.Canvas;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import com.jaychang.srv.SimpleRecyclerView;
-
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
 @SuppressWarnings("unchecked")
 class SwipeToDismissItemCallback extends ItemTouchHelper.Callback {
@@ -38,7 +34,7 @@ class SwipeToDismissItemCallback extends ItemTouchHelper.Callback {
 
     // obtain current item
     swipeItemPosition = viewHolder.getAdapterPosition();
-    if (swipeItemPosition != NO_POSITION) {
+    if (swipeItemPosition != RecyclerView.NO_POSITION) {
       swipeItem = simpleRecyclerView.getCell(swipeItemPosition).getItem();
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="@string/key_features"
+    <androidx.preference.PreferenceCategory android:title="@string/key_features"
         android:layout="@layout/preference_category_layout">
         <Preference
             android:layout="@layout/custom_preferences_item_premium"
@@ -30,7 +30,5 @@
             android:key="@string/no_advertisement"
             android:summary="@string/get_rid_of_those_ugly_ads"
             android:title="@string/no_advertisement"/>
-
-
-    </PreferenceCategory>
-</PreferenceScreen>
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>

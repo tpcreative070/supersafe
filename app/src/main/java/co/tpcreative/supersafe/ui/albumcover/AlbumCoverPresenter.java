@@ -1,14 +1,9 @@
 package co.tpcreative.supersafe.ui.albumcover;
-
 import android.app.Activity;
-import android.app.TaskStackBuilder;
 import android.os.Bundle;
-
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -16,7 +11,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.ListItem;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 

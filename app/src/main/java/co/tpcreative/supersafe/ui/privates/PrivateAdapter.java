@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.ui.privates;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.PopupMenu;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.snatik.storage.Storage;
+import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -69,7 +70,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         public ItemHolder(View itemView) {
             super(itemView);
         }
-
         private MainCategories data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
@@ -84,8 +84,9 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
             super.bind(data, position);
             this.data = data;
             if (data.pin.equals("")) {
+                final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(data.categories_local_id,data.isFakePin);
                 final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(data.items_id);
-                if (items != null) {
+                if (items != null && mList!=null && mList.size()>0) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {
                         case AUDIO: {
@@ -203,13 +204,10 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
     }
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
         int position;
-
         public MyMenuItemClickListener(int position) {
             this.position = position;
         }
-
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
@@ -237,13 +235,8 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
-
         void onSetting(int position);
-
         void onDeleteAlbum(int position);
-
         void onEmptyTrash(int position);
-
     }
-
 }

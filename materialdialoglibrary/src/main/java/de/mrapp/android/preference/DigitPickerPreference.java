@@ -12,17 +12,12 @@
  * the License.
  */
 package de.mrapp.android.preference;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -31,13 +26,14 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import java.util.Locale;
-
 import de.mrapp.android.dialog.MaterialDialog;
 import de.mrapp.android.preference.view.NumberPicker;
 import de.mrapp.android.util.view.AbstractSavedState;
-
 import static de.mrapp.android.util.Condition.ensureAtLeast;
 import static de.mrapp.android.util.Condition.ensureAtMaximum;
 

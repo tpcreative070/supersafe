@@ -7,20 +7,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -34,7 +32,6 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 
-
 public class SettingsActivity extends BaseActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -46,7 +43,6 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         activity = this;
-        onDrawOverLay(this);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -114,6 +110,11 @@ public class SettingsActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 
@@ -234,32 +235,44 @@ public class SettingsActivity extends BaseActivity {
                             Utils.Log(TAG,"Action here");
                         }
                         else if (preference.getKey().equals(getString(R.string.key_theme))){
-                            if (User.getInstance().isPremiumExpired()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveThemeSettings(activity);
+                                return true;
+                            }
+                            if (!User.getInstance().isPremium()){
                                 onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveThemeSettings(activity);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_break_in_alert))){
-                            if (User.getInstance().isPremiumExpired()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveBreakInAlerts(getContext());
+                                return true;
+                            }
+                            if (!User.getInstance().isPremium()){
                                 onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveBreakInAlerts(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_fake_pin))){
-                            if (User.getInstance().isPremiumExpired()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveFakePin(getContext());
+                                return true;
+                            }
+                            if (!User.getInstance().isPremium()){
                                 onShowPremium();
                                 return true;
                             }
                             Navigator.onMoveFakePin(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_secret_door))){
-                            if (User.getInstance().isPremiumExpired()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveSecretDoor(getContext());
+                                return true;
+                            }
+                            if (!User.getInstance().isPremium()){
                                 onShowPremium();
                                 return true;
                             }
@@ -288,8 +301,11 @@ public class SettingsActivity extends BaseActivity {
                             }
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_lock))){
-                            if (User.getInstance().isPremiumExpired()){
-                                //onShowDialog(getString(R.string.your_premium_has_expired));
+                            if (BuildConfig.DEBUG) {
+                                Navigator.onMoveUnlockAllAlbums(getContext());
+                                return true;
+                            }
+                            if (!User.getInstance().isPremium()){
                                 onShowPremium();
                                 return true;
                             }

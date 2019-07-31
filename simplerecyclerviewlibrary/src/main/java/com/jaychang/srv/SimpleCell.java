@@ -1,10 +1,9 @@
 package com.jaychang.srv;
-
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 public abstract class SimpleCell<T, VH extends SimpleViewHolder> {
 
@@ -25,7 +24,8 @@ public abstract class SimpleCell<T, VH extends SimpleViewHolder> {
     this.item = item;
   }
 
-  @LayoutRes protected abstract int getLayoutRes();
+  @LayoutRes
+  protected abstract int getLayoutRes();
 
   @NonNull protected abstract VH onCreateViewHolder(@NonNull ViewGroup parent, @NonNull View cellView);
 

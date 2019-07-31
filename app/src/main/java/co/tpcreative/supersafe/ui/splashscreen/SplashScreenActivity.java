@@ -2,15 +2,11 @@ package co.tpcreative.supersafe.ui.splashscreen;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -19,6 +15,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -37,27 +34,27 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
     private static final String TAG = SplashScreenActivity.class.getSimpleName();
     @BindView(R.id.rlScreen)
     RelativeLayout rlScreen;
-    private Handler handler = new Handler();
-    private int DELAY = 500;
+    private int DELAY = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-
-
         /*Black list*/
         if (SuperSafeApplication.getInstance().getDeviceId().equals("66801ac00252fe84")){
             finish();
         }
-
-
-        ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        rlScreen.setBackgroundColor(getResources().getColor(themeApp.getPrimaryColor()));
-
+        try {
+            ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+            if (themeApp!=null){
+                rlScreen.setBackgroundColor(getResources().getColor(themeApp.getPrimaryColor()));
+            }
+        }catch (Exception e){
+            final ThemeApp themeApp = new ThemeApp(0,R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton,"#0091EA");
+            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),new Gson().toJson(themeApp));
+        }
         value  = SuperSafeApplication.getInstance().readKey();
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access),false);
         isRunning = PrefsController.getBoolean(getString(R.string.key_running),false);
@@ -68,35 +65,24 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
             grant_access = false;
         }
         SuperSafeApplication.getInstance().initFolder();
-
-        Log.d(TAG,"Key "+ value);
-
+        Utils.Log(TAG,"Key "+ value);
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
         int version = Build.VERSION.SDK_INT;
         String versionRelease = Build.VERSION.RELEASE;
-
         Utils.Log(TAG, "manufacturer " + manufacturer
                 + " \n model " + model
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
         );
-//        ServiceManager.getInstance().setUploadData(false);
-//        ServiceManager.getInstance().setDownloadData(false);
-//        ServiceManager.getInstance().setDeleteOwnCloud(false);
-//        ServiceManager.getInstance().setDeleteSyncCLoud(false);
-//        ServiceManager.getInstance().setGetListCategories(false);
-//        ServiceManager.getInstance().setCategoriesSync(false);
-//        ServiceManager.getInstance().setDeleteAlbum(false);
         MainCategories.getInstance().getList();
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
         Utils.Log(TAG,"Max "+count);
-
-        handler.postDelayed(new Runnable() {
+        Utils.onObserveData(DELAY, new Listener() {
             @Override
-            public void run() {
+            public void onStart() {
                 if (grant_access){
                     if (isRunning){
                         if(!"".equals(value)){
@@ -122,8 +108,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                 }
                 finish();
             }
-        },DELAY);
-
+        });
     }
 
 
@@ -151,6 +136,10 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

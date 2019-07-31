@@ -6,10 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -38,13 +37,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javax.crypto.Cipher;
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
@@ -66,7 +63,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.OnClickListener ,BaseView,GalleryCameraMediaManager.AlbumDetailManagerListener{
+public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.OnClickListener ,BaseView{
 
     private static final String TAG = PhotoSlideShowActivity.class.getSimpleName();
     private RequestOptions options = new RequestOptions()
@@ -96,22 +93,17 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     @BindView(R.id.imgDelete)
     ImageView imgDelete;
     private boolean isHide;
-
     private PhotoSlideShowPresenter presenter;
     private Storage storage;
     private ViewPager viewPager;
     private SamplePagerAdapter adapter;
     private boolean isReload;
     private AlertDialog dialog;
-    private Cipher mCipher;
-
     private Disposable subscriptions;
     private boolean isProgressing;
     private  int position = 0;
     private  PhotoView photoView;
     SweetAlertDialog mDialogProgress;
-
-
     private Handler handler;
     private int delay = 2000; //milliseconds
     private int page = 0;
@@ -127,7 +119,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -139,8 +130,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         presenter = new PhotoSlideShowPresenter();
         presenter.bindView(this);
         presenter.getIntent(this);
-
-        //Utils.showGotItSnackbar(findViewById(R.id.coordinator), R.string.custom_objects_hint);
         viewPager = findViewById(R.id.view_pager);
         adapter = new SamplePagerAdapter(this);
         viewPager.setAdapter(adapter);
@@ -151,18 +140,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         imgRotate.setOnClickListener(this);
         imgShare.setOnClickListener(this);
         imgMove.setOnClickListener(this);
-        GalleryCameraMediaManager.getInstance().setListener(this);
         attachFragment(R.id.gallery_root);
-
         /*Auto slide*/
-
         handler = new Handler();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
-
             @Override
             public void onPageSelected(int position) {
                 page = position;
@@ -170,7 +154,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
     }
@@ -193,12 +176,64 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         }
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
         switch (event){
             case FINISH:{
                 Navigator.onMoveToFaceDown(this);
+                break;
+            }
+            case START_PROGRESS:{
+                onStartProgressing();
+                break;
+            }
+            case STOP_PROGRESS:{
+                try {
+                    Utils.Log(TAG,"onStopProgress");
+                    onStopProgressing();
+                    switch (presenter.status){
+                        case SHARE:{
+                            if (presenter.mListShare!=null){
+                                if (presenter.mListShare.size()>0){
+                                    Utils.shareMultiple(presenter.mListShare,this);
+                                }
+                            }
+                            break;
+                        }
+                        case EXPORT:{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(PhotoSlideShowActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e){
+                    Utils.Log(TAG,e.getMessage());
+                }
+                break;
+            }
+            case DOWNLOAD_COMPLETED:{
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        onShowDialog(EnumStatus.EXPORT,position);
+                    }
+                });
+                Utils.Log(TAG, " already sync");
+                break;
+            }
+            case DOWNLOAD_FAILED:{
+                mDialogProgress.setTitleText("No connection, Try again")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                 break;
             }
         }
@@ -211,7 +246,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(PhotoSlideShowActivity.class.getSimpleName());
     }
 
     @Override
@@ -231,6 +265,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -285,13 +324,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         return null;
     }
 
-
     class SamplePagerAdapter extends PagerAdapter {
         private Context context;
         SamplePagerAdapter(Context context){
             this.context = context;
         }
-
         @Override
         public int getCount() {
             return presenter.mList.size();
@@ -300,26 +337,21 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             //PhotoView photoView = new PhotoView(container.getContext());
-
             LayoutInflater inflater = getLayoutInflater();
             View myView = inflater.inflate(R.layout.content_view, null);
             photoView = myView.findViewById(R.id.imgPhoto);
             ImageView imgPlayer = myView.findViewById(R.id.imgPlayer);
-
-
             final Items mItems = presenter.mList.get(position);
             EnumFormatType enumTypeFile = EnumFormatType.values()[mItems.formatType];
-
             photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
                 public void onPhotoTap(ImageView view, float x, float y) {
-                    Log.d(TAG,"on Clicked");
+                    Utils.Log(TAG,"on Clicked");
                     onStopSlider();
                     isHide = !isHide;
                     onHideView();
                 }
             });
-
             imgPlayer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -327,22 +359,32 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     Navigator.onPlayer(PhotoSlideShowActivity.this,items,presenter.mainCategories);
                 }
             });
-
             try{
                 String path = mItems.thumbnailPath;
                 File file = new File(""+path);
                 if (file.exists() || file.isFile()){
                     photoView.setRotation(mItems.degrees);
-                    Glide.with(context)
-                            .load(storage.readFile(path))
-                            .apply(options)
-                            .into(photoView);
+                    if (mItems.mimeType.equals(getString(R.string.key_gif))){
+                        String mOriginal = mItems.originalPath;
+                        File mFileOriginal = new File(""+mOriginal);
+                        if (mFileOriginal.exists() || mFileOriginal.isFile()){
+                            Glide.with(context)
+                                    .asGif()
+                                    .load(storage.readFile(mOriginal))
+                                    .apply(options)
+                                    .into(photoView);
+                        }
+                    }else{
+                        Glide.with(context)
+                                .load(storage.readFile(path))
+                                .apply(options)
+                                .into(photoView);
+                    }
                 }
             }
             catch (Exception e){
                 e.printStackTrace();
             }
-
             switch (enumTypeFile){
                 case VIDEO:{
                     imgPlayer.setVisibility(View.VISIBLE);
@@ -521,7 +563,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     items.isChecked = true;
                     list.add(items);
                     ServiceManager.getInstance().setListDownloadFile(list);
-                    ServiceManager.getInstance().getObservableDownload(true);
+                    ServiceManager.getInstance().getObservableDownload();
                 }
             }
             else{
@@ -567,7 +609,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 break;
             }
         }
-
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))
                 .theme(Theme.LIGHT)
@@ -599,7 +640,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                         List<ExportFiles> mListExporting = new ArrayList<>();
                         switch (status){
                             case SHARE:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 final Items index = presenter.mList.get(position);
                                     if (index!=null){
@@ -645,7 +686,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                                 break;
                                             }
                                             default:{
-                                                File input = new File(index.thumbnailPath);
+                                                String path = "";
+                                                if (index.mimeType.equals(getString(R.string.key_gif))){
+                                                    path = index.originalPath;
+                                                }else{
+                                                    path = index.thumbnailPath;
+                                                }
+                                                File input = new File(path);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(output.getAbsolutePath())){
                                                     output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
@@ -660,14 +707,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                                         }
 
                                 }
-
                                 onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
                                 break;
                             }
                             case EXPORT:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 final Items index = presenter.mList.get(position);
                                 if (index!=null){
@@ -744,49 +790,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     /*Gallery interface*/
-
-    @Override
-    public void onUpdatedView() {
-
-    }
-
-    /*Exporting....*/
-    @Override
-    public void onStartProgress() {
-        onStartProgressing();
-    }
-
-    /*Exporting*/
-    @Override
-    public void onStopProgress() {
-        try {
-                Utils.Log(TAG,"onStopProgress");
-                onStopProgressing();
-                switch (presenter.status){
-                    case SHARE:{
-                        if (presenter.mListShare!=null){
-                            if (presenter.mListShare.size()>0){
-                                Utils.shareMultiple(presenter.mListShare,this);
-                            }
-                        }
-                        break;
-                    }
-                    case EXPORT:{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(PhotoSlideShowActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        break;
-                    }
-                }
-        }
-        catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
-        }
-    }
-
     private void onStartProgressing(){
         try{
             runOnUiThread(new Runnable() {
@@ -885,44 +888,6 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
         });
         popup.show();
     }
-
-    @Override
-    public void onCompletedDownload(EnumStatus status) {
-        switch (status){
-            case DONE:{
-                mDialogProgress.setTitleText("Success!")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        onShowDialog(EnumStatus.EXPORT,position);
-                    }
-                });
-                Utils.Log(TAG, " already sync");
-                break;
-            }
-            case ERROR:{
-                final User mUser = User.getInstance().getUserInfo();
-                if (mUser!=null){
-                    mUser.driveConnected = false;
-                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                }
-                mDialogProgress.setTitleText("Success!")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                });
-                break;
-            }
-        }
-    }
-
 
     /*ViewPresenter*/
 

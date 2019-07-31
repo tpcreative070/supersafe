@@ -1,7 +1,7 @@
 package com.jaychang.srv;
-
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

@@ -1,8 +1,6 @@
 package com.jaychang.srv.behavior;
-
-import android.support.annotation.NonNull;
 import android.view.View;
-
+import androidx.annotation.NonNull;
 import com.jaychang.srv.SimpleRecyclerView;
 
 public abstract class DragAndDropCallback<T> {

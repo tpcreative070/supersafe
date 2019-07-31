@@ -12,8 +12,7 @@
  * the License.
  */
 package de.mrapp.android.validation;
-
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Defines the interface, a class, which should be notified, when a view has been validated, must

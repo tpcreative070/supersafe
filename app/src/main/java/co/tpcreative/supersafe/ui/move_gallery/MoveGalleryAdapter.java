@@ -148,6 +148,7 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
             tvPhotos.setText(photos);
             tvVideos.setText(videos);
             tvAudios.setText(audios);
+            tvOthers.setText(others);
             tvTitle.setText(data.main.categories_name);
             this.mPosition = position;
         }

@@ -15,7 +15,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-
 public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategories, BaseHolder> {
 
     private Context context;

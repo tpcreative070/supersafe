@@ -10,10 +10,8 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.github.marlonlom.utilities.timeago.TimeAgoMessages;
-
 import java.io.File;
 import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;

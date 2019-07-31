@@ -12,11 +12,8 @@
  * the License.
  */
 package de.mrapp.android.validation.constraints;
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import de.mrapp.android.validation.Constraint;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

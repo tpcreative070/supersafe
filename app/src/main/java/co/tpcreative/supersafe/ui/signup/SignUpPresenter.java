@@ -1,16 +1,10 @@
 package co.tpcreative.supersafe.ui.signup;
-
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -35,7 +29,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
     }
 
     public void onSignUp(SignUpRequest request) {
-        Log.d(TAG, "info onSignUp");
+        Utils.Log(TAG, "info onSignUp");
         BaseView view = view();
         if (view == null) {
             return;
@@ -46,7 +40,6 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
         if (subscriptions == null) {
             return;
         }
-
         Map<String, String> hash = new HashMap<>();
         hash.put(getString(R.string.key_email), request.email);
         hash.put(getString(R.string.key_other_email),request.email);
@@ -72,7 +65,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                         view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, onResponse.user);
                         ServiceManager.getInstance().onInitConfigurationFile();
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody body = ((HttpException) throwable).response().errorBody();
@@ -83,7 +76,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.SIGN_UP);
                 }));
@@ -94,5 +87,4 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
         String value = view.getContext().getString(res);
         return value;
     }
-
 }

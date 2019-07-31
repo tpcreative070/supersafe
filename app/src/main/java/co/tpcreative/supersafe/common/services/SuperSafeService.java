@@ -21,7 +21,6 @@ import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.controller.SingletonPremiumTimer;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -41,7 +40,6 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -74,7 +72,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     public void onCreate() {
         super.onCreate();
         Utils.Log(TAG, "onCreate");
-        downloadService = new DownloadService(this);
+        downloadService = new DownloadService();
         storage = new Storage(this);
         onInitReceiver();
         SuperSafeApplication.getInstance().setConnectivityListener(this);
@@ -152,31 +150,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             return;
         }
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            final boolean isPremiumComplimentary  = User.getInstance().isPremiumComplimentary();
-            if (!isPremiumComplimentary){
-                return;
-            }
-            final User mUser = User.getInstance().getUserInfo();
-            if (mUser!=null){
-                final Premium premium = mUser.premium;
-                if (mUser.premium!=null){
-                    if (mUser.premium.status){
-                        long currentDatetime = System.currentTimeMillis();
-                        long device_milliseconds = premium.device_milliseconds;
-                        if (device_milliseconds>0){
-                            long result  = currentDatetime - device_milliseconds;
-                            mUser.premium.current_milliseconds = mUser.premium.current_milliseconds+result;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                            Utils.Log(TAG,"onStartTimer");
-                            SingletonPremiumTimer.getInstance().onStartTimer();
-                            Utils.Log(TAG,"onGetUserInfo 3");
-                        }
-                        Utils.Log(TAG,"onGetUserInfo 4");
-                    }
-                    Utils.Log(TAG,"onGetUserInfo 5");
-                }
-                Utils.Log(TAG,"onGetUserInfo 6");
-            }
             return;
         }
         Utils.Log(TAG,"onGetUserInfo 2");
@@ -207,7 +180,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         }
                     }
                     Utils.Log(TAG,"onGetUserInfo 3");
-                    Utils.Log(TAG, "Body user info : " + new Gson().toJson(mUser));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -375,7 +347,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
                         view.onSuccessful(new Gson().toJson(onResponse), EnumStatus.GET_DRIVE_ABOUT);
                     }
-                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
                         view.onError("View is null", EnumStatus.GET_DRIVE_ABOUT);
@@ -727,7 +698,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
 
     public void onUpdateItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
         final Items items = mItem;
-        Utils.Log(TAG, "onAddItems");
+        Utils.Log(TAG, "onUpdateItems");
         if (isCheckNull(view,EnumStatus.UPDATE)){
             return;
         }
@@ -742,8 +713,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         if (items.categories_id == null || items.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.UPDATE);
+            Utils.Log(TAG, " Updated => Warning categories id is null");
+            return;
         }
-        // Map<String, Object> hashMap = new HashMap<>();
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         if (hashMap != null) {
             hashMap.put(getString(R.string.key_user_id), user.email);
@@ -767,7 +739,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
-                        mItem.isUpdate = false;
+                        mItem.isUpdate = true;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
                         view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.UPDATE);
                     } else {
@@ -821,8 +793,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         if (items.categories_id == null || items.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.ADD_ITEMS);
+            return;
         }
-        // Map<String, Object> hashMap = new HashMap<>();
+        items.isSyncOwnServer = true;
         final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
         if (hashMap != null) {
             hashMap.put(getString(R.string.key_user_id), user.email);
@@ -1234,7 +1207,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             Utils.Log(TAG,"Delete everytime..............");
             hashMapGlobal.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
-            //GalleryCameraMediaManager.getInstance().onUpdatedView();
             EventBus.getDefault().post(EnumStatus.RELOAD);
             view.onDone();
             /*Note here*/
@@ -1260,7 +1232,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onDone();
             hashMapGlobalCategories.clear();
             SingletonPrivateFragment.getInstance().onUpdateView();
-            //GalleryCameraMediaManager.getInstance().onUpdatedView();
             EventBus.getDefault().post(EnumStatus.RELOAD);
             /*Note here*/
         }
@@ -1313,8 +1284,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             request.file_name = items.thumbnailName;
         }
         request.items = items;
-        request.api_name = String.format(getString(R.string.url_drive_download), id);
         request.Authorization = mUser.access_token;
+        request.id = id;
         if (destination==null){
             String path = SuperSafeApplication.getInstance().getSupersafePrivate();
             String pathFolder = path + items.items_id + "/";
@@ -1350,11 +1321,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             }
             @Override
             public void onAttachmentSpeedPerSecond(double all) {
-
             }
             @Override
             public void onAttachmentTotalDownload(long totalByte, long totalByteDownloaded) {
-
             }
             @Override
             public void onSavedCompleted() {
@@ -1384,10 +1353,12 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                 }
             }
-        }, getString(R.string.drive_api));
-        request.mapHeader = new HashMap<>();
-        request.mapObject = new HashMap<>();
-        downloadService.downloadDriveFileByGET(request);
+            @Override
+            public Map<String, String> onHeader() {
+                return new HashMap<>();
+            }
+        });
+        downloadService.downloadFileFromGoogleDrive(request);
     }
 
     public void onUploadFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
@@ -1437,7 +1408,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         });
         fileBody.setContentType(items.mimeType);
         MultipartBody.Part dataPart = MultipartBody.Part.create(fileBody);
-        Call<DriveResponse> request = SuperSafeApplication.serverAPI.uploadFileMultipleInAppFolder(getString(R.string.url_drive_upload), mUser.access_token, metaPart, dataPart, items.mimeType);
+        Call<DriveResponse> request = SuperSafeApplication.serverDriveApi.uploadFileMultipleInAppFolder(mUser.access_token, metaPart, dataPart, items.mimeType);
         request.enqueue(new Callback<DriveResponse>() {
             @Override
             public void onResponse(Call<DriveResponse> call, Response<DriveResponse> response) {
@@ -1496,7 +1467,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             view.onSuccessful("Successful",EnumStatus.GET_DRIVE_ABOUT);
                         }
                     }
-                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (view == null) {
                         Utils.Log(TAG, "View is null");
@@ -1567,7 +1537,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user) );
                         }
                     }
-                    Utils.Log(TAG, "Body check version: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -1608,7 +1577,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Utils.Log(TAG, "Body author device: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -1668,7 +1636,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "Nothing to do");
                         view.onError("Null", EnumStatus.SEND_EMAIL);
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

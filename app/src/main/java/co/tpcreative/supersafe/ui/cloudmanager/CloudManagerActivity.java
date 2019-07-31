@@ -4,11 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +13,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -63,7 +62,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     LinearLayout llPremium;
     @BindView(R.id.llTitle)
     LinearLayout llTitle;
-
     @BindView(R.id.tvValueSupersafeSpace)
     TextView tvValueSupersafeSpace;
     @BindView(R.id.tvValueOtherSpace)
@@ -92,7 +90,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         storage = new Storage(this);
         presenter = new CloudManagerPresenter();
         presenter.bindView(this);
@@ -105,16 +102,15 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         onShowUI();
         onUpdatedView();
         presenter.onGetDriveAbout();
-        onStartOverridePendingTransition();
     }
 
     public void onUpdatedView() {
-        if (User.getInstance().isPremiumExpired()) {
-            llPremium.setVisibility(View.VISIBLE);
-            llTitle.setVisibility(View.GONE);
-        } else {
+        if (User.getInstance().isPremium()) {
             llPremium.setVisibility(View.GONE);
             llTitle.setVisibility(View.VISIBLE);
+        } else {
+            llPremium.setVisibility(View.VISIBLE);
+            llTitle.setVisibility(View.GONE);
         }
     }
 
@@ -218,12 +214,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_refresh: {
-                final boolean isExpired = User.getInstance().isPremiumExpired();
-                if (isExpired) {
-                    if (!User.getInstance().isCheckAllowUpload()){
-                        break;
-                    }
-                }
                 presenter.onGetDriveAbout();
                 isRefresh = true;
                 break;
@@ -319,7 +309,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 break;
             }
             case R.id.switch_SaveSpace: {
-                if (User.getInstance().isPremiumExpired()){
+                if (!User.getInstance().isPremium()){
                     onShowPremium();
                     PrefsController.putBoolean(getString(R.string.key_saving_space), false);
                     btnSwitchSaveSpace.setChecked(false);
@@ -369,6 +359,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             builder.setNegativeButton(getText(R.string.later), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    PrefsController.putBoolean(getString(R.string.key_saving_space), false);
                 }
             });
             de.mrapp.android.dialog.MaterialDialog dialog = builder.show();
@@ -450,6 +441,11 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
@@ -459,15 +455,15 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
     @Override
     protected void onDriveError() {
-        Log.d(TAG, "onDriveError");
+        Utils.Log(TAG, "onDriveError");
     }
     @Override
     protected void onDriveSignOut() {
-        Log.d(TAG, "onDriveSignOut");
+        Utils.Log(TAG, "onDriveSignOut");
     }
     @Override
     protected void onDriveRevokeAccess() {
-        Log.d(TAG, "onDriveRevokeAccess");
+        Utils.Log(TAG, "onDriveRevokeAccess");
     }
     @Override
     protected void onDriveClientReady() {

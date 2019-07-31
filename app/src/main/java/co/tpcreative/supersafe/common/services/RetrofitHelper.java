@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.services;
 import java.io.IOException;
-
 import co.tpcreative.supersafe.common.api.RootAPI;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -10,11 +9,7 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-
 public class RetrofitHelper {
-
-
     /**
      * The CityService communicates with the json api of the city provider.
      */
@@ -22,7 +17,6 @@ public class RetrofitHelper {
         final Retrofit retrofit = createRetrofit(url);
         return retrofit.create(RootAPI.class);
     }
-
     /**
      * This custom client will append the "username=demo" query after every request.
      */
@@ -45,7 +39,6 @@ public class RetrofitHelper {
         });
         return httpClient.build();
     }
-
     /**
      * Creates a pre configured Retrofit instance
      */

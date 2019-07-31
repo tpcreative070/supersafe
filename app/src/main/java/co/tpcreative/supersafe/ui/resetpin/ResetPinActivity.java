@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -60,7 +59,6 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
     LinearLayout llSupport;
     @BindView(R.id.tvSupport)
     TextView tvSupport;
-
     private ResetPinPresenter presenter;
     private boolean isNext;
     private Boolean isRestoreFiles;
@@ -114,8 +112,6 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        //onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(ResetPinActivity.class.getSimpleName());
     }
 
     @Override
@@ -341,7 +337,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Log.d(TAG,"positive");
+                        Utils.Log(TAG,"positive");
                         final User mUser = User.getInstance().getUserInfo();
                         Utils.Log(TAG,"Pressed "+ new Gson().toJson(mUser));
                         SingletonResetPin.getInstance().onStartTimer(300000);

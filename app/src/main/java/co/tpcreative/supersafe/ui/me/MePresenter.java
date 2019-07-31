@@ -1,11 +1,6 @@
 package co.tpcreative.supersafe.ui.me;
-import android.util.Log;
-import android.view.View;
-
 import com.google.gson.Gson;
-
 import java.util.List;
-
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -26,14 +21,11 @@ public class MePresenter extends Presenter<BaseView>{
     protected int audios = 0;
     protected int others = 0;
 
-
     public MePresenter(){
-
     }
 
     public void onShowUserInfo(){
        mUser = User.getInstance().getUserInfo();
-       Log.d(TAG,new Gson().toJson(mUser));
        Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.USER_INFO);
     }
 

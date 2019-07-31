@@ -12,7 +12,6 @@
  * the License.
  */
 package de.mrapp.android.dialog;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -21,26 +20,24 @@ import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.AttrRes;
-import android.support.annotation.CallSuper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.annotation.StyleRes;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ScrollView;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.CallSuper;
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
 import de.mrapp.android.dialog.ScrollableArea.Area;
 import de.mrapp.android.dialog.animation.BackgroundAnimation;
 import de.mrapp.android.dialog.decorator.AbstractDecorator;
@@ -49,8 +46,6 @@ import de.mrapp.android.dialog.model.MaterialDialog;
 import de.mrapp.android.dialog.view.DialogRootView;
 import de.mrapp.android.dialog.view.DialogRootView.ViewType;
 import de.mrapp.android.preference.R;
-
-import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**
  * An abstract base class for all dialogs, which are designed according to Android 5's Material

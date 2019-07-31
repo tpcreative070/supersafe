@@ -12,14 +12,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,8 +24,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
@@ -42,6 +42,7 @@ import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
 import org.apache.commons.io.FilenameUtils;
+import org.greenrobot.eventbus.EventBus;
 import org.solovyev.android.checkout.Purchase;
 import java.io.File;
 import java.io.FileWriter;
@@ -62,12 +63,15 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -80,11 +84,7 @@ public class Utils {
     // utility function
     final public static int COUNT_RATE = 9;
     final public static long START_TIMER = 5000;
-    final public static long SnackBar = 200;
-
     private  static  Storage storage = new Storage(SuperSafeApplication.getInstance());
-
-
     private static final String TAG = Utils.class.getSimpleName();
     private static String bytesToHexString(byte[] bytes) {
         // http://stackoverflow.com/questions/332079
@@ -379,7 +379,7 @@ public class Utils {
     }
 
     private static Snackbar multilineSnackbar(Snackbar snackbar) {
-        TextView textView = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = (TextView) snackbar.getView().findViewById(R.id.snackbar_text);
         textView.setMaxLines(5);
         return snackbar;
     }
@@ -463,6 +463,7 @@ public class Utils {
         hashMap.put("jpg",new MimeTypeFile(".jpg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("jpeg",new MimeTypeFile(".jpeg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
+        hashMap.put("gif",new MimeTypeFile(".gif", EnumFormatType.IMAGE,"image/gif"));
         return hashMap;
     }
 
@@ -691,5 +692,17 @@ public class Utils {
                     public void onError(Throwable e) {
                     }
                 });
+    }
+
+    public static void onHomePressed(){
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
+        Utils.Log(TAG,"Pressed home button");
+        if (!SingletonManager.getInstance().isVisitLockScreen()){
+            Navigator.onMoveToVerifyPin(SuperSafeApplication.getInstance().getActivity(),EnumPinAction.NONE);
+            SingletonManager.getInstance().setVisitLockScreen(true);
+            Utils.Log(TAG,"Verify pin");
+        }else{
+            Utils.Log(TAG,"Verify pin already");
+        }
     }
 }

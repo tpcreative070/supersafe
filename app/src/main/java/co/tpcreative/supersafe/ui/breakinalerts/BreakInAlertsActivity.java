@@ -3,17 +3,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -21,29 +19,22 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.SensorOrientationChangeNotifier;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.adapter.DividerItemDecoration;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.hiddencamera.HiddenCameraUtils;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.ui.camera.CameraActivity;
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity;
 
 public class BreakInAlertsActivity extends BaseActivity implements BaseView, CompoundButton.OnCheckedChangeListener,BreakInAlertsAdapter.ItemSelectedListener{
 
@@ -54,6 +45,8 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     RecyclerView recyclerView;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
+    @BindView(R.id.tvStatus)
+    TextView tvStatus;
     private BreakInAlertsAdapter adapter;
     private BreakInAlertsPresenter presenter;
 
@@ -61,7 +54,6 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_break_in_alerts);
-        onDrawOverLay(this);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -100,6 +92,11 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -160,6 +157,7 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
         else{
             showMessage(getString(R.string.error_not_having_camera));
         }
+        tvStatus.setText(b ? getString(R.string.enabled) : getString(R.string.disabled));
     }
 
     public void initRecycleView(){
@@ -188,14 +186,14 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
                         else{
                             PrefsController.putBoolean(getString(R.string.key_break_in_alert),false);
                             btnSwitch.setChecked(false);
-                            Log.d(TAG,"Permission is denied");
+                            Utils.Log(TAG,"Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             PrefsController.putBoolean(getString(R.string.key_break_in_alert),false);
                             btnSwitch.setChecked(false);
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
                     @Override
@@ -207,7 +205,7 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }

@@ -10,7 +10,6 @@ public class SingletonScreenLock {
 
     private static SingletonScreenLock instance ;
     private static final String TAG = SingletonScreenLock.class.getSimpleName();
-    long current_milliseconds = 0;
     public static SingletonScreenLock getInstance(){
         synchronized (SingletonScreenLock.class){
             if (instance==null){

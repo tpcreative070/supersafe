@@ -12,7 +12,6 @@
  * the License.
  */
 package de.mrapp.android.dialog.view;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -25,22 +24,21 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.AttrRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
+import androidx.core.content.ContextCompat;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -49,14 +47,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import de.mrapp.android.preference.R;
 import de.mrapp.android.dialog.ScrollableArea;
 import de.mrapp.android.dialog.ScrollableArea.Area;
 import de.mrapp.android.dialog.listener.AreaListener;
 import de.mrapp.android.dialog.view.ScrollView.ScrollListener;
 import de.mrapp.android.util.ViewUtil;
-
 import static de.mrapp.android.util.Condition.ensureAtLeast;
 import static de.mrapp.android.util.Condition.ensureNotNull;
 import static de.mrapp.android.util.DisplayUtil.dpToPixels;

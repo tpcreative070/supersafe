@@ -12,15 +12,10 @@
  * the License.
  */
 package de.mrapp.android.util.view;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Build;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +27,13 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 import android.widget.WrapperListAdapter;
-
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

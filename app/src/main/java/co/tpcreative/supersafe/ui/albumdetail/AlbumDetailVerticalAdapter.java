@@ -16,6 +16,7 @@ import butterknife.OnLongClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.adapter.FooterViewHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -24,12 +25,12 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.ThemeApp;
 
 public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
-
+    private static final int FOOTER_VIEW = 1;
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
             .placeholder(R.color.material_gray_100)
-            .error(R.color.red_100)
+            .error(R.color.red_200)
             .priority(Priority.HIGH);
     private Context context;
     private ItemSelectedListener itemSelectedListener;
@@ -37,7 +38,6 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
     private String TAG = AlbumDetailVerticalAdapter.class.getSimpleName();
     final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
     Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
-
 
     public AlbumDetailVerticalAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
@@ -49,14 +49,35 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
 
     @Override
     public int getItemCount() {
-        return dataSource.size();
+        if (dataSource == null) {
+            return 0;
+        }
+        if (dataSource.size() == 0) {
+            // Return 1 here to show nothing
+            return 1;
+        }
+        // Add another extra view to show the footer view
+        // So there are two extra views need to be populated
+        return dataSource.size() + 1;
+    }
+
+    // Now define getItemViewType of your own.
+    @Override
+    public int getItemViewType(int position) {
+        if (position == dataSource.size()) {
+            // This is where we'll add footer.
+            return FOOTER_VIEW;
+        }
+        return super.getItemViewType(position);
     }
 
     @Override
     public BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType==FOOTER_VIEW){
+            return new FooterViewHolder(inflater.inflate(R.layout.album_detail_item_footer, parent, false));
+        }
         return new ItemHolder(inflater.inflate(R.layout.custom_item_verical, parent, false));
     }
-
 
     public interface ItemSelectedListener {
         void onClickItem(int position);
@@ -64,7 +85,6 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
     }
 
     public class ItemHolder extends BaseHolder<Items> {
-
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -74,28 +94,20 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
         @BindView(R.id.view_alpha)
         View alpha;
         int mPosition;
-
-
         public ItemHolder(View itemView) {
             super(itemView);
         }
-
-
         @Override
         public void bind(Items data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);
-
             if (data.isChecked) {
                 alpha.setAlpha(0.5f);
 
             } else {
                 alpha.setAlpha(0.0f);
             }
-
-            Utils.Log(TAG,"date time "+data);
-
             try {
                 String path = data.thumbnailPath;
                 EnumFormatType formatTypeFile = EnumFormatType.values()[data.formatType];
@@ -153,8 +165,5 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
             }
             return true;
         }
-
     }
-
-
 }

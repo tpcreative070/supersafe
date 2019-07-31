@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.help;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,9 +33,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
 
     protected List<HelpAndSupport> mList;
     protected HelpAndSupport content;
-
     private static final String TAG = HelpAndSupportPresenter.class.getSimpleName();
-
     public HelpAndSupportPresenter(){
         mList = new ArrayList<>();
         content = new HelpAndSupport();
@@ -77,7 +74,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
 
 
     public void onSendMail(EmailToken request,String content){
-        Log.d(TAG, "onSendMail.....");
+        Utils.Log(TAG, "onSendMail.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -98,12 +95,12 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
                         Utils.Log(TAG, "code " + code);
                         onRefreshEmailToken(request,content);
                         final String errorMessage = response.errorBody().string();
-                        Log.d(TAG, "error" + errorMessage);
+                        Utils.Log(TAG, "error" + errorMessage);
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL);
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("Successful",EnumStatus.SEND_EMAIL);
-                        Log.d(TAG, "Body : Send email Successful");
+                        Utils.Log(TAG, "Body : Send email Successful");
                     } else {
                         Utils.Log(TAG, "code " + code);
                         Utils.Log(TAG, "Nothing to do");
@@ -123,7 +120,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
     }
 
     public void onRefreshEmailToken(EmailToken request,String content) {
-        Log.d(TAG, "onRefreshEmailToken.....");
+        Utils.Log(TAG, "onRefreshEmailToken.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -153,7 +150,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
                         onAddEmailToken(content);
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
-                    Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body refresh : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -162,21 +159,21 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
                             if (code == 401) {
                                 Utils.Log(TAG, "code " + code);
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             view.onError(msg, EnumStatus.SEND_EMAIL);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
 
     public void onAddEmailToken(String content){
-        Log.d(TAG, "onSignIn.....");
+        Utils.Log(TAG, "onSignIn.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -198,7 +195,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     final EmailToken emailToken = EmailToken.getInstance().convertTextObject(mUser,content);
                     onSendMail(emailToken,content);
                 }, throwable -> {
@@ -211,16 +208,14 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
-
-
 }

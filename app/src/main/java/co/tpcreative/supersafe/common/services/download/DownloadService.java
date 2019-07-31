@@ -2,8 +2,6 @@ package co.tpcreative.supersafe.common.services.download;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.snatik.storage.Storage;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -11,8 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -30,41 +28,26 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-
 /**
  * Created by PC on 9/1/2017.
  */
-
 public class DownloadService  implements ProgressResponseBody.ProgressResponseBodyListener{
     public static final String TAG = DownloadService.class.getSimpleName();
-    private Object context;
-    private String ip ;
     private DownLoadServiceListener listener;
-    private Storage storage;
-    
-    
-    public DownloadService(Object context) {
-        this.context = context;
-    }
-    
-    public void intDownLoadPOST(DownloadFileRequest request){
-        downloadFileByPost(request);
-    }
-    
-    public void intDownLoadGET(DownloadFileRequest request){
-        downloadFileByGET(request);
-    }
-    
-    public void onProgressingDownload(DownLoadServiceListener downLoadServiceListener,String ip){
+    private RootAPI rootAPI;
+    private Map<String,String> header = new HashMap<>();
+
+    public void onProgressingDownload(DownLoadServiceListener downLoadServiceListener){
         this.listener  = downLoadServiceListener;
-        this.ip = ip;
-        storage = new Storage(SuperSafeApplication.getInstance());
+    }
+    public DownloadService(){
+        if (rootAPI==null){
+            rootAPI  = createService(RootAPI.class,RootAPI.ROOT_GOOGLE_DRIVE);
+        }
     }
 
     @Override
     public void onAttachmentDownloadUpdate(int percent) {
-        //Log.d(TAG,"Downloading : " + percent );
         this.listener.onProgressingDownloading(percent);
     }
 
@@ -102,33 +85,13 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
     public void onAttachmentDownloadedSuccess() {
       
     }
-    
-    public synchronized void downloadFileByPost(final DownloadFileRequest reqest){
-        RetrofitInterface downloadService = createService(RetrofitInterface.class, this.ip,reqest.mapHeader);
-        downloadService.downloadFile(reqest.api_name,reqest)
-                .flatMap(processResponse(reqest))
+
+    public synchronized void downloadFileFromGoogleDrive(final DownloadFileRequest request){
+        rootAPI.downloadDriveFile(request.Authorization,request.id)
+                .flatMap(processResponse(request))
                 .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.computation())
-                .subscribe(handleResult(reqest));
-    }
-
-
-    public synchronized void downloadFileByGET(final DownloadFileRequest reqest){
-        RetrofitInterface downloadService = createService(RetrofitInterface.class, this.ip,reqest.mapHeader);
-        downloadService.downloadFile(reqest.api_name)
-                .flatMap(processResponse(reqest))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .subscribe(handleResult(reqest));
-    }
-
-    public synchronized void downloadDriveFileByGET(final DownloadFileRequest reqest){
-        RetrofitInterface downloadService = createService(RetrofitInterface.class, this.ip,reqest.mapHeader);
-        downloadService.downloadDriveFile(reqest.api_name,reqest.Authorization)
-                .flatMap(processResponse(reqest))
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .subscribe(handleResult(reqest));
+                .subscribe(handleResult(request));
     }
 
     private synchronized Function<Response<ResponseBody>, Observable<File>> processResponse(final DownloadFileRequest request) {
@@ -217,17 +180,22 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
         };
     }
 
-    private synchronized <T> T createService(Class<T> serviceClass, String baseUrl, Map<String,String> mapHeader) {
+    private synchronized <T> T createService(Class<T> serviceClass, String baseUrl) {
         Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL , Modifier.TRANSIENT , Modifier.STATIC).create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .client(getOkHttpDownloadClientBuilder(this,mapHeader))
+                .client(getOkHttpDownloadClientBuilder(this))
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build();
         return retrofit.create(serviceClass);
     }
 
-    private synchronized OkHttpClient getOkHttpDownloadClientBuilder(final ProgressResponseBody.ProgressResponseBodyListener progressListener, final Map<String,String> mapHeader) {
+    private synchronized OkHttpClient getOkHttpDownloadClientBuilder(final ProgressResponseBody.ProgressResponseBodyListener progressListener) {
+        if (listener!=null){
+           if (listener.onHeader()!=null){
+               header = listener.onHeader();
+           }
+        }
         OkHttpClient httpClientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(10 , TimeUnit.MINUTES)
                 .writeTimeout(10 , TimeUnit.MINUTES)
@@ -236,7 +204,7 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
                 Request.Builder builder = request.newBuilder();
-                Iterator var4 = mapHeader.entrySet().iterator();
+                Iterator var4 = header.entrySet().iterator();
                 while(var4.hasNext()) {
                     Map.Entry<String, String> entry = (Map.Entry)var4.next();
                     builder.addHeader(entry.getKey(),entry.getValue());
@@ -264,7 +232,6 @@ public class DownloadService  implements ProgressResponseBody.ProgressResponseBo
         void onSavedCompleted();
         void onErrorSave(String name);
         void onCodeResponse(int code, DownloadFileRequest request);
+        Map<String,String> onHeader();
     }
-
-
 }

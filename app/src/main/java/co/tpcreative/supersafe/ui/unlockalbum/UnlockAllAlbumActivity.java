@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.ui.unlockalbum;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -13,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -75,7 +75,6 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         edtCode.addTextChangedListener(mTextWatcher);
         edtCode.setOnEditorActionListener(this);
         tvPremiumDescription.setText(getString(R.string.unlock_all_album_title));
-        onDrawOverLay(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -104,6 +103,11 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

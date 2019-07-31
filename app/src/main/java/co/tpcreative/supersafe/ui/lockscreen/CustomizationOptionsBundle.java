@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.lockscreen;
-
 import android.graphics.drawable.Drawable;
 
 /**

@@ -3,13 +3,8 @@ import java.util.ArrayList;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-/**
- * Created by Pankaj on 12-11-2017.
- */
 
 public class ThemeUtil {
-
-
 
     public static final int THEME_PRIMARY = 0;
     public static final int THEME_PINK = 1;
@@ -74,41 +69,41 @@ public class ThemeUtil {
         int themeId=0;
         switch (theme){
             case THEME_PRIMARY :{
-                themeId = R.style.AppTheme_Slide;
+                themeId = R.style.AppTheme;
                 break;
             }
             case THEME_PINK  :
-                themeId = R.style.AppTheme_PINK_Slide;
+                themeId = R.style.AppTheme_PINK;
                 break;
             case THEME_PURPLE  :
-                themeId = R.style.AppTheme_PURPLE_Slide;
+                themeId = R.style.AppTheme_PURPLE;
                 break;
             case THEME_DEEPPURPLE  :
-                themeId = R.style.AppTheme_DEEPPURPLE_Slide;
+                themeId = R.style.AppTheme_DEEPPURPLE;
                 break;
             case THEME_CYAN  :
-                themeId = R.style.AppTheme_CYAN_Slide;
+                themeId = R.style.AppTheme_CYAN;
                 break;
             case THEME_TEAL  :
-                themeId = R.style.AppTheme_TEAL_Slide;
+                themeId = R.style.AppTheme_TEAL;
                 break;
             case THEME_LIGHTGREEN  :
-                themeId = R.style.AppTheme_LIGHTGREEN_Slide;
+                themeId = R.style.AppTheme_LIGHTGREEN;
                 break;
             case THEME_LIME  :
-                themeId = R.style.AppTheme_LIME_Slide;
+                themeId = R.style.AppTheme_LIME;
                 break;
             case THEME_AMBER  :
-                themeId = R.style.AppTheme_AMBER_Slide;
+                themeId = R.style.AppTheme_AMBER;
                 break;
             case THEME_BROWN  :
-                themeId = R.style.AppTheme_BROWN_Slide;
+                themeId = R.style.AppTheme_BROWN;
                 break;
             case THEME_GRAY  :
-                themeId = R.style.AppTheme_GRAY_Slide;
+                themeId = R.style.AppTheme_GRAY;
                 break;
             case THEME_BLUEGRAY  :
-                themeId = R.style.AppTheme_BLUEGRAY_Slide;
+                themeId = R.style.AppTheme_BLUEGRAY;
                 break;
             default:
                 break;

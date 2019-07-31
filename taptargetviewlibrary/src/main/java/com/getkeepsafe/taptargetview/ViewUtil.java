@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 package com.getkeepsafe.taptargetview;
-
 import android.os.Build;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewManager;
 import android.view.ViewTreeObserver;
+
+import androidx.core.view.ViewCompat;
 
 class ViewUtil {
   ViewUtil() {

@@ -1,13 +1,13 @@
 package co.tpcreative.supersafe.ui.secretdoor;
 import android.os.Bundle;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,12 +34,13 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
     TextView tvOptionItems;
     @BindView(R.id.imgIcons)
     ImageView imgIcons;
+    @BindView(R.id.tvStatus)
+    TextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_secret_door);
-        onDrawOverLay(this);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -72,6 +73,7 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
         if (!b){
             PrefsController.putBoolean(getString(R.string.key_secret_door),b);
         }
+        tvStatus.setText(b ? getString(R.string.enabled) : getString(R.string.disabled));
     }
 
     @OnClick(R.id.rlSwitch)
@@ -109,13 +111,17 @@ public class SecretDoorActivity extends BaseActivity implements CompoundButton.O
             tvOptionItems.setText(getString(R.string.virus_scanner));
             imgIcons.setImageResource(R.drawable.baseline_donut_large_white_48);
         }
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
         EventBus.getDefault().unregister(this);
     }
 

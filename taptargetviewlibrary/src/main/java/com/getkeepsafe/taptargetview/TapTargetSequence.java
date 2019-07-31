@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 package com.getkeepsafe.taptargetview;
-
 import android.app.Activity;
 import android.app.Dialog;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +30,8 @@ import java.util.Queue;
  * Internally, a FIFO queue is held to dictate which {@link TapTarget} will be shown.
  */
 public class TapTargetSequence {
-  private final @Nullable Activity activity;
+  private final @Nullable
+  Activity activity;
   private final @Nullable Dialog dialog;
   private final Queue<TapTarget> targets;
   private boolean active;

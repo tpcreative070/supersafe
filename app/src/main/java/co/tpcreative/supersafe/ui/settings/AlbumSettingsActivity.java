@@ -2,20 +2,18 @@ package co.tpcreative.supersafe.ui.settings;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -31,6 +29,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -42,8 +41,6 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity;
-
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
@@ -68,12 +65,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         presenter = new AlbumSettingsPresenter();
         presenter.bindView(this);
         presenter.getData(this);
-        onDrawOverLay(this);
-        //android O fix bug orientation
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -109,6 +100,11 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -305,13 +301,10 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     }
                 }
             });
-
-
-            if(FakePinComponentActivity.isVisit){
+            if(SingletonManager.getInstance().isVisitFakePin()){
                 mLockAlbum.setVisible(false);
                 mAlbumCover.setVisible(false);
             }
-
         }
 
         @Override
@@ -508,5 +501,4 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
             }
         }
     }
-
 }

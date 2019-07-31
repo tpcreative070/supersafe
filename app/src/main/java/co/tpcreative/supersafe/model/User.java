@@ -3,6 +3,8 @@ import android.view.View;
 import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.Comparator;
+
+import co.tpcreative.supersafe.BuildConfig;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.controller.PrefsController;
@@ -61,6 +63,9 @@ public class User extends BaseResponse implements Serializable{
     }
 
     public boolean isPremium(){
+        if (BuildConfig.DEBUG){
+            return true;
+        }
         final User mUser = getUserInfo();
         if (mUser!=null){
             final CheckoutItems mCheckout = mUser.checkout;
@@ -73,31 +78,9 @@ public class User extends BaseResponse implements Serializable{
         return  false;
     }
 
-    public boolean isPremiumComplimentary(){
-        final User mUser = getUserInfo();
-        if (mUser!=null){
-           if (mUser.premium!=null){
-               if (mUser.premium.status){
-                   return true;
-               }
-           }
-        }
-        return  false;
-    }
-
-    public boolean isPremiumExpired(){
-        if (!isPremium()){
-            if (!isPremiumComplimentary()){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isCheckAllowUpload(){
-        final boolean expired = isPremiumExpired();
-        if (expired){
-            final SyncData syncData = User.getInstance().getUserInfo().syncData;
+        final SyncData syncData = User.getInstance().getUserInfo().syncData;
+        if (!isPremium()){
             if (syncData!=null){
                 if (syncData.left==0){
                     return false;

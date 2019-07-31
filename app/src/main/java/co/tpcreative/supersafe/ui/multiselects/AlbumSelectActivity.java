@@ -10,10 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,37 +18,30 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import org.apache.commons.io.FilenameUtils;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.AlbumMultiItems;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter;
-import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity;
-
 
 public class AlbumSelectActivity extends HelperActivity {
 
     private static final String TAG = AlbumSelectActivity.class.getSimpleName();
     private ArrayList<AlbumMultiItems> albums;
-
     private TextView errorDisplay;
-
     private ProgressBar progressBar;
     private GridView gridView;
     private CustomAlbumSelectAdapter adapter;
-
     private ActionBar actionBar;
-
     private ContentObserver observer;
     private Handler handler;
     private Thread thread;
-
     private final String[] projection = new String[]{
             MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
@@ -62,10 +52,8 @@ public class AlbumSelectActivity extends HelperActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_select);
         setView(findViewById(R.id.layout_album_select));
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -74,16 +62,13 @@ public class AlbumSelectActivity extends HelperActivity {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(R.string.album_view);
         }
-
         Intent intent = getIntent();
         if (intent == null) {
             finish();
         }
         Navigator.limit = intent.getIntExtra(Navigator.INTENT_EXTRA_LIMIT, Navigator.DEFAULT_LIMIT);
-
         errorDisplay = (TextView) findViewById(R.id.text_view_error);
         errorDisplay.setVisibility(View.INVISIBLE);
-
         progressBar = (ProgressBar) findViewById(R.id.progress_bar_album_select);
         gridView = (GridView) findViewById(R.id.grid_view_album_select);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,13 +79,11 @@ public class AlbumSelectActivity extends HelperActivity {
                 startActivityForResult(intent, Navigator.REQUEST_CODE);
             }
         });
-        onDrawOverLay(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -158,19 +141,14 @@ public class AlbumSelectActivity extends HelperActivity {
     protected void onResume() {
         super.onResume();
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(AlbumSelectActivity.class.getSimpleName());
     }
-
 
     @Override
     protected void onStop() {
         super.onStop();
-
         stopThread();
-
         getContentResolver().unregisterContentObserver(observer);
         observer = null;
-
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
             handler = null;
@@ -180,7 +158,6 @@ public class AlbumSelectActivity extends HelperActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(null);
         }
@@ -235,7 +212,6 @@ public class AlbumSelectActivity extends HelperActivity {
                 onBackPressed();
                 return true;
             }
-
             default: {
                 return false;
             }
@@ -250,11 +226,9 @@ public class AlbumSelectActivity extends HelperActivity {
         @Override
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-
             if (adapter == null) {
                 sendMessage(Navigator.FETCH_STARTED);
             }
-
             String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                     + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                     + " OR "
@@ -272,7 +246,6 @@ public class AlbumSelectActivity extends HelperActivity {
                 sendMessage(Navigator.ERROR);
                 return;
             }
-
             ArrayList<AlbumMultiItems> temp = new ArrayList<>(cursor.getCount());
             HashSet<Long> albumSet = new HashSet<>();
             File file;
@@ -281,11 +254,9 @@ public class AlbumSelectActivity extends HelperActivity {
                     if (Thread.interrupted()) {
                         return;
                     }
-
                     long albumId = cursor.getLong(cursor.getColumnIndex(projection[0]));
                     String album = cursor.getString(cursor.getColumnIndex(projection[1]));
                     String image = cursor.getString(cursor.getColumnIndex(projection[2]));
-
                     if (!albumSet.contains(albumId)) {
                         /*
                         It may happen that some image file paths are still present in cache,
@@ -302,7 +273,7 @@ public class AlbumSelectActivity extends HelperActivity {
                                 albumSet.add(albumId);
                             }
                             else{
-                                Log.d(TAG,"value "+extensionFile);
+                                Utils.Log(TAG,"value "+extensionFile);
                             }
                         }
                     }
@@ -330,7 +301,6 @@ public class AlbumSelectActivity extends HelperActivity {
         if (thread == null || !thread.isAlive()) {
             return;
         }
-
         thread.interrupt();
         try {
             thread.join();
@@ -343,7 +313,6 @@ public class AlbumSelectActivity extends HelperActivity {
         if (handler == null) {
             return;
         }
-
         Message message = handler.obtainMessage();
         message.what = what;
         message.sendToTarget();

@@ -12,14 +12,11 @@
  * the License.
  */
 package de.mrapp.android.dialog.animation;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
-
+import androidx.annotation.NonNull;
 import de.mrapp.android.dialog.builder.AbstractBuilder;
-
 import static de.mrapp.android.util.Condition.ensureAtLeast;
 import static de.mrapp.android.util.Condition.ensureAtMaximum;
 import static de.mrapp.android.util.Condition.ensureNotNull;

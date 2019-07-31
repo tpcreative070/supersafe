@@ -1,22 +1,25 @@
 package co.tpcreative.supersafe.ui.trash;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
@@ -35,11 +38,10 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 
-
 public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
-
     private static final String TAG = TrashActivity.class.getSimpleName();
     @BindView(R.id.tv_Audios)
     TextView tv_Audios;
@@ -75,22 +77,18 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         setContentView(R.layout.activity_trash);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         initRecycleView(getLayoutInflater());
         presenter = new TrashPresenter();
         presenter.bindView(this);
         presenter.getData(this);
     }
 
-
     public void onUpdatedView(){
-        if (User.getInstance().isPremiumExpired()){
+        if (!User.getInstance().isPremium()){
             llUpgrade.setVisibility(View.VISIBLE);
-            rlEmptyTrash.setVisibility(View.GONE);
             rlRecyclerView.setVisibility(View.GONE);
         }
     }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
@@ -119,6 +117,11 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -201,8 +204,34 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
         return this;
     }
 
-    /*Action mode*/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (User.getInstance().isPremium()){
+            if (toolbar==null){
+                return false;
+            }
+            toolbar.inflateMenu(R.menu.menu_trash);
+        }
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_select_items :{
+                if (actionMode == null) {
+                    actionMode = toolbar.startActionMode(callback);
+                }
+                countSelected = 0;
+                actionMode.setTitle(countSelected + " " + getString(R.string.selected));
+                Utils.Log(TAG,"Action here");
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*Action mode*/
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -210,6 +239,10 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
             menuInflater.inflate(R.menu.menu_select, menu);
             actionMode = mode;
             countSelected = 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.material_orange_900));
+            }
             return true;
         }
 
@@ -234,6 +267,13 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
                 deselectAll();
             }
             actionMode = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
+                if (themeApp!=null){
+                    Window window = getWindow();
+                    window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
+                }
+            }
         }
     };
 
@@ -299,19 +339,14 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case RELOAD:{
-
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
-
                 String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
                 tv_Videos.setText(videos);
-
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
                 adapter.setDataSource(presenter.mList);
                 break;
             }
@@ -321,7 +356,6 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
                 }
                 presenter.getData(this);
                 btnTrash.setText(getString(R.string.key_empty_trash));
-
                 SingletonPrivateFragment.getInstance().onUpdateView();
                 ServiceManager.getInstance().onSyncDataOwnServer("0");
                 break;

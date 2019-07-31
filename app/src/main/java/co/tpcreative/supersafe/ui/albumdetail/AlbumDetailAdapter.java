@@ -27,12 +27,11 @@ import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.ThemeApp;
 
 public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
-
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
             .placeholder(R.color.material_gray_100)
-            .error(R.color.red_100)
+            .error(R.color.red_200)
             .priority(Priority.HIGH);
     private Context context;
     private ItemSelectedListener itemSelectedListener;
@@ -40,7 +39,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
     private String TAG = AlbumDetailAdapter.class.getSimpleName();
     final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
     Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
-
 
     public AlbumDetailAdapter(LayoutInflater inflater, Context context, ItemSelectedListener itemSelectedListener) {
         super(inflater);
@@ -67,7 +65,6 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
     }
 
     public class ItemHolder extends BaseHolder<Items> {
-
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.imgVideoCam)
@@ -85,11 +82,9 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         int mPosition;
         @BindView(R.id.rlHome)
         RelativeLayout rlHome;
-
         public ItemHolder(View itemView) {
             super(itemView);
         }
-
 
         @Override
         public void bind(Items data, int position) {
@@ -200,8 +195,5 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
             }
             return true;
         }
-
     }
-
-
 }

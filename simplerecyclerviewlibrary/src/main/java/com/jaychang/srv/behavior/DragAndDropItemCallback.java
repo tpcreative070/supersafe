@@ -1,19 +1,14 @@
 package com.jaychang.srv.behavior;
-
 import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.jaychang.srv.R;
 import com.jaychang.srv.SimpleRecyclerView;
-
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
 @SuppressWarnings("unchecked")
 class DragAndDropItemCallback extends ItemTouchHelper.Callback {
@@ -53,7 +48,7 @@ class DragAndDropItemCallback extends ItemTouchHelper.Callback {
 
     // obtain current dragging item
     draggingItemPosition = viewHolder.getAdapterPosition();
-    if (draggingItemPosition != NO_POSITION) {
+    if (draggingItemPosition != RecyclerView.NO_POSITION) {
       draggingItem = simpleRecyclerView.getCell(draggingItemPosition).getItem();
     }
 
@@ -66,7 +61,7 @@ class DragAndDropItemCallback extends ItemTouchHelper.Callback {
     } else if (layoutManager instanceof LinearLayoutManager) {
       int dragFlags;
       int orientation = ((LinearLayoutManager) layoutManager).getOrientation();
-      if (orientation == VERTICAL) {
+      if (orientation == RecyclerView.VERTICAL) {
         dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
       } else {
         dragFlags = ItemTouchHelper.START | ItemTouchHelper.END;

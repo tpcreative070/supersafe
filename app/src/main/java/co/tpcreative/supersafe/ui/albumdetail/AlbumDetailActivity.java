@@ -8,16 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.content.res.AppCompatResources;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,13 +19,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.gson.Gson;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -58,7 +57,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
-import co.tpcreative.supersafe.common.controller.GalleryCameraMediaManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
@@ -83,8 +81,7 @@ import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.model.room.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 
-public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener, GalleryCameraMediaManager.AlbumDetailManagerListener{
-
+public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener{
     private static final String TAG = AlbumDetailActivity.class.getSimpleName();
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -104,10 +101,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     Toolbar toolbar;
     @BindView(R.id.llBottom)
     LinearLayout llBottom;
-
     private AlbumDetailPresenter presenter;
     private AlbumDetailAdapter adapter;
-    private AlbumDetailVerticalAdapter vericalAdapter;
+    private AlbumDetailVerticalAdapter verticalAdapter;
     private boolean isReload;
     private Storage storage;
     private ActionMode actionMode;
@@ -115,9 +111,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     private boolean isSelectAll = false;
     private AlertDialog dialog;
     SweetAlertDialog mDialogProgress;
-
     private MenuItem menuItem;
-
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(400, 400)
@@ -129,21 +123,19 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_detail);
-
         storage = new Storage(this);
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         initSpeedDial(true);
-
         presenter = new AlbumDetailPresenter();
         presenter.bindView(this);
         onInit();
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
+        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(presenter.mainCategories.categories_local_id,presenter.mainCategories.isFakePin);
         final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mainCategories.items_id);
-        if (items != null) {
+        if (items != null && mList != null && mList.size()>0) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             switch (formatTypeFile){
                 case AUDIO:{
@@ -202,13 +194,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
             }
         }
-        GalleryCameraMediaManager.getInstance().setListener(this);
-        onDrawOverLay(this);
         llBottom.setVisibility(View.GONE);
-
         /*Root Fragment*/
         attachFragment(R.id.gallery_root);
-
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -219,9 +207,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
             }
         });
-
     }
-
 
     public void onInit(){
         presenter.getData(this);
@@ -235,22 +221,74 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case UPDATED_VIEW_DETAIL_ALBUM:{
+                try {
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            presenter.getData(EnumStatus.RELOAD);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+            case START_PROGRESS:{
+                onStartProgressing();
+                break;
+            }
+            case STOP_PROGRESS:{
+                try {
+                    Utils.Log(TAG,"onStopProgress");
+                    onStopProgressing();
+                    switch (presenter.status){
+                        case SHARE:{
+                            if (presenter.mListShare!=null){
+                                if (presenter.mListShare.size()>0){
+                                    Utils.shareMultiple(presenter.mListShare,this);
+                                }
+                            }
+                            break;
+                        }
+                        case EXPORT:{
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(AlbumDetailActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e){
+                    Utils.Log(TAG,e.getMessage());
+                }
+                break;
+            }
+            case DOWNLOAD_COMPLETED:{
+                mDialogProgress.setTitleText("Success!")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                        onClickedExport();
+                    }
+                });
+                Utils.Log(TAG, "already sync ");
+                break;
+            }
+            case DOWNLOAD_FAILED:{
+                mDialogProgress.setTitleText("No connection, Try again")
+                        .setConfirmText("OK")
+                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                break;
+            }
         }
     };
-
-    @Override
-    public void onUpdatedView() {
-        try {
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    presenter.getData(EnumStatus.RELOAD);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -258,7 +296,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        GalleryCameraMediaManager.getInstance().setListener(this);
         onRegisterHomeWatcher();
     }
 
@@ -275,12 +312,26 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop Album");
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (toolbar==null){
+            return false;
+        }
         toolbar.inflateMenu(R.menu.menu_album_detail);
         this.menuItem = toolbar.getMenu().getItem(0);
         boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
@@ -310,19 +361,19 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 return true;
             }
             case R.id.action_view :{
-               if (menuItem!=null){
-                   boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                   if (isVertical){
-                       menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_format_list_bulleted_white_48));
-                       PrefsController.putBoolean(getString(R.string.key_vertical_adapter),false);
-                       onInit();
-                   }
-                   else{
-                       menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_view_comfy_white_48));
-                       PrefsController.putBoolean(getString(R.string.key_vertical_adapter),true);
-                       onInit();
-                   }
-               }
+                if (menuItem!=null){
+                    boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+                    if (isVertical){
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_format_list_bulleted_white_48));
+                        PrefsController.putBoolean(getString(R.string.key_vertical_adapter),false);
+                        onInit();
+                    }
+                    else{
+                        menuItem.setIcon(getResources().getDrawable(R.drawable.baseline_view_comfy_white_48));
+                        PrefsController.putBoolean(getString(R.string.key_vertical_adapter),true);
+                        onInit();
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -372,7 +423,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @OnClick(R.id.imgShare)
     public void onClickedShare(View view){
-       if (countSelected>0){
+        if (countSelected>0){
             storage.createDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
             presenter.status = EnumStatus.SHARE;
             onShowDialog(presenter.status);
@@ -393,7 +444,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     spaceAvailable +=Long.parseLong(items.size);;
                 }
             }
-
             long availableSpaceOS =  Utils.getAvailableSpaceInBytes();
             if (availableSpaceOS < spaceAvailable){
                 long request_spaces = spaceAvailable - availableSpaceOS;
@@ -414,52 +464,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @OnClick(R.id.imgDelete)
     public void onClickedDelete(View view){
-       if (countSelected>0){
-           presenter.status = EnumStatus.DELETE;
-           onShowDialog(presenter.status);
-       }
+        if (countSelected>0){
+            presenter.status = EnumStatus.DELETE;
+            onShowDialog(presenter.status);
+        }
     }
 
     @OnClick(R.id.imgMove)
     public void onClickedMove(View view){
         openAlbum();
-    }
-
-    /*Exporting....*/
-    @Override
-    public void onStartProgress() {
-        onStartProgressing();
-    }
-
-    /*Exporting*/
-    @Override
-    public void onStopProgress() {
-        try {
-                Utils.Log(TAG,"onStopProgress");
-                onStopProgressing();
-                switch (presenter.status){
-                    case SHARE:{
-                        if (presenter.mListShare!=null){
-                            if (presenter.mListShare.size()>0){
-                                Utils.shareMultiple(presenter.mListShare,this);
-                            }
-                        }
-                        break;
-                    }
-                    case EXPORT:{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(AlbumDetailActivity.this,"Exported at "+SuperSafeApplication.getInstance().getSupersafePicture(),Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        break;
-                    }
-                }
-        }
-        catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
-        }
     }
 
     private void onStartProgressing(){
@@ -503,7 +516,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             });
         }
         catch (Exception e){
-           Utils.Log(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -523,7 +536,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     /*Init Floating View*/
-
     private void initSpeedDial(boolean addActionItems) {
         final ThemeApp mThemeApp = ThemeApp.getInstance().getThemeInfo();
         if (addActionItems) {
@@ -556,10 +568,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             public boolean onMainActionSelected() {
                 return false; // True to keep the Speed Dial open
             }
-
             @Override
             public void onToggleChanged(boolean isOpen) {
-                Log.d(TAG, "Speed dial toggle state changed. Open = " + isOpen);
+                Utils.Log(TAG, "Speed dial toggle state changed. Open = " + isOpen);
             }
         });
 
@@ -594,7 +605,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     /*Init grant permission*/
-
     public void onAddPermissionCamera() {
         Dexter.withActivity(this)
                 .withPermissions(
@@ -605,12 +615,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         if (report.areAllPermissionsGranted()) {
                             Navigator.onMoveCamera(AlbumDetailActivity.this, presenter.mainCategories);
                         } else {
-                            Log.d(TAG, "Permission is denied");
+                            Utils.Log(TAG, "Permission is denied");
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Log.d(TAG, "request permission is failed");
+                            Utils.Log(TAG, "request permission is failed");
                         }
                     }
 
@@ -623,34 +633,39 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 .withErrorListener(new PermissionRequestErrorListener() {
                     @Override
                     public void onError(DexterError error) {
-                        Log.d(TAG, "error ask permission");
+                        Utils.Log(TAG, "error ask permission");
                     }
                 }).onSameThread().check();
     }
 
     public void initRecycleView(LayoutInflater layoutInflater) {
-        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-        if (isVertical){
-            vericalAdapter = new AlbumDetailVerticalAdapter(getLayoutInflater(),this,this);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-            recyclerView.setLayoutManager(mLayoutManager);
-            while (recyclerView.getItemDecorationCount() > 0) {
-                recyclerView.removeItemDecorationAt(0);
+        try {
+            boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+            if (isVertical){
+                verticalAdapter = new AlbumDetailVerticalAdapter(getLayoutInflater(),this,this);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                while (recyclerView.getItemDecorationCount() > 0) {
+                    recyclerView.removeItemDecorationAt(0);
+                }
+                recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));
+                recyclerView.setAdapter(verticalAdapter);
+                verticalAdapter.setDataSource(presenter.mList);
             }
-            recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));
-            recyclerView.setAdapter(vericalAdapter);
-            vericalAdapter.setDataSource(presenter.mList);
+            else{
+                adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
+                RecyclerView.LayoutManager mLayoutManager = new NpaGridLayoutManager(getApplicationContext(), 3);
+                recyclerView.setLayoutManager(mLayoutManager);
+                while (recyclerView.getItemDecorationCount() > 0) {
+                    recyclerView.removeItemDecorationAt(0);
+                }
+                recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
+                recyclerView.setAdapter(adapter);
+                adapter.setDataSource(presenter.mList);
+            }
         }
-        else{
-            adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
-            RecyclerView.LayoutManager mLayoutManager = new NpaGridLayoutManager(getApplicationContext(), 3);
-            recyclerView.setLayoutManager(mLayoutManager);
-            while (recyclerView.getItemDecorationCount() > 0) {
-                recyclerView.removeItemDecorationAt(0);
-            }
-            recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
-            recyclerView.setAdapter(adapter);
-            adapter.setDataSource(presenter.mList);
+        catch (Exception e){
+            e.getMessage();
         }
     }
 
@@ -673,7 +688,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 break;
             }
         }
-
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.confirm))
                 .theme(Theme.LIGHT)
@@ -693,7 +707,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         List<ExportFiles> mListExporting = new ArrayList<>();
                         switch (status){
                             case SHARE:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 for (int i = 0; i< presenter.mList.size();i++){
                                     Items index = presenter.mList.get(i);
@@ -741,7 +755,13 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                                 break;
                                             }
                                             default:{
-                                                File input = new File(index.thumbnailPath);
+                                                String path = "";
+                                                if (index.mimeType.equals(getString(R.string.key_gif))){
+                                                    path = index.originalPath;
+                                                }else{
+                                                    path = index.thumbnailPath;
+                                                }
+                                                File input = new File(path);
                                                 File output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName +index.fileExtension);
                                                 if (storage.isFileExist(output.getAbsolutePath())){
                                                     output = new File(SuperSafeApplication.getInstance().getSupersafeShare()+index.originalName+"(1)" +index.fileExtension);
@@ -762,7 +782,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 break;
                             }
                             case EXPORT:{
-                                GalleryCameraMediaManager.getInstance().onStartProgress();
+                                EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
 
                                 for (int i = 0;i< presenter.mList.size();i++){
@@ -828,11 +848,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                         }
                                     }
                                 }
-
                                 onStartProgressing();
                                 ServiceManager.getInstance().setmListExport(mListExporting);
                                 ServiceManager.getInstance().onExportingFiles();
-
                                 break;
                             }
                             case DELETE:{
@@ -863,7 +881,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 else{
                     onDialogDownloadFile();
                     ServiceManager.getInstance().setListDownloadFile(presenter.mList);
-                    ServiceManager.getInstance().getObservableDownload(true);
+                    ServiceManager.getInstance().getObservableDownload();
                 }
             }
             else{
@@ -875,7 +893,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "Selected album :");
+        Utils.Log(TAG, "Selected album :");
         switch (requestCode) {
             case Navigator.CAMERA_ACTION: {
                 if (resultCode == Activity.RESULT_OK) {
@@ -904,19 +922,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         String name = images.get(i).name;
                         String id = "" + images.get(i).id;
                         String mimeType = Utils.getMimeType(path);
-                        Log.d(TAG, "mimeType " + mimeType);
-                        Log.d(TAG, "name " + name);
-                        Log.d(TAG, "path " + path);
+                        Utils.Log(TAG, "mimeType " + mimeType);
+                        Utils.Log(TAG, "name " + name);
+                        Utils.Log(TAG, "path " + path);
                         String fileExtension = Utils.getFileExtension(path);
-                        Log.d(TAG, "file extension " + Utils.getFileExtension(path));
-
+                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path));
                         try {
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
-
                             if (mimeTypeFile==null){
                                 return;
                             }
-
                             mimeTypeFile.name = name;
                             if (presenter.mainCategories == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
@@ -950,61 +965,19 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-    @Override
-    public void onCompletedDownload(EnumStatus status) {
-        switch (status){
-            case DONE:{
-                mDialogProgress.setTitleText("Success!")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                        onClickedExport();
-                    }
-                });
-                Utils.Log(TAG, " already sync");
-                break;
-            }
-            case ERROR:{
-                final User mUser = User.getInstance().getUserInfo();
-                if (mUser!=null){
-                    mUser.driveConnected = false;
-                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                }
-                mDialogProgress.setTitleText("Success!")
-                        .setConfirmText("OK")
-                        .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                mDialogProgress.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        sweetAlertDialog.dismiss();
-                    }
-                });
-                break;
-            }
-        }
-    }
-
     /**
      * Converting dp to pixel
      */
-
-
     @Override
     public void onError(String message, EnumStatus status) {
-
     }
 
     @Override
     public void onError(String message) {
-
     }
 
     @Override
     public void onSuccessful(String message) {
-
     }
 
     @Override
@@ -1013,13 +986,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case RELOAD:{
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
-
                 String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
                 tv_Videos.setText(videos);
-
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
                 if (actionMode!=null){
@@ -1028,10 +998,9 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     llBottom.setVisibility(View.GONE);
                     isReload = true;
                 }
-
                 boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
                 if (isVertical){
-                    vericalAdapter.setDataSource(presenter.mList);
+                    verticalAdapter.setDataSource(presenter.mList);
                 }
                 else{
                     adapter.setDataSource(presenter.mList);
@@ -1041,20 +1010,16 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case REFRESH:{
                 String photos = String.format(getString(R.string.photos_default),""+presenter.photos);
                 tv_Photos.setText(photos);
-
                 String videos = String.format(getString(R.string.videos_default),""+presenter.videos);
                 tv_Videos.setText(videos);
-
                 String audios = String.format(getString(R.string.audios_default),""+presenter.audios);
                 tv_Audios.setText(audios);
-
                 String others = String.format(getString(R.string.others_default),""+presenter.others);
                 tv_Others.setText(others);
-
                 boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
                 if (isVertical){
-                    vericalAdapter.getDataSource().clear();
-                    vericalAdapter.getDataSource().addAll(presenter.mList);
+                    verticalAdapter.getDataSource().clear();
+                    verticalAdapter.getDataSource().addAll(presenter.mList);
                 }
                 else{
                     adapter.getDataSource().clear();
@@ -1073,19 +1038,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         }
     }
 
-
     @Override
     public void onSuccessful(String message, EnumStatus status, Integer object) {
         switch (status){
             case DELETE:{
                 Utils.Log(TAG,"Position "+ object);
-                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                if (isVertical){
-                    vericalAdapter.removeAt(object);
-                }
-                else{
-                    adapter.removeAt(object);
-                }
+                onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER,object);
                 break;
             }
         }
@@ -1096,14 +1054,11 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         return this;
     }
 
-
     @Override
     public void onSuccessful(String message, EnumStatus status, List list) {
-
     }
 
     /*Action mode*/
-
     private ActionMode.Callback callback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -1142,8 +1097,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             actionMode = null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-                Window window = getWindow();
-                window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
+                if (themeApp!=null){
+                    Window window = getWindow();
+                    window.setStatusBarColor(ContextCompat.getColor(getContext(), themeApp.getPrimaryDarkColor()));
+                }
             }
         }
     };
@@ -1156,13 +1113,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             countSelected--;
         }
         onShowUI();
-        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-        if (isVertical){
-            vericalAdapter.notifyItemChanged(position);
-        }
-        else{
-            adapter.notifyItemChanged(position);
-        }
+        onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER,position);
     }
 
     private void deselectAll() {
@@ -1194,30 +1145,14 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 break;
                             }
                         }
-
-
-                        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                        if (isVertical){
-                            vericalAdapter.notifyItemChanged(i);
-                        }
-                        else{
-                            adapter.notifyItemChanged(i);
-                        }
-
+                        onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER,i);
                     }
                     break;
                 }
                 default:{
                     if (presenter.mList.get(i).isChecked){
                         presenter.mList.get(i).isChecked = false;
-
-                        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                        if (isVertical){
-                            vericalAdapter.notifyItemChanged(i);
-                        }
-                        else{
-                            adapter.notifyItemChanged(i);
-                        }
+                        onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER,i);
                     }
                     break;
                 }
@@ -1226,7 +1161,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         countSelected = 0;
         onShowUI();
         if (isExport){
-           onCheckDelete();
+            onCheckDelete();
         }
     }
 
@@ -1247,15 +1182,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     Utils.Log(TAG, "ServiceManager waiting for delete");
                 }
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).items_id);
-
-                boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-                if (isVertical){
-                    vericalAdapter.removeAt(i);
-                }
-                else{
-                    adapter.removeAt(i);
-                }
-
+                onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER,i);
             }
         }
         presenter.getData(EnumStatus.REFRESH);
@@ -1272,14 +1199,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
             countSelected = countSelect;
             onShowUI();
-
-            boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
-            if (isVertical){
-                vericalAdapter.notifyDataSetChanged();
-            }
-            else{
-                adapter.notifyDataSetChanged();
-            }
+            onUpdateAdapter(EnumStatus.UPDATE_ENTIRE_ADAPTER,0);
             actionMode.setTitle(countSelected + " " + getString(R.string.selected));
         }
         catch (Exception e){
@@ -1309,7 +1229,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     /*Gallery action*/
-
     @Override
     public Configuration getConfiguration() {
         //default configuration
@@ -1339,7 +1258,6 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     @Override
     public void onMoveAlbumSuccessful() {
-
     }
 
     @Override
@@ -1347,4 +1265,68 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         return presenter.mList;
     }
 
+    public void onUpdateAdapter(EnumStatus status,int position){
+        boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
+        switch (status){
+            case UPDATE_ENTIRE_ADAPTER:{
+                if (isVertical){
+                    if (verticalAdapter!=null){
+                        if (verticalAdapter.getDataSource()!=null){
+                            verticalAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+                else{
+                    if (adapter!=null){
+                        if (adapter.getDataSource()!=null){
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+                break;
+            }
+            case REMOVE_AT_ADAPTER:{
+                if (isVertical){
+                    if (verticalAdapter!=null){
+                        if (verticalAdapter.getDataSource()!=null){
+                            if (verticalAdapter.getDataSource().size()>position){
+                                verticalAdapter.removeAt(position);
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (adapter!=null){
+                        if (adapter.getDataSource()!=null){
+                            if (adapter.getDataSource().size()>position){
+                                adapter.removeAt(position);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case UPDATE_AT_ADAPTER:{
+                if (isVertical){
+                    if (verticalAdapter!=null){
+                        if (verticalAdapter.getDataSource()!=null){
+                            if (verticalAdapter.getDataSource().size()>position){
+                                verticalAdapter.notifyItemChanged(position);
+                            }
+                        }
+                    }
+                }
+                else{
+                    if (adapter!=null){
+                        if (adapter.getDataSource()!=null){
+                            if (adapter.getDataSource().size()>position){
+                                adapter.notifyItemChanged(position);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 }

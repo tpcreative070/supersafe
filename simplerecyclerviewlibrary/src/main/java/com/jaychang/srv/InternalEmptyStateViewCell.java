@@ -1,9 +1,8 @@
 package com.jaychang.srv;
-
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
 
 class InternalEmptyStateViewCell extends SimpleCell<View, SimpleViewHolder> {
 

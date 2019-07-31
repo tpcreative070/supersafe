@@ -2,40 +2,34 @@ package co.tpcreative.supersafe.ui.privates;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.snatik.storage.Storage;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.BaseFragment;
 import co.tpcreative.supersafe.common.Navigator;
-import co.tpcreative.supersafe.common.controller.SingletonManagerTab;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.dialog.DialogListener;
 import co.tpcreative.supersafe.common.dialog.DialogManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
 
 public class PrivateFragment extends BaseFragment implements BaseView, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
 
@@ -43,7 +37,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     private RecyclerView recyclerView;
     private PrivatePresenter presenter;
     private PrivateAdapter adapter;
-    private Storage storage;
     public boolean isClicked;
 
     public static PrivateFragment newInstance(int index) {
@@ -55,7 +48,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     }
 
     public PrivateFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -70,7 +62,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         recyclerView = view.findViewById(R.id.recyclerView);
         initRecycleView(inflater);
         SingletonPrivateFragment.getInstance().setListener(this);
-        storage = new Storage(SuperSafeApplication.getInstance());
         return view;
     }
 
@@ -197,6 +188,12 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Utils.Log(TAG,"onStop");
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
     }
@@ -211,7 +208,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(TAG, "visit :" + isVisibleToUser);
         if (isVisibleToUser) {
-            SingletonManagerTab.getInstance().setVisetFloatingButton(View.VISIBLE);
+            EventBus.getDefault().post(EnumStatus.SHOW_FLOATING_BUTTON);
         }
     }
 
@@ -286,9 +283,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         isClicked = false;
                         if (mainCategories.pin.equals(input.toString())) {
-//                            mainCategories.pin = "";
-//                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
-//                            SingletonPrivateFragment.getInstance().onUpdateView();
                             Navigator.onMoveAlbumDetail(getActivity(), mainCategories);
                             dialog.dismiss();
                         } else {

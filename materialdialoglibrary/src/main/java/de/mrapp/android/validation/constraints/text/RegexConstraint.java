@@ -12,14 +12,10 @@
  * the License.
  */
 package de.mrapp.android.validation.constraints.text;
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import de.mrapp.android.validation.Constraint;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

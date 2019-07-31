@@ -12,12 +12,9 @@
  * the License.
  */
 package de.mrapp.android.util;
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import java.io.File;
 import java.io.IOException;
-
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

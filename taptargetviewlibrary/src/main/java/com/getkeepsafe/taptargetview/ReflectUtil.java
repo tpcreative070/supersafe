@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package com.getkeepsafe.taptargetview;
-
 import java.lang.reflect.Field;
 
 class ReflectUtil {

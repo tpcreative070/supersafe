@@ -1,14 +1,8 @@
 package co.tpcreative.supersafe.common.views;
-
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import androidx.recyclerview.widget.RecyclerView;
 
-/**
- * Created by 李涛 on 16/4/22.
- *
- * http://stackoverflow.com/questions/28531996/android-recyclerview-gridlayoutmanager-column-spacing/30701422#30701422
- */
 public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
     private int spanCount;

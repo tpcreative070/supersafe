@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.checksystem;
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import com.google.gson.Gson;
 import com.snatik.storage.security.SecurityUtil;
 import java.io.IOException;
@@ -38,7 +37,6 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     protected GoogleOauth googleOauth;
     protected boolean isUserExisting;
 
-
     public CheckSystemPresenter(){
         final User user = User.getInstance().getUserInfo();
         if (user!=null){
@@ -58,7 +56,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     }
 
     public void onCheckUser(final String email,String other_email){
-        Log.d(TAG,"onCheckUser");
+        Utils.Log(TAG,"onCheckUser");
         BaseView view = view();
         if (view == null) {
             return;
@@ -79,7 +77,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.USER_ID_EXISTING))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
                         SignInRequest request = new SignInRequest();
                         request.email = email;
@@ -108,21 +106,21 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 onSignIn(request);
                                 Utils.Log(TAG,"Login");
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call check user" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call check user" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.USER_ID_EXISTING);
                 }));
     }
 
     public void onSignIn(SignInRequest request){
-        Log.d(TAG,"onSignIn");
+        Utils.Log(TAG,"onSignIn");
         BaseView view = view();
         if (view == null) {
             return;
@@ -163,19 +161,19 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         onSendMail(emailToken);
                         ServiceManager.getInstance().onInitConfigurationFile();
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         try {
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             view.onError(msg,EnumStatus.SIGN_IN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call sign in" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call sign in" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.SIGN_IN);
                 }));
@@ -183,7 +181,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
 
     public void onVerifyCode(VerifyCodeRequest request){
-        Log.d(TAG,"onVerifyCode");
+        Utils.Log(TAG,"onVerifyCode");
         BaseView view = view();
         if (view == null) {
             return;
@@ -223,7 +221,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         }
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
-                    Log.d(TAG, "Body verify code : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body verify code : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -233,14 +231,14 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call verify code" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call verify code" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.VERIFY_CODE);
                 }));
@@ -248,7 +246,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
 
     public void onChangeEmail(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             return;
@@ -302,7 +300,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                             }
                         }
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -312,14 +310,14 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.CHANGE_EMAIL);
                 }));
@@ -327,7 +325,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
 
 
     public void onResendCode(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             return;
@@ -360,7 +358,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                         onSendMail(emailToken);
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -370,14 +368,14 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.RESEND_CODE);
                 }));
@@ -386,7 +384,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     /*Email Verify*/
 
     public void onSendMail(EmailToken request){
-        Log.d(TAG, "onSendMail.....");
+        Utils.Log(TAG, "onSendMail.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -407,12 +405,12 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         Utils.Log(TAG, "code " + code);
                         onRefreshEmailToken(request);
                         final String errorMessage = response.errorBody().string();
-                        Log.d(TAG, "error" + errorMessage);
+                        Utils.Log(TAG, "error" + errorMessage);
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL);
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("Successful",EnumStatus.SEND_EMAIL);
-                        Log.d(TAG, "Body : Send email Successful");
+                        Utils.Log(TAG, "Body : Send email Successful");
                     } else {
                         Utils.Log(TAG, "code " + code);
                         Utils.Log(TAG, "Nothing to do");
@@ -432,7 +430,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     }
 
     public void onRefreshEmailToken(EmailToken request) {
-        Log.d(TAG, "onRefreshEmailToken.....");
+        Utils.Log(TAG, "onRefreshEmailToken.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -462,7 +460,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
-                    Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body refresh : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -471,21 +469,21 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                             if (code == 401) {
                                 Utils.Log(TAG, "code " + code);
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             view.onError(msg, EnumStatus.SEND_EMAIL);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
 
     public void onAddEmailToken(){
-        Log.d(TAG, "onSignIn.....");
+        Utils.Log(TAG, "onSignIn.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -507,7 +505,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                     onSendMail(emailToken);
                 }, throwable -> {
@@ -520,19 +518,19 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
     public void onAddUserCloud(UserCloudRequest cloudRequest){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             return;
@@ -554,7 +552,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body ???: " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body ???: " + new Gson().toJson(onResponse));
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.CREATE);
                     }
@@ -577,14 +575,14 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call add user cloud" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call add user cloud" + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.CREATE);
                 }));
@@ -592,7 +590,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     }
 
     public void onUserCloudChecking(){
-        Log.d(TAG,"onUserCloudChecking");
+        Utils.Log(TAG,"onUserCloudChecking");
         BaseView view = view();
         if (view == null) {
             return;
@@ -607,14 +605,13 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         Map<String,String> hash = new HashMap<>();
         hash.put(getString(R.string.key_user_id),mUser.email);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-
-        Log.d(TAG,"request :"+ new Gson().toJson(hash));
+        Utils.Log(TAG,"request :"+ new Gson().toJson(hash));
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckUserCloud(hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CLOUD_ID_EXISTING))
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error){
                         view.onError(onResponse.message,EnumStatus.CLOUD_ID_EXISTING);
                     }
@@ -631,14 +628,14 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call check user cloud " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call check user cloud " + throwable.getMessage());
                     }
                     view.onStopLoading(EnumStatus.CLOUD_ID_EXISTING);
                 }));
@@ -649,5 +646,4 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         String value = view.getContext().getString(res);
         return value;
     }
-
 }

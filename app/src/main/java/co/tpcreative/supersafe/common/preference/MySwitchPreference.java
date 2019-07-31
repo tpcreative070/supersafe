@@ -2,11 +2,11 @@ package co.tpcreative.supersafe.common.preference;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.PreferenceViewHolder;
-import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.view.View;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.PreferenceViewHolder;
 
 
 public class MySwitchPreference extends CheckBoxPreference {

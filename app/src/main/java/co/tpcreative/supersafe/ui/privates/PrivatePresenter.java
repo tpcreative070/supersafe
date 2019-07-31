@@ -1,14 +1,7 @@
 package co.tpcreative.supersafe.ui.privates;
-import com.google.gson.Gson;
 import com.snatik.storage.Storage;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
@@ -34,7 +27,6 @@ public class PrivatePresenter extends Presenter<BaseView> {
         mList = MainCategories.getInstance().getList();
         storage = new Storage(SuperSafeApplication.getInstance());
         view.onSuccessful("Successful", EnumStatus.RELOAD);
-        Utils.Log(TAG,new Gson().toJson(mList));
     }
 
     public void onDeleteAlbum(int position){
@@ -90,8 +82,5 @@ public class PrivatePresenter extends Presenter<BaseView> {
             getData();
             ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
-
     }
-
-
 }

@@ -12,14 +12,13 @@
  * the License.
  */
 package de.mrapp.android.dialog.model;
-
 import android.content.DialogInterface;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.ColorInt;
-import android.support.annotation.Nullable;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import androidx.annotation.ArrayRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
 
 /**
  * Defines the interface, a decorator, which allows to modify the view hierarchy of a dialog, which

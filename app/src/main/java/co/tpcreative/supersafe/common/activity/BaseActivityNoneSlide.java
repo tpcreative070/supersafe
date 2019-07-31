@@ -3,11 +3,10 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 import com.snatik.storage.Storage;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -16,6 +15,7 @@ import co.tpcreative.supersafe.common.HomeWatcher;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ThemeUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -24,10 +24,8 @@ import co.tpcreative.supersafe.model.ThemeApp;
 import spencerstudios.com.bungeelib.Bungee;
 
 public abstract class BaseActivityNoneSlide extends AppCompatActivity implements  SensorFaceUpDownChangeNotifier.Listener{
-
     Unbinder unbinder;
     int onStartCount = 0;
-    private Toast mToast;
     private HomeWatcher mHomeWatcher;
     public static final String TAG = BaseActivityNoneSlide.class.getSimpleName();
     protected Storage storage;
@@ -42,7 +40,7 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
             onStartCount = 2;
         }
         storage = new Storage(this);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
@@ -113,7 +111,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
                 return;
             }
         }
-
         mHomeWatcher = new HomeWatcher(this);
         mHomeWatcher.setOnHomePressedListener(new HomeWatcher.OnHomePressedListener() {
             @Override
@@ -122,8 +119,8 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
                 EnumPinAction action = EnumPinAction.values()[value];
                 switch (action){
                     case NONE:{
-                        PrefsController.putInt(getString(R.string.key_screen_status),EnumPinAction.SCREEN_LOCK.ordinal());
-                        Utils.Log(TAG,"Pressed home button");
+                        Utils.onHomePressed();
+                        onStopListenerAWhile();
                         break;
                     }
                     default:{
@@ -152,20 +149,6 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
         System.gc();
     }
 
-    protected void showToast(String text) {
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        mToast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-        mToast.show();
-    }
-
-
-    protected void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -180,11 +163,17 @@ public abstract class BaseActivityNoneSlide extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (onStartCount > 1) {
-            Bungee.fade(this);
-        } else if (onStartCount == 1) {
-            onStartCount++;
+        if (SingletonManager.getInstance().isAnimation()){
+            if (onStartCount > 1) {
+                Bungee.fade(this);
+            } else if (onStartCount == 1) {
+                onStartCount++;
+            }
+        }else{
+            Bungee.zoom(this);
+            SingletonManager.getInstance().setAnimation(true);
         }
     }
 
+    protected abstract void onStopListenerAWhile();
 }

@@ -12,17 +12,15 @@
  * the License.
  */
 package de.mrapp.android.util;
-
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import static de.mrapp.android.util.Condition.ensureNotNull;
 
 /**

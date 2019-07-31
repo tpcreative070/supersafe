@@ -1,12 +1,11 @@
 package co.tpcreative.supersafe.model.room;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
-import android.util.Log;
+import androidx.room.Database;
+import androidx.room.Ignore;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.List;
 import java.util.UUID;
 import co.tpcreative.supersafe.R;
@@ -15,10 +14,10 @@ import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
-//import co.tpcreative.supersafe.model.Secret;
 
 @Database(entities = {Items.class, MainCategories.class, BreakInAlerts.class}, version = 5, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
+
 
     @Ignore
     private static InstanceGenerator instance;
@@ -108,7 +107,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.itemsDao().insert(cTalkManager);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -121,10 +120,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.itemsDao().update(cTalkManager);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
-
 
     public final synchronized List<Items> getListItems(final String categories_local_id,boolean isDeleteLocal,boolean isExport,boolean isFakePin){
         try{
@@ -134,7 +132,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isExport,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -147,7 +145,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -162,7 +160,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAll(categories_local_id,formatType,isDeleteLocal,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -176,7 +174,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAll(categories_local_id,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -187,7 +185,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAll(isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -197,7 +195,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAllSaved(isSaved,isSyncCloud);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -207,7 +205,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAllSaved(formatType);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -218,7 +216,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadAll(isDeleteLocal,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -228,7 +226,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,deleteAction,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -238,7 +236,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadDeleteLocalAndGlobalDataItems(isDeleteLocal,isDeleteGlobal,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -248,7 +246,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadSyncDataItems(false,false,EnumStatus.UPLOAD.ordinal(),isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -258,7 +256,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadSyncDataItemsByCategoriesIdNull(false,false,EnumStatus.UPLOAD.ordinal(),isFakePin,"null");
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -268,7 +266,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadSyncDataItems(false,false,EnumStatus.DOWNLOAD.ordinal(),isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -278,7 +276,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadSyncData(isSyncCloud,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -289,7 +287,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadSyncData(isSyncCloud,isSaver,isWaitingForExporting,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -299,7 +297,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadSyncData(isSyncCloud,isSaver,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -310,7 +308,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadItemId(id,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -320,7 +318,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadItemId(item_id);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -331,7 +329,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().getLatestId(categories_local_id,isDeleteLocal,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -341,7 +339,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadItemId(item_id,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -351,7 +349,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadListItemId(item_id,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -361,7 +359,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadItemId(item_id,isSyncCloud,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -372,7 +370,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadListItemId(isSyncCloud,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -382,7 +380,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadListItemUpdate(isUpdate,isSyncCloud,isSyncOwnServer,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -394,7 +392,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.itemsDao().loadListItemId(isSyncCloud,isSyncOwnServer,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -407,7 +405,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return true;
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return false;
     }
@@ -418,7 +416,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return true;
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return false;
     }
@@ -429,18 +427,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return true;
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return false;
     }
 
-
-
-
     /*Main categories*/
-
-
-
     public synchronized void onInsert(MainCategories item){
         try {
             if (item==null){
@@ -449,7 +441,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.mainCategoriesDao().insert(item);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -462,7 +454,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.mainCategoriesDao().update(cTalkManager);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -471,7 +463,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadAll(isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -481,7 +473,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadAll(categories_local_id,isDelete,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -491,7 +483,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadAll(isDelete,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -502,7 +494,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadItemId(categories_hex_name,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -519,7 +511,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return 0;
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return 0;
     }
@@ -530,7 +522,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadListAllItemId(categories_hex_name,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -540,7 +532,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadItemLocalId(categories_local_id,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -550,7 +542,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadLocalId(categories_local_id);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -560,7 +552,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadItemCategoriesId(categories_id,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -570,7 +562,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadItemCategoriesSync(isSyncOwnServer,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -580,7 +572,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadListItemCategoriesSync(isSyncOwnServer,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
@@ -590,17 +582,13 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.mainCategoriesDao().loadListItemCategoriesSync(isSyncOwnServer,limit,isFakePin);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
 
-
-
     /*Break In Alerts*/
-
     /*Items action*/
-
     public synchronized void onInsert(BreakInAlerts cTalkManager){
         try {
             if (cTalkManager==null){
@@ -609,7 +597,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.breakInAlertsDao().insert(cTalkManager);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -622,7 +610,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.breakInAlertsDao().update(cTalkManager);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -635,7 +623,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
             instance.breakInAlertsDao().delete(cTalkManager);
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
     }
 
@@ -644,15 +632,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
             return instance.breakInAlertsDao().loadAll();
         }
         catch (Exception e){
-            Log.d(TAG,e.getMessage());
+            Utils.Log(TAG,e.getMessage());
         }
         return null;
     }
 
-
-
     /*Secret*/
-
 //    public synchronized void onInsert(Secret secret){
 //        try {
 //            if (secret==null){
@@ -706,14 +691,11 @@ public abstract class InstanceGenerator extends RoomDatabase {
 //        return null;
 //    }
 
-
-
     public void onCleanDatabase(){
         instance.breakInAlertsDao().deleteBreakInAlerts();
         instance.itemsDao().deleteAllItems();
         instance.mainCategoriesDao().deleteAllCategories();
     }
-
 }
 
 

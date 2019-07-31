@@ -5,35 +5,23 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
-
-import com.ftinc.kit.util.SizeUtils;
-import com.r0adkll.slidr.Slidr;
-import com.r0adkll.slidr.model.SlidrConfig;
-import com.r0adkll.slidr.model.SlidrListener;
-import com.r0adkll.slidr.model.SlidrPosition;
-
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import com.google.android.material.snackbar.Snackbar;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.ThemeApp;
-
 
 public class HelperActivity extends BaseActivity {
     protected View view;
-
     private final int maxLines = 4;
-    private SlidrConfig mConfig;
     private final String[] permissions = new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
     protected void checkPermission() {
@@ -69,45 +57,7 @@ public class HelperActivity extends BaseActivity {
                                 Navigator.PERMISSION_REQUEST_CODE);
                     }
                 });
-
-        /*((TextView) snackbar.getView()
-                .findViewById(android.support.design.R.id.snackbar_text)).setMaxLines(maxLines);*/
         snackbar.show();
-    }
-
-    protected void onDrawOverLay(Activity activity){
-        final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        mConfig = new SlidrConfig.Builder()
-                .primaryColor(getResources().getColor(themeApp.getPrimaryColor()))
-                .secondaryColor(getResources().getColor(themeApp.getPrimaryDarkColor()))
-                .position(SlidrPosition.LEFT)
-                .velocityThreshold(2400)
-                .touchSize(SizeUtils.dpToPx(this, 32))
-                .listener(new SlidrListener(){
-                    @Override
-                    public void onSlideStateChanged(int state) {
-
-                    }
-
-                    @Override
-                    public void onSlideChange(float percent) {
-
-                    }
-
-                    @Override
-                    public void onSlideOpened() {
-
-                    }
-
-                    @Override
-                    public boolean onSlideClosed() {
-                        Utils.Log(TAG,"Closed.....");
-                        EventBus.getDefault().post(EnumStatus.CLOSED);
-                        return false;
-                    }
-                })
-                .build();
-        Slidr.attach(activity, mConfig);
     }
 
     private void showAppPermissionSettings() {
@@ -179,7 +129,6 @@ public class HelperActivity extends BaseActivity {
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(HelperActivity.class.getSimpleName());
     }
 
     @Override
@@ -190,9 +139,12 @@ public class HelperActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
-
-
 }

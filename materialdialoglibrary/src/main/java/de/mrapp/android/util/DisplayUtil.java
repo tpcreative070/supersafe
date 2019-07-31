@@ -17,12 +17,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import static de.mrapp.android.util.Condition.ensureNotNull;
 

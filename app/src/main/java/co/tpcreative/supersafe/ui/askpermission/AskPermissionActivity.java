@@ -10,6 +10,9 @@ import com.karumi.dexter.listener.DexterError;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.PermissionRequestErrorListener;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
@@ -23,17 +26,18 @@ import co.tpcreative.supersafe.model.EnumStatus;
 public class AskPermissionActivity extends BaseActivityNoneSlide {
 
     private static final String TAG = AskPermissionActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask_permission);
     }
 
     @Override
-    public void onOrientationChange(boolean isFaceDown) {
+    protected void onStopListenerAWhile() {
+    }
 
+    @Override
+    public void onOrientationChange(boolean isFaceDown) {
     }
 
     public void onAddPermission() {

@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -13,9 +12,9 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import org.greenrobot.eventbus.EventBus;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -29,7 +28,6 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
 import dmax.dialog.SpotsDialog;
@@ -67,7 +65,6 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
         presenter = new RestorePresenter();
         presenter.bindView(this);
         presenter.onGetData();
-        onDrawOverLay(this);
     }
 
     @Override
@@ -220,6 +217,10 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
         if (subscriptions!=null){
             subscriptions.dispose();
         }
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
     }
 
     /*Detecting textWatch*/

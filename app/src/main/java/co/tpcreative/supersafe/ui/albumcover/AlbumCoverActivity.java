@@ -4,11 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +11,11 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -67,7 +67,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        onDrawOverLay(this);
         btnSwitch.setOnCheckedChangeListener(this);
         presenter.getData();
         tvPremiumDescription.setText(getString(R.string.premium_cover_description));
@@ -81,7 +80,6 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         recyclerViewDefault.setItemAnimator(new DefaultItemAnimator());
         recyclerViewDefault.setAdapter(adapterDefault);
         recyclerViewDefault.setNestedScrollingEnabled(false);
-
     }
 
     public void initRecycleViewCustom(LayoutInflater layoutInflater) {
@@ -119,6 +117,11 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
+    }
+
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -174,7 +177,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.btnSwitch: {
-                if (User.getInstance().isPremiumExpired()) {
+                if (!User.getInstance().isPremium()) {
                     btnSwitch.setChecked(false);
                     onShowPremium();
                     break;
@@ -225,16 +228,16 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         switch (status){
             case RELOAD:{
                 if (presenter.mMainCategories!=null){
-                    if (User.getInstance().isPremiumExpired()) {
+                    if (User.getInstance().isPremium()) {
+                        setTitle(presenter.mMainCategories.categories_name);
+                        btnSwitch.setChecked(presenter.mMainCategories.isCustom_Cover);
+                        llRecyclerView.setVisibility(presenter.mMainCategories.isCustom_Cover?View.VISIBLE : View.INVISIBLE);
+                    }else{
                         setTitle(presenter.mMainCategories.categories_name);
                         presenter.mMainCategories.isCustom_Cover = false;
                         btnSwitch.setChecked(presenter.mMainCategories.isCustom_Cover);
                         llRecyclerView.setVisibility(presenter.mMainCategories.isCustom_Cover?View.VISIBLE : View.INVISIBLE);
                         InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
-                    }else{
-                        setTitle(presenter.mMainCategories.categories_name);
-                        btnSwitch.setChecked(presenter.mMainCategories.isCustom_Cover);
-                        llRecyclerView.setVisibility(presenter.mMainCategories.isCustom_Cover?View.VISIBLE : View.INVISIBLE);
                     }
                 }
                 break;

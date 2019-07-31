@@ -1,8 +1,9 @@
 package co.tpcreative.supersafe.common.adapter;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,9 @@ public class BaseAdapter<V, VH extends BaseHolder> extends RecyclerView.Adapter<
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
+        if (holder instanceof FooterViewHolder){
+            return;
+        }
         holder.bind(dataSource.get(position), position);
         holder.event();
     }

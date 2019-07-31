@@ -1,16 +1,13 @@
 package co.tpcreative.supersafe.ui.lockscreen;
-
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
-
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -24,12 +21,9 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
  * Created by aritraroy on 31/05/16.
  */
 public class PinLockView extends RecyclerView {
-
     private static final String TAG = PinLockView.class.getSimpleName();
-
     private static final int DEFAULT_PIN_LENGTH = 4;
     private static final int[] DEFAULT_KEY_SET = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
-
     private String mPin = "";
     private int mPinLength;
     private int mHorizontalSpacing, mVerticalSpacing;
@@ -44,7 +38,6 @@ public class PinLockView extends RecyclerView {
     private PinLockListener mPinLockListener;
     private CustomizationOptionsBundle mCustomizationOptionsBundle;
     private int[] mCustomKeySet;
-
     private PinLockAdapter.OnNumberClickListener mOnNumberClickListener
             = new PinLockAdapter.OnNumberClickListener() {
 
@@ -52,16 +45,13 @@ public class PinLockView extends RecyclerView {
         public void onNumberClicked(int keyValue) {
             if (mPin.length() < getPinLength()) {
                 mPin = mPin.concat(String.valueOf(keyValue));
-
                 if (isIndicatorDotsAttached()) {
                     mIndicatorDots.updateDot(mPin.length());
                 }
-
                 if (mPin.length() == 1) {
                     mAdapter.setPinLength(mPin.length());
                     mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
                 }
-
                 if (mPinLockListener != null) {
                     if (mPin.length() == mPinLength) {
                         mPinLockListener.onComplete(mPin);
@@ -72,20 +62,16 @@ public class PinLockView extends RecyclerView {
                 else{
                     Utils.Log(TAG,"mPinLockListener is null");
                 }
-
             } else {
                 if (!isShowDeleteButton()) {
                     resetPinLockView();
                     mPin = mPin.concat(String.valueOf(keyValue));
-
                     if (isIndicatorDotsAttached()) {
                         mIndicatorDots.updateDot(mPin.length());
                     }
-
                     if (mPinLockListener != null) {
                         mPinLockListener.onPinChange(mPin.length(), mPin);
                     }
-
                 } else {
                     if (mPinLockListener != null) {
                         mPinLockListener.onComplete(mPin);
@@ -95,7 +81,6 @@ public class PinLockView extends RecyclerView {
                     }
                 }
             }
-
         }
     };
 
@@ -104,16 +89,13 @@ public class PinLockView extends RecyclerView {
     public void onDeleteClicked() {
         if (mPin.length() > 0) {
             mPin = mPin.substring(0, mPin.length() - 1);
-
             if (isIndicatorDotsAttached()) {
                 mIndicatorDots.updateDot(mPin.length());
             }
-
             if (mPin.length() == 0) {
                 mAdapter.setPinLength(mPin.length());
                 mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
             }
-
             if (mPinLockListener != null) {
                 if (mPin.length() == 0) {
                     mPinLockListener.onEmpty();
@@ -130,7 +112,6 @@ public class PinLockView extends RecyclerView {
     }
 
     /*Verify on item clicked*/
-
     private PinLockAdapter.OnVerifyClickListener mOnVerifyClickListener
             = new PinLockAdapter.OnVerifyClickListener() {
         @Override
@@ -161,9 +142,7 @@ public class PinLockView extends RecyclerView {
     }
 
     private void init(AttributeSet attributeSet, int defStyle) {
-
         TypedArray typedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.PinLockView);
-
         try {
             mPinLength = typedArray.getInt(R.styleable.PinLockView_pinLength, DEFAULT_PIN_LENGTH);
             mHorizontalSpacing = (int) typedArray.getDimension(R.styleable.PinLockView_keypadHorizontalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_horizontal_spacing));
@@ -178,11 +157,9 @@ public class PinLockView extends RecyclerView {
             mShowVerifyButton = typedArray.getBoolean(R.styleable.PinLockView_keypadShowVerifyButton, true);
             mVerifyButtonPressedColor = typedArray.getColor(R.styleable.PinLockView_keypadVerifyButtonPressedColor, ResourceUtils.getColor(getContext(), R.color.teal_a700));
             mTextColorNormal = typedArray.getColor(R.styleable.PinLockView_keypadVerifyButtonPressedColor, ResourceUtils.getColor(getContext(), R.color.material_gray_400));
-
         } finally {
             typedArray.recycle();
         }
-
         mCustomizationOptionsBundle = new CustomizationOptionsBundle();
         mCustomizationOptionsBundle.setTextColor(mTextColor);
         mCustomizationOptionsBundle.setTextSize(mTextSize);
@@ -195,30 +172,20 @@ public class PinLockView extends RecyclerView {
         mCustomizationOptionsBundle.setVerifyButtonPressesColor(mVerifyButtonPressedColor);
         mCustomizationOptionsBundle.setTextColorVerify(mVerifyButtonPressedColor);
         mCustomizationOptionsBundle.setVerifyButtonNormalColor(mTextColorNormal);
-
         initView();
     }
 
     private void initView() {
-
-
         mAdapter = new PinLockAdapter();
         mAdapter.setOnItemClickListener(mOnNumberClickListener);
         mAdapter.setOnVerifyClickListener(mOnVerifyClickListener);
         mAdapter.setCustomizationOptions(mCustomizationOptionsBundle);
-
-
         addItemDecoration(new ItemSpaceDecoration(0, mVerticalSpacing, 3, false));
         setLayoutManager(new GridLayoutManager(getContext(), 3));
         addItemDecoration(new GridSpacingItemDecoration(3, 4, true));
         setItemAnimator(new DefaultItemAnimator());
         setAdapter(mAdapter);
-
         setOverScrollMode(OVER_SCROLL_NEVER);
-    }
-
-    public void setTypeFace(Typeface typeFace) {
-        mAdapter.setTypeFace(typeFace);
     }
 
     /**
@@ -438,7 +405,6 @@ public class PinLockView extends RecyclerView {
 
     public void setCustomKeySet(int[] customKeySet) {
         this.mCustomKeySet = customKeySet;
-
         if (mAdapter != null) {
             mAdapter.setKeyValues(customKeySet);
         }
@@ -446,7 +412,6 @@ public class PinLockView extends RecyclerView {
 
     public void enableLayoutShuffling() {
         this.mCustomKeySet = ShuffleArrayUtils.shuffle(DEFAULT_KEY_SET);
-
         if (mAdapter != null) {
             mAdapter.setKeyValues(mCustomKeySet);
         }
@@ -461,12 +426,9 @@ public class PinLockView extends RecyclerView {
      * and resetting the {@link IndicatorDots} if attached
      */
     public void resetPinLockView() {
-
         clearInternalPin();
-
         mAdapter.setPinLength(mPin.length());
         mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
-
         if (mIndicatorDots != null) {
             mIndicatorDots.updateDot(mPin.length());
         }

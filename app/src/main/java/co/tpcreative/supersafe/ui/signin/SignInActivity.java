@@ -1,17 +1,15 @@
 package co.tpcreative.supersafe.ui.signin;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import org.greenrobot.eventbus.EventBus;
@@ -46,7 +44,6 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
         final Toolbar toolbar = findViewById(R.id.toolbar);
@@ -84,6 +81,10 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
         presenter.unbindView();
     }
 
+    @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onOrientationChange(boolean isFaceDown) {

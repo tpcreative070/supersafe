@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.unlockalbum;
-import android.util.Log;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
     }
 
     public void onVerifyCode(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             view.onError("View is null", EnumStatus.VERIFIED_ERROR);
@@ -76,7 +75,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         }
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -86,14 +85,14 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                 }));
     }
@@ -101,7 +100,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
     /*Email Verify*/
 
     public void onSendMail(EmailToken request){
-        Log.d(TAG, "onSendMail.....");
+        Utils.Log(TAG, "onSendMail.....");
         BaseView view = view();
         if (view == null) {
             view.onError("Null", EnumStatus.SEND_EMAIL);
@@ -124,12 +123,12 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         Utils.Log(TAG, "code " + code);
                         onRefreshEmailToken(request);
                         final String errorMessage = response.errorBody().string();
-                        Log.d(TAG, "error" + errorMessage);
+                        Utils.Log(TAG, "error" + errorMessage);
                         //view.onError(errorMessage, EnumStatus.SEND_EMAIL);
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("Sent email successful",EnumStatus.SEND_EMAIL);
-                        Log.d(TAG, "Body : Send email Successful");
+                        Utils.Log(TAG, "Body : Send email Successful");
                     } else {
                         Utils.Log(TAG, "code " + code);
                         Utils.Log(TAG, "Nothing to do");
@@ -149,7 +148,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
     }
 
     public void onRefreshEmailToken(EmailToken request) {
-        Log.d(TAG, "onRefreshEmailToken.....");
+        Utils.Log(TAG, "onRefreshEmailToken.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -179,7 +178,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
-                    Log.d(TAG, "Body refresh : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body refresh : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -188,21 +187,21 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                             if (code == 401) {
                                 Utils.Log(TAG, "code " + code);
                             }
-                            Log.d(TAG, "error" + bodys.string());
+                            Utils.Log(TAG, "error" + bodys.string());
                             String msg = new Gson().toJson(bodys.string());
                             view.onError(msg, EnumStatus.SEND_EMAIL);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
 
     public void onAddEmailToken(){
-        Log.d(TAG, "onSignIn.....");
+        Utils.Log(TAG, "onSignIn.....");
         BaseView view = view();
         if (view == null) {
             return;
@@ -224,7 +223,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.UNLOCK_ALBUMS);
                     onSendMail(emailToken);
                 }, throwable -> {
@@ -237,20 +236,20 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
                             final String errorMessage = bodys.string();
-                            Log.d(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call " + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
                 }));
     }
 
 
     public void onRequestCode(VerifyCodeRequest request){
-        Log.d(TAG,"info");
+        Utils.Log(TAG,"info");
         BaseView view = view();
         if (view == null) {
             view.onError("View is null", EnumStatus.REQUEST_CODE);
@@ -284,7 +283,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         onSendMail(emailToken);
                         view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
-                    Log.d(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
@@ -294,14 +293,14 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            Log.d(TAG,"error" +bodys.string());
+                            Utils.Log(TAG,"error" +bodys.string());
                             String msg = new Gson().toJson(bodys.string());
-                            Log.d(TAG, msg);
+                            Utils.Log(TAG, msg);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Log.d(TAG, "Can not call" + throwable.getMessage());
+                        Utils.Log(TAG, "Can not call" + throwable.getMessage());
                     }
                 }));
     }

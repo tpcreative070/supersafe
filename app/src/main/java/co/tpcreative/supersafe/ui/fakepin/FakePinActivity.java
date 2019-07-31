@@ -1,12 +1,12 @@
 package co.tpcreative.supersafe.ui.fakepin;
 import android.os.Bundle;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -34,12 +34,13 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     ImageView imgView;
     @BindView(R.id.tvPremiumDescription)
     TextView tvPremiumDescription;
+    @BindView(R.id.tvStatus)
+    TextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fake_pin);
-        onDrawOverLay(this);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -84,6 +85,11 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     }
 
     @Override
+    protected void onStopListenerAWhile() {
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onOrientationChange(boolean isFaceDown) {
         onFaceDown(isFaceDown);
     }
@@ -102,6 +108,7 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
             tvCreatePin.setEnabled(b);
             //imgView.setColorFilter(getResources().getColor(R.color.material_gray_500), PorterDuff.Mode.SRC_ATOP);
         }
+        tvStatus.setText(b ? getString(R.string.enabled) : getString(R.string.disabled));
     }
 
     @OnClick(R.id.tvCreatePin)
