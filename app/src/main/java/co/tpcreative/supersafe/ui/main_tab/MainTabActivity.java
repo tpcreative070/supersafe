@@ -111,6 +111,9 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         presenter.bindView(this);
         presenter.onGetUserInfo();
         onShowSuggestion();
+        if (Utils.isCheckSyncSuggestion()){
+            onSuggestionSyncData();
+        }
         PremiumManager.getInstance().onStartInAppPurchase();
         if (presenter.mUser.driveConnected){
             if (NetworkUtil.pingIpAddress(this)) {
@@ -787,7 +790,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                 TapTarget.forToolbarMenuItem(toolbar,R.id.action_sync, getString(R.string.tap_here_to_enable_sync_data), getString(R.string.tap_here_to_enable_sync_data_description))
                         .titleTextSize(25)
                         .titleTextColor(R.color.white)
-                        .descriptionTextColor(R.color.md_light_blue_200)
+                        .descriptionTextColor(R.color.colorPrimary)
                         .descriptionTextSize(17)
                         .outerCircleColor(R.color.colorButton)
                         .transparentTarget(true)
