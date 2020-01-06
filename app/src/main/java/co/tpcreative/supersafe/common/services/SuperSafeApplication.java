@@ -350,6 +350,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
             }
         }
         catch (Exception e){
+            e.getMessage();
             deleteFolder();
         }
         return "";
