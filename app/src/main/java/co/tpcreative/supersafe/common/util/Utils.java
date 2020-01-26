@@ -71,6 +71,7 @@ import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
+import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
@@ -705,4 +706,37 @@ public class Utils {
             Utils.Log(TAG,"Verify pin already");
         }
     }
+
+    public static User getUserInfo(){
+        try{
+            String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user),null);
+            if (value!=null){
+                final User mUser = new Gson().fromJson(value,User.class);
+                if (mUser!=null){
+                    return mUser;
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static boolean isCheckSyncSuggestion(){
+        String name = SuperSafeApplication.getInstance().getString(R.string.key_count_sync);
+        final int mCount = PrefsController.getInt(name,0);
+        final boolean mSynced = getUserInfo().driveConnected;
+        if (!mSynced){
+            if (mCount==5) {
+                PrefsController.putInt(name,0);
+                return true;
+            }else{
+                PrefsController.putInt(name,mCount+1);
+            }
+        }
+        return false;
+    }
+
 }
