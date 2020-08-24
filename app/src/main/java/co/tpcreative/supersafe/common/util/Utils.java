@@ -41,6 +41,8 @@ import com.google.gson.reflect.TypeToken;
 import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
+import com.snatik.storage.security.SecurityUtil;
+
 import org.apache.commons.io.FilenameUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.solovyev.android.checkout.Purchase;
@@ -737,6 +739,21 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static String getAccessToken() {
+        try {
+            String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), "");
+            User user = new Gson().fromJson(value, User.class);
+            if (user != null) {
+               return user.author.session_token;
+            }
+            else{
+                 return user.author.session_token;
+            }
+        } catch (Exception e) {
+        }
+        return SecurityUtil.DEFAULT_TOKEN;
     }
 
 }

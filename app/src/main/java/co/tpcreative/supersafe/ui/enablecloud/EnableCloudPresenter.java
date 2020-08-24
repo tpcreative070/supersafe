@@ -53,11 +53,7 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
         if (subscriptions == null) {
             return;
         }
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),cloudRequest.user_id);
-        hash.put(getString(R.string.key_cloud_id),cloudRequest.cloud_id);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(cloudRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))

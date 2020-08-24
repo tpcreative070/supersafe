@@ -10,6 +10,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.CheckoutRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -103,18 +104,9 @@ public class PremiumPresenter extends Presenter<BaseView>{
         }
         user.checkout = checkout;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user));
-
-        Map<String, Object> hash = Utils.objectToHashMap(purchase);
-        hash.put(getString(R.string.key_user_id),mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version).toLowerCase(),""+ SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        Utils.onWriteLog(new Gson().toJson(hash),EnumStatus.CHECKOUT);
-        subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(hash)
+        final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.sku);
+        Utils.onWriteLog(new Gson().toJson(mCheckout),EnumStatus.CHECKOUT);
+        subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(mCheckout)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CHECKOUT))

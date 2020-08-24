@@ -190,8 +190,9 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
             final User mUser = User.getInstance().getUserInfo();
             if (mUser!=null){
                 request.code = code;
-                request.email = mUser.email;
+                request.user_id = mUser.email;
                 request._id =  mUser._id;
+                request.device_id = SuperSafeApplication.getInstance().getDeviceId();
                 presenter.onVerifyCode(request);
             }
         }
@@ -230,7 +231,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         if (mUser!=null){
             if (mUser.email!=null){
                 final VerifyCodeRequest request = new VerifyCodeRequest();
-                request.email = mUser.email;
+                request.user_id = mUser.email;
                 presenter.onRequestCode(request);
             }
             else{

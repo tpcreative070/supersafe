@@ -17,6 +17,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.gson.Gson;
+import com.snatik.storage.security.SecurityUtil;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -31,6 +33,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignInRequest;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
@@ -64,7 +67,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             else{
                 this.email = email;
                 VerifyCodeRequest request = new VerifyCodeRequest();
-                request.email = email;
+                request.new_user_id = this.email;
                 request.other_email = email;
                 request.user_id = presenter.mUser.email;
                 request._id = presenter.mUser._id;
@@ -154,9 +157,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
         Utils.Log(TAG, "onDriveClient");
         presenter.mUser.driveConnected = true;
         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
-        UserCloudRequest request = new UserCloudRequest();
-        request.cloud_id = presenter.mUser.email;
-        request.user_id = presenter.mUser.email;
+        UserCloudRequest request = new UserCloudRequest(presenter.mUser.email,presenter.mUser.email,SuperSafeApplication.getInstance().getDeviceId());
         presenter.onAddUserCloud(request);
     }
 
@@ -183,9 +184,10 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                     Utils.Log(TAG, "call input code");
                     VerifyCodeRequest request = new VerifyCodeRequest();
-                    request.email = presenter.mUser.email;
+                    request.user_id = presenter.mUser.email;
                     request.code = input.toString().trim();
                     request._id = presenter.mUser._id;
+                    request.device_id = SuperSafeApplication.getInstance().getDeviceId();
                     presenter.onVerifyCode(request);
                 }
             });
@@ -355,7 +357,9 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
             }
             case CHANGE_EMAIL:{
                 SignInRequest request = new SignInRequest();
-                request.email = email;
+                request.user_id = email;
+                request.password = SecurityUtil.key_password_default_encrypted;
+                request.device_id = SuperSafeApplication.getInstance().getDeviceId();
                 presenter.onSignIn(request);
                 break;
             }

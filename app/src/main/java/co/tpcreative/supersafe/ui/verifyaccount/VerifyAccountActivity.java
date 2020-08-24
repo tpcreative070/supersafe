@@ -39,6 +39,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.Categories;
@@ -271,20 +272,18 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     public void onChangedEmail(){
-        final String email = edtEmail.getText().toString().toLowerCase().trim();
-        tvEmail.setText(email);
-        String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + email +"</font>");
+        final String new_user_id = edtEmail.getText().toString().toLowerCase().trim();
+        tvEmail.setText(new_user_id);
+        String sourceString = getString(R.string.verify_title, "<font color='#000000'>" + new_user_id +"</font>");
         tvTitle.setText(Html.fromHtml(sourceString));
 
-        if (email.equals(presenter.mUser.email)){
+        if (new_user_id.equals(presenter.mUser.email)){
             return;
         }
         VerifyCodeRequest request = new VerifyCodeRequest();
-        request.email = email;
-        request.other_email = email;
+        request.new_user_id = new_user_id;
         request.user_id = presenter.mUser.email;
         request._id = presenter.mUser._id;
-
         presenter.onChangeEmail(request);
         Utils.hideSoftKeyboard(this);
         Utils.hideKeyboard(edtEmail);
@@ -296,7 +295,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
             SingletonManagerProcessing.getInstance().onStartProgressing(this,R.string.progressing);
             Utils.hideSoftKeyboard(this);
             VerifyCodeRequest request = new VerifyCodeRequest();
-            request.email = presenter.mUser.email;
+            request.user_id = presenter.mUser.email;
             presenter.onResendCode(request);
             Utils.Log(TAG,"onResend");
         }catch (Exception e){
@@ -316,8 +315,9 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     public void onVerifyCode(){
         VerifyCodeRequest request = new VerifyCodeRequest();
         request.code = edtCode.getText().toString().trim();
-        request.email = presenter.mUser.email;
+        request.user_id = presenter.mUser.email;
         request._id = presenter.mUser._id;
+        request.device_id = SuperSafeApplication.getInstance().getDeviceId();
         presenter.onVerifyCode(request);
         Utils.hideSoftKeyboard(this);
     }

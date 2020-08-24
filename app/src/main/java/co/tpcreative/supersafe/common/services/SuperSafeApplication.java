@@ -94,7 +94,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         });
         InstanceGenerator.getInstance(this);
         mInstance = this;
-        isLive = true;
+        isLive = false;
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
         /*Init own service api*/
@@ -535,6 +535,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public String getVersionRelease() {
         String versionRelease = Build.VERSION.RELEASE;
         return versionRelease;
+    }
+
+    public String getPackageId(){
+        return BuildConfig.APPLICATION_ID;
     }
 
     public  String getAppVersionRelease(){

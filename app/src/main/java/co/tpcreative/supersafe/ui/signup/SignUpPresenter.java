@@ -10,6 +10,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.SignUpRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -40,19 +41,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
         if (subscriptions == null) {
             return;
         }
-        Map<String, String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_email), request.email);
-        hash.put(getString(R.string.key_other_email),request.email);
-        hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
-        hash.put(getString(R.string.key_name), request.name);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type), getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version), "" + SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onSignUP(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_UP))
@@ -61,8 +50,9 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_UP);
                     } else {
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(onResponse.user));
-                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, onResponse.user);
+                        final DataResponse mData = onResponse.data;
+                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mData.user));
+                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, mData.user);
                         ServiceManager.getInstance().onInitConfigurationFile();
                     }
                     Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));

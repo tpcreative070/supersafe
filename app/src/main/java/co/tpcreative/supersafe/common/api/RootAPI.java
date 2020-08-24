@@ -1,8 +1,22 @@
 package co.tpcreative.supersafe.common.api;
 import java.util.Map;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
+import co.tpcreative.supersafe.common.request.CategoriesRequest;
+import co.tpcreative.supersafe.common.request.ChangeUserIdRequest;
+import co.tpcreative.supersafe.common.request.CheckoutRequest;
 import co.tpcreative.supersafe.common.request.DriveApiRequest;
+import co.tpcreative.supersafe.common.request.OutlookMailRequest;
+import co.tpcreative.supersafe.common.request.RequestCodeRequest;
+import co.tpcreative.supersafe.common.request.SignInRequest;
+import co.tpcreative.supersafe.common.request.SignUpRequest;
+import co.tpcreative.supersafe.common.request.SyncItemsRequest;
+import co.tpcreative.supersafe.common.request.TrackingRequest;
+import co.tpcreative.supersafe.common.request.UserCloudRequest;
+import co.tpcreative.supersafe.common.request.UserRequest;
+import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.response.DriveResponse;
+import co.tpcreative.supersafe.common.response.RootResponse;
 import co.tpcreative.supersafe.common.response.SignInResponse;
 import co.tpcreative.supersafe.common.response.SyncCategoriesResponse;
 import co.tpcreative.supersafe.common.response.SyncResponse;
@@ -35,24 +49,24 @@ public interface RootAPI{
     String ROOT_GOOGLE_DRIVE = "https://www.googleapis.com/";
     String REFRESH_TOKEN = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
     String SEND_MAIL = "/v1.0/me/sendMail";
-    String ADD_EMAIL_TOKEN = "/api/user/addEmailToken";
-    String SIGN_UP = "/api/user/signup";
-    String SIGN_IN = "/api/user/signin";
-    String UPDATE = "/api/user/update";
-    String UPDATE_TOKEN = "/api/user/updateToken";
+    String ADD_EMAIL_TOKEN = "/api/supersafe/outlook/addEmailToken";
+    String SIGN_UP = "/api/supersafe/user/signup";
+    String SIGN_IN = "/api/supersafe/user/signin";
+    String UPDATE = "/api/supersafe/user/changeUserId";
+    String REFRESH_USER_TOKEN = "/api/supersafe/user/updateToken";
 
-    String VERIFY_CODE = "api/user/verifycode";
-    String RESEND_CODE = "api/user/resendcode";
-    String CHECK_USER_CLOUD = "/api/usercloud/check";
-    String ADD_USER_CLOUD = "/api/usercloud/add/";
-    String CHECK_USER_ID = "/api/user/checkUser";
-    String USER_INFO = "/api/user/userInfo";
-    String GET_LIST_FILES_SYNC = "/api/items/listFilesSync";
-    String GET_LIST_CATEGORIES_SYNC = "/api/category/listCategoriesSync";
-    String CATEGORIES_SYNC = "/api/category/syncCategories";
-    String DELETE_CATEGORIES = "/api/category/onDelete";
-    String SYNC_DATA = "/api/items/syncData";
-    String DELETE_OWN_ITEMS = "/api/items/onDelete";
+    String VERIFY_CODE = "api/supersafe/user/verifyCode";
+    String RESEND_CODE = "api/supersafe/user/sendCode";
+    String CHECK_USER_CLOUD = "/api/supersafe/userCloud/check";
+    String ADD_USER_CLOUD = "/api/supersafe/userCloud/add";
+    String CHECK_USER_ID = "/api/supersafe/user/checkUser";
+    String USER_INFO = "/api/supersafe/user/userInfo";
+    String GET_LIST_CATEGORIES_SYNC = "/api/supersafe/category/listCategoriesSync";
+    String CATEGORIES_SYNC = "/api/supersafe/category/syncCategories";
+    String DELETE_CATEGORIES = "/api/supersafe/category/onDelete";
+    String GET_LIST_FILES_SYNC = "/api/supersafe/items/listFilesSync";
+    String SYNC_DATA = "/api/supersafe/items/syncData";
+    String DELETE_OWN_ITEMS = "/api/supersafe/items/deleteItem";
     String GET_DRIVE_ABOUT = "/drive/v3/about?fields=user,storageQuota,kind";
     String CREATE_FOLDER = "/drive/v3/files";
     String CHECK_IN_APP_FOLDER_EXITING = "/drive/v3/files";
@@ -61,90 +75,67 @@ public interface RootAPI{
     String DELETE_CLOUD_ITEM = "/drive/v3/files/{id}";
     String UPLOAD_FILE_TO_GOOGLE_DRIVE = "/upload/drive/v3/files?uploadType=multipart";
     String DOWNLOAD_FILE_FROM_GOOGLE_DRIVE = "/drive/v3/files/{id}?alt=media";
-    String CHECKOUT = "/api/checkout";
+    String CHECKOUT = "/api/supersafe/checkout/transaction";
 
-    String AUTHOR = "/api/track/syncDevices";
+    String TRACKING = "/api/supersafe/track/tracking";
     String CHECK_VERSION = "/api/track/version";
 
-
-
-    @FormUrlEncoded
-    @POST(AUTHOR)
-    Observable<BaseResponse> onAuthor(@FieldMap Map<String, String> request);
-
+    @POST(TRACKING)
+    Observable<RootResponse> onTracking(@Body TrackingRequest request);
 
     @POST(CHECK_VERSION)
     Observable<BaseResponse> onCheckVersion();
 
-
-    @FormUrlEncoded
     @POST(SIGN_UP)
-    Observable<SignInResponse> onSignUP(@FieldMap Map<String,String> request);
+    Observable<RootResponse> onSignUP(@Body SignUpRequest request);
 
-    @FormUrlEncoded
     @POST(SIGN_IN)
-    Observable<SignInResponse> onSignIn(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onSignIn(@Body SignInRequest request);
 
-    @FormUrlEncoded
     @POST(VERIFY_CODE)
-    Observable<BaseResponse> onVerifyCode(@FieldMap Map<String,String>request);
+    Observable<BaseResponse> onVerifyCode(@Body VerifyCodeRequest request);
 
-    @FormUrlEncoded
     @POST(RESEND_CODE)
-    Observable<VerifyCodeResponse> onResendCode(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onResendCode(@Body RequestCodeRequest request);
 
-    @FormUrlEncoded
     @POST(CHECK_USER_CLOUD)
-    Observable<UserCloudResponse> onCheckUserCloud(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onCheckUserCloud(@Body UserCloudRequest request);
 
-    @FormUrlEncoded
     @POST(ADD_USER_CLOUD)
-    Observable<UserCloudResponse> onAddUserCloud(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onAddUserCloud(@Body UserCloudRequest request);
 
-    @FormUrlEncoded
     @POST(UPDATE)
-    Observable<SignInResponse> onUpdateUser(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onUpdateUser(@Body ChangeUserIdRequest request);
 
-    @FormUrlEncoded
-    @POST(UPDATE_TOKEN)
-    Observable<SignInResponse> onUpdateToken(@FieldMap Map<String,String>request);
+    @POST(REFRESH_USER_TOKEN)
+    Observable<RootResponse> onUpdateToken(@Body UserRequest request);
 
-    @FormUrlEncoded
     @POST(CHECKOUT)
-    Observable<BaseResponse> onCheckout(@FieldMap Map<String,Object>request);
+    Observable<RootResponse> onCheckout(@Body CheckoutRequest request);
 
-    @FormUrlEncoded
     @POST(CHECK_USER_ID)
-    Observable<VerifyCodeResponse> onCheckUserId(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onCheckUserId(@Body UserRequest request);
 
-    @FormUrlEncoded
     @POST(USER_INFO)
-    Observable<BaseResponse> onUserInfo(@FieldMap Map<String,String>request);
+    Observable<RootResponse> onUserInfo(@Body UserRequest request);
 
-    @FormUrlEncoded
     @POST(GET_LIST_FILES_SYNC)
-    Observable<SyncResponse> onListFilesSync(@FieldMap Map<String,Object>request);
+    Observable<RootResponse> onListFilesSync(@Body SyncItemsRequest request);
 
-    @FormUrlEncoded
     @POST(SYNC_DATA)
-    Observable<SyncResponse> onSyncData(@FieldMap Map<String,Object>request);
+    Observable<RootResponse> onSyncData(@Body SyncItemsRequest request);
 
-    @FormUrlEncoded
     @POST(DELETE_OWN_ITEMS)
-    Observable<SyncResponse> onDeleteOwnItems(@FieldMap Map<String,Object>request);
+    Observable<RootResponse> onDeleteOwnItems(@Body SyncItemsRequest request);
 
-    @FormUrlEncoded
     @POST(CATEGORIES_SYNC)
-    Observable<SyncCategoriesResponse> onCategoriesSync(@FieldMap Map<String,Object>request);
+    Observable<RootResponse> onCategoriesSync(@Body CategoriesRequest request);
 
-    @FormUrlEncoded
     @POST(GET_LIST_CATEGORIES_SYNC)
-    Observable<SyncCategoriesResponse> onListCategoriesSync(@FieldMap Map<String,Object>request);
+    Observable<RootResponse> onListCategoriesSync(@Body CategoriesRequest request);
 
-    @FormUrlEncoded
     @POST(DELETE_CATEGORIES)
-    Observable<SyncCategoriesResponse> onDeleteCategories(@FieldMap Map<String,Object>request);
-
+    Observable<RootResponse> onDeleteCategories(@Body CategoriesRequest request);
 
     @Headers({"Accept: application/json"})
     @GET(GET_DRIVE_ABOUT)
@@ -158,15 +149,12 @@ public interface RootAPI{
     @POST()
     Observable<EmailToken> onRefreshEmailToken(@Url String url,@FieldMap Map<String,Object>request);
 
-    @FormUrlEncoded
     @POST(ADD_EMAIL_TOKEN)
-    Observable<BaseResponse> onAddEmailToken(@FieldMap Map<String,Object>request);
-
+    Observable<BaseResponse> onAddEmailToken(@Body OutlookMailRequest request);
 
     @Headers({"Accept: application/json"})
     @POST(CREATE_FOLDER)
     Observable<DriveAbout> onCrateFolder(@Header("Authorization") String token, @Body DriveApiRequest request);
-
 
     @Headers({"Accept: application/json"})
     @GET(CHECK_IN_APP_FOLDER_EXITING)

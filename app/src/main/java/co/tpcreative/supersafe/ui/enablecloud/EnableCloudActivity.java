@@ -27,6 +27,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
@@ -126,9 +127,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     @Override
     protected void onDriveClientReady() {
         Utils.Log(TAG,"Google drive ready");
-        UserCloudRequest request = new UserCloudRequest();
-        request.user_id = presenter.mUser.email;
-        request.cloud_id = presenter.mUser.cloud_id;
+        UserCloudRequest request = new UserCloudRequest(presenter.mUser.email,presenter.mUser.cloud_id, SuperSafeApplication.getInstance().getDeviceId());
         presenter.onAddUserCloud(request);
     }
 

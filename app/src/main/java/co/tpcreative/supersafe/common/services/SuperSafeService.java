@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import com.google.android.exoplayer2.extractor.mp4.Track;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
@@ -25,6 +27,13 @@ import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
+import co.tpcreative.supersafe.common.request.CategoriesRequest;
+import co.tpcreative.supersafe.common.request.OutlookMailRequest;
+import co.tpcreative.supersafe.common.request.SignInRequest;
+import co.tpcreative.supersafe.common.request.SyncItemsRequest;
+import co.tpcreative.supersafe.common.request.TrackingRequest;
+import co.tpcreative.supersafe.common.request.UserRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.download.DownloadService;
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody;
@@ -160,11 +169,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (mUser==null){
             return;
         }
-        String email = mUser.email;
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        subscriptions.add(SuperSafeApplication.serverAPI.onUserInfo(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onUserInfo(new UserRequest())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -210,14 +215,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (mUser==null){
             return;
         }
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),mUser.email);
-        hash.put(getString(R.string.key_other_email),mUser.other_email);
-        hash.put(getString(R.string.key_change_email),""+mUser.change);
-        hash.put(getString(R.string.key_active),""+mUser.active);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        Utils.onWriteLog(new Gson().toJson(hash),EnumStatus.REFRESH_EMAIL_TOKEN);
-        subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(hash)
+        final UserRequest mUserRequest = new UserRequest();
+        Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.REFRESH_EMAIL_TOKEN);
+        subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(mUserRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -225,10 +225,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                     }
                     else{
-                        if (onResponse.user!=null){
-                            if (onResponse.user.author!=null){
+                        final DataResponse mData = onResponse.data;
+                        if (mData.user!=null){
+                            if (mData.user.author!=null){
                                 final Authorization authorization = mUser.author;
-                                authorization.session_token = onResponse.user.author.session_token;
+                                authorization.session_token = mData.user.author.session_token;
                                 mUser.author = authorization;
                                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
@@ -271,17 +272,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.SIGN_IN)){
             return;
         }
-        Map<String, String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_email), request.email);
-        hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type), getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version).toLowerCase(), "" + SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
+        SignInRequest mRequest = new SignInRequest();
+        mRequest.user_id = request.email;
+        mRequest.password = SecurityUtil.key_password_default_encrypted;
+        mRequest.device_id = SuperSafeApplication.getInstance().getDeviceId();
+        subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(mRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -290,9 +285,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message, EnumStatus.SIGN_IN);
                     } else {
                         final User user = User.getInstance().getUserInfo();
-                        if (onResponse.user!=null){
+                        final DataResponse mData = onResponse.data;
+                        if (mData.user!=null){
                             final Authorization authorization = user.author;
-                            authorization.session_token = onResponse.user.author.session_token;
+                            authorization.session_token = mData.user.author.session_token;
                             user.author = authorization;
                         }
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
@@ -461,14 +457,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("no access_token", EnumStatus.CATEGORIES_SYNC);
             return;
         }
-        Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
-        hashMap.put(getString(R.string.key_user_id), user.email);
-        hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
-        hashMap.put(getString(R.string.key_categories_max), mainCategories.categories_max + "");
-        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(new CategoriesRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mainCategories))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -482,16 +473,17 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
                     } else {
                         if (onResponse != null) {
-                            if (onResponse.category != null) {
-                                if (mainCategories.categories_hex_name.equals(onResponse.category.categories_hex_name)) {
-                                    mainCategories.categories_id = onResponse.category.categories_id;
+                            final DataResponse mData = onResponse.data;
+                            if (mData.category != null) {
+                                if (mainCategories.categories_hex_name.equals(mData.category.categories_hex_name)) {
+                                    mainCategories.categories_id = mData.category.categories_id;
                                     mainCategories.isSyncOwnServer = true;
                                     mainCategories.isChange = false;
                                     mainCategories.isDelete = false;
                                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
-                                    view.onSuccessful(onResponse.message + " - " + onResponse.category.categories_id + " - ", EnumStatus.CATEGORIES_SYNC);
+                                    view.onSuccessful(onResponse.message + " - " + mData.category.categories_id + " - ", EnumStatus.CATEGORIES_SYNC);
                                 } else {
-                                    view.onSuccessful("Not found categories_hex_name - " + onResponse.category.categories_id,EnumStatus.CATEGORIES_SYNC);
+                                    view.onSuccessful("Not found categories_hex_name - " + mData.category.categories_id,EnumStatus.CATEGORIES_SYNC);
                                 }
                             }
                         }
@@ -539,13 +531,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("no access_token", EnumStatus.DELETE_CATEGORIES);
             return;
         }
-        Map<String, Object> hashMap = MainCategories.getInstance().objectToHashMap(mainCategories);
-        hashMap.put(getString(R.string.key_user_id), user.email);
-        hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
-        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        String access_token = user.access_token;
-        Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(new CategoriesRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mainCategories.categories_id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -609,13 +595,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("cloud id null", EnumStatus.LIST_CATEGORIES_SYNC);
             return;
         }
-        Map<String, Object> hashMap = new HashMap<>();
-        hashMap.put(getString(R.string.key_user_id), user.email);
-        hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
-        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        String access_token = user.access_token;
-        Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(new CategoriesRequest(user.email, user.cloud_id,SuperSafeApplication.getInstance().getDeviceId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -629,8 +609,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
                     } else {
                         try {
-                            if (onResponse.files != null) {
-                                for (MainCategories index : onResponse.files) {
+                            final DataResponse mData = onResponse.data;
+                            if (mData.categoriesList != null) {
+                                for (MainCategories index : mData.categoriesList) {
                                     MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                     if (main != null) {
                                         if (!main.isChange && !main.isDelete) {
@@ -716,20 +697,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             Utils.Log(TAG, " Updated => Warning categories id is null");
             return;
         }
-        final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
-        if (hashMap != null) {
-            hashMap.put(getString(R.string.key_user_id), user.email);
-            hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
-            hashMap.put(getString(R.string.key_kind), getString(R.string.key_drive_file));
-            DriveEvent contentTitle = new DriveEvent();
-            contentTitle.items_id = items.items_id;
-            String hex = DriveEvent.getInstance().convertToHex(new Gson().toJson(contentTitle));
-            hashMap.put(getString(R.string.key_name), hex);
-            hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        }
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -796,20 +766,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             return;
         }
         items.isSyncOwnServer = true;
-        final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
-        if (hashMap != null) {
-            hashMap.put(getString(R.string.key_user_id), user.email);
-            hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
-            hashMap.put(getString(R.string.key_kind), getString(R.string.key_drive_file));
-            DriveEvent contentTitle = new DriveEvent();
-            contentTitle.items_id = items.items_id;
-            String hex = DriveEvent.getInstance().convertToHex(new Gson().toJson(contentTitle));
-            hashMap.put(getString(R.string.key_name), hex);
-            hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        }
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),items))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -945,7 +904,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(new SyncItemsRequest(user.email,user.cloud_id,items.items_id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -1014,15 +973,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             hashMapGlobalCategories.clear();
             hashMapGlobal.clear();
         }
-        Map<String, Object> hashMap = new HashMap<>();
-        hashMap.put(getString(R.string.key_cloud_id), user.cloud_id);
-        hashMap.put(getString(R.string.key_user_id), user.email);
-        hashMap.put(getString(R.string.key_next_page), nextPage);
-        hashMap.put(getString(R.string.key_isSyncCloud), true);
-        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onListFilesSync(hashMap)
+        subscriptions.add(SuperSafeApplication.serverAPI.onListFilesSync(new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),true,nextPage))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -1035,8 +988,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
-                        final List<MainCategories> listCategories = onResponse.listCategories;
-                        final List<Items> driveResponse = onResponse.files;
+                        final DataResponse mData = onResponse.data;
+                        final List<MainCategories> listCategories = mData.categoriesList;
+                        final List<Items> driveResponse = mData.itemsList;
                         final HashMap<String,MainCategories> currentCategories = MainCategories.getInstance().getMainCurrentCategories();
                         boolean isNewCategories = false;
                         if (onResponse.nextPage == null) {
@@ -1573,7 +1527,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
         hash.put(getString(R.string.key_appVersionRelease),BuildConfig.VERSION_NAME);
         hash.put(getString(R.string.key_user_id),user_id);
-        subscriptions.add(SuperSafeApplication.serverAPI.onAuthor(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onTracking(new TrackingRequest(user_id,SuperSafeApplication.getInstance().getDeviceId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -1701,12 +1655,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
-        Map<String, Object> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id), mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_refresh_token), mUser.email_token.refresh_token);
-        hash.put(getString(R.string.key_access_token), mUser.email_token.access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
