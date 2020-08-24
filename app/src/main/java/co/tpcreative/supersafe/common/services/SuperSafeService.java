@@ -450,7 +450,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
 
     /*Network request*/
     public void onCategoriesSync(MainCategories mainCategories, ServiceManager.ServiceManagerShortListener view) {
-        Utils.Log(TAG, "onCategoriesSync");
+        Utils.Log(TAG, "onCategoriesSync " + new Gson().toJson(mainCategories));
         if (isCheckNull(view,EnumStatus.CATEGORIES_SYNC)){
             return;
         }
@@ -465,7 +465,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(new CategoriesRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mainCategories))
+        final CategoriesRequest mCategories = new CategoriesRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mainCategories);
+        Utils.Log(TAG, "onCategoriesSync " + new Gson().toJson(mCategories));
+        subscriptions.add(SuperSafeApplication.serverAPI.onCategoriesSync(mCategories)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -476,6 +478,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError 1");
+                        Utils.Log(TAG,"onCategoriesSync " + new Gson().toJson(onResponse));
                         view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
                     } else {
                         if (onResponse != null) {
