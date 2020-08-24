@@ -25,7 +25,7 @@ public class SecurityUtil {
     public static final String SHA1 = "PBKDF2WithHmacSHA1";
     public static final int iterationCount = 1000; // recommended by PKCS#5
     public static final int keyLength = 128;
-    public static final String url_developer = "http://192.168.1.2:8081";
+    public static final String url_developer = "http://192.168.1.30:8081";
     public static final String url_live = "http://tpcreative.me:8081";
     public static final String key_password_default = "tpcreative.co";
     public static final String key_password_default_encrypted = "qF6xTl5bcYOVtf4A9RND6g==";

@@ -3,8 +3,10 @@ import java.io.Serializable;
 import java.util.List;
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.model.Authorization;
+import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.Premium;
 import co.tpcreative.supersafe.model.User;
 
 public class DataResponse  implements Serializable  {
@@ -23,4 +25,9 @@ public class DataResponse  implements Serializable  {
     public RequestCodeResponse requestCode;
 
     public Authorization author;
+
+    public Premium premium;
+    public EmailToken email_token;
+
+    public String nextPage;
 }

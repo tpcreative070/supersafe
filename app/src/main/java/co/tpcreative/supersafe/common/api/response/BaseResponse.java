@@ -14,13 +14,9 @@ import co.tpcreative.supersafe.model.Version;
 public class BaseResponse implements Serializable {
     public String message;
     public boolean error;
-    public String nextPage;
-    public Premium premium;
-    public EmailToken email_token;
     public SyncData syncData;
     public Purchase purchase;
     public Version version;
-
     public String toFormResponse() {
         return new Gson().toJson(this);
     }

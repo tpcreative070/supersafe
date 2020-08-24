@@ -83,6 +83,7 @@ public class SyncItemsRequest implements Serializable {
     public SyncItemsRequest(String user_id,String cloud_id,String device_id,boolean isSyncCloud, String nextPage){
         this.user_id = user_id;
         this.cloud_id = cloud_id;
+        this.device_id = device_id;
         this.isSyncCloud = isSyncCloud;
         this.nextPage = nextPage;
     }

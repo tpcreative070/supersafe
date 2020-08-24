@@ -35,6 +35,8 @@ public class User extends BaseResponse implements Serializable{
     public boolean isUpdateView;
     public boolean isWaitingSendMail;
     public CheckoutItems checkout;
+    public Premium premium;
+    public EmailToken email_token;
     private static User instance ;
 
     public static User getInstance(){

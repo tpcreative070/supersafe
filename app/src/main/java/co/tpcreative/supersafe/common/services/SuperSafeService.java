@@ -177,9 +177,14 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message,EnumStatus.USER_INFO);
                     }
                     else{
-                        if (onResponse.premium!=null && onResponse.email_token!=null){
-                            mUser.premium = onResponse.premium;
-                            mUser.email_token = onResponse.email_token;
+                        final DataResponse mData = onResponse.data;
+                        if (mData ==null){
+                            view.onError(onResponse.message,EnumStatus.USER_INFO);
+                            return;
+                        }
+                        if (mData.premium!=null && mData.email_token!=null){
+                            mUser.premium = mData.premium;
+                            mUser.email_token = mData.email_token;
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                             view.onSuccessful("Successful",EnumStatus.USER_INFO);
                         }
@@ -190,7 +195,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -234,6 +239,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
+                                ServiceManager.getInstance().onSyncDataOwnServer("0");
                             }
                         }
                     }
@@ -243,11 +249,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            else if (code == 401){
+                            else if (code == 403){
                                 final User user = User.getInstance().getUserInfo();
                                 if (user!=null){
                                     onSignIn(user);
@@ -417,7 +423,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -498,7 +504,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -557,7 +563,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -658,7 +664,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -727,7 +733,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -792,7 +798,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -930,7 +936,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -979,6 +985,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
+                    Utils.Log(TAG,"onGetListSync "+ new Gson().toJson(onResponse));
                     if (view == null) {
                         Utils.Log(TAG, "View is null");
                         view.onError("View is null", EnumStatus.GET_LIST_FILE);
@@ -993,7 +1000,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         final List<Items> driveResponse = mData.itemsList;
                         final HashMap<String,MainCategories> currentCategories = MainCategories.getInstance().getMainCurrentCategories();
                         boolean isNewCategories = false;
-                        if (onResponse.nextPage == null) {
+                        if (mData.nextPage == null) {
                             try {
                                 //Utils.Log(TAG,"Special values "+new Gson().toJson(listCategories));
                                 for (MainCategories index : listCategories) {
@@ -1046,10 +1053,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 }
                                 Utils.Log(TAG, "Ready for sync");
                                 if (isNewCategories){
-                                    view.onSuccessful(onResponse.nextPage, EnumStatus.RELOAD);
+                                    view.onSuccessful(mData.nextPage, EnumStatus.RELOAD);
                                 }
                                 else{
-                                    view.onSuccessful(onResponse.nextPage, EnumStatus.SYNC_READY);
+                                    view.onSuccessful(mData.nextPage, EnumStatus.SYNC_READY);
                                 }
                             }
                         } else {
@@ -1111,7 +1118,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 e.printStackTrace();
                             } finally {
                                 Utils.Log(TAG, "Load more");
-                                view.onSuccessful(onResponse.nextPage, EnumStatus.LOAD_MORE);
+                                view.onSuccessful(mData.nextPage, EnumStatus.LOAD_MORE);
                             }
                         }
                     }
@@ -1125,7 +1132,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -1518,15 +1525,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (user!=null){
             user_id = user.email;
         }
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version),""+ SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease),BuildConfig.VERSION_NAME);
-        hash.put(getString(R.string.key_user_id),user_id);
         subscriptions.add(SuperSafeApplication.serverAPI.onTracking(new TrackingRequest(user_id,SuperSafeApplication.getInstance().getDeviceId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -1536,7 +1534,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -1667,7 +1665,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code = ((HttpException) throwable).response().code();
                         try {
-                            if (code == 403) {
+                            if (code == 401) {
                                 Utils.Log(TAG, "code " + code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }

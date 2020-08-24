@@ -101,11 +101,11 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            else if (code ==401){
+                            else if (code ==403){
                                 SignInRequest request = new SignInRequest();
                                 request.user_id = email;
                                 request.password = SecurityUtil.key_password_default_encrypted;
@@ -201,8 +201,13 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
-                            if (onResponse.premium!=null){
-                                mUser.premium = onResponse.premium;
+                            final DataResponse mData = onResponse.data;
+                            if (mData == null){
+                                view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
+                                return;
+                            }
+                            if (mData.premium!=null){
+                                mUser.premium = mData.premium;
                                 Utils.Log(TAG,"Saved.............");
                             }
                             SuperSafeApplication.getInstance().writeUserSecret(mUser);
@@ -217,7 +222,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -282,7 +287,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -337,7 +342,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -534,7 +539,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -584,7 +589,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }

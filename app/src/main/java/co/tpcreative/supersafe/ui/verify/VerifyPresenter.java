@@ -73,8 +73,13 @@ public class VerifyPresenter extends Presenter<BaseView>{
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
-                            if (onResponse.premium!=null){
-                                mUser.premium = onResponse.premium;
+                            final DataResponse mData = onResponse.data;
+                            if (mData == null){
+                                view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
+                                return;
+                            }
+                            if (mData.premium!=null){
+                                mUser.premium = mData.premium;
                             }
                             SuperSafeApplication.getInstance().writeUserSecret(mUser);
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
@@ -86,7 +91,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -138,7 +143,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }

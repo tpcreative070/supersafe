@@ -93,7 +93,7 @@ public interface RootAPI{
     Observable<RootResponse> onSignIn(@Body SignInRequest request);
 
     @POST(VERIFY_CODE)
-    Observable<BaseResponse> onVerifyCode(@Body VerifyCodeRequest request);
+    Observable<RootResponse> onVerifyCode(@Body VerifyCodeRequest request);
 
     @POST(RESEND_CODE)
     Observable<RootResponse> onResendCode(@Body RequestCodeRequest request);

@@ -80,7 +80,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -133,7 +133,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
