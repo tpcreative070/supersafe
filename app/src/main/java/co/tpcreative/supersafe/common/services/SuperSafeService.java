@@ -540,7 +540,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("no access_token", EnumStatus.DELETE_CATEGORIES);
             return;
         }
-        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(new CategoriesRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mainCategories.categories_id))
+        final CategoriesRequest mCategories = new CategoriesRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mainCategories.categories_id);
+        Utils.Log(TAG,"onDeleteCategoriesSync " + new Gson().toJson(mCategories));
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteCategories(mCategories)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -553,6 +555,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "onError 1");
                         view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES);
                     } else {
+                        Utils.Log(TAG,"onDeleteCategoriesSync response" + new Gson().toJson(onResponse));
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mainCategories);
                         view.onSuccessful(onResponse.message, EnumStatus.DELETE_CATEGORIES);
                     }
@@ -908,12 +911,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-        final Map<String, Object> hashMap = Items.getInstance().objectToHashMap(items);
-        hashMap.put(getString(R.string.key_user_id), user.email);
-        hashMap.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(new SyncItemsRequest(user.email,user.cloud_id,items.items_id))
+        final SyncItemsRequest mItem = new SyncItemsRequest(user.email,user.cloud_id,items.items_id);
+        Utils.Log(TAG, "onDeleteOwnSystem " + new Gson().toJson(mItem));
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOwnItems(mItem)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {

@@ -77,6 +77,7 @@ public class SyncItemsRequest implements Serializable {
         this.user_id = user_id;
         this.cloud_id = cloud_id;
         this.items_id = items_id;
+        this.device_id = SuperSafeApplication.getInstance().getDeviceId();
     }
 
     /*Get items list*/
