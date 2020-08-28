@@ -883,8 +883,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
                 else{
                     onDialogDownloadFile();
-                    ServiceManager.getInstance().setListDownloadFile(presenter.mList);
-                    ServiceManager.getInstance().getObservableDownload();
+                    ServiceManager.getInstance().onPreparingEnableDownloadData(presenter.mList);
+                    //ServiceManager.getInstance().getObservableDownload();
                 }
             }
             else{
@@ -947,7 +947,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                             e.printStackTrace();
                         }
                     }
-                    ServiceManager.getInstance().setmListImport(mListImportFiles);
+                    ServiceManager.getInstance().setListImport(mListImportFiles);
                     ServiceManager.getInstance().onPreparingImportData();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");

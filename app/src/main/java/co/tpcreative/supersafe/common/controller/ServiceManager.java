@@ -356,6 +356,23 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
+    public void onPreparingEnableDownloadData(List<ItemModel>globalList){
+        if (isDownloadData){
+            return;
+        }
+        List<ItemModel> mListLocal = SQLHelper.getItemListDownload();
+        Utils.Log(TAG,"onPreparingSyncData ==> Local original list "+ new Gson().toJson(mListLocal));
+        mMapDownload.clear();
+        mMapDownload = Utils.mergeListToHashMap(globalList);
+        final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownload);
+        if (itemModel!=null){
+            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
+            Utils.Log(TAG,"Preparing to download "+ new Gson().toJson(itemModel));
+            Utils.Log(TAG,"Preparing to download total  "+ globalList.size());
+            onDownLoadData(itemModel);
+        }
+    }
+
     /*Download file from Google drive*/
     private void onDownLoadData(final ItemModel itemModel){
         if (myService!=null){

@@ -235,7 +235,7 @@ public class ShareFilesActivity extends BaseActivityNone{
                         count +=1;
                         ImportFilesModel importFiles = new ImportFilesModel(mainCategories,mimeTypeFile,path,0,false);
                         mListImport.add(importFiles);
-                        ServiceManager.getInstance().setmListImport(mListImport);
+                        ServiceManager.getInstance().setListImport(mListImport);
                         ServiceManager.getInstance().onPreparingImportData();
                     } else {
                         onStopProgressing();
@@ -345,7 +345,7 @@ public class ShareFilesActivity extends BaseActivityNone{
                         });
                     }
                 }
-                ServiceManager.getInstance().setmListImport(mListImport);
+                ServiceManager.getInstance().setListImport(mListImport);
                 ServiceManager.getInstance().onPreparingImportData();
             }
             else{
