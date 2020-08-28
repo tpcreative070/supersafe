@@ -361,6 +361,7 @@ public class ServiceManager implements BaseServiceView {
         if (myService!=null){
             isDownloadData = true;
             mStart = 20;
+            Utils.onPushEventBus(EnumStatus.DOWNLOAD);
             myService.onDownloadFile(itemModel, new DownloadServiceListener() {
                 @Override
                 public void onProgressDownload(int percentage) {
@@ -388,6 +389,7 @@ public class ServiceManager implements BaseServiceView {
                             isDownloadData = false;
                             onPreparingUploadData();
                             Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                            Utils.onPushEventBus(EnumStatus.DONE);
                         }
                     }
                 }
@@ -417,6 +419,7 @@ public class ServiceManager implements BaseServiceView {
                                 isDownloadData = false;
                                 onPreparingUploadData();
                                 Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                                Utils.onPushEventBus(EnumStatus.DONE);
                             }
                         }
                     }
@@ -449,6 +452,7 @@ public class ServiceManager implements BaseServiceView {
     private void onUploadData(ItemModel itemModel){
         if (myService!=null){
             mStart = 20;
+            Utils.onPushEventBus(EnumStatus.UPLOAD);
             myService.onUploadFileInAppFolder(itemModel, new UploadServiceListener() {
                 @Override
                 public void onProgressUpdate(int percentage) {
@@ -520,6 +524,7 @@ public class ServiceManager implements BaseServiceView {
                                     Utils.Log(TAG,"Upload completely...............");
                                     Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                                     Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
+                                    Utils.onPushEventBus(EnumStatus.DONE);
                                     Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.UPLOAD_COMPLETED,"Total uploading "+mMapUpload.size());
                                 }
                             }
@@ -533,6 +538,7 @@ public class ServiceManager implements BaseServiceView {
                     if (status == EnumStatus.NO_SPACE_LEFT_CLOUD){
                         Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT_CLOUD);
                         onPreparingDeleteData();
+                        Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
                     }
                     if (status == EnumStatus.REQUEST_NEXT_UPLOAD){
                         Utils.Log(TAG,"Request next upload");
@@ -596,6 +602,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.onWriteLog(EnumStatus.UPDATE,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapUpdateItem.size());
                             isUpdateItemData = false;
                             Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
+                            Utils.onPushEventBus(EnumStatus.DONE);
                             onPreparingUpdateCategoryData();
                         }
                     }
