@@ -16,11 +16,13 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.views.SquaredImageView;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.GalleryAlbum;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
 
 
 public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
@@ -89,7 +91,7 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
         public void bind(GalleryAlbum mData, int position) {
             super.bind(mData, position);
             this.data = mData;
-            final ItemEntity items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.main.categories_local_id,false,data.main.isFakePin);
+            final ItemModel items = SQLHelper.getLatestId(data.main.categories_local_id,false,data.main.isFakePin);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {

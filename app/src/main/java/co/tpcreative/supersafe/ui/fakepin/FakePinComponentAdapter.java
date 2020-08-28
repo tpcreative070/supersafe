@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
 
 public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, BaseHolder> {
 
@@ -81,7 +82,7 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, Bas
         public void bind(MainCategoryEntity data, int position) {
             super.bind(data, position);
             this.data = data;
-            final ItemEntity items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false,true);
+            final ItemModel items = SQLHelper.getLatestId(data.categories_local_id,false,true);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {

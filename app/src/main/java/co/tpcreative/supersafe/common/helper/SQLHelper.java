@@ -590,5 +590,121 @@ public class SQLHelper {
         return null;
     }
 
+    public static final List<ItemModel> getListSyncData(boolean isSyncCloud, boolean isSaver, boolean isFakePin){
+        try{
+            final List<ItemEntityModel> mList =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(isSyncCloud,isSaver,isFakePin);
+            final List<ItemModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntityModel index : mList){
+                    mData.add(new ItemModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public static final List<ItemModel> getListItemId(boolean isSyncCloud, boolean isFakePin){
+        try{
+            final List<ItemEntityModel> mList =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(isSyncCloud,isFakePin);
+            final List<ItemModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntityModel index : mList){
+                    mData.add(new ItemModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public static final  ItemModel getLatestId(String categories_local_id, boolean isDeleteLocal, boolean isFakePin){
+        try{
+            final ItemEntityModel mResult =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(categories_local_id,isDeleteLocal,isFakePin);
+            if (mResult!=null){
+                return  new ItemModel(mResult);
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+    public static final List<ItemModel> getListSyncData(boolean isSyncCloud, boolean isFakePin){
+        try{
+            final List<ItemEntityModel> mList =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(isSyncCloud,isFakePin);
+            final List<ItemModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntityModel index : mList){
+                    mData.add(new ItemModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public static final  List<ItemModel> getListAllItems(boolean isDeleteLocal, boolean isFakePin){
+        try{
+            final List<ItemEntityModel> mList =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(isDeleteLocal,isFakePin);
+            final List<ItemModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntityModel index : mList){
+                    mData.add(new ItemModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public static final  List<ItemModel> getListAllItemsSaved(boolean isSaved, boolean isSyncCloud){
+        try{
+            final List<ItemEntityModel> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(isSaved,isSyncCloud);
+            final List<ItemModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntityModel index : mList){
+                    mData.add(new ItemModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+    public static final  List<ItemModel> getListAllItems(boolean isFakePin){
+        try{
+            final List<ItemEntityModel> mList =InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(isFakePin);
+            final List<ItemModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntityModel index : mList){
+                    mData.add(new ItemModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
 
 }

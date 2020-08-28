@@ -241,7 +241,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
-                                ServiceManager.getInstance().onSyncDataOwnServer("0");
+                                //ServiceManager.getInstance().onSyncDataOwnServer("0");
                             }
                         }
                     }
@@ -1070,50 +1070,50 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     public void onDeletePreviousSync(ServiceManager.DeleteServiceListener view) {
-        Utils.Log(TAG, "onDeletePreviousSync");
-        try {
-            final List<ItemEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true, false);
-            for (ItemEntity index : list) {
-                String value = hashMapGlobal.get(index.items_id);
-                if (value == null) {
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id);
-                }
-            }
-        } catch (Exception e) {
-            e.getMessage();
-        } finally {
-            Utils.Log(TAG,"Delete everytime..............");
-            hashMapGlobal.clear();
-            SingletonPrivateFragment.getInstance().onUpdateView();
-            EventBus.getDefault().post(EnumStatus.RELOAD);
-            view.onDone();
-            /*Note here*/
-        }
+//        Utils.Log(TAG, "onDeletePreviousSync");
+//        try {
+//            final List<ItemEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true, false);
+//            for (ItemEntity index : list) {
+//                String value = hashMapGlobal.get(index.items_id);
+//                if (value == null) {
+//                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
+//                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id);
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.getMessage();
+//        } finally {
+//            Utils.Log(TAG,"Delete everytime..............");
+//            hashMapGlobal.clear();
+//            SingletonPrivateFragment.getInstance().onUpdateView();
+//            EventBus.getDefault().post(EnumStatus.RELOAD);
+//            view.onDone();
+//            /*Note here*/
+//        }
     }
 
     public void onDeletePreviousCategoriesSync(ServiceManager.DeleteServiceListener view) {
-        Utils.Log(TAG, "onDeletePreviousCategoriesSync");
-        try {
-            final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
-            for (MainCategoryEntity index : list) {
-                String value = hashMapGlobalCategories.get(index.categories_id);
-                if (value == null) {
-                    final List<ItemEntity> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
-                    if (data == null || data.size() == 0) {
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.getMessage();
-        } finally {
-            view.onDone();
-            hashMapGlobalCategories.clear();
-            SingletonPrivateFragment.getInstance().onUpdateView();
-            EventBus.getDefault().post(EnumStatus.RELOAD);
-            /*Note here*/
-        }
+//        Utils.Log(TAG, "onDeletePreviousCategoriesSync");
+//        try {
+//            final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
+//            for (MainCategoryEntity index : list) {
+//                String value = hashMapGlobalCategories.get(index.categories_id);
+//                if (value == null) {
+//                    final List<ItemEntity> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
+//                    if (data == null || data.size() == 0) {
+//                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.getMessage();
+//        } finally {
+//            view.onDone();
+//            hashMapGlobalCategories.clear();
+//            SingletonPrivateFragment.getInstance().onUpdateView();
+//            EventBus.getDefault().post(EnumStatus.RELOAD);
+//            /*Note here*/
+//        }
     }
 
     public void onSaveItem(final ItemEntity mItem) {

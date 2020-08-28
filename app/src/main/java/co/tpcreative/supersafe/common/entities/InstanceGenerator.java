@@ -6,7 +6,6 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -103,7 +102,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     /*Items action*/
 
-    public synchronized void onInsert(ItemEntity cTalkManager){
+    public void onInsert(ItemEntity cTalkManager){
         try {
             if (cTalkManager==null){
                 return;
@@ -115,7 +114,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
     }
 
-    public synchronized void onUpdate(ItemEntity cTalkManager){
+    public void onUpdate(ItemEntity cTalkManager){
         try {
             if (cTalkManager==null){
                 Utils.Log(TAG,"Null???? ");
@@ -211,9 +210,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<ItemEntity> getListAllItems(boolean isFakePin){
+    public final  List<ItemEntityModel> getListAllItems(boolean isFakePin){
         try{
-            return instance.itemsDao().loadAll(isFakePin);
+            final List<ItemEntity> mList = instance.itemsDao().loadAll(isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -221,9 +227,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<ItemEntity> getListAllItemsSaved(boolean isSaved, boolean isSyncCloud){
+    public final  List<ItemEntityModel> getListAllItemsSaved(boolean isSaved, boolean isSyncCloud){
         try{
-            return instance.itemsDao().loadAllSaved(isSaved,isSyncCloud);
+            final List<ItemEntity> mList = instance.itemsDao().loadAllSaved(isSaved,isSyncCloud);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -242,9 +255,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<ItemEntity> getListAllItems(boolean isDeleteLocal, boolean isFakePin){
+    public final  List<ItemEntityModel> getListAllItems(boolean isDeleteLocal, boolean isFakePin){
         try{
-            return instance.itemsDao().loadAll(isDeleteLocal,isFakePin);
+            final List<ItemEntity> mList =  instance.itemsDao().loadAll(isDeleteLocal,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -326,9 +346,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<ItemEntity> getListSyncData(boolean isSyncCloud, boolean isFakePin){
+    public final List<ItemEntityModel> getListSyncData(boolean isSyncCloud, boolean isFakePin){
         try{
-            return instance.itemsDao().loadSyncData(isSyncCloud,isFakePin);
+            final List<ItemEntity> mList =  instance.itemsDao().loadSyncData(isSyncCloud,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -347,9 +374,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<ItemEntity> getListSyncData(boolean isSyncCloud, boolean isSaver, boolean isFakePin){
+    public final List<ItemEntityModel> getListSyncData(boolean isSyncCloud, boolean isSaver, boolean isFakePin){
         try{
-            return instance.itemsDao().loadSyncData(isSyncCloud,isSaver,isFakePin);
+            final List<ItemEntity> mList =  instance.itemsDao().loadSyncData(isSyncCloud,isSaver,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -382,9 +416,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized ItemEntity getLatestId(String categories_local_id, boolean isDeleteLocal, boolean isFakePin){
+    public final  ItemEntityModel getLatestId(String categories_local_id, boolean isDeleteLocal, boolean isFakePin){
         try{
-            return instance.itemsDao().getLatestId(categories_local_id,isDeleteLocal,isFakePin);
+            final ItemEntity mResult =  instance.itemsDao().getLatestId(categories_local_id,isDeleteLocal,isFakePin);
+            if (mResult!=null){
+                return  new ItemEntityModel(mResult);
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -426,9 +463,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized List<ItemEntity> getListItemId(boolean isSyncCloud, boolean isFakePin){
+    public final List<ItemEntityModel> getListItemId(boolean isSyncCloud, boolean isFakePin){
         try{
-            return instance.itemsDao().loadListItemId(isSyncCloud,isFakePin);
+            final List<ItemEntity> mList =  instance.itemsDao().loadListItemId(isSyncCloud,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
