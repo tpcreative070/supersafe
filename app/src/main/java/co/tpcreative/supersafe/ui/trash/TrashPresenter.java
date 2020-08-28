@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
+
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -11,14 +13,13 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class TrashPresenter extends Presenter<BaseView>{
 
     private static final String TAG = TrashPresenter.class.getSimpleName();
-    protected List<Items> mList;
+    protected List<ItemEntity> mList;
     protected Storage storage;
     protected int videos = 0;
     protected int photos = 0;
@@ -35,7 +36,7 @@ public class TrashPresenter extends Presenter<BaseView>{
         BaseView view = view();
         mList.clear();
         try {
-            final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal(),false);
+            final List<ItemEntity> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal(),false);
             if (data!=null){
                 mList = data;
                 onCalculate();
@@ -53,7 +54,7 @@ public class TrashPresenter extends Presenter<BaseView>{
         videos = 0;
         audios = 0;
         others = 0;
-        for (Items index : mList){
+        for (ItemEntity index : mList){
             final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
             switch (enumTypeFile){
                 case IMAGE:{
@@ -98,10 +99,10 @@ public class TrashPresenter extends Presenter<BaseView>{
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).items_id);
             }
             else{
-               final Items items =  mList.get(i);
+               final ItemEntity items =  mList.get(i);
                items.isDeleteLocal = false;
                 if (mList.get(i).isChecked){
-                    final MainCategories mainCategories  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(items.categories_local_id);
+                    final MainCategoryEntity mainCategories  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(items.categories_local_id);
                     if (mainCategories!=null){
                         mainCategories.isDelete = false;
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);

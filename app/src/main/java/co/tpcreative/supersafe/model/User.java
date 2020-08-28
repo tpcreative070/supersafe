@@ -92,4 +92,17 @@ public class User extends BaseResponse implements Serializable{
         return true;
     }
 
+    public boolean isAllowRequestDriveApis(){
+        final User mUser = getUserInfo();
+        if (mUser!=null){
+            if (mUser.driveConnected){
+                if (mUser.access_token !=null && !access_token.equals("")){
+                    if (mUser.cloud_id!=null && !mUser.cloud_id.equals("")){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

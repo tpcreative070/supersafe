@@ -21,16 +21,16 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.ThemeApp;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 
-public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
+public class PrivateAdapter extends BaseAdapter<MainCategoryEntity, BaseHolder> {
 
     private Context context;
     private Storage storage;
@@ -65,12 +65,12 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         return new ItemHolder(inflater.inflate(R.layout.private_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<MainCategories> {
+    public class ItemHolder extends BaseHolder<MainCategoryEntity> {
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
-        private MainCategories data;
+        private MainCategoryEntity data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -80,12 +80,12 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
         int mPosition;
 
         @Override
-        public void bind(MainCategories data, int position) {
+        public void bind(MainCategoryEntity data, int position) {
             super.bind(data, position);
             this.data = data;
             if (data.pin.equals("")) {
-                final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(data.categories_local_id,data.isFakePin);
-                final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(data.items_id);
+                final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(data.categories_local_id,data.isFakePin);
+                final ItemEntity items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(data.items_id);
                 if (items != null && mList!=null && mList.size()>0) {
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     switch (formatTypeFile) {
@@ -119,7 +119,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                                     imgAlbum.setImageResource(0);
                                     int myColor = Color.parseColor(data.image);
                                     imgAlbum.setBackgroundColor(myColor);
-                                    imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
+                                    imgIcon.setImageDrawable(MainCategoryEntity.getInstance().getDrawable(context, data.icon));
                                     imgIcon.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
@@ -130,9 +130,9 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                     }
                 } else {
                     imgAlbum.setImageResource(0);
-                    final MainCategories mainCategories = MainCategories.getInstance().getCategoriesPosition(data.mainCategories_Local_Id);
+                    final MainCategoryEntity mainCategories = MainCategoryEntity.getInstance().getCategoriesPosition(data.mainCategories_Local_Id);
                     if (mainCategories!=null){
-                        imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(SuperSafeApplication.getInstance(), mainCategories.icon));
+                        imgIcon.setImageDrawable(MainCategoryEntity.getInstance().getDrawable(SuperSafeApplication.getInstance(), mainCategories.icon));
                         imgIcon.setVisibility(View.VISIBLE);
                         try {
                             int myColor = Color.parseColor(mainCategories.image);
@@ -142,7 +142,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategories, BaseHolder> {
                         }
                     }else{
                         imgAlbum.setImageResource(0);
-                        imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, data.icon));
+                        imgIcon.setImageDrawable(MainCategoryEntity.getInstance().getDrawable(context, data.icon));
                         imgIcon.setVisibility(View.VISIBLE);
                         try {
                             int myColor = Color.parseColor(data.image);

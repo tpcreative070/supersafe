@@ -1,8 +1,12 @@
 package co.tpcreative.supersafe.model;
+
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+
 public class ResponseRXJava {
     public boolean isWorking;
-    public Items items;
+    public ItemEntity items;
     public String originalPath;
-    public MainCategories categories;
+    public MainCategoryEntity categories;
     public int position;
 }

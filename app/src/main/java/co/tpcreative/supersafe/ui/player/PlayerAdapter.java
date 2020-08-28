@@ -12,12 +12,12 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class PlayerAdapter extends BaseAdapter<Items, BaseHolder> {
+public class PlayerAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
     private Context mContext;
     private Storage storage;
     private PlayerAdapter.ItemSelectedListener ls;
@@ -46,18 +46,18 @@ public class PlayerAdapter extends BaseAdapter<Items, BaseHolder> {
     public interface ItemSelectedListener {
         void onClickGalleryItem(int position);
     }
-    public class ItemHolder extends BaseHolder<Items> {
+    public class ItemHolder extends BaseHolder<ItemEntity> {
         @BindView(R.id.tvTitle)
         TextView tvTitle;
         @BindView(R.id.imgPlaying)
         ImageView imgPlaying;
         private int mPosition;
-        private Items data;
+        private ItemEntity data;
         public ItemHolder(View itemView) {
             super(itemView);
         }
         @Override
-        public void bind(Items mData, int position) {
+        public void bind(ItemEntity mData, int position) {
             super.bind(mData, position);
             this.data = mData;
             if (data.isChecked){

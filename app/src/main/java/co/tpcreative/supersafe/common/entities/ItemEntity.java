@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.model;
+package co.tpcreative.supersafe.common.entities;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -10,8 +10,15 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumDelete;
+import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.EnumStatusProgress;
+import co.tpcreative.supersafe.model.ItemEntityModel;
+
 @Entity(tableName = "items")
-public class Items implements Serializable {
+public class ItemEntity implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
@@ -62,20 +69,21 @@ public class Items implements Serializable {
     public Date date;
     @Ignore
     public String name ;
-    private static Items instance;
+    private static ItemEntity instance;
     @Ignore
-    private static final String TAG = Items.class.getSimpleName();
+    private static final String TAG = ItemEntity.class.getSimpleName();
 
 
     @Ignore
-    public static Items getInstance(){
+    public static ItemEntity getInstance(){
         if (instance==null){
-            instance = new Items();
+            instance = new ItemEntity();
         }
         return instance;
     }
 
-    public Items(Items items){
+    public ItemEntity(ItemEntity items){
+        this.id = items.id;
         this.originalName = items.originalName;
         this.thumbnailName = items.thumbnailName;
         this.items_id = items.items_id;
@@ -109,7 +117,43 @@ public class Items implements Serializable {
         this.isUpdate = items.isUpdate;
     }
 
-    public Items(boolean isSyncCloud,boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction,boolean isFakePin,boolean isSaver,boolean isExport,boolean isWaitingForExporting,int custom_items,boolean isUpdate){
+    public ItemEntity(ItemEntityModel items){
+        this.id = items.id;
+        this.originalName = items.originalName;
+        this.thumbnailName = items.thumbnailName;
+        this.items_id = items.items_id;
+        this.fileType = items.fileType;
+        this.formatType = items.formatType;
+        this.title = items.title;
+        this.isSyncCloud = items.isSyncCloud;
+        this.isSyncOwnServer = items.isSyncOwnServer;
+        this.thumbnailSync = items.thumbnailSync;
+        this.originalSync = items.originalSync;
+        this.degrees = items.degrees;
+        this.global_original_id = items.global_original_id;
+        this.global_thumbnail_id = items.global_thumbnail_id;
+        this.categories_id = items.categories_id;
+        this.categories_local_id = items.categories_local_id;
+        this.originalPath = items.originalPath;
+        this.thumbnailPath = items.thumbnailPath;
+        this.mimeType = items.mimeType;
+        this.fileExtension = items.fileExtension;
+        this.statusAction = items.statusAction;
+        this.size = items.size;
+        this.statusProgress = items.statusProgress;
+        this.isDeleteLocal = items.isDeleteLocal ;
+        this.isDeleteGlobal = items.isDeleteGlobal;
+        this.deleteAction = items.deleteAction;
+        this.isFakePin = items.isFakePin;
+        this.isSaver = items.isSaver;
+        this.isExport = items.isExport;
+        this.isWaitingForExporting = items.isWaitingForExporting;
+        this.custom_items = items.custom_items;
+        this.isUpdate = items.isUpdate;
+    }
+
+
+    public ItemEntity(boolean isSyncCloud, boolean isSyncOwnServer, boolean originalSync, boolean thumbnailSync, int degrees, int fileType, int formatType, String title, String originalName, String thumbnailName, String items_id, String originalPath, String thumbnailPath, String global_original_id, String global_thumbnail_id, String categories_id, String categories_local_id, String mimeType, String fileExtension, EnumStatus enumStatus, String size, int statusProgress, boolean isDeleteLocal, boolean isDeleteGlobal, int deleteAction, boolean isFakePin, boolean isSaver, boolean isExport, boolean isWaitingForExporting, int custom_items, boolean isUpdate){
         this.originalName = originalName;
         this.thumbnailName = thumbnailName;
         this.items_id = items_id;
@@ -143,44 +187,44 @@ public class Items implements Serializable {
         this.isUpdate = isUpdate;
     }
 
-    public Items(){
+    public ItemEntity(){
         this.thumbnailName = "";
         this.isSyncCloud = false;
         this.isSyncOwnServer = false;
         this.isOriginalGlobalId = false;
         this.isUpdate = false;
     }
-    public Items(String fileExtension,
-                 String originalPath,
-                 String thumbnailPath,
-                 String categories_id,
-                 String categories_local_id,
-                 String mimeType,
-                 String uuId,
-                 EnumFormatType formatType,
-                 int degrees,
-                 boolean thumbnailSync,
-                 boolean originalSync,
-                 String global_original_id,
-                 String global_thumbnail_id,
-                 EnumFileType fileType,
-                 String originalName,
-                 String name,
-                 String thumbnailName,
-                 String size,
-                 EnumStatusProgress progress,
-                 boolean isDeleteLocal,
-                 boolean isDeleteGlobal,
-                 EnumDelete deleteAction,
-                 boolean isFakePin,
-                 boolean isSaver,
-                 boolean isExport,
-                 boolean isWaitingForExporting,
-                 int custom_items,
-                 boolean isSyncCloud,
-                 boolean isSyncOwnServer,
-                 boolean isUpdate,
-                 EnumStatus statusAction
+    public ItemEntity(String fileExtension,
+                      String originalPath,
+                      String thumbnailPath,
+                      String categories_id,
+                      String categories_local_id,
+                      String mimeType,
+                      String uuId,
+                      EnumFormatType formatType,
+                      int degrees,
+                      boolean thumbnailSync,
+                      boolean originalSync,
+                      String global_original_id,
+                      String global_thumbnail_id,
+                      EnumFileType fileType,
+                      String originalName,
+                      String name,
+                      String thumbnailName,
+                      String size,
+                      EnumStatusProgress progress,
+                      boolean isDeleteLocal,
+                      boolean isDeleteGlobal,
+                      EnumDelete deleteAction,
+                      boolean isFakePin,
+                      boolean isSaver,
+                      boolean isExport,
+                      boolean isWaitingForExporting,
+                      int custom_items,
+                      boolean isSyncCloud,
+                      boolean isSyncOwnServer,
+                      boolean isUpdate,
+                      EnumStatus statusAction
                  ){
         this.fileExtension = fileExtension;
         this.originalPath = originalPath;
@@ -256,19 +300,19 @@ public class Items implements Serializable {
     }
 
     @Ignore
-    public Map<String,Object> objectToHashMap(final Items items){
+    public Map<String,Object> objectToHashMap(final ItemEntity items){
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
         return myMap;
     }
 
     @Ignore
-    public Items getObject(String value){
+    public ItemEntity getObject(String value){
         try {
             if (value==null){
                 return null;
             }
-            final Items items = new Gson().fromJson(value,Items.class);
+            final ItemEntity items = new Gson().fromJson(value, ItemEntity.class);
             Utils.Log(TAG,new Gson().toJson(items));
             return items;
         }

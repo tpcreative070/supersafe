@@ -1,14 +1,16 @@
 package co.tpcreative.supersafe.model;
 
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+
 public class GalleryAlbum {
     public final int videos;
     public final int photos;
     public final int audios;
     public final int others;
-    public final MainCategories main;
+    public final MainCategoryEntity main;
 
 
-    public GalleryAlbum(MainCategories main,int photos,int videos, int audios,int others){
+    public GalleryAlbum(MainCategoryEntity main, int photos, int videos, int audios, int others){
         this.main = main;
         this.photos = photos;
         this.videos = videos;

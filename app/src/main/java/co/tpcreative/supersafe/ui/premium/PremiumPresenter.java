@@ -4,10 +4,11 @@ import org.solovyev.android.checkout.Purchase;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.CheckoutRequest;
@@ -16,9 +17,8 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -28,7 +28,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
 
     private static final String TAG = PremiumPresenter.class.getSimpleName();
     protected User mUser;
-    protected List<Items> mList ;
+    protected List<ItemEntity> mList ;
     protected long spaceAvailable=0;
     protected boolean isSaver;
 
@@ -42,7 +42,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         if (mList.size()>0){
             spaceAvailable = 0;
             for (int i = 0;i<mList.size();i++){
-                final Items items = mList.get(i);
+                final ItemEntity items = mList.get(i);
                 items.isChecked = true;
                 spaceAvailable +=Long.parseLong(items.size);
             }
@@ -59,7 +59,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
             }
         }
         for (int i =0;i<mList.size();i++){
-            final Items index = mList.get(i);
+            final ItemEntity index = mList.get(i);
             index.isSaver = false;
             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(index);
         }

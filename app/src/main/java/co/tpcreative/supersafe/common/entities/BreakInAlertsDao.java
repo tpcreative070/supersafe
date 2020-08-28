@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.model.room;
+package co.tpcreative.supersafe.common.entities;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -8,7 +8,6 @@ import androidx.room.Update;
 import java.util.List;
 
 import co.tpcreative.supersafe.model.BreakInAlerts;
-import co.tpcreative.supersafe.model.Items;
 
 @Dao
 public interface BreakInAlertsDao {

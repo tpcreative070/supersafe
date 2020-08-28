@@ -34,13 +34,13 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNone;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.PathUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.ImportFiles;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ImportFilesModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
@@ -59,7 +59,7 @@ public class ShareFilesActivity extends BaseActivityNone{
     @BindView(R.id.rlProgress)
     RelativeLayout rlProgress;
     private Storage storage;
-    private final List<ImportFiles> mListImport = new ArrayList<>();
+    private final List<ImportFilesModel> mListImport = new ArrayList<>();
     private int count=0;
 
     @Override
@@ -155,8 +155,9 @@ public class ShareFilesActivity extends BaseActivityNone{
     public void handleSendSingleItem(Intent intent) {
         try {
             Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            final List<MainCategories> list = MainCategories.getInstance().getList();
-            final MainCategories mainCategories  = list.get(0);
+            String type = intent.getType();
+            final List<MainCategoryEntity> list = MainCategoryEntity.getInstance().getList();
+            final MainCategoryEntity mainCategories  = list.get(0);
             if (imageUri != null && mainCategories!=null) {
                 mListFile.clear();
                 onStartProgressing();
@@ -200,12 +201,37 @@ public class ShareFilesActivity extends BaseActivityNone{
                         Utils.Log(TAG,"Path file :"+path);
                         MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                         if (mimeTypeFile == null) {
-                            mimeTypeFile = new MimeTypeFile("." + fileExtension, EnumFormatType.FILES, mimeType);
+                            MimeTypeFile mMimeTypeSupport = Utils.mimeTypeSupport().get(mimeType);
+                            if (mMimeTypeSupport!=null){
+                                switch (mMimeTypeSupport.formatType){
+                                    case IMAGE:
+                                        mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.IMAGE, mimeType);
+                                        mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                        break;
+                                    case VIDEO:
+                                        mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.VIDEO, mimeType);
+                                        mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                        break;
+                                    case AUDIO:
+                                        mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.AUDIO, mimeType);
+                                        mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                        break;
+                                    default:
+                                        mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.FILES, mimeType);
+                                        mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                        break;
+                                }
+                            }else{
+                                mimeTypeFile = new MimeTypeFile("." + fileExtension, EnumFormatType.FILES, mimeType);
+                                mimeTypeFile.name = name;
+                                Utils.Log(TAG,"type file " + mimeType);
+                            }
+                        }
+                        if (mimeTypeFile.name==null || mimeTypeFile.name.equals("")){
                             mimeTypeFile.name = name;
                         }
-                        mimeTypeFile.name = name;
                         count +=1;
-                        ImportFiles importFiles = new ImportFiles(mainCategories,mimeTypeFile,path,0,false);
+                        ImportFilesModel importFiles = new ImportFilesModel(mainCategories,mimeTypeFile,path,0,false);
                         mListImport.add(importFiles);
                         ServiceManager.getInstance().setmListImport(mListImport);
                         ServiceManager.getInstance().onImportingFiles();
@@ -227,8 +253,8 @@ public class ShareFilesActivity extends BaseActivityNone{
     public void handleSendMultipleFiles(Intent intent, EnumFormatType enumFormatType) {
         try {
             ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            final List<MainCategories> list = MainCategories.getInstance().getList();
-            final MainCategories mainCategories  = list.get(0);
+            final List<MainCategoryEntity> list = MainCategoryEntity.getInstance().getList();
+            final MainCategoryEntity mainCategories  = list.get(0);
             if (imageUris != null) {
                 mListFile.clear();
                 onStartProgressing();
@@ -258,13 +284,37 @@ public class ShareFilesActivity extends BaseActivityNone{
 
                             MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(fileExtension);
                             if (mimeTypeFile==null){
-                                mimeTypeFile = new MimeTypeFile("."+fileExtension,EnumFormatType.FILES,mimeType);
+                                MimeTypeFile mMimeTypeSupport = Utils.mimeTypeSupport().get(mimeType);
+                                if (mMimeTypeSupport!=null){
+                                    switch (mMimeTypeSupport.formatType){
+                                        case IMAGE:
+                                            mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.IMAGE, mimeType);
+                                            mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                            break;
+                                        case VIDEO:
+                                            mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.VIDEO, mimeType);
+                                            mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                            break;
+                                        case AUDIO:
+                                            mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.AUDIO, mimeType);
+                                            mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                            break;
+                                        default:
+                                            mimeTypeFile = new MimeTypeFile(mMimeTypeSupport.extension, EnumFormatType.FILES, mimeType);
+                                            mimeTypeFile.name = Utils.getCurrentDateTime(Utils.FORMAT_TIME_FILE_NAME)+mMimeTypeSupport.extension;
+                                            break;
+                                    }
+                                }else{
+                                    mimeTypeFile = new MimeTypeFile("." + fileExtension, EnumFormatType.FILES, mimeType);
+                                    mimeTypeFile.name = name;
+                                    Utils.Log(TAG,"type file " + mimeType);
+                                }
+                            }
+                            if (mimeTypeFile.name==null || mimeTypeFile.name.equals("")){
                                 mimeTypeFile.name = name;
                             }
-
-                            mimeTypeFile.name = name;
                             count +=1;
-                            ImportFiles importFiles = new ImportFiles(mainCategories,mimeTypeFile,path,i,false);
+                            ImportFilesModel importFiles = new ImportFilesModel(mainCategories,mimeTypeFile,path,i,false);
                             mListImport.add(importFiles);
                             Utils.Log(TAG,new Gson().toJson(mimeTypeFile));
                         }

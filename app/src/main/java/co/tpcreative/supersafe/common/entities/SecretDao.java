@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.model.room;
+package co.tpcreative.supersafe.common.entities;
 
 
 //import co.tpcreative.supersafe.model.Secret;

@@ -27,13 +27,13 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.util.Configuration;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.common.views.VerticalSpaceItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
 
 
 public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.ItemSelectedListener ,MoveGalleryView{
@@ -48,7 +48,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     private MoveGalleryPresenter presenter;
     public interface OnGalleryAttachedListener {
         Configuration getConfiguration();
-        List<Items> getListItems();
+        List<ItemEntity> getListItems();
         void onMoveAlbumSuccessful();
     }
 
@@ -198,13 +198,13 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
                         String value = input.toString();
                         String base64Code = Utils.getHexCode(value);
-                        MainCategories item = MainCategories.getInstance().getTrashItem();
+                        MainCategoryEntity item = MainCategoryEntity.getInstance().getTrashItem();
                         String result = item.categories_hex_name;
                         if (base64Code.equals(result)){
                             Toast.makeText(getActivity(),"This name already existing",Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,mConfig.isFakePIN);
+                            boolean response = MainCategoryEntity.getInstance().onAddCategories(base64Code,value,mConfig.isFakePIN);
                             if (response){
                                 Toast.makeText(getActivity(),"Created album successful",Toast.LENGTH_SHORT).show();
                                 presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
@@ -279,17 +279,17 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     }
 
     @Override
-    public void onSuccessful(String message, EnumStatus status, Items object) {
+    public void onSuccessful(String message, EnumStatus status, ItemEntity object) {
 
     }
 
     @Override
-    public void onSuccessful(String message, EnumStatus status, List<Items> list) {
+    public void onSuccessful(String message, EnumStatus status, List<ItemEntity> list) {
 
     }
 
     @Override
-    public List<Items> getListItems() {
+    public List<ItemEntity> getListItems() {
         if (mListener!=null){
             return mListener.getListItems();
         }

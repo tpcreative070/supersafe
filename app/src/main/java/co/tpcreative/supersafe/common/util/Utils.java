@@ -46,6 +46,8 @@ import com.snatik.storage.security.SecurityUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.solovyev.android.checkout.Purchase;
+
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -68,10 +70,15 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ImportFilesModel;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
+import co.tpcreative.supersafe.model.SyncItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
@@ -85,6 +92,8 @@ import io.reactivex.disposables.Disposable;
  */
 public class Utils {
     // utility function
+    public  static String  FORMAT_TIME = "yyyy-MM-dd HH:mm:ss";
+    public static String FORMAT_TIME_FILE_NAME = "yyyyMMdd_HHmmss";
     final public static int COUNT_RATE = 9;
     final public static long START_TIMER = 5000;
     private  static  Storage storage = new Storage(SuperSafeApplication.getInstance());
@@ -239,6 +248,13 @@ public class Utils {
     public static String getCurrentDateTime() {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+        String result = dateFormat.format(date);
+        return result;
+    }
+
+    public static String getCurrentDateTime(String formatName) {
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(formatName, Locale.getDefault());
         String result = dateFormat.format(date);
         return result;
     }
@@ -462,11 +478,51 @@ public class Utils {
         hashMap.put("aac",new MimeTypeFile(".aac", EnumFormatType.AUDIO,"audio/aac"));
         hashMap.put("mp3",new MimeTypeFile(".mp3", EnumFormatType.AUDIO,"audio/mp3"));
         hashMap.put("wav",new MimeTypeFile(".wav", EnumFormatType.AUDIO,"audio/wav"));
-        hashMap.put("m4a",new MimeTypeFile(".m4a", EnumFormatType.AUDIO,"audio/m4a"));
         hashMap.put("jpg",new MimeTypeFile(".jpg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("jpeg",new MimeTypeFile(".jpeg", EnumFormatType.IMAGE,"image/jpeg"));
         hashMap.put("png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
         hashMap.put("gif",new MimeTypeFile(".gif", EnumFormatType.IMAGE,"image/gif"));
+        return hashMap;
+    }
+
+    public static HashMap<String,MimeTypeFile> mimeTypeSupport(){
+        HashMap<String,MimeTypeFile> hashMap = new HashMap<>();
+        hashMap.put("video/mp4",new MimeTypeFile(".mp4", EnumFormatType.VIDEO,"video/mp4"));
+        hashMap.put("video/3gp",new MimeTypeFile(".3gp", EnumFormatType.VIDEO,"video/3gp"));
+        hashMap.put("video/wmv",new MimeTypeFile(".wmv", EnumFormatType.VIDEO,"video/wmv"));
+        hashMap.put("video/mkv",new MimeTypeFile(".mkv", EnumFormatType.VIDEO,"video/mkv"));
+        hashMap.put("audio/m4a",new MimeTypeFile(".m4a", EnumFormatType.AUDIO,"audio/m4a"));
+        hashMap.put("audio/aac",new MimeTypeFile(".aac", EnumFormatType.AUDIO,"audio/aac"));
+        hashMap.put("audio/mp3",new MimeTypeFile(".mp3", EnumFormatType.AUDIO,"audio/mp3"));
+        hashMap.put("audio/mpeg",new MimeTypeFile(".mp3", EnumFormatType.AUDIO,"audio/mpeg"));
+        hashMap.put("audio/wav",new MimeTypeFile(".wav", EnumFormatType.AUDIO,"audio/wav"));
+        hashMap.put("image/jpeg",new MimeTypeFile(".jpg", EnumFormatType.IMAGE,"image/jpeg"));
+        hashMap.put("image/png",new MimeTypeFile(".png", EnumFormatType.IMAGE,"image/png"));
+        hashMap.put("image/gif",new MimeTypeFile(".gif", EnumFormatType.IMAGE,"image/gif"));
+
+        hashMap.put("application/msword",new MimeTypeFile(".doc", EnumFormatType.FILES,"application/msword"));
+        hashMap.put("application/vnd.openxmlformats-officedocument.wordprocessingml.document",new MimeTypeFile(".docx", EnumFormatType.FILES,"application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
+        hashMap.put("application/vnd.openxmlformats-officedocument.wordprocessingml.template",new MimeTypeFile(".dotx", EnumFormatType.FILES,"application/vnd.openxmlformats-officedocument.wordprocessingml.template"));
+        hashMap.put("application/vnd.ms-word.document.macroEnabled.12",new MimeTypeFile(".dotm", EnumFormatType.FILES,"application/vnd.ms-word.document.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-excel",new MimeTypeFile(".xls", EnumFormatType.FILES,"application/vnd.ms-excel"));
+        hashMap.put("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",new MimeTypeFile(".xlsx", EnumFormatType.FILES,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        hashMap.put("application/vnd.openxmlformats-officedocument.spreadsheetml.template",new MimeTypeFile(".xltx", EnumFormatType.FILES,"application/vnd.openxmlformats-officedocument.spreadsheetml.template"));
+        hashMap.put("application/vnd.ms-excel.sheet.macroEnabled.12",new MimeTypeFile(".xlsm", EnumFormatType.FILES,"application/vnd.ms-excel.sheet.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-excel.template.macroEnabled.12",new MimeTypeFile(".xltm", EnumFormatType.FILES,"application/vnd.ms-excel.template.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-excel.addin.macroEnabled.12",new MimeTypeFile(".xlam", EnumFormatType.FILES,"application/vnd.ms-excel.addin.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-excel.sheet.binary.macroEnabled.12",new MimeTypeFile(".xlsb", EnumFormatType.FILES,"application/vnd.ms-excel.sheet.binary.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-powerpoint",new MimeTypeFile(".ppt", EnumFormatType.FILES,"application/vnd.ms-powerpoint"));
+        hashMap.put("application/vnd.openxmlformats-officedocument.presentationml.presentation",new MimeTypeFile(".pptx", EnumFormatType.FILES,"application/vnd.openxmlformats-officedocument.presentationml.presentation"));
+        hashMap.put("application/vnd.openxmlformats-officedocument.presentationml.template",new MimeTypeFile(".potx", EnumFormatType.FILES,"application/vnd.openxmlformats-officedocument.presentationml.template"));
+        hashMap.put("application/vnd.ms-powerpoint.addin.macroEnabled.12",new MimeTypeFile(".ppsx", EnumFormatType.FILES,"application/vnd.ms-powerpoint.addin.macroEnabled.12"));
+
+
+        hashMap.put("application/vnd.ms-powerpoint.presentation.macroEnabled.12t",new MimeTypeFile(".pptm", EnumFormatType.FILES,"application/vnd.ms-powerpoint.presentation.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-powerpoint.template.macroEnabled.12",new MimeTypeFile(".potm", EnumFormatType.FILES,"application/vnd.ms-powerpoint.template.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-powerpoint.slideshow.macroEnabled.12",new MimeTypeFile(".ppsm", EnumFormatType.FILES,"application/vnd.ms-powerpoint.slideshow.macroEnabled.12"));
+        hashMap.put("application/vnd.ms-access",new MimeTypeFile(".mdb", EnumFormatType.FILES,"application/vnd.ms-access"));
+
+
         return hashMap;
     }
 
@@ -498,6 +554,48 @@ public class Utils {
         }
         else{
             Utils.mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + Utils.getCurrentDateTimeFormat() + " ----Status---- :" + status.name() + " ----Content--- :" + message, true);
+        }
+    }
+
+    private static void appendLog(String text) {
+        File logFile = new File(SuperSafeApplication.getInstance().getSupersafeLog());
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            }
+            catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        try {
+            //BufferedWriter for performance, true to set append to file flag
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text+"\n");
+            buf.newLine();
+            buf.close();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void onWriteLog(EnumStatus action,EnumStatus status,String value){
+        if (!BuildConfig.DEBUG){
+            return;
+        }
+        onCheck();
+        appendLog("Version "+BuildConfig.VERSION_NAME+" ; created date time :"+Utils.getCurrentDateTime(Utils.FORMAT_TIME)+" ; Action :"+action.name() +" ; Status: "+status.name() + " ; message log: " +value);
+    }
+
+    public static void onCheck(){
+        File file = new File(SuperSafeApplication.getInstance().getInstance().getSupersafeLog());
+        if (file.exists()){
+            long mSize = (long) +SuperSafeApplication.getInstance().getInstance().getStorage().getSize(file, SizeUnit.MB);
+            if (mSize>2){
+                SuperSafeApplication.getInstance().getStorage().deleteFile(file.getAbsolutePath());
+            }
         }
     }
 
@@ -725,6 +823,27 @@ public class Utils {
         return null;
     }
 
+    public static String getUserId(){
+        try{
+            String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user),null);
+            if (value!=null){
+                final User mUser = new Gson().fromJson(value,User.class);
+                if (mUser!=null){
+                    return mUser.email;
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*Checking allow sync data*/
+    public static boolean isAllowSyncData(){
+        return User.getInstance().isAllowRequestDriveApis();
+    }
+
 
     public static boolean isCheckSyncSuggestion(){
         String name = SuperSafeApplication.getInstance().getString(R.string.key_count_sync);
@@ -755,5 +874,224 @@ public class Utils {
         }
         return SecurityUtil.DEFAULT_TOKEN;
     }
+
+    public static void onPushEventBus(EnumStatus status){
+        EventBus.getDefault().post(status);
+    }
+
+    /*Improved sync data*/
+    /*Filter only item already synced*/
+    public static List<ItemModel> filterOnlyGlobalOriginalId(List<ItemModel> list1) {
+        List<ItemModel> mList = new ArrayList<>();
+        for (ItemModel index : list1) {
+            if (index.isSyncCloud){
+                mList.add(index);
+            }
+        }
+        return mList;
+    }
+
+    /*Remove duplicated item for download id*/
+    public static List<ItemModel> clearListFromDuplicate(List<ItemModel> globalList,List<ItemModel> localList) {
+        Map<String,ItemModel> modelMap = new HashMap<>();
+        List<ItemModel>mList = new ArrayList<>();
+        if (globalList!=null){
+            if (globalList.size()==0){
+                return mList;
+            }
+        }
+
+        /*Merged local data*/
+        final List<ItemModel> mLocalList = Utils.getMergedOriginalThumbnailList(localList);
+
+        for (ItemModel index : mLocalList){
+            modelMap.put(index.global_id,index);
+        }
+
+        /*Merged global data*/
+        final List<ItemModel> mGlobalList = Utils.getMergedOriginalThumbnailList(globalList);
+
+        for (ItemModel index : mGlobalList){
+            final ItemModel item = modelMap.get(index.global_id);
+            if (item!=null){
+                if (!index.global_id.equals(item.global_id)){
+                    mList.add(index);
+                    Utils.Log(TAG,"onPreparingSyncData ==> Index download"+ new Gson().toJson(index));
+                }
+            }else{
+                mList.add(index);
+                Utils.Log(TAG,"onPreparingSyncData ==> Index download"+ new Gson().toJson(index));
+            }
+        }
+        return mList;
+    }
+
+    /*Merge list to hash map for upload, download and delete*/
+    public static Map<String,ItemModel> mergeListToHashMap(List<ItemModel>mList){
+        Map<String,ItemModel> map = new HashMap<>();
+        for (ItemModel index : mList){
+            map.put(index.unique_id,index);
+        }
+        return map;
+    }
+
+    /*Get the first of item data*/
+    public static ItemModel getArrayOfIndexHashMap(Map<String,ItemModel> mMapDelete){
+        if (mMapDelete!=null){
+            if (mMapDelete.size()>0){
+                final ItemModel model = mMapDelete.get(mMapDelete.keySet().toArray()[0]);
+                Utils.Log(TAG,"Object need to be deleting " + new Gson().toJson(model));
+                return  model;
+            }
+        }
+        return null;
+    }
+
+    /*Get the first of category data*/
+    public static MainCategoryModel getArrayOfIndexCategoryHashMap(Map<String, MainCategoryModel> mMapDelete){
+        if (mMapDelete!=null){
+            if (mMapDelete.size()>0){
+                final MainCategoryModel model = mMapDelete.get(mMapDelete.keySet().toArray()[0]);
+                Utils.Log(TAG,"Object need to be deleting " + new Gson().toJson(model));
+                return  model;
+            }
+        }
+        return null;
+    }
+
+    /*Delete hash map after delete Google drive or Server system*/
+    public static boolean deletedIndexOfCategoryHashMap(MainCategoryModel itemModel, Map<String,MainCategoryModel>map){
+        try {
+            if (map!=null){
+                if (map.size()>0){
+                    map.remove(itemModel.unique_id);
+                    return  true;
+                }
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,"Could not delete hash map==============================>");
+        }
+        return  false;
+    }
+
+    /*Merge list to hash map for upload, download and delete*/
+    public static Map<String,MainCategoryModel> mergeListToCategoryHashMap(List<MainCategoryModel>mList){
+        Map<String,MainCategoryModel> map = new HashMap<>();
+        for (MainCategoryModel index : mList){
+            map.put(index.unique_id,index);
+        }
+        return map;
+    }
+
+    /*Merge list original and thumbnail as list*/
+    public static List<ItemModel> getMergedOriginalThumbnailList(List<ItemModel> mDataList){
+        List<ItemModel> mList = new ArrayList<>();
+        for (ItemModel index : mDataList){
+           if (!index.originalSync){
+               mList.add(new ItemModel(index,true));
+           }
+           if (!index.thumbnailSync){
+               mList.add(new ItemModel(index,false));
+           }
+        }
+        return mList;
+    }
+
+
+    /*Delete hash map after delete Google drive and Server system*/
+    public static boolean deletedIndexOfHashMap(ItemModel itemModel, Map<String,ItemModel>map){
+        try {
+            if (map!=null){
+                if (map.size()>0){
+                    map.remove(itemModel.unique_id);
+                    return  true;
+                }
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,"Could not delete hash map==============================>");
+        }
+        return  false;
+    }
+
+    /*------------------------Import area-------------------*/
+
+    /*Add list to hash map for import*/
+    public static Map<String, ImportFilesModel> mergeListToHashMapImport(List<ImportFilesModel>mList){
+        Map<String,ImportFilesModel> map = new HashMap<>();
+        for (ImportFilesModel index : mList){
+            map.put(index.unique_id,index);
+        }
+        return map;
+    }
+
+    /*Get the first of data for import*/
+    public static ImportFilesModel getArrayOfIndexHashMapImport(Map<String,ImportFilesModel> mMapDelete){
+        if (mMapDelete!=null){
+            if (mMapDelete.size()>0){
+                final ImportFilesModel model = mMapDelete.get(mMapDelete.keySet().toArray()[0]);
+                Utils.Log(TAG,"Object need to be deleting " + new Gson().toJson(model));
+                return  model;
+            }
+        }
+        return null;
+    }
+
+    /*Delete hash map after delete Google drive and Server system for import*/
+    public static boolean deletedIndexOfHashMapImport(ImportFilesModel itemModel, Map<String,ImportFilesModel>map){
+        try {
+            if (map!=null){
+                if (map.size()>0){
+                    map.remove(itemModel.unique_id);
+                    return  true;
+                }
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,"Could not delete hash map==============================>");
+        }
+        return  false;
+    }
+
+    /*Check saver space*/
+    public static boolean getSaverSpace(){
+        final boolean isSaver = PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false);
+        return isSaver;
+    }
+
+    /*Delete folder*/
+    public static void onDeleteItemFolder(String item_id){
+        String path = SuperSafeApplication.getInstance().getSupersafePrivate()+item_id;
+        Utils.Log(TAG,"Delete folder "+path);
+        SuperSafeApplication.getInstance().getStorage().deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+item_id);
+    }
+
+    /*Create folder*/
+    public static String createDestinationDownloadItem(String items_id){
+        String path = SuperSafeApplication.getInstance().getSupersafePrivate();
+        String pathFolder = path + items_id + "/";
+        return pathFolder;
+    }
+
+    public static String getOriginalPath(String currentTime,String items_id){
+        String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
+        String pathContent = rootPath + items_id + "/";
+        Utils.createDirectory(pathContent);
+        String originalPath = pathContent + currentTime;
+        return originalPath;
+    }
+
+    /*Create folder*/
+    public static boolean createDirectory(String path) {
+        File directory = new File(path);
+        if (directory.exists()) {
+            Log.w(TAG, "Directory '" + path + "' already exists");
+            return false;
+        }
+        return directory.mkdirs();
+    }
+
+
 
 }

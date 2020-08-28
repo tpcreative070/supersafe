@@ -6,7 +6,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 
-import com.google.android.exoplayer2.extractor.mp4.Track;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
@@ -17,13 +16,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import co.tpcreative.supersafe.BuildConfig;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.PresenterService;
@@ -47,10 +49,10 @@ import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -449,7 +451,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     /*Network request*/
-    public void onCategoriesSync(MainCategories mainCategories, ServiceManager.ServiceManagerShortListener view) {
+    public void onCategoriesSync(MainCategoryEntity mainCategories, ServiceManager.ServiceManagerShortListener view) {
         Utils.Log(TAG, "onCategoriesSync " + new Gson().toJson(mainCategories));
         if (isCheckNull(view,EnumStatus.CATEGORIES_SYNC)){
             return;
@@ -526,7 +528,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 }));
     }
 
-    public void onDeleteCategoriesSync(MainCategories mainCategories, ServiceManager.ServiceManagerShortListener view) {
+    public void onDeleteCategoriesSync(MainCategoryModel mainCategories, ServiceManager.BaseListener view) {
         Utils.Log(TAG, "onDeleteCategoriesSync");
         if (isCheckNull(view,EnumStatus.DELETE_CATEGORIES)){
             return;
@@ -556,7 +558,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES);
                     } else {
                         Utils.Log(TAG,"onDeleteCategoriesSync response" + new Gson().toJson(onResponse));
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mainCategories);
                         view.onSuccessful(onResponse.message, EnumStatus.DELETE_CATEGORIES);
                     }
                 }, throwable -> {
@@ -623,15 +624,15 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         try {
                             final DataResponse mData = onResponse.data;
                             if (mData.categoriesList != null) {
-                                for (MainCategories index : mData.categoriesList) {
-                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
+                                for (MainCategoryEntity index : mData.categoriesList) {
+                                    MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
                                     if (main != null) {
                                         if (!main.isChange && !main.isDelete) {
                                             main.isSyncOwnServer = true;
                                             InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
                                         }
                                     } else {
-                                        MainCategories mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
+                                        MainCategoryEntity mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
                                         if (mMain != null) {
                                             if (!mMain.isChange && !mMain.isDelete) {
                                                 mMain.isSyncOwnServer = true;
@@ -689,8 +690,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 }));
     }
 
-    public void onUpdateItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
-        final Items items = mItem;
+    public void onUpdateItems(final ItemModel mItem, ServiceManager.BaseListener view) {
         Utils.Log(TAG, "onUpdateItems");
         if (isCheckNull(view,EnumStatus.UPDATE)){
             return;
@@ -704,14 +704,14 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-        if (items.categories_id == null || items.categories_id.equals("null")){
+        if (mItem.categories_id == null || mItem.categories_id.equals("null")){
             view.onError("Categories id is null", EnumStatus.UPDATE);
             Utils.Log(TAG, " Updated => Warning categories id is null");
             return;
         }
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),items))
+        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),mItem))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -722,12 +722,13 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
                         mItem.isUpdate = true;
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
+                        view.onSuccessful(EnumStatus.UPDATED_ITEM_SUCCESSFULLY.name(),EnumStatus.UPDATED_ITEM_SUCCESSFULLY);
+                        SQLHelper.updatedItem(mItem);
                         view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.UPDATE);
                     } else {
                         mItem.isUpdate = false;
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mItem);
-                        view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.UPDATE);
+                        SQLHelper.updatedItem(mItem);
+                        view.onSuccessful(EnumStatus.UPDATED_ITEM_SUCCESSFULLY.name(),EnumStatus.UPDATED_ITEM_SUCCESSFULLY);
                     }
                     Utils.Log(TAG,"Adding item Response "+ new Gson().toJson(onResponse));
                 }, throwable -> {
@@ -758,8 +759,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     /*Date for Categories*/
-    public void onAddItems(final Items mItem, ServiceManager.ServiceManagerShortListener view) {
-        final Items items = mItem;
+    public void onAddItems(final ItemModel items, ServiceManager.ServiceManagerInsertItem view) {
         Utils.Log(TAG, "onAddItems");
         if (isCheckNull(view,EnumStatus.ADD_ITEMS)){
             return;
@@ -771,10 +771,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         if (!user.driveConnected) {
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
-            return;
-        }
-        if (items.categories_id == null || items.categories_id.equals("null")){
-            view.onError("Categories id is null", EnumStatus.ADD_ITEMS);
             return;
         }
         items.isSyncOwnServer = true;
@@ -790,7 +786,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
-                        view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.ADD_ITEMS);
+                        view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     } else {
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     }
@@ -823,7 +819,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     /*Get List Categories*/
-    public void onDeleteCloudItems(final Items items, final boolean isOriginalGlobalId, final ServiceManager.ServiceManagerShortListener view) {
+    public void onDeleteCloudItems(final ItemModel items, final ServiceManager.BaseListener view) {
         Utils.Log(TAG, "onDeleteCloudItems");
         if (isCheckNull(view, EnumStatus.DELETE_SYNC_CLOUD_DATA)){
             return;
@@ -840,28 +836,24 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
-        String id = "";
-        if (isOriginalGlobalId) {
-            id = items.global_original_id;
-        } else {
-            id = items.global_thumbnail_id;
-        }
-        subscriptions.add(SuperSafeApplication.serverDriveApi.onDeleteCloudItem(access_token, id)
+        subscriptions.add(SuperSafeApplication.serverDriveApi.onDeleteCloudItem(access_token, items.global_id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (onResponse.code() == 204) {
                         final EnumDelete delete = EnumDelete.values()[items.deleteAction];
                         if (delete == EnumDelete.DELETE_DONE) {
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
-                            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + items.items_id);
+//                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+//                            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + items.items_id);
+                              view.onSuccessful("Deleted successfully",EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY);
                         }
                         view.onSuccessful("Deleted Successful : code " + onResponse.code() + " - ", EnumStatus.DELETE_SYNC_CLOUD_DATA);
                     } else if (onResponse.code() == 404) {
                         final EnumDelete delete = EnumDelete.values()[items.deleteAction];
                         if (delete == EnumDelete.DELETE_DONE) {
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
-                            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + items.items_id);
+//                           InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+//                            storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + items.items_id);
+                            view.onSuccessful("Deleted successfully",EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY);
                         }
                         final String value = onResponse.errorBody().string();
                         final DriveAbout driveAbout = new Gson().fromJson(value, DriveAbout.class);
@@ -881,23 +873,23 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             final DriveAbout driveAbout = new Gson().fromJson(value, DriveAbout.class);
                             if (driveAbout != null) {
                                 if (driveAbout.error != null) {
-                                    view.onError(new Gson().toJson(driveAbout.error), EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                                    view.onError(new Gson().toJson(driveAbout.error), EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY);
                                 }
                             } else {
-                                view.onError("Error null 1 ", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                                view.onError("Error null 1 ", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
-                            view.onError("Exception " + e.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                            view.onError("Exception " + e.getMessage(), EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY);
                         }
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error 0:" + throwable.getMessage(), EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                        view.onError("Error 0:" + throwable.getMessage(), EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY);
                     }
                 }));
     }
 
-    public void onDeleteOwnSystem(final Items items, final ServiceManager.ServiceManagerShortListener view) {
+    public void onDeleteOwnSystem(final ItemModel items, final ServiceManager.BaseListener view) {
         Utils.Log(TAG, "onDeleteOwnSystem");
         if (isCheckNull(view,EnumStatus.DELETE_SYNC_OWN_DATA)){
             return;
@@ -925,12 +917,12 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         return;
                     }
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
+                        view.onError(onResponse.message, EnumStatus.DELETED_ITEM_SUCCESSFULLY);
                     } else {
-                        view.onSuccessful(onResponse.message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                        items.isDeleteGlobal = true;
-                        items.deleteAction = EnumDelete.DELETE_DONE.ordinal();
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                        view.onSuccessful(onResponse.message, EnumStatus.DELETED_ITEM_SUCCESSFULLY);
+//                        items.isDeleteGlobal = true;
+//                        items.deleteAction = EnumDelete.DELETE_DONE.ordinal();
+//                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                     }
                 }, throwable -> {
                     if (view == null) {
@@ -962,7 +954,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 }));
     }
 
-    public void onGetListSync(String nextPage, ServiceManager.ServiceManagerShortListener view) {
+    public void onGetListSync(String nextPage, ServiceManager.BaseListener<ItemModel> view) {
         Utils.Log(TAG, "onGetListSync");
         if (isCheckNull(view,EnumStatus.GET_LIST_FILE)){
             return;
@@ -1001,130 +993,51 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
                         final DataResponse mData = onResponse.data;
-                        final List<MainCategories> listCategories = mData.categoriesList;
-                        final List<Items> driveResponse = mData.itemsList;
-                        final HashMap<String,MainCategories> currentCategories = MainCategories.getInstance().getMainCurrentCategories();
-                        boolean isNewCategories = false;
+                        final List<MainCategoryEntity> listCategories = mData.categoriesList;
+                        final List<ItemModel> mListItemResponse = mData.itemsList;
                         if (mData.nextPage == null) {
-                            try {
-                                //Utils.Log(TAG,"Special values "+new Gson().toJson(listCategories));
-                                for (MainCategories index : listCategories) {
-                                    hashMapGlobalCategories.put(index.categories_id, index.categories_id);
-                                    MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
-                                    if (main != null) {
-                                        if (!main.isChange && !main.isDelete) {
-                                            main.isSyncOwnServer = true;
-                                            main.categories_name = index.categories_name;
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
-                                        }
-                                        view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
-                                    } else {
-                                        MainCategories mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
-                                        if (mMain != null) {
-                                            if (!mMain.isDelete && !mMain.isChange) {
-                                                mMain.isSyncOwnServer = true;
-                                                mMain.isChange = false;
-                                                mMain.isDelete = false;
-                                                mMain.categories_id = index.categories_id;
-                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mMain);
-
-                                            }
-                                        } else {
-                                            mMain = index;
-                                            mMain.categories_local_id = Utils.getUUId();
+                            for (MainCategoryEntity index : listCategories) {
+                                hashMapGlobalCategories.put(index.categories_id, index.categories_id);
+                                MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
+                                if (main != null) {
+                                    if (!main.isChange && !main.isDelete) {
+                                        main.isSyncOwnServer = true;
+                                        main.categories_name = index.categories_name;
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                    }
+                                    view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
+                                } else {
+                                    MainCategoryEntity mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
+                                    if (mMain != null) {
+                                        if (!mMain.isDelete && !mMain.isChange) {
                                             mMain.isSyncOwnServer = true;
                                             mMain.isChange = false;
                                             mMain.isDelete = false;
-                                            final int count  = InstanceGenerator.getInstance(this).getLatestItem();
-                                            mMain.categories_max = count;
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
-                                            Utils.Log(TAG,"Adding new main categories.......................................2");
-                                            isNewCategories = true;
+                                            mMain.categories_id = index.categories_id;
+                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mMain);
                                         }
-                                        view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
+                                    } else {
+                                        mMain = index;
+                                        mMain.categories_local_id = Utils.getUUId();
+                                        mMain.isSyncOwnServer = true;
+                                        mMain.isChange = false;
+                                        mMain.isDelete = false;
+                                        final int count  = InstanceGenerator.getInstance(this).getLatestItem();
+                                        mMain.categories_max = count;
+                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
+                                        Utils.Log(TAG,"Adding new main categories.......................................2");
                                     }
+                                    view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
                                 }
-                            }
-                            catch (Exception e){
-                                view.onError("Error "+e.getMessage(), EnumStatus.GET_LIST_FILE);
-                                e.printStackTrace();
-                            }
-                            finally {
-                                final User mUser = User.getInstance().getUserInfo();
-                                if (mUser!=null){
-                                    mUser.syncData = onResponse.syncData;
-                                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-                                    Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.GET_LIST_FILE);
-                                }
-                                Utils.Log(TAG, "Ready for sync");
-                                if (isNewCategories){
-                                    view.onSuccessful(mData.nextPage, EnumStatus.RELOAD);
-                                }
-                                else{
-                                    view.onSuccessful(mData.nextPage, EnumStatus.SYNC_READY);
-                                }
+                                view.onSuccessful(mData.nextPage, EnumStatus.SYNC_READY);
                             }
                         } else {
-                            try {
-                                view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
-                                for (Items index : driveResponse) {
-                                    hashMapGlobal.put(index.items_id, index.items_id);
-                                    Items itemsResponse = new Items(index);
-                                        DriveEvent driveTitle = DriveEvent.getInstance().hexToObject(index.name);
-                                        if (driveTitle != null) {
-                                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(driveTitle.items_id,false);
-                                            EnumFormatType formatTypeFile = EnumFormatType.values()[itemsResponse.formatType];
-                                            if (items == null) {
-                                                switch (formatTypeFile) {
-                                                    case AUDIO: {
-                                                        itemsResponse.thumbnailSync = true;
-                                                        break;
-                                                    }
-                                                    case FILES:{
-                                                        itemsResponse.thumbnailSync = true;
-                                                        break;
-                                                    }
-                                                    default: {
-                                                        itemsResponse.originalSync = false;
-                                                        itemsResponse.thumbnailSync = false;
-                                                        break;
-                                                    }
-                                                }
-                                                final MainCategories main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
-                                                if (main != null) {
-                                                    itemsResponse.categories_local_id = main.categories_local_id;
-                                                    onSaveItem(itemsResponse);
-                                                } else {
-                                                    Utils.Log(TAG,"..................categories_id is nul............."+index.categories_id);
-                                                }
-                                            } else {
-                                                items.global_original_id = index.global_original_id;
-                                                items.global_thumbnail_id = index.global_thumbnail_id;
-                                                items.categories_id = index.categories_id;
-                                                if (currentCategories!=null){
-                                                    final MainCategories main = currentCategories.get(index.categories_id);
-                                                    if (main!=null){
-                                                        final String categories_local_id = main.categories_local_id;
-                                                        if (categories_local_id!=null){
-                                                            items.categories_local_id = categories_local_id;
-                                                        }
-                                                    }
-                                                }
-                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
-                                                Utils.Log(TAG, "This item is existing");
-                                            }
-                                        } else {
-                                            view.onError("Can not convert item", EnumStatus.GET_LIST_FILE);
-                                            Utils.Log(TAG, "Can not convert item");
-                                        }
-                                }
-                            } catch (Exception e) {
-                                view.onError("Error "+e.getMessage(), EnumStatus.GET_LIST_FILE);
-                                e.printStackTrace();
-                            } finally {
-                                Utils.Log(TAG, "Load more");
-                                view.onSuccessful(mData.nextPage, EnumStatus.LOAD_MORE);
+                            List<ItemModel> mList = new ArrayList<>();
+                            for(ItemModel index : mListItemResponse){
+                                mList.add(new ItemModel(index));
                             }
+                            view.onShowListObjects(mList);
+                            view.onSuccessful(mData.nextPage, EnumStatus.LOAD_MORE);
                         }
                     }
                 }, throwable -> {
@@ -1159,8 +1072,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     public void onDeletePreviousSync(ServiceManager.DeleteServiceListener view) {
         Utils.Log(TAG, "onDeletePreviousSync");
         try {
-            final List<Items> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true, false);
-            for (Items index : list) {
+            final List<ItemEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true, false);
+            for (ItemEntity index : list) {
                 String value = hashMapGlobal.get(index.items_id);
                 if (value == null) {
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
@@ -1182,11 +1095,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     public void onDeletePreviousCategoriesSync(ServiceManager.DeleteServiceListener view) {
         Utils.Log(TAG, "onDeletePreviousCategoriesSync");
         try {
-            final List<MainCategories> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
-            for (MainCategories index : list) {
+            final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
+            for (MainCategoryEntity index : list) {
                 String value = hashMapGlobalCategories.get(index.categories_id);
                 if (value == null) {
-                    final List<Items> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
+                    final List<ItemEntity> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
                     if (data == null || data.size() == 0) {
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
                     }
@@ -1203,8 +1116,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
     }
 
-    public void onSaveItem(final Items mItem) {
-        final Items items = new Items(mItem);
+    public void onSaveItem(final ItemEntity mItem) {
+        final ItemEntity items = new ItemEntity(mItem);
         Utils.Log(TAG, "onSaveItem");
         Utils.onWriteLog(new Gson().toJson(items),EnumStatus.CREATE);
         boolean isSaver;
@@ -1230,7 +1143,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
-    public void onDownloadFile(final Items items,String destination, final ServiceManager.DownloadServiceListener listener) {
+    public void onDownloadFile(final ItemModel items, final ServiceManager.DownloadServiceListener listener) {
         Utils.Log(TAG, "onDownloadFile !!!!");
         final User mUser = User.getInstance().getUserInfo();
         if (!mUser.driveConnected) {
@@ -1252,17 +1165,34 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         request.items = items;
         request.Authorization = mUser.access_token;
         request.id = id;
-        if (destination==null){
-            String path = SuperSafeApplication.getInstance().getSupersafePrivate();
-            String pathFolder = path + items.items_id + "/";
-            destination = pathFolder;
-        }
-        request.path_folder_output = destination;
+
+        items.originalPath = Utils.getOriginalPath(items.originalName,items.items_id);
+        request.path_folder_output = Utils.createDestinationDownloadItem(items.items_id);
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
             @Override
             public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
                 Utils.Log(TAG, "onDownLoadCompleted " + file_name.getAbsolutePath());
                 listener.onDownLoadCompleted(file_name, request);
+                final ItemModel entityModel = SQLHelper.getItemById(items.items_id);
+                if (entityModel !=null){
+                    if (items.isOriginalGlobalId){
+                        entityModel.originalSync = true;
+                    }else {
+                        entityModel.thumbnailSync = true;
+                    }
+                    if (entityModel.originalSync && entityModel.thumbnailSync){
+                        entityModel.isSyncCloud = true;
+                        entityModel.isSyncOwnServer = true;
+                    }
+                    SQLHelper.updatedItem(entityModel);
+                }else{
+                    if (items.isOriginalGlobalId){
+                        items.originalSync = true;
+                    }else {
+                        items.thumbnailSync = true;
+                    }
+                    SQLHelper.insertedItem(items);
+                }
             }
             @Override
             public void onDownLoadError(String error) {
@@ -1305,16 +1235,12 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             @Override
             public void onCodeResponse(int code, DownloadFileRequest request) {
                 if (listener != null) {
-                    final Items mItem = request.items;
+                    final ItemModel mItem = request.items;
                     if (mItem != null) {
                         /*Not Found file*/
                         if (code == 404) {
                             Utils.Log(TAG,"isDelete local id error");
-                            mItem.isDeleteLocal = true;
-                            mItem.originalSync = true;
-                            mItem.thumbnailSync = true;
-                            mItem.deleteAction = EnumDelete.DELETE_WAITING.ordinal();
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                            SQLHelper.deleteItem(items);
                         }
                     }
                 }
@@ -1327,7 +1253,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         downloadService.downloadFileFromGoogleDrive(request);
     }
 
-    public void onUploadFileInAppFolder(final Items items, final ServiceManager.UploadServiceListener listener) {
+    public void onUploadFileInAppFolder(final ItemModel items, final ServiceManager.UploadServiceListener listener) {
         Utils.Log(TAG, "onUploadFileInAppFolder");
         final User mUser = User.getInstance().getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
@@ -1342,7 +1268,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             file = new File(items.thumbnailPath);
         }
         if (!storage.isFileExist(file.getAbsolutePath())) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(items);
+            SQLHelper.deleteItem(items);
             listener.onError("This path is not found", EnumStatus.UPLOAD);
             return;
         }

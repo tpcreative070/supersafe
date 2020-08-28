@@ -7,12 +7,12 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.HelpAndSupport;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity;
 import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity;
@@ -158,7 +158,7 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveCamera(Activity activity,final MainCategories mainCategories){
+    public static void onMoveCamera(Activity activity,final MainCategoryEntity mainCategories){
         Intent intent = new Intent(activity, CameraActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(activity.getString(R.string.key_main_categories),mainCategories);
@@ -172,7 +172,7 @@ public class Navigator {
         activity.startActivityForResult(intent, Navigator.REQUEST_CODE);
     }
 
-    public static void onMoveAlbumDetail(Activity context, MainCategories mainCategories){
+    public static void onMoveAlbumDetail(Activity context, MainCategoryEntity mainCategories){
         Intent intent = new Intent(context,AlbumDetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_main_categories),mainCategories);
@@ -180,7 +180,7 @@ public class Navigator {
         context.startActivityForResult(intent,ALBUM_DETAIL);
     }
 
-    public static void onPhotoSlider(Activity context, final Items items, final List<Items> mList, MainCategories mainCategories){
+    public static void onPhotoSlider(Activity context, final ItemEntity items, final List<ItemEntity> mList, MainCategoryEntity mainCategories){
         Intent intent = new Intent(context, PhotoSlideShowActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_items),items);
@@ -223,7 +223,7 @@ public class Navigator {
         context.startActivityForResult(intent,ENABLE_CLOUD);
     }
 
-    public static void onPlayer(Context context,final Items items,final MainCategories main){
+    public static void onPlayer(Context context, final ItemEntity items, final MainCategoryEntity main){
         Intent intent = new Intent(context, PlayerActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_items),items);
@@ -237,7 +237,7 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onAlbumSettings(Context context,MainCategories items){
+    public static void onAlbumSettings(Context context, MainCategoryEntity items){
         Intent intent = new Intent(context, AlbumSettingsActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_main_categories),items);
@@ -341,10 +341,10 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveAlbumCover(Activity context,MainCategories categories){
+    public static void onMoveAlbumCover(Activity context, MainCategoryEntity categories){
         Intent intent = new Intent(context, AlbumCoverActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MainCategories.class.getSimpleName(),categories);
+        bundle.putSerializable(MainCategoryEntity.class.getSimpleName(),categories);
         intent.putExtras(bundle);
         context.startActivityForResult(intent,ALBUM_COVER);
     }

@@ -19,14 +19,14 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
-public class FakePinComponentAdapter extends BaseAdapter<MainCategories, BaseHolder> {
+public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, BaseHolder> {
 
     private Activity context;
     private Storage storage;
@@ -61,13 +61,13 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategories, BaseHol
         return new ItemHolder(inflater.inflate(R.layout.fake_pin_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<MainCategories> {
+    public class ItemHolder extends BaseHolder<MainCategoryEntity> {
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
 
-        private MainCategories data;
+        private MainCategoryEntity data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -77,10 +77,10 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategories, BaseHol
         int mPosition;
 
         @Override
-        public void bind(MainCategories data, int position) {
+        public void bind(MainCategoryEntity data, int position) {
             super.bind(data, position);
             this.data = data;
-            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false,true);
+            final ItemEntity items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestId(data.categories_local_id,false,true);
             if (items != null) {
                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                 switch (formatTypeFile) {
@@ -122,7 +122,7 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategories, BaseHol
                 }
             } else {
                 imgAlbum.setImageResource(0);
-                imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context,data.icon));
+                imgIcon.setImageDrawable(MainCategoryEntity.getInstance().getDrawable(context,data.icon));
                 imgIcon.setVisibility(View.VISIBLE);
                 try {
                     int myColor = Color.parseColor(data.image);

@@ -29,7 +29,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.chrisbanes.photoview.OnPhotoTapListener;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,6 +45,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Configuration;
@@ -54,9 +54,8 @@ import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ExportFiles;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -306,10 +305,10 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     @Override
-    public List<Items> getListItems() {
+    public List<ItemEntity> getListItems() {
         try {
-            final List<Items> list = new ArrayList<>();
-            final Items item = presenter.mList.get(position);
+            final List<ItemEntity> list = new ArrayList<>();
+            final ItemEntity item = presenter.mList.get(position);
             if (item!=null){
                 item.isChecked = true;
                 list.add(item);
@@ -341,7 +340,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             View myView = inflater.inflate(R.layout.content_view, null);
             photoView = myView.findViewById(R.id.imgPhoto);
             ImageView imgPlayer = myView.findViewById(R.id.imgPlayer);
-            final Items mItems = presenter.mList.get(position);
+            final ItemEntity mItems = presenter.mList.get(position);
             EnumFormatType enumTypeFile = EnumFormatType.values()[mItems.formatType];
             photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
@@ -355,7 +354,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             imgPlayer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final Items items = presenter.mList.get(viewPager.getCurrentItem());
+                    final ItemEntity items = presenter.mList.get(viewPager.getCurrentItem());
                     Navigator.onPlayer(PhotoSlideShowActivity.this,items,presenter.mainCategories);
                 }
             });
@@ -526,7 +525,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     if (isProgressing){
                         return;
                     }
-                    final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).items_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
+                    final ItemEntity items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).items_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     if (formatTypeFile!=EnumFormatType.AUDIO && formatTypeFile !=EnumFormatType.FILES ){
                         if (items!=null) {
@@ -558,8 +557,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 }
                 else{
                     onDialogDownloadFile();
-                    final List<Items> list = new ArrayList<>();
-                    final Items items = presenter.mList.get(position);
+                    final List<ItemEntity> list = new ArrayList<>();
+                    final ItemEntity items = presenter.mList.get(position);
                     items.isChecked = true;
                     list.add(items);
                     ServiceManager.getInstance().setListDownloadFile(list);
@@ -619,7 +618,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        final Items items = presenter.mList.get(position);
+                        final ItemEntity items = presenter.mList.get(position);
                         final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
                         EnumFormatType formatType = EnumFormatType.values()[items.formatType];
                         switch (formatType) {
@@ -642,7 +641,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                             case SHARE:{
                                 EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
-                                final Items index = presenter.mList.get(position);
+                                final ItemEntity index = presenter.mList.get(position);
                                     if (index!=null){
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
@@ -715,7 +714,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                             case EXPORT:{
                                 EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
-                                final Items index = presenter.mList.get(position);
+                                final ItemEntity index = presenter.mList.get(position);
                                 if (index!=null){
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
@@ -846,7 +845,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     public void onCheckDelete(){
-        final List<Items> mList = presenter.mList;
+        final List<ItemEntity> mList = presenter.mList;
         Utils.Log(TAG,"Action 3");
         EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(position).formatType];
         if (formatTypeFile == EnumFormatType.AUDIO && mList.get(position).global_original_id == null) {
@@ -924,11 +923,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
 
-    public void onRotateBitmap(final Items items){
+    public void onRotateBitmap(final ItemEntity items){
         subscriptions = Observable.create(subscriber -> {
             isProgressing = true;
             Utils.Log(TAG,"Start Progressing encrypt thumbnail data");
-            final  Items mItem = items;
+            final ItemEntity mItem = items;
             int mDegrees = mItem.degrees;
 
             if (mDegrees>=360){
@@ -952,7 +951,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
-                    final Items mItem = (Items) response;
+                    final ItemEntity mItem = (ItemEntity) response;
                     if (mItem!=null){
                         InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
                         runOnUiThread(new Runnable() {

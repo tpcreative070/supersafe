@@ -3,6 +3,8 @@ import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -10,12 +12,10 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class PrivatePresenter extends Presenter<BaseView> {
-    protected List<MainCategories> mList;
+    protected List<MainCategoryEntity> mList;
     protected Storage storage;
     private static final String TAG = PrivatePresenter.class.getSimpleName();
     public PrivatePresenter(){
@@ -24,7 +24,7 @@ public class PrivatePresenter extends Presenter<BaseView> {
 
     public void  getData(){
         BaseView view = view();
-        mList = MainCategories.getInstance().getList();
+        mList = MainCategoryEntity.getInstance().getList();
         storage = new Storage(SuperSafeApplication.getInstance());
         view.onSuccessful("Successful", EnumStatus.RELOAD);
     }
@@ -32,10 +32,10 @@ public class PrivatePresenter extends Presenter<BaseView> {
     public void onDeleteAlbum(int position){
         BaseView view = view();
         try {
-            final MainCategories main = mList.get(position);
+            final MainCategoryEntity main = mList.get(position);
             if (main!=null){
-                final List<Items> mListItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(main.categories_local_id,false);
-                for (Items index : mListItems){
+                final List<ItemEntity> mListItems = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(main.categories_local_id,false);
+                for (ItemEntity index : mListItems){
                     index.isDeleteLocal = true;
                     InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(index);
                 }
@@ -55,7 +55,7 @@ public class PrivatePresenter extends Presenter<BaseView> {
     public void onEmptyTrash(){
         BaseView view = view();
         try {
-            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.NONE.ordinal(),false);
+            final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.NONE.ordinal(),false);
             for (int i = 0 ;i <mList.size();i++){
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
                 if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){

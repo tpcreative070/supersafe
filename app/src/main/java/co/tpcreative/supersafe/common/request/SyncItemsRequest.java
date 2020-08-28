@@ -3,9 +3,10 @@ import com.google.gson.Gson;
 
 import java.io.Serializable;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.DriveEvent;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 
 public class SyncItemsRequest implements Serializable {
 
@@ -39,7 +40,7 @@ public class SyncItemsRequest implements Serializable {
     public String nextPage;
 
     /*Sync items*/
-    public SyncItemsRequest(String user_id,String cloud_id,String device_id,Items items){
+    public SyncItemsRequest(String user_id, String cloud_id, String device_id, ItemModel items){
         this.user_id = user_id;
         this.cloud_id = cloud_id;
         this.device_id = device_id;

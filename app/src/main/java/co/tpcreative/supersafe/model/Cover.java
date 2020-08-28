@@ -1,10 +1,13 @@
 package co.tpcreative.supersafe.model;
 
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+
 public class Cover {
 
     public Categories categories;
-    public MainCategories mainCategories;
-    public Items items;
+    public MainCategoryEntity mainCategories;
+    public ItemEntity items;
     public boolean isSelected;
 
     public int getCategoryId() {

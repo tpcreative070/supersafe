@@ -19,9 +19,9 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -35,7 +35,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
     private static final String TAG = UnlockAllAlbumPresenter.class.getSimpleName();
 
 
-    protected List<MainCategories> mListCategories;
+    protected List<MainCategoryEntity> mListCategories;
 
     public UnlockAllAlbumPresenter(){
         mListCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);

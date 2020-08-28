@@ -7,6 +7,7 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -14,9 +15,8 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
 
@@ -31,8 +31,8 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
     public void onGetSaveData(){
         sizeSaverFiles = 0;
         BaseView view = view();
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false);
-        for (Items index : mList) {
+        final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false);
+        for (ItemEntity index : mList) {
             EnumFormatType formatType = EnumFormatType.values()[index.formatType];
             switch (formatType){
                 case IMAGE:{
@@ -47,7 +47,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
     public void onDisableSaverSpace(EnumStatus enumStatus){
         sizeFile = 0;
         BaseView view = view();
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,true,false);
+        final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,true,false);
         for (int i = 0; i <mList.size();i++) {
             EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
             switch (formatType){
@@ -74,7 +74,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
 
 
     public void onEnableSaverSpace(){
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false,false);
+        final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false,false);
         if (mList!=null && mList.size()>0){
             for (int i = 0 ; i< mList.size();i++){
                 EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
@@ -196,10 +196,10 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
                     Utils.Log(TAG, "onSuccessful 4");
 
                 } else {
-                    final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false);
+                    final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false);
                     long countSize = 0;
                     try {
-                        for (Items index : mList) {
+                        for (ItemEntity index : mList) {
                             countSize += Long.parseLong(index.size);
                         }
                         final User mUser = User.getInstance().getUserInfo();

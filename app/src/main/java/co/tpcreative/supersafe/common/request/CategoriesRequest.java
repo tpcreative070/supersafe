@@ -2,7 +2,7 @@ package co.tpcreative.supersafe.common.request;
 
 import java.io.Serializable;
 
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 
 public class CategoriesRequest implements Serializable {
     public String user_id;
@@ -35,7 +35,7 @@ public class CategoriesRequest implements Serializable {
     }
 
     /*Sync category*/
-    public CategoriesRequest(String user_id, String cloud_id, String device_id , MainCategories mainCategories){
+    public CategoriesRequest(String user_id, String cloud_id, String device_id , MainCategoryEntity mainCategories){
         this.user_id = user_id;
         this.cloud_id = cloud_id;
         this.device_id = device_id;

@@ -20,10 +20,10 @@ import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
+public class TrashAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -60,7 +60,7 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
         void onClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<Items> {
+    public class ItemHolder extends BaseHolder<ItemEntity> {
 
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
@@ -84,7 +84,7 @@ public class TrashAdapter extends BaseAdapter<Items, BaseHolder> {
         }
 
         @Override
-        public void bind(Items data, int position) {
+        public void bind(ItemEntity data, int position) {
             super.bind(data, position);
             mPosition = position;
 
