@@ -82,7 +82,7 @@ public class ServiceManager implements BaseServiceView {
 
     /*Improved sync data*/
     private List<ImportFilesModel> listImport = new ArrayList<>();
-    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isGetItemList, isImportData,isExportData, isDeleteItemData,isDeleteCategoryData;
+    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData;
     /*Using item_id as key for hash map*/
     private Map<String, ItemModel> mMapDeleteItem = new HashMap<>();
     private Map<String, MainCategoryModel> mMapDeleteCategory = new HashMap<>();
@@ -95,7 +95,7 @@ public class ServiceManager implements BaseServiceView {
     private int mStart = 20;
 
     public void setListImport(List<ImportFilesModel> mListImport) {
-        if (!isImporting) {
+        if (!isImportData) {
             this.listImport.clear();
             this.listImport.addAll(mListImport);
         }
@@ -147,9 +147,15 @@ public class ServiceManager implements BaseServiceView {
             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.ERROR,"onPreparingSyncData is updating category.. Please wait");
             return;
         }
-        if (isImporting){
+        if (isImportData){
             Utils.Log(TAG,"onPreparingSyncData is importing. Please wait");
             Utils.onWriteLog(EnumStatus.IMPORTING,EnumStatus.ERROR,"onPreparingSyncData is importing. Please wait");
+            return;
+        }
+        if (isDownloadingFiles){
+            Utils.Log(TAG,"onPreparingSyncData is downloading files. Please wait");
+            Utils.onWriteLog(EnumStatus.DOWNLOADING,EnumStatus.ERROR,"onPreparingSyncData is downloading files. Please wait");
+            return;
         }
         mDownloadList.clear();
         ServiceManager.getInstance().onGetItemList("0");
@@ -357,7 +363,7 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void onPreparingEnableDownloadData(List<ItemModel>globalList){
-        if (isDownloadData){
+        if (isDownloadingFiles){
             return;
         }
         List<ItemModel> mListLocal = SQLHelper.getItemListDownload();
@@ -377,12 +383,14 @@ public class ServiceManager implements BaseServiceView {
     private void onDownLoadData(final ItemModel itemModel){
         if (myService!=null){
             isDownloadData = true;
+            isDownloadingFiles = true;
             mStart = 20;
             Utils.onPushEventBus(EnumStatus.DOWNLOAD);
             myService.onDownloadFile(itemModel, new DownloadServiceListener() {
                 @Override
                 public void onProgressDownload(int percentage) {
                     isDownloadData = true;
+                    isDownloadingFiles = true;
                     if (mStart == percentage){
                         Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Progressing "+ mStart);
                         mStart += 20;
@@ -397,6 +405,7 @@ public class ServiceManager implements BaseServiceView {
                         if (mDownloadItem!=null){
                             onDownLoadData(mDownloadItem);
                             isDownloadData = true;
+                            isDownloadingFiles = true;
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                             Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
                         }else{
@@ -404,6 +413,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownload.size());
                             isDownloadData = false;
+                            isDownloadingFiles = false;
                             onPreparingUploadData();
                             Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
                             Utils.onPushEventBus(EnumStatus.DONE);
@@ -697,7 +707,7 @@ public class ServiceManager implements BaseServiceView {
 
     /*Preparing import data*/
     public void onPreparingImportData(){
-        if (isImporting){
+        if (isImportData){
             return;
         }
         /*Preparing upload file to Google drive*/
@@ -987,10 +997,10 @@ public class ServiceManager implements BaseServiceView {
                                 final ImportFilesModel mImportItem = Utils.getArrayOfIndexHashMapImport(mMapImporting);
                                 if (mImportItem != null) {
                                     onImportData(mImportItem);
-                                    isImporting = true;
+                                    isImportData = true;
                                     Utils.Log(TAG,"Next import data completely");
                                 } else {
-                                    isImporting = false;
+                                    isImportData = false;
                                     listImport.clear();
                                     Utils.Log(TAG,"Imported data completely");
                                     Utils.onPushEventBus(EnumStatus.IMPORTED_COMPLETELY);
@@ -1002,10 +1012,10 @@ public class ServiceManager implements BaseServiceView {
                             final ImportFilesModel mImportItem = Utils.getArrayOfIndexHashMapImport(mMapImporting);
                             if (mImportItem != null) {
                                 onImportData(mImportItem);
-                                isImporting = true;
+                                isImportData = true;
                                 Utils.Log(TAG,"Next import data completely");
                             } else {
-                                isImporting = false;
+                                isImportData = false;
                                 listImport.clear();
                                 Utils.Log(TAG,"Imported data completely");
                                 Utils.onPushEventBus(EnumStatus.IMPORTED_COMPLETELY);
@@ -1039,7 +1049,7 @@ public class ServiceManager implements BaseServiceView {
         mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
     }
     private Cipher mCiphers;
-    private boolean isLoadingData,isDeleteSyncCLoud,isDeleteOwnCloud,isGetListCategories,isCategoriesSync,isDeleteAlbum, isImporting, isExporting, isDownloadingFiles, isWaitingSendMail, isUpdate;
+    private boolean isLoadingData, isWaitingSendMail;
     private int countSyncData = 0;
     private int totalList = 0;
     public static ServiceManager getInstance() {
@@ -1054,7 +1064,7 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void setImporting(boolean importing) {
-        isImporting = importing;
+        isImportData = importing;
     }
 
     public void setIsWaitingSendMail(boolean isWaitingSendMail) {
@@ -1070,7 +1080,7 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void setmListImport(List<ImportFilesModel> mListImport) {
-        if (!isImporting) {
+        if (!isImportData) {
             this.mListImport.clear();
             this.mListImport.addAll(mListImport);
         }
@@ -1089,43 +1099,27 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void setmListExport(List<ExportFiles> mListExport) {
-        if (!isExporting) {
+        if (!isExportData) {
             this.mListExport.clear();
             this.mListExport.addAll(mListExport);
         }
     }
 
     public void setExporting(boolean exporting) {
-        isExporting = exporting;
+        isImportData = exporting;
     }
 
     public void setDeleteAlbum(boolean deleteAlbum) {
-        isDeleteAlbum = deleteAlbum;
+        isDeleteCategoryData = deleteAlbum;
     }
 
     public void setUpdate(boolean update) {
-        isUpdate = update;
+        isUpdateItemData = update;
     }
 
-    public void setCategoriesSync(boolean categoriesSync) {
-        isCategoriesSync = categoriesSync;
-    }
-
-    public void setGetListCategories(boolean getListCategories) {
-        isGetListCategories = getListCategories;
-    }
 
     public void setDownloadData(boolean downloadData) {
         isDownloadData = downloadData;
-    }
-
-    public void setDeleteSyncCLoud(boolean deleteSyncCLoud) {
-        isDeleteSyncCLoud = deleteSyncCLoud;
-    }
-
-
-    public void setDeleteOwnCloud(boolean deleteOwnCloud) {
-        isDeleteOwnCloud = deleteOwnCloud;
     }
 
     public void setUploadData(boolean uploadData) {
@@ -1261,32 +1255,32 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void onGetListCategoriesSync() {
-        if (isCheckNull(EnumStatus.OTHER)){
-            return;
-        }
-        if (isCategoriesSync) {
-            Utils.Log(TAG, "List categories is sync...!!!--------------*******************************-----------");
-            return;
-        }
-        if (isGetListCategories) {
-            Utils.Log(TAG, "Setting list categories is sync...--------------*******************************-----------");
-            return;
-        }
-        isGetListCategories = true;
-        myService.onGetListCategoriesSync(new ServiceManagerShortListener() {
-            @Override
-            public void onError(String message, EnumStatus status) {
-                Utils.Log(TAG, message + "--" + status.name());
-                isGetListCategories = false;
-            }
-            @Override
-            public void onSuccessful(String message, EnumStatus status) {
-                Utils.Log(TAG, message + "--" + status.name());
-                SingletonPrivateFragment.getInstance().onUpdateView();
-                isGetListCategories = false;
-                //getObservable();
-            }
-        });
+//        if (isCheckNull(EnumStatus.OTHER)){
+//            return;
+//        }
+//        if (isCategoriesSync) {
+//            Utils.Log(TAG, "List categories is sync...!!!--------------*******************************-----------");
+//            return;
+//        }
+//        if (isGetListCategories) {
+//            Utils.Log(TAG, "Setting list categories is sync...--------------*******************************-----------");
+//            return;
+//        }
+//        isGetListCategories = true;
+//        myService.onGetListCategoriesSync(new ServiceManagerShortListener() {
+//            @Override
+//            public void onError(String message, EnumStatus status) {
+//                Utils.Log(TAG, message + "--" + status.name());
+//                isGetListCategories = false;
+//            }
+//            @Override
+//            public void onSuccessful(String message, EnumStatus status) {
+//                Utils.Log(TAG, message + "--" + status.name());
+//                SingletonPrivateFragment.getInstance().onUpdateView();
+//                isGetListCategories = false;
+//                //getObservable();
+//            }
+//        });
     }
 
 //    private Observable<MainCategoryEntity> getObservableItems(List<MainCategoryEntity> categories) {
@@ -2853,134 +2847,134 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void onUpdateSyncDataStatus(EnumStatus enumStatus) {
-        switch (enumStatus) {
-            case UPLOAD: {
-                countSyncData += 1;
-                if (countSyncData == totalList) {
-                    EventBus.getDefault().post(EnumStatus.DONE);
-                    SingletonPrivateFragment.getInstance().onUpdateView();
-                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
-                    isUploadData = false;
-                    String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
-                    String messageDone = "Completed upload sync data.......................^^...........^^.......^^........";
-                    Utils.onWriteLog(message, EnumStatus.UPLOAD);
-                    Utils.onWriteLog(messageDone, EnumStatus.UPLOAD);
-                    Utils.Log(TAG, message);
-                    Utils.Log(TAG, messageDone);
-                    Utils.Log(TAG, "Request syn data on upload.........");
-                    Utils.onWriteLog("Request syn data on upload", EnumStatus.UPLOAD);
-                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                    onGetDriveAbout();
-                } else {
-                    String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
-                    Utils.onWriteLog(message, EnumStatus.UPLOAD);
-                    Utils.Log(TAG, message);
-                }
-                break;
-            }
-            case DOWNLOAD: {
-                countSyncData += 1;
-                if (countSyncData == totalList) {
-                    EventBus.getDefault().post(EnumStatus.DONE);
-                    SingletonPrivateFragment.getInstance().onUpdateView();
-                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
-                    isDownloadData = false;
-                    String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
-                    String messageDone = "Completed downloaded sync data.......................^^...........^^.......^^........";
-                    Utils.onWriteLog(message, EnumStatus.DOWNLOAD);
-                    Utils.onWriteLog(messageDone, EnumStatus.DOWNLOAD);
-                    Utils.Log(TAG, message);
-                    Utils.Log(TAG, messageDone);
-                    Utils.onWriteLog("Request syn data on download", EnumStatus.DOWNLOAD);
-                    Utils.Log(TAG, "Request syn data on download.........");
-                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                    onGetDriveAbout();
-                } else {
-                    String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
-                    Utils.onWriteLog(message, EnumStatus.DOWNLOAD);
-                    Utils.Log(TAG, message);
-                }
-                break;
-            }
-            case DELETE_SYNC_OWN_DATA: {
-                countSyncData += 1;
-                if (countSyncData == totalList) {
-                    isDeleteOwnCloud = false;
-                    String message = "Completed delete own cloud count syn data...................deleted " + countSyncData + "/" + totalList;
-                    String messageDone = "Completed delete own sync data.......................^^...........^^.......^^........";
-                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_OWN_DATA);
-                    Utils.onWriteLog(messageDone, EnumStatus.DELETE_SYNC_OWN_DATA);
-                    Utils.Log(TAG, message);
-                    Utils.Log(TAG, messageDone);
-                    Utils.onWriteLog("Request own syn data on download", EnumStatus.DELETE_SYNC_OWN_DATA);
-                    Utils.Log(TAG, "Request own syn data on download.........");
-                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                    onGetDriveAbout();
-                } else {
-                    String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
-                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_OWN_DATA);
-                    Utils.Log(TAG, message);
-                }
-                break;
-            }
-            case DELETE_SYNC_CLOUD_DATA: {
-                countSyncData += 1;
-                if (countSyncData == totalList) {
-                    isDeleteSyncCLoud = false;
-                    String message = "Completed delete cloud count syn data...................deleted " + countSyncData + "/" + totalList;
-                    String messageDone = "Completed delete cloud sync data.......................^^...........^^.......^^........";
-                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                    Utils.onWriteLog(messageDone, EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                    Utils.Log(TAG, message);
-                    Utils.Log(TAG, messageDone);
-                    Utils.onWriteLog("Request cloud syn data on download", EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                    Utils.Log(TAG, "Request cloud syn data on download.........");
-                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                    onGetDriveAbout();
-                } else {
-                    String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
-                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
-                    Utils.Log(TAG, message);
-                }
-                break;
-            }
-            case DELETE_CATEGORIES: {
-                countSyncData += 1;
-                if (countSyncData == totalList) {
-                    isDeleteAlbum = false;
-                    String message = "Completed delete album...................deleted " + countSyncData + "/" + totalList;
-                    String messageDone = "Completed delete album data.......................^^...........^^.......^^........";
-                    Utils.onWriteLog(message, EnumStatus.DELETE_CATEGORIES);
-                    Utils.onWriteLog(messageDone, EnumStatus.DELETE_CATEGORIES);
-                    Utils.Log(TAG, message);
-                    Utils.Log(TAG, messageDone);
-                    Utils.onWriteLog("Request cloud syn data on album", EnumStatus.DELETE_CATEGORIES);
-                    Utils.Log(TAG, "Request cloud syn data on album.........");
-                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                    SingletonPrivateFragment.getInstance().onUpdateView();
-                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
-                    onGetDriveAbout();
-                } else {
-                    String message = "Completed delete count album...................deleted " + countSyncData + "/" + totalList;
-                    Utils.onWriteLog(message, EnumStatus.DELETE_CATEGORIES);
-                    Utils.Log(TAG, message);
-                }
-                break;
-            }
-            case UPDATE:{
-                countSyncData += 1;
-                if (countSyncData == totalList) {
-                    isUpdate = false;
-                    String message = "Completed update own...................items " + countSyncData + "/" + totalList;
-                    Utils.Log(TAG,message);
-                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
-                } else {
-                    String message = "Completed delete count item...................updated " + countSyncData + "/" + totalList;
-                    Utils.Log(TAG, message);
-                }
-                break;
-            }
-        }
+//        switch (enumStatus) {
+//            case UPLOAD: {
+//                countSyncData += 1;
+//                if (countSyncData == totalList) {
+//                    EventBus.getDefault().post(EnumStatus.DONE);
+//                    SingletonPrivateFragment.getInstance().onUpdateView();
+//                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
+//                    isUploadData = false;
+//                    String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
+//                    String messageDone = "Completed upload sync data.......................^^...........^^.......^^........";
+//                    Utils.onWriteLog(message, EnumStatus.UPLOAD);
+//                    Utils.onWriteLog(messageDone, EnumStatus.UPLOAD);
+//                    Utils.Log(TAG, message);
+//                    Utils.Log(TAG, messageDone);
+//                    Utils.Log(TAG, "Request syn data on upload.........");
+//                    Utils.onWriteLog("Request syn data on upload", EnumStatus.UPLOAD);
+//                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
+//                    onGetDriveAbout();
+//                } else {
+//                    String message = "Completed upload count syn data...................uploaded " + countSyncData + "/" + totalList;
+//                    Utils.onWriteLog(message, EnumStatus.UPLOAD);
+//                    Utils.Log(TAG, message);
+//                }
+//                break;
+//            }
+//            case DOWNLOAD: {
+//                countSyncData += 1;
+//                if (countSyncData == totalList) {
+//                    EventBus.getDefault().post(EnumStatus.DONE);
+//                    SingletonPrivateFragment.getInstance().onUpdateView();
+//                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
+//                    isDownloadData = false;
+//                    String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
+//                    String messageDone = "Completed downloaded sync data.......................^^...........^^.......^^........";
+//                    Utils.onWriteLog(message, EnumStatus.DOWNLOAD);
+//                    Utils.onWriteLog(messageDone, EnumStatus.DOWNLOAD);
+//                    Utils.Log(TAG, message);
+//                    Utils.Log(TAG, messageDone);
+//                    Utils.onWriteLog("Request syn data on download", EnumStatus.DOWNLOAD);
+//                    Utils.Log(TAG, "Request syn data on download.........");
+//                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
+//                    onGetDriveAbout();
+//                } else {
+//                    String message = "Completed download count syn data...................downloaded " + countSyncData + "/" + totalList;
+//                    Utils.onWriteLog(message, EnumStatus.DOWNLOAD);
+//                    Utils.Log(TAG, message);
+//                }
+//                break;
+//            }
+//            case DELETE_SYNC_OWN_DATA: {
+//                countSyncData += 1;
+//                if (countSyncData == totalList) {
+//                    isDeleteOwnCloud = false;
+//                    String message = "Completed delete own cloud count syn data...................deleted " + countSyncData + "/" + totalList;
+//                    String messageDone = "Completed delete own sync data.......................^^...........^^.......^^........";
+//                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_OWN_DATA);
+//                    Utils.onWriteLog(messageDone, EnumStatus.DELETE_SYNC_OWN_DATA);
+//                    Utils.Log(TAG, message);
+//                    Utils.Log(TAG, messageDone);
+//                    Utils.onWriteLog("Request own syn data on download", EnumStatus.DELETE_SYNC_OWN_DATA);
+//                    Utils.Log(TAG, "Request own syn data on download.........");
+//                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
+//                    onGetDriveAbout();
+//                } else {
+//                    String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
+//                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_OWN_DATA);
+//                    Utils.Log(TAG, message);
+//                }
+//                break;
+//            }
+//            case DELETE_SYNC_CLOUD_DATA: {
+//                countSyncData += 1;
+//                if (countSyncData == totalList) {
+//                    isDeleteSyncCLoud = false;
+//                    String message = "Completed delete cloud count syn data...................deleted " + countSyncData + "/" + totalList;
+//                    String messageDone = "Completed delete cloud sync data.......................^^...........^^.......^^........";
+//                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
+//                    Utils.onWriteLog(messageDone, EnumStatus.DELETE_SYNC_CLOUD_DATA);
+//                    Utils.Log(TAG, message);
+//                    Utils.Log(TAG, messageDone);
+//                    Utils.onWriteLog("Request cloud syn data on download", EnumStatus.DELETE_SYNC_CLOUD_DATA);
+//                    Utils.Log(TAG, "Request cloud syn data on download.........");
+//                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
+//                    onGetDriveAbout();
+//                } else {
+//                    String message = "Completed delete count syn data...................deleted " + countSyncData + "/" + totalList;
+//                    Utils.onWriteLog(message, EnumStatus.DELETE_SYNC_CLOUD_DATA);
+//                    Utils.Log(TAG, message);
+//                }
+//                break;
+//            }
+//            case DELETE_CATEGORIES: {
+//                countSyncData += 1;
+//                if (countSyncData == totalList) {
+//                    isDeleteAlbum = false;
+//                    String message = "Completed delete album...................deleted " + countSyncData + "/" + totalList;
+//                    String messageDone = "Completed delete album data.......................^^...........^^.......^^........";
+//                    Utils.onWriteLog(message, EnumStatus.DELETE_CATEGORIES);
+//                    Utils.onWriteLog(messageDone, EnumStatus.DELETE_CATEGORIES);
+//                    Utils.Log(TAG, message);
+//                    Utils.Log(TAG, messageDone);
+//                    Utils.onWriteLog("Request cloud syn data on album", EnumStatus.DELETE_CATEGORIES);
+//                    Utils.Log(TAG, "Request cloud syn data on album.........");
+//                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
+//                    SingletonPrivateFragment.getInstance().onUpdateView();
+//                    EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
+//                    onGetDriveAbout();
+//                } else {
+//                    String message = "Completed delete count album...................deleted " + countSyncData + "/" + totalList;
+//                    Utils.onWriteLog(message, EnumStatus.DELETE_CATEGORIES);
+//                    Utils.Log(TAG, message);
+//                }
+//                break;
+//            }
+//            case UPDATE:{
+//                countSyncData += 1;
+//                if (countSyncData == totalList) {
+//                    isUpdate = false;
+//                    String message = "Completed update own...................items " + countSyncData + "/" + totalList;
+//                    Utils.Log(TAG,message);
+//                    //ServiceManager.getInstance().onSyncDataOwnServer("0");
+//                } else {
+//                    String message = "Completed delete count item...................updated " + countSyncData + "/" + totalList;
+//                    Utils.Log(TAG, message);
+//                }
+//                break;
+//            }
+//        }
     }
 
     @Override
@@ -3032,7 +3026,7 @@ public class ServiceManager implements BaseServiceView {
             }
             case USER_INFO: {
                 Utils.Log(TAG, "Get info successful");
-                //ServiceManager.getInstance().onSyncDataOwnServer("0");
+                ServiceManager.getInstance().onPreparingSyncData();
                 //ServiceManager.getInstance().onCheckingMissData();
                 final User mUser = User.getInstance().getUserInfo();
                 if (mUser.isWaitingSendMail){
@@ -3042,6 +3036,7 @@ public class ServiceManager implements BaseServiceView {
             }
             case UPDATE_USER_TOKEN:{
                 //onSyncDataOwnServer("0");
+                ServiceManager.getInstance().onPreparingSyncData();
                 break;
             }
         }
@@ -3075,18 +3070,18 @@ public class ServiceManager implements BaseServiceView {
         ServiceManager.getInstance().setDownloadingFiles(false);
         ServiceManager.getInstance().setExporting(false);
         ServiceManager.getInstance().setImporting(false);
-        ServiceManager.getInstance().setDeleteOwnCloud(false);
-        ServiceManager.getInstance().setDeleteSyncCLoud(false);
+        isUpdateItemData = false;
+        isUpdateCategoryData = false;
+        isDeleteItemData = false;
+        isDeleteCategoryData = false;
+        isDownloadingFiles = false;
         ServiceManager.getInstance().setDeleteAlbum(false);
-        ServiceManager.getInstance().setGetListCategories(false);
-        ServiceManager.getInstance().setCategoriesSync(false);
         ServiceManager.getInstance().setIsWaitingSendMail(false);
-        ServiceManager.getInstance().setUpdate(false);
         ServiceManager.getInstance().setLoadingData(false);
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExporting || isImporting || isDeleteOwnCloud || isDeleteSyncCLoud || isDeleteAlbum || isGetListCategories || isCategoriesSync|| isWaitingSendMail || isUpdate || isLoadingData) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isLoadingData) {
             Utils.Log(TAG, "Progress....................!!!!:");
         }
         else {
