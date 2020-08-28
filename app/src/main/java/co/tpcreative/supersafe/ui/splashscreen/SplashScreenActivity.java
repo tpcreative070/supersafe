@@ -15,6 +15,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -74,7 +75,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
         );
-        MainCategoryEntity.getInstance().getList();
+        SQLHelper.getList();
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
@@ -93,7 +94,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                             SuperSafeApplication.getInstance().initFolder();
                             InstanceGenerator.getInstance(SplashScreenActivity.this).onCleanDatabase();
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(new User()));
-                            MainCategoryEntity.getInstance().getList();
+                            SQLHelper.getList();
                             PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive),true);
                             Navigator.onMoveToDashBoard(SplashScreenActivity.this);
                         }
