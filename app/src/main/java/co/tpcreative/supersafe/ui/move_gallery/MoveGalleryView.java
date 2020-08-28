@@ -5,6 +5,6 @@ import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.model.ItemModel;
 
-public interface MoveGalleryView extends BaseView<ItemEntity>{
+public interface MoveGalleryView extends BaseView<ItemModel>{
     List<ItemModel>getListItems();
 }

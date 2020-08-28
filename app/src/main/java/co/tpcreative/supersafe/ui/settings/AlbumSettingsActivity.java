@@ -38,8 +38,10 @@ import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.common.views.SquaredImageView;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
@@ -215,7 +217,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                     if (mAlbumCover.getImageView()!=null){
                         final MainCategoryModel main = presenter.mMainCategories;
                         if (main.pin.equals("")) {
-                            final ItemEntity items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(main.items_id);
+                            final ItemModel items = SQLHelper.getItemId(main.items_id);
                             if (items != null) {
                                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                                 switch (formatTypeFile) {
@@ -252,7 +254,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                                 mAlbumCover.getImageView().setImageResource(0);
                                                 int myColor = Color.parseColor(main.image);
                                                 mAlbumCover.getImageView().setBackgroundColor(myColor);
-                                                mAlbumCover.getImgIcon().setImageDrawable(MainCategoryEntity.getInstance().getDrawable(getContext(), main.icon));
+                                                mAlbumCover.getImgIcon().setImageDrawable(SQLHelper.getDrawable(getContext(), main.icon));
                                                 mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
                                             }
                                         } catch (Exception e) {
@@ -263,9 +265,9 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                 }
                             } else {
                                 mAlbumCover.getImageView().setImageResource(0);
-                                final MainCategoryModel mainCategories = MainCategoryEntity.getInstance().getCategoriesPosition(main.mainCategories_Local_Id);
+                                final MainCategoryModel mainCategories = SQLHelper.getCategoriesPosition(main.mainCategories_Local_Id);
                                 if (mainCategories!=null){
-                                    mAlbumCover.getImgIcon().setImageDrawable(MainCategoryEntity.getInstance().getDrawable(getContext(), mainCategories.icon));
+                                    mAlbumCover.getImgIcon().setImageDrawable(SQLHelper.getDrawable(getContext(), mainCategories.icon));
                                     mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
                                     try {
                                         int myColor = Color.parseColor(mainCategories.image);
@@ -274,7 +276,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                         e.printStackTrace();
                                     }
                                 }else{
-                                    mAlbumCover.getImgIcon().setImageDrawable(MainCategoryEntity.getInstance().getDrawable(getContext(), main.icon));
+                                    mAlbumCover.getImgIcon().setImageDrawable(SQLHelper.getDrawable(getContext(), main.icon));
                                     mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
                                     try {
                                         int myColor = Color.parseColor(main.image);
@@ -368,7 +370,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                     Utils.Log(TAG,"Value");
                                     String value = input.toString();
                                     String base64Code = Utils.getHexCode(value);
-                                    MainCategoryModel item = MainCategoryEntity.getInstance().getTrashItem();
+                                    MainCategoryModel item = SQLHelper.getTrashItem();
                                     String result = item.categories_hex_name;
                                     String main = Utils.getHexCode(getString(R.string.key_main_album));
 
@@ -389,7 +391,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                     }
                                     else{
                                         presenter.mMainCategories.categories_name = value;
-                                        boolean response = MainCategoryEntity.getInstance().onChangeCategories(presenter.mMainCategories);
+                                        boolean response = SQLHelper.onChangeCategories(presenter.mMainCategories);
                                         if (response){
                                             Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                             mName.setSummary(presenter.mMainCategories.categories_name);

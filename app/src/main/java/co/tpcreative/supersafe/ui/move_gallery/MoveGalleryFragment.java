@@ -282,12 +282,12 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
     }
 
     @Override
-    public void onSuccessful(String message, EnumStatus status, ItemEntity object) {
+    public void onSuccessful(String message, EnumStatus status, ItemModel object) {
 
     }
 
     @Override
-    public void onSuccessful(String message, EnumStatus status, List<ItemEntity> list) {
+    public void onSuccessful(String message, EnumStatus status, List<ItemModel> list) {
 
     }
 

@@ -32,6 +32,7 @@ import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
@@ -39,6 +40,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.DriveAbout;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.StorageQuota;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
@@ -404,7 +406,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             //ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
         if (isDownload) {
-            final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, false, false);
+            final List<ItemModel> mList = SQLHelper.getListSyncData(true, false, false);
             if (mList != null && mList.size() > 0) {
                 for (int i = 0; i < mList.size(); i++) {
                     EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
@@ -413,7 +415,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                             mList.get(i).isSyncCloud = false;
                             mList.get(i).originalSync = false;
                             mList.get(i).statusAction = EnumStatus.DOWNLOAD.ordinal();
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                            SQLHelper.updatedItem(mList.get(i));
                             break;
                         }
                     }
@@ -423,8 +425,8 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             Utils.Log(TAG, "Re-Download file");
         }
         if (isSpaceSaver){
-            final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, true, false);
-            for (ItemEntity index : mList){
+            final List<ItemModel> mList = SQLHelper.getListSyncData(true, true, false);
+            for (ItemModel index : mList){
                 EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                 switch (formatType) {
                     case IMAGE: {

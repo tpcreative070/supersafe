@@ -33,8 +33,8 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
     public void onGetSaveData(){
         sizeSaverFiles = 0;
         BaseView view = view();
-        final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false);
-        for (ItemEntity index : mList) {
+        final List<ItemModel> mList = SQLHelper.getListSyncData(true,false);
+        for (ItemModel index : mList) {
             EnumFormatType formatType = EnumFormatType.values()[index.formatType];
             switch (formatType){
                 case IMAGE:{

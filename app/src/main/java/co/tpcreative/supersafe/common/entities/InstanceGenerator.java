@@ -729,9 +729,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized MainCategoryEntity getCategoriesLocalId(String categories_local_id){
+    public final  MainCategoryEntityModel getCategoriesLocalId(String categories_local_id){
         try{
-            return instance.mainCategoriesDao().loadLocalId(categories_local_id);
+            final MainCategoryEntity mResut =  instance.mainCategoriesDao().loadLocalId(categories_local_id);
+            if (mResut!=null){
+                return new MainCategoryEntityModel(mResut);
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());

@@ -707,4 +707,17 @@ public class SQLHelper {
         return null;
     }
 
+
+    public static final  MainCategoryModel getCategoriesLocalId(String categories_local_id){
+        try{
+            final MainCategoryEntityModel mResut =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(categories_local_id);
+            if (mResut!=null){
+                return new MainCategoryModel(mResut);
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
 }

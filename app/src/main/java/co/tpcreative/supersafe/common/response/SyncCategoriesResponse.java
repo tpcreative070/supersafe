@@ -5,8 +5,9 @@ import java.util.List;
 
 import co.tpcreative.supersafe.common.api.response.BaseResponse;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class SyncCategoriesResponse extends BaseResponse implements Serializable {
-    public List<MainCategoryEntity>files;
-    public MainCategoryEntity category;
+    public List<MainCategoryModel>files;
+    public MainCategoryModel category;
 }

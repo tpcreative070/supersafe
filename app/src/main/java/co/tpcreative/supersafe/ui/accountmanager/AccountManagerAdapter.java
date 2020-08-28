@@ -19,6 +19,7 @@ import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.AppLists;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 
 public class AccountManagerAdapter extends BaseAdapter<AppLists, BaseHolder> {
@@ -33,7 +34,7 @@ public class AccountManagerAdapter extends BaseAdapter<AppLists, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private Encrypter encrypter;
     private Storage storage;
-    private MainCategoryEntity categories;
+    private MainCategoryModel categories;
     private String TAG = AccountManagerAdapter.class.getSimpleName();
 
     public AccountManagerAdapter(LayoutInflater inflater, Context context,ItemSelectedListener itemSelectedListener) {

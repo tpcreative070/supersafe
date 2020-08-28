@@ -225,7 +225,7 @@ public class Navigator {
         context.startActivityForResult(intent,ENABLE_CLOUD);
     }
 
-    public static void onPlayer(Context context, final ItemEntity items, final MainCategoryEntity main){
+    public static void onPlayer(Context context, final ItemModel items, final MainCategoryModel main){
         Intent intent = new Intent(context, PlayerActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_items),items);

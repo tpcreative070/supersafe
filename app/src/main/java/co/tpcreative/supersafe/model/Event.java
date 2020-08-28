@@ -8,9 +8,9 @@ import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 public class Event {
 
     @NonNull
-    private ItemEntity items;
+    private ItemModel items;
     @NonNull
-    private MainCategoryEntity mainCategories;
+    private MainCategoryModel mainCategories;
     @NonNull
     EnumEvent event;
     @NonNull
@@ -22,12 +22,12 @@ public class Event {
     }
 
     @NonNull
-    public ItemEntity getItems() {
+    public ItemModel getItems() {
         return items;
     }
 
     @NonNull
-    public MainCategoryEntity getMainCategories() {
+    public MainCategoryModel getMainCategories() {
         return mainCategories;
     }
 
@@ -36,7 +36,7 @@ public class Event {
         return event;
     }
 
-    public Event(@NonNull ItemEntity items, @NonNull MainCategoryEntity mainCategories, @NonNull EnumEvent event, @NonNull Date date) {
+    public Event(@NonNull ItemModel items, @NonNull MainCategoryModel mainCategories, @NonNull EnumEvent event, @NonNull Date date) {
         this.items = items;
         this.mainCategories = mainCategories;
         this.event = event;

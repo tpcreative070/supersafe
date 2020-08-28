@@ -15,9 +15,10 @@ import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class PlayerAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
+public class PlayerAdapter extends BaseAdapter<ItemModel, BaseHolder> {
     private Context mContext;
     private Storage storage;
     private PlayerAdapter.ItemSelectedListener ls;
@@ -46,18 +47,18 @@ public class PlayerAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
     public interface ItemSelectedListener {
         void onClickGalleryItem(int position);
     }
-    public class ItemHolder extends BaseHolder<ItemEntity> {
+    public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.tvTitle)
         TextView tvTitle;
         @BindView(R.id.imgPlaying)
         ImageView imgPlaying;
         private int mPosition;
-        private ItemEntity data;
+        private ItemModel data;
         public ItemHolder(View itemView) {
             super(itemView);
         }
         @Override
-        public void bind(ItemEntity mData, int position) {
+        public void bind(ItemModel mData, int position) {
             super.bind(mData, position);
             this.data = mData;
             if (data.isChecked){

@@ -307,10 +307,10 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     @Override
-    public List<ItemEntity> getListItems() {
+    public List<ItemModel> getListItems() {
         try {
-            final List<ItemEntity> list = new ArrayList<>();
-            final ItemEntity item = presenter.mList.get(position);
+            final List<ItemModel> list = new ArrayList<>();
+            final ItemModel item = presenter.mList.get(position);
             if (item!=null){
                 item.isChecked = true;
                 list.add(item);
@@ -342,7 +342,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             View myView = inflater.inflate(R.layout.content_view, null);
             photoView = myView.findViewById(R.id.imgPhoto);
             ImageView imgPlayer = myView.findViewById(R.id.imgPlayer);
-            final ItemEntity mItems = presenter.mList.get(position);
+            final ItemModel mItems = presenter.mList.get(position);
             EnumFormatType enumTypeFile = EnumFormatType.values()[mItems.formatType];
             photoView.setOnPhotoTapListener(new OnPhotoTapListener() {
                 @Override
@@ -356,7 +356,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
             imgPlayer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final ItemEntity items = presenter.mList.get(viewPager.getCurrentItem());
+                    final ItemModel items = presenter.mList.get(viewPager.getCurrentItem());
                     Navigator.onPlayer(PhotoSlideShowActivity.this,items,presenter.mainCategories);
                 }
             });
@@ -559,8 +559,8 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 }
                 else{
                     onDialogDownloadFile();
-                    final List<ItemEntity> list = new ArrayList<>();
-                    final ItemEntity items = presenter.mList.get(position);
+                    final List<ItemModel> list = new ArrayList<>();
+                    final ItemModel items = presenter.mList.get(position);
                     items.isChecked = true;
                     list.add(items);
                     ServiceManager.getInstance().setListDownloadFile(list);
@@ -620,13 +620,13 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        final ItemEntity items = presenter.mList.get(position);
+                        final ItemModel items = presenter.mList.get(position);
                         final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
                         EnumFormatType formatType = EnumFormatType.values()[items.formatType];
                         switch (formatType) {
                             case IMAGE: {
                                 items.isSaver = isSaver;
-                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                                SQLHelper.updatedItem(items);
                                 if (isSaver){
                                     storage.deleteFile(items.originalPath);
                                 }
@@ -643,7 +643,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                             case SHARE:{
                                 EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
-                                final ItemEntity index = presenter.mList.get(position);
+                                final ItemModel index = presenter.mList.get(position);
                                     if (index!=null){
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
@@ -716,7 +716,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                             case EXPORT:{
                                 EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
-                                final ItemEntity index = presenter.mList.get(position);
+                                final ItemModel index = presenter.mList.get(position);
                                 if (index!=null){
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
@@ -839,7 +839,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 Utils.Log(TAG,"Action 2");
                 presenter.mList.get(position).isExport = true;
                 presenter.mList.get(position).isDeleteLocal = true;
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(position));
+                SQLHelper.updatedItem(presenter.mList.get(position));
                 onCheckDelete();
                 break;
             }
@@ -847,18 +847,18 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
     public void onCheckDelete(){
-        final List<ItemEntity> mList = presenter.mList;
+        final List<ItemModel> mList = presenter.mList;
         Utils.Log(TAG,"Action 3");
         EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(position).formatType];
         if (formatTypeFile == EnumFormatType.AUDIO && mList.get(position).global_original_id == null) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+            SQLHelper.deleteItem(mList.get(position));
         } else if (formatTypeFile == EnumFormatType.FILES && mList.get(position).global_original_id == null) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+            SQLHelper.deleteItem(mList.get(position));
         } else if (mList.get(position).global_original_id == null & mList.get(position).global_thumbnail_id == null) {
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(position));
+            SQLHelper.deleteItem(mList.get(position));
         } else {
             mList.get(position).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(position));
+           SQLHelper.updatedItem(mList.get(position));
             Utils.Log(TAG, "ServiceManager waiting for delete");
         }
         storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(position).items_id);
@@ -953,7 +953,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe(response -> {
-                    final ItemEntity mItem = (ItemEntity) response;
+                    final ItemModel mItem = (ItemModel) response;
                     if (mItem!=null){
                         SQLHelper.updatedItem(items);
                         runOnUiThread(new Runnable() {

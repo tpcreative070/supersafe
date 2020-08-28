@@ -27,8 +27,9 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
-public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, BaseHolder> {
+public class FakePinComponentAdapter extends BaseAdapter<MainCategoryModel, BaseHolder> {
 
     private Activity context;
     private Storage storage;
@@ -63,13 +64,13 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, Bas
         return new ItemHolder(inflater.inflate(R.layout.fake_pin_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<MainCategoryEntity> {
+    public class ItemHolder extends BaseHolder<MainCategoryModel> {
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
 
-        private MainCategoryEntity data;
+        private MainCategoryModel data;
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -79,7 +80,7 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, Bas
         int mPosition;
 
         @Override
-        public void bind(MainCategoryEntity data, int position) {
+        public void bind(MainCategoryModel data, int position) {
             super.bind(data, position);
             this.data = data;
             final ItemModel items = SQLHelper.getLatestId(data.categories_local_id,false,true);

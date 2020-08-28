@@ -9,6 +9,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.CheckoutRequest;
@@ -17,6 +18,7 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -28,13 +30,13 @@ public class PremiumPresenter extends Presenter<BaseView>{
 
     private static final String TAG = PremiumPresenter.class.getSimpleName();
     protected User mUser;
-    protected List<ItemEntity> mList ;
+    protected List<ItemModel> mList ;
     protected long spaceAvailable=0;
     protected boolean isSaver;
 
     public PremiumPresenter(){
         mUser = User.getInstance().getUserInfo();
-        mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(true,true);
+        mList = SQLHelper.getListAllItemsSaved(true,true);
         if (mList==null){
             mList = new ArrayList<>();
         }
@@ -42,7 +44,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         if (mList.size()>0){
             spaceAvailable = 0;
             for (int i = 0;i<mList.size();i++){
-                final ItemEntity items = mList.get(i);
+                final ItemModel items = mList.get(i);
                 items.isChecked = true;
                 spaceAvailable +=Long.parseLong(items.size);
             }
@@ -53,15 +55,15 @@ public class PremiumPresenter extends Presenter<BaseView>{
 
     public void onUpdatedItems(){
         if (mList==null){
-            mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(true,true);
+            mList = SQLHelper.getListAllItemsSaved(true,true);
             if (mList==null){
                 mList = new ArrayList<>();
             }
         }
         for (int i =0;i<mList.size();i++){
-            final ItemEntity index = mList.get(i);
+            final ItemModel index = mList.get(i);
             index.isSaver = false;
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(index);
+            SQLHelper.updatedItem(index);
         }
     }
 

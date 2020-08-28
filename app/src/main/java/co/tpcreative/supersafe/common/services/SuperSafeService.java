@@ -1116,31 +1116,31 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
 //        }
     }
 
-    public void onSaveItem(final ItemEntity mItem) {
-        final ItemEntity items = new ItemEntity(mItem);
-        Utils.Log(TAG, "onSaveItem");
-        Utils.onWriteLog(new Gson().toJson(items),EnumStatus.CREATE);
-        boolean isSaver;
-        EnumFormatType formatType = EnumFormatType.values()[items.formatType];
-        switch (formatType){
-            case IMAGE:{
-                isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
-                items.originalSync = isSaver;
-                break;
-            }
-            default:{
-                items.originalSync = false;
-                break;
-            }
-        }
-        items.isExport = false;
-        items.isWaitingForExporting = false;
-        items.custom_items = 0;
-        items.isSyncCloud = false;
-        items.isSyncOwnServer = false;
-        items.isUpdate = false;
-        items.statusAction = EnumStatus.DOWNLOAD.ordinal();
-        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
+    public void onSaveItem(final ItemModel mItem) {
+//        final ItemEntity items = new ItemEntity(mItem);
+//        Utils.Log(TAG, "onSaveItem");
+//        Utils.onWriteLog(new Gson().toJson(items),EnumStatus.CREATE);
+//        boolean isSaver;
+//        EnumFormatType formatType = EnumFormatType.values()[items.formatType];
+//        switch (formatType){
+//            case IMAGE:{
+//                isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
+//                items.originalSync = isSaver;
+//                break;
+//            }
+//            default:{
+//                items.originalSync = false;
+//                break;
+//            }
+//        }
+//        items.isExport = false;
+//        items.isWaitingForExporting = false;
+//        items.custom_items = 0;
+//        items.isSyncCloud = false;
+//        items.isSyncOwnServer = false;
+//        items.isUpdate = false;
+//        items.statusAction = EnumStatus.DOWNLOAD.ordinal();
+//        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
     public void onDownloadFile(final ItemModel items, final ServiceManager.DownloadServiceListener listener) {

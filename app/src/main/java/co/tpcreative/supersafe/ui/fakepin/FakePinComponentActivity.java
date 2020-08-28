@@ -39,6 +39,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
@@ -163,12 +164,12 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         Utils.Log(TAG, "Value");
                         String value = input.toString();
                         String base64Code = Utils.getHexCode(value);
-                        MainCategoryModel item = MainCategoryEntity.getInstance().getTrashItem();
+                        MainCategoryModel item = SQLHelper.getTrashItem();
                         String result = item.categories_hex_name;
                         if (base64Code.equals(result)) {
                             Toast.makeText(FakePinComponentActivity.this, "This name already existing", Toast.LENGTH_SHORT).show();
                         } else {
-                            boolean response = MainCategoryEntity.getInstance().onAddFakePinCategories(base64Code, value,true);
+                            boolean response = SQLHelper.onAddFakePinCategories(base64Code, value,true);
                             if (response) {
                                 Toast.makeText(FakePinComponentActivity.this, "Created album successful", Toast.LENGTH_SHORT).show();
                             } else {
@@ -189,7 +190,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            final List<MainCategoryModel> list = MainCategoryEntity.getInstance().getListFakePin();
+                            final List<MainCategoryModel> list = SQLHelper.getListFakePin();
                             if (list != null) {
                                 Navigator.onMoveCamera(FakePinComponentActivity.this, list.get(0));
                             }
@@ -252,7 +253,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                                 return;
                             }
                             mimeTypeFile.name = name;
-                            final List<MainCategoryModel> list = MainCategoryEntity.getInstance().getListFakePin();
+                            final List<MainCategoryModel> list = SQLHelper.getListFakePin();
                             if (list == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
@@ -393,7 +394,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                 Navigator.onMoveTrash(getActivity());
             }
             else{
-                final MainCategoryEntity mainCategories = presenter.mList.get(position);
+                final MainCategoryModel mainCategories = presenter.mList.get(position);
                 Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
             }
         }
