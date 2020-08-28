@@ -388,7 +388,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                 presenter.mUser = mUser;
                 Utils.Log(TAG,"Finsh enable cloud.........................");
-                //ServiceManager.getInstance().onSyncDataOwnServer("0");
+                ServiceManager.getInstance().onPreparingSyncData();
                 ServiceManager.getInstance().onGetUserInfo();
                 ServiceManager.getInstance().onGetListCategoriesSync();
                 onBackPressed();

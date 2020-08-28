@@ -241,7 +241,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
-                                //ServiceManager.getInstance().onSyncDataOwnServer("0");
+                                ServiceManager.getInstance().onPreparingSyncData();
                             }
                         }
                     }

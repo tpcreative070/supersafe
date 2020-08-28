@@ -24,6 +24,7 @@ import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
 public class CameraActivity extends BaseActivity implements
@@ -88,7 +89,7 @@ public class CameraActivity extends BaseActivity implements
                     }
                     break;
                 case R.id.btnDone :
-                    ServiceManager.getInstance().onSyncDataOwnServer("0");
+                    ServiceManager.getInstance().onPreparingSyncData();
                     onBackPressed();
                     break;
             }
@@ -96,7 +97,7 @@ public class CameraActivity extends BaseActivity implements
     };
 
 
-    private MainCategoryEntity mainCategories;
+    private MainCategoryModel mainCategories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +118,7 @@ public class CameraActivity extends BaseActivity implements
         }
         try {
             Bundle bundle = getIntent().getExtras();
-            mainCategories = (MainCategoryEntity) bundle.get(getString(R.string.key_main_categories));
+            mainCategories = (MainCategoryModel) bundle.get(getString(R.string.key_main_categories));
         }
         catch (Exception e){
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);

@@ -309,7 +309,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
         if (isReload) {
-            //ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onPreparingSyncData();
         }
         storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
     }
@@ -948,7 +948,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                         }
                     }
                     ServiceManager.getInstance().setmListImport(mListImportFiles);
-                    ServiceManager.getInstance().onImportingFiles();
+                    ServiceManager.getInstance().onPreparingImportData();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }

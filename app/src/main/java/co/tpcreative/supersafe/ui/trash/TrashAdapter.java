@@ -21,9 +21,10 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class TrashAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
+public class TrashAdapter extends BaseAdapter<ItemModel, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()

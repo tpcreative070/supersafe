@@ -265,7 +265,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         }
                     }
                     ServiceManager.getInstance().setmListImport(mListImport);
-                    ServiceManager.getInstance().onImportingFiles();
+                    ServiceManager.getInstance().onPreparingImportData();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }

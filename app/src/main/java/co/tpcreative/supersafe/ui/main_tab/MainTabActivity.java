@@ -542,7 +542,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                         }
                     }
                     ServiceManager.getInstance().setmListImport(mListImportFiles);
-                    ServiceManager.getInstance().onImportingFiles();
+                    ServiceManager.getInstance().onPreparingImportData();;
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }

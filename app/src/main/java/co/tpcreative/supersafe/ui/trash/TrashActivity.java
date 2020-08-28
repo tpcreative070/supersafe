@@ -357,7 +357,7 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
                 presenter.getData(this);
                 btnTrash.setText(getString(R.string.key_empty_trash));
                 SingletonPrivateFragment.getInstance().onUpdateView();
-                //ServiceManager.getInstance().onSyncDataOwnServer("0");
+                ServiceManager.getInstance().onPreparingSyncData();
                 break;
             }
         }

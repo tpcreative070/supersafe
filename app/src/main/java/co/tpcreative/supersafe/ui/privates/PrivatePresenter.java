@@ -51,7 +51,7 @@ public class PrivatePresenter extends Presenter<BaseView> {
         }
         finally {
             getData();
-            //ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onPreparingSyncData();
         }
     }
 
@@ -83,7 +83,7 @@ public class PrivatePresenter extends Presenter<BaseView> {
         }
         finally {
             getData();
-            //ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onPreparingSyncData();
         }
     }
 }
