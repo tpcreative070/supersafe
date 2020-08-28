@@ -2,11 +2,12 @@ package co.tpcreative.supersafe.model;
 
 import androidx.room.Ignore;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import co.tpcreative.supersafe.common.util.Utils;
 
-public class ItemModel {
+public class ItemModel implements Serializable {
 
     public int id;
     public String originalName;
@@ -174,6 +175,10 @@ public class ItemModel {
         this.isWaitingForExporting = isWaitingForExporting;
         this.custom_items = custom_items;
         this.isUpdate = isUpdate;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
     }
 
     public ItemModel(){

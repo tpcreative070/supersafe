@@ -9,6 +9,7 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -16,18 +17,20 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
     private final static String TAG = AlbumDetailPresenter.class.getSimpleName();
-    protected List<ItemEntity> mList;
-    protected MainCategoryEntity mainCategories;
+    protected List<ItemModel> mList;
+    protected MainCategoryModel mainCategories;
     protected int videos = 0;
     protected int photos = 0;
     protected int audios = 0;
     protected int others = 0;
     protected List<File> mListShare = new ArrayList<>();
     protected EnumStatus status = EnumStatus.OTHER;
-    protected List<HashMap<Integer, ItemEntity>> mListHashExporting;
+    protected List<HashMap<Integer, ItemModel>> mListHashExporting;
 
     public AlbumDetailPresenter(){
         mList = new ArrayList<>();
@@ -40,9 +43,9 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
         mList.clear();
         try {
             Bundle bundle = activity.getIntent().getExtras();
-            mainCategories = (MainCategoryEntity) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
+            mainCategories = (MainCategoryModel) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
             if (mainCategories!=null){
-                final List<ItemEntity> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,false,mainCategories.isFakePin);
+                final List<ItemModel> data = SQLHelper.getListItems(mainCategories.categories_local_id,false,false,mainCategories.isFakePin);
                 if (data!=null){
                     mList = data;
                     onCalculate();
@@ -63,7 +66,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
         videos = 0;
         audios = 0;
         others = 0;
-        for (ItemEntity index : mList){
+        for (ItemModel index : mList){
             final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
             switch (enumTypeFile){
                 case IMAGE:{
@@ -91,7 +94,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
         mList.clear();
         try {
             if (mainCategories!=null){
-                final List<ItemEntity> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,false,false,mainCategories.isFakePin);
+                final List<ItemModel> data = SQLHelper.getListItems(mainCategories.categories_local_id,false,false,mainCategories.isFakePin);
                 if (data!=null){
                     mList = data;
                     onCalculate();
@@ -113,7 +116,7 @@ public class AlbumDetailPresenter extends Presenter<BaseView<Integer>> {
             if (mList.get(i).isChecked()){
                 Utils.Log(TAG,"Delete position at "+ i);
                 mList.get(i).isDeleteLocal = true;
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+               SQLHelper.updatedItem(mList.get(i));
                 view.onSuccessful("Successful",EnumStatus.DELETE,i);
             }
         }

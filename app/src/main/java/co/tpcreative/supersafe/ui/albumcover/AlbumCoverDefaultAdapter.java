@@ -11,11 +11,13 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategoryEntity, BaseHolder> {
+public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategoryModel, BaseHolder> {
 
     private Context context;
     private ItemSelectedListener itemSelectedListener;
@@ -43,7 +45,7 @@ public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategoryEntity, Ba
         void onClickedDefaultItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<MainCategoryEntity> {
+    public class ItemHolder extends BaseHolder<MainCategoryModel> {
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.imgIcon)
@@ -53,14 +55,14 @@ public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategoryEntity, Ba
         @BindView(R.id.view_alpha)
         View view_alpha;
         int mPosition;
-        MainCategoryEntity categories;
+        MainCategoryModel categories;
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
 
         @Override
-        public void bind(MainCategoryEntity data, int position) {
+        public void bind(MainCategoryModel data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"load data");
@@ -79,7 +81,7 @@ public class AlbumCoverDefaultAdapter extends BaseAdapter<MainCategoryEntity, Ba
                 imgAlbum.setImageResource(0);
                 int myColor = Color.parseColor(categories.image);
                 imgAlbum.setBackgroundColor(myColor);
-                imgIcon.setImageDrawable(MainCategoryEntity.getInstance().getDrawable(context, categories.icon));
+                imgIcon.setImageDrawable(SQLHelper.getDrawable(context, categories.icon));
                 imgIcon.setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 e.printStackTrace();

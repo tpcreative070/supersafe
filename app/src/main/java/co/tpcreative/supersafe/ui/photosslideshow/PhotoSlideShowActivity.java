@@ -46,6 +46,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Configuration;
@@ -54,6 +55,7 @@ import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ExportFiles;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
@@ -525,7 +527,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                     if (isProgressing){
                         return;
                     }
-                    final ItemEntity items = InstanceGenerator.getInstance(this).getItemId(presenter.mList.get(viewPager.getCurrentItem()).items_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
+                    final ItemModel items = SQLHelper.getItemId(presenter.mList.get(viewPager.getCurrentItem()).items_id,presenter.mList.get(viewPager.getCurrentItem()).isFakePin);
                     EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                     if (formatTypeFile!=EnumFormatType.AUDIO && formatTypeFile !=EnumFormatType.FILES ){
                         if (items!=null) {
@@ -923,11 +925,11 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     }
 
 
-    public void onRotateBitmap(final ItemEntity items){
+    public void onRotateBitmap(final ItemModel items){
         subscriptions = Observable.create(subscriber -> {
             isProgressing = true;
             Utils.Log(TAG,"Start Progressing encrypt thumbnail data");
-            final ItemEntity mItem = items;
+            final ItemModel mItem = items;
             int mDegrees = mItem.degrees;
 
             if (mDegrees>=360){
@@ -953,7 +955,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
                 .subscribe(response -> {
                     final ItemEntity mItem = (ItemEntity) response;
                     if (mItem!=null){
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                        SQLHelper.updatedItem(items);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

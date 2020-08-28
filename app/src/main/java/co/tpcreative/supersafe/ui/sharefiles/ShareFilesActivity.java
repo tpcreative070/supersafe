@@ -35,12 +35,14 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNone;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.PathUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ImportFilesModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
@@ -156,8 +158,8 @@ public class ShareFilesActivity extends BaseActivityNone{
         try {
             Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
             String type = intent.getType();
-            final List<MainCategoryEntity> list = MainCategoryEntity.getInstance().getList();
-            final MainCategoryEntity mainCategories  = list.get(0);
+            final List<MainCategoryModel> list = SQLHelper.getList();
+            final MainCategoryModel mainCategories  = list.get(0);
             if (imageUri != null && mainCategories!=null) {
                 mListFile.clear();
                 onStartProgressing();
@@ -253,8 +255,8 @@ public class ShareFilesActivity extends BaseActivityNone{
     public void handleSendMultipleFiles(Intent intent, EnumFormatType enumFormatType) {
         try {
             ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            final List<MainCategoryEntity> list = MainCategoryEntity.getInstance().getList();
-            final MainCategoryEntity mainCategories  = list.get(0);
+            final List<MainCategoryModel> list = SQLHelper.getList();
+            final MainCategoryModel mainCategories  = list.get(0);
             if (imageUris != null) {
                 mListFile.clear();
                 onStartProgressing();

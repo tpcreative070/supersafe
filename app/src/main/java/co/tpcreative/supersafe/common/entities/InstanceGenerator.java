@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ItemEntityModel;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryEntityModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 @Database(entities = {ItemEntity.class, MainCategoryEntity.class, BreakInAlerts.class}, version = 5, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
@@ -127,12 +128,24 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
     }
 
-    public final synchronized List<ItemEntity> getListItems(final String categories_local_id, boolean isDeleteLocal, boolean isExport, boolean isFakePin){
+    public final  List<ItemEntityModel> getListItems(final String categories_local_id, boolean isDeleteLocal, boolean isExport, boolean isFakePin){
         try{
             if (categories_local_id==null){
                 return null;
             }
-            return instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isExport,isFakePin);
+            try{
+                final List<ItemEntity> mList =  instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isExport,isFakePin);
+                final List<ItemEntityModel> mData = new ArrayList<>();
+                if (mList!=null){
+                    for (ItemEntity index : mList){
+                        mData.add(new ItemEntityModel(index));
+                    }
+                    return mData;
+                }
+            }
+            catch (Exception e){
+
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -140,41 +153,56 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<ItemEntity> getListItems(final String categories_local_id, boolean isDeleteLocal, boolean isFakePin){
+    public final List<ItemEntityModel> getListItems(final String categories_local_id, boolean isDeleteLocal, boolean isFakePin){
+        if (categories_local_id==null){
+            return null;
+        }
         try{
-            if (categories_local_id==null){
-                return null;
+            final List<ItemEntity> mList =  instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
             }
-            return instance.itemsDao().loadAll(categories_local_id,isDeleteLocal,isFakePin);
         }
         catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
+
         }
         return null;
     }
 
-
-
-    public final synchronized List<ItemEntity> getListItems(final String categories_local_id, int formatType, boolean isDeleteLocal, boolean isFakePin){
+    public final  List<ItemEntityModel> getListItems(final String categories_local_id, int formatType, boolean isDeleteLocal, boolean isFakePin){
+        if (categories_local_id==null){
+            return null;
+        }
         try{
-            if (categories_local_id==null){
-                return null;
+            final List<ItemEntity> mList =  instance.itemsDao().loadAll(categories_local_id,formatType,isDeleteLocal,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
             }
-            return instance.itemsDao().loadAll(categories_local_id,formatType,isDeleteLocal,isFakePin);
         }
         catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
+
         }
         return null;
     }
 
-
-    public final synchronized List<ItemEntity> getListItems(final String categories_local_id, boolean isFakePin){
+    public final List<ItemEntityModel> getListItems(final String categories_local_id, boolean isFakePin){
         try{
-            if (categories_local_id==null){
-                return null;
+            final List<ItemEntity> mList =  instance.itemsDao().loadAll(categories_local_id,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
             }
-            return instance.itemsDao().loadAll(categories_local_id,isFakePin);
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -224,9 +252,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<ItemEntity> getDeleteLocalListItems(boolean isDeleteLocal, int deleteAction, boolean isFakePin){
+    public static final List<ItemEntityModel> getDeleteLocalListItems(boolean isDeleteLocal, int deleteAction, boolean isFakePin){
         try{
-            return instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,deleteAction,isFakePin);
+            final List<ItemEntity> mList =  instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,deleteAction,isFakePin);
+            final List<ItemEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (ItemEntity index : mList){
+                    mData.add(new ItemEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -333,9 +368,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized ItemEntity getItemId(String item_id){
+    public final ItemEntityModel getItemId(String item_id){
         try{
-            return instance.itemsDao().loadItemId(item_id);
+            final ItemEntity mResult =  instance.itemsDao().loadItemId(item_id);
+            if (mResult != null){
+                return  new ItemEntityModel(mResult);
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -481,34 +519,41 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
     /*Main categories*/
-    public synchronized void onInsert(MainCategoryEntity item){
+    public void onInsert(MainCategoryEntityModel item){
         try {
             if (item==null){
                 return;
             }
-            instance.mainCategoriesDao().insert(item);
+            instance.mainCategoriesDao().insert(new MainCategoryEntity(item));
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
         }
     }
 
-    public synchronized void onUpdate(MainCategoryEntity cTalkManager){
+    public  void onUpdate(MainCategoryEntityModel cTalkManager){
         try {
             if (cTalkManager==null){
                 Utils.Log(TAG,"Null???? ");
             }
             Utils.Log(TAG,"Updated :"+cTalkManager.categories_id);
-            instance.mainCategoriesDao().update(cTalkManager);
+            instance.mainCategoriesDao().update(new MainCategoryEntity(cTalkManager));
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
         }
     }
 
-    public final synchronized List<MainCategoryEntity> getListCategories(boolean isFakePin){
+    public final  List<MainCategoryEntityModel> getListCategories(boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadAll(isFakePin);
+            final List<MainCategoryEntity> mResult =  instance.mainCategoriesDao().loadAll(isFakePin);
+            final List<MainCategoryEntityModel> mData = new ArrayList<>();
+            if (mResult!=null){
+                for (MainCategoryEntity index : mResult){
+                    mData.add(new MainCategoryEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -516,9 +561,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<MainCategoryEntity> getListCategories(String categories_local_id , boolean isDelete , boolean isFakePin){
+    public final List<MainCategoryEntityModel> getListCategories(String categories_local_id , boolean isDelete , boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadAll(categories_local_id,isDelete,isFakePin);
+            final List<MainCategoryEntity> mList =  instance.mainCategoriesDao().loadAll(categories_local_id,isDelete,isFakePin);
+            final List<MainCategoryEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (MainCategoryEntity index : mList){
+                    mData.add(new MainCategoryEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -526,9 +578,33 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<MainCategoryEntity> getListCategories(boolean isDelete, boolean isFakePin){
+    public final List<MainCategoryEntityModel> getListCategories(boolean isDelete, boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadAll(isDelete,isFakePin);
+            final List<MainCategoryEntity> mList =  instance.mainCategoriesDao().loadAll(isDelete,isFakePin);
+            final List<MainCategoryEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (MainCategoryEntity index : mList){
+                    mData.add(new MainCategoryEntityModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+    public final synchronized List<MainCategoryEntityModel> getChangedCategoryList(){
+        try{
+            final List<MainCategoryEntity> mList =  instance.mainCategoriesDao().loadAllChangedItem(true,false);
+            final List<MainCategoryEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (MainCategoryEntity index : mList){
+                    mData.add(new MainCategoryEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -554,9 +630,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized MainCategoryEntity getCategoriesItemId(String categories_hex_name, boolean isFakePin){
+    public final  MainCategoryEntityModel getCategoriesItemId(String categories_hex_name, boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadItemId(categories_hex_name,isFakePin);
+            final MainCategoryEntity mResult =  instance.mainCategoriesDao().loadItemId(categories_hex_name,isFakePin);
+            if (mResult!=null){
+                return new MainCategoryEntityModel(mResult);
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -593,9 +672,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized MainCategoryEntity getCategoriesLocalId(String categories_local_id, boolean isFakePin){
+    public final  MainCategoryEntityModel getCategoriesLocalId(String categories_local_id, boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadItemLocalId(categories_local_id,isFakePin);
+            final MainCategoryEntity mResult =  instance.mainCategoriesDao().loadItemLocalId(categories_local_id,isFakePin);
+            if (mResult!=null){
+                new MainCategoryEntityModel(mResult);
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
@@ -613,9 +695,12 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized MainCategoryEntity getCategoriesId(String categories_id, boolean isFakePin){
+    public final  MainCategoryEntityModel getCategoriesId(String categories_id, boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadItemCategoriesId(categories_id,isFakePin);
+            final MainCategoryEntity mResult = instance.mainCategoriesDao().loadItemCategoriesId(categories_id,isFakePin);
+            if (mResult!=null){
+                return  new MainCategoryEntityModel(mResult);
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());

@@ -20,6 +20,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
@@ -122,7 +123,7 @@ public class FakePinComponentAdapter extends BaseAdapter<MainCategoryEntity, Bas
                 }
             } else {
                 imgAlbum.setImageResource(0);
-                imgIcon.setImageDrawable(MainCategoryEntity.getInstance().getDrawable(context,data.icon));
+                imgIcon.setImageDrawable(SQLHelper.getDrawable(context,data.icon));
                 imgIcon.setVisibility(View.VISIBLE);
                 try {
                     int myColor = Color.parseColor(data.image);

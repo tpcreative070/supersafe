@@ -30,6 +30,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
+import androidx.room.Ignore;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -68,6 +70,9 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.EnumFileType;
@@ -1090,6 +1095,27 @@ public class Utils {
             return false;
         }
         return directory.mkdirs();
+    }
+
+
+    public boolean onChangeCategories(MainCategoryModel mainCategories){
+        try {
+            String hex_name = Utils.getHexCode(mainCategories.categories_name);
+            boolean mIsFakePin = mainCategories.isFakePin;
+            MainCategoryModel response = SQLHelper.getCategoriesItemId(hex_name,mIsFakePin);
+            if (response==null){
+                mainCategories.categories_hex_name = hex_name;
+                mainCategories.isChange = true;
+                mainCategories.isSyncOwnServer = false;
+               SQLHelper.updateCategory(mainCategories);
+                return true;
+            }
+            Utils.Log(TAG,"value changed :"+ new Gson().toJson(response));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

@@ -45,6 +45,7 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
 import co.tpcreative.supersafe.model.ImportFilesModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 
@@ -162,7 +163,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         Utils.Log(TAG, "Value");
                         String value = input.toString();
                         String base64Code = Utils.getHexCode(value);
-                        MainCategoryEntity item = MainCategoryEntity.getInstance().getTrashItem();
+                        MainCategoryModel item = MainCategoryEntity.getInstance().getTrashItem();
                         String result = item.categories_hex_name;
                         if (base64Code.equals(result)) {
                             Toast.makeText(FakePinComponentActivity.this, "This name already existing", Toast.LENGTH_SHORT).show();
@@ -188,7 +189,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            final List<MainCategoryEntity> list = MainCategoryEntity.getInstance().getListFakePin();
+                            final List<MainCategoryModel> list = MainCategoryEntity.getInstance().getListFakePin();
                             if (list != null) {
                                 Navigator.onMoveCamera(FakePinComponentActivity.this, list.get(0));
                             }
@@ -251,7 +252,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                                 return;
                             }
                             mimeTypeFile.name = name;
-                            final List<MainCategoryEntity> list = MainCategoryEntity.getInstance().getListFakePin();
+                            final List<MainCategoryModel> list = MainCategoryEntity.getInstance().getListFakePin();
                             if (list == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;

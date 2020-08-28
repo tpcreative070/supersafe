@@ -451,7 +451,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     /*Network request*/
-    public void onCategoriesSync(MainCategoryEntity mainCategories, ServiceManager.ServiceManagerShortListener view) {
+    public void onCategoriesSync(MainCategoryModel mainCategories, ServiceManager.BaseListener view) {
         Utils.Log(TAG, "onCategoriesSync " + new Gson().toJson(mainCategories));
         if (isCheckNull(view,EnumStatus.CATEGORIES_SYNC)){
             return;
@@ -491,7 +491,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                     mainCategories.isSyncOwnServer = true;
                                     mainCategories.isChange = false;
                                     mainCategories.isDelete = false;
-                                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+                                    SQLHelper.updateCategory(mainCategories);
                                     view.onSuccessful(onResponse.message + " - " + mData.category.categories_id + " - ", EnumStatus.CATEGORIES_SYNC);
                                 } else {
                                     view.onSuccessful("Not found categories_hex_name - " + mData.category.categories_id,EnumStatus.CATEGORIES_SYNC);
@@ -608,86 +608,86 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("cloud id null", EnumStatus.LIST_CATEGORIES_SYNC);
             return;
         }
-        subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(new CategoriesRequest(user.email, user.cloud_id,SuperSafeApplication.getInstance().getDeviceId()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onResponse -> {
-                    if (view == null) {
-                        Utils.Log(TAG, "View is null");
-                        view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
-                        return;
-                    }
-                    if (onResponse.error) {
-                        Utils.Log(TAG, "onError 1");
-                        view.onError(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
-                    } else {
-                        try {
-                            final DataResponse mData = onResponse.data;
-                            if (mData.categoriesList != null) {
-                                for (MainCategoryEntity index : mData.categoriesList) {
-                                    MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
-                                    if (main != null) {
-                                        if (!main.isChange && !main.isDelete) {
-                                            main.isSyncOwnServer = true;
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
-                                        }
-                                    } else {
-                                        MainCategoryEntity mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
-                                        if (mMain != null) {
-                                            if (!mMain.isChange && !mMain.isDelete) {
-                                                mMain.isSyncOwnServer = true;
-                                                mMain.isChange = false;
-                                                mMain.isDelete = false;
-                                                mMain.categories_id = index.categories_id;
-                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mMain);
-                                            }
-                                        } else {
-                                            mMain = index;
-                                            mMain.categories_local_id = Utils.getUUId();
-                                            mMain.isSyncOwnServer = true;
-                                            mMain.isChange = false;
-                                            mMain.isDelete = false;
-                                            final int count  = InstanceGenerator.getInstance(this).getLatestItem();
-                                            mMain.categories_max = count;
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
-                                            Utils.Log(TAG,"Adding new main categories.......................................1");
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                            view.onError("Error :" + e.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
-                        } finally {
-                            view.onSuccessful(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
-                        }
-                    }
-                }, throwable -> {
-                    if (view == null) {
-                        Utils.Log(TAG, "View is null");
-                        view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
-                        return;
-                    }
-                    if (throwable instanceof HttpException) {
-                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
-                        int code  = ((HttpException) throwable).response().code();
-                        try {
-                            if (code==401){
-                                Utils.Log(TAG,"code "+code);
-                                ServiceManager.getInstance().onUpdatedUserToken();
-                            }
-                            Utils.Log(TAG, "error" + bodys.string());
-                            String msg = new Gson().toJson(bodys.string());
-                            Utils.Log(TAG, msg);
-                            view.onError("" + msg, EnumStatus.LIST_CATEGORIES_SYNC);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            view.onError("" + e.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
-                        }
-                    } else {
-                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
-                        view.onError("Error :" + throwable.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
-                    }
-                }));
+//        subscriptions.add(SuperSafeApplication.serverAPI.onListCategoriesSync(new CategoriesRequest(user.email, user.cloud_id,SuperSafeApplication.getInstance().getDeviceId()))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(onResponse -> {
+//                    if (view == null) {
+//                        Utils.Log(TAG, "View is null");
+//                        view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
+//                        return;
+//                    }
+//                    if (onResponse.error) {
+//                        Utils.Log(TAG, "onError 1");
+//                        view.onError(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
+//                    } else {
+//                        try {
+//                            final DataResponse mData = onResponse.data;
+//                            if (mData.categoriesList != null) {
+//                                for (MainCategoryEntity index : mData.categoriesList) {
+//                                    MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
+//                                    if (main != null) {
+//                                        if (!main.isChange && !main.isDelete) {
+//                                            main.isSyncOwnServer = true;
+//                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+//                                        }
+//                                    } else {
+//                                        MainCategoryEntity mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
+//                                        if (mMain != null) {
+//                                            if (!mMain.isChange && !mMain.isDelete) {
+//                                                mMain.isSyncOwnServer = true;
+//                                                mMain.isChange = false;
+//                                                mMain.isDelete = false;
+//                                                mMain.categories_id = index.categories_id;
+//                                                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mMain);
+//                                            }
+//                                        } else {
+//                                            mMain = index;
+//                                            mMain.categories_local_id = Utils.getUUId();
+//                                            mMain.isSyncOwnServer = true;
+//                                            mMain.isChange = false;
+//                                            mMain.isDelete = false;
+//                                            final int count  = InstanceGenerator.getInstance(this).getLatestItem();
+//                                            mMain.categories_max = count;
+//                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
+//                                            Utils.Log(TAG,"Adding new main categories.......................................1");
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        } catch (Exception e) {
+//                            view.onError("Error :" + e.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
+//                        } finally {
+//                            view.onSuccessful(onResponse.message, EnumStatus.LIST_CATEGORIES_SYNC);
+//                        }
+//                    }
+//                }, throwable -> {
+//                    if (view == null) {
+//                        Utils.Log(TAG, "View is null");
+//                        view.onError("View is null", EnumStatus.LIST_CATEGORIES_SYNC);
+//                        return;
+//                    }
+//                    if (throwable instanceof HttpException) {
+//                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+//                        int code  = ((HttpException) throwable).response().code();
+//                        try {
+//                            if (code==401){
+//                                Utils.Log(TAG,"code "+code);
+//                                ServiceManager.getInstance().onUpdatedUserToken();
+//                            }
+//                            Utils.Log(TAG, "error" + bodys.string());
+//                            String msg = new Gson().toJson(bodys.string());
+//                            Utils.Log(TAG, msg);
+//                            view.onError("" + msg, EnumStatus.LIST_CATEGORIES_SYNC);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            view.onError("" + e.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
+//                        }
+//                    } else {
+//                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
+//                        view.onError("Error :" + throwable.getMessage(), EnumStatus.LIST_CATEGORIES_SYNC);
+//                    }
+//                }));
     }
 
     public void onUpdateItems(final ItemModel mItem, ServiceManager.BaseListener view) {
@@ -993,28 +993,28 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError(onResponse.message, EnumStatus.GET_LIST_FILE);
                     } else {
                         final DataResponse mData = onResponse.data;
-                        final List<MainCategoryEntity> listCategories = mData.categoriesList;
+                        final List<MainCategoryModel> listCategories = mData.categoriesList;
                         final List<ItemModel> mListItemResponse = mData.itemsList;
                         if (mData.nextPage == null) {
-                            for (MainCategoryEntity index : listCategories) {
+                            for (MainCategoryModel index : listCategories) {
                                 hashMapGlobalCategories.put(index.categories_id, index.categories_id);
-                                MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesId(index.categories_id,false);
+                                MainCategoryModel main = SQLHelper.getCategoriesId(index.categories_id,false);
                                 if (main != null) {
                                     if (!main.isChange && !main.isDelete) {
                                         main.isSyncOwnServer = true;
                                         main.categories_name = index.categories_name;
-                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(main);
+                                        SQLHelper.updateCategory(main);
                                     }
                                     view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
                                 } else {
-                                    MainCategoryEntity mMain = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(index.categories_hex_name,false);
+                                    MainCategoryModel mMain = SQLHelper.getCategoriesItemId(index.categories_hex_name,false);
                                     if (mMain != null) {
                                         if (!mMain.isDelete && !mMain.isChange) {
                                             mMain.isSyncOwnServer = true;
                                             mMain.isChange = false;
                                             mMain.isDelete = false;
                                             mMain.categories_id = index.categories_id;
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mMain);
+                                            SQLHelper.updateCategory(mMain);
                                         }
                                     } else {
                                         mMain = index;
@@ -1024,7 +1024,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                         mMain.isDelete = false;
                                         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
                                         mMain.categories_max = count;
-                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(mMain);
+                                        SQLHelper.insertCategory(mMain);
                                         Utils.Log(TAG,"Adding new main categories.......................................2");
                                     }
                                     view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);

@@ -4,14 +4,14 @@ import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.util.Utils;
 
 public class ImportFilesModel implements Serializable{
-    public MainCategoryEntity mainCategories;
+    public MainCategoryModel mainCategories;
     public String path ;
     public MimeTypeFile mimeTypeFile;
     public int position;
     public boolean isImport;
     public String unique_id;
 
-    public ImportFilesModel(MainCategoryEntity mainCategories, MimeTypeFile mimeTypeFile, String path, int position, boolean isImport){
+    public ImportFilesModel(MainCategoryModel mainCategories, MimeTypeFile mimeTypeFile, String path, int position, boolean isImport){
         this.mainCategories = mainCategories;
         this.mimeTypeFile = mimeTypeFile;
         this.path = path;

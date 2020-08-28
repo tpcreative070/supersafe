@@ -55,6 +55,9 @@ public interface MainCategoriesDao {
     @Query("Select * FROM maincategories WHERE isDelete = :isDelete AND isFakePin =:isFakePin")
     List<MainCategoryEntity> loadAll(boolean isDelete, boolean isFakePin);
 
+    @Query("Select * FROM maincategories WHERE isChange = :isChange AND isFakePin =:isFakePin")
+    List<MainCategoryEntity> loadAllChangedItem(boolean isChange, boolean isFakePin);
+
     @Query("Select * FROM maincategories WHERE isDelete = :isDelete AND isFakePin =:isFakePin AND categories_local_id !=:categories_local_id")
     List<MainCategoryEntity> loadAll(String categories_local_id, boolean isDelete, boolean isFakePin);
 

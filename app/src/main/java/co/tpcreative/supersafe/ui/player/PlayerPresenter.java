@@ -7,14 +7,18 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
+
 public class PlayerPresenter extends Presenter<BaseView>{
-    protected ItemEntity mItems ;
-    protected MainCategoryEntity mainCategories;
-    protected List<ItemEntity>mList ;
+    protected ItemModel mItems ;
+    protected MainCategoryModel mainCategories;
+    protected List<ItemModel>mList ;
     protected List<MediaSource> mListSource;
     public PlayerPresenter(){
         mList = new ArrayList<>();
@@ -25,15 +29,15 @@ public class PlayerPresenter extends Presenter<BaseView>{
         BaseView view = view();
         Bundle bundle = activity.getIntent().getExtras();
         try {
-            final ItemEntity items = (ItemEntity) bundle.get(activity.getString(R.string.key_items));
-            mainCategories = (MainCategoryEntity) bundle.get(activity.getString(R.string.key_main_categories));
+            final ItemModel items = (ItemModel) bundle.get(activity.getString(R.string.key_items));
+            mainCategories = (MainCategoryModel) bundle.get(activity.getString(R.string.key_main_categories));
             if (items!=null){
                 mItems = items;
                 if (mainCategories!=null){
-                    final List<ItemEntity> list = InstanceGenerator.getInstance(view.getContext()).getListItems(mainCategories.categories_local_id,items.formatType,false,mainCategories.isFakePin);
+                    final List<ItemModel> list = SQLHelper.getListItems(mainCategories.categories_local_id,items.formatType,false,mainCategories.isFakePin);
                     if (list!=null){
                         mList.clear();
-                        for (ItemEntity index : list){
+                        for (ItemModel index : list){
                             if (!index.items_id.equals(items.items_id)){
                                 mList.add(index);
                             }

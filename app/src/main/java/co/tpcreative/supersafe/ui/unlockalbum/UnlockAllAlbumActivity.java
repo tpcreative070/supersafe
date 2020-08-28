@@ -24,6 +24,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -326,7 +327,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
                 if (presenter.mListCategories!=null){
                     for (int i = 0;i< presenter.mListCategories.size();i++){
                         presenter.mListCategories.get(i).pin= "";
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mListCategories.get(i));
+                        SQLHelper.updateCategory(presenter.mListCategories.get(i));
                     }
                 }
                 SingletonPrivateFragment.getInstance().onUpdateView();

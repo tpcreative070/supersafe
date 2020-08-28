@@ -30,6 +30,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class PrivateFragment extends BaseFragment implements BaseView, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
 
@@ -116,7 +117,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
             if (value.equals(presenter.mList.get(position).categories_hex_name)) {
                 Navigator.onMoveTrash(getActivity());
             } else {
-                final MainCategoryEntity mainCategories = presenter.mList.get(position);
+                final MainCategoryModel mainCategories = presenter.mList.get(position);
                 final String pin = mainCategories.pin;
                 isClicked = true;
                 if (pin.equals("")) {
@@ -260,7 +261,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
 
     }
 
-    public void onShowChangeCategoriesNameDialog(final MainCategoryEntity mainCategories) {
+    public void onShowChangeCategoriesNameDialog(final MainCategoryModel mainCategories) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
                 .title(getString(R.string.album_is_locked))
                 .content(getString(R.string.enter_a_password_for_this_album))

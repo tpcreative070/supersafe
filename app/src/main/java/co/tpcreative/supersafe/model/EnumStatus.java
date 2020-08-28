@@ -67,6 +67,8 @@ public enum EnumStatus {
         DELETE,
         CHANGE,
         UPDATE,
+        UPDATE_CATEGORY,
+        UPDATE_ITEM,
         EXPORT,
         SHARE,
         MOVE,

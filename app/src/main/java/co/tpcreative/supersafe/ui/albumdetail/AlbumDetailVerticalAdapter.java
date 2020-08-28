@@ -22,9 +22,10 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class AlbumDetailVerticalAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
+public class AlbumDetailVerticalAdapter extends BaseAdapter<ItemModel, BaseHolder> {
     private static final int FOOTER_VIEW = 1;
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -84,7 +85,7 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<ItemEntity, BaseHold
         void onLongClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<ItemEntity> {
+    public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -98,7 +99,7 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<ItemEntity, BaseHold
             super(itemView);
         }
         @Override
-        public void bind(ItemEntity data, int position) {
+        public void bind(ItemModel data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);

@@ -401,7 +401,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         if (!isPauseCloudSync) {
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            //ServiceManager.getInstance().onSyncDataOwnServer("0");
         }
         if (isDownload) {
             final List<ItemEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true, false, false);
@@ -419,7 +419,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                     }
                 }
             }
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            //ServiceManager.getInstance().onSyncDataOwnServer("0");
             Utils.Log(TAG, "Re-Download file");
         }
         if (isSpaceSaver){

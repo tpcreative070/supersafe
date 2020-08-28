@@ -52,4 +52,30 @@ public class MainCategoryModel implements Serializable {
         this.mainCategories_Local_Id = entity.mainCategories_Local_Id;
         this.unique_id = entity.unique_id;
     }
+
+    /*Added category*/
+    public MainCategoryModel(String categories_id, String categories_local_id, String categories_hex_name, String categories_name, String image, String icon, long categories_max, boolean isDelete, boolean isChange, boolean isSyncOwnServer, boolean isFakePin, String pin, String items_id, String mainCategories_Local_Id, boolean isCustom_Cover) {
+        this.categories_name = categories_name;
+        this.image = image;
+        this.icon = icon;
+        this.categories_local_id = categories_local_id;
+        this.categories_id = categories_id;
+        this.categories_hex_name = categories_hex_name;
+        this.categories_max = categories_max;
+        this.isDelete = isDelete;
+        this.isChange = isChange;
+        this.isFakePin = isFakePin;
+        this.pin = pin;
+        this.items_id = items_id;
+        this.mainCategories_Local_Id = mainCategories_Local_Id;
+        this.isCustom_Cover = isCustom_Cover;
+        this.isSyncOwnServer = isSyncOwnServer;
+    }
+
+
+
+
+    public MainCategoryModel(){
+
+    }
 }

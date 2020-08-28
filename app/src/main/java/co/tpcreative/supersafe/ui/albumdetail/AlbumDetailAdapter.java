@@ -24,9 +24,10 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class AlbumDetailAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
+public class AlbumDetailAdapter extends BaseAdapter<ItemModel, BaseHolder> {
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
@@ -64,7 +65,7 @@ public class AlbumDetailAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
         void onLongClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<ItemEntity> {
+    public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.imgVideoCam)
@@ -87,7 +88,7 @@ public class AlbumDetailAdapter extends BaseAdapter<ItemEntity, BaseHolder> {
         }
 
         @Override
-        public void bind(ItemEntity data, int position) {
+        public void bind(ItemModel data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);

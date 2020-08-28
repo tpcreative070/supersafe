@@ -8,6 +8,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.request.OutlookMailRequest;
@@ -20,6 +21,7 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -35,10 +37,10 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
     private static final String TAG = UnlockAllAlbumPresenter.class.getSimpleName();
 
 
-    protected List<MainCategoryEntity> mListCategories;
+    protected List<MainCategoryModel> mListCategories;
 
     public UnlockAllAlbumPresenter(){
-        mListCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
+        mListCategories = SQLHelper.getListCategories(false);
     }
 
     public void onVerifyCode(VerifyCodeRequest request){

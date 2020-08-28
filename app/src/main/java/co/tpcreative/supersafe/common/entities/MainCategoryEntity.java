@@ -16,10 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryEntityModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 @Entity(tableName = "maincategories")
 public class MainCategoryEntity implements Serializable{
@@ -49,25 +52,15 @@ public class MainCategoryEntity implements Serializable{
     @Ignore
     private static MainCategoryEntity instance ;
 
-    @Ignore
-    public static final transient String []ListIcon =new  String[]{
-            "baseline_photo_white_48",
-            "baseline_how_to_vote_white_48",
-            "baseline_local_movies_white_48",
-            "baseline_favorite_border_white_48",
-            "baseline_delete_white_48",
-            "baseline_cake_white_48",
-            "baseline_school_white_48"};
 
     @Ignore
-    public static final transient String []ListColor =new  String[]{
-            "#34bdb7",
-            "#03A9F4",
-            "#9E9D24",
-            "#AA00FF",
-            "#371989",
-            "#E040FB",
-            "#9E9E9E"};
+    public static MainCategoryEntity getInstance(){
+        if (instance==null){
+            instance = new MainCategoryEntity();
+        }
+        return instance;
+    }
+
 
     /*Send data to camera action*/
 
@@ -108,231 +101,6 @@ public class MainCategoryEntity implements Serializable{
         this.isCustom_Cover = false;
     }
 
-    @Ignore
-    public List<MainCategoryEntity> getList(){
-        List<MainCategoryEntity> mList = new ArrayList<>();
-        final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false,false);
-
-        if (list!=null && list.size()>0){
-            mList.addAll(list);
-            Utils.Log(TAG,"Found data :"+ list.size());
-        }
-        else{
-            final Map<String, MainCategoryEntity> map = MainCategoryEntity.getInstance().getMainCategoriesDefault();
-            Utils.Log(TAG,"No Data " + map.size());
-            for (Map.Entry<String, MainCategoryEntity> index : map.entrySet()){
-                final MainCategoryEntity main = index.getValue();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(main);
-            }
-        }
-
-        final List<ItemEntity>listDelete = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true, EnumDelete.NONE.ordinal(),false);
-        if (listDelete!=null){
-            if (listDelete.size()>0){
-                final MainCategoryEntity items = getTrashItem();
-                final int count  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
-                items.categories_max = count;
-                mList.add(items);
-            }
-        }
-
-        Collections.sort(mList, new Comparator<MainCategoryEntity>() {
-            @Override
-            public int compare(MainCategoryEntity lhs, MainCategoryEntity rhs) {
-                int count_1 = (int) lhs.categories_max;
-                int count_2 = (int) rhs.categories_max;
-                return count_1 - count_2;
-            }
-        });
-        return mList;
-    }
-
-    @Ignore
-    public List<MainCategoryEntity> getListMoveGallery(String categories_local_id, boolean isFakePin){
-        final List<MainCategoryEntity> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(categories_local_id,false,isFakePin);
-        Collections.sort(mList, new Comparator<MainCategoryEntity>() {
-            @Override
-            public int compare(MainCategoryEntity lhs, MainCategoryEntity rhs) {
-                int count_1 = (int) lhs.categories_max;
-                int count_2 = (int) rhs.categories_max;
-                return count_1 - count_2;
-            }
-        });
-        return mList;
-    }
-
-    @Ignore
-    public List<MainCategoryEntity> getListFakePin(){
-        final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(true);
-        list.add(getMainItemFakePin());
-        Collections.sort(list, new Comparator<MainCategoryEntity>() {
-            @Override
-            public int compare(MainCategoryEntity lhs, MainCategoryEntity rhs) {
-                int count_1 = (int) lhs.categories_max;
-                int count_2 = (int) rhs.categories_max;
-                return count_1 - count_2;
-            }
-        });
-        return list;
-    }
-
-    @Ignore
-    public Map<String, MainCategoryEntity>getMainCategoriesDefault(){
-        Map<String, MainCategoryEntity> map = new HashMap<>();
-        map.put(Utils.getHexCode("1234"),new MainCategoryEntity("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,null,false));
-        map.put(Utils.getHexCode("1235"),new MainCategoryEntity("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,null,false));
-        map.put(Utils.getHexCode("1236"),new MainCategoryEntity("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,null,false));
-        map.put(Utils.getHexCode("1237"),new MainCategoryEntity("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,null,false));
-        return map;
-    }
-
-    @Ignore
-    public List<MainCategoryEntity> getCategoriesDefault(){
-        List<MainCategoryEntity> list = new ArrayList<>();
-        list.add(new MainCategoryEntity("null",null,null, null,ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,Utils.getHexCode("1234"),false));
-        list.add(new MainCategoryEntity("null",null,null,null, ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,Utils.getHexCode("1235"),false));
-        list.add(new MainCategoryEntity("null",null,null,null, ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,Utils.getHexCode("1236"),false));
-        list.add(new MainCategoryEntity("null",null,null,null,ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,Utils.getHexCode("1237"),false));
-        list.add(new MainCategoryEntity("null",null,null,null,ListColor[5],ListIcon[5], 5,false,false,false,false,"",null,Utils.getHexCode("1238"),false));
-        list.add(new MainCategoryEntity("null",null,null,null,ListColor[6],ListIcon[6], 6,false,false,false,false,"",null,Utils.getHexCode("1239"),false));
-        return list;
-    }
-
-    @Ignore
-    public MainCategoryEntity getTrashItem(){
-        return new MainCategoryEntity("null",Utils.getUUId(),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_trash)), SuperSafeApplication.getInstance().getString(R.string.key_trash), ListColor[4],ListIcon[4],System.currentTimeMillis(),false,false,false,false,"",null,null,false);
-    }
-
-    @Ignore
-    public MainCategoryEntity getMainItemFakePin(){
-        return new MainCategoryEntity("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,true,"",null,null,false);
-    }
-
-    @Ignore
-    public boolean onAddCategories(String categories_hex_name,String name,boolean isFakePin){
-        try {
-            final MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(categories_hex_name,isFakePin);
-            if (main==null){
-                final int count  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategoryEntity("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,true,false,isFakePin,"",null,null,false));
-                return true;
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Ignore
-    public boolean onAddFakePinCategories(String categories_hex_name,String name,boolean isFakePin){
-        try {
-            final MainCategoryEntity main = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(categories_hex_name,isFakePin);
-            if (main==null){
-                final int count  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new MainCategoryEntity("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,false,false,isFakePin,"",null,null,false));
-                return true;
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Ignore
-    public boolean onChangeCategories(MainCategoryEntity mainCategories){
-        try {
-            String hex_name = Utils.getHexCode(mainCategories.categories_name);
-            boolean mIsFakePin = mainCategories.isFakePin;
-            MainCategoryEntity response = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesItemId(hex_name,mIsFakePin);
-            if (response==null){
-                mainCategories.categories_hex_name = hex_name;
-                mainCategories.isChange = true;
-                mainCategories.isSyncOwnServer = false;
-                InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
-                return true;
-            }
-            Utils.Log(TAG,"value changed :"+ new Gson().toJson(response));
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Ignore
-    public Drawable getDrawable(Context mContext, String name) {
-        try {
-            int resourceId = mContext.getResources().getIdentifier(name, "drawable", mContext.getPackageName());
-            return mContext.getResources().getDrawable(resourceId);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Ignore
-    public static MainCategoryEntity getInstance(){
-        if (instance==null){
-            instance = new MainCategoryEntity();
-        }
-        return instance;
-    }
-
-    @Ignore
-    public Map<String,Object> objectToHashMap(final MainCategoryEntity items){
-        Type type = new TypeToken<Map<String, Object>>(){}.getType();
-        Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
-        return myMap;
-    }
-
-    @Ignore
-    public MainCategoryEntity getObject(String value){
-        try {
-            if (value==null){
-                return null;
-            }
-            final MainCategoryEntity items = new Gson().fromJson(value, MainCategoryEntity.class);
-            Utils.Log(TAG,new Gson().toJson(items));
-            return items;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Ignore
-    public MainCategoryEntity getCategoriesPosition(final String mainCategories_Local_Id){
-        final List<MainCategoryEntity> data = getCategoriesDefault();
-        if (mainCategories_Local_Id==null){
-            return null;
-        }
-        for (MainCategoryEntity index : data){
-            if (index.mainCategories_Local_Id.equals(mainCategories_Local_Id)){
-                return index;
-            }
-        }
-        return null;
-    }
-
-    @Ignore
-    public HashMap<String, MainCategoryEntity> getMainCurrentCategories(){
-        final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
-        final HashMap<String, MainCategoryEntity>hashMap = new HashMap<>();
-        if (list!=null){
-            for (int i = 0;i< list.size();i++){
-               final MainCategoryEntity main  = list.get(i);
-               final String categories_id = main.categories_id;
-               if (categories_id!=null){
-                   hashMap.put(categories_id,main);
-               }
-            }
-        }
-        return hashMap;
-    }
 
     /*Delete category*/
     public MainCategoryEntity(MainCategoryEntityModel entityModel){

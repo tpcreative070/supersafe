@@ -7,10 +7,10 @@ public class GalleryAlbum {
     public final int photos;
     public final int audios;
     public final int others;
-    public final MainCategoryEntity main;
+    public final MainCategoryModel main;
 
 
-    public GalleryAlbum(MainCategoryEntity main, int photos, int videos, int audios, int others){
+    public GalleryAlbum(MainCategoryModel main, int photos, int videos, int audios, int others){
         this.main = main;
         this.photos = photos;
         this.videos = videos;
