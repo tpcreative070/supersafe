@@ -207,7 +207,7 @@ public class ServiceManager implements BaseServiceView {
     public void onPreparingDeleteData(){
         final List<ItemModel> mResult = SQLHelper.getDeleteItemRequest();
         /*Merged original and thumbnail*/
-        final List<ItemModel> listRequestDelete = Utils.getMergedOriginalThumbnailList(mResult);
+        final List<ItemModel> listRequestDelete = Utils.getMergedOriginalThumbnailList(false,mResult);
         mMapDeleteItem.clear();
         mMapDeleteItem = Utils.mergeListToHashMap(listRequestDelete);
         Utils.Log(TAG,"onPreparingDeleteData preparing to delete "+mMapDeleteItem.size());
@@ -291,12 +291,12 @@ public class ServiceManager implements BaseServiceView {
         final List<MainCategoryModel> listRequestDelete = SQLHelper.getDeleteCategoryRequest();
         mMapDeleteCategory.clear();
         mMapDeleteCategory = Utils.mergeListToCategoryHashMap(listRequestDelete);
-        Utils.Log(TAG,"onPreparingDeleteData preparing to delete "+mMapDeleteCategory.size());
+        Utils.Log(TAG,"onPreparingDeleteCategoryData preparing to delete "+mMapDeleteCategory.size());
         final MainCategoryModel categoryModel = Utils.getArrayOfIndexCategoryHashMap(mMapDeleteCategory);
         if (categoryModel!=null){
             Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.PROGRESS,"Total Delete category "+mMapDeleteCategory.size());
             onDeleteCategoryData(categoryModel);
-            Utils.Log(TAG,"Preparing to delete data " + mMapDeleteCategory.size());
+            Utils.Log(TAG,"onPreparingDeleteCategoryData to delete data " + mMapDeleteCategory.size());
         }else{
             onPreparingUpdateItemData();
         }
@@ -488,7 +488,7 @@ public class ServiceManager implements BaseServiceView {
         }
         /*Preparing upload file to Google drive*/
         final List<ItemModel> mResult = SQLHelper.getItemListUpload();
-        final List<ItemModel> listUpload = Utils.getMergedOriginalThumbnailList(mResult);
+        final List<ItemModel> listUpload = Utils.getMergedOriginalThumbnailList(true,mResult);
         if (listUpload.size()>0){
             mMapUpload.clear();
             mMapUpload = Utils.mergeListToHashMap(listUpload);

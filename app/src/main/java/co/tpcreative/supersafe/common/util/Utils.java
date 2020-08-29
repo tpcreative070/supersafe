@@ -907,14 +907,14 @@ public class Utils {
         }
 
         /*Merged local data*/
-        final List<ItemModel> mLocalList = Utils.getMergedOriginalThumbnailList(localList);
+        final List<ItemModel> mLocalList = Utils.getMergedOriginalThumbnailList(false,localList);
 
         for (ItemModel index : mLocalList){
             modelMap.put(index.global_id,index);
         }
 
         /*Merged global data*/
-        final List<ItemModel> mGlobalList = Utils.getMergedOriginalThumbnailList(globalList);
+        final List<ItemModel> mGlobalList = Utils.getMergedOriginalThumbnailList(true,globalList);
 
         Utils.Log(TAG,"onPreparingSyncData ==> Index download globalList "+ new Gson().toJson(globalList));
         Utils.Log(TAG,"onPreparingSyncData ==> Index download map "+ new Gson().toJson(modelMap));
@@ -994,15 +994,24 @@ public class Utils {
     }
 
     /*Merge list original and thumbnail as list*/
-    public static List<ItemModel> getMergedOriginalThumbnailList(List<ItemModel> mDataList){
+    public static List<ItemModel> getMergedOriginalThumbnailList(boolean isNotSync,List<ItemModel> mDataList){
         List<ItemModel> mList = new ArrayList<>();
         for (ItemModel index : mDataList){
-           if (!index.originalSync){
-               mList.add(new ItemModel(index,true));
-           }
-           if (!index.thumbnailSync){
-               mList.add(new ItemModel(index,false));
-           }
+            if (isNotSync){
+                if (!index.originalSync){
+                    mList.add(new ItemModel(index,true));
+                }
+                if (!index.thumbnailSync){
+                    mList.add(new ItemModel(index,false));
+                }
+            }else{
+                if (index.originalSync){
+                    mList.add(new ItemModel(index,true));
+                }
+                if (index.thumbnailSync){
+                    mList.add(new ItemModel(index,false));
+                }
+            }
         }
         return mList;
     }
