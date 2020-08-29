@@ -873,6 +873,23 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
+    public final List<ItemEntityModel> getItemListDownload(boolean isSyncCloud,boolean isFake){
+        try{
+            final List<ItemEntity> mValue =  instance.itemsDao().loadListItem(isSyncCloud,isFake);
+            List<ItemEntityModel> mList = new ArrayList<>();
+            for ( ItemEntity index : mValue){
+                mList.add(new ItemEntityModel(index));
+            }
+            return mList;
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
+
+
 
 }
 

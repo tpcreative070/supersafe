@@ -77,7 +77,7 @@ public class SQLHelper {
 
     /*Request download item*/
     public static List<ItemModel> getItemListDownload(){
-        final List<ItemEntityModel> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getAllListItems(false,false);
+        final List<ItemEntityModel> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemListDownload(false,false);
         List<ItemModel> mList = new ArrayList<>();
         for (ItemEntityModel index : list){
             mList.add(new ItemModel(index));

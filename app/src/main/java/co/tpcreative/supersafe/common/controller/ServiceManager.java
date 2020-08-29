@@ -353,15 +353,18 @@ public class ServiceManager implements BaseServiceView {
             Utils.Log(TAG,"onPreparingDownloadData ==> Local list "+ new Gson().toJson(mListLocal));
             if (globalList!=null && mListLocal!=null){
                 List<ItemModel> mergeList = Utils.clearListFromDuplicate(globalList,mListLocal);
+                Utils.Log(TAG,"onPreparingDownloadData ==> clear duplicated data "+ new Gson().toJson(mergeList));
                 if (mergeList!=null){
                     if (mergeList.size()>0){
                         mMapDownload.clear();
                         mMapDownload = Utils.mergeListToHashMap(mergeList);
+                        Utils.Log(TAG,"onPreparingDownloadData ==> clear merged data "+ new Gson().toJson(mMapDownload));
+                        Utils.Log(TAG,"onPreparingDownloadData ==> merged data "+ new Gson().toJson(mergeList));
                         final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownload);
                         if (itemModel!=null){
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
                             Utils.Log(TAG,"Preparing to download "+ new Gson().toJson(itemModel));
-                            Utils.Log(TAG,"Preparing to download total  "+ mergeList.size());
+                            Utils.Log(TAG,"Preparing to download total  "+ mMapDownload.size());
                             onDownLoadData(itemModel);
                         }
                     }else{
@@ -384,8 +387,8 @@ public class ServiceManager implements BaseServiceView {
         final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownload);
         if (itemModel!=null){
             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
-            Utils.Log(TAG,"Preparing to download "+ new Gson().toJson(itemModel));
-            Utils.Log(TAG,"Preparing to download total  "+ globalList.size());
+            Utils.Log(TAG,"onPreparingEnableDownloadData "+ new Gson().toJson(itemModel));
+            Utils.Log(TAG,"onPreparingEnableDownloadData total  "+ globalList.size());
             onDownLoadData(itemModel);
         }
     }

@@ -288,9 +288,8 @@ public class ItemModel implements Serializable {
         this.isWaitingForExporting = items.isWaitingForExporting;
         this.custom_items = items.custom_items;
         this.isUpdate = items.isUpdate;
-        this.unique_id = items.unique_id;
-
         /*Added more condition fields*/
+        this.unique_id = Utils.getUUId();
         if (isOriginalGlobalId){
             global_id =  items.global_original_id;
         }else{

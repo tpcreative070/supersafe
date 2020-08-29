@@ -1026,7 +1026,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                         main.categories_name = index.categories_name;
                                         SQLHelper.updateCategory(main);
                                     }
-                                    view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
                                 } else {
                                     MainCategoryModel mMain = SQLHelper.getCategoriesItemId(index.categories_hex_name,false);
                                     if (mMain != null) {
@@ -1048,10 +1047,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                         SQLHelper.insertCategory(mMain);
                                         Utils.Log(TAG,"Adding new main categories.......................................2");
                                     }
-                                    view.onSuccessful(onResponse.message, EnumStatus.GET_LIST_FILE);
                                 }
-                                view.onSuccessful(mData.nextPage, EnumStatus.SYNC_READY);
                             }
+                            view.onSuccessful(mData.nextPage, EnumStatus.SYNC_READY);
                         } else {
                             List<ItemModel> mList = new ArrayList<>();
                             for(ItemModel index : mListItemResponse){
@@ -1198,12 +1196,15 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 if (entityModel !=null){
                     if (items.isOriginalGlobalId){
                         entityModel.originalSync = true;
+                        entityModel.global_original_id = request.id;
                     }else {
                         entityModel.thumbnailSync = true;
+                        entityModel.global_thumbnail_id = request.id;
                     }
                     if (entityModel.originalSync && entityModel.thumbnailSync){
                         entityModel.isSyncCloud = true;
                         entityModel.isSyncOwnServer = true;
+                        Utils.Log(TAG,"Synced already....");
                     }
                     SQLHelper.updatedItem(entityModel);
                 }else{
