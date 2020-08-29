@@ -71,14 +71,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     protected Storage storage;
     private SuperSafeReceiver androidReceiver;
     private DownloadService downloadService;
-    private HashMap<String, String> hashMapGlobal = new HashMap<>();
-    private HashMap<String, String> hashMapGlobalCategories = new HashMap<>();
-    public HashMap<String, String> getHashMapGlobal() {
-        return hashMapGlobal;
-    }
-    public HashMap<String, String> getHashMapGlobalCategories() {
-        return hashMapGlobalCategories;
-    }
 
     @Override
     public void onCreate() {
@@ -995,10 +987,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (!user.driveConnected) {
             view.onError("no driveConnected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
-        }
-        if (nextPage.equals("0")) {
-            hashMapGlobalCategories.clear();
-            hashMapGlobal.clear();
         }
         String access_token = user.access_token;
         Utils.Log(TAG, "access_token : " + access_token);
