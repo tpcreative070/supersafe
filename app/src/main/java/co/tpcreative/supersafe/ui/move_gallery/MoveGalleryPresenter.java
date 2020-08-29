@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
@@ -99,6 +100,7 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                     SQLHelper.updatedItem(item);
                 }
             }
+            ServiceManager.getInstance().onPreparingUpdateItemData();
             view.onSuccessful("Successful",EnumStatus.MOVE);
         }
         else{

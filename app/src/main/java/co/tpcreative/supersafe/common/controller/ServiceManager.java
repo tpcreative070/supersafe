@@ -631,7 +631,7 @@ public class ServiceManager implements BaseServiceView {
                         /*Delete local db and folder name*/
                         final ItemModel mUpdatedItem = Utils.getArrayOfIndexHashMap(mMapUpdateItem);
                         if (mUpdatedItem!=null){
-                            onDownLoadData(mUpdatedItem);
+                            onUpdateItemData(mUpdatedItem);
                             isUpdateItemData = true;
                             Utils.onWriteLog(EnumStatus.UPDATE,EnumStatus.DONE,new Gson().toJson(itemModel));
                             Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
