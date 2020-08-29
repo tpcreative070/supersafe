@@ -396,7 +396,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                             Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                             mName.setSummary(presenter.mMainCategories.categories_name);
                                             if (!presenter.mMainCategories.isFakePin){
-                                                ServiceManager.getInstance().onGetListCategoriesSync();
+                                                ServiceManager.getInstance().onPreparingSyncCategoryData();
                                             }
                                         }
                                         else{
