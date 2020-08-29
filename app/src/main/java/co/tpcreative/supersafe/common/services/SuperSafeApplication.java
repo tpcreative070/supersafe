@@ -291,6 +291,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         return supersafeLog;
     }
 
+    public String getFileLogs(){
+        return supersafe + "/log.txt";
+    }
+
     public String getSupersafeBreakInAlerts() {
         return supersafeBreakInAlerts;
     }

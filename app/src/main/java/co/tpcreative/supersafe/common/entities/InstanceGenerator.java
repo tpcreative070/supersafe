@@ -319,9 +319,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final List<ItemEntityModel> getSyncUploadDataItemsListByNull(boolean isFakePin){
+    public final List<ItemEntityModel> getRequestUploadData(boolean isFakePin){
         try{
-            final List<ItemEntity> mList =  instance.itemsDao().loadSyncDataItemsByCategoriesIdNull(false,false,EnumStatus.UPLOAD.ordinal(),isFakePin,"null");
+            final List<ItemEntity> mList =  instance.itemsDao().loadRequestUploadData(false,false,EnumStatus.UPLOAD.ordinal(),isFakePin);
             final List<ItemEntityModel> mData = new ArrayList<>();
             if (mList!=null){
                 for (ItemEntity index : mList){

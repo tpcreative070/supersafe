@@ -256,6 +256,7 @@ public class ItemModel implements Serializable {
 
     /*Merged request list for sync data*/
     public ItemModel(ItemModel items,boolean isOriginalGlobalId ){
+        this.id = items.id;
         this.originalName = items.originalName;
         this.thumbnailName = items.thumbnailName;
         this.items_id = items.items_id;

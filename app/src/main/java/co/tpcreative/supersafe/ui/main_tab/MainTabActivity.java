@@ -128,7 +128,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                 }
             });
         };
-        Utils.Log(TAG,"Author access token "+ Utils.getAccessToken());
+        Utils.Log(TAG, "system access token : " + Utils.getAccessToken());
     }
 
     private void showInterstitial() {

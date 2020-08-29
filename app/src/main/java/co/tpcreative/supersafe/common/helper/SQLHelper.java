@@ -14,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
@@ -89,7 +88,7 @@ public class SQLHelper {
     /*Request upload item*/
     public static List<ItemModel> getItemListUpload(){
         List<ItemModel> mList = new ArrayList<>();
-        final List<ItemEntityModel> mResult = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getSyncUploadDataItemsListByNull( false);
+        final List<ItemEntityModel> mResult = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getRequestUploadData( false);
         if (mResult!=null){
             for (ItemEntityModel index : mResult){
                 mList.add(new ItemModel(index));

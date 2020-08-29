@@ -759,7 +759,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     /*Date for Categories*/
-    public void onAddItems(final ItemModel items, ServiceManager.ServiceManagerInsertItem view) {
+    public void onAddItems(final ItemModel items,String drive_id, ServiceManager.ServiceManagerInsertItem view) {
         Utils.Log(TAG, "onAddItems");
         if (isCheckNull(view,EnumStatus.ADD_ITEMS)){
             return;
@@ -775,8 +775,28 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         items.isSyncOwnServer = true;
         String access_token = user.access_token;
-        Utils.Log(TAG, "access_token : " + access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),items))
+        Utils.Log(TAG, "system access token : " + Utils.getAccessToken());
+        final ItemModel entityModel = SQLHelper.getItemById(items.items_id);
+        if (items.isOriginalGlobalId){
+            if (!Utils.isNotEmptyOrNull(items.global_thumbnail_id)){
+                entityModel.global_thumbnail_id = "null";
+            }
+            entityModel.originalSync = true;
+            entityModel.global_original_id = drive_id;
+        }else{
+            if (!Utils.isNotEmptyOrNull(items.global_original_id)){
+                entityModel.global_original_id = "null";
+            }
+            entityModel.thumbnailSync = true;
+            entityModel.global_thumbnail_id = drive_id;
+        }
+        if (entityModel.originalSync && entityModel.thumbnailSync){
+            entityModel.isSyncCloud = true;
+            entityModel.isSyncOwnServer = true;
+        }
+        final SyncItemsRequest mRequest =  new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),entityModel);
+        Utils.Log(TAG,"onAddItems request " + new Gson().toJson(mRequest));
+        subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(mRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -788,6 +808,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     } else {
+                        SQLHelper.updatedItem(entityModel);
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     }
                     Utils.Log(TAG,"Adding item Response "+ new Gson().toJson(onResponse));
@@ -1165,7 +1186,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         request.items = items;
         request.Authorization = mUser.access_token;
         request.id = id;
-
+        Utils.Log(TAG,"onDownloadFile request id "+ id);
         items.originalPath = Utils.getOriginalPath(items.originalName,items.items_id);
         request.path_folder_output = Utils.createDestinationDownloadItem(items.items_id);
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
@@ -1460,6 +1481,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
+                    if (!onResponse.error){
+                        Utils.Log(TAG,"Tracking response "+ new Gson().toJson(onResponse));
+                    }
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();

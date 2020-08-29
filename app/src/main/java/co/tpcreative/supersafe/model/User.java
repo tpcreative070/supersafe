@@ -1,5 +1,8 @@
 package co.tpcreative.supersafe.model;
 import android.view.View;
+
+import androidx.room.Ignore;
+
 import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.Comparator;
@@ -39,6 +42,9 @@ public class User extends BaseResponse implements Serializable{
     public EmailToken email_token;
     private static User instance ;
 
+//    @Ignore
+//    private final String TAG = User.class.getSimpleName();
+
     public static User getInstance(){
         synchronized (User.class){
             if (instance==null){
@@ -52,6 +58,7 @@ public class User extends BaseResponse implements Serializable{
         try{
             String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user),null);
             if (value!=null){
+                Utils.Log("User","get value " + value);
                 final User mUser = new Gson().fromJson(value,User.class);
                 if (mUser!=null){
                     return mUser;
@@ -96,7 +103,7 @@ public class User extends BaseResponse implements Serializable{
         final User mUser = getUserInfo();
         if (mUser!=null){
             if (mUser.driveConnected){
-                if (mUser.access_token !=null && !access_token.equals("")){
+                if (mUser.access_token !=null && !mUser.access_token.equals("")){
                     if (mUser.cloud_id!=null && !mUser.cloud_id.equals("")){
                         return true;
                     }

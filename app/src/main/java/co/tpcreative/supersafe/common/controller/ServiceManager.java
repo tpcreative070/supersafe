@@ -66,6 +66,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.internal.Util;
 
 public class ServiceManager implements BaseServiceView {
     private static final String TAG = ServiceManager.class.getSimpleName();
@@ -82,7 +83,7 @@ public class ServiceManager implements BaseServiceView {
 
     /*Improved sync data*/
     private List<ImportFilesModel> listImport = new ArrayList<>();
-    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData;
+    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic;
     /*Using item_id as key for hash map*/
     private Map<String, ItemModel> mMapDeleteItem = new HashMap<>();
     private Map<String, MainCategoryModel> mMapDeleteCategory = new HashMap<>();
@@ -106,7 +107,7 @@ public class ServiceManager implements BaseServiceView {
         if (Utils.getUserId()==null){
             return;
         }
-        Utils.Log(TAG,"onPreparingSyncData");
+        Utils.Log(TAG,"onPreparingSyncData...???");
         if (!Utils.isAllowSyncData()){
             Utils.Log(TAG,"onPreparingSyncData is unauthorized " + isDownloadData);
             Utils.onWriteLog(EnumStatus.AUTHOR_SYNC,EnumStatus.AUTHOR_SYNC,"onPreparingSyncData is unauthorized");
@@ -137,16 +138,6 @@ public class ServiceManager implements BaseServiceView {
             Utils.onWriteLog(EnumStatus.DELETE_CATEGORIES,EnumStatus.ERROR,"onPreparingSyncData is deleting category. Please wait");
             return;
         }
-        if (isUpdateItemData){
-            Utils.Log(TAG,"onPreparingSyncData is updating item. Please wait");
-            Utils.onWriteLog(EnumStatus.UPDATE_ITEM,EnumStatus.ERROR,"onPreparingSyncData is updating item.. Please wait");
-            return;
-        }
-        if (isUpdateCategoryData){
-            Utils.Log(TAG,"onPreparingSyncData is updating category. Please wait");
-            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.ERROR,"onPreparingSyncData is updating category.. Please wait");
-            return;
-        }
         if (isImportData){
             Utils.Log(TAG,"onPreparingSyncData is importing. Please wait");
             Utils.onWriteLog(EnumStatus.IMPORTING,EnumStatus.ERROR,"onPreparingSyncData is importing. Please wait");
@@ -157,13 +148,31 @@ public class ServiceManager implements BaseServiceView {
             Utils.onWriteLog(EnumStatus.DOWNLOADING,EnumStatus.ERROR,"onPreparingSyncData is downloading files. Please wait");
             return;
         }
+        if (isUpdateItemData){
+            Utils.Log(TAG,"onPreparingSyncData is updating item. Please wait");
+            Utils.onWriteLog(EnumStatus.UPDATE_ITEM,EnumStatus.ERROR,"onPreparingSyncData is updating item.. Please wait");
+            return;
+        }
+        if (isUpdateCategoryData){
+            Utils.Log(TAG,"onPreparingSyncData is updating category. Please wait");
+            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.ERROR,"onPreparingSyncData is updating category.. Please wait");
+            return;
+        }
+        if (isHandleLogic){
+            Utils.Log(TAG,"onPreparingSyncData is handle logic. Please wait");
+            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.ERROR,"onPreparingSyncData is handle logic. Please wait");
+            return;
+        }
         mDownloadList.clear();
+        Utils.Log(TAG,"onPreparingSyncData...onGetItemList");
         ServiceManager.getInstance().onGetItemList("0");
     }
 
     private void onGetItemList(String next){
         if (myService!=null){
             isGetItemList = true;
+            /*Stop multiple request*/
+            isHandleLogic = true;
             myService.onGetListSync(next, new BaseListener<ItemModel>() {
                 @Override
                 public void onShowListObjects(List<ItemModel> list) {
@@ -182,10 +191,12 @@ public class ServiceManager implements BaseServiceView {
                     if (status==EnumStatus.LOAD_MORE){
                         isGetItemList = true;
                         ServiceManager.getInstance().onGetItemList(message);
+                        Utils.Log(TAG,"Continue load more "+ message);
                     }else if (status == EnumStatus.SYNC_READY){
                         /*Start sync*/
                         isGetItemList = false;
                         onPreparingDownloadData(mDownloadList);
+                        Utils.Log(TAG,"Start to sync data.......");
                     }
                 }
             });
@@ -336,10 +347,10 @@ public class ServiceManager implements BaseServiceView {
     /*Preparing to download data from Google drive and system server*/
     private void onPreparingDownloadData(List<ItemModel>globalList){
         List<ItemModel> mListLocal = SQLHelper.getItemListDownload();
-        Utils.Log(TAG,"onPreparingSyncData ==> Local original list "+ new Gson().toJson(mListLocal));
+        Utils.Log(TAG,"onPreparingDownloadData ==> Local original list "+ new Gson().toJson(mListLocal));
         if (mListLocal!=null){
             mListLocal = Utils.filterOnlyGlobalOriginalId(mListLocal);
-            Utils.Log(TAG,"onPreparingSyncData ==> Local list "+ new Gson().toJson(mListLocal));
+            Utils.Log(TAG,"onPreparingDownloadData ==> Local list "+ new Gson().toJson(mListLocal));
             if (globalList!=null && mListLocal!=null){
                 List<ItemModel> mergeList = Utils.clearListFromDuplicate(globalList,mListLocal);
                 if (mergeList!=null){
@@ -457,6 +468,11 @@ public class ServiceManager implements BaseServiceView {
 
     /*Preparing upload data*/
     private void onPreparingUploadData(){
+        Utils.Log(TAG,"onPreparingUploadData");
+        if (!User.getInstance().isCheckAllowUpload()){
+            Utils.Log(TAG,"onPreparingUploadData ==> Left 0. Please wait for next month or upgrade to premium version");
+            return;
+        }
         /*Preparing upload file to Google drive*/
         final List<ItemModel> mResult = SQLHelper.getItemListUpload();
         final List<ItemModel> listUpload = Utils.getMergedOriginalThumbnailList(mResult);
@@ -498,7 +514,8 @@ public class ServiceManager implements BaseServiceView {
                         isUploadData = false;
                         return;
                     }
-                    ServiceManager.getInstance().onInsertItem(itemModel, new ServiceManager.ServiceManagerInsertItem() {
+                    final ItemModel entityModel = SQLHelper.getItemById(itemModel.items_id);
+                    ServiceManager.getInstance().onInsertItem(itemModel,response.id, new ServiceManager.ServiceManagerInsertItem() {
                         @Override
                         public void onCancel() {
                             isUploadData = false;
@@ -507,6 +524,7 @@ public class ServiceManager implements BaseServiceView {
                         @Override
                         public void onError(String message, EnumStatus status) {
                             isUploadData = false;
+                            Utils.onPushEventBus(EnumStatus.DONE);
                         }
                         @Override
                         public void onSuccessful(String message, EnumStatus status) {
@@ -515,37 +533,8 @@ public class ServiceManager implements BaseServiceView {
                                 if (mUploadItem!=null){
                                     onUploadData(mUploadItem);
                                     Utils.Log(TAG,"Next upload item..............." + new Gson().toJson(mUploadItem));
-                                    final ItemModel entityModel = SQLHelper.getItemById(itemModel.items_id);
-                                    if (entityModel!=null){
-                                        Utils.Log(TAG,"Value of object => id "+ new Gson().toJson(entityModel));
-                                        if (itemModel.isOriginalGlobalId){
-                                            entityModel.originalSync = true;
-                                        }else {
-                                            entityModel.thumbnailSync = true;
-                                        }
-                                        if (entityModel.originalSync && itemModel.thumbnailSync){
-                                            entityModel.isSyncCloud = true;
-                                            entityModel.isSyncOwnServer = true;
-                                        }
-                                        SQLHelper.updatedItem(entityModel);
-                                        Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.DONE,new Gson().toJson(entityModel));
-                                    }
                                     isUploadData = true;
                                 }else{
-                                    final ItemModel entityModel = SQLHelper.getItemById(itemModel.items_id);
-                                    if (entityModel!=null){
-                                        Utils.Log(TAG,"Value of object => id "+ new Gson().toJson(entityModel));
-                                        if (itemModel.isOriginalGlobalId){
-                                            entityModel.originalSync = true;
-                                        }else {
-                                            entityModel.thumbnailSync = true;
-                                        }
-                                        if (entityModel.originalSync && entityModel.thumbnailSync){
-                                            entityModel.isSyncCloud = true;
-                                            entityModel.isSyncOwnServer = true;
-                                        }
-                                        SQLHelper.updatedItem(entityModel);
-                                    }
                                     isUploadData = false;
                                     onPreparingDeleteData();
                                     Utils.Log(TAG,"Upload completely...............");
@@ -561,6 +550,7 @@ public class ServiceManager implements BaseServiceView {
                 @Override
                 public void onError(String message, EnumStatus status) {
                     isUploadData = false;
+                    Utils.onPushEventBus(EnumStatus.DONE);
                     Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.ERROR,"onUploadLoadData ==> onError "+message);
                     if (status == EnumStatus.NO_SPACE_LEFT_CLOUD){
                         Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT_CLOUD);
@@ -584,7 +574,7 @@ public class ServiceManager implements BaseServiceView {
             final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapUpdateItem);
             if (itemModel!=null){
                 Utils.onWriteLog(EnumStatus.UPDATE,EnumStatus.PROGRESS,"Total updating "+mMapUpdateItem.size());
-                Utils.Log(TAG,"onPreparingUploadData ==> total: "+ mMapUpdateItem.size());
+                Utils.Log(TAG,"onPreparingUpdateItemData ==> total: "+ mMapUpdateItem.size());
                 onUpdateItemData(itemModel);
             }
         }else{
@@ -647,13 +637,15 @@ public class ServiceManager implements BaseServiceView {
             final MainCategoryModel itemModel = Utils.getArrayOfIndexCategoryHashMap(mMapUpdateCategory);
             if (itemModel!=null){
                 Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.PROGRESS,"Total updating "+mMapUpdateItem.size());
-                Utils.Log(TAG,"onPreparingUploadData ==> total: "+ mMapUpdateItem.size());
+                Utils.Log(TAG,"onPreparingUpdateCategoryData ==> total: "+ mMapUpdateItem.size());
                 onUpdateCategoryData(itemModel);
             }
         }else{
             Utils.Log(TAG,"Not found item to upload");
             Utils.Log(TAG,"Not found item to delete ");
             Utils.Log(TAG,"Sync items completely======>ready to test");
+            isHandleLogic = false;
+            Utils.onPushEventBus(EnumStatus.DONE);
         }
     }
 
@@ -684,9 +676,9 @@ public class ServiceManager implements BaseServiceView {
         }
      }
 
-    public void onInsertItem(ItemModel itemRequest, ServiceManagerInsertItem ls){
+    public void onInsertItem(ItemModel itemRequest,String drive_id, ServiceManagerInsertItem ls){
         if (myService!=null){
-            myService.onAddItems(itemRequest, new ServiceManagerInsertItem() {
+            myService.onAddItems(itemRequest,drive_id, new ServiceManagerInsertItem() {
                 @Override
                 public void onCancel() {
                     ls.onCancel();
@@ -694,9 +686,8 @@ public class ServiceManager implements BaseServiceView {
 
                 @Override
                 public void onError(String message, EnumStatus status) {
-                    ls.onSuccessful(message,status);
+                    ls.onError(message,status);
                 }
-
                 @Override
                 public void onSuccessful(String message, EnumStatus status) {
                     ls.onSuccessful(message,status);
@@ -1034,7 +1025,6 @@ public class ServiceManager implements BaseServiceView {
             storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
             ServiceManager.getInstance().onGetUserInfo();
-            ServiceManager.getInstance().onSyncCheckVersion();
             ServiceManager.getInstance().onSyncAuthorDevice();
             ServiceManager.getInstance().onGetDriveAbout();
         }
@@ -1050,8 +1040,6 @@ public class ServiceManager implements BaseServiceView {
     }
     private Cipher mCiphers;
     private boolean isLoadingData, isWaitingSendMail;
-    private int countSyncData = 0;
-    private int totalList = 0;
     public static ServiceManager getInstance() {
         if (instance == null) {
             instance = new ServiceManager();
@@ -1106,7 +1094,7 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void setExporting(boolean exporting) {
-        isImportData = exporting;
+        isExportData = exporting;
     }
 
     public void setDeleteAlbum(boolean deleteAlbum) {
@@ -3075,13 +3063,14 @@ public class ServiceManager implements BaseServiceView {
         isDeleteItemData = false;
         isDeleteCategoryData = false;
         isDownloadingFiles = false;
+        isHandleLogic = false;
         ServiceManager.getInstance().setDeleteAlbum(false);
         ServiceManager.getInstance().setIsWaitingSendMail(false);
         ServiceManager.getInstance().setLoadingData(false);
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isLoadingData) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isLoadingData || isHandleLogic) {
             Utils.Log(TAG, "Progress....................!!!!:");
         }
         else {

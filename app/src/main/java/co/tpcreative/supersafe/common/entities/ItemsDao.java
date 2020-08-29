@@ -46,6 +46,9 @@ public interface ItemsDao {
     @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin AND categories_id =:categories_id")
     List<ItemEntity> loadSyncDataItemsByCategoriesIdNull(boolean isSyncCloud, boolean isDeleteLocal, int statusAction, boolean isFakePin, String categories_id);
 
+    @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin")
+    List<ItemEntity> loadRequestUploadData(boolean isSyncCloud, boolean isDeleteLocal, int statusAction, boolean isFakePin);
+
 
     @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND deleteAction = :deleteAction AND isFakePin =:isFakePin")
     List<ItemEntity> loadDeleteLocalDataItems(boolean isDeleteLocal, int deleteAction, boolean isFakePin);

@@ -563,7 +563,7 @@ public class Utils {
     }
 
     private static void appendLog(String text) {
-        File logFile = new File(SuperSafeApplication.getInstance().getSupersafeLog());
+        File logFile = new File(SuperSafeApplication.getInstance().getFileLogs());
         if (!logFile.exists()) {
             try {
                 logFile.createNewFile();
@@ -595,7 +595,7 @@ public class Utils {
     }
 
     public static void onCheck(){
-        File file = new File(SuperSafeApplication.getInstance().getInstance().getSupersafeLog());
+        File file = new File(SuperSafeApplication.getInstance().getInstance().getFileLogs());
         if (file.exists()){
             long mSize = (long) +SuperSafeApplication.getInstance().getInstance().getStorage().getSize(file, SizeUnit.MB);
             if (mSize>2){
@@ -1116,6 +1116,13 @@ public class Utils {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean isNotEmptyOrNull(String value) {
+       if (value==null || value.equals("") || value.equals("null")){
+           return false;
+       }
+       return  true;
     }
 
 
