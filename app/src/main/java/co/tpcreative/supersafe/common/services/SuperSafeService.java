@@ -474,7 +474,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError 1");
                         Utils.Log(TAG,"onCategoriesSync " + new Gson().toJson(onResponse));
-                        view.onError(onResponse.message, EnumStatus.CATEGORIES_SYNC);
+                        view.onSuccessful(onResponse.message, EnumStatus.CATEGORIES_SYNC);
                     } else {
                         if (onResponse != null) {
                             final DataResponse mData = onResponse.data;

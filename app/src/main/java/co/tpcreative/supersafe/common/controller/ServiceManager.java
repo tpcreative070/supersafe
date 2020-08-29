@@ -83,11 +83,12 @@ public class ServiceManager implements BaseServiceView {
 
     /*Improved sync data*/
     private List<ImportFilesModel> listImport = new ArrayList<>();
-    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic;
+    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isSyncCategory,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic;
     /*Using item_id as key for hash map*/
     private Map<String, ItemModel> mMapDeleteItem = new HashMap<>();
     private Map<String, MainCategoryModel> mMapDeleteCategory = new HashMap<>();
     private Map<String, MainCategoryModel> mMapUpdateCategory = new HashMap<>();
+    private Map<String, MainCategoryModel> mMapSyncCategory = new HashMap<>();
     private Map<String,ItemModel> mMapDownload = new HashMap<>();
     private Map<String,ItemModel> mMapUpload = new HashMap<>();
     private Map<String,ItemModel> mMapUpdateItem = new HashMap<>();
@@ -163,6 +164,14 @@ public class ServiceManager implements BaseServiceView {
             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.ERROR,"onPreparingSyncData is handle logic. Please wait");
             return;
         }
+
+        if (isSyncCategory){
+            Utils.Log(TAG,"onPreparingSyncData is sync category. Please wait");
+            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.ERROR,"onPreparingSyncData is sync category. Please wait");
+            return;
+        }
+
+
         mDownloadList.clear();
         Utils.Log(TAG,"onPreparingSyncData...onGetItemList");
         ServiceManager.getInstance().onGetItemList("0");
@@ -654,11 +663,7 @@ public class ServiceManager implements BaseServiceView {
                 onUpdateCategoryData(itemModel);
             }
         }else{
-            Utils.Log(TAG,"Not found item to upload");
-            Utils.Log(TAG,"Not found item to delete ");
-            Utils.Log(TAG,"Sync items completely======>ready to test");
-            isHandleLogic = false;
-            Utils.onPushEventBus(EnumStatus.DONE);
+           onPreparingSyncCategoryData();
         }
     }
 
@@ -684,10 +689,97 @@ public class ServiceManager implements BaseServiceView {
                 @Override
                 public void onSuccessful(String message, EnumStatus status) {
                     isUpdateCategoryData = false;
+                    if (Utils.deletedIndexOfCategoryHashMap(itemModel,mMapUpdateCategory)){
+                        /*Delete local db and folder name*/
+                        final MainCategoryModel mUpdatedItem = Utils.getArrayOfIndexCategoryHashMap(mMapUpdateCategory);
+                        if (mUpdatedItem!=null){
+                            onUpdateCategoryData(mUpdatedItem);
+                            isUpdateCategoryData = true;
+                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
+                        }else{
+                            Utils.Log(TAG,"Update completely...............");
+                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapUpdateCategory.size());
+                            isUpdateCategoryData = false;
+                            Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
+                            Utils.onPushEventBus(EnumStatus.DONE);
+                            onPreparingSyncCategoryData();
+                        }
+                    }
                 }
             });
         }
      }
+
+     /*Preparing sync category*/
+    public void onPreparingSyncCategoryData(){
+        final List<MainCategoryModel> mResult = SQLHelper.requestSyncCategories(false,false);
+        if (mResult.size()>0){
+            mMapSyncCategory.clear();
+            mMapSyncCategory = Utils.mergeListToCategoryHashMap(mResult);
+            final MainCategoryModel itemModel = Utils.getArrayOfIndexCategoryHashMap(mMapSyncCategory);
+            if (itemModel!=null){
+                Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.PROGRESS,"Total updating "+mMapSyncCategory.size());
+                Utils.Log(TAG,"onPreparingSyncCategoryData ==> total: "+ mMapSyncCategory.size());
+                onSyncCategoryData(itemModel);
+            }
+        }else{
+            Utils.Log(TAG,"Not found item to upload");
+            Utils.Log(TAG,"Not found item to delete ");
+            Utils.Log(TAG,"Sync items completely======>ready to test");
+            isSyncCategory = false;
+            isHandleLogic = false;
+            Utils.onPushEventBus(EnumStatus.DONE);
+        }
+    }
+
+    /*Sync category data*/
+    public void onSyncCategoryData(MainCategoryModel categoryModel){
+        if(myService != null){
+            isSyncCategory = true;
+            myService.onCategoriesSync(categoryModel, new BaseListener() {
+                @Override
+                public void onShowListObjects(List list) {
+
+                }
+
+                @Override
+                public void onShowObjects(Object object) {
+
+                }
+
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    isSyncCategory = false;
+                }
+
+                @Override
+                public void onSuccessful(String message, EnumStatus status) {
+                    isSyncCategory = false;
+                    if (Utils.deletedIndexOfCategoryHashMap(categoryModel,mMapSyncCategory)){
+                        /*Delete local db and folder name*/
+                        final MainCategoryModel mUpdatedItem = Utils.getArrayOfIndexCategoryHashMap(mMapSyncCategory);
+                        if (mUpdatedItem!=null){
+                            onSyncCategoryData(mUpdatedItem);
+                            isSyncCategory = true;
+                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.DONE,new Gson().toJson(categoryModel));
+                            Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
+                        }else{
+                            Utils.Log(TAG,"Update completely...............");
+                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.DONE,new Gson().toJson(categoryModel));
+                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapSyncCategory.size());
+                            isSyncCategory = false;
+                            isHandleLogic = false;
+                            Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
+                            Utils.onPushEventBus(EnumStatus.DONE);
+                            Utils.Log(TAG,"Sync items completely======>ready to test");
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     public void onInsertItem(ItemModel itemRequest,String drive_id, ServiceManagerInsertItem ls){
         if (myService!=null){
@@ -3077,13 +3169,14 @@ public class ServiceManager implements BaseServiceView {
         isDeleteCategoryData = false;
         isDownloadingFiles = false;
         isHandleLogic = false;
+        isSyncCategory = false;
         ServiceManager.getInstance().setDeleteAlbum(false);
         ServiceManager.getInstance().setIsWaitingSendMail(false);
         ServiceManager.getInstance().setLoadingData(false);
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isLoadingData || isHandleLogic) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isLoadingData || isHandleLogic || isSyncCategory) {
             Utils.Log(TAG, "Progress....................!!!!:");
         }
         else {

@@ -261,6 +261,24 @@ public class SQLHelper {
         return null;
     }
 
+
+    public static final  List<MainCategoryModel> requestSyncCategories(boolean isSyncOwnServer, boolean isFakePin){
+        try{
+            final List<MainCategoryEntityModel> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(isSyncOwnServer,isFakePin);
+            final List<MainCategoryModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (MainCategoryEntityModel index : mList){
+                    mData.add(new MainCategoryModel(index));
+                }
+                return mData;
+            }
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return null;
+    }
+
     public static List<MainCategoryModel> getList(){
         List<MainCategoryModel> mList = new ArrayList<>();
         final List<MainCategoryModel> list = SQLHelper.getListCategories(false,false);

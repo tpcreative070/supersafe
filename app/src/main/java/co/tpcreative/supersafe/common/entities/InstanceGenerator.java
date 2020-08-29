@@ -769,9 +769,16 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final synchronized List<MainCategoryEntity> loadListItemCategoriesSync(boolean isSyncOwnServer, boolean isFakePin){
+    public final  List<MainCategoryEntityModel> loadListItemCategoriesSync(boolean isSyncOwnServer, boolean isFakePin){
         try{
-            return instance.mainCategoriesDao().loadListItemCategoriesSync(isSyncOwnServer,isFakePin);
+            final List<MainCategoryEntity> mList = instance.mainCategoriesDao().loadListItemCategoriesSync(isSyncOwnServer,isFakePin);
+            final List<MainCategoryEntityModel> mData = new ArrayList<>();
+            if (mList!=null){
+                for (MainCategoryEntity index : mList){
+                    mData.add(new MainCategoryEntityModel(index));
+                }
+                return mData;
+            }
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
