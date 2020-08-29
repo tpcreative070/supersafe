@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.util.List;
 import butterknife.BindView;
@@ -86,6 +87,7 @@ public class PrivateAdapter extends BaseAdapter<MainCategoryModel, BaseHolder> {
         public void bind(MainCategoryModel data, int position) {
             super.bind(data, position);
             this.data = data;
+            Utils.Log(TAG,new Gson().toJson(this.data));
             if (data.pin.equals("")) {
                 final List<ItemModel> mList = SQLHelper.getListItems(data.categories_local_id,data.isFakePin);
                 final ItemModel items = SQLHelper.getItemId(data.items_id);

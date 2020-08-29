@@ -46,6 +46,9 @@ public class MainCategoryModel implements Serializable {
         this.isChange  = entity.isChange;
         this.isSyncOwnServer = entity.isSyncOwnServer;
         this.isFakePin = entity.isFakePin;
+        if (entity.pin==null){
+            entity.pin = "";
+        }
         this.pin  = entity.pin;
         this.isCustom_Cover = entity.isCustom_Cover;
         this.items_id = entity.items_id;
@@ -71,9 +74,6 @@ public class MainCategoryModel implements Serializable {
         this.isCustom_Cover = isCustom_Cover;
         this.isSyncOwnServer = isSyncOwnServer;
     }
-
-
-
 
     public MainCategoryModel(){
 

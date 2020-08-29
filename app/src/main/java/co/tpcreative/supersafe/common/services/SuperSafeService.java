@@ -1033,6 +1033,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                         mMain.isSyncOwnServer = true;
                                         mMain.isChange = false;
                                         mMain.isDelete = false;
+                                        mMain.pin = "";
                                         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
                                         mMain.categories_max = count;
                                         SQLHelper.insertCategory(mMain);

@@ -116,6 +116,9 @@ public class MainCategoryEntity implements Serializable{
         this.isChange  = entityModel.isChange;
         this.isSyncOwnServer = entityModel.isSyncOwnServer;
         this.isFakePin = entityModel.isFakePin;
+        if (entityModel.pin==null){
+            entityModel.pin = "";
+        }
         this.pin  = entityModel.pin;
         this.isCustom_Cover = entityModel.isCustom_Cover;
         this.items_id = entityModel.items_id;
