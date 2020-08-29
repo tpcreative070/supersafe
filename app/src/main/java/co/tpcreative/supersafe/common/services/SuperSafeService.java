@@ -49,6 +49,7 @@ import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFileType;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.EnumStatusProgress;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.User;
@@ -778,13 +779,13 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken());
         final ItemModel entityModel = SQLHelper.getItemById(items.items_id);
         if (items.isOriginalGlobalId){
-            if (!Utils.isNotEmptyOrNull(items.global_thumbnail_id)){
+            if (!Utils.isNotEmptyOrNull(entityModel.global_thumbnail_id)){
                 entityModel.global_thumbnail_id = "null";
             }
             entityModel.originalSync = true;
             entityModel.global_original_id = drive_id;
         }else{
-            if (!Utils.isNotEmptyOrNull(items.global_original_id)){
+            if (!Utils.isNotEmptyOrNull(entityModel.global_original_id)){
                 entityModel.global_original_id = "null";
             }
             entityModel.thumbnailSync = true;
@@ -793,6 +794,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (entityModel.originalSync && entityModel.thumbnailSync){
             entityModel.isSyncCloud = true;
             entityModel.isSyncOwnServer = true;
+            entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
         }
         final SyncItemsRequest mRequest =  new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),entityModel);
         Utils.Log(TAG,"onAddItems request " + new Gson().toJson(mRequest));
@@ -1193,6 +1195,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 Utils.Log(TAG, "onDownLoadCompleted " + file_name.getAbsolutePath());
                 listener.onDownLoadCompleted(file_name, request);
                 final ItemModel entityModel = SQLHelper.getItemById(items.items_id);
+                final MainCategoryModel categoryModel = SQLHelper.getCategoriesId(items.categories_id,false);
+                if (categoryModel!=null){
+                    entityModel.categories_local_id = categoryModel.categories_local_id;
+                }
                 if (entityModel !=null){
                     if (items.isOriginalGlobalId){
                         entityModel.originalSync = true;
@@ -1204,6 +1210,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     if (entityModel.originalSync && entityModel.thumbnailSync){
                         entityModel.isSyncCloud = true;
                         entityModel.isSyncOwnServer = true;
+                        entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
                         Utils.Log(TAG,"Synced already....");
                     }
                     SQLHelper.updatedItem(entityModel);

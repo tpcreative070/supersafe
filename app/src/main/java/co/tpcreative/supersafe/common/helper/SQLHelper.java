@@ -55,7 +55,7 @@ public class SQLHelper {
     /*Check request delete item*/
     public static List<ItemModel> getDeleteItemRequest(){
         List<ItemModel> mList = new ArrayList<>();
-        final List<ItemEntityModel> mResult = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemList(true, false);
+        final List<ItemEntityModel> mResult = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getDeleteLocalListItems(true,EnumDelete.DELETE_WAITING.ordinal(),false);
         if (mResult!=null){
             for (ItemEntityModel index : mResult){
                 mList.add(new ItemModel(index));
@@ -77,7 +77,7 @@ public class SQLHelper {
 
     /*Request download item*/
     public static List<ItemModel> getItemListDownload(){
-        final List<ItemEntityModel> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemListDownload(false,false);
+        final List<ItemEntityModel> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemListDownload(true,false);
         List<ItemModel> mList = new ArrayList<>();
         for (ItemEntityModel index : list){
             mList.add(new ItemModel(index));

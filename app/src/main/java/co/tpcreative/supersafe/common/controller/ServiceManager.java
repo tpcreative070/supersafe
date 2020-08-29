@@ -349,7 +349,6 @@ public class ServiceManager implements BaseServiceView {
         List<ItemModel> mListLocal = SQLHelper.getItemListDownload();
         Utils.Log(TAG,"onPreparingDownloadData ==> Local original list "+ new Gson().toJson(mListLocal));
         if (mListLocal!=null){
-            mListLocal = Utils.filterOnlyGlobalOriginalId(mListLocal);
             Utils.Log(TAG,"onPreparingDownloadData ==> Local list "+ new Gson().toJson(mListLocal));
             if (globalList!=null && mListLocal!=null){
                 List<ItemModel> mergeList = Utils.clearListFromDuplicate(globalList,mListLocal);
@@ -381,16 +380,27 @@ public class ServiceManager implements BaseServiceView {
             return;
         }
         List<ItemModel> mListLocal = SQLHelper.getItemListDownload();
-        Utils.Log(TAG,"onPreparingSyncData ==> Local original list "+ new Gson().toJson(mListLocal));
-        mMapDownload.clear();
-        mMapDownload = Utils.mergeListToHashMap(globalList);
-        final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownload);
-        if (itemModel!=null){
-            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
-            Utils.Log(TAG,"onPreparingEnableDownloadData "+ new Gson().toJson(itemModel));
-            Utils.Log(TAG,"onPreparingEnableDownloadData total  "+ globalList.size());
-            onDownLoadData(itemModel);
-        }
+       if (mListLocal!=null){
+           if (globalList!=null && mListLocal!=null){
+               List<ItemModel> mergeList = Utils.clearListFromDuplicate(globalList,mListLocal);
+               Utils.Log(TAG,"onPreparingDownloadData ==> clear duplicated data "+ new Gson().toJson(mergeList));
+               if (mergeList!=null){
+                   if (mergeList.size()>0){
+                       mMapDownload.clear();
+                       mMapDownload = Utils.mergeListToHashMap(mergeList);
+                       Utils.Log(TAG,"onPreparingDownloadData ==> clear merged data "+ new Gson().toJson(mMapDownload));
+                       Utils.Log(TAG,"onPreparingDownloadData ==> merged data "+ new Gson().toJson(mergeList));
+                       final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownload);
+                       if (itemModel!=null){
+                           Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
+                           Utils.Log(TAG,"Preparing to download "+ new Gson().toJson(itemModel));
+                           Utils.Log(TAG,"Preparing to download total  "+ mMapDownload.size());
+                           onDownLoadData(itemModel);
+                       }
+                   }
+               }
+           }
+       }
     }
 
     /*Download file from Google drive*/

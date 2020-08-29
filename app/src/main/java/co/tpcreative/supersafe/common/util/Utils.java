@@ -916,6 +916,10 @@ public class Utils {
         /*Merged global data*/
         final List<ItemModel> mGlobalList = Utils.getMergedOriginalThumbnailList(globalList);
 
+        Utils.Log(TAG,"onPreparingSyncData ==> Index download globalList "+ new Gson().toJson(globalList));
+        Utils.Log(TAG,"onPreparingSyncData ==> Index download map "+ new Gson().toJson(modelMap));
+        Utils.Log(TAG,"onPreparingSyncData ==> Index download list "+ new Gson().toJson(mGlobalList));
+
         for (ItemModel index : mGlobalList){
             final ItemModel item = modelMap.get(index.global_id);
             if (item!=null){
@@ -925,7 +929,7 @@ public class Utils {
                 }
             }else{
                 mList.add(index);
-                Utils.Log(TAG,"onPreparingSyncData ==> Index download"+ new Gson().toJson(index));
+                Utils.Log(TAG,"onPreparingSyncData ==> Index download add "+ new Gson().toJson(index));
             }
         }
         return mList;

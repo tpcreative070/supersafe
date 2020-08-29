@@ -6,6 +6,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -120,6 +123,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
                 Utils.Log(TAG,"Null???? ");
                 return;
             }
+            Utils.Log(TAG,"updatedItem " + new Gson().toJson(cTalkManager));
             instance.itemsDao().update(cTalkManager);
         }
         catch (Exception e){
@@ -272,7 +276,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public static final List<ItemEntityModel> getDeleteLocalListItems(boolean isDeleteLocal, int deleteAction, boolean isFakePin){
+    public final List<ItemEntityModel> getDeleteLocalListItems(boolean isDeleteLocal, int deleteAction, boolean isFakePin){
         try{
             final List<ItemEntity> mList =  instance.itemsDao().loadDeleteLocalDataItems(isDeleteLocal,deleteAction,isFakePin);
             final List<ItemEntityModel> mData = new ArrayList<>();
@@ -873,9 +877,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-    public final List<ItemEntityModel> getItemListDownload(boolean isSyncCloud,boolean isFake){
+    public final List<ItemEntityModel> getItemListDownload(boolean isCloudSync,boolean isFake){
         try{
-            final List<ItemEntity> mValue =  instance.itemsDao().loadListItem(isSyncCloud,isFake);
+            final List<ItemEntity> mValue =  instance.itemsDao().loadListItem(isCloudSync,isFake);
             List<ItemEntityModel> mList = new ArrayList<>();
             for ( ItemEntity index : mValue){
                 mList.add(new ItemEntityModel(index));
