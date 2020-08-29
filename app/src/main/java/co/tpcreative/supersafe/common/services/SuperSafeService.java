@@ -863,6 +863,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
+                    Utils.Log(TAG,"Deleted cloud response code " + onResponse.code());
                     if (onResponse.code() == 204) {
                         final EnumDelete delete = EnumDelete.values()[items.deleteAction];
                         if (delete == EnumDelete.DELETE_DONE) {
@@ -1020,7 +1021,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         final List<ItemModel> mListItemResponse = mData.itemsList;
                         if (mData.nextPage == null) {
                             for (MainCategoryModel index : listCategories) {
-                                hashMapGlobalCategories.put(index.categories_id, index.categories_id);
                                 MainCategoryModel main = SQLHelper.getCategoriesId(index.categories_id,false);
                                 if (main != null) {
                                     if (!main.isChange && !main.isDelete) {
@@ -1041,6 +1041,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                     } else {
                                         mMain = index;
                                         mMain.categories_local_id = Utils.getUUId();
+                                        mMain.items_id = Utils.getUUId();
                                         mMain.isSyncOwnServer = true;
                                         mMain.isChange = false;
                                         mMain.isDelete = false;
