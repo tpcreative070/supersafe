@@ -187,7 +187,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
             presenter.getData();
         }
     }
-
     @Override
     public void onStop() {
         super.onStop();

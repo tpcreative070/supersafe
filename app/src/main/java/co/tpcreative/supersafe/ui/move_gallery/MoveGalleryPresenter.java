@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
@@ -101,6 +102,7 @@ public class MoveGalleryPresenter extends Presenter<MoveGalleryView>{
                 }
             }
             ServiceManager.getInstance().onPreparingUpdateItemData();
+            SingletonPrivateFragment.getInstance().onUpdateView();
             view.onSuccessful("Successful",EnumStatus.MOVE);
         }
         else{
