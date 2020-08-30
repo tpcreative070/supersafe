@@ -344,7 +344,7 @@ public class Utils {
                 multilineSnackbar(
                         Snackbar.make(
                                 view, text,
-                                isLong ? BaseTransientBottomBar.LENGTH_LONG : BaseTransientBottomBar.LENGTH_SHORT)
+                                isLong ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT)
                 ).show();
             }
         }, 100);
@@ -356,7 +356,7 @@ public class Utils {
             public void run() {
                 multilineSnackbar(
                         Snackbar.make(
-                                view, text, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                view, text, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.got_it, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -374,7 +374,7 @@ public class Utils {
             public void onStart() {
                 multilineSnackbar(
                         Snackbar.make(
-                                view, text, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                view, text, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.got_it, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -392,7 +392,7 @@ public class Utils {
             public void onStart() {
                 multilineSnackbar(
                         Snackbar.make(
-                                view, text, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                view, text, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(R.string.got_it, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -849,6 +849,10 @@ public class Utils {
     /*Checking allow sync data*/
     public static boolean isAllowSyncData(){
         return User.getInstance().isAllowRequestDriveApis();
+    }
+
+    public static boolean isPauseSync(){
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false);
     }
 
 

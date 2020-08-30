@@ -104,7 +104,7 @@ public class User extends BaseResponse implements Serializable{
         if (mUser!=null){
             if (mUser.driveConnected){
                 if (mUser.access_token !=null && !mUser.access_token.equals("")){
-                    if (mUser.cloud_id!=null && !mUser.cloud_id.equals("")){
+                    if (mUser.cloud_id!=null && !mUser.cloud_id.equals("") && !Utils.isPauseSync()){
                         return true;
                     }
                 }
