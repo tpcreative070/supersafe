@@ -1221,6 +1221,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     checkSaverSpace(entityModel,items.isOriginalGlobalId);
                     SQLHelper.updatedItem(entityModel);
                 }else{
+                    if (categoryModel!=null){
+                        items.categories_local_id = categoryModel.categories_local_id;
+                    }
                     if (items.isOriginalGlobalId){
                         items.originalSync = true;
                     }else {

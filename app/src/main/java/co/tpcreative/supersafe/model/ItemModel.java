@@ -128,10 +128,12 @@ public class ItemModel implements Serializable {
         EnumFormatType formatTypeFile = EnumFormatType.values()[formatType];
         switch (formatTypeFile) {
             case AUDIO: {
+                this.originalSync = false;
                 this.thumbnailSync = true;
                 break;
             }
             case FILES: {
+                this.originalSync = false;
                 this.thumbnailSync = true;
                 break;
             }
