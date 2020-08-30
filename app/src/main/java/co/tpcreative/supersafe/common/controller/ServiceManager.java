@@ -32,13 +32,11 @@ import javax.crypto.Cipher;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseServiceView;
 import co.tpcreative.supersafe.common.response.DriveResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeService;
-import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumDelete;
@@ -87,6 +85,37 @@ public class ServiceManager implements BaseServiceView {
     private Map<String,ImportFilesModel> mMapImporting = new HashMap<>();
     private List<ItemModel> mDownloadList = new ArrayList<>();
     private int mStart = 20;
+
+    ServiceConnection myConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            Utils.Log(TAG, "connected");
+            myService = ((SuperSafeService.LocalBinder) binder).getService();
+            myService.bindView(ServiceManager.this);
+            storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+            mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+            ServiceManager.getInstance().onGetUserInfo();
+            ServiceManager.getInstance().onSyncAuthorDevice();
+            ServiceManager.getInstance().onGetDriveAbout();
+            Utils.onScanFile(SuperSafeApplication.getInstance(),"scan.log");
+        }
+        //binder comes from server to communicate with method's of
+        public void onServiceDisconnected(ComponentName className) {
+            Utils.Log(TAG, "disconnected");
+            myService = null;
+        }
+    };
+    public void onInitConfigurationFile(){
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+        mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
+    }
+    private Cipher mCiphers;
+    private boolean isLoadingData, isWaitingSendMail;
+    public static ServiceManager getInstance() {
+        if (instance == null) {
+            instance = new ServiceManager();
+        }
+        return instance;
+    }
 
     public void setListImport(List<ImportFilesModel> mListImport) {
         if (!isImportData) {
@@ -1125,37 +1154,6 @@ public class ServiceManager implements BaseServiceView {
                 });
     }
 
-    ServiceConnection myConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder binder) {
-            Utils.Log(TAG, "connected");
-            myService = ((SuperSafeService.LocalBinder) binder).getService();
-            myService.bindView(ServiceManager.this);
-            storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-            mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-            ServiceManager.getInstance().onGetUserInfo();
-            ServiceManager.getInstance().onSyncAuthorDevice();
-            ServiceManager.getInstance().onGetDriveAbout();
-            Utils.onScanFile(SuperSafeApplication.getInstance(),"scan.log");
-        }
-        //binder comes from server to communicate with method's of
-        public void onServiceDisconnected(ComponentName className) {
-            Utils.Log(TAG, "disconnected");
-            myService = null;
-        }
-    };
-    public void onInitConfigurationFile(){
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-        mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
-    }
-    private Cipher mCiphers;
-    private boolean isLoadingData, isWaitingSendMail;
-    public static ServiceManager getInstance() {
-        if (instance == null) {
-            instance = new ServiceManager();
-        }
-        return instance;
-    }
-
     public void setLoadingData(boolean loadingData) {
         isLoadingData = loadingData;
     }
@@ -1342,296 +1340,6 @@ public class ServiceManager implements BaseServiceView {
         if (myService != null) {
             myService.onSyncAuthorDevice();
         }
-    }
-
-    /*Check Version App*/
-    public void onSyncCheckVersion() {
-        if (myService != null) {
-            myService.onCheckVersion();
-        }
-    }
-
-
-    /*Gallery action*/
-    public void onSaveDataOnGallery(final ImportFilesModel importFiles, ServiceManagerGalleySyncDataListener listener) {
-        subscriptions = Observable.create(subscriber -> {
-            final MimeTypeFile mMimeTypeFile = importFiles.mimeTypeFile;
-            final EnumFormatType enumTypeFile = mMimeTypeFile.formatType;
-            final String mPath = importFiles.path;
-            final String mMimeType = mMimeTypeFile.mimeType;
-            final MainCategoryModel mMainCategories = importFiles.mainCategories;
-            final String categories_id = mMainCategories.categories_id;
-            final String categories_local_id = mMainCategories.categories_local_id;
-            final boolean isFakePin = mMainCategories.isFakePin;
-            Bitmap thumbnail = null;
-            switch (enumTypeFile) {
-                case IMAGE: {
-                    Utils.Log(TAG, "Start RXJava Image Progressing");
-                    try {
-                        String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
-                        String currentTime = Utils.getCurrentDateTime();
-                        String uuId = Utils.getUUId();
-                        String pathContent = rootPath + uuId + "/";
-                        storage.createDirectory(pathContent);
-                        String thumbnailPath = pathContent + "thumbnail_" + currentTime;
-                        String originalPath = pathContent + currentTime;
-                        final boolean isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space), false);
-                        ItemModel itemsPhoto = new ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_" + currentTime, "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD);
-                        File file = new Compressor(SuperSafeApplication.getInstance())
-                                .setMaxWidth(1032)
-                                .setMaxHeight(774)
-                                .setQuality(85)
-                                .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                                .compressToFile(new File(mPath));
-                        Utils.Log(TAG, "start compress");
-                        boolean createdThumbnail = storage.createFile(new File(thumbnailPath), file, Cipher.ENCRYPT_MODE);
-                        boolean createdOriginal = storage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
-                        Utils.Log(TAG, "start end");
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.items = itemsPhoto;
-                        response.categories = mMainCategories;
-                        response.originalPath = mPath;
-                        if (createdThumbnail && createdOriginal) {
-                            response.isWorking = true;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile successful");
-                        } else {
-                            response.isWorking = false;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile failed");
-                        }
-                    } catch (Exception e) {
-                        Utils.Log(TAG, "Cannot write to " + e);
-                        Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.isWorking = false;
-                        subscriber.onNext(response);
-                        subscriber.onComplete();
-                    } finally {
-                        Utils.Log(TAG, "Finally");
-                    }
-                    break;
-                }
-                case VIDEO: {
-                    Utils.Log(TAG, "Start RXJava Video Progressing");
-                    try {
-                        try {
-                            thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
-                                    MediaStore.Video.Thumbnails.MINI_KIND);
-                            ExifInterface exifInterface = new ExifInterface(mPath);
-                            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-                            Utils.Log("EXIF", "Exif: " + orientation);
-                            Matrix matrix = new Matrix();
-                            if (orientation == 6) {
-                                matrix.postRotate(90);
-                            } else if (orientation == 3) {
-                                matrix.postRotate(180);
-                            } else if (orientation == 8) {
-                                matrix.postRotate(270);
-                            }
-                            thumbnail = Bitmap.createBitmap(thumbnail, 0, 0, thumbnail.getWidth(), thumbnail.getHeight(), matrix, true); // rotating bitmap
-                        }
-                        catch (Exception e){
-                            thumbnail  = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().getResources(),
-                                    R.drawable.ic_default_video);
-                            Utils.Log(TAG, "Cannot write to " + e);
-                        }
-                        String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
-                        String currentTime = Utils.getCurrentDateTime();
-                        String uuId = Utils.getUUId();
-                        String pathContent = rootPath + uuId + "/";
-                        storage.createDirectory(pathContent);
-                        String thumbnailPath = pathContent + "thumbnail_" + currentTime;
-                        String originalPath = pathContent + currentTime;
-                        ItemModel itemsVideo = new ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.VIDEO, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_" + currentTime, "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD);
-                        Utils.Log(TAG,"Call thumbnail");
-                        boolean createdThumbnail = storage.createFile(thumbnailPath, thumbnail);
-                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
-                        boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
-                        Utils.Log(TAG,"Call original");
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.items = itemsVideo;
-                        response.categories = mMainCategories;
-                        response.originalPath = mPath;
-                        if (createdThumbnail && createdOriginal) {
-                            response.isWorking = true;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile successful");
-                        } else {
-                            response.isWorking = false;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile failed");
-                        }
-                    } catch (Exception e) {
-                        Utils.Log(TAG, "Cannot write to " + e);
-                        Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.isWorking = false;
-                        subscriber.onNext(response);
-                        subscriber.onComplete();
-                    } finally {
-                        Utils.Log(TAG, "Finally");
-                    }
-                    break;
-                }
-                case AUDIO: {
-                    Utils.Log(TAG, "Start RXJava Audio Progressing");
-                    try {
-                        String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
-                        String currentTime = Utils.getCurrentDateTime();
-                        String uuId = Utils.getUUId();
-                        String pathContent = rootPath + uuId + "/";
-                        storage.createDirectory(pathContent);
-                        String originalPath = pathContent + currentTime;
-                        ItemModel itemsAudio = new ItemModel(mMimeTypeFile.extension, originalPath, "null", categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD);
-                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
-                        boolean createdOriginal = mStorage.createLargeFile(new File(originalPath), new File(mPath), mCiphers);
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.items = itemsAudio;
-                        response.categories = mMainCategories;
-                        response.originalPath = mPath;
-                        if (createdOriginal) {
-                            response.isWorking = true;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile successful");
-                        } else {
-                            response.isWorking = false;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile failed");
-                        }
-                    } catch (Exception e) {
-                        Utils.Log(TAG, "Cannot write to " + e);
-                        Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.isWorking = false;
-                        subscriber.onNext(response);
-                        subscriber.onComplete();
-                    } finally {
-                        Utils.Log(TAG, "Finally");
-                    }
-                    break;
-                }
-                case FILES: {
-                    Utils.Log(TAG, "Start RXJava Files Progressing");
-                    try {
-                        String rootPath = SuperSafeApplication.getInstance().getSupersafePrivate();
-                        String currentTime = Utils.getCurrentDateTime();
-                        String uuId = Utils.getUUId();
-                        String pathContent = rootPath + uuId + "/";
-                        storage.createDirectory(pathContent);
-                        String originalPath = pathContent + currentTime;
-                        ItemModel itemsFile = new ItemModel(mMimeTypeFile.extension,originalPath, "null", categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD);
-                        mCiphers = mStorage.getCipher(Cipher.ENCRYPT_MODE);
-                        boolean createdOriginal = mStorage.createFile(new File(originalPath), new File(mPath), Cipher.ENCRYPT_MODE);
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.items = itemsFile;
-                        response.categories = mMainCategories;
-                        response.originalPath = mPath;
-                        if (createdOriginal) {
-                            response.isWorking = true;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile successful");
-                        } else {
-                            response.isWorking = false;
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            Utils.Log(TAG, "CreatedFile failed");
-                        }
-                    } catch (Exception e) {
-                        Utils.Log(TAG, "Cannot write to " + e);
-                        Utils.onWriteLog(e.getMessage(), EnumStatus.WRITE_FILE);
-                        final ResponseRXJava response = new ResponseRXJava();
-                        response.isWorking = false;
-                        subscriber.onNext(response);
-                        subscriber.onComplete();
-                    } finally {
-                        Utils.Log(TAG, "Finally");
-                    }
-                    break;
-                }
-            }
-            Utils.Log(TAG, "End up RXJava");
-        })
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .subscribe(response -> {
-                    final ResponseRXJava mResponse = (ResponseRXJava) response;
-                    try {
-                        if (mResponse.isWorking) {
-                            final ItemModel items = mResponse.items;
-                            long mb;
-                            EnumFormatType enumFormatType = EnumFormatType.values()[items.formatType];
-                            switch (enumFormatType) {
-                                case AUDIO: {
-                                    if (storage.isFileExist(items.originalPath)) {
-                                        mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                                        items.size = "" + mb;
-                                        SQLHelper.insertedItem(items);
-                                    }
-                                    break;
-                                }
-                                case FILES: {
-                                    if (storage.isFileExist(items.originalPath)) {
-                                        mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                                        items.size = "" + mb;
-                                        SQLHelper.insertedItem(items);
-                                    }
-                                    break;
-                                }
-                                default: {
-                                    if (storage.isFileExist(items.originalPath) && storage.isFileExist(items.thumbnailPath)) {
-                                        mb = (long) +storage.getSize(new File(items.originalPath), SizeUnit.B);
-                                        if (storage.isFileExist(items.thumbnailPath)) {
-                                            mb += (long) +storage.getSize(new File(items.thumbnailPath), SizeUnit.B);
-                                        }
-                                        items.size = "" + mb;
-                                        SQLHelper.insertedItem(items);
-                                        if (!mResponse.categories.isCustom_Cover) {
-                                            if (enumFormatType==EnumFormatType.IMAGE){
-                                                final MainCategoryModel main = mResponse.categories;
-                                                main.items_id = items.items_id;
-                                                SQLHelper.updateCategory(main);
-                                            }
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                            Utils.Log(TAG, "Write file successful ");
-                        } else {
-                            Utils.Log(TAG, "Write file Failed ");
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (mResponse.isWorking) {
-                            final ItemModel items = mResponse.items;
-                            GalleryCameraMediaManager.getInstance().setProgressing(false);
-                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM);
-                            if (items.isFakePin) {
-                                SingletonFakePinComponent.getInstance().onUpdateView();
-                            } else {
-                                SingletonPrivateFragment.getInstance().onUpdateView();
-//                                ServiceManager.getInstance().onSyncDataOwnServer("0");
-                            }
-                            Utils.Log(TAG, "Original path :" + mResponse.originalPath);
-                            Storage storage = new Storage(SuperSafeApplication.getInstance());
-                            storage.deleteFile(mResponse.originalPath);
-                            listener.onCompleted(importFiles);
-                        }
-                        else{
-                            listener.onFailed(importFiles);
-                        }
-                    }
-                });
     }
 
     /*--------------Camera action-----------------*/
@@ -1921,28 +1629,6 @@ public class ServiceManager implements BaseServiceView {
                 break;
             }
         }
-    }
-
-    public boolean isCheckNull(EnumStatus enumStatus){
-        if (myService == null) {
-            Utils.Log(TAG, "Service is null on " + enumStatus.name());
-            switch (enumStatus){
-                case UPLOAD:
-                    EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
-                    break;
-                case DOWNLOAD:
-                    EventBus.getDefault().post(EnumStatus.SYNC_ERROR);
-                    break;
-                 default:
-                     break;
-            }
-            return true;
-        }
-        else if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
-            Utils.Log(TAG, "Check network connection");
-            return true;
-        }
-        return false;
     }
 
     public void onDefaultValue(){

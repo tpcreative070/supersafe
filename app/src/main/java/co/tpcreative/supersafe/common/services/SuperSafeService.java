@@ -248,7 +248,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
-                            else if (code == 403){
+                            else if (code == 403 || code == 400){
                                 final User user = User.getInstance().getUserInfo();
                                 if (user!=null){
                                     onSignIn(user);
