@@ -195,7 +195,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY_CODE))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         mUser = User.getInstance().getUserInfo();

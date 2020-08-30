@@ -63,7 +63,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY);

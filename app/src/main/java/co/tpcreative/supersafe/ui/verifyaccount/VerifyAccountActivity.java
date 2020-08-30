@@ -511,6 +511,10 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 edtEmail.setError(message);
                 break;
             }
+            case VERIFY_CODE: {
+                edtEmail.setError(message);
+                break;
+            }
         }
     }
 

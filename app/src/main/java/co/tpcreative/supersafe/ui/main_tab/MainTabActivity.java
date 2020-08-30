@@ -427,7 +427,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                              boolean response = SQLHelper.onAddCategories(base64Code,value,false);
                              if (response){
                                  Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
-                                 ServiceManager.getInstance().onGetListCategoriesSync();
+                                 ServiceManager.getInstance().onPreparingSyncCategoryData();
                              }
                              else{
                                  Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();

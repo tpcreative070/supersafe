@@ -605,7 +605,9 @@
     <string name="we_are_a_team_positive">We_Are_A_Team</string>
     <string name="second_loads">second loads</string>
     <string name="current_code_version">current_code_version</string>
-
+    <string name="signed_in_failed">Email not registered with SuperSafe</string>
+    <string name="signed_up_failed">That username is taken. Try another</string>
+    <string name="the_code_not_signed_up">This code was not registered!</string>
     <!--Multi selects -->
     <string name="album_view">Select photo album</string>
     <string name="image_view">Tap to select images</string>

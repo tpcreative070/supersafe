@@ -48,11 +48,11 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                 .subscribe(onResponse -> {
                     view.onStopLoading(EnumStatus.SIGN_UP);
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.SIGN_UP);
+                        view.onError(onResponse.responseMessage, EnumStatus.SIGN_UP);
                     } else {
                         final DataResponse mData = onResponse.data;
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mData.user));
-                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_UP, mData.user);
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.SIGN_UP, mData.user);
                         ServiceManager.getInstance().onInitConfigurationFile();
                     }
                     Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));

@@ -417,7 +417,7 @@ public class SQLHelper {
             final MainCategoryModel main = SQLHelper.getCategoriesItemId(categories_hex_name,isFakePin);
             if (main==null){
                 final int count  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
-                SQLHelper.insertCategory(new MainCategoryModel("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,true,false,isFakePin,"",null,null,false));
+                SQLHelper.insertCategory(new MainCategoryModel("null",Utils.getUUId(),Utils.getHexCode(name),name,ListColor[0],ListIcon[0],count,false,false,false,isFakePin,"",null,null,false));
                 return true;
             }
         }

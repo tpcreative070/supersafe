@@ -64,7 +64,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         final User mUser = User.getInstance().getUserInfo();

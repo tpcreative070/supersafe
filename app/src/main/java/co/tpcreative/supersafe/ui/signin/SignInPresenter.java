@@ -51,7 +51,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.SIGN_IN);
+                        view.onError(getString(R.string.signed_in_failed), EnumStatus.SIGN_IN);
                     } else {
                         final DataResponse mData = onResponse.data;
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mData.user));

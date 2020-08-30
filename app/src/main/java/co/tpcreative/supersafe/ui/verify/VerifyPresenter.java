@@ -66,7 +66,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
                 .subscribe(onResponse -> {
                     view.onStopLoading(EnumStatus.VERIFY_CODE);
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);

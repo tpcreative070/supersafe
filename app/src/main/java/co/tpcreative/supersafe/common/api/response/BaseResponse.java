@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.model.Version;
 
 public class BaseResponse implements Serializable {
     public String message;
+    public String responseMessage;
     public boolean error;
     public SyncData syncData;
     public Purchase purchase;
