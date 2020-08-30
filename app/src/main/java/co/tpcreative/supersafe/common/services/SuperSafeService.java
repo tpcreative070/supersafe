@@ -802,6 +802,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "onError:" + new Gson().toJson(onResponse));
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     } else {
+                        /*Check saver space*/
+                        checkSaverSpace(entityModel,items.isOriginalGlobalId);
                         SQLHelper.updatedItem(entityModel);
                         view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS);
                     }
@@ -831,6 +833,17 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.ADD_ITEMS);
                     }
                 }));
+    }
+
+    /*Check saver space*/
+    public void checkSaverSpace(ItemModel itemModel,boolean isOriginalGlobalId){
+        EnumFormatType mType = EnumFormatType.values()[itemModel.formatType];
+        if (mType==EnumFormatType.IMAGE){
+            if (Utils.getSaverSpace()){
+                itemModel.isSaver = true;
+                Utils.checkSaverToDelete(itemModel.originalPath,isOriginalGlobalId);
+            }
+        }
     }
 
     /*Get List Categories*/
@@ -1186,10 +1199,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 listener.onDownLoadCompleted(file_name, request);
                 final ItemModel entityModel = SQLHelper.getItemById(items.items_id);
                 final MainCategoryModel categoryModel = SQLHelper.getCategoriesId(items.categories_id,false);
-                if (categoryModel!=null){
-                    entityModel.categories_local_id = categoryModel.categories_local_id;
-                }
                 if (entityModel !=null){
+                    if (categoryModel!=null){
+                        entityModel.categories_local_id = categoryModel.categories_local_id;
+                    }
                     entityModel.isSaver = false;
                     if (items.isOriginalGlobalId){
                         entityModel.originalSync = true;
@@ -1204,6 +1217,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
                         Utils.Log(TAG,"Synced already....");
                     }
+                    /*Check saver space*/
+                    checkSaverSpace(entityModel,items.isOriginalGlobalId);
                     SQLHelper.updatedItem(entityModel);
                 }else{
                     if (items.isOriginalGlobalId){
@@ -1211,6 +1226,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }else {
                         items.thumbnailSync = true;
                     }
+                    /*Check saver space*/
+                    checkSaverSpace(items,items.isOriginalGlobalId);
                     SQLHelper.insertedItem(items);
                 }
             }

@@ -1091,6 +1091,10 @@ public class Utils {
         SuperSafeApplication.getInstance().getStorage().deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+item_id);
     }
 
+    public static void onDeleteFile(String file_path){
+        SuperSafeApplication.getInstance().getStorage().deleteFile(file_path);
+    }
+
     /*Create folder*/
     public static String createDestinationDownloadItem(String items_id){
         String path = SuperSafeApplication.getInstance().getSupersafePrivate();
@@ -1153,7 +1157,13 @@ public class Utils {
         }
         return mResult;
     }
-
-
-
+    public static  void checkSaverToDelete(String originalPath,boolean isOriginalGlobalId){
+        if (getSaverSpace()){
+            if (SuperSafeApplication.getInstance().getStorage().isFileExist(originalPath)){
+                if (isOriginalGlobalId){
+                    Utils.onDeleteFile(originalPath);
+                }
+            }
+        }
+    }
 }

@@ -535,7 +535,6 @@ public class ServiceManager implements BaseServiceView {
                         isUploadData = false;
                         return;
                     }
-                    final ItemModel entityModel = SQLHelper.getItemById(itemModel.items_id);
                     ServiceManager.getInstance().onInsertItem(itemModel,response.id, new ServiceManager.ServiceManagerInsertItem() {
                         @Override
                         public void onCancel() {
