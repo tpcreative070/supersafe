@@ -1985,10 +1985,7 @@ public class ServiceManager implements BaseServiceView {
         void onError();
         void onCancel();
     }
-    public interface ServiceManagerShortListener{
-        void onError(String message, EnumStatus status);
-        void onSuccessful(String message,EnumStatus status);
-    }
+
     public interface ServiceManagerGalleySyncDataListener {
         void onCompleted(ImportFilesModel importFiles);
         void onFailed(ImportFilesModel importFiles);
@@ -2004,9 +2001,6 @@ public class ServiceManager implements BaseServiceView {
         void onProgressDownload(int percentage);
         void onDownLoadCompleted(File file_name, DownloadFileRequest request);
         void onError(String message, EnumStatus status);
-    }
-    public interface DeleteServiceListener {
-        void onDone();
     }
 
     public interface BaseListener <T> {
