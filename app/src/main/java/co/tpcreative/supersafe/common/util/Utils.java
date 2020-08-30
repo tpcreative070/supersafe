@@ -1001,15 +1001,21 @@ public class Utils {
                 if (!index.originalSync){
                     mList.add(new ItemModel(index,true));
                 }
-                if (!index.thumbnailSync){
-                    mList.add(new ItemModel(index,false));
+                final EnumFormatType mType = EnumFormatType.values()[index.formatType];
+                if (EnumFormatType.IMAGE == mType || EnumFormatType.VIDEO == mType){
+                    if (!index.thumbnailSync){
+                        mList.add(new ItemModel(index,false));
+                    }
                 }
             }else{
                 if (index.originalSync){
                     mList.add(new ItemModel(index,true));
                 }
-                if (index.thumbnailSync){
-                    mList.add(new ItemModel(index,false));
+                final EnumFormatType mType = EnumFormatType.values()[index.formatType];
+                if (EnumFormatType.IMAGE == mType || EnumFormatType.VIDEO == mType){
+                    if (index.thumbnailSync){
+                        mList.add(new ItemModel(index,false));
+                    }
                 }
             }
         }
@@ -1136,6 +1142,16 @@ public class Utils {
            return false;
        }
        return  true;
+    }
+
+    public static List<ItemModel>getCheckedList(List<ItemModel>mList){
+        List<ItemModel>mResult = new ArrayList<>();
+        for (ItemModel index : mList){
+            if (index.isChecked){
+                mResult.add(index);
+            }
+        }
+        return mResult;
     }
 
 

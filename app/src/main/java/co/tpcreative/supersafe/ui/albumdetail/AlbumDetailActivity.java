@@ -278,6 +278,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
+                        for (int i = 0;i<presenter.mList.size();i++){
+                            final ItemModel items = presenter.mList.get(i);
+                            if (items.isChecked){
+                                items.isSaver = false;
+                            }
+                        }
                         onClickedExport();
                     }
                 });
@@ -883,7 +889,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
                 else{
                     onDialogDownloadFile();
-                    ServiceManager.getInstance().onPreparingEnableDownloadData(presenter.mList);
+                    ServiceManager.getInstance().onPreparingEnableDownloadData(Utils.getCheckedList(presenter.mList));
                     //ServiceManager.getInstance().getObservableDownload();
                 }
             }

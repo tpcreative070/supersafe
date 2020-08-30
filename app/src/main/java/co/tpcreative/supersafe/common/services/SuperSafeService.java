@@ -1190,6 +1190,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     entityModel.categories_local_id = categoryModel.categories_local_id;
                 }
                 if (entityModel !=null){
+                    entityModel.isSaver = false;
                     if (items.isOriginalGlobalId){
                         entityModel.originalSync = true;
                         entityModel.global_original_id = request.id;

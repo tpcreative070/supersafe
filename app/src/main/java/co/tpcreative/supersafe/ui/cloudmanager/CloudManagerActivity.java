@@ -414,7 +414,6 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                         case IMAGE: {
                             mList.get(i).isSyncCloud = false;
                             mList.get(i).originalSync = false;
-                            mList.get(i).statusAction = EnumStatus.DOWNLOAD.ordinal();
                             SQLHelper.updatedItem(mList.get(i));
                             break;
                         }
