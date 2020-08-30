@@ -562,6 +562,7 @@ public class ServiceManager implements BaseServiceView {
                                     Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                                     Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
                                     Utils.onPushEventBus(EnumStatus.DONE);
+                                    Utils.onPushEventBus(EnumStatus.REFRESH);
                                     Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.UPLOAD_COMPLETED,"Total uploading "+mMapUpload.size());
                                 }
                             }

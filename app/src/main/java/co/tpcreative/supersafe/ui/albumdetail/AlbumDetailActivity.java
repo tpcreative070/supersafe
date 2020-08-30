@@ -220,6 +220,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
         switch (event){
+            case REFRESH:{
+                presenter.getData(this);
+                break;
+            }
             case FINISH:{
                 Navigator.onMoveToFaceDown(this);
                 break;

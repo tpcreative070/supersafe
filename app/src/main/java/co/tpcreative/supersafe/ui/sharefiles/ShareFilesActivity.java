@@ -388,7 +388,7 @@ public class ShareFilesActivity extends BaseActivityNone{
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
-            case STOP_PROGRESS:{
+            case IMPORTED_COMPLETELY:{
                 try {
                     onStopProgressing();
                     onShowUI(View.VISIBLE);
