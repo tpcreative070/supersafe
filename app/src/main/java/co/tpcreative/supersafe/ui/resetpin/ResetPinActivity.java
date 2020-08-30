@@ -104,6 +104,24 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                 Navigator.onMoveToFaceDown(this);
                 break;
             }
+            case WAITING_LEFT:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        edtCode.setHint(String.format(getString(R.string.waiting_left),SingletonResetPin.getInstance().waitingLeft+""));
+                    }
+                });
+                break;
+            }
+            case WAITING_DONE:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        edtCode.setHint(getString(R.string.code));
+                    }
+                });
+                break;
+            }
         }
     };
 

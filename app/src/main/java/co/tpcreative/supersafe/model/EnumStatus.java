@@ -136,5 +136,7 @@ public enum EnumStatus {
         NO_SPACE_LEFT_CLOUD,
         REQUEST_NEXT_UPLOAD,
         UPLOAD_COMPLETED,
-        UPDATED_COMPLETED
+        UPDATED_COMPLETED,
+        WAITING_LEFT,
+        WAITING_DONE
 }

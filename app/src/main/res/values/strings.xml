@@ -114,6 +114,8 @@
     <string name="yes">YES</string>
     <string name="verify_title">Check %1$s for an access code to sign in</string>
     <string name="code">Access code</string>
+    <string name="checking_your_email">Checking your email: %1$s</string>
+    <string name="waiting_left">Count down left: %1$s</string>
     <string name="login_action">SIGN IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
