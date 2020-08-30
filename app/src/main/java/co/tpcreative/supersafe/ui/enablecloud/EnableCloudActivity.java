@@ -390,7 +390,6 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                 Utils.Log(TAG,"Finsh enable cloud.........................");
                 ServiceManager.getInstance().onPreparingSyncData();
                 ServiceManager.getInstance().onGetUserInfo();
-                ServiceManager.getInstance().onGetListCategoriesSync();
                 onBackPressed();
                 break;
             }

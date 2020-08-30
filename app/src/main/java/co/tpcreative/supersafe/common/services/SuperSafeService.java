@@ -767,7 +767,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             return;
         }
         items.isSyncOwnServer = true;
-        String access_token = user.access_token;
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken());
         final ItemModel entityModel = SQLHelper.getItemById(items.items_id);
         if (items.isOriginalGlobalId){
@@ -1091,80 +1090,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         view.onError("Error :" + throwable.getMessage(), EnumStatus.GET_LIST_FILE);
                     }
                 }));
-    }
-
-    public void onDeletePreviousSync(ServiceManager.DeleteServiceListener view) {
-//        Utils.Log(TAG, "onDeletePreviousSync");
-//        try {
-//            final List<ItemEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true,true, false);
-//            for (ItemEntity index : list) {
-//                String value = hashMapGlobal.get(index.items_id);
-//                if (value == null) {
-//                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-//                    storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.getMessage();
-//        } finally {
-//            Utils.Log(TAG,"Delete everytime..............");
-//            hashMapGlobal.clear();
-//            SingletonPrivateFragment.getInstance().onUpdateView();
-//            EventBus.getDefault().post(EnumStatus.RELOAD);
-//            view.onDone();
-//            /*Note here*/
-//        }
-    }
-
-    public void onDeletePreviousCategoriesSync(ServiceManager.DeleteServiceListener view) {
-//        Utils.Log(TAG, "onDeletePreviousCategoriesSync");
-//        try {
-//            final List<MainCategoryEntity> list = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).loadListItemCategoriesSync(true,false);
-//            for (MainCategoryEntity index : list) {
-//                String value = hashMapGlobalCategories.get(index.categories_id);
-//                if (value == null) {
-//                    final List<ItemEntity> data = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(index.categories_local_id, false);
-//                    if (data == null || data.size() == 0) {
-//                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(index);
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.getMessage();
-//        } finally {
-//            view.onDone();
-//            hashMapGlobalCategories.clear();
-//            SingletonPrivateFragment.getInstance().onUpdateView();
-//            EventBus.getDefault().post(EnumStatus.RELOAD);
-//            /*Note here*/
-//        }
-    }
-
-    public void onSaveItem(final ItemModel mItem) {
-//        final ItemEntity items = new ItemEntity(mItem);
-//        Utils.Log(TAG, "onSaveItem");
-//        Utils.onWriteLog(new Gson().toJson(items),EnumStatus.CREATE);
-//        boolean isSaver;
-//        EnumFormatType formatType = EnumFormatType.values()[items.formatType];
-//        switch (formatType){
-//            case IMAGE:{
-//                isSaver = PrefsController.getBoolean(getString(R.string.key_saving_space),false);
-//                items.originalSync = isSaver;
-//                break;
-//            }
-//            default:{
-//                items.originalSync = false;
-//                break;
-//            }
-//        }
-//        items.isExport = false;
-//        items.isWaitingForExporting = false;
-//        items.custom_items = 0;
-//        items.isSyncCloud = false;
-//        items.isSyncOwnServer = false;
-//        items.isUpdate = false;
-//        items.statusAction = EnumStatus.DOWNLOAD.ordinal();
-//        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(items);
     }
 
     public void onDownloadFile(final ItemModel items, final ServiceManager.DownloadServiceListener listener) {

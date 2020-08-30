@@ -212,7 +212,7 @@ public class MoveGalleryFragment extends Fragment implements MoveGalleryAdapter.
                                 Toast.makeText(getActivity(),"Created album successful",Toast.LENGTH_SHORT).show();
                                 presenter.getData(mConfig.localCategoriesId,mConfig.isFakePIN);
                                 SingletonPrivateFragment.getInstance().onUpdateView();
-                                ServiceManager.getInstance().onGetListCategoriesSync();
+                                ServiceManager.getInstance().onPreparingSyncCategoryData();
                             }
                             else{
                                 Toast.makeText(getActivity(),"Album name already existing",Toast.LENGTH_SHORT).show();

@@ -436,7 +436,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
             }
         }
         if (isRefresh){
-            ServiceManager.getInstance().onGetListCategoriesSync();
+            ServiceManager.getInstance().onPreparingSyncCategoryData();
         }
         presenter.unbindView();
     }
