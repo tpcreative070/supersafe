@@ -310,6 +310,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
+        ServiceManager.getInstance().setRequestShareIntent(false);
     }
 
     @Override

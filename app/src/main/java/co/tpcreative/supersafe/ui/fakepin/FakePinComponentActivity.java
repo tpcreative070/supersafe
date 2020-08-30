@@ -298,6 +298,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
         SingletonManager.getInstance().setVisitFakePin(true);
+        ServiceManager.getInstance().setRequestShareIntent(false);
     }
 
     @Override

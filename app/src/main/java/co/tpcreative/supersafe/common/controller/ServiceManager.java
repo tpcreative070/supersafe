@@ -83,7 +83,7 @@ public class ServiceManager implements BaseServiceView {
 
     /*Improved sync data*/
     private List<ImportFilesModel> listImport = new ArrayList<>();
-    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isSyncCategory,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic;
+    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isSyncCategory,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic,isRequestShareIntent;
     /*Using item_id as key for hash map*/
     private Map<String, ItemModel> mMapDeleteItem = new HashMap<>();
     private Map<String, MainCategoryModel> mMapDeleteCategory = new HashMap<>();
@@ -228,6 +228,14 @@ public class ServiceManager implements BaseServiceView {
         }else{
             onPreparingDeleteCategoryData();
         }
+    }
+
+    public boolean getRequestShareIntent() {
+        return isRequestShareIntent;
+    }
+
+    public void setRequestShareIntent(boolean requestShareIntent) {
+        isRequestShareIntent = requestShareIntent;
     }
 
     /*Delete item from Google drive and server*/
@@ -1089,7 +1097,9 @@ public class ServiceManager implements BaseServiceView {
                             }
                             Utils.Log(TAG, "Original path :" + mResponse.originalPath);
                             Storage storage = new Storage(SuperSafeApplication.getInstance());
-                            storage.deleteFile(mResponse.originalPath);
+                            if (!getRequestShareIntent()){
+                                Utils.onDeleteFile(mResponse.originalPath);
+                            }
                             if (Utils.deletedIndexOfHashMapImport(importFiles,mMapImporting)) {
                                 final ImportFilesModel mImportItem = Utils.getArrayOfIndexHashMapImport(mMapImporting);
                                 if (mImportItem != null) {
@@ -1133,6 +1143,7 @@ public class ServiceManager implements BaseServiceView {
             ServiceManager.getInstance().onGetUserInfo();
             ServiceManager.getInstance().onSyncAuthorDevice();
             ServiceManager.getInstance().onGetDriveAbout();
+            Utils.onScanFile(SuperSafeApplication.getInstance(),"scan.log");
         }
         //binder comes from server to communicate with method's of
         public void onServiceDisconnected(ComponentName className) {

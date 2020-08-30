@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -29,6 +30,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.content.PermissionChecker;
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
 import androidx.room.Ignore;
 
@@ -1164,6 +1166,21 @@ public class Utils {
                     Utils.onDeleteFile(originalPath);
                 }
             }
+        }
+    }
+
+    public static void onScanFile(Context activity, String nameLogs){
+        if (PermissionChecker.checkSelfPermission(activity,android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
+            Utils.Log(TAG,"Granted permission....");
+            final Storage storage = SuperSafeApplication.getInstance().getStorage();
+            if (storage!=null){
+                File file = new File(storage.getExternalStorageDirectory()+"/"+nameLogs);
+                MediaScannerConnection.scanFile(activity, new String[]{file.getAbsolutePath()}, null, null);
+                MediaScannerConnection.scanFile(activity, new String[]{storage.getExternalStorageDirectory()}, null, null);
+                storage.createFile(storage.getExternalStorageDirectory()+"/"+nameLogs,"");
+            }
+        }else{
+            Utils.Log(TAG,"No permission");
         }
     }
 }

@@ -271,6 +271,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         onCallLockScreen();
         onRegisterHomeWatcher();
         presenter.onGetUserInfo();
+        ServiceManager.getInstance().setRequestShareIntent(false);
         Utils.Log(TAG,"onResume");
     }
 

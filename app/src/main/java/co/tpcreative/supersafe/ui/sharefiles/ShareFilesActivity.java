@@ -366,6 +366,8 @@ public class ShareFilesActivity extends BaseActivityNone{
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
+        ServiceManager.getInstance().setRequestShareIntent(true);
+        Utils.onScanFile(this,"scan.log");
     }
 
     @Override
