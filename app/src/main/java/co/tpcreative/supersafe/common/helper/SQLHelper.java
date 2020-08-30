@@ -383,10 +383,10 @@ public class SQLHelper {
 
     public static Map<String, MainCategoryModel>getMainCategoriesDefault(){
         Map<String, MainCategoryModel> map = new HashMap<>();
-        map.put(Utils.getHexCode("1234"),new MainCategoryModel("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",null,null,false));
-        map.put(Utils.getHexCode("1235"),new MainCategoryModel("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",null,null,false));
-        map.put(Utils.getHexCode("1236"),new MainCategoryModel("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",null,null,false));
-        map.put(Utils.getHexCode("1237"),new MainCategoryModel("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",null,null,false));
+        map.put(Utils.getHexCode("1234"),new MainCategoryModel("null",Utils.getHexCode("1234"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album),ListColor[0] ,ListIcon[0],0,false,false,false,false,"",Utils.getUUId(),null,false));
+        map.put(Utils.getHexCode("1235"),new MainCategoryModel("null",Utils.getHexCode("1235"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor[1] ,ListIcon[1],1,false,false,false,false,"",Utils.getUUId(),null,false));
+        map.put(Utils.getHexCode("1236"),new MainCategoryModel("null",Utils.getHexCode("1236"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor[2] ,ListIcon[2],2,false,false,false,false,"",Utils.getUUId(),null,false));
+        map.put(Utils.getHexCode("1237"),new MainCategoryModel("null",Utils.getHexCode("1237"),Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other),ListColor[3],ListIcon[3], 3,false,false,false,false,"",Utils.getUUId(),null,false));
         return map;
     }
 
