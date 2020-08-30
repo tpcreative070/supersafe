@@ -731,6 +731,7 @@ public class ServiceManager implements BaseServiceView {
             isSyncCategory = false;
             isHandleLogic = false;
             Utils.onPushEventBus(EnumStatus.DONE);
+            SingletonPrivateFragment.getInstance().onUpdateView();
         }
     }
 
@@ -773,6 +774,7 @@ public class ServiceManager implements BaseServiceView {
                             isHandleLogic = false;
                             Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
                             Utils.onPushEventBus(EnumStatus.DONE);
+                            SingletonPrivateFragment.getInstance().onUpdateView();
                             Utils.Log(TAG,"Sync items completely======>ready to test");
                         }
                     }
