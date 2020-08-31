@@ -25,13 +25,14 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import de.mrapp.android.dialog.MaterialDialog;
 
 public class AlbumCoverActivity extends BaseActivity implements BaseView,CompoundButton.OnCheckedChangeListener ,AlbumCoverAdapter.ItemSelectedListener,AlbumCoverDefaultAdapter.ItemSelectedListener{
@@ -135,7 +136,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         try {
             presenter.mMainCategories.items_id = presenter.mList.get(position).items_id;
             presenter.mMainCategories.mainCategories_Local_Id = "";
-            InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
+            SQLHelper.updateCategory(presenter.mMainCategories);
             presenter.getData();
             isReload = true;
         }
@@ -150,7 +151,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         try {
             presenter.mMainCategories.items_id = "";
             presenter.mMainCategories.mainCategories_Local_Id = presenter.mListMainCategories.get(position).mainCategories_Local_Id;
-            InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
+            SQLHelper.updateCategory(presenter.mMainCategories);
             presenter.getData();
             isReload = true;
         }
@@ -184,7 +185,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
                 }
                 else {
                     presenter.mMainCategories.isCustom_Cover = b;
-                    InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
+                    SQLHelper.updateCategory(presenter.mMainCategories);
                     llRecyclerView.setVisibility(b?View.VISIBLE : View.INVISIBLE);
                     Utils.Log(TAG,"action here");
                 }
@@ -237,7 +238,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
                         presenter.mMainCategories.isCustom_Cover = false;
                         btnSwitch.setChecked(presenter.mMainCategories.isCustom_Cover);
                         llRecyclerView.setVisibility(presenter.mMainCategories.isCustom_Cover?View.VISIBLE : View.INVISIBLE);
-                        InstanceGenerator.getInstance(this).onUpdate(presenter.mMainCategories);
+                        SQLHelper.updateCategory(presenter.mMainCategories);
                     }
                 }
                 break;

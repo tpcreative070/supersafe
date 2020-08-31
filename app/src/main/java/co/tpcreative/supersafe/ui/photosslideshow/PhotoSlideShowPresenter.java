@@ -7,25 +7,28 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class PhotoSlideShowPresenter extends Presenter<BaseView>{
 
     private final String TAG = PhotoSlideShowPresenter.class.getSimpleName();
-    protected Items items;
-    protected List<Items> mList;
+    protected ItemModel items;
+    protected List<ItemModel> mList;
     protected List<File> mListShare = new ArrayList<>();
     protected EnumStatus status = EnumStatus.OTHER;
     protected Storage storage ;
-    protected MainCategories mainCategories;
+    protected MainCategoryModel mainCategories;
     public PhotoSlideShowPresenter(){
         mList = new ArrayList<>();
     }
@@ -35,10 +38,10 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
         mList.clear();
         try {
             Bundle bundle = context.getIntent().getExtras();
-            items = (Items) bundle.get(context.getString(R.string.key_items));
-            List<Items> list = (ArrayList<Items>)bundle.get(context.getString(R.string.key_list_items));
-            mainCategories = (MainCategories) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
-            for (Items index : list){
+            items = (ItemModel) bundle.get(context.getString(R.string.key_items));
+            List<ItemModel> list = (ArrayList<ItemModel>)bundle.get(context.getString(R.string.key_list_items));
+            mainCategories = (MainCategoryModel) bundle.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories));
+            for (ItemModel index : list){
                 if (!index.items_id.equals(items.items_id)){
                     EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                     if (formatType!=EnumFormatType.FILES){
@@ -57,16 +60,16 @@ public class PhotoSlideShowPresenter extends Presenter<BaseView>{
     public void onDelete(int position){
         try {
             BaseView view = view();
-            final Items items = mList.get(position);
-            final Items mItem = InstanceGenerator.getInstance(view.getContext()).getItemId(items.items_id,items.isFakePin);
+            final ItemModel items = mList.get(position);
+            final ItemModel mItem = SQLHelper.getItemId(items.items_id,items.isFakePin);
             if (mItem!=null){
                 if (mItem.isFakePin){
                     storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mItem.items_id);
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mItem);
+                    SQLHelper.deleteItem(mItem);
                 }
                 else{
                     mItem.isDeleteLocal = true;
-                    InstanceGenerator.getInstance(view.getContext()).onUpdate(mItem);
+                    SQLHelper.updatedItem(mItem);
                 }
                 mList.remove(position);
                 view.onSuccessful("Delete Successful", EnumStatus.DELETE);

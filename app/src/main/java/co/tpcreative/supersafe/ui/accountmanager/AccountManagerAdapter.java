@@ -15,9 +15,11 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Encrypter;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.model.AppLists;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 
 public class AccountManagerAdapter extends BaseAdapter<AppLists, BaseHolder> {
@@ -32,7 +34,7 @@ public class AccountManagerAdapter extends BaseAdapter<AppLists, BaseHolder> {
     private ItemSelectedListener itemSelectedListener;
     private Encrypter encrypter;
     private Storage storage;
-    private MainCategories categories;
+    private MainCategoryModel categories;
     private String TAG = AccountManagerAdapter.class.getSimpleName();
 
     public AccountManagerAdapter(LayoutInflater inflater, Context context,ItemSelectedListener itemSelectedListener) {
@@ -84,7 +86,7 @@ public class AccountManagerAdapter extends BaseAdapter<AppLists, BaseHolder> {
             mPosition = position;
             items = data;
             try {
-                imgIconApp.setImageDrawable(MainCategories.getInstance().getDrawable(context,data.ic_name));
+                imgIconApp.setImageDrawable(SQLHelper.getDrawable(context,data.ic_name));
                 tvTitle.setText(data.title);
                 tvDescription.setText(data.description);
                 if (data.isInstalled){

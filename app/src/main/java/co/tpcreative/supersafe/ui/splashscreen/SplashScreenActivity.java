@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.splashscreen;
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,15 +14,16 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.MainCategories;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 
 public class SplashScreenActivity extends BaseActivityNoneSlide {
@@ -75,7 +75,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
         );
-        MainCategories.getInstance().getList();
+        SQLHelper.getList();
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
         final int count  = InstanceGenerator.getInstance(this).getLatestItem();
@@ -94,7 +94,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                             SuperSafeApplication.getInstance().initFolder();
                             InstanceGenerator.getInstance(SplashScreenActivity.this).onCleanDatabase();
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(new User()));
-                            MainCategories.getInstance().getList();
+                            SQLHelper.getList();
                             PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive),true);
                             Navigator.onMoveToDashBoard(SplashScreenActivity.this);
                         }

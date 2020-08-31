@@ -35,6 +35,7 @@ import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -101,6 +102,24 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
         switch (event){
             case FINISH:{
                 Navigator.onMoveToFaceDown(this);
+                break;
+            }
+            case WAITING_LEFT:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        edtCode.setHint(String.format(getString(R.string.waiting_left),SingletonResetPin.getInstance().waitingLeft+""));
+                    }
+                });
+                break;
+            }
+            case WAITING_DONE:{
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        edtCode.setHint(getString(R.string.code));
+                    }
+                });
                 break;
             }
         }
@@ -183,8 +202,9 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
             String code = edtCode.getText().toString().trim();
             final VerifyCodeRequest request = new VerifyCodeRequest();
             request.code = code;
-            request.email = presenter.mUser.email;
+            request.user_id = presenter.mUser.email;
             request._id = presenter.mUser._id;
+            request.device_id = SuperSafeApplication.getInstance().getDeviceId();
             presenter.onVerifyCode(request);
         }
     }
@@ -218,7 +238,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
         if (presenter.mUser!=null){
             if (presenter.mUser.email!=null){
                 final VerifyCodeRequest request = new VerifyCodeRequest();
-                request.email = presenter.mUser.email;
+                request.user_id = presenter.mUser.email;
                 presenter.onRequestCode(request);
             }
         }

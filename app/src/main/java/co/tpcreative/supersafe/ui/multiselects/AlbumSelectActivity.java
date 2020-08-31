@@ -58,7 +58,6 @@ public class AlbumSelectActivity extends HelperActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
-
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(R.string.album_view);
         }
@@ -92,34 +91,28 @@ public class AlbumSelectActivity extends HelperActivity {
                         loadAlbums();
                         break;
                     }
-
                     case Navigator.FETCH_STARTED: {
                         progressBar.setVisibility(View.VISIBLE);
                         gridView.setVisibility(View.INVISIBLE);
                         break;
                     }
-
                     case Navigator.FETCH_COMPLETED: {
                         if (adapter == null) {
                             adapter = new CustomAlbumSelectAdapter(getApplicationContext(), albums);
                             gridView.setAdapter(adapter);
-
                             progressBar.setVisibility(View.INVISIBLE);
                             gridView.setVisibility(View.VISIBLE);
                             orientationBasedUI(getResources().getConfiguration().orientation);
-
                         } else {
                             adapter.notifyDataSetChanged();
                         }
                         break;
                     }
-
                     case Navigator.ERROR: {
                         progressBar.setVisibility(View.INVISIBLE);
                         errorDisplay.setVisibility(View.VISIBLE);
                         break;
                     }
-
                     default: {
                         super.handleMessage(msg);
                     }
@@ -133,7 +126,6 @@ public class AlbumSelectActivity extends HelperActivity {
             }
         };
         getContentResolver().registerContentObserver(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, false, observer);
-
         checkPermission();
     }
 
@@ -178,7 +170,6 @@ public class AlbumSelectActivity extends HelperActivity {
         final WindowManager windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         final DisplayMetrics metrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
-
         if (adapter != null) {
             int size = orientation == Configuration.ORIENTATION_PORTRAIT ? metrics.widthPixels / 2 : metrics.widthPixels / 4;
             adapter.setLayoutParams(size);
@@ -196,7 +187,6 @@ public class AlbumSelectActivity extends HelperActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == Navigator.REQUEST_CODE
                 && resultCode == RESULT_OK
                 && data != null) {
@@ -268,7 +258,7 @@ public class AlbumSelectActivity extends HelperActivity {
                         if (file.exists()) {
                             String extensionFile = Utils.getFileExtension(file.getAbsolutePath());
                             final MimeTypeFile mimeTypeFile = Utils.mediaTypeSupport().get(extensionFile);
-                            if (mimeTypeFile != null) {
+                            if (mimeTypeFile != null && album!=null) {
                                 temp.add(new AlbumMultiItems(album, image));
                                 albumSet.add(albumId);
                             }
@@ -286,7 +276,6 @@ public class AlbumSelectActivity extends HelperActivity {
             }
             albums.clear();
             albums.addAll(temp);
-
             sendMessage(Navigator.FETCH_COMPLETED);
         }
     }

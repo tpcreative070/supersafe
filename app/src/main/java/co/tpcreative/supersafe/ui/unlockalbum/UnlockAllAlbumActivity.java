@@ -24,6 +24,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -31,7 +32,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
@@ -190,8 +191,9 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
             final User mUser = User.getInstance().getUserInfo();
             if (mUser!=null){
                 request.code = code;
-                request.email = mUser.email;
+                request.user_id = mUser.email;
                 request._id =  mUser._id;
+                request.device_id = SuperSafeApplication.getInstance().getDeviceId();
                 presenter.onVerifyCode(request);
             }
         }
@@ -230,7 +232,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         if (mUser!=null){
             if (mUser.email!=null){
                 final VerifyCodeRequest request = new VerifyCodeRequest();
-                request.email = mUser.email;
+                request.user_id = mUser.email;
                 presenter.onRequestCode(request);
             }
             else{
@@ -325,7 +327,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
                 if (presenter.mListCategories!=null){
                     for (int i = 0;i< presenter.mListCategories.size();i++){
                         presenter.mListCategories.get(i).pin= "";
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mListCategories.get(i));
+                        SQLHelper.updateCategory(presenter.mListCategories.get(i));
                     }
                 }
                 SingletonPrivateFragment.getInstance().onUpdateView();

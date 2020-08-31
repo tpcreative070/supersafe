@@ -4,25 +4,29 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class AlbumCoverPresenter extends Presenter<BaseView> {
 
-    protected MainCategories mMainCategories;
-    protected List<Items> mList;
-    protected List<MainCategories> mListMainCategories;
+    protected MainCategoryModel mMainCategories;
+    protected List<ItemModel> mList;
+    protected List<MainCategoryModel> mListMainCategories;
     private static final String TAG = AlbumCoverPresenter.class.getSimpleName();
 
     public AlbumCoverPresenter() {
-        mMainCategories = new MainCategories();
+        mMainCategories = new MainCategoryModel();
         mList = new ArrayList<>();
     }
 
@@ -30,7 +34,7 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
         BaseView view = view();
         Bundle bundle = activity.getIntent().getExtras();
         try {
-            final MainCategories mainCategories = (MainCategories) bundle.get(MainCategories.class.getSimpleName());
+            final MainCategoryModel mainCategories = (MainCategoryModel) bundle.get(MainCategoryModel.class.getSimpleName());
             if (mainCategories != null) {
                 this.mMainCategories = mainCategories;
                 view.onSuccessful("Successful", EnumStatus.RELOAD);
@@ -41,13 +45,13 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
         }
     }
 
-    public List<Items> getData() {
+    public List<ItemModel> getData() {
         BaseView view = view();
         mList.clear();
-        final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getListItems(mMainCategories.categories_local_id, EnumFormatType.IMAGE.ordinal(),false, mMainCategories.isFakePin);
+        final List<ItemModel> data = SQLHelper.getListItems(mMainCategories.categories_local_id, EnumFormatType.IMAGE.ordinal(),false, mMainCategories.isFakePin);
         if (data != null) {
             mList = data;
-            final Items oldItem = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(mMainCategories.items_id);
+            final ItemModel oldItem = SQLHelper.getItemId(mMainCategories.items_id);
             if (oldItem != null) {
                 for (int i = 0; i < mList.size(); i++) {
                     if (oldItem.items_id.equals(mList.get(i).items_id)) {
@@ -67,8 +71,8 @@ public class AlbumCoverPresenter extends Presenter<BaseView> {
         Utils.Log(TAG,"Count list "+ mList.size());
 
         //Utils.Log(TAG,"Categories "+new Gson().toJson(mMainCategories));
-        final MainCategories oldMainCategories = MainCategories.getInstance().getCategoriesPosition(mMainCategories.mainCategories_Local_Id);
-        mListMainCategories = MainCategories.getInstance().getCategoriesDefault();
+        final MainCategoryModel oldMainCategories = SQLHelper.getCategoriesPosition(mMainCategories.mainCategories_Local_Id);
+        mListMainCategories = SQLHelper.getCategoriesDefault();
         if (oldMainCategories != null) {
             Utils.Log(TAG,"Main categories " + oldMainCategories.mainCategories_Local_Id);
             for (int i = 0; i < mListMainCategories.size(); i++) {

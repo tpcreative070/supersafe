@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 @Entity(tableName = "breakinalerts")
 public class BreakInAlerts implements Serializable{

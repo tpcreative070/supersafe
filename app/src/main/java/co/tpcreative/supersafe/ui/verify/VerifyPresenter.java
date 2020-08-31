@@ -11,7 +11,10 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.OutlookMailRequest;
+import co.tpcreative.supersafe.common.request.RequestCodeRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -45,7 +48,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
     }
 
     public void onVerifyCode(VerifyCodeRequest request){
-        Utils.Log(TAG,"info");
+        Utils.Log(TAG,"onVerifyCode ");
         BaseView view = view();
         if (view == null) {
             return;
@@ -56,29 +59,27 @@ public class VerifyPresenter extends Presenter<BaseView>{
         if (subscriptions == null) {
             return;
         }
-
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),request.email);
-        hash.put(getString(R.string.key_id),request._id);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_code),request.code);
-        hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY_CODE))
                 .subscribe(onResponse -> {
                     view.onStopLoading(EnumStatus.VERIFY_CODE);
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
-                            if (onResponse.premium!=null){
-                                mUser.premium = onResponse.premium;
+                            final DataResponse mData = onResponse.data;
+                            if (mData == null){
+                                view.onError(onResponse.message,EnumStatus.VERIFY_CODE);
+                                return;
+                            }
+                            if (mData.premium!=null){
+                                mUser.premium = mData.premium;
                             }
                             SuperSafeApplication.getInstance().writeUserSecret(mUser);
                             PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
@@ -90,7 +91,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -120,10 +121,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
             return;
         }
 
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),request.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(new RequestCodeRequest(request.user_id,Utils.getAccessToken(),SuperSafeApplication.getInstance().getDeviceId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.RESEND_CODE))
@@ -133,7 +131,8 @@ public class VerifyPresenter extends Presenter<BaseView>{
                     }
                     else{
                         final User mUser = User.getInstance().getUserInfo();
-                        mUser.code = onResponse.code ;
+                        final DataResponse mData = onResponse.data;
+                        mUser.code = mData.requestCode.code ;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                         onSendMail(emailToken);
@@ -144,7 +143,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -277,12 +276,7 @@ public class VerifyPresenter extends Presenter<BaseView>{
         }
 
         final User mUser = User.getInstance().getUserInfo();
-        Map<String, Object> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id), mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_refresh_token), mUser.email_token.refresh_token);
-        hash.put(getString(R.string.key_access_token), mUser.email_token.access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {

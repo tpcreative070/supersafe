@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.OutlookMailRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -186,12 +187,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
         }
 
         final User mUser = User.getInstance().getUserInfo();
-        Map<String, Object> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id), mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_refresh_token), mUser.email_token.refresh_token);
-        hash.put(getString(R.string.key_access_token), mUser.email_token.access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {

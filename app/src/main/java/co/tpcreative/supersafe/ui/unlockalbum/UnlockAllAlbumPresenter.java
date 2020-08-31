@@ -8,17 +8,22 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.api.RootAPI;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.OutlookMailRequest;
+import co.tpcreative.supersafe.common.request.RequestCodeRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -32,10 +37,10 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
     private static final String TAG = UnlockAllAlbumPresenter.class.getSimpleName();
 
 
-    protected List<MainCategories> mListCategories;
+    protected List<MainCategoryModel> mListCategories;
 
     public UnlockAllAlbumPresenter(){
-        mListCategories = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListCategories(false);
+        mListCategories = SQLHelper.getListCategories(false);
     }
 
     public void onVerifyCode(VerifyCodeRequest request){
@@ -52,20 +57,13 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         if (subscriptions == null) {
             return;
         }
-
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),request.email);
-        hash.put(getString(R.string.key_id),request._id);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_code),request.code);
-        hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY);
@@ -81,7 +79,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -214,12 +212,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         }
 
         final User mUser = User.getInstance().getUserInfo();
-        Map<String, Object> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id), mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_refresh_token), mUser.email_token.refresh_token);
-        hash.put(getString(R.string.key_access_token), mUser.email_token.access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
@@ -264,10 +257,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
             return;
         }
 
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),request.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(new RequestCodeRequest(request.user_id,Utils.getAccessToken(),SuperSafeApplication.getInstance().getDeviceId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ ->view.onStartLoading(EnumStatus.REQUEST_CODE) )
@@ -277,7 +267,8 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                     }
                     else{
                         final User mUser = User.getInstance().getUserInfo();
-                        mUser.code = onResponse.code;
+                        final DataResponse mData = onResponse.data;
+                        mUser.code = mData.requestCode.code ;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.UNLOCK_ALBUMS);
                         onSendMail(emailToken);
@@ -289,7 +280,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }

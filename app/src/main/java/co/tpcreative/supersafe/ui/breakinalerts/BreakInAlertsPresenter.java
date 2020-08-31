@@ -8,7 +8,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.BreakInAlerts;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class BreakInAlertsPresenter extends Presenter<BaseView>{
     private static final String TAG = BreakInAlertsPresenter.class.getSimpleName();

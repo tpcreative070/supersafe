@@ -17,14 +17,15 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
 import co.tpcreative.supersafe.common.adapter.FooterViewHolder;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
+public class AlbumDetailVerticalAdapter extends BaseAdapter<ItemModel, BaseHolder> {
     private static final int FOOTER_VIEW = 1;
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -84,7 +85,7 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
         void onLongClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<Items> {
+    public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.tvTitle)
@@ -98,7 +99,7 @@ public class AlbumDetailVerticalAdapter extends BaseAdapter<Items, BaseHolder> {
             super(itemView);
         }
         @Override
-        public void bind(Items data, int position) {
+        public void bind(ItemModel data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);

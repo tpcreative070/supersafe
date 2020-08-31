@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.model.room;
+package co.tpcreative.supersafe.common.entities;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -6,18 +6,17 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import java.util.List;
-import co.tpcreative.supersafe.model.MainCategories;
 
 @Dao
 public interface MainCategoriesDao {
     @Insert
-    void insert(MainCategories... items);
+    void insert(MainCategoryEntity... items);
 
     @Update
-    void update(MainCategories... items);
+    void update(MainCategoryEntity... items);
 
     @Delete
-    void delete(MainCategories... items);
+    void delete(MainCategoryEntity... items);
 
     @Query("DELETE FROM maincategories")
     public void deleteAllCategories();
@@ -27,45 +26,48 @@ public interface MainCategoriesDao {
     void deleteAll(String categories_local_id,boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE id = :id AND isFakePin =:isFakePin")
-    MainCategories loadItemId(int id,boolean isFakePin);
+    MainCategoryEntity loadItemId(int id, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name AND isFakePin =:isFakePin")
-    MainCategories loadItemId(String categories_hex_name,boolean isFakePin);
+    MainCategoryEntity loadItemId(String categories_hex_name, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE categories_hex_name = :categories_hex_name AND isFakePin =:isFakePin")
-    List<MainCategories> loadListAllItemId(String categories_hex_name,boolean isFakePin);
+    List<MainCategoryEntity> loadListAllItemId(String categories_hex_name, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id AND isFakePin =:isFakePin")
-    MainCategories loadItemLocalId(String categories_local_id,boolean isFakePin);
+    MainCategoryEntity loadItemLocalId(String categories_local_id, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE categories_id = :categories_id AND isFakePin =:isFakePin")
-    MainCategories loadItemCategoriesId(String categories_id,boolean isFakePin);
+    MainCategoryEntity loadItemCategoriesId(String categories_id, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer AND isFakePin =:isFakePin")
-    MainCategories loadItemCategoriesSync(boolean isSyncOwnServer,boolean isFakePin);
+    MainCategoryEntity loadItemCategoriesSync(boolean isSyncOwnServer, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer AND isFakePin =:isFakePin")
-    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,boolean isFakePin);
+    List<MainCategoryEntity> loadListItemCategoriesSync(boolean isSyncOwnServer, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE isSyncOwnServer = :isSyncOwnServer AND isFakePin =:isFakePin ORDER BY id DESC LIMIT :limit")
-    List<MainCategories> loadListItemCategoriesSync(boolean isSyncOwnServer,int limit,boolean isFakePin);
+    List<MainCategoryEntity> loadListItemCategoriesSync(boolean isSyncOwnServer, int limit, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE categories_local_id = :categories_local_id AND isFakePin=:isFakePin")
-    List<MainCategories> loadListItemId(String categories_local_id,boolean isFakePin);
+    List<MainCategoryEntity> loadListItemId(String categories_local_id, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE isDelete = :isDelete AND isFakePin =:isFakePin")
-    List<MainCategories> loadAll(boolean isDelete,boolean isFakePin);
+    List<MainCategoryEntity> loadAll(boolean isDelete, boolean isFakePin);
+
+    @Query("Select * FROM maincategories WHERE isChange = :isChange AND isFakePin =:isFakePin")
+    List<MainCategoryEntity> loadAllChangedItem(boolean isChange, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE isDelete = :isDelete AND isFakePin =:isFakePin AND categories_local_id !=:categories_local_id")
-    List<MainCategories> loadAll(String categories_local_id,boolean isDelete,boolean isFakePin);
+    List<MainCategoryEntity> loadAll(String categories_local_id, boolean isDelete, boolean isFakePin);
 
     @Query("Select * FROM maincategories WHERE isFakePin =:isFakePin")
-    List<MainCategories> loadAll(boolean isFakePin);
+    List<MainCategoryEntity> loadAll(boolean isFakePin);
 
     @Query("Select * FROM maincategories  ORDER BY id DESC LIMIT :limit")
-    MainCategories loadLatestItem(int limit);
+    MainCategoryEntity loadLatestItem(int limit);
 
     @Query("Select * FROM maincategories  WHERE categories_local_id = :categories_local_id")
-    MainCategories loadLocalId(String  categories_local_id);
+    MainCategoryEntity loadLocalId(String  categories_local_id);
 
 }

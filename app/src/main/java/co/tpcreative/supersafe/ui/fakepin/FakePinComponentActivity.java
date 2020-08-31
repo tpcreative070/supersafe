@@ -38,13 +38,15 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlideFakePin;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.Image;
-import co.tpcreative.supersafe.model.ImportFiles;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ImportFilesModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 
@@ -162,12 +164,12 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                         Utils.Log(TAG, "Value");
                         String value = input.toString();
                         String base64Code = Utils.getHexCode(value);
-                        MainCategories item = MainCategories.getInstance().getTrashItem();
+                        MainCategoryModel item = SQLHelper.getTrashItem();
                         String result = item.categories_hex_name;
                         if (base64Code.equals(result)) {
                             Toast.makeText(FakePinComponentActivity.this, "This name already existing", Toast.LENGTH_SHORT).show();
                         } else {
-                            boolean response = MainCategories.getInstance().onAddFakePinCategories(base64Code, value,true);
+                            boolean response = SQLHelper.onAddFakePinCategories(base64Code, value,true);
                             if (response) {
                                 Toast.makeText(FakePinComponentActivity.this, "Created album successful", Toast.LENGTH_SHORT).show();
                             } else {
@@ -188,7 +190,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
+                            final List<MainCategoryModel> list = SQLHelper.getListFakePin();
                             if (list != null) {
                                 Navigator.onMoveCamera(FakePinComponentActivity.this, list.get(0));
                             }
@@ -234,7 +236,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
             case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
-                    List<ImportFiles> mListImport = new ArrayList<>();
+                    List<ImportFilesModel> mListImport = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -251,19 +253,19 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                                 return;
                             }
                             mimeTypeFile.name = name;
-                            final List<MainCategories> list = MainCategories.getInstance().getListFakePin();
+                            final List<MainCategoryModel> list = SQLHelper.getListFakePin();
                             if (list == null) {
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            ImportFiles importFiles = new ImportFiles(list.get(0),mimeTypeFile,path,0,false);
+                            ImportFilesModel importFiles = new ImportFilesModel(list.get(0),mimeTypeFile,path,0,false);
                             mListImport.add(importFiles);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                    ServiceManager.getInstance().setmListImport(mListImport);
-                    ServiceManager.getInstance().onImportingFiles();
+                    ServiceManager.getInstance().setListImport(mListImport);
+                    ServiceManager.getInstance().onPreparingImportData();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }
@@ -296,6 +298,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
         SingletonFakePinComponent.getInstance().setListener(this);
         onRegisterHomeWatcher();
         SingletonManager.getInstance().setVisitFakePin(true);
+        ServiceManager.getInstance().setRequestShareIntent(false);
     }
 
     @Override
@@ -392,7 +395,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
                 Navigator.onMoveTrash(getActivity());
             }
             else{
-                final MainCategories mainCategories = presenter.mList.get(position);
+                final MainCategoryModel mainCategories = presenter.mList.get(position);
                 Navigator.onMoveAlbumDetail(getActivity(),mainCategories);
             }
         }

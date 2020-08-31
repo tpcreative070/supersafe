@@ -7,6 +7,8 @@ import java.util.List;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -14,9 +16,9 @@ import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
 
@@ -31,8 +33,8 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
     public void onGetSaveData(){
         sizeSaverFiles = 0;
         BaseView view = view();
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false);
-        for (Items index : mList) {
+        final List<ItemModel> mList = SQLHelper.getListSyncData(true,false);
+        for (ItemModel index : mList) {
             EnumFormatType formatType = EnumFormatType.values()[index.formatType];
             switch (formatType){
                 case IMAGE:{
@@ -47,7 +49,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
     public void onDisableSaverSpace(EnumStatus enumStatus){
         sizeFile = 0;
         BaseView view = view();
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,true,false);
+        final List<ItemModel> mList = SQLHelper.getListSyncData(true,true,false);
         for (int i = 0; i <mList.size();i++) {
             EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
             switch (formatType){
@@ -60,7 +62,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
                         case DOWNLOAD:{
                             sizeFile = 0;
                             mList.get(i).isSaver = false;
-                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                            SQLHelper.updatedItem(mList.get(i));
                             break;
                         }
                     }
@@ -74,14 +76,14 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
 
 
     public void onEnableSaverSpace(){
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListSyncData(true,false,false);
+        final List<ItemModel> mList = SQLHelper.getListSyncData(true,false,false);
         if (mList!=null && mList.size()>0){
             for (int i = 0 ; i< mList.size();i++){
                 EnumFormatType formatType = EnumFormatType.values()[mList.get(i).formatType];
                 switch (formatType){
                     case IMAGE:{
                         mList.get(i).isSaver = true;
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                        SQLHelper.updatedItem(mList.get(i));
                         //storage.deleteFile(mList.get(i).originalPath);
                         Utils.Log(TAG,"Continue updating...");
                         break;
@@ -196,10 +198,10 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
                     Utils.Log(TAG, "onSuccessful 4");
 
                 } else {
-                    final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItemId(true, false);
+                    final List<ItemModel> mList = SQLHelper.getListItemId(true, false);
                     long countSize = 0;
                     try {
-                        for (Items index : mList) {
+                        for (ItemModel index : mList) {
                             countSize += Long.parseLong(index.size);
                         }
                         final User mUser = User.getInstance().getUserInfo();

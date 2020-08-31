@@ -19,14 +19,15 @@ import butterknife.OnLongClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatusProgress;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
+public class AlbumDetailAdapter extends BaseAdapter<ItemModel, BaseHolder> {
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
@@ -64,7 +65,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         void onLongClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<Items> {
+    public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.imgVideoCam)
@@ -87,7 +88,7 @@ public class AlbumDetailAdapter extends BaseAdapter<Items, BaseHolder> {
         }
 
         @Override
-        public void bind(Items data, int position) {
+        public void bind(ItemModel data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);

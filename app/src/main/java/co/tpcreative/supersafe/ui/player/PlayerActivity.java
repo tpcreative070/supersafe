@@ -57,12 +57,13 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 import dyanamitechetan.vusikview.VusikView;
 
@@ -222,7 +223,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         try {
             presenter.mListSource.clear();
-            for (Items index : presenter.mList) {
+            for (ItemModel index : presenter.mList) {
                 mEncryptedFile = new File(index.originalPath);
                 Uri uri = Uri.fromFile(mEncryptedFile);
                 presenter.mListSource.add(new ExtractorMediaSource.Factory(dataSourceFactory).setExtractorsFactory(extractorsFactory).createMediaSource(uri));

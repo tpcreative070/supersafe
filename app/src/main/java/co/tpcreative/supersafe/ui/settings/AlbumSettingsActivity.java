@@ -31,16 +31,20 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.preference.MyPreferenceAlbumSettings;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.common.views.SquaredImageView;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.ThemeApp;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class AlbumSettingsActivity extends BaseActivity implements BaseView {
 
@@ -68,7 +72,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         storage = new Storage(getApplicationContext());
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         onSetUpPreference();
@@ -169,7 +172,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                             onShowChangeCategoriesNameDialog(EnumStatus.SET,null);
                         }
                         else if (preference.getKey().equals(getString(R.string.key_album_cover))){
-                            final MainCategories main = presenter.mMainCategories;
+                            final MainCategoryModel main = presenter.mMainCategories;
                             if (main.pin.equals("")) {
                                 Navigator.onMoveAlbumCover(getActivity(),presenter.mMainCategories);
                             }
@@ -211,9 +214,9 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                 @Override
                 public void onUpdatePreference() {
                     if (mAlbumCover.getImageView()!=null){
-                        final MainCategories main = presenter.mMainCategories;
+                        final MainCategoryModel main = presenter.mMainCategories;
                         if (main.pin.equals("")) {
-                            final Items items = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getItemId(main.items_id);
+                            final ItemModel items = SQLHelper.getItemId(main.items_id);
                             if (items != null) {
                                 EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
                                 switch (formatTypeFile) {
@@ -250,7 +253,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                                 mAlbumCover.getImageView().setImageResource(0);
                                                 int myColor = Color.parseColor(main.image);
                                                 mAlbumCover.getImageView().setBackgroundColor(myColor);
-                                                mAlbumCover.getImgIcon().setImageDrawable(MainCategories.getInstance().getDrawable(getContext(), main.icon));
+                                                mAlbumCover.getImgIcon().setImageDrawable(SQLHelper.getDrawable(getContext(), main.icon));
                                                 mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
                                             }
                                         } catch (Exception e) {
@@ -261,9 +264,9 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                 }
                             } else {
                                 mAlbumCover.getImageView().setImageResource(0);
-                                final MainCategories mainCategories = MainCategories.getInstance().getCategoriesPosition(main.mainCategories_Local_Id);
+                                final MainCategoryModel mainCategories = SQLHelper.getCategoriesPosition(main.mainCategories_Local_Id);
                                 if (mainCategories!=null){
-                                    mAlbumCover.getImgIcon().setImageDrawable(MainCategories.getInstance().getDrawable(getContext(), mainCategories.icon));
+                                    mAlbumCover.getImgIcon().setImageDrawable(SQLHelper.getDrawable(getContext(), mainCategories.icon));
                                     mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
                                     try {
                                         int myColor = Color.parseColor(mainCategories.image);
@@ -272,7 +275,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                         e.printStackTrace();
                                     }
                                 }else{
-                                    mAlbumCover.getImgIcon().setImageDrawable(MainCategories.getInstance().getDrawable(getContext(), main.icon));
+                                    mAlbumCover.getImgIcon().setImageDrawable(SQLHelper.getDrawable(getContext(), main.icon));
                                     mAlbumCover.getImgIcon().setVisibility(View.VISIBLE);
                                     try {
                                         int myColor = Color.parseColor(main.image);
@@ -366,7 +369,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                     Utils.Log(TAG,"Value");
                                     String value = input.toString();
                                     String base64Code = Utils.getHexCode(value);
-                                    MainCategories item = MainCategories.getInstance().getTrashItem();
+                                    MainCategoryModel item = SQLHelper.getTrashItem();
                                     String result = item.categories_hex_name;
                                     String main = Utils.getHexCode(getString(R.string.key_main_album));
 
@@ -387,12 +390,12 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                     }
                                     else{
                                         presenter.mMainCategories.categories_name = value;
-                                        boolean response = MainCategories.getInstance().onChangeCategories(presenter.mMainCategories);
+                                        boolean response = SQLHelper.onChangeCategories(presenter.mMainCategories);
                                         if (response){
                                             Toast.makeText(getContext(),"Changed album successful",Toast.LENGTH_SHORT).show();
                                             mName.setSummary(presenter.mMainCategories.categories_name);
                                             if (!presenter.mMainCategories.isFakePin){
-                                                ServiceManager.getInstance().onGetListCategoriesSync();
+                                                ServiceManager.getInstance().onPreparingSyncCategoryData();
                                             }
                                         }
                                         else{
@@ -410,7 +413,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                     if (!isPin.equals("")){
                                         if (isPin.equals(input.toString())){
                                             presenter.mMainCategories.pin = "";
-                                            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mMainCategories);
+                                            SQLHelper.updateCategory(presenter.mMainCategories);
                                             mLockAlbum.setSummary(getString(R.string.unlocked));
                                             SingletonPrivateFragment.getInstance().onUpdateView();
                                             dialog.dismiss();
@@ -422,7 +425,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                                     }
                                     else{
                                         presenter.mMainCategories.pin = input.toString();
-                                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mMainCategories);
+                                        SQLHelper.updateCategory(presenter.mMainCategories);
                                         mLockAlbum.setSummary(getString(R.string.locked));
                                         SingletonPrivateFragment.getInstance().onUpdateView();
                                         dialog.dismiss();

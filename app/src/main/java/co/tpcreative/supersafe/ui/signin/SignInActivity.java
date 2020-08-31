@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.snatik.storage.security.SecurityUtil;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -24,6 +26,7 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.SignInRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EmailToken;
@@ -121,7 +124,9 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     public void onSignIn(){
         String email = edtEmail.getText().toString().toLowerCase().trim();
         SignInRequest request = new SignInRequest();
-        request.email = email;
+        request.user_id = email;
+        request.password = SecurityUtil.key_password_default_encrypted;
+        request.device_id = SuperSafeApplication.getInstance().getDeviceId();
         presenter.onSignIn(request);
         Utils.hideSoftKeyboard(this);
     }

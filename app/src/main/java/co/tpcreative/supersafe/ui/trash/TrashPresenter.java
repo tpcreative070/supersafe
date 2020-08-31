@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
+
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -11,14 +14,15 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class TrashPresenter extends Presenter<BaseView>{
 
     private static final String TAG = TrashPresenter.class.getSimpleName();
-    protected List<Items> mList;
+    protected List<ItemModel> mList;
     protected Storage storage;
     protected int videos = 0;
     protected int photos = 0;
@@ -35,7 +39,7 @@ public class TrashPresenter extends Presenter<BaseView>{
         BaseView view = view();
         mList.clear();
         try {
-            final List<Items> data = InstanceGenerator.getInstance(view.getContext()).getDeleteLocalListItems(true,EnumDelete.NONE.ordinal(),false);
+            final List<ItemModel> data = SQLHelper.getDeleteLocalListItems(true,EnumDelete.NONE.ordinal(),false);
             if (data!=null){
                 mList = data;
                 onCalculate();
@@ -53,7 +57,7 @@ public class TrashPresenter extends Presenter<BaseView>{
         videos = 0;
         audios = 0;
         others = 0;
-        for (Items index : mList){
+        for (ItemModel index : mList){
             final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
             switch (enumTypeFile){
                 case IMAGE:{
@@ -82,31 +86,31 @@ public class TrashPresenter extends Presenter<BaseView>{
             if (isEmpty){
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
                 if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id==null){
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                    SQLHelper.deleteItem(mList.get(i));
                 }
                 else if (formatTypeFile == EnumFormatType.FILES && mList.get(i).global_original_id==null){
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                    SQLHelper.deleteItem(mList.get(i));
                 }
                 else if (mList.get(i).global_original_id==null & mList.get(i).global_thumbnail_id == null){
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                    SQLHelper.deleteItem(mList.get(i));
                 }
                 else{
                     mList.get(i).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                    SQLHelper.updatedItem(mList.get(i));
                     Utils.Log(TAG,"ServiceManager waiting for delete");
                 }
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate()+mList.get(i).items_id);
             }
             else{
-               final Items items =  mList.get(i);
+               final ItemModel items =  mList.get(i);
                items.isDeleteLocal = false;
                 if (mList.get(i).isChecked){
-                    final MainCategories mainCategories  = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getCategoriesLocalId(items.categories_local_id);
+                    final MainCategoryModel mainCategories  = SQLHelper.getCategoriesLocalId(items.categories_local_id);
                     if (mainCategories!=null){
                         mainCategories.isDelete = false;
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mainCategories);
+                        SQLHelper.updateCategory(mainCategories);
                     }
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(items);
+                    SQLHelper.updatedItem(items);
                 }
             }
         }

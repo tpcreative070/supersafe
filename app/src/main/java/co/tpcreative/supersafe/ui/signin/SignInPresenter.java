@@ -13,7 +13,9 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.OutlookMailRequest;
 import co.tpcreative.supersafe.common.request.SignInRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -31,7 +33,7 @@ import retrofit2.Response;
 public class SignInPresenter extends Presenter<BaseView<User>> {
     private static final String TAG = SignInPresenter.class.getSimpleName();
     public void onSignIn(SignInRequest request) {
-        Utils.Log(TAG, "onSignIn");
+        Utils.Log(TAG, "onSignIn " + new Gson().toJson(request));
         BaseView view = view();
         if (view == null) {
             return;
@@ -42,29 +44,19 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
         if (subscriptions == null) {
             return;
         }
-
-        Map<String, String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_email), request.email);
-        hash.put(getString(R.string.key_password), SecurityUtil.key_password_default);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type), getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version).toLowerCase(), "" + SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onSignIn(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.SIGN_IN))
                 .subscribe(onResponse -> {
                     Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.SIGN_IN);
+                        view.onError(getString(R.string.signed_in_failed), EnumStatus.SIGN_IN);
                     } else {
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(onResponse.user));
+                        final DataResponse mData = onResponse.data;
+                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mData.user));
                         ServiceManager.getInstance().onInitConfigurationFile();
-                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_IN, onResponse.user);
+                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_IN, mData.user);
                     }
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -92,7 +84,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
     /*Email token*/
 
     public void onSendMail(EmailToken request){
-        Utils.Log(TAG, "onSendMail.....");
+        Utils.Log(TAG, "onSendMail....." + new Gson().toJson(request));
         BaseView view = view();
         if (view == null) {
             return;
@@ -155,6 +147,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
         hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
         hash.put(getString(R.string.key_grant_type), request.grant_type);
         hash.put(getString(R.string.key_refresh_token), request.refresh_token);
+        Utils.Log(TAG, "Refresh token : " + new Gson().toJson(hash));
         subscriptions.add(SuperSafeApplication.serviceGraphMicrosoft.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -202,12 +195,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
-        Map<String, Object> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id), mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_refresh_token), mUser.email_token.refresh_token);
-        hash.put(getString(R.string.key_access_token), mUser.email_token.access_token);
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {

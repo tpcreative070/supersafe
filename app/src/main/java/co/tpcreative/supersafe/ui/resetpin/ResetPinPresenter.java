@@ -8,7 +8,9 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.RequestCodeRequest;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.response.DataResponse;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -51,18 +53,18 @@ public class ResetPinPresenter extends Presenter<BaseView> {
             return;
         }
         Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),request.email);
+        hash.put(getString(R.string.key_user_id),request.user_id);
         hash.put(getString(R.string.key_id),request._id);
         hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
         hash.put(getString(R.string.key_code),request.code);
         hash.put(getString(R.string.key_appVersionRelease),SuperSafeApplication.getInstance().getAppVersionRelease());
-        subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onVerifyCode(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.VERIFY))
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.VERIFY);
+                        view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
                         final User mUser = User.getInstance().getUserInfo();
@@ -78,7 +80,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
@@ -108,10 +110,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         if (subscriptions == null) {
             return;
         }
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),request.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onResendCode(new RequestCodeRequest(request.user_id,Utils.getAccessToken(),SuperSafeApplication.getInstance().getDeviceId()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ ->view.onStartLoading(EnumStatus.OTHER) )
@@ -121,7 +120,8 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                     }
                     else{
                         final User mUser = User.getInstance().getUserInfo();
-                        mUser.code = onResponse.code;
+                        final DataResponse mData = onResponse.data;
+                        mUser.code = mData.requestCode.code ;
                         this.mUser = mUser;
                         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                         view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
@@ -133,7 +133,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }

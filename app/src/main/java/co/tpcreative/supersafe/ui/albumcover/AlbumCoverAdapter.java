@@ -16,14 +16,17 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
+public class AlbumCoverAdapter extends BaseAdapter<ItemModel, BaseHolder> {
 
     RequestOptions options = new RequestOptions()
             .centerCrop()
@@ -34,11 +37,11 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
     private Context context;
     private ItemSelectedListener itemSelectedListener;
     private Storage storage;
-    private MainCategories categories;
+    private MainCategoryModel categories;
     ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
     private String TAG = AlbumCoverAdapter.class.getSimpleName();
 
-    public AlbumCoverAdapter(LayoutInflater inflater, Context context,MainCategories mainCategories, ItemSelectedListener itemSelectedListener) {
+    public AlbumCoverAdapter(LayoutInflater inflater, Context context, MainCategoryModel mainCategories, ItemSelectedListener itemSelectedListener) {
         super(inflater);
         this.context = context;
         storage = new Storage(context);
@@ -61,7 +64,7 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
         void onClickItem(int position);
     }
 
-    public class ItemHolder extends BaseHolder<Items> {
+    public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.imgAlbum)
         ImageView imgAlbum;
         @BindView(R.id.imgIcon)
@@ -73,14 +76,14 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
         int mPosition;
         @BindView(R.id.rlHome)
         RelativeLayout rlHome;
-        Items items;
+        ItemModel items;
 
         public ItemHolder(View itemView) {
             super(itemView);
         }
 
         @Override
-        public void bind(Items data, int position) {
+        public void bind(ItemModel data, int position) {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"load data");
@@ -128,7 +131,7 @@ public class AlbumCoverAdapter extends BaseAdapter<Items, BaseHolder> {
                                 imgAlbum.setImageResource(0);
                                 int myColor = Color.parseColor(categories.image);
                                 imgAlbum.setBackgroundColor(myColor);
-                                imgIcon.setImageDrawable(MainCategories.getInstance().getDrawable(context, categories.icon));
+                                imgIcon.setImageDrawable(SQLHelper.getDrawable(context, categories.icon));
                                 imgIcon.setVisibility(View.VISIBLE);
                                 Utils.Log(TAG,"load data 3");
                             }

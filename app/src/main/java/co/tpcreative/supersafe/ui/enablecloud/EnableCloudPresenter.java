@@ -53,11 +53,7 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
         if (subscriptions == null) {
             return;
         }
-        Map<String,String> hash = new HashMap<>();
-        hash.put(getString(R.string.key_user_id),cloudRequest.user_id);
-        hash.put(getString(R.string.key_cloud_id),cloudRequest.cloud_id);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(hash)
+        subscriptions.add(SuperSafeApplication.serverAPI.onAddUserCloud(cloudRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CREATE))
@@ -75,7 +71,7 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }

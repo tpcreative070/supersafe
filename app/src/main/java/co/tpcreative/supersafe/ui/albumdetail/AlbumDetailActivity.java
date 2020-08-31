@@ -60,6 +60,9 @@ import co.tpcreative.supersafe.common.activity.BaseGalleryActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.ConvertUtils;
@@ -72,13 +75,13 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.Image;
-import co.tpcreative.supersafe.model.ImportFiles;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ImportFilesModel;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 
 public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView<Integer>, AlbumDetailAdapter.ItemSelectedListener,AlbumDetailVerticalAdapter.ItemSelectedListener{
@@ -133,8 +136,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(presenter.mainCategories.categories_name);
-        final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListItems(presenter.mainCategories.categories_local_id,presenter.mainCategories.isFakePin);
-        final Items items = InstanceGenerator.getInstance(this).getItemId(presenter.mainCategories.items_id);
+        final List<ItemModel> mList = SQLHelper.getListItems(presenter.mainCategories.categories_local_id,presenter.mainCategories.isFakePin);
+        final ItemModel items = SQLHelper.getItemId(presenter.mainCategories.items_id);
         if (items != null && mList != null && mList.size()>0) {
             EnumFormatType formatTypeFile = EnumFormatType.values()[items.formatType];
             switch (formatTypeFile){
@@ -176,7 +179,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             }
         } else {
             backdrop.setImageResource(0);
-            final MainCategories mainCategories = MainCategories.getInstance().getCategoriesPosition(presenter.mainCategories.mainCategories_Local_Id);
+            final MainCategoryModel mainCategories = SQLHelper.getCategoriesPosition(presenter.mainCategories.mainCategories_Local_Id);
             if (mainCategories!=null){
                 try {
                     int myColor = Color.parseColor(mainCategories.image);
@@ -217,6 +220,10 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(EnumStatus event) {
         switch (event){
+            case REFRESH:{
+                presenter.getData(this);
+                break;
+            }
             case FINISH:{
                 Navigator.onMoveToFaceDown(this);
                 break;
@@ -275,6 +282,12 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
+                        for (int i = 0;i<presenter.mList.size();i++){
+                            final ItemModel items = presenter.mList.get(i);
+                            if (items.isChecked){
+                                items.isSaver = false;
+                            }
+                        }
                         onClickedExport();
                     }
                 });
@@ -297,6 +310,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             EventBus.getDefault().register(this);
         }
         onRegisterHomeWatcher();
+        ServiceManager.getInstance().setRequestShareIntent(false);
     }
 
     @Override
@@ -306,7 +320,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
         if (isReload) {
-            ServiceManager.getInstance().onSyncDataOwnServer("0");
+            ServiceManager.getInstance().onPreparingSyncData();
         }
         storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare());
     }
@@ -438,7 +452,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             boolean isSaver = false;
             long spaceAvailable = 0;
             for (int i = 0;i<presenter.mList.size();i++){
-                final Items items = presenter.mList.get(i);
+                final ItemModel items = presenter.mList.get(i);
                 if (items.isSaver && items.isChecked){
                     isSaver = true;
                     spaceAvailable +=Long.parseLong(items.size);;
@@ -710,7 +724,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 EventBus.getDefault().post(EnumStatus.START_PROGRESS);
                                 presenter.mListShare.clear();
                                 for (int i = 0; i< presenter.mList.size();i++){
-                                    Items index = presenter.mList.get(i);
+                                    ItemModel index = presenter.mList.get(i);
                                     if (index.isChecked){
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
@@ -786,7 +800,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 presenter.mListShare.clear();
 
                                 for (int i = 0;i< presenter.mList.size();i++){
-                                    Items index = presenter.mList.get(i);
+                                    ItemModel index = presenter.mList.get(i);
                                     if (index.isChecked){
                                         EnumFormatType formatType = EnumFormatType.values()[index.formatType];
                                         switch (formatType){
@@ -880,8 +894,8 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 }
                 else{
                     onDialogDownloadFile();
-                    ServiceManager.getInstance().setListDownloadFile(presenter.mList);
-                    ServiceManager.getInstance().getObservableDownload();
+                    ServiceManager.getInstance().onPreparingEnableDownloadData(Utils.getCheckedList(presenter.mList));
+                    //ServiceManager.getInstance().getObservableDownload();
                 }
             }
             else{
@@ -916,7 +930,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
             case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
-                    List<ImportFiles> mListImportFiles = new ArrayList<>();
+                    List<ImportFilesModel> mListImportFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -937,15 +951,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            ImportFiles importFiles = new ImportFiles(presenter.mainCategories,mimeTypeFile,path,i,false);
+                            ImportFilesModel importFiles = new ImportFilesModel(presenter.mainCategories,mimeTypeFile,path,i,false);
                             mListImportFiles.add(importFiles);
                             isReload = true;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                    ServiceManager.getInstance().setmListImport(mListImportFiles);
-                    ServiceManager.getInstance().onImportingFiles();
+                    ServiceManager.getInstance().setListImport(mListImportFiles);
+                    ServiceManager.getInstance().onPreparingImportData();
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }
@@ -1125,20 +1139,20 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                     if (presenter.mList.get(i).isChecked){
                         presenter.mList.get(i).isExport = true;
                         presenter.mList.get(i).isDeleteLocal = true;
-                        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(presenter.mList.get(i));
+                        SQLHelper.updatedItem(presenter.mList.get(i));
                     }
                     isExport = true;
                     break;
                 }
                 case CANCEL:{
-                    final Items items = presenter.mList.get(i);
+                    final ItemModel items = presenter.mList.get(i);
                     if (items.isChecked){
                         items.isChecked = false;
                         EnumFormatType formatType = EnumFormatType.values()[items.formatType];
                         switch (formatType) {
                             case IMAGE: {
                                 items.isSaver = isSaver;
-                                InstanceGenerator.getInstance(this).onUpdate(items);
+                                SQLHelper.updatedItem(items);
                                 if (isSaver){
                                     storage.deleteFile(items.originalPath);
                                 }
@@ -1166,19 +1180,19 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     public void onCheckDelete(){
-        final List<Items> mList = presenter.mList;
+        final List<ItemModel> mList = presenter.mList;
         for (int i = 0, l = mList.size(); i < l; i++) {
             if (presenter.mList.get(i).isChecked){
                 EnumFormatType formatTypeFile = EnumFormatType.values()[mList.get(i).formatType];
                 if (formatTypeFile == EnumFormatType.AUDIO && mList.get(i).global_original_id == null) {
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                    SQLHelper.deleteItem(mList.get(i));
                 } else if (formatTypeFile == EnumFormatType.FILES && mList.get(i).global_original_id == null) {
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                    SQLHelper.deleteItem(mList.get(i));
                 } else if (mList.get(i).global_original_id == null & mList.get(i).global_thumbnail_id == null) {
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(mList.get(i));
+                    SQLHelper.deleteItem(mList.get(i));
                 } else {
                     mList.get(i).deleteAction = EnumDelete.DELETE_WAITING.ordinal();
-                    InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(mList.get(i));
+                    SQLHelper.updatedItem(mList.get(i));
                     Utils.Log(TAG, "ServiceManager waiting for delete");
                 }
                 storage.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList.get(i).items_id);
@@ -1261,7 +1275,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     }
 
     @Override
-    public List<Items> getListItems() {
+    public List<ItemModel> getListItems() {
         return presenter.mList;
     }
 

@@ -18,7 +18,6 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
@@ -29,7 +28,7 @@ import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.ArrayList;
@@ -94,7 +93,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         });
         InstanceGenerator.getInstance(this);
         mInstance = this;
-        isLive = true;
+        isLive = false;
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
         /*Init own service api*/
@@ -290,6 +289,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public String getSupersafeLog() {
         return supersafeLog;
+    }
+
+    public String getFileLogs(){
+        return supersafe + "/log.txt";
     }
 
     public String getSupersafeBreakInAlerts() {
@@ -535,6 +538,10 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     public String getVersionRelease() {
         String versionRelease = Build.VERSION.RELEASE;
         return versionRelease;
+    }
+
+    public String getPackageId(){
+        return BuildConfig.APPLICATION_ID;
     }
 
     public  String getAppVersionRelease(){

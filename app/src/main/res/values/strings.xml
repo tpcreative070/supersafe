@@ -114,6 +114,8 @@
     <string name="yes">YES</string>
     <string name="verify_title">Check %1$s for an access code to sign in</string>
     <string name="code">Access code</string>
+    <string name="checking_your_email">Checking your email: %1$s</string>
+    <string name="waiting_left">Count down left: %1$s</string>
     <string name="login_action">SIGN IN</string>
     <string name="resend">RESEND CODE</string>
     <string name="sign_up">SIGN UP HERE</string>
@@ -605,7 +607,9 @@
     <string name="we_are_a_team_positive">We_Are_A_Team</string>
     <string name="second_loads">second loads</string>
     <string name="current_code_version">current_code_version</string>
-
+    <string name="signed_in_failed">Email not registered with SuperSafe</string>
+    <string name="signed_up_failed">That username is taken. Try another</string>
+    <string name="the_code_not_signed_up">This code was not registered!</string>
     <!--Multi selects -->
     <string name="album_view">Select photo album</string>
     <string name="image_view">Tap to select images</string>

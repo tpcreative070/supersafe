@@ -25,11 +25,12 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
 import co.tpcreative.supersafe.common.dialog.DialogListener;
 import co.tpcreative.supersafe.common.dialog.DialogManager;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 
 public class PrivateFragment extends BaseFragment implements BaseView, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
 
@@ -116,7 +117,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
             if (value.equals(presenter.mList.get(position).categories_hex_name)) {
                 Navigator.onMoveTrash(getActivity());
             } else {
-                final MainCategories mainCategories = presenter.mList.get(position);
+                final MainCategoryModel mainCategories = presenter.mList.get(position);
                 final String pin = mainCategories.pin;
                 isClicked = true;
                 if (pin.equals("")) {
@@ -186,7 +187,6 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
             presenter.getData();
         }
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -260,7 +260,7 @@ public class PrivateFragment extends BaseFragment implements BaseView, PrivateAd
 
     }
 
-    public void onShowChangeCategoriesNameDialog(final MainCategories mainCategories) {
+    public void onShowChangeCategoriesNameDialog(final MainCategoryModel mainCategories) {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
                 .title(getString(R.string.album_is_locked))
                 .content(getString(R.string.enter_a_password_for_this_album))

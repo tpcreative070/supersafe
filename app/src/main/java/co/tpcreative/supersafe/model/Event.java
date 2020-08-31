@@ -2,12 +2,15 @@ package co.tpcreative.supersafe.model;
 import androidx.annotation.NonNull;
 import java.util.Date;
 
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+
 public class Event {
 
     @NonNull
-    private Items items;
+    private ItemModel items;
     @NonNull
-    private MainCategories mainCategories;
+    private MainCategoryModel mainCategories;
     @NonNull
     EnumEvent event;
     @NonNull
@@ -19,12 +22,12 @@ public class Event {
     }
 
     @NonNull
-    public Items getItems() {
+    public ItemModel getItems() {
         return items;
     }
 
     @NonNull
-    public MainCategories getMainCategories() {
+    public MainCategoryModel getMainCategories() {
         return mainCategories;
     }
 
@@ -33,7 +36,7 @@ public class Event {
         return event;
     }
 
-    public Event(@NonNull Items items, @NonNull MainCategories mainCategories, @NonNull EnumEvent event, @NonNull Date date) {
+    public Event(@NonNull ItemModel items, @NonNull MainCategoryModel mainCategories, @NonNull EnumEvent event, @NonNull Date date) {
         this.items = items;
         this.mainCategories = mainCategories;
         this.event = event;

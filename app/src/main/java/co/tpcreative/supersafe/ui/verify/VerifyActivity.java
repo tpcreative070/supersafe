@@ -25,6 +25,7 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -109,7 +110,7 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
     @OnClick(R.id.btnReSend)
     public void onResend(View view){
         VerifyCodeRequest request = new VerifyCodeRequest();
-        request.email = presenter.user.email;
+        request.user_id = presenter.user.email;
         presenter.onResendCode(request);
     }
 
@@ -133,8 +134,9 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
     public void onVerifyCode(){
         VerifyCodeRequest request = new VerifyCodeRequest();
         request.code = edtCode.getText().toString().trim();
-        request.email = presenter.user.email;
+        request.user_id = presenter.user.email;
         request._id = presenter.user._id;
+        request.device_id =  SuperSafeApplication.getInstance().getDeviceId();
         presenter.onVerifyCode(request);
         Utils.hideSoftKeyboard(this);
     }

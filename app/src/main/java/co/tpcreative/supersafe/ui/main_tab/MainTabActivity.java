@@ -30,6 +30,7 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -53,6 +54,9 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -63,14 +67,13 @@ import co.tpcreative.supersafe.model.Categories;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.model.Image;
-import co.tpcreative.supersafe.model.ImportFiles;
-import co.tpcreative.supersafe.model.Items;
-import co.tpcreative.supersafe.model.MainCategories;
+import co.tpcreative.supersafe.model.ImportFilesModel;
+import co.tpcreative.supersafe.model.ItemModel;
+import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
-import spencerstudios.com.bungeelib.Bungee;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class MainTabActivity extends BaseGoogleApi implements BaseView{
     private static final String TAG = MainTabActivity.class.getSimpleName();
@@ -126,6 +129,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                 }
             });
         };
+        Utils.Log(TAG, "system access token : " + Utils.getAccessToken());
     }
 
     private void showInterstitial() {
@@ -137,7 +141,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
     public void onShowSuggestion(){
         final boolean isFirstFile = PrefsController.getBoolean(getString(R.string.key_is_first_files),false);
         if (!isFirstFile){
-            List<Items> mList = InstanceGenerator.getInstance(this).getListAllItems(false);
+            List<ItemModel> mList = SQLHelper.getListAllItems(false);
             if (mList!=null && mList.size()>0){
                 PrefsController.putBoolean(getString(R.string.key_is_first_files),true);
                 return;
@@ -268,6 +272,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         onCallLockScreen();
         onRegisterHomeWatcher();
         presenter.onGetUserInfo();
+        ServiceManager.getInstance().setRequestShareIntent(false);
         Utils.Log(TAG,"onResume");
     }
 
@@ -415,16 +420,16 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                          String value = input.toString();
                          String base64Code = Utils.getHexCode(value);
 
-                         MainCategories item = MainCategories.getInstance().getTrashItem();
+                         MainCategoryModel item = SQLHelper.getTrashItem();
                          String result = item.categories_hex_name;
                          if (base64Code.equals(result)){
                              Toast.makeText(MainTabActivity.this,"This name already existing",Toast.LENGTH_SHORT).show();
                          }
                          else{
-                             boolean response = MainCategories.getInstance().onAddCategories(base64Code,value,false);
+                             boolean response = SQLHelper.onAddCategories(base64Code,value,false);
                              if (response){
                                  Toast.makeText(MainTabActivity.this,"Created album successful",Toast.LENGTH_SHORT).show();
-                                 ServiceManager.getInstance().onGetListCategoriesSync();
+                                 ServiceManager.getInstance().onPreparingSyncCategoryData();
                              }
                              else{
                                  Toast.makeText(MainTabActivity.this,"Album name already existing",Toast.LENGTH_SHORT).show();
@@ -444,7 +449,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            final List<MainCategories> list = MainCategories.getInstance().getList();
+                            final List<MainCategoryModel> list = SQLHelper.getList();
                             if (list!=null){
                                 Navigator.onMoveCamera(MainTabActivity.this,list.get(0));
                             }
@@ -509,7 +514,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
             case Navigator.REQUEST_CODE: {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     ArrayList<Image> images = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES);
-                    List<ImportFiles> mListImportFiles = new ArrayList<>();
+                    List<ImportFilesModel> mListImportFiles = new ArrayList<>();
                     for (int i = 0, l = images.size(); i < l; i++) {
                         String path = images.get(i).path;
                         String name = images.get(i).name;
@@ -526,20 +531,22 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                                 return;
                             }
                             mimeTypeFile.name = name;
-                            final List<MainCategories> list = MainCategories.getInstance().getList();
+                            final List<MainCategoryModel> list = SQLHelper.getList();
                             if (list==null){
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
-                            ImportFiles importFiles = new ImportFiles(list.get(0),mimeTypeFile,path,i,false);
+                            final MainCategoryModel mCategory = list.get(0);
+                            Utils.Log(TAG,"Show category "+ new Gson().toJson(mCategory));
+                            ImportFilesModel importFiles = new ImportFilesModel(list.get(0),mimeTypeFile,path,i,false);
                             mListImportFiles.add(importFiles);
 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                    ServiceManager.getInstance().setmListImport(mListImportFiles);
-                    ServiceManager.getInstance().onImportingFiles();
+                    ServiceManager.getInstance().setListImport(mListImportFiles);
+                    ServiceManager.getInstance().onPreparingImportData();;
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery");
                 }

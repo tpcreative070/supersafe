@@ -7,11 +7,13 @@ import com.google.gson.Gson;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 
 public class SingletonResetPin {
     private static SingletonResetPin instance ;
     private static final String TAG = SingletonResetPin.class.getSimpleName();
+    public long waitingLeft = 0;
     public static SingletonResetPin getInstance(){
         if (instance==null){
             instance = new SingletonResetPin();
@@ -34,7 +36,9 @@ public class SingletonResetPin {
             @Override
             public void onTick(long millisUntilFinished) {
                 long secondsRemaining = millisUntilFinished / 1000;
+                waitingLeft = secondsRemaining;
                 Utils.Log(TAG,""+secondsRemaining);
+                Utils.onPushEventBus(EnumStatus.WAITING_LEFT);
             }
             @Override
             public void onFinish() {
@@ -46,6 +50,7 @@ public class SingletonResetPin {
                 mCountDownTimer= null;
                 ServiceManager.getInstance().onSendEmail();
                 ServiceManager.getInstance().setIsWaitingSendMail(false);
+                Utils.onPushEventBus(EnumStatus.WAITING_DONE);
             }
         }.start();
     }

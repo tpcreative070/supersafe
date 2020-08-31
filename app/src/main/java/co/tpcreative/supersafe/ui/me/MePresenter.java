@@ -1,15 +1,18 @@
 package co.tpcreative.supersafe.ui.me;
 import com.google.gson.Gson;
 import java.util.List;
+
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class MePresenter extends Presenter<BaseView>{
 
@@ -36,8 +39,8 @@ public class MePresenter extends Presenter<BaseView>{
             videos = 0;
             audios = 0;
             others = 0;
-            final List<Items> mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItems(false,false);
-            for (Items index : mList){
+            final List<ItemModel> mList = SQLHelper.getListAllItems(false,false);
+            for (ItemModel index : mList){
                 final EnumFormatType enumTypeFile = EnumFormatType.values()[index.formatType];
                 switch (enumTypeFile){
                     case IMAGE:{

@@ -4,20 +4,23 @@ import org.solovyev.android.checkout.Purchase;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
+import co.tpcreative.supersafe.common.entities.ItemEntity;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.request.CheckoutRequest;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.NetworkUtil;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.model.Items;
+import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.model.room.InstanceGenerator;
+import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -27,13 +30,13 @@ public class PremiumPresenter extends Presenter<BaseView>{
 
     private static final String TAG = PremiumPresenter.class.getSimpleName();
     protected User mUser;
-    protected List<Items> mList ;
+    protected List<ItemModel> mList ;
     protected long spaceAvailable=0;
     protected boolean isSaver;
 
     public PremiumPresenter(){
         mUser = User.getInstance().getUserInfo();
-        mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(true,true);
+        mList = SQLHelper.getListAllItemsSaved(true,true);
         if (mList==null){
             mList = new ArrayList<>();
         }
@@ -41,7 +44,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         if (mList.size()>0){
             spaceAvailable = 0;
             for (int i = 0;i<mList.size();i++){
-                final Items items = mList.get(i);
+                final ItemModel items = mList.get(i);
                 items.isChecked = true;
                 spaceAvailable +=Long.parseLong(items.size);
             }
@@ -52,15 +55,15 @@ public class PremiumPresenter extends Presenter<BaseView>{
 
     public void onUpdatedItems(){
         if (mList==null){
-            mList = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getListAllItemsSaved(true,true);
+            mList = SQLHelper.getListAllItemsSaved(true,true);
             if (mList==null){
                 mList = new ArrayList<>();
             }
         }
         for (int i =0;i<mList.size();i++){
-            final Items index = mList.get(i);
+            final ItemModel index = mList.get(i);
             index.isSaver = false;
-            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onUpdate(index);
+            SQLHelper.updatedItem(index);
         }
     }
 
@@ -103,18 +106,9 @@ public class PremiumPresenter extends Presenter<BaseView>{
         }
         user.checkout = checkout;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user));
-
-        Map<String, Object> hash = Utils.objectToHashMap(purchase);
-        hash.put(getString(R.string.key_user_id),mUser.email);
-        hash.put(getString(R.string.key_device_id), SuperSafeApplication.getInstance().getDeviceId());
-        hash.put(getString(R.string.key_device_type),getString(R.string.device_type));
-        hash.put(getString(R.string.key_manufacturer), SuperSafeApplication.getInstance().getManufacturer());
-        hash.put(getString(R.string.key_name_model), SuperSafeApplication.getInstance().getModel());
-        hash.put(getString(R.string.key_version).toLowerCase(),""+ SuperSafeApplication.getInstance().getVersion());
-        hash.put(getString(R.string.key_versionRelease), SuperSafeApplication.getInstance().getVersionRelease());
-        hash.put(getString(R.string.key_appVersionRelease), SuperSafeApplication.getInstance().getAppVersionRelease());
-        Utils.onWriteLog(new Gson().toJson(hash),EnumStatus.CHECKOUT);
-        subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(hash)
+        final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.sku);
+        Utils.onWriteLog(new Gson().toJson(mCheckout),EnumStatus.CHECKOUT);
+        subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(mCheckout)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(__ -> view.onStartLoading(EnumStatus.CHECKOUT))
@@ -139,7 +133,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==403){
+                            if (code==401){
                                 Utils.Log(TAG,"code "+code);
                                 ServiceManager.getInstance().onUpdatedUserToken();
                             }
