@@ -96,6 +96,7 @@ public enum EnumStatus {
         PRIVATE_DONE,
         ME_DONE,
         REFRESH_EMAIL_TOKEN,
+        DELETE_OLD_ACCESS_TOKEN,
         ADD_EMAIL_TOKEN,
         DownLoadDone,
         CANCEL,

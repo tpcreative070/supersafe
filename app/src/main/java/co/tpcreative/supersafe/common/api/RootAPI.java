@@ -54,6 +54,9 @@ public interface RootAPI{
     String SIGN_IN = "/api/supersafe/user/signin";
     String UPDATE = "/api/supersafe/user/changeUserId";
     String REFRESH_USER_TOKEN = "/api/supersafe/user/updateToken";
+    String DELETE_OLD_ACCESS_TOKEN = "/api/supersafe/user/deleteOldAccessToken";
+
+
 
     String VERIFY_CODE = "api/supersafe/user/verifyCode";
     String RESEND_CODE = "api/supersafe/user/sendCode";
@@ -109,6 +112,9 @@ public interface RootAPI{
 
     @POST(REFRESH_USER_TOKEN)
     Observable<RootResponse> onUpdateToken(@Body UserRequest request);
+
+    @POST(DELETE_OLD_ACCESS_TOKEN)
+    Observable<RootResponse> onDeleteOldAccessToken(@Body UserRequest request);
 
     @POST(CHECKOUT)
     Observable<RootResponse> onCheckout(@Body CheckoutRequest request);

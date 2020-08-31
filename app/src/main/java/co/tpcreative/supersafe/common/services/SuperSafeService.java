@@ -217,12 +217,13 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         final UserRequest mUserRequest = new UserRequest();
         Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.REFRESH_EMAIL_TOKEN);
+        Utils.Log(TAG,"Body request " + new Gson().toJson(mUserRequest));
         subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(mUserRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
+                        view.onError(onResponse.responseMessage,EnumStatus.UPDATE_USER_TOKEN);
                     }
                     else{
                         final DataResponse mData = onResponse.data;
@@ -235,6 +236,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
                                 ServiceManager.getInstance().onPreparingSyncData();
+                                onDeleteOldAccessToken(mUserRequest);
                             }
                         }
                     }
@@ -244,11 +246,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code==401){
-                                Utils.Log(TAG,"code "+code);
-                                ServiceManager.getInstance().onUpdatedUserToken();
-                            }
-                            else if (code == 403 || code == 400){
+                            if (code == 403 || code == 400 || code == 401){
                                 final User user = User.getInstance().getUserInfo();
                                 if (user!=null){
                                     onSignIn(user);
@@ -258,6 +256,48 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             Utils.Log(TAG, "error" + errorMessage);
                             view.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN);
                             Utils.onWriteLog(errorMessage,EnumStatus.UPDATE_USER_TOKEN);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Utils.Log(TAG, "Can not call " + throwable.getMessage());
+                    }
+                }));
+    }
+
+    public void onDeleteOldAccessToken(UserRequest request){
+        BaseServiceView view = view();
+        if (isCheckNull(view,EnumStatus.UPDATE_USER_TOKEN)){
+            return;
+        }
+        final User mUser = User.getInstance().getUserInfo();
+        if (mUser==null){
+            return;
+        }
+        Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.DELETE_OLD_ACCESS_TOKEN);
+        subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOldAccessToken(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onResponse -> {
+                    if (onResponse.error){
+                        view.onError(onResponse.message,EnumStatus.DELETE_OLD_ACCESS_TOKEN);
+                    }
+                    Utils.Log(TAG, "Body delele old access token: " + new Gson().toJson(onResponse));
+                }, throwable -> {
+                    if (throwable instanceof HttpException) {
+                        ResponseBody bodys = ((HttpException) throwable).response().errorBody();
+                        int code  = ((HttpException) throwable).response().code();
+                        try {
+                            if (code == 403 || code == 400){
+                                final User user = User.getInstance().getUserInfo();
+                                if (user!=null){
+                                    onSignIn(user);
+                                }
+                            }
+                            final String errorMessage = bodys.string();
+                            Utils.Log(TAG, "error" + errorMessage);
+                            view.onError(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN);
+                            Utils.onWriteLog(errorMessage,EnumStatus.DELETE_OLD_ACCESS_TOKEN);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -293,6 +333,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             user.author = authorization;
                         }
                         PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                        ServiceManager.getInstance().onPreparingSyncData();
+
                     }
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
