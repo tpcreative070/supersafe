@@ -21,7 +21,9 @@ import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
+import co.tpcreative.supersafe.model.User;
 
 public class AskPermissionActivity extends BaseActivityNoneSlide {
 
@@ -49,12 +51,11 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
-                            boolean value = PrefsController.getBoolean(getString(R.string.key_running),false);
-                            if (value){
-                                Navigator.onMoveToLogin(AskPermissionActivity.this);
-                            }
-                            else{
-                                Navigator.onMoveToDashBoard(AskPermissionActivity.this);
+                            Navigator.onMoveToDashBoard(AskPermissionActivity.this);
+                            final User mUSer = User.getInstance().getUserInfo();
+                            if (mUSer!=null){
+                                mUSer.driveConnected = false;
+                                Utils.setUserPreShare(mUSer);
                             }
                             PrefsController.putBoolean(getString(R.string.key_grant_access),true);
                             SuperSafeApplication.getInstance().initFolder();
