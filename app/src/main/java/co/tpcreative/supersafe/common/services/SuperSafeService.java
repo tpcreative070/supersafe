@@ -180,7 +180,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         if (mData.premium!=null && mData.email_token!=null){
                             mUser.premium = mData.premium;
                             mUser.email_token = mData.email_token;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            if (mData.syncData!=null){
+                                mUser.syncData = mData.syncData;
+                            }
+                            Utils.setUserPreShare(mUser);
                             view.onSuccessful("Successful",EnumStatus.USER_INFO);
                         }
                     }
@@ -968,6 +971,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         final List<MainCategoryModel> listCategories = mData.categoriesList;
                         final List<ItemModel> mListItemResponse = mData.itemsList;
                         if (mData.nextPage == null) {
+                            if (mData.syncData!=null){
+                                user.syncData = mData.syncData;
+                            }
+                            Utils.setUserPreShare(user);
                             for (MainCategoryModel index : listCategories) {
                                 MainCategoryModel main = SQLHelper.getCategoriesId(index.categories_id,false);
                                 if (main != null) {
