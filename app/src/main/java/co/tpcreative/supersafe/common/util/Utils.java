@@ -1200,6 +1200,7 @@ public class Utils {
                return;
             }
         }
+        ServiceManager.getInstance().onDefaultValue();
         Utils.Log(TAG,"All items already synced...........");
     }
 }
