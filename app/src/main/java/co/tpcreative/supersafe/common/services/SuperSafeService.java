@@ -288,7 +288,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         ResponseBody bodys = ((HttpException) throwable).response().errorBody();
                         int code  = ((HttpException) throwable).response().code();
                         try {
-                            if (code == 403 || code == 400){
+                            if (code == 403 || code == 400 || code == 401){
                                 final User user = User.getInstance().getUserInfo();
                                 if (user!=null){
                                     onSignIn(user);
