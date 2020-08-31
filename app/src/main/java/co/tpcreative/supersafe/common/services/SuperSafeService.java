@@ -180,9 +180,6 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         if (mData.premium!=null && mData.email_token!=null){
                             mUser.premium = mData.premium;
                             mUser.email_token = mData.email_token;
-                            if (mData.syncData!=null){
-                                mUser.syncData = mData.syncData;
-                            }
                             Utils.setUserPreShare(mUser);
                             view.onSuccessful("Successful",EnumStatus.USER_INFO);
                         }
