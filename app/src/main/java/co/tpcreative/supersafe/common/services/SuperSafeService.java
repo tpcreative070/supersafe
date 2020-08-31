@@ -686,6 +686,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             entityModel.isSyncOwnServer = true;
             entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
         }
+        /*Check imported data before sync data*/
+        checkImportedDataBeforeSyncData(entityModel);
         final SyncItemsRequest mRequest =  new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),entityModel);
         Utils.Log(TAG,"onAddItems request " + new Gson().toJson(mRequest));
         subscriptions.add(SuperSafeApplication.serverAPI.onSyncData(mRequest)
@@ -740,6 +742,18 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             if (Utils.getSaverSpace()){
                 itemModel.isSaver = true;
                 Utils.checkSaverToDelete(itemModel.originalPath,isOriginalGlobalId);
+            }
+        }
+    }
+
+    /*Check imported data after sync data*/
+    public void checkImportedDataBeforeSyncData(ItemModel itemModel){
+        final MainCategoryModel categoryModel = SQLHelper.getCategoriesLocalId(itemModel.categories_local_id);
+        Utils.Log(TAG,"checkImportedDataBeforeSyncData " + new Gson().toJson(categoryModel));
+        if (categoryModel!=null){
+            if (!Utils.isNotEmptyOrNull(itemModel.categories_id)){
+                itemModel.categories_id = categoryModel.categories_id;
+                Utils.Log(TAG,"checkImportedDataBeforeSyncData ==> isNotEmptyOrNull");
             }
         }
     }

@@ -30,6 +30,7 @@ import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -535,6 +536,8 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                                 Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE);
                                 return;
                             }
+                            final MainCategoryModel mCategory = list.get(0);
+                            Utils.Log(TAG,"Show category "+ new Gson().toJson(mCategory));
                             ImportFilesModel importFiles = new ImportFilesModel(list.get(0),mimeTypeFile,path,i,false);
                             mListImportFiles.add(importFiles);
 
