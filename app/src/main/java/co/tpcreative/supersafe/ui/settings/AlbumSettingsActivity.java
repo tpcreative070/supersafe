@@ -72,7 +72,6 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         storage = new Storage(getApplicationContext());
         storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
         onSetUpPreference();

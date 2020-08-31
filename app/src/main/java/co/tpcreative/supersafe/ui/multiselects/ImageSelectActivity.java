@@ -340,6 +340,7 @@ public class ImageSelectActivity extends HelperActivity {
                 }
             }
 
+            Utils.Log(TAG,"Album name "+ album);
             Uri queryUri = MediaStore.Files.getContentUri("external");
             Cursor cursor = getContentResolver().query(queryUri, projection,
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?", new String[]{ album }, MediaStore.Images.Media.DATE_ADDED);

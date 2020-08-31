@@ -18,8 +18,6 @@ import co.tpcreative.supersafe.model.AlbumMultiItems;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
-
-
 public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiItems> {
 
     RequestOptions options = new RequestOptions()
@@ -28,10 +26,8 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
             .placeholder(R.drawable.image_placeholder)
             .error(R.drawable.ic_music)
             .priority(Priority.HIGH);
-
     final ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
     Drawable note1 = SuperSafeApplication.getInstance().getResources().getDrawable( themeApp.getAccentColor());
-
 
     public CustomAlbumSelectAdapter(Context context, ArrayList<AlbumMultiItems> albums) {
         super(context, albums);
@@ -54,16 +50,10 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
         viewHolder.imageView.getLayoutParams().width = size;
         viewHolder.imageView.getLayoutParams().height = size;
-
         viewHolder.textView.setText(arrayList.get(position).name);
-
-
         final AlbumMultiItems data = arrayList.get(position);
-
-
         try {
             String extensionFile = Utils.getFileExtension(data.cover);
             Log.d("value customer",extensionFile);
