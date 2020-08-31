@@ -9,6 +9,7 @@ import co.tpcreative.supersafe.model.EmailToken;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.Premium;
+import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.User;
 
 public class DataResponse  implements Serializable  {
@@ -30,6 +31,7 @@ public class DataResponse  implements Serializable  {
 
     public Premium premium;
     public EmailToken email_token;
+    public SyncData syncData;
 
     public String nextPage;
 }

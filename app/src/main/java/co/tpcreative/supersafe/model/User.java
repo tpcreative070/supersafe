@@ -40,6 +40,7 @@ public class User extends BaseResponse implements Serializable{
     public CheckoutItems checkout;
     public Premium premium;
     public EmailToken email_token;
+    public SyncData syncData;
     private static User instance ;
 
 //    @Ignore

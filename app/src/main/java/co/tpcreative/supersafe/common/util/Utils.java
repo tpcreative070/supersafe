@@ -1173,6 +1173,10 @@ public class Utils {
         }
     }
 
+    public static void setUserPreShare(User user){
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
+    }
+
     public static void onScanFile(Context activity, String nameLogs){
         if (PermissionChecker.checkSelfPermission(activity,android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
             Utils.Log(TAG,"Granted permission....");
