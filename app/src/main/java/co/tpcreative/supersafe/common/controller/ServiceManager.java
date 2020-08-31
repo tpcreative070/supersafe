@@ -191,8 +191,6 @@ public class ServiceManager implements BaseServiceView {
             Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.ERROR,"onPreparingSyncData is sync category. Please wait");
             return;
         }
-
-
         mDownloadList.clear();
         Utils.Log(TAG,"onPreparingSyncData...onGetItemList");
         ServiceManager.getInstance().onGetItemList("0");
