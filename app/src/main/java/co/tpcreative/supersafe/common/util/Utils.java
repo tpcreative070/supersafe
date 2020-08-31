@@ -1191,4 +1191,16 @@ public class Utils {
             Utils.Log(TAG,"No permission");
         }
     }
+
+    public static void checkRequestUploadItemData(){
+        final List<ItemModel> mResult = SQLHelper.getItemListUpload();
+        if (mResult!=null){
+            if (mResult.size()>0){
+               ServiceManager.getInstance().onPreparingSyncData();
+               return;
+            }
+        }
+        ServiceManager.getInstance().onDefaultValue();
+        Utils.Log(TAG,"All items already synced...........");
+    }
 }

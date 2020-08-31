@@ -109,7 +109,7 @@ public class ServiceManager implements BaseServiceView {
         mStorage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile());
     }
     private Cipher mCiphers;
-    private boolean isLoadingData, isWaitingSendMail;
+    private boolean isWaitingSendMail;
     public static ServiceManager getInstance() {
         if (instance == null) {
             instance = new ServiceManager();
@@ -757,6 +757,7 @@ public class ServiceManager implements BaseServiceView {
             isSyncCategory = false;
             isHandleLogic = false;
             Utils.onPushEventBus(EnumStatus.DONE);
+            Utils.checkRequestUploadItemData();
             SingletonPrivateFragment.getInstance().onUpdateView();
         }
     }
@@ -800,6 +801,7 @@ public class ServiceManager implements BaseServiceView {
                             isHandleLogic = false;
                             Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
                             Utils.onPushEventBus(EnumStatus.DONE);
+                            Utils.checkRequestUploadItemData();
                             SingletonPrivateFragment.getInstance().onUpdateView();
                             Utils.Log(TAG,"Sync items completely======>ready to test");
                         }
@@ -1152,13 +1154,6 @@ public class ServiceManager implements BaseServiceView {
                 });
     }
 
-    public void setLoadingData(boolean loadingData) {
-        isLoadingData = loadingData;
-    }
-
-    public void setImporting(boolean importing) {
-        isImportData = importing;
-    }
 
     public void setIsWaitingSendMail(boolean isWaitingSendMail) {
         this.isWaitingSendMail =  isWaitingSendMail;
@@ -1172,25 +1167,6 @@ public class ServiceManager implements BaseServiceView {
         return mProgress;
     }
 
-    public void setmListImport(List<ImportFilesModel> mListImport) {
-        if (!isImportData) {
-            this.mListImport.clear();
-            this.mListImport.addAll(mListImport);
-        }
-    }
-
-    public void setListDownloadFile(List<ItemModel> downloadFile) {
-        Utils.Log(TAG, "Download file " + isDownloadingFiles);
-        if (!isDownloadingFiles) {
-            this.mListDownLoadFiles.clear();
-            this.mListDownLoadFiles.addAll(downloadFile);
-        }
-    }
-
-    public void setDownloadingFiles(boolean downloadingFiles) {
-        isDownloadingFiles = downloadingFiles;
-    }
-
     public void setmListExport(List<ExportFiles> mListExport) {
         if (!isExportData) {
             this.mListExport.clear();
@@ -1202,21 +1178,8 @@ public class ServiceManager implements BaseServiceView {
         isExportData = exporting;
     }
 
-    public void setDeleteAlbum(boolean deleteAlbum) {
-        isDeleteCategoryData = deleteAlbum;
-    }
-
     public void setUpdate(boolean update) {
         isUpdateItemData = update;
-    }
-
-
-    public void setDownloadData(boolean downloadData) {
-        isDownloadData = downloadData;
-    }
-
-    public void setUploadData(boolean uploadData) {
-        isUploadData = uploadData;
     }
 
     public void onPickUpNewEmailNoTitle(Activity context, String account) {
@@ -1614,7 +1577,6 @@ public class ServiceManager implements BaseServiceView {
             case USER_INFO: {
                 Utils.Log(TAG, "Get info successful");
                 ServiceManager.getInstance().onPreparingSyncData();
-                //ServiceManager.getInstance().onCheckingMissData();
                 final User mUser = User.getInstance().getUserInfo();
                 if (mUser.isWaitingSendMail){
                     ServiceManager.getInstance().onSendEmail();
@@ -1622,7 +1584,6 @@ public class ServiceManager implements BaseServiceView {
                 break;
             }
             case UPDATE_USER_TOKEN:{
-                //onSyncDataOwnServer("0");
                 ServiceManager.getInstance().onPreparingSyncData();
                 break;
             }
@@ -1630,11 +1591,10 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void onDefaultValue(){
-        ServiceManager.getInstance().setDownloadData(false);
-        ServiceManager.getInstance().setUploadData(false);
-        ServiceManager.getInstance().setDownloadingFiles(false);
-        ServiceManager.getInstance().setExporting(false);
-        ServiceManager.getInstance().setImporting(false);
+        isDownloadData = false;
+        isUploadData = false;
+        isExportData  = false;
+        isImportData = false;
         isUpdateItemData = false;
         isUpdateCategoryData = false;
         isDeleteItemData = false;
@@ -1642,13 +1602,12 @@ public class ServiceManager implements BaseServiceView {
         isDownloadingFiles = false;
         isHandleLogic = false;
         isSyncCategory = false;
-        ServiceManager.getInstance().setDeleteAlbum(false);
-        ServiceManager.getInstance().setIsWaitingSendMail(false);
-        ServiceManager.getInstance().setLoadingData(false);
+        isGetItemList = false;
+        isWaitingSendMail = false;
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isLoadingData || isHandleLogic || isSyncCategory) {
+        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isHandleLogic || isSyncCategory || isGetItemList || isUpdateCategoryData) {
             Utils.Log(TAG, "Progress....................!!!!:");
         }
         else {
