@@ -21,7 +21,7 @@ public class CheckoutRequest implements Serializable {
     public String versionRelease;
     public String appVersionRelease;
 
-    public CheckoutRequest(String user_id,boolean autoRenewing,String orderId,String sku){
+    public CheckoutRequest(String user_id,boolean autoRenewing,String orderId,String sku,String state,String token){
         this.user_id = user_id;
         this.autoRenewing = autoRenewing;
         this.sku = sku;
@@ -34,5 +34,7 @@ public class CheckoutRequest implements Serializable {
         this.versionRelease = SuperSafeApplication.getInstance().getVersionRelease();
         this.appVersionRelease =  BuildConfig.VERSION_NAME;
         this.packageName = SuperSafeApplication.getInstance().getPackageId();
+        this.state = state;
+        this.token = token;
     }
 }

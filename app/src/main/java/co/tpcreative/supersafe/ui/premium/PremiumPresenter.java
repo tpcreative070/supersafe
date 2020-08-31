@@ -106,7 +106,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         }
         user.checkout = checkout;
         PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user));
-        final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.sku);
+        final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.sku,purchase.state.name(),purchase.token);
         Utils.onWriteLog(new Gson().toJson(mCheckout),EnumStatus.CHECKOUT);
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(mCheckout)
                 .subscribeOn(Schedulers.io())
