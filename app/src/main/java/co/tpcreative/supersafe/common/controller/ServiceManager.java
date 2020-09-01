@@ -440,7 +440,6 @@ public class ServiceManager implements BaseServiceView {
         if (myService!=null){
             isDownloadToExportFiles = true;
             mStart = 20;
-            Utils.onPushEventBus(EnumStatus.DOWNLOAD);
             myService.onDownloadFile(itemModel,true, new DownloadServiceListener() {
                 @Override
                 public void onProgressDownload(int percentage) {
@@ -551,6 +550,8 @@ public class ServiceManager implements BaseServiceView {
                         Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT);
                         Utils.onDeleteItemFolder(itemModel.items_id);
                         onPreparingDeleteData();
+                        /*Download done for main tab*/
+                        Utils.onPushEventBus(EnumStatus.DONE);
                     }
                     if (status == EnumStatus.REQUEST_NEXT_DOWNLOAD){
                         if (Utils.deletedIndexOfHashMap(itemModel,mMapDownload)){
