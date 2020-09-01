@@ -71,6 +71,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     protected Storage storage;
     private SuperSafeReceiver androidReceiver;
     private DownloadService downloadService;
+    private boolean isCallRefreshToken;
 
     @Override
     public void onCreate() {
@@ -215,6 +216,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (mUser==null){
             return;
         }
+        if (isCallRefreshToken){
+            Utils.Log(TAG,"Refresh token is progressing");
+            return;
+        }
+        isCallRefreshToken = true;
         final UserRequest mUserRequest = new UserRequest();
         Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.REFRESH_EMAIL_TOKEN);
         Utils.Log(TAG,"Body request " + new Gson().toJson(mUserRequest));
@@ -224,6 +230,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribe(onResponse -> {
                     if (onResponse.error){
                         view.onError(onResponse.responseMessage,EnumStatus.UPDATE_USER_TOKEN);
+                        isCallRefreshToken = false;
                     }
                     else{
                         final DataResponse mData = onResponse.data;
@@ -237,6 +244,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
                                 ServiceManager.getInstance().onPreparingSyncData();
                                 onDeleteOldAccessToken(mUserRequest);
+                                isCallRefreshToken = false;
                             }
                         }
                     }
@@ -262,6 +270,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
+                    isCallRefreshToken = false;
                 }));
     }
 
