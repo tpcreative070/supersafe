@@ -73,13 +73,14 @@ public class ServiceManager implements BaseServiceView {
 
     /*Improved sync data*/
     private List<ImportFilesModel> listImport = new ArrayList<>();
-    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isSyncCategory,isGetItemList, isImportData,isExportData,isDownloadingFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic,isRequestShareIntent;
+    private boolean isDownloadData,isUploadData,isUpdateItemData,isUpdateCategoryData,isSyncCategory,isGetItemList, isImportData,isExportData,isDownloadToExportFiles, isDeleteItemData,isDeleteCategoryData,isHandleLogic,isRequestShareIntent;
     /*Using item_id as key for hash map*/
     private Map<String, ItemModel> mMapDeleteItem = new HashMap<>();
     private Map<String, MainCategoryModel> mMapDeleteCategory = new HashMap<>();
     private Map<String, MainCategoryModel> mMapUpdateCategory = new HashMap<>();
     private Map<String, MainCategoryModel> mMapSyncCategory = new HashMap<>();
     private Map<String,ItemModel> mMapDownload = new HashMap<>();
+    private Map<String,ItemModel> mMapDownloadToExportFiles = new HashMap<>();
     private Map<String,ItemModel> mMapUpload = new HashMap<>();
     private Map<String,ItemModel> mMapUpdateItem = new HashMap<>();
     private Map<String,ImportFilesModel> mMapImporting = new HashMap<>();
@@ -165,9 +166,9 @@ public class ServiceManager implements BaseServiceView {
             Utils.onWriteLog(EnumStatus.IMPORTING,EnumStatus.ERROR,"onPreparingSyncData is importing. Please wait");
             return;
         }
-        if (isDownloadingFiles){
+        if (isDownloadToExportFiles){
             Utils.Log(TAG,"onPreparingSyncData is downloading files. Please wait");
-            Utils.onWriteLog(EnumStatus.DOWNLOADING,EnumStatus.ERROR,"onPreparingSyncData is downloading files. Please wait");
+            Utils.onWriteLog(EnumStatus.DOWNLOADING,EnumStatus.ERROR,"onPreparingSyncData is downloading to export files. Please wait");
             return;
         }
         if (isUpdateItemData){
@@ -400,7 +401,7 @@ public class ServiceManager implements BaseServiceView {
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
                             Utils.Log(TAG,"Preparing to download "+ new Gson().toJson(itemModel));
                             Utils.Log(TAG,"Preparing to download total  "+ mMapDownload.size());
-                            onDownLoadData(itemModel,false);
+                            onDownLoadData(itemModel);
                         }
                     }else{
                         /*Preparing upload file to Google drive*/
@@ -412,40 +413,107 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void onPreparingEnableDownloadData(List<ItemModel>globalList){
-        if (isDownloadingFiles){
+        if (isDownloadToExportFiles){
             return;
         }
         List<ItemModel> mergeList = Utils.getMergedOriginalThumbnailList(false,globalList);
         Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear duplicated data "+ new Gson().toJson(mergeList));
         if (mergeList!=null){
             if (mergeList.size()>0){
-                mMapDownload.clear();
-                mMapDownload = Utils.mergeListToHashMap(mergeList);
-                Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear merged data "+ new Gson().toJson(mMapDownload));
+                mMapDownloadToExportFiles.clear();
+                mMapDownloadToExportFiles = Utils.mergeListToHashMap(mergeList);
+                Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear merged data "+ new Gson().toJson(mMapDownloadToExportFiles));
                 Utils.Log(TAG,"onPreparingEnableDownloadData ==> merged data "+ new Gson().toJson(mergeList));
-                final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownload);
+                final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
                 if (itemModel!=null){
-                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownload.size());
+                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownloadToExportFiles.size());
                     Utils.Log(TAG,"onPreparingEnableDownloadData to download "+ new Gson().toJson(itemModel));
-                    Utils.Log(TAG,"onPreparingEnableDownloadData to download total  "+ mMapDownload.size());
-                    onDownLoadData(itemModel,true);
+                    Utils.Log(TAG,"onPreparingEnableDownloadData to download total  "+ mMapDownloadToExportFiles.size());
+                    onDownLoadDataToExportFiles(itemModel);
                 }
             }
         }
     }
 
     /*Download file from Google drive*/
-    private void onDownLoadData(final ItemModel itemModel, boolean isDownloadForExport){
+    private void onDownLoadDataToExportFiles(final ItemModel itemModel){
+        if (myService!=null){
+            isDownloadToExportFiles = true;
+            mStart = 20;
+            myService.onDownloadFile(itemModel,true, new DownloadServiceListener() {
+                @Override
+                public void onProgressDownload(int percentage) {
+                    isDownloadToExportFiles = true;
+                    if (mStart == percentage){
+                        Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Progressing "+ mStart);
+                        mStart += 20;
+                    }
+                }
+                @Override
+                public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
+                    Utils.Log(TAG,"onDownLoadCompleted ==> onDownLoadCompleted:" + file_name.getAbsolutePath());
+                    if (Utils.deletedIndexOfHashMap(itemModel,mMapDownloadToExportFiles)){
+                        /*Delete local db and folder name*/
+                        final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
+                        if (mDownloadItem!=null){
+                            onDownLoadDataToExportFiles(mDownloadItem);
+                            isDownloadToExportFiles = true;
+                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
+                        }else{
+                            Utils.Log(TAG,"Download completely...............");
+                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownloadToExportFiles.size());
+                            isDownloadToExportFiles = false;
+                            Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                        }
+                    }
+                }
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    Utils.Log(TAG,"onDownLoadData ==> onError:" + message);
+                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.ERROR,"onDownLoadData ==> onError "+message);
+                    isDownloadToExportFiles = false;
+                    if (status == EnumStatus.NO_SPACE_LEFT){
+                        Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT);
+                        Utils.onDeleteItemFolder(itemModel.items_id);
+                        onPreparingDeleteData();
+                    }
+                    if (status == EnumStatus.REQUEST_NEXT_DOWNLOAD){
+                        if (Utils.deletedIndexOfHashMap(itemModel,mMapDownloadToExportFiles)){
+                            /*Delete local db and folder name*/
+                            final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
+                            if (mDownloadItem!=null){
+                                onDownLoadDataToExportFiles(mDownloadItem);
+                                isDownloadToExportFiles = true;
+                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
+                            }else{
+                                Utils.Log(TAG,"Download completely...............");
+                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownloadToExportFiles.size());
+                                isDownloadToExportFiles = false;
+                                /*Download completed for export files*/
+                                Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+    /*Download file from Google drive*/
+    private void onDownLoadData(final ItemModel itemModel){
         if (myService!=null){
             isDownloadData = true;
-            isDownloadingFiles = true;
             mStart = 20;
             Utils.onPushEventBus(EnumStatus.DOWNLOAD);
-            myService.onDownloadFile(itemModel, new DownloadServiceListener() {
+            myService.onDownloadFile(itemModel,false, new DownloadServiceListener() {
                 @Override
                 public void onProgressDownload(int percentage) {
                     isDownloadData = true;
-                    isDownloadingFiles = true;
                     if (mStart == percentage){
                         Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Progressing "+ mStart);
                         mStart += 20;
@@ -458,9 +526,8 @@ public class ServiceManager implements BaseServiceView {
                         /*Delete local db and folder name*/
                         final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownload);
                         if (mDownloadItem!=null){
-                            onDownLoadData(mDownloadItem,isDownloadForExport);
+                            onDownLoadData(mDownloadItem);
                             isDownloadData = true;
-                            isDownloadingFiles = true;
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                             Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
                         }else{
@@ -468,11 +535,8 @@ public class ServiceManager implements BaseServiceView {
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                             Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownload.size());
                             isDownloadData = false;
-                            isDownloadingFiles = false;
-                            if (!isDownloadForExport){
-                                onPreparingUploadData();
-                            }
-                            Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                            onPreparingUploadData();
+                            /*Download done for main tab*/
                             Utils.onPushEventBus(EnumStatus.DONE);
                         }
                     }
@@ -486,13 +550,15 @@ public class ServiceManager implements BaseServiceView {
                         Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT);
                         Utils.onDeleteItemFolder(itemModel.items_id);
                         onPreparingDeleteData();
+                        /*Download done for main tab*/
+                        Utils.onPushEventBus(EnumStatus.DONE);
                     }
                     if (status == EnumStatus.REQUEST_NEXT_DOWNLOAD){
                         if (Utils.deletedIndexOfHashMap(itemModel,mMapDownload)){
                             /*Delete local db and folder name*/
                             final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownload);
                             if (mDownloadItem!=null){
-                                onDownLoadData(mDownloadItem,isDownloadForExport);
+                                onDownLoadData(mDownloadItem);
                                 isDownloadData = true;
                                 Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                                 Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
@@ -501,10 +567,8 @@ public class ServiceManager implements BaseServiceView {
                                 Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                                 Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownload.size());
                                 isDownloadData = false;
-                                if (!isDownloadForExport){
-                                    onPreparingUploadData();
-                                }
-                                Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                                onPreparingUploadData();
+                                /*Download done for main tab*/
                                 Utils.onPushEventBus(EnumStatus.DONE);
                             }
                         }
@@ -1599,7 +1663,7 @@ public class ServiceManager implements BaseServiceView {
         isUpdateCategoryData = false;
         isDeleteItemData = false;
         isDeleteCategoryData = false;
-        isDownloadingFiles = false;
+        isDownloadToExportFiles = false;
         isHandleLogic = false;
         isSyncCategory = false;
         isGetItemList = false;
@@ -1607,7 +1671,7 @@ public class ServiceManager implements BaseServiceView {
     }
 
     public void onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadingFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isHandleLogic || isSyncCategory || isGetItemList || isUpdateCategoryData) {
+        if (isDownloadData || isUploadData || isDownloadToExportFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData  ||  isWaitingSendMail || isUpdateItemData || isHandleLogic || isSyncCategory || isGetItemList || isUpdateCategoryData) {
             Utils.Log(TAG, "Progress....................!!!!:");
         }
         else {
