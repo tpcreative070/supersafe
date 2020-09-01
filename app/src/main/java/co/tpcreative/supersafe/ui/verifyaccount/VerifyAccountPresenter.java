@@ -123,7 +123,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                 .subscribe(onResponse -> {
                     view.onStopLoading(EnumStatus.CHANGE_EMAIL);
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.CHANGE_EMAIL);
+                        view.onError(onResponse.responseMessage,EnumStatus.CHANGE_EMAIL);
                     }
                     else{
                         if (onResponse!=null){
@@ -140,7 +140,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                                     Utils.Log(TAG,"User is null");
                                 }
                                 mUser = User.getInstance().getUserInfo();
-                                view.onSuccessful(onResponse.message,EnumStatus.CHANGE_EMAIL);
+                                view.onSuccessful(onResponse.responseMessage,EnumStatus.CHANGE_EMAIL);
                             }
                         }
                     }
