@@ -619,6 +619,8 @@
     <string name="limit_exceeded">Can select a maximum of %d images</string>
 
     <string name="error_null_cursor">Oops, something went wrong!</string>
+    <string name="key_no_space_left_space">No space left on device</string>
+    <string name="key_no_space_left_space_cloud">No space left on cloud</string>
 
     <!--Request Permission-->
     <string name="permission_info">App requires permission to Storage to view images.</string>

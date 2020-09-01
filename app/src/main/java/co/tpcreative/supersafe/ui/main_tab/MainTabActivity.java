@@ -260,8 +260,28 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
                 getAccessToken();
                 break;
             }
+            case NO_SPACE_LEFT:{
+                onAlert(getString(R.string.key_no_space_left_space));
+                break;
+            }
+            case NO_SPACE_LEFT_CLOUD:{
+                onAlert(getString(R.string.key_no_space_left_space_cloud));
+                break;
+            }
         }
     };
+
+    public void onAlert(String content){
+        new MaterialDialog.Builder(this).title("Alert")
+                .content(content)
+                .positiveText("Ok")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    }
+                })
+                .show();
+    }
 
     @Override
     protected void onResume(){

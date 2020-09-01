@@ -1044,7 +1044,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 }));
     }
 
-    public void onDownloadFile(final ItemModel items, final ServiceManager.DownloadServiceListener listener) {
+    public void onDownloadFile(final ItemModel items,boolean isDownloadToExport, final ServiceManager.DownloadServiceListener listener) {
         Utils.Log(TAG, "onDownloadFile !!!!");
         final User mUser = User.getInstance().getUserInfo();
         if (!mUser.driveConnected) {
@@ -1095,7 +1095,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG,"Synced already....");
                     }
                     /*Check saver space*/
-                    checkSaverSpace(entityModel,items.isOriginalGlobalId);
+                    if (!isDownloadToExport){
+                        checkSaverSpace(entityModel,items.isOriginalGlobalId);
+                    }
                     SQLHelper.updatedItem(entityModel);
                 }else{
                     if (categoryModel!=null){
@@ -1107,7 +1109,9 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         items.thumbnailSync = true;
                     }
                     /*Check saver space*/
-                    checkSaverSpace(items,items.isOriginalGlobalId);
+                    if (!isDownloadToExport){
+                        checkSaverSpace(items,items.isOriginalGlobalId);
+                    }
                     SQLHelper.insertedItem(items);
                 }
             }
