@@ -62,7 +62,7 @@ public class PremiumManager {
                                         PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                         user.checkout = checkoutItems;
                                     }
-                                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                    Utils.setUserPreShare(user);
                                 }
                                 Utils.onWriteLog(" response expired months :" + new Gson().toJson(purchaseExpire), EnumStatus.CHECKOUT);
                             } else {
@@ -79,7 +79,7 @@ public class PremiumManager {
                                             //PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                             user.checkout = checkoutItems;
                                         }
-                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                        Utils.setUserPreShare(user);
                                     }
                                 } else {
                                     if (user != null) {
@@ -91,7 +91,7 @@ public class PremiumManager {
                                             checkoutItems.isPurchasedSixMonths = true;
                                             user.checkout = checkoutItems;
                                         }
-                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                        Utils.setUserPreShare(user);
                                     }
                                 }
                                 Utils.onWriteLog(" response purchased momths :" + new Gson().toJson(purchase), EnumStatus.CHECKOUT);
@@ -111,7 +111,7 @@ public class PremiumManager {
                                         PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                         user.checkout = checkoutItems;
                                     }
-                                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                    Utils.setUserPreShare(user);
                                 }
                                 Utils.onWriteLog(" response expired years :" + new Gson().toJson(purchaseExpire), EnumStatus.CHECKOUT);
                             } else {
@@ -128,7 +128,7 @@ public class PremiumManager {
                                             //PrefsController.putBoolean(getString(R.string.key_switch_to_basic),false);
                                             user.checkout = checkoutItems;
                                         }
-                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                        Utils.setUserPreShare(user);
                                     }
                                 } else {
                                     if (user != null) {
@@ -140,7 +140,7 @@ public class PremiumManager {
                                             checkoutItems.isPurchasedOneYears = true;
                                             user.checkout = checkoutItems;
                                         }
-                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                        Utils.setUserPreShare(user);
                                     }
                                 }
                                 Utils.onWriteLog(" response purchased year :" + new Gson().toJson(purchase), EnumStatus.CHECKOUT);
@@ -178,7 +178,7 @@ public class PremiumManager {
                                         checkoutItems.isPurchasedLifeTime = true;
                                         user.checkout = checkoutItems;
                                     }
-                                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                    Utils.setUserPreShare(user);
                                 }
                             }
                             Utils.onWriteLog("response Life time :" + new Gson().toJson(index), EnumStatus.CHECKOUT);

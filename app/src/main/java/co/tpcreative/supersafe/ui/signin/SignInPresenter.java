@@ -54,7 +54,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                         view.onError(getString(R.string.signed_in_failed), EnumStatus.SIGN_IN);
                     } else {
                         final DataResponse mData = onResponse.data;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mData.user));
+                        Utils.setUserPreShare(mData.user);
                         ServiceManager.getInstance().onInitConfigurationFile();
                         view.onSuccessful(onResponse.message, EnumStatus.SIGN_IN, mData.user);
                     }
@@ -157,7 +157,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
                         token.access_token = onResponse.token_type + " " + onResponse.access_token;
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);

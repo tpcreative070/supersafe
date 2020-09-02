@@ -212,8 +212,8 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.UPDATE_USER_TOKEN)){
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
-        if (mUser==null){
+        final User user = User.getInstance().getUserInfo();
+        if (user==null){
             return;
         }
         if (isCallRefreshToken){
@@ -222,7 +222,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         }
         isCallRefreshToken = true;
         final UserRequest mUserRequest = new UserRequest();
-        Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.REFRESH_EMAIL_TOKEN);
+        Utils.onWriteLog(new Gson().toJson(user),EnumStatus.REFRESH_EMAIL_TOKEN);
         Utils.Log(TAG,"Body request " + new Gson().toJson(mUserRequest));
         subscriptions.add(SuperSafeApplication.serverAPI.onUpdateToken(mUserRequest)
                 .subscribeOn(Schedulers.io())
@@ -233,13 +233,16 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         isCallRefreshToken = false;
                     }
                     else{
+                        final User mUser = User.getInstance().getUserInfo();
                         final DataResponse mData = onResponse.data;
                         if (mData.user!=null){
                             if (mData.user.author!=null){
-                                final Authorization authorization = mUser.author;
-                                authorization.session_token = mData.user.author.session_token;
-                                mUser.author = authorization;
-                                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                final Authorization mAuthorGlobal = mData.user.author;
+                                final Authorization mAuthor = mUser.author;
+                                mAuthor.refresh_token = mAuthorGlobal.refresh_token;
+                                mAuthor.session_token = mAuthorGlobal.session_token;
+                                mUser.author =mAuthor;
+                                Utils.setUserPreShare(mUser);
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
                                 onDeleteOldAccessToken(mUserRequest);
@@ -253,13 +256,13 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         int code  = ((HttpException) throwable).response().code();
                         try {
                             if (code == 403 || code == 400 || code == 401){
-                                final User user = User.getInstance().getUserInfo();
-                                if (user!=null){
+                                final User mUserResponse = User.getInstance().getUserInfo();
+                                if (mUserResponse!=null){
                                     onSignIn(user);
                                 }
                             }
                             final String errorMessage = bodys.string();
-                            Utils.Log(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error update access token " + errorMessage);
                             view.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN);
                             Utils.onWriteLog(errorMessage,EnumStatus.UPDATE_USER_TOKEN);
                         } catch (IOException e) {
@@ -284,6 +287,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             return;
         }
         Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.DELETE_OLD_ACCESS_TOKEN);
+        Utils.Log(TAG,"Body request " + new Gson().toJson(request));
         subscriptions.add(SuperSafeApplication.serverAPI.onDeleteOldAccessToken(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -307,7 +311,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 }
                             }
                             final String errorMessage = bodys.string();
-                            Utils.Log(TAG, "error" + errorMessage);
+                            Utils.Log(TAG, "error old delete access token " + errorMessage);
                             view.onError(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN);
                             Utils.onWriteLog(errorMessage,EnumStatus.DELETE_OLD_ACCESS_TOKEN);
                         } catch (IOException e) {
@@ -321,7 +325,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     }
 
     public void onSignIn(final User request) {
-        Utils.Log(TAG, "onSignIn");
+        Utils.Log(TAG, "onSignIn request");
         BaseServiceView view = view();
         if (isCheckNull(view,EnumStatus.SIGN_IN)){
             return;
@@ -334,20 +338,17 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
-                    Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
+                    Utils.Log(TAG, "Body response sign in: " + new Gson().toJson(onResponse));
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_IN);
                     } else {
                         final User user = User.getInstance().getUserInfo();
                         final DataResponse mData = onResponse.data;
                         if (mData.user!=null){
-                            final Authorization authorization = user.author;
-                            authorization.session_token = mData.user.author.session_token;
-                            user.author = authorization;
+                            user.author = mData.user.author;
                         }
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                        Utils.setUserPreShare(user);
                         ServiceManager.getInstance().onPreparingSyncData();
-
                     }
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -396,7 +397,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     } else {
                         final User mUser = User.getInstance().getUserInfo();
                         mUser.driveAbout = onResponse;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         view.onSuccessful(new Gson().toJson(onResponse), EnumStatus.GET_DRIVE_ABOUT);
                     }
                 }, throwable -> {
@@ -1290,14 +1291,14 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
-                            PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                            Utils.setUserPreShare(user);
                         }
                         view.onError(new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = true;
-                            PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                            Utils.setUserPreShare(user);
                             view.onSuccessful("Successful",EnumStatus.GET_DRIVE_ABOUT);
                         }
                     }
@@ -1319,7 +1320,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                     final User mUser = User.getInstance().getUserInfo();
                                     if (mUser != null) {
                                         user.driveConnected = false;
-                                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                        Utils.setUserPreShare(user);
                                     }
                                     view.onError(EnumStatus.GET_DRIVE_ABOUT.name()+"-"+new Gson().toJson(driveAbout.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                                 }
@@ -1327,7 +1328,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 final User mUser = User.getInstance().getUserInfo();
                                 if (mUser != null) {
                                     user.driveConnected = false;
-                                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                    Utils.setUserPreShare(user);
                                 }
                                 view.onError(EnumStatus.GET_DRIVE_ABOUT.name()+" - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN);
                             }
@@ -1335,7 +1336,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             final User mUser = User.getInstance().getUserInfo();
                             if (mUser != null) {
                                 user.driveConnected = false;
-                                PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                                Utils.setUserPreShare(user);
                             }
                             view.onError("Error IOException " + e.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                         }
@@ -1344,7 +1345,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
-                            PrefsController.putString(getString(R.string.key_user), new Gson().toJson(user));
+                            Utils.setUserPreShare(user);
                         }
                         view.onError("Error else :" + throwable.getMessage(), EnumStatus.GET_DRIVE_ABOUT);
                     }
@@ -1368,7 +1369,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             view.onSuccessful("Successful",EnumStatus.CHECK_VERSION);
                             final User user = User.getInstance().getUserInfo();
                             user.version = onResponse.version;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user) );
+                            Utils.setUserPreShare(user);
                         }
                     }
                 }, throwable -> {
@@ -1450,13 +1451,13 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         Utils.Log(TAG, "error" + errorMessage);
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL);
                         mUser.isWaitingSendMail = false;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("successful", EnumStatus.SEND_EMAIL);
                         final User mUser = User.getInstance().getUserInfo();
                         mUser.isWaitingSendMail = false;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         ServiceManager.getInstance().onDismissServices();
                         Utils.Log(TAG, "Body : Send email Successful");
                     } else {
@@ -1496,8 +1497,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         token.access_token = onResponse.token_type + " " + onResponse.access_token;
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
-                        mUser.email_token = token;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);

@@ -147,7 +147,7 @@ public class HelpAndSupportPresenter extends Presenter<BaseView>{
                         token.access_token = onResponse.token_type + " " + onResponse.access_token;
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         onAddEmailToken(content);
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);

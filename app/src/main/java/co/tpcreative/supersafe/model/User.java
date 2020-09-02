@@ -61,6 +61,7 @@ public class User extends BaseResponse implements Serializable{
             if (value!=null){
                 Utils.Log("User","get value " + value);
                 final User mUser = new Gson().fromJson(value,User.class);
+                Utils.Log("Access token.....:","Access token get " +mUser.author.refresh_token);
                 if (mUser!=null){
                     return mUser;
                 }

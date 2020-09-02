@@ -156,7 +156,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
     protected void onDriveClientReady() {
         Utils.Log(TAG, "onDriveClient");
         presenter.mUser.driveConnected = true;
-        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
+        Utils.setUserPreShare(presenter.mUser);
         UserCloudRequest request = new UserCloudRequest(presenter.mUser.email,presenter.mUser.email,SuperSafeApplication.getInstance().getDeviceId());
         presenter.onAddUserCloud(request);
     }
@@ -266,7 +266,7 @@ public class CheckSystemActivity extends BaseGoogleApi implements BaseView {
                 if (presenter.mUser != null) {
                     presenter.mUser.cloud_id = message;
                     Utils.Log(TAG, "CLOUD_ID_EXISTING : " + message);
-                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
+                    Utils.setUserPreShare(presenter.mUser);
                 }
                 Navigator.onEnableCloud(this);
                 break;

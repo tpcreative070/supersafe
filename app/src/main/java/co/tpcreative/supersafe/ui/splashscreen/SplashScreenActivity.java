@@ -93,7 +93,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                             SuperSafeApplication.getInstance().deleteFolder();
                             SuperSafeApplication.getInstance().initFolder();
                             InstanceGenerator.getInstance(SplashScreenActivity.this).onCleanDatabase();
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(new User()));
+                            Utils.setUserPreShare(new User());
                             SQLHelper.getList();
                             PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive),true);
                             Navigator.onMoveToDashBoard(SplashScreenActivity.this);

@@ -385,7 +385,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
                 final User mUser = User.getInstance().getUserInfo();
                 mUser.cloud_id= message;
                 mUser.driveConnected = true;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                Utils.setUserPreShare(mUser);
                 presenter.mUser = mUser;
                 Utils.Log(TAG,"Finsh enable cloud.........................");
                 ServiceManager.getInstance().onPreparingSyncData();

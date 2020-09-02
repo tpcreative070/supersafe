@@ -28,8 +28,7 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
     }
 
     public void onUserInfo(){
-        String value = PrefsController.getString(getString(R.string.key_user),"");
-        final User user = new Gson().fromJson(value,User.class);
+        final User user = User.getInstance().getUserInfo();
         if (user!=null){
             mUser = user;
         }

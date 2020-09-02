@@ -259,7 +259,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             final User mUser = User.getInstance().getUserInfo();
             if (mUser!=null){
                 mUser.driveConnected = false;
-                PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                Utils.setUserPreShare(mUser);
                 onDriveError();
                 Utils.onWriteLog("Sign-in failed on Google drive..",EnumStatus.SIGN_IN);
             }
@@ -354,7 +354,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.access_token = String.format(getString(R.string.access_token),value);
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            Utils.setUserPreShare(mUser);
                         }
                     }
                     return value;
@@ -496,7 +496,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                 final  User mUser = User.getInstance().getUserInfo();
                 if (mUser!=null){
                     mUser.driveConnected = false;
-                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                    Utils.setUserPreShare(mUser);
                 }
                 onDriveSignOut();
             }
