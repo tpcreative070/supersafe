@@ -275,10 +275,12 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
     public void onDeleteOldAccessToken(UserRequest request){
         BaseServiceView view = view();
         if (isCheckNull(view,EnumStatus.UPDATE_USER_TOKEN)){
+            isCallRefreshToken = false;
             return;
         }
         final User mUser = User.getInstance().getUserInfo();
         if (mUser==null){
+            isCallRefreshToken = false;
             return;
         }
         Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.DELETE_OLD_ACCESS_TOKEN);
