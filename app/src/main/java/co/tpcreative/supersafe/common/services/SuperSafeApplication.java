@@ -489,8 +489,8 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public String onAuthorToken() {
         try {
-            String value = PrefsController.getString(getString(R.string.key_user), "");
-            User user = new Gson().fromJson(value, User.class);
+
+            User user = User.getInstance().getUserInfo();
             if (user != null) {
                 authorization = user.author.session_token;
                 Utils.onWriteLog(authorization,EnumStatus.REQUEST_ACCESS_TOKEN);

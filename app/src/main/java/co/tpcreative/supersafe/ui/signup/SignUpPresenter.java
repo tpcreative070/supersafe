@@ -51,7 +51,7 @@ public class SignUpPresenter extends Presenter<BaseView<User>> {
                         view.onError(onResponse.responseMessage, EnumStatus.SIGN_UP);
                     } else {
                         final DataResponse mData = onResponse.data;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mData.user));
+                        Utils.setUserPreShare(mData.user);
                         view.onSuccessful(onResponse.responseMessage, EnumStatus.SIGN_UP, mData.user);
                         ServiceManager.getInstance().onInitConfigurationFile();
                     }

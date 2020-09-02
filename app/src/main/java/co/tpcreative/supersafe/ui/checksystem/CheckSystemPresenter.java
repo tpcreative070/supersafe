@@ -149,7 +149,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                     else{
                         final DataResponse mData = onResponse.data;
                         mUser = mData.user;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mData.user));
+                        Utils.setUserPreShare(mUser);
                         String email = mUser.email;
                         if (mUser.change){
                             email = mUser.other_email;
@@ -211,7 +211,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 Utils.Log(TAG,"Saved.............");
                             }
                             SuperSafeApplication.getInstance().writeUserSecret(mUser);
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            Utils.setUserPreShare(mUser);
                             mUser = User.getInstance().getUserInfo();
                         }
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
@@ -271,7 +271,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                     mUser.email = request.new_user_id;
                                     mUser.other_email = request.other_email;
                                     mUser.change = true;
-                                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                    Utils.setUserPreShare(mUser);
                                 }
                                 else{
                                     Utils.Log(TAG,"User is null");
@@ -331,8 +331,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         User mUser = User.getInstance().getUserInfo();
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
-
+                        Utils.setUserPreShare(mUser);
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                         onSendMail(emailToken);
                     }
@@ -434,7 +433,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         token.access_token = onResponse.token_type + " " + onResponse.access_token;
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
@@ -528,7 +527,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         mUser = User.getInstance().getUserInfo();
                         mUser.verified = true;
                         mUser.cloud_id = mCloud.cloud_id;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         view.onSuccessful(onResponse.message,EnumStatus.CREATE);
                     }
                     Utils.Log(TAG,"User info "+ new Gson().toJson(mUser));

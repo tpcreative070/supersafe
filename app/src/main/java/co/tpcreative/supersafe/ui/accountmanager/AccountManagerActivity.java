@@ -191,7 +191,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
                 public void onCompleted() {
                     mUser.verified = false;
                     mUser.driveConnected = false;
-                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                    Utils.setUserPreShare(mUser);
                     onBackPressed();
                 }
                 @Override

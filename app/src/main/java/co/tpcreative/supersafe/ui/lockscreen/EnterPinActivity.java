@@ -538,7 +538,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
                 Utils.Log(TAG, "Exporting successful");
                 final User mUser = SuperSafeApplication.getInstance().readUseSecret();
                 if (mUser != null) {
-                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                    Utils.setUserPreShare(mUser);
                     Navigator.onMoveToMainTab(EnterPinActivity.this);
                     presenter.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE);
                 }

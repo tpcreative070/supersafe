@@ -105,7 +105,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
             checkout.isPurchasedLifeTime = true;
         }
         user.checkout = checkout;
-        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(user));
+        Utils.setUserPreShare(user);
         final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.sku,purchase.state.name(),purchase.token);
         Utils.onWriteLog(new Gson().toJson(mCheckout),EnumStatus.CHECKOUT);
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(mCheckout)

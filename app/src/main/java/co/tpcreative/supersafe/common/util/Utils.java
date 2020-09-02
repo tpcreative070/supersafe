@@ -832,12 +832,9 @@ public class Utils {
 
     public static String getUserId(){
         try{
-            String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user),null);
-            if (value!=null){
-                final User mUser = new Gson().fromJson(value,User.class);
-                if (mUser!=null){
-                    return mUser.email;
-                }
+            final User mUser = User.getInstance().getUserInfo();
+            if (mUser!=null){
+                return mUser.email;
             }
         }
         catch (Exception e){
@@ -873,13 +870,9 @@ public class Utils {
 
     public static String getAccessToken() {
         try {
-            String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), "");
-            User user = new Gson().fromJson(value, User.class);
+            User user = User.getInstance().getUserInfo();
             if (user != null) {
                return user.author.session_token;
-            }
-            else{
-                 return user.author.session_token;
             }
         } catch (Exception e) {
         }
@@ -1174,6 +1167,7 @@ public class Utils {
     }
 
     public static void setUserPreShare(User user){
+        Utils.Log(TAG,"Access token set "+user.author.refresh_token);
         PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
     }
 

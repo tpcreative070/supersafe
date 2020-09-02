@@ -34,7 +34,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
         }
         else{
             this.mUser = SuperSafeApplication.getInstance().readUseSecret();
-            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(this.mUser));
+            Utils.setUserPreShare(this.mUser);
         }
     }
 
@@ -70,7 +70,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            Utils.setUserPreShare(mUser);
                         }
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY);
                     }
@@ -123,7 +123,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
                         this.mUser = mUser;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);
                         Utils.Log(TAG,new Gson().toJson(mUser));
                     }

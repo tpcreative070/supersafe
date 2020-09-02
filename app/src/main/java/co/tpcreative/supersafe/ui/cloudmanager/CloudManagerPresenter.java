@@ -191,7 +191,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
                         if (mUser.driveAbout != null) {
                             Utils.Log(TAG, "onSuccessful 3");
                             mUser.driveAbout.inAppUsed = 0;
-                            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), new Gson().toJson(mUser));
+                            Utils.setUserPreShare(mUser);
                             view.onSuccessful("Successful", status);
                         }
                     }
@@ -208,7 +208,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
                         if (mUser != null) {
                             if (mUser.driveAbout != null) {
                                 mUser.driveAbout.inAppUsed = countSize;
-                                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user), new Gson().toJson(mUser));
+                                Utils.setUserPreShare(mUser);
                                 view.onSuccessful("Successful", status);
                             }
                         }

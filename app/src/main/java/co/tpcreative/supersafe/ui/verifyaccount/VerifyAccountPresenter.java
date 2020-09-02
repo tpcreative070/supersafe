@@ -76,7 +76,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                                 mUser.premium = mData.premium;
                             }
                             SuperSafeApplication.getInstance().writeUserSecret(mUser);
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            Utils.setUserPreShare(mUser);
                         }
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
@@ -134,7 +134,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                                     mUser.email = request.new_user_id;
                                     mUser.other_email = request.other_email;
                                     mUser.change = true;
-                                    PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                                    Utils.setUserPreShare(mUser);
                                 }
                                 else{
                                     Utils.Log(TAG,"User is null");
@@ -190,7 +190,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
                         this.mUser = mUser;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                         onSendMail(emailToken);
                     }
@@ -294,7 +294,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                     else{
                         final DataResponse mData = onResponse.data;
                         mUser = mData.user;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mData.user));
+                        Utils.setUserPreShare(mData.user);
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                         onSendMail(emailToken);
                         ServiceManager.getInstance().onInitConfigurationFile();
@@ -402,7 +402,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
                         this.mUser = mUser;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);

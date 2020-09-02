@@ -186,7 +186,7 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
                     subscriber.onNext(true);
                     subscriber.onComplete();
                     Utils.Log(TAG, "Exporting successful");
-                    PrefsController.putString(getString(R.string.key_user), new Gson().toJson(presenter.mUser));
+                    Utils.setUserPreShare(presenter.mUser);
                     Navigator.onMoveToMainTab(RestoreActivity.this);
                 }
                 @Override

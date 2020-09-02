@@ -70,7 +70,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         final User mUser = User.getInstance().getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
-                            PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                            Utils.setUserPreShare(mUser);
                         }
                     }
                     Utils.Log(TAG, "Body : " + new Gson().toJson(onResponse));
@@ -172,7 +172,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         token.access_token = onResponse.token_type + " " + onResponse.access_token;
                         token.refresh_token = onResponse.refresh_token;
                         token.token_type = onResponse.token_type;
-                        PrefsController.putString(getString(R.string.key_user), new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         onAddEmailToken();
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH);
@@ -269,7 +269,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         final User mUser = User.getInstance().getUserInfo();
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
-                        PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
+                        Utils.setUserPreShare(mUser);
                         final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.UNLOCK_ALBUMS);
                         onSendMail(emailToken);
                         view.onSuccessful(onResponse.message,EnumStatus.REQUEST_CODE);

@@ -46,7 +46,7 @@ public class SingletonResetPin {
                 final User mUser = User.getInstance().getUserInfo();
                 Utils.Log(TAG,new Gson().toJson(mUser));
                 mUser.isWaitingSendMail = true;
-                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+                Utils.setUserPreShare(mUser);
                 mCountDownTimer= null;
                 ServiceManager.getInstance().onSendEmail();
                 ServiceManager.getInstance().setIsWaitingSendMail(false);
@@ -62,14 +62,14 @@ public class SingletonResetPin {
             ServiceManager.getInstance().setIsWaitingSendMail(false);
             final User mUser = User.getInstance().getUserInfo();
             mUser.isWaitingSendMail = false;
-            PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+            Utils.setUserPreShare(mUser);
         }
         else{
             try {
                 ServiceManager.getInstance().setIsWaitingSendMail(false);
                 final User mUser = User.getInstance().getUserInfo();
                 mUser.isWaitingSendMail = false;
-                PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(mUser));
+                Utils.setUserPreShare(mUser);
             }
             catch (Exception e){
                 Answers.getInstance().logContentView(new ContentViewEvent()
