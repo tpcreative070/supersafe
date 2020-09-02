@@ -242,9 +242,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 PrefsController.putString(getString(R.string.key_user),new Gson().toJson(mUser));
                                 view.onSuccessful(onResponse.message,EnumStatus.UPDATE_USER_TOKEN);
                                 Utils.onWriteLog(new Gson().toJson(mUser),EnumStatus.UPDATE_USER_TOKEN);
-                                ServiceManager.getInstance().onPreparingSyncData();
                                 onDeleteOldAccessToken(mUserRequest);
-                                isCallRefreshToken = false;
                             }
                         }
                     }
@@ -289,8 +287,11 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onResponse -> {
                     if (onResponse.error){
-                        view.onError(onResponse.message,EnumStatus.DELETE_OLD_ACCESS_TOKEN);
+                        view.onError(onResponse.responseMessage,EnumStatus.DELETE_OLD_ACCESS_TOKEN);
+                    }else{
+                        ServiceManager.getInstance().onPreparingSyncData();
                     }
+                    isCallRefreshToken = false;
                     Utils.Log(TAG, "Body delele old access token: " + new Gson().toJson(onResponse));
                 }, throwable -> {
                     if (throwable instanceof HttpException) {
@@ -313,6 +314,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
                     }
+                    isCallRefreshToken = false;
                 }));
     }
 
@@ -737,6 +739,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             entityModel.isSyncOwnServer = true;
             entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
         }
+        final EnumFormatType mFormat = EnumFormatType.values()[entityModel.formatType];
+        if (mFormat==EnumFormatType.AUDIO || mFormat== EnumFormatType.FILES){
+            entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
+        }
         /*Check imported data before sync data*/
         checkImportedDataBeforeSyncData(entityModel);
         final SyncItemsRequest mRequest =  new SyncItemsRequest(user.email,user.cloud_id,SuperSafeApplication.getInstance().getDeviceId(),entityModel);
@@ -1102,6 +1108,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         entityModel.isSyncOwnServer = true;
                         entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
                         Utils.Log(TAG,"Synced already....");
+                    }
+                    final EnumFormatType mFormat = EnumFormatType.values()[entityModel.formatType];
+                    if (mFormat==EnumFormatType.AUDIO || mFormat== EnumFormatType.FILES){
+                        entityModel.statusProgress = EnumStatusProgress.DONE.ordinal();
                     }
                     /*Check saver space*/
                     if (!isDownloadToExport){
