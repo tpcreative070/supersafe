@@ -20,6 +20,9 @@ public class UserRequest implements Serializable {
             return;
         }
         final Authorization mAuthor = mUser.author;
+        if (mAuthor==null){
+            return;
+        }
         this.user_id = mUser.email;
         this.refresh_token = mAuthor.refresh_token;
         this.public_key = mAuthor.public_key;
