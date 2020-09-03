@@ -1134,6 +1134,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }else {
                         items.thumbnailSync = true;
                     }
+                    final EnumFormatType mFormat = EnumFormatType.values()[items.formatType];
+                    if (mFormat==EnumFormatType.AUDIO || mFormat== EnumFormatType.FILES){
+                        items.statusProgress = EnumStatusProgress.DONE.ordinal();
+                    }
                     /*Check saver space*/
                     if (!isDownloadToExport){
                         checkSaverSpace(items,items.isOriginalGlobalId);

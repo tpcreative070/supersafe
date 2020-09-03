@@ -93,7 +93,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
         });
         InstanceGenerator.getInstance(this);
         mInstance = this;
-        isLive = false;
+        isLive = true;
         Fabric.with(this, new Crashlytics());
         ViewTarget.setTagId(R.id.fab_glide_tag);
         /*Init own service api*/
