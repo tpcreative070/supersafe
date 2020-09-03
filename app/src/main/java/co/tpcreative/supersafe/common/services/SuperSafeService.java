@@ -165,6 +165,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (mUser==null){
             return;
         }
+        final Authorization mAuthor = mUser.author;
+        if (mAuthor==null){
+            return;
+        }
         subscriptions.add(SuperSafeApplication.serverAPI.onUserInfo(new UserRequest())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
