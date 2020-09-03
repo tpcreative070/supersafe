@@ -5,11 +5,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import com.google.android.cameraview.CameraView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.otaliastudios.cameraview.CameraListener;
+import com.otaliastudios.cameraview.CameraOptions;
+import com.otaliastudios.cameraview.CameraView;
+import com.otaliastudios.cameraview.PictureResult;
+import com.otaliastudios.cameraview.controls.Facing;
+import com.otaliastudios.cameraview.controls.Flash;
+import com.otaliastudios.cameraview.controls.Grid;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -32,10 +39,10 @@ public class CameraActivity extends BaseActivity implements
 
     private static final String TAG = CameraActivity.class.getSimpleName();
 
-    private static final int[] FLASH_OPTIONS = {
-            CameraView.FLASH_AUTO,
-            CameraView.FLASH_OFF,
-            CameraView.FLASH_ON,
+    private static final Flash[] FLASH_OPTIONS = {
+            Flash.AUTO,
+            Flash.OFF,
+            Flash.ON,
     };
 
     private static final int[] FLASH_ICONS = {
@@ -83,9 +90,12 @@ public class CameraActivity extends BaseActivity implements
                     break;
                 case R.id.btnSwitch:
                     if (mCameraView != null) {
-                        int facing = mCameraView.getFacing();
-                        mCameraView.setFacing(facing == CameraView.FACING_FRONT ?
-                                CameraView.FACING_BACK : CameraView.FACING_FRONT);
+                        Facing facing = mCameraView.getFacing();
+                        if (facing == Facing.FRONT){
+                            mCameraView.setFacing(Facing.BACK);
+                        }else{
+                            mCameraView.setFacing(Facing.FRONT);
+                        }
                     }
                     break;
                 case R.id.btnDone :
@@ -96,7 +106,6 @@ public class CameraActivity extends BaseActivity implements
         }
     };
 
-
     private MainCategoryModel mainCategories;
 
     @Override
@@ -104,7 +113,8 @@ public class CameraActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         if (mCameraView != null) {
-            mCameraView.addCallback(mCallback);
+            mCameraView.addCameraListener(mCallback);
+            mCameraView.setLifecycleOwner(this);
         }
         take_picture.setOnClickListener(mOnClickListener);
         btnDone.setOnClickListener(mOnClickListener);
@@ -123,18 +133,19 @@ public class CameraActivity extends BaseActivity implements
         catch (Exception e){
             Utils.onWriteLog(""+e.getMessage(), EnumStatus.WRITE_FILE);
         }
+        btnAutoFocus.setVisibility(View.INVISIBLE);
     }
 
     @OnClick(R.id.btnAutoFocus)
     public void onClickedFocus(View view){
         if (mCameraView!=null){
-            if (mCameraView.getAutoFocus()){
+            if (mCameraView.getGrid() == Grid.OFF){
                 btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
-                mCameraView.setAutoFocus(false);
+                mCameraView.setGrid(Grid.DRAW_3X3);
             }
             else {
                 btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
-                mCameraView.setAutoFocus(true);
+                mCameraView.setGrid(Grid.OFF);
             }
         }
     }
@@ -155,13 +166,15 @@ public class CameraActivity extends BaseActivity implements
         if (!EventBus.getDefault().isRegistered(this)){
             EventBus.getDefault().register(this);
         }
-        mCameraView.start();
-        if (mCameraView.getAutoFocus()){
-            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
+        if (mCameraView!=null){
+            mCameraView.open();
         }
-        else{
-            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
-        }
+//        if (mCameraView.getAutoFocus()){
+//            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
+//        }
+//        else{
+//            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+//        }
         GalleryCameraMediaManager.getInstance().setProgressing(false);
         onRegisterHomeWatcher();
     }
@@ -170,6 +183,9 @@ public class CameraActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
+        if (mCameraView!=null){
+            mCameraView.destroy();
+        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -185,9 +201,11 @@ public class CameraActivity extends BaseActivity implements
 
     @Override
     protected void onPause() {
-        mCameraView.stop();
         Utils.Log(TAG,"onPause");
         super.onPause();
+        if (mCameraView!=null){
+            mCameraView.close();
+        }
     }
 
     @Override
@@ -200,21 +218,17 @@ public class CameraActivity extends BaseActivity implements
         super.onBackPressed();
     }
 
-    private CameraView.Callback mCallback
-            = new CameraView.Callback() {
+    private CameraListener mCallback = new CameraListener() {
         @Override
-        public void onCameraOpened(CameraView cameraView) {
-            Utils.Log(TAG, "onCameraOpened");
-        }
-        @Override
-        public void onCameraClosed(CameraView cameraView) {
-            Utils.Log(TAG, "onCameraClosed");
+        public void onCameraOpened(@NonNull CameraOptions options) {
+            super.onCameraOpened(options);
         }
 
         @Override
-        public void onPictureTaken(CameraView cameraView, final byte[] data,int orientation) {
-            Utils.Log(TAG, "onPictureTaken " + data.length);
-            Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT).show();
+        public void onPictureTaken(@NonNull PictureResult result) {
+            super.onPictureTaken(result);
+            byte[] data = result.getData();
+            Toast.makeText(CameraActivity.this, R.string.picture_taken, Toast.LENGTH_SHORT).show();
             if (mainCategories==null){
                 Utils.Log(TAG, "Local id is null");
                 Utils.onWriteLog("Main categories is null",EnumStatus.WRITE_FILE);
@@ -222,6 +236,32 @@ public class CameraActivity extends BaseActivity implements
             }
             isReload = true;
             ServiceManager.getInstance().onSaveDataOnCamera(data,mainCategories);
+            Utils.Log(TAG,"take picture");
         }
     };
+
+//    private CameraView.Callback mCallback
+//            = new CameraView.Callback() {
+//        @Override
+//        public void onCameraOpened(CameraView cameraView) {
+//            Utils.Log(TAG, "onCameraOpened");
+//        }
+//        @Override
+//        public void onCameraClosed(CameraView cameraView) {
+//            Utils.Log(TAG, "onCameraClosed");
+//        }
+//
+//        @Override
+//        public void onPictureTaken(CameraView cameraView, final byte[] data,int orientation) {
+//            Utils.Log(TAG, "onPictureTaken " + data.length);
+//            Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT).show();
+//            if (mainCategories==null){
+//                Utils.Log(TAG, "Local id is null");
+//                Utils.onWriteLog("Main categories is null",EnumStatus.WRITE_FILE);
+//                return;
+//            }
+//            isReload = true;
+//            ServiceManager.getInstance().onSaveDataOnCamera(data,mainCategories);
+//        }
+//    };
 }

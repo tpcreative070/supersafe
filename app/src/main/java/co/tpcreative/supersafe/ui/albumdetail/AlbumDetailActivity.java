@@ -656,6 +656,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
         try {
             boolean isVertical = PrefsController.getBoolean(getString(R.string.key_vertical_adapter),false);
             if (isVertical){
+                recyclerView.getRecycledViewPool().clear();
                 verticalAdapter = new AlbumDetailVerticalAdapter(getLayoutInflater(),this,this);
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 recyclerView.setLayoutManager(mLayoutManager);
@@ -667,6 +668,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
                 verticalAdapter.setDataSource(presenter.mList);
             }
             else{
+                recyclerView.getRecycledViewPool().clear();
                 adapter = new AlbumDetailAdapter(layoutInflater, getApplicationContext(), this);
                 RecyclerView.LayoutManager mLayoutManager = new NpaGridLayoutManager(getApplicationContext(), 3);
                 recyclerView.setLayoutManager(mLayoutManager);
