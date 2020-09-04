@@ -724,7 +724,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
         try{
             final MainCategoryEntity mResult =  instance.mainCategoriesDao().loadItemLocalId(categories_local_id,isFakePin);
             if (mResult!=null){
-                new MainCategoryEntityModel(mResult);
+                return new MainCategoryEntityModel(mResult);
             }
         }
         catch (Exception e){
