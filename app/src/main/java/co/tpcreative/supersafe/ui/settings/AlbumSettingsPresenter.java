@@ -45,6 +45,7 @@ public class AlbumSettingsPresenter extends Presenter<BaseView> {
         }
         try{
             final MainCategoryModel mainCategories = SQLHelper.getCategoriesLocalId(mMainCategories.categories_local_id,mMainCategories.isFakePin);
+            Utils.Log(TAG,"Reload " + new Gson().toJson(mainCategories));
             if (mainCategories!=null){
                 this.mMainCategories = mainCategories;
                 view.onSuccessful("Successful",EnumStatus.RELOAD);

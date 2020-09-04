@@ -54,8 +54,6 @@ import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
-import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -73,7 +71,6 @@ import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 
 public class MainTabActivity extends BaseGoogleApi implements BaseView{
     private static final String TAG = MainTabActivity.class.getSimpleName();
@@ -118,17 +115,19 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
             onSuggestionSyncData();
         }
         PremiumManager.getInstance().onStartInAppPurchase();
-        if (presenter.mUser.driveConnected){
-            if (NetworkUtil.pingIpAddress(this)) {
-                return;
-            }
-            Utils.onObserveData(2000, new Listener() {
-                @Override
-                public void onStart() {
-                    onAnimationIcon(EnumStatus.DONE);
+        if (presenter.mUser!=null){
+            if (presenter.mUser.driveConnected){
+                if (NetworkUtil.pingIpAddress(this)) {
+                    return;
                 }
-            });
-        };
+                Utils.onObserveData(2000, new Listener() {
+                    @Override
+                    public void onStart() {
+                        onAnimationIcon(EnumStatus.DONE);
+                    }
+                });
+            };
+        }
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken());
     }
 

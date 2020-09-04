@@ -346,9 +346,8 @@ public class Navigator {
     public static void onMoveAlbumCover(Activity context, MainCategoryModel categories){
         Intent intent = new Intent(context, AlbumCoverActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MainCategoryEntity.class.getSimpleName(),categories);
+        bundle.putSerializable(MainCategoryModel.class.getSimpleName(),categories);
         intent.putExtras(bundle);
         context.startActivityForResult(intent,ALBUM_COVER);
     }
-
 }

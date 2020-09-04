@@ -619,6 +619,8 @@ public class Utils {
         }
         final Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         intent.setType("*/*");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
         context.startActivityForResult(Intent.createChooser(intent, context.getString(R.string.share)),Navigator.SHARE);
     }

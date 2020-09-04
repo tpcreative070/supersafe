@@ -499,6 +499,7 @@ public class AlbumSettingsActivity extends BaseActivity implements BaseView {
                 if (resultCode == RESULT_OK) {
                     onSetUpPreference();
                     SingletonPrivateFragment.getInstance().onUpdateView();
+                    Utils.Log(TAG,"onActivityResult...");
                 }
                 break;
             }
