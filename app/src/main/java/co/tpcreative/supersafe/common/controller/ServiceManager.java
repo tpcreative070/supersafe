@@ -66,9 +66,7 @@ public class ServiceManager implements BaseServiceView {
     private Disposable subscriptions;
     private Storage storage = new Storage(SuperSafeApplication.getInstance());
     private Storage mStorage = new Storage(SuperSafeApplication.getInstance());
-    private List<ImportFilesModel> mListImport = new ArrayList<>();
     private List<ExportFiles> mListExport = new ArrayList<>();
-    private List<ItemModel> mListDownLoadFiles = new ArrayList<>();
     private String mProgress;
 
     /*Improved sync data*/
@@ -224,7 +222,8 @@ public class ServiceManager implements BaseServiceView {
                     }else if (status == EnumStatus.SYNC_READY){
                         /*Start sync*/
                         isGetItemList = false;
-                        onPreparingDownloadData(mDownloadList);
+                        SingletonPrivateFragment.getInstance().onUpdateView();
+                        onPreparingSyncCategoryData();
                         Utils.Log(TAG,"Start to sync data.......");
                     }
                 }
@@ -232,96 +231,127 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
-    /*Preparing to delete item from system server*/
-    public void onPreparingDeleteData(){
-        final List<ItemModel> mResult = SQLHelper.getDeleteItemRequest();
-        /*Merged original and thumbnail*/
-        final List<ItemModel> listRequestDelete = Utils.getMergedOriginalThumbnailList(false,mResult);
-        mMapDeleteItem.clear();
-        mMapDeleteItem = Utils.mergeListToHashMap(listRequestDelete);
-        Utils.Log(TAG,"onPreparingDeleteData preparing to delete "+mMapDeleteItem.size());
-        final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDeleteItem);
-        if (itemModel!=null){
-            Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.PROGRESS,"Total Delete category "+mMapDeleteItem.size());
-            onDeleteData(itemModel);
-            Utils.Log(TAG,"Preparing to delete data " + mMapDeleteItem.size());
+    /*Preparing sync category*/
+    public void onPreparingSyncCategoryData(){
+        final List<MainCategoryModel> mResult = SQLHelper.requestSyncCategories(false,false);
+        if (mResult.size()>0){
+            mMapSyncCategory.clear();
+            mMapSyncCategory = Utils.mergeListToCategoryHashMap(mResult);
+            final MainCategoryModel itemModel = Utils.getArrayOfIndexCategoryHashMap(mMapSyncCategory);
+            if (itemModel!=null){
+                Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.PROGRESS,"Total updating "+mMapSyncCategory.size());
+                Utils.Log(TAG,"onPreparingSyncCategoryData ==> total: "+ mMapSyncCategory.size());
+                onSyncCategoryData(itemModel);
+            }
+        }else{
+           onPreparingUpdateCategoryData();
+        }
+    }
+
+    /*Sync category data*/
+    public void onSyncCategoryData(MainCategoryModel categoryModel){
+        if(myService != null){
+            isSyncCategory = true;
+            myService.onCategoriesSync(categoryModel, new BaseListener() {
+                @Override
+                public void onShowListObjects(List list) {
+
+                }
+
+                @Override
+                public void onShowObjects(Object object) {
+
+                }
+
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    isSyncCategory = false;
+                }
+
+                @Override
+                public void onSuccessful(String message, EnumStatus status) {
+                    isSyncCategory = false;
+                    if (Utils.deletedIndexOfCategoryHashMap(categoryModel,mMapSyncCategory)){
+                        /*Delete local db and folder name*/
+                        final MainCategoryModel mUpdatedItem = Utils.getArrayOfIndexCategoryHashMap(mMapSyncCategory);
+                        if (mUpdatedItem!=null){
+                            onSyncCategoryData(mUpdatedItem);
+                            isSyncCategory = true;
+                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.DONE,new Gson().toJson(categoryModel));
+                            Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
+                        }else{
+                            Utils.Log(TAG,"Update completely...............");
+                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.DONE,new Gson().toJson(categoryModel));
+                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapSyncCategory.size());
+                            onPreparingUpdateCategoryData();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /*Preparing update category*/
+    public void onPreparingUpdateCategoryData(){
+        final List<MainCategoryModel> mResult = SQLHelper.getRequestUpdateCategoryList();
+        if (mResult.size()>0){
+            mMapUpdateCategory.clear();
+            mMapUpdateCategory = Utils.mergeListToCategoryHashMap(mResult);
+            final MainCategoryModel itemModel = Utils.getArrayOfIndexCategoryHashMap(mMapUpdateCategory);
+            if (itemModel!=null){
+                Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.PROGRESS,"Total updating "+mMapUpdateItem.size());
+                Utils.Log(TAG,"onPreparingUpdateCategoryData ==> total: "+ mMapUpdateItem.size());
+                onUpdateCategoryData(itemModel);
+            }
         }else{
             onPreparingDeleteCategoryData();
         }
     }
 
-    public boolean getRequestShareIntent() {
-        return isRequestShareIntent;
-    }
+    public void onUpdateCategoryData(MainCategoryModel itemModel){
+        if(myService != null){
+            isUpdateCategoryData = true;
+            myService.onCategoriesSync(itemModel, new BaseListener() {
+                @Override
+                public void onShowListObjects(List list) {
 
-    public void setRequestShareIntent(boolean requestShareIntent) {
-        isRequestShareIntent = requestShareIntent;
-    }
+                }
 
-    /*Delete item from Google drive and server*/
-    public void onDeleteData(final ItemModel itemModel){
-        if (myService==null){
-            return;
-        }
-        isDeleteItemData = true;
-        /*Request delete item from cloud*/
-        myService.onDeleteCloudItems(itemModel, new BaseListener() {
-            @Override
-            public void onShowListObjects(List list) {
+                @Override
+                public void onShowObjects(Object object) {
 
-            }
-            @Override
-            public void onShowObjects(Object object) {
+                }
 
-            }
-            @Override
-            public void onError(String message, EnumStatus status) {
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    isUpdateCategoryData = false;
+                }
 
-            }
-            @Override
-            public void onSuccessful(String message, EnumStatus status) {
-                /*Request delete item from system*/
-                myService.onDeleteOwnSystem(itemModel, new BaseListener() {
-                    @Override
-                    public void onShowListObjects(List list) {
-
-                    }
-
-                    @Override
-                    public void onShowObjects(Object object) {
-
-                    }
-
-                    @Override
-                    public void onError(String message, EnumStatus status) {
-                        isDeleteItemData = false;
-                    }
-
-                    @Override
-                    public void onSuccessful(String message, EnumStatus status) {
-                        if (Utils.deletedIndexOfHashMap(itemModel,mMapDeleteItem)){
-                            /*Delete local db and folder name*/
-                            Utils.onDeleteItemFolder(itemModel.items_id);
-                            SQLHelper.deleteItem(itemModel);
-                            final ItemModel mDeleteItem = Utils.getArrayOfIndexHashMap(mMapDeleteItem);
-                            if (mDeleteItem!=null){
-                                isDeleteItemData = true;
-                                Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DONE,new Gson().toJson(itemModel));
-                                onDeleteData(mDeleteItem);
-                            }else{
-                                isDeleteItemData = false;
-                                Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DONE,new Gson().toJson(itemModel));
-                                Utils.Log(TAG,"Deleted completely...............");
-                                Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DELETED_ITEM_SUCCESSFULLY,"Total deleted "+mMapDeleteItem.size());
-                                onPreparingDeleteCategoryData();
-                            }
+                @Override
+                public void onSuccessful(String message, EnumStatus status) {
+                    isUpdateCategoryData = false;
+                    if (Utils.deletedIndexOfCategoryHashMap(itemModel,mMapUpdateCategory)){
+                        /*Delete local db and folder name*/
+                        final MainCategoryModel mUpdatedItem = Utils.getArrayOfIndexCategoryHashMap(mMapUpdateCategory);
+                        if (mUpdatedItem!=null){
+                            onUpdateCategoryData(mUpdatedItem);
+                            isUpdateCategoryData = true;
+                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
+                        }else{
+                            Utils.Log(TAG,"Update completely...............");
+                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapUpdateCategory.size());
+                            isUpdateCategoryData = false;
+                            Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
+                            Utils.onPushEventBus(EnumStatus.DONE);
+                            onPreparingDeleteCategoryData();
                         }
                     }
-                });
-            }
-        });
+                }
+            });
+        }
     }
-
 
     /*Preparing to delete category from system server*/
     private void onPreparingDeleteCategoryData(){
@@ -335,7 +365,7 @@ public class ServiceManager implements BaseServiceView {
             onDeleteCategoryData(categoryModel);
             Utils.Log(TAG,"onPreparingDeleteCategoryData to delete data " + mMapDeleteCategory.size());
         }else{
-            onPreparingUpdateItemData();
+           onPreparingDownloadData(mDownloadList);
         }
     }
 
@@ -374,7 +404,7 @@ public class ServiceManager implements BaseServiceView {
                         Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DONE,new Gson().toJson(mainCategoryModel));
                         Utils.Log(TAG,"Deleted completely...............");
                         Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DELETED_CATEGORY_SUCCESSFULLY,"Total uploading "+mMapDeleteCategory.size());
-                        onPreparingUpdateItemData();
+                        onPreparingDownloadData(mDownloadList);
                     }
                 }
             }
@@ -411,98 +441,6 @@ public class ServiceManager implements BaseServiceView {
             }
         }
     }
-
-    public void onPreparingEnableDownloadData(List<ItemModel>globalList){
-        if (isDownloadToExportFiles){
-            return;
-        }
-        List<ItemModel> mergeList = Utils.getMergedOriginalThumbnailList(false,globalList);
-        Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear duplicated data "+ new Gson().toJson(mergeList));
-        if (mergeList!=null){
-            if (mergeList.size()>0){
-                mMapDownloadToExportFiles.clear();
-                mMapDownloadToExportFiles = Utils.mergeListToHashMap(mergeList);
-                Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear merged data "+ new Gson().toJson(mMapDownloadToExportFiles));
-                Utils.Log(TAG,"onPreparingEnableDownloadData ==> merged data "+ new Gson().toJson(mergeList));
-                final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
-                if (itemModel!=null){
-                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownloadToExportFiles.size());
-                    Utils.Log(TAG,"onPreparingEnableDownloadData to download "+ new Gson().toJson(itemModel));
-                    Utils.Log(TAG,"onPreparingEnableDownloadData to download total  "+ mMapDownloadToExportFiles.size());
-                    onDownLoadDataToExportFiles(itemModel);
-                }
-            }
-        }
-    }
-
-    /*Download file from Google drive*/
-    private void onDownLoadDataToExportFiles(final ItemModel itemModel){
-        if (myService!=null){
-            isDownloadToExportFiles = true;
-            mStart = 20;
-            myService.onDownloadFile(itemModel,true, new DownloadServiceListener() {
-                @Override
-                public void onProgressDownload(int percentage) {
-                    isDownloadToExportFiles = true;
-                    if (mStart == percentage){
-                        Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Progressing "+ mStart);
-                        mStart += 20;
-                    }
-                }
-                @Override
-                public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
-                    Utils.Log(TAG,"onDownLoadCompleted ==> onDownLoadCompleted:" + file_name.getAbsolutePath());
-                    if (Utils.deletedIndexOfHashMap(itemModel,mMapDownloadToExportFiles)){
-                        /*Delete local db and folder name*/
-                        final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
-                        if (mDownloadItem!=null){
-                            onDownLoadDataToExportFiles(mDownloadItem);
-                            isDownloadToExportFiles = true;
-                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
-                            Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
-                        }else{
-                            Utils.Log(TAG,"Download completely...............");
-                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
-                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownloadToExportFiles.size());
-                            isDownloadToExportFiles = false;
-                            Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
-                        }
-                    }
-                }
-                @Override
-                public void onError(String message, EnumStatus status) {
-                    Utils.Log(TAG,"onDownLoadData ==> onError:" + message);
-                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.ERROR,"onDownLoadData ==> onError "+message);
-                    isDownloadToExportFiles = false;
-                    if (status == EnumStatus.NO_SPACE_LEFT){
-                        Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT);
-                        Utils.onDeleteItemFolder(itemModel.items_id);
-                        onPreparingDeleteData();
-                    }
-                    if (status == EnumStatus.REQUEST_NEXT_DOWNLOAD){
-                        if (Utils.deletedIndexOfHashMap(itemModel,mMapDownloadToExportFiles)){
-                            /*Delete local db and folder name*/
-                            final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
-                            if (mDownloadItem!=null){
-                                onDownLoadDataToExportFiles(mDownloadItem);
-                                isDownloadToExportFiles = true;
-                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
-                                Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
-                            }else{
-                                Utils.Log(TAG,"Download completely...............");
-                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
-                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownloadToExportFiles.size());
-                                isDownloadToExportFiles = false;
-                                /*Download completed for export files*/
-                                Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
 
     /*Download file from Google drive*/
     private void onDownLoadData(final ItemModel itemModel){
@@ -578,11 +516,15 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
+
     /*Preparing upload data*/
     private void onPreparingUploadData(){
         Utils.Log(TAG,"onPreparingUploadData");
         if (!User.getInstance().isCheckAllowUpload()){
             Utils.Log(TAG,"onPreparingUploadData ==> Left 0. Please wait for next month or upgrade to premium version");
+            Utils.onPushEventBus(EnumStatus.DONE);
+            Utils.onPushEventBus(EnumStatus.REFRESH);
+            onPreparingUpdateItemData();
             return;
         }
         /*Preparing upload file to Google drive*/
@@ -599,7 +541,7 @@ public class ServiceManager implements BaseServiceView {
             }
         }else{
             Utils.Log(TAG,"Not found item to upload");
-            onPreparingDeleteData();
+            onPreparingUpdateItemData();
         }
     }
 
@@ -647,7 +589,7 @@ public class ServiceManager implements BaseServiceView {
                                     isUploadData = true;
                                 }else{
                                     isUploadData = false;
-                                    onPreparingDeleteData();
+                                    onPreparingUpdateItemData();
                                     Utils.Log(TAG,"Upload completely...............");
                                     Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                                     Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
@@ -678,7 +620,7 @@ public class ServiceManager implements BaseServiceView {
                                 isUploadData = true;
                             }else{
                                 isUploadData = false;
-                                onPreparingDeleteData();
+                                onPreparingUpdateItemData();
                                 Utils.Log(TAG,"Upload completely...............");
                                 Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
                                 Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
@@ -706,7 +648,7 @@ public class ServiceManager implements BaseServiceView {
                 onUpdateItemData(itemModel);
             }
         }else{
-            onPreparingUpdateCategoryData();
+            onPreparingDeleteData();
         }
     }
 
@@ -748,7 +690,7 @@ public class ServiceManager implements BaseServiceView {
                             isUpdateItemData = false;
                             Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
                             Utils.onPushEventBus(EnumStatus.DONE);
-                            onPreparingUpdateCategoryData();
+                            onPreparingDeleteData();
                         }
                     }
                 }
@@ -756,85 +698,25 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
-    /*Preparing update category*/
-    public void onPreparingUpdateCategoryData(){
-        final List<MainCategoryModel> mResult = SQLHelper.getRequestUpdateCategoryList();
-        if (mResult.size()>0){
-            mMapUpdateCategory.clear();
-            mMapUpdateCategory = Utils.mergeListToCategoryHashMap(mResult);
-            final MainCategoryModel itemModel = Utils.getArrayOfIndexCategoryHashMap(mMapUpdateCategory);
-            if (itemModel!=null){
-                Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.PROGRESS,"Total updating "+mMapUpdateItem.size());
-                Utils.Log(TAG,"onPreparingUpdateCategoryData ==> total: "+ mMapUpdateItem.size());
-                onUpdateCategoryData(itemModel);
-            }
-        }else{
-           onPreparingSyncCategoryData();
-        }
-    }
 
-     public void onUpdateCategoryData(MainCategoryModel itemModel){
-        if(myService != null){
-            isUpdateCategoryData = true;
-            myService.onCategoriesSync(itemModel, new BaseListener() {
-                @Override
-                public void onShowListObjects(List list) {
-
-                }
-
-                @Override
-                public void onShowObjects(Object object) {
-
-                }
-
-                @Override
-                public void onError(String message, EnumStatus status) {
-                    isUpdateCategoryData = false;
-                }
-
-                @Override
-                public void onSuccessful(String message, EnumStatus status) {
-                    isUpdateCategoryData = false;
-                    if (Utils.deletedIndexOfCategoryHashMap(itemModel,mMapUpdateCategory)){
-                        /*Delete local db and folder name*/
-                        final MainCategoryModel mUpdatedItem = Utils.getArrayOfIndexCategoryHashMap(mMapUpdateCategory);
-                        if (mUpdatedItem!=null){
-                            onUpdateCategoryData(mUpdatedItem);
-                            isUpdateCategoryData = true;
-                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.DONE,new Gson().toJson(itemModel));
-                            Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
-                        }else{
-                            Utils.Log(TAG,"Update completely...............");
-                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.DONE,new Gson().toJson(itemModel));
-                            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapUpdateCategory.size());
-                            isUpdateCategoryData = false;
-                            Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
-                            Utils.onPushEventBus(EnumStatus.DONE);
-                            onPreparingSyncCategoryData();
-                        }
-                    }
-                }
-            });
-        }
-     }
-
-     /*Preparing sync category*/
-    public void onPreparingSyncCategoryData(){
-        final List<MainCategoryModel> mResult = SQLHelper.requestSyncCategories(false,false);
-        if (mResult.size()>0){
-            mMapSyncCategory.clear();
-            mMapSyncCategory = Utils.mergeListToCategoryHashMap(mResult);
-            final MainCategoryModel itemModel = Utils.getArrayOfIndexCategoryHashMap(mMapSyncCategory);
-            if (itemModel!=null){
-                Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.PROGRESS,"Total updating "+mMapSyncCategory.size());
-                Utils.Log(TAG,"onPreparingSyncCategoryData ==> total: "+ mMapSyncCategory.size());
-                onSyncCategoryData(itemModel);
-            }
+    /*Preparing to delete item from system server*/
+    public void onPreparingDeleteData(){
+        final List<ItemModel> mResult = SQLHelper.getDeleteItemRequest();
+        /*Merged original and thumbnail*/
+        final List<ItemModel> listRequestDelete = Utils.getMergedOriginalThumbnailList(false,mResult);
+        mMapDeleteItem.clear();
+        mMapDeleteItem = Utils.mergeListToHashMap(listRequestDelete);
+        Utils.Log(TAG,"onPreparingDeleteData preparing to delete "+mMapDeleteItem.size());
+        final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDeleteItem);
+        if (itemModel!=null){
+            Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.PROGRESS,"Total Delete category "+mMapDeleteItem.size());
+            onDeleteData(itemModel);
+            Utils.Log(TAG,"Preparing to delete data " + mMapDeleteItem.size());
         }else{
             Utils.Log(TAG,"Not found item to upload");
             Utils.Log(TAG,"Not found item to delete ");
             Utils.Log(TAG,"Sync items completely======>ready to test");
-            isSyncCategory = false;
+            isDeleteItemData = false;
             isHandleLogic = false;
             Utils.onPushEventBus(EnumStatus.DONE);
             Utils.checkRequestUploadItemData();
@@ -842,53 +724,74 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
-    /*Sync category data*/
-    public void onSyncCategoryData(MainCategoryModel categoryModel){
-        if(myService != null){
-            isSyncCategory = true;
-            myService.onCategoriesSync(categoryModel, new BaseListener() {
-                @Override
-                public void onShowListObjects(List list) {
+    /*Delete item from Google drive and server*/
+    public void onDeleteData(final ItemModel itemModel){
+        if (myService==null){
+            return;
+        }
+        isDeleteItemData = true;
+        /*Request delete item from cloud*/
+        myService.onDeleteCloudItems(itemModel, new BaseListener() {
+            @Override
+            public void onShowListObjects(List list) {
 
-                }
+            }
+            @Override
+            public void onShowObjects(Object object) {
 
-                @Override
-                public void onShowObjects(Object object) {
+            }
+            @Override
+            public void onError(String message, EnumStatus status) {
 
-                }
+            }
+            @Override
+            public void onSuccessful(String message, EnumStatus status) {
+                /*Request delete item from system*/
+                myService.onDeleteOwnSystem(itemModel, new BaseListener() {
+                    @Override
+                    public void onShowListObjects(List list) {
 
-                @Override
-                public void onError(String message, EnumStatus status) {
-                    isSyncCategory = false;
-                }
+                    }
 
-                @Override
-                public void onSuccessful(String message, EnumStatus status) {
-                    isSyncCategory = false;
-                    if (Utils.deletedIndexOfCategoryHashMap(categoryModel,mMapSyncCategory)){
-                        /*Delete local db and folder name*/
-                        final MainCategoryModel mUpdatedItem = Utils.getArrayOfIndexCategoryHashMap(mMapSyncCategory);
-                        if (mUpdatedItem!=null){
-                            onSyncCategoryData(mUpdatedItem);
-                            isSyncCategory = true;
-                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.DONE,new Gson().toJson(categoryModel));
-                            Utils.Log(TAG,"Next update item..............." + new Gson().toJson(mUpdatedItem));
-                        }else{
-                            Utils.Log(TAG,"Update completely...............");
-                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.DONE,new Gson().toJson(categoryModel));
-                            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC,EnumStatus.UPDATED_COMPLETED,"Total updating "+mMapSyncCategory.size());
-                            isSyncCategory = false;
-                            isHandleLogic = false;
-                            Utils.onPushEventBus(EnumStatus.UPDATED_COMPLETED);
-                            Utils.onPushEventBus(EnumStatus.DONE);
-                            Utils.checkRequestUploadItemData();
-                            SingletonPrivateFragment.getInstance().onUpdateView();
-                            Utils.Log(TAG,"Sync items completely======>ready to test");
+                    @Override
+                    public void onShowObjects(Object object) {
+
+                    }
+
+                    @Override
+                    public void onError(String message, EnumStatus status) {
+                        isDeleteItemData = false;
+                    }
+
+                    @Override
+                    public void onSuccessful(String message, EnumStatus status) {
+                        if (Utils.deletedIndexOfHashMap(itemModel,mMapDeleteItem)){
+                            /*Delete local db and folder name*/
+                            Utils.onDeleteItemFolder(itemModel.items_id);
+                            SQLHelper.deleteItem(itemModel);
+                            final ItemModel mDeleteItem = Utils.getArrayOfIndexHashMap(mMapDeleteItem);
+                            if (mDeleteItem!=null){
+                                isDeleteItemData = true;
+                                Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                onDeleteData(mDeleteItem);
+                            }else{
+                                isDeleteItemData = false;
+                                Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                Utils.Log(TAG,"Deleted completely...............");
+                                Utils.onWriteLog(EnumStatus.DELETE,EnumStatus.DELETED_ITEM_SUCCESSFULLY,"Total deleted "+mMapDeleteItem.size());
+                                Utils.Log(TAG,"Not found item to upload");
+                                Utils.Log(TAG,"Not found item to delete ");
+                                Utils.Log(TAG,"Sync items completely======>ready to test");
+                                isHandleLogic = false;
+                                Utils.onPushEventBus(EnumStatus.DONE);
+                                Utils.checkRequestUploadItemData();
+                                SingletonPrivateFragment.getInstance().onUpdateView();
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
 
     public void onInsertItem(ItemModel itemRequest,String drive_id, ServiceManagerInsertItem ls){
@@ -1670,6 +1573,99 @@ public class ServiceManager implements BaseServiceView {
         }
     }
 
+    public void onPreparingEnableDownloadData(List<ItemModel>globalList){
+        if (isDownloadToExportFiles){
+            return;
+        }
+        List<ItemModel> mergeList = Utils.getMergedOriginalThumbnailList(false,globalList);
+        Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear duplicated data "+ new Gson().toJson(mergeList));
+        if (mergeList!=null){
+            if (mergeList.size()>0){
+                mMapDownloadToExportFiles.clear();
+                mMapDownloadToExportFiles = Utils.mergeListToHashMap(mergeList);
+                Utils.Log(TAG,"onPreparingEnableDownloadData ==> clear merged data "+ new Gson().toJson(mMapDownloadToExportFiles));
+                Utils.Log(TAG,"onPreparingEnableDownloadData ==> merged data "+ new Gson().toJson(mergeList));
+                final ItemModel itemModel = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
+                if (itemModel!=null){
+                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Total downloading "+mMapDownloadToExportFiles.size());
+                    Utils.Log(TAG,"onPreparingEnableDownloadData to download "+ new Gson().toJson(itemModel));
+                    Utils.Log(TAG,"onPreparingEnableDownloadData to download total  "+ mMapDownloadToExportFiles.size());
+                    onDownLoadDataToExportFiles(itemModel);
+                }
+            }
+        }
+    }
+
+    /*Download file from Google drive*/
+    private void onDownLoadDataToExportFiles(final ItemModel itemModel){
+        if (myService!=null){
+            isDownloadToExportFiles = true;
+            mStart = 20;
+            myService.onDownloadFile(itemModel,true, new DownloadServiceListener() {
+                @Override
+                public void onProgressDownload(int percentage) {
+                    isDownloadToExportFiles = true;
+                    if (mStart == percentage){
+                        Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.PROGRESS,"Progressing "+ mStart);
+                        mStart += 20;
+                    }
+                }
+                @Override
+                public void onDownLoadCompleted(File file_name, DownloadFileRequest request) {
+                    Utils.Log(TAG,"onDownLoadCompleted ==> onDownLoadCompleted:" + file_name.getAbsolutePath());
+                    if (Utils.deletedIndexOfHashMap(itemModel,mMapDownloadToExportFiles)){
+                        /*Delete local db and folder name*/
+                        final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
+                        if (mDownloadItem!=null){
+                            onDownLoadDataToExportFiles(mDownloadItem);
+                            isDownloadToExportFiles = true;
+                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
+                        }else{
+                            Utils.Log(TAG,"Download completely...............");
+                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                            Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownloadToExportFiles.size());
+                            isDownloadToExportFiles = false;
+                            Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                        }
+                    }
+                }
+                @Override
+                public void onError(String message, EnumStatus status) {
+                    Utils.Log(TAG,"onDownLoadData ==> onError:" + message);
+                    Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.ERROR,"onDownLoadData ==> onError "+message);
+                    isDownloadToExportFiles = false;
+                    if (status == EnumStatus.NO_SPACE_LEFT){
+                        Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT);
+                        Utils.onDeleteItemFolder(itemModel.items_id);
+                        onPreparingDeleteData();
+                    }
+                    if (status == EnumStatus.REQUEST_NEXT_DOWNLOAD){
+                        if (Utils.deletedIndexOfHashMap(itemModel,mMapDownloadToExportFiles)){
+                            /*Delete local db and folder name*/
+                            final ItemModel mDownloadItem = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles);
+                            if (mDownloadItem!=null){
+                                onDownLoadDataToExportFiles(mDownloadItem);
+                                isDownloadToExportFiles = true;
+                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                Utils.Log(TAG,"Next download item..............." + new Gson().toJson(mDownloadItem));
+                            }else{
+                                Utils.Log(TAG,"Download completely...............");
+                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                Utils.onWriteLog(EnumStatus.DOWNLOAD,EnumStatus.DOWNLOAD_COMPLETED,"Total downloading "+mMapDownloadToExportFiles.size());
+                                isDownloadToExportFiles = false;
+                                /*Download completed for export files*/
+                                Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+
+
     public void onDefaultValue(){
         isDownloadData = false;
         isUploadData = false;
@@ -1701,6 +1697,14 @@ public class ServiceManager implements BaseServiceView {
             onStopService();
             Utils.Log(TAG, "Dismiss Service manager");
         }
+    }
+
+    public boolean getRequestShareIntent() {
+        return isRequestShareIntent;
+    }
+
+    public void setRequestShareIntent(boolean requestShareIntent) {
+        isRequestShareIntent = requestShareIntent;
     }
 
     public interface ServiceManagerSyncDataListener {

@@ -91,7 +91,14 @@ public class SQLHelper {
         final List<ItemEntityModel> mResult = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getRequestUploadData( false);
         if (mResult!=null){
             for (ItemEntityModel index : mResult){
-                mList.add(new ItemModel(index));
+                if (!Utils.isNotEmptyOrNull(index.categories_id)){
+                    final MainCategoryModel categoryModel = SQLHelper.getCategoriesLocalId(index.categories_local_id);
+                    if (categoryModel!=null){
+                        mList.add(new ItemModel(index,categoryModel.categories_id));
+                    }
+                }else{
+                    mList.add(new ItemModel(index));
+                }
             }
             return mList;
         }

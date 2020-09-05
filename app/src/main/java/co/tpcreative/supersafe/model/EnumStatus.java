@@ -139,5 +139,6 @@ public enum EnumStatus {
         UPLOAD_COMPLETED,
         UPDATED_COMPLETED,
         WAITING_LEFT,
-        WAITING_DONE
+        WAITING_DONE,
+        REFRESH_MAIN_TAB
 }
