@@ -670,7 +670,23 @@ public class ServiceManager implements BaseServiceView {
                         Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
                     }
                     if (status == EnumStatus.REQUEST_NEXT_UPLOAD){
-                        Utils.Log(TAG,"Request next upload");
+                        if (Utils.deletedIndexOfHashMap(itemModel,mMapUpload)){
+                            final ItemModel mUploadItem = Utils.getArrayOfIndexHashMap(mMapUpload);
+                            if (mUploadItem!=null){
+                                onUploadData(mUploadItem);
+                                Utils.Log(TAG,"Next upload item..............." + new Gson().toJson(mUploadItem));
+                                isUploadData = true;
+                            }else{
+                                isUploadData = false;
+                                onPreparingDeleteData();
+                                Utils.Log(TAG,"Upload completely...............");
+                                Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.DONE,new Gson().toJson(itemModel));
+                                Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED);
+                                Utils.onPushEventBus(EnumStatus.DONE);
+                                Utils.onPushEventBus(EnumStatus.REFRESH);
+                                Utils.onWriteLog(EnumStatus.UPLOAD,EnumStatus.UPLOAD_COMPLETED,"Total uploading "+mMapUpload.size());
+                            }
+                        }
                     }
                 }
             });
