@@ -90,6 +90,43 @@ public class ItemModel implements Serializable {
         this.unique_id = Utils.getUUId();
     }
 
+    /*Get data list from local db*/
+    public ItemModel(ItemEntityModel items,String categories_id){
+        this.id = items.id;
+        this.originalName = items.originalName;
+        this.thumbnailName = items.thumbnailName;
+        this.items_id = items.items_id;
+        this.fileType = items.fileType;
+        this.formatType = items.formatType;
+        this.title = items.title;
+        this.isSyncCloud = items.isSyncCloud;
+        this.isSyncOwnServer = items.isSyncOwnServer;
+        this.thumbnailSync = items.thumbnailSync;
+        this.originalSync = items.originalSync;
+        this.degrees = items.degrees;
+        this.global_original_id = items.global_original_id;
+        this.global_thumbnail_id = items.global_thumbnail_id;
+        this.categories_id = categories_id;
+        this.categories_local_id = items.categories_local_id;
+        this.originalPath = items.originalPath;
+        this.thumbnailPath = items.thumbnailPath;
+        this.mimeType = items.mimeType;
+        this.fileExtension = items.fileExtension;
+        this.statusAction = items.statusAction;
+        this.size = items.size;
+        this.statusProgress = items.statusProgress;
+        this.isDeleteLocal = items.isDeleteLocal ;
+        this.isDeleteGlobal = items.isDeleteGlobal;
+        this.deleteAction = items.deleteAction;
+        this.isFakePin = items.isFakePin;
+        this.isSaver = items.isSaver;
+        this.isExport = items.isExport;
+        this.isWaitingForExporting = items.isWaitingForExporting;
+        this.custom_items = items.custom_items;
+        this.isUpdate = items.isUpdate;
+        this.unique_id = Utils.getUUId();
+    }
+
     /*Added item to list from fetch data*/
     public ItemModel(ItemModel items,EnumStatus enumStatus){
         this.id = items.id;

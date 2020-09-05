@@ -656,7 +656,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             view.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN);
             return;
         }
-        if (mItem.categories_id == null || mItem.categories_id.equals("null")){
+        if (!Utils.isNotEmptyOrNull(mItem.categories_id)){
             view.onError("Categories id is null", EnumStatus.UPDATE);
             Utils.Log(TAG, " Updated => Warning categories id is null");
             return;
@@ -1079,16 +1079,20 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         final DownloadFileRequest request = new DownloadFileRequest();
         String id = "";
         if (items.isOriginalGlobalId) {
-            id = items.global_original_id;
+            id = items.global_id;
             request.file_name = items.originalName;
         } else {
-            id = items.global_thumbnail_id;
+            id = items.global_id;
             request.file_name = items.thumbnailName;
         }
         request.items = items;
         request.Authorization = mUser.access_token;
         request.id = id;
         Utils.Log(TAG,"onDownloadFile request "+ new Gson().toJson(items));
+        if (!Utils.isNotEmptyOrNull(id)){
+            listener.onError("Error upload", EnumStatus.REQUEST_NEXT_DOWNLOAD);
+            return;
+        }
         items.originalPath = Utils.getOriginalPath(items.originalName,items.items_id);
         request.path_folder_output = Utils.createDestinationDownloadItem(items.items_id);
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
@@ -1223,6 +1227,10 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             listener.onError("This path is not found", EnumStatus.UPLOAD);
             return;
         }
+        if (!Utils.isNotEmptyOrNull(items.categories_id)){
+            listener.onError("Error upload", EnumStatus.REQUEST_NEXT_UPLOAD);
+            return;
+        }
         contentEvent.items_id = items.items_id;
         String hex = DriveEvent.getInstance().convertToHex(new Gson().toJson(contentEvent));
         content.put(getString(R.string.key_name), hex);
@@ -1261,9 +1269,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             @Override
             public void onFailure(Call<DriveResponse> call, Throwable t) {
                 Utils.Log(TAG, "response failed :" + t.getMessage());
-                if (listener != null) {
-                    listener.onError("Error upload" + t.getMessage(), EnumStatus.REQUEST_NEXT_UPLOAD);
-                }
+                listener.onError("Error upload" + t.getMessage(), EnumStatus.REQUEST_NEXT_UPLOAD);
             }
         });
     }
