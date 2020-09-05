@@ -1031,7 +1031,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         } else {
                             List<ItemModel> mList = new ArrayList<>();
                             for(ItemModel index : mListItemResponse){
-                                mList.add(new ItemModel(index));
+                                mList.add(new ItemModel(index,EnumStatus.DOWNLOAD));
                             }
                             view.onShowListObjects(mList);
                             view.onSuccessful(mData.nextPage, EnumStatus.LOAD_MORE);
