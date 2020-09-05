@@ -91,7 +91,7 @@ public class ItemModel implements Serializable {
     }
 
     /*Added item to list from fetch data*/
-    public ItemModel(ItemModel items){
+    public ItemModel(ItemModel items,EnumStatus enumStatus){
         this.id = items.id;
         this.originalName = items.originalName;
         this.thumbnailName = items.thumbnailName;
@@ -112,7 +112,7 @@ public class ItemModel implements Serializable {
         this.thumbnailPath = items.thumbnailPath;
         this.mimeType = items.mimeType;
         this.fileExtension = items.fileExtension;
-        this.statusAction = items.statusAction;
+        this.statusAction = enumStatus.ordinal();
         this.size = items.size;
         this.statusProgress = items.statusProgress;
         this.isDeleteLocal = items.isDeleteLocal ;
