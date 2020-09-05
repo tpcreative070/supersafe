@@ -1088,7 +1088,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         request.items = items;
         request.Authorization = mUser.access_token;
         request.id = id;
-        Utils.Log(TAG,"onDownloadFile request id "+ id);
+        Utils.Log(TAG,"onDownloadFile request "+ new Gson().toJson(items));
         items.originalPath = Utils.getOriginalPath(items.originalName,items.items_id);
         request.path_folder_output = Utils.createDestinationDownloadItem(items.items_id);
         downloadService.onProgressingDownload(new DownloadService.DownLoadServiceListener() {
@@ -1149,7 +1149,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             public void onDownLoadError(String error) {
                 Utils.Log(TAG, "onDownLoadError " + error);
                 if (listener != null) {
-                    listener.onError("Error download ", EnumStatus.DOWNLOAD);
+                    listener.onError("Error download ", EnumStatus.REQUEST_NEXT_DOWNLOAD);
                 }
             }
             @Override
@@ -1240,7 +1240,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             public void onError() {
                 Utils.Log(TAG, "onError");
                 if (listener != null) {
-                    listener.onError("Error upload", EnumStatus.UPLOAD);
+                    listener.onError("Error upload", EnumStatus.REQUEST_NEXT_UPLOAD);
                 }
             }
             @Override
@@ -1262,7 +1262,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             public void onFailure(Call<DriveResponse> call, Throwable t) {
                 Utils.Log(TAG, "response failed :" + t.getMessage());
                 if (listener != null) {
-                    listener.onError("Error upload" + t.getMessage(), EnumStatus.UPLOAD);
+                    listener.onError("Error upload" + t.getMessage(), EnumStatus.REQUEST_NEXT_UPLOAD);
                 }
             }
         });
