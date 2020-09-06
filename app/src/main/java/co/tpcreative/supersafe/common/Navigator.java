@@ -7,9 +7,7 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
-import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
-import co.tpcreative.supersafe.model.BreakInAlerts;
+import co.tpcreative.supersafe.model.BreakInAlertsModel;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.HelpAndSupport;
@@ -265,7 +263,7 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public static void onMoveBreakInAlertsDetail(Context context, BreakInAlerts inAlerts){
+    public static void onMoveBreakInAlertsDetail(Context context, BreakInAlertsModel inAlerts){
         Intent intent = new Intent(context, BreakInAlertsDetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(context.getString(R.string.key_break_in_alert),inAlerts);

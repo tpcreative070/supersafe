@@ -7,21 +7,19 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import co.tpcreative.supersafe.model.BreakInAlerts;
-
 @Dao
 public interface BreakInAlertsDao {
     @Insert
-    void insert(BreakInAlerts... breakinalerts);
+    void insert(BreakInAlertsEntity... item);
 
     @Update
-    void update(BreakInAlerts... breakinalerts);
+    void update(BreakInAlertsEntity... item);
 
     @Delete
-    void delete(BreakInAlerts... breakinalerts);
+    void delete(BreakInAlertsEntity... item);
 
     @Query("Select * FROM breakinalerts")
-    List<BreakInAlerts> loadAll();
+    List<BreakInAlertsEntity> loadAll();
 
     @Query("DELETE FROM breakinalerts")
     public void deleteBreakInAlerts();

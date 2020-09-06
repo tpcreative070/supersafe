@@ -17,9 +17,9 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.adapter.BaseAdapter;
 import co.tpcreative.supersafe.common.adapter.BaseHolder;
-import co.tpcreative.supersafe.model.BreakInAlerts;
+import co.tpcreative.supersafe.model.BreakInAlertsModel;
 
-public class BreakInAlertsAdapter extends BaseAdapter<BreakInAlerts, BaseHolder> {
+public class BreakInAlertsAdapter extends BaseAdapter<BreakInAlertsModel, BaseHolder> {
     private Activity myActivity;
     private ItemSelectedListener itemSelectedListener;
     private String TAG = BreakInAlertsAdapter.class.getSimpleName();
@@ -41,11 +41,11 @@ public class BreakInAlertsAdapter extends BaseAdapter<BreakInAlerts, BaseHolder>
     }
 
     @Override
-    public BaseHolder<BreakInAlerts> onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BaseHolder<BreakInAlertsModel> onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ItemHolder(inflater.inflate(R.layout.break_in_alerts_item, parent, false));
     }
 
-    public class ItemHolder extends BaseHolder<BreakInAlerts> {
+    public class ItemHolder extends BaseHolder<BreakInAlertsModel> {
 
         @BindView(R.id.imgPicture)
         ImageView imgPicture;
@@ -60,7 +60,7 @@ public class BreakInAlertsAdapter extends BaseAdapter<BreakInAlerts, BaseHolder>
         }
 
         @Override
-        public void bind(BreakInAlerts data, int position) {
+        public void bind(BreakInAlertsModel data, int position) {
             super.bind(data, position);
             this.position = position;
             Locale locale = new Locale("en");

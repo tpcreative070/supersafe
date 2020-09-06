@@ -15,7 +15,7 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.BreakInAlerts;
+import co.tpcreative.supersafe.model.BreakInAlertsModel;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class BreakInAlertsDetailActivity extends BaseActivity{
@@ -34,7 +34,7 @@ public class BreakInAlertsDetailActivity extends BaseActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_break_in_alerts_detail);
         Bundle bundle = getIntent().getExtras();
-        final BreakInAlerts inAlerts = (BreakInAlerts) bundle.get(getString(R.string.key_break_in_alert));
+        final BreakInAlertsModel inAlerts = (BreakInAlertsModel) bundle.get(getString(R.string.key_break_in_alert));
         if (inAlerts!=null){
             Glide.with(this)
                     .load(new File(inAlerts.fileName))

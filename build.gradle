@@ -80,5 +80,5 @@ subprojects {
     ext.build_versions_java_version = 1.8
     ext.appRoomVersion = "2.0.0-rc01"
     ext.fresco = "1.10.0"
-    ext.glide = "4.8.0"
+    ext.glide = "4.9.0"
 }

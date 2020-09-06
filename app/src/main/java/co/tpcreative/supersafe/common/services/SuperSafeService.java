@@ -1020,7 +1020,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                         mMain.isChange = false;
                                         mMain.isDelete = false;
                                         mMain.pin = "";
-                                        final int count  = InstanceGenerator.getInstance(this).getLatestItem();
+                                        final int count  = SQLHelper.getLatestItem();
                                         mMain.categories_max = count;
                                         SQLHelper.insertCategory(mMain);
                                         Utils.Log(TAG,"Adding new main categories.......................................2");

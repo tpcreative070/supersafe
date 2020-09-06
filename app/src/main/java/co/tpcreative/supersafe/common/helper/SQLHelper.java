@@ -20,6 +20,8 @@ import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.BreakInAlertsEntityModel;
+import co.tpcreative.supersafe.model.BreakInAlertsModel;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.ItemEntityModel;
 import co.tpcreative.supersafe.model.ItemModel;
@@ -289,10 +291,8 @@ public class SQLHelper {
     public static List<MainCategoryModel> getList(){
         List<MainCategoryModel> mList = new ArrayList<>();
         final List<MainCategoryModel> list = SQLHelper.getListCategories(false,false);
-
         if (list!=null && list.size()>0){
             mList.addAll(list);
-            Utils.Log(TAG,"Found data :"+ list.size());
         }
         else{
             final Map<String, MainCategoryModel> map = getMainCategoriesDefault();
@@ -744,4 +744,61 @@ public class SQLHelper {
         }
         return null;
     }
+
+    public static final List<BreakInAlertsModel> getBreakInAlertsList(){
+        List<BreakInAlertsEntityModel> mResult = InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getBreakInAlertsList();
+        List<BreakInAlertsModel> mList = new ArrayList<>();
+        if (mResult!=null){
+            for (BreakInAlertsEntityModel index : mResult){
+                mList.add(new BreakInAlertsModel(index));
+            }
+        }
+        return mList;
+    }
+
+    public static  void onInsert(BreakInAlertsModel cTalkManager){
+        try {
+            if (cTalkManager==null){
+                return;
+            }
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(new BreakInAlertsEntityModel(cTalkManager));
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+    }
+
+    public final static  int getLatestItem(){
+        try{
+            int  mCount =  InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).getLatestItem();
+            return mCount;
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+        return 0;
+    }
+
+    public static  void onDelete(BreakInAlertsModel cTalkManager){
+        try {
+            if (cTalkManager==null){
+                Utils.Log(TAG,"Null???? ");
+                return;
+            }
+            InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onDelete(new BreakInAlertsEntityModel(cTalkManager));
+        }
+        catch (Exception e){
+            Utils.Log(TAG,e.getMessage());
+        }
+    }
+
+
+    public static void initInstance(Context context){
+        InstanceGenerator.getInstance(context);
+    }
+
+    public static void onCleanDatabase(){
+       InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onCleanDatabase();
+    }
+
 }
