@@ -11,6 +11,8 @@ import android.provider.Settings;
 import androidx.core.content.PermissionChecker;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
+
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.bumptech.glide.request.target.ViewTarget;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.MobileAds;
@@ -24,6 +26,8 @@ import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
 import org.solovyev.android.checkout.Billing;
+
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumPinAction;
@@ -91,11 +95,11 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
             }
         });
-        InstanceGenerator.getInstance(this);
+        SQLHelper.initInstance(this);
         mInstance = this;
         isLive = true;
         Fabric.with(this, new Crashlytics());
-        ViewTarget.setTagId(R.id.fab_glide_tag);
+        ImageViewTarget.setTagId(R.id.fab_glide_tag);
         /*Init own service api*/
         dependencies = Dependencies.getsInstance(getApplicationContext(), getUrl());
         dependencies.dependenciesListener(this);

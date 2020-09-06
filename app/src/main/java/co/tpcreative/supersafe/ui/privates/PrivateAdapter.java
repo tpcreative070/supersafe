@@ -87,7 +87,6 @@ public class PrivateAdapter extends BaseAdapter<MainCategoryModel, BaseHolder> {
         public void bind(MainCategoryModel data, int position) {
             super.bind(data, position);
             this.data = data;
-            Utils.Log(TAG,new Gson().toJson(this.data));
             if (data.pin.equals("")) {
                 final List<ItemModel> mList = SQLHelper.getListItems(data.categories_local_id,data.isFakePin);
                 final ItemModel items = SQLHelper.getItemId(data.items_id);

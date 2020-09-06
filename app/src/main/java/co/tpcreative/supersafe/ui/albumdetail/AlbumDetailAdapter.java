@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.snatik.storage.Storage;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -92,16 +93,13 @@ public class AlbumDetailAdapter extends BaseAdapter<ItemModel, BaseHolder> {
             super.bind(data, position);
             mPosition = position;
             Utils.Log(TAG,"Position "+ position);
-
             if (data.isChecked) {
                 view_alpha.setAlpha(0.5f);
                 imgSelect.setVisibility(View.VISIBLE);
-
             } else {
                 view_alpha.setAlpha(0.0f);
                 imgSelect.setVisibility(View.INVISIBLE);
             }
-
             try {
                 String path = data.thumbnailPath;
                 EnumFormatType formatTypeFile = EnumFormatType.values()[data.formatType];

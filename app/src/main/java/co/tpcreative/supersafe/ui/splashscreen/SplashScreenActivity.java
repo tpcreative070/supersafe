@@ -78,8 +78,6 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
         SQLHelper.getList();
         Utils.onWriteLog("^^^--------------------------------Launch App----------------------------^^^", null);
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT);
-        final int count  = InstanceGenerator.getInstance(this).getLatestItem();
-        Utils.Log(TAG,"Max "+count);
         Utils.onObserveData(DELAY, new Listener() {
             @Override
             public void onStart() {
@@ -92,7 +90,7 @@ public class SplashScreenActivity extends BaseActivityNoneSlide {
                         else{
                             SuperSafeApplication.getInstance().deleteFolder();
                             SuperSafeApplication.getInstance().initFolder();
-                            InstanceGenerator.getInstance(SplashScreenActivity.this).onCleanDatabase();
+                            SQLHelper.onCleanDatabase();
                             Utils.setUserPreShare(new User());
                             SQLHelper.getList();
                             PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive),true);

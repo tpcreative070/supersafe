@@ -10,18 +10,19 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import co.tpcreative.supersafe.R;
+import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.BreakInAlerts;
+import co.tpcreative.supersafe.model.BreakInAlertsEntityModel;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ItemEntityModel;
-import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryEntityModel;
-import co.tpcreative.supersafe.model.MainCategoryModel;
 
-@Database(entities = {ItemEntity.class, MainCategoryEntity.class, BreakInAlerts.class}, version = 5, exportSchema = false)
+@Database(entities = {ItemEntity.class, MainCategoryEntity.class, BreakInAlertsEntity.class}, version = 5, exportSchema = false)
 public abstract class InstanceGenerator extends RoomDatabase {
 
 
@@ -692,9 +693,9 @@ public abstract class InstanceGenerator extends RoomDatabase {
     }
 
 
-    public final synchronized int getLatestItem(){
+    public final  int getLatestItem(){
         try{
-            MainCategoryEntity categories =   instance.mainCategoriesDao().loadLatestItem(1);
+            MainCategoryEntity categories =  instance.mainCategoriesDao().loadLatestItem(1);
             int count = 0;
             if (categories!=null){
                 count +=categories.id +1;
@@ -707,8 +708,7 @@ public abstract class InstanceGenerator extends RoomDatabase {
         }
         return 0;
     }
-
-
+    
     public final synchronized List<MainCategoryEntity> loadListAllItemId(String categories_hex_name, boolean isFakePin){
         try{
             return instance.mainCategoriesDao().loadListAllItemId(categories_hex_name,isFakePin);
@@ -798,52 +798,42 @@ public abstract class InstanceGenerator extends RoomDatabase {
 
     /*Break In Alerts*/
     /*Items action*/
-    public synchronized void onInsert(BreakInAlerts cTalkManager){
+    public  void onInsert(BreakInAlertsEntityModel cTalkManager){
         try {
             if (cTalkManager==null){
                 return;
             }
-            instance.breakInAlertsDao().insert(cTalkManager);
+            instance.breakInAlertsDao().insert(new BreakInAlertsEntity(cTalkManager));
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
         }
     }
 
-    public synchronized void onUpdate(BreakInAlerts cTalkManager){
-        try {
-            if (cTalkManager==null){
-                Utils.Log(TAG,"Null???? ");
-                return;
-            }
-            instance.breakInAlertsDao().update(cTalkManager);
-        }
-        catch (Exception e){
-            Utils.Log(TAG,e.getMessage());
-        }
-    }
-
-    public synchronized void onDelete(BreakInAlerts cTalkManager){
+    public void onUpdate(BreakInAlertsEntityModel cTalkManager){
         try {
             if (cTalkManager==null){
                 Utils.Log(TAG,"Null???? ");
                 return;
             }
-            instance.breakInAlertsDao().delete(cTalkManager);
+            instance.breakInAlertsDao().update(new BreakInAlertsEntity(cTalkManager));
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
         }
     }
 
-    public final synchronized List<BreakInAlerts> getList(){
-        try{
-            return instance.breakInAlertsDao().loadAll();
+    public  void onDelete(BreakInAlertsEntityModel cTalkManager){
+        try {
+            if (cTalkManager==null){
+                Utils.Log(TAG,"Null???? ");
+                return;
+            }
+            instance.breakInAlertsDao().delete(new BreakInAlertsEntity(cTalkManager));
         }
         catch (Exception e){
             Utils.Log(TAG,e.getMessage());
         }
-        return null;
     }
 
     public void onCleanDatabase(){
@@ -851,7 +841,6 @@ public abstract class InstanceGenerator extends RoomDatabase {
         instance.itemsDao().deleteAllItems();
         instance.mainCategoriesDao().deleteAllCategories();
     }
-
 
     /*Improved sqlite*/
     public final List<ItemEntityModel> getAllListItems(){
@@ -899,9 +888,24 @@ public abstract class InstanceGenerator extends RoomDatabase {
         return null;
     }
 
-
-
-
+    public final List<BreakInAlertsEntityModel> getBreakInAlertsList(){
+        List<BreakInAlertsEntity> mResult = instance.breakInAlertsDao().loadAll();
+        List<BreakInAlertsEntityModel> mList = new ArrayList<>();
+        if (mResult!=null){
+            for (BreakInAlertsEntity index : mResult){
+                mList.add(new BreakInAlertsEntityModel(index));
+            }
+            Collections.sort(mList, new Comparator<BreakInAlertsEntityModel>() {
+                @Override
+                public int compare(BreakInAlertsEntityModel lhs, BreakInAlertsEntityModel rhs) {
+                    int count_1 = (int) lhs.id;
+                    int count_2 = (int) rhs.id;
+                    return count_1 - count_2;
+                }
+            });
+        }
+        return mList;
+    }
 }
 
 

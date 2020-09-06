@@ -24,7 +24,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import com.github.kratorius.circleprogress.CircleProgressView;
-import com.google.gson.Gson;
 import com.multidots.fingerprintauth.FingerPrintAuthCallback;
 import com.multidots.fingerprintauth.FingerPrintAuthHelper;
 import org.greenrobot.eventbus.EventBus;
@@ -42,6 +41,7 @@ import co.tpcreative.supersafe.common.controller.SingletonManager;
 import co.tpcreative.supersafe.common.controller.SingletonMultipleListener;
 import co.tpcreative.supersafe.common.controller.SingletonResetPin;
 import co.tpcreative.supersafe.common.controller.SingletonScreenLock;
+import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig;
 import co.tpcreative.supersafe.common.hiddencamera.CameraError;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing;
@@ -59,11 +59,10 @@ import co.tpcreative.supersafe.common.util.CalculatorImpl;
 import co.tpcreative.supersafe.common.util.Constants;
 import co.tpcreative.supersafe.common.util.Formatter;
 import co.tpcreative.supersafe.common.util.Utils;
-import co.tpcreative.supersafe.model.BreakInAlerts;
+import co.tpcreative.supersafe.model.BreakInAlertsModel;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 import me.grantland.widget.AutofitHelper;
 
@@ -1173,11 +1172,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @Override
     public void onImageCapture(@NonNull File imageFile, @NonNull String pin) {
         super.onImageCapture(imageFile, pin);
-        BreakInAlerts inAlerts = new BreakInAlerts();
+        BreakInAlertsModel inAlerts = new BreakInAlertsModel();
         inAlerts.fileName = imageFile.getAbsolutePath();
         inAlerts.pin = pin;
         inAlerts.time = System.currentTimeMillis();
-        InstanceGenerator.getInstance(SuperSafeApplication.getInstance()).onInsert(inAlerts);
+        SQLHelper.onInsert(inAlerts);
     }
     @Override
     public void onCameraError(int errorCode) {

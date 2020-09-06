@@ -3,8 +3,6 @@ import com.snatik.storage.Storage;
 import java.util.ArrayList;
 import java.util.List;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
-import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
@@ -13,7 +11,6 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumDelete;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumStatus;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryModel;
 

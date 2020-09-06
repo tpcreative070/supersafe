@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.controller;
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -11,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
+import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import com.crashlytics.android.answers.Answers;
@@ -1168,8 +1170,8 @@ public class ServiceManager implements BaseServiceView {
     public void onPickUpNewEmailNoTitle(Activity context, String account) {
         try {
             Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
+            Intent intent = AccountManager.newChooseAccountIntent(account1, null,
+                    new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, null, null, null, null);
             intent.putExtra("overrideTheme", 1);
             //  intent.putExtra("selectedAccount",account);
             context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT);
@@ -1182,8 +1184,8 @@ public class ServiceManager implements BaseServiceView {
         try {
             String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_account), account);
             Account account1 = new Account(account, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-            Intent intent = AccountPicker.newChooseAccountIntent(account1, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
+            Intent intent = AccountManager.newChooseAccountIntent(account1, null,
+                    new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, value, null, null, null);
             intent.putExtra("overrideTheme", 1);
             context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
@@ -1193,10 +1195,14 @@ public class ServiceManager implements BaseServiceView {
 
     public void onPickUpNewEmail(Activity context) {
         try {
+            if (Utils.getUserId()==null){
+                return;
+            }
             String value = String.format(SuperSafeApplication.getInstance().getString(R.string.choose_an_new_account));
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-                    new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, value, null, null, null);
-            intent.putExtra("overrideTheme", 1);
+            Account account1 = new Account(Utils.getUserId(), GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+            Intent    intent = AccountManager.newChooseAccountIntent(account1, null,
+                        new String[] { GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE }, value, null, null, null);
+                intent.putExtra("overrideTheme", 1);
             context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
