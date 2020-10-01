@@ -7,7 +7,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
     }
 
     subprojects {
@@ -58,8 +59,8 @@ task clean(type: Delete) {
 }
 
 subprojects {
-    ext.appVersionCode = 238
-    ext.appVersionName = "2.3.8"
+    ext.appVersionCode = 240
+    ext.appVersionName = "2.4.0"
     ext.appMinSdkVersion = 23
     ext.appSupportVersion = "1.0.2"
     ext.appReactivexAndroid = "2.1.1"

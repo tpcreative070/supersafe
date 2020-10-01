@@ -75,7 +75,7 @@ public class User extends BaseResponse implements Serializable{
 
     public boolean isPremium(){
         if (BuildConfig.DEBUG){
-            return true;
+            return false;
         }
         final User mUser = getUserInfo();
         if (mUser!=null){

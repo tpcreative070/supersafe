@@ -12,13 +12,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
-import android.os.Build;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.common.AccountPicker;
 import com.google.common.net.MediaType;
 import com.google.gson.Gson;
 import com.snatik.storage.Storage;
@@ -1456,10 +1452,6 @@ public class ServiceManager implements BaseServiceView {
                                     onExportingFiles();
                                 }
                                 catch (Exception e){
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName("Exporting error")
-                                            .putContentType("Content error "+e.getMessage())
-                                            .putContentId("Exporting "+System.currentTimeMillis()));
                                     e.printStackTrace();
                                 }
                             }
@@ -1486,10 +1478,6 @@ public class ServiceManager implements BaseServiceView {
                                     onExportingFiles();
                                 }
                                 catch (Exception e){
-                                    Answers.getInstance().logContentView(new ContentViewEvent()
-                                            .putContentName("Exporting error")
-                                            .putContentType("Content error "+e.getMessage())
-                                            .putContentId("Exporting "+System.currentTimeMillis()));
                                     e.printStackTrace();
                                 }
                             }
