@@ -1,11 +1,6 @@
 package co.tpcreative.supersafe.common.controller;
 import android.os.CountDownTimer;
-
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.ContentViewEvent;
 import com.google.gson.Gson;
-import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
@@ -72,10 +67,6 @@ public class SingletonResetPin {
                 Utils.setUserPreShare(mUser);
             }
             catch (Exception e){
-                Answers.getInstance().logContentView(new ContentViewEvent()
-                        .putContentName(SingletonResetPin.class.getSimpleName()+" error")
-                        .putContentType("Content error "+e.getMessage())
-                        .putContentId(SingletonResetPin.class.getSimpleName()+" "+System.currentTimeMillis()));
             }
         }
     }
