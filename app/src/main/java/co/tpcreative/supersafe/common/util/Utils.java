@@ -1169,7 +1169,6 @@ public class Utils {
     }
 
     public static void setUserPreShare(User user){
-        Utils.Log(TAG,"Access token set "+user.author.refresh_token);
         PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_user),new Gson().toJson(user));
     }
 

@@ -12,7 +12,6 @@ public class AccountManagerPresenter extends Presenter<BaseView>{
 
     private static final String TAG = AccountManagerPresenter.class.getSimpleName();
     protected List<AppLists> mList;
-
     public AccountManagerPresenter(){
         mList = new ArrayList<>();
     }
@@ -20,9 +19,9 @@ public class AccountManagerPresenter extends Presenter<BaseView>{
     public void getData(){
         BaseView view = view();
         boolean qrScanner = Utils.appInstalledOrNot(getString(R.string.qrscanner_package_name));
-        boolean gpsSpeed = Utils.appInstalledOrNot(getString(R.string.gpsspeed_package_name));
+        //boolean gpsSpeed = Utils.appInstalledOrNot(getString(R.string.gpsspeed_package_name));
         mList.add(new AppLists("ic_qrscanner_launcher","QRScanner","Scan code quickly by your hands",qrScanner,getString(R.string.qrscanner_package_name),getString(R.string.qrscanner_link)));
-        mList.add(new AppLists("ic_gpsspeedkmh_launcher","GPSSpeedKmh","Calculate speed without internet",gpsSpeed,getString(R.string.gpsspeed_package_name),getString(R.string.gpsspeed_link)));
+        //mList.add(new AppLists("ic_gpsspeedkmh_launcher","GPSSpeedKmh","Calculate speed without internet",gpsSpeed,getString(R.string.gpsspeed_package_name),getString(R.string.gpsspeed_link)));
         view.onSuccessful("Successful", EnumStatus.RELOAD);
     }
 
@@ -31,5 +30,4 @@ public class AccountManagerPresenter extends Presenter<BaseView>{
         String value = view.getContext().getString(res);
         return value;
     }
-
 }
