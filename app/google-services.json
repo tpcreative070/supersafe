@@ -8,7 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:789377331744:android:39188f7f9b1f0e09558245",
+        "mobilesdk_app_id": "1:789377331744:android:08309d4df65f95b3558245",
         "android_client_info": {
           "package_name": "co.tpcreative.supersafe"
         }
@@ -21,11 +21,19 @@
             "package_name": "co.tpcreative.supersafe",
             "certificate_hash": "07f0c8f4f0601e17ed799664ac8b1904679c40a2"
           }
+        },
+        {
+          "client_id": "789377331744-6rt2d0rg6o09gllnds1v8sgoj5m0td4f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.tpcreative.supersafe",
+            "certificate_hash": "18df20cb3e96f8c527b6df0bc18d268efa38fff9"
+          }
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDIgdJjWAibl2wbUHL5fQzM6PnaE_4VPEc"
+          "current_key": "AIzaSyAyfVcjal6PCZJNM16_5HN491RM4xK2YIY"
         }
       ],
       "services": {
@@ -34,13 +42,6 @@
             {
               "client_id": "789377331744-tmo35q55ba00kn55213q9od4cutk3vt3.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "789377331744-pb0puhn6dmd9jaqr0kfhojmcquqaog67.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "co.tpcreative.supersafe"
-              }
             }
           ]
         }
