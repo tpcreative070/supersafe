@@ -59,6 +59,7 @@
     <color name="inbox_primary">#4285f4</color>
     <color name="inbox_primary_dark">#3367d6</color>
     <color name="inbox_accent">#db4437</color>
+    <color name="sd_overlay_new_color">#cc061360</color>
 
     <!-- Material Color Palette -->
     <color name="material_gray_050">#FAFAFA</color>

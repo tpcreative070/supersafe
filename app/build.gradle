@@ -63,12 +63,12 @@ dependencies {
     implementation 'androidx.multidex:multidex:' + appMultidex
 
     /*Support grant permission*/
-    implementation 'com.karumi:dexter:5.0.0'
+    implementation 'com.karumi:dexter:6.2.1'
 
     // Dependency for Google Sign-In
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
     // Dependencies for the REST API example
-    implementation 'com.google.api-client:google-api-client-android:1.23.0'
+    implementation 'com.google.api-client:google-api-client-android:1.26.0'
     /*Google drive*/
     implementation 'com.google.apis:google-api-services-drive:v3-rev126-1.24.1'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
 
     /*Call Floating button*/
-    implementation project(':floatingbuttonlibrary')
+    implementation "com.leinardi.android:speed-dial:3.1.1"
 
     /*Add butter knife*/
     implementation 'com.jakewharton:butterknife:10.1.0'
@@ -91,7 +91,7 @@ dependencies {
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'
 
     /*Gson*/
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     /*Room**/
     implementation "androidx.room:room-runtime:" + appRoomVersion
@@ -107,7 +107,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     /*Retrofit and RXJava 2*/
-    implementation 'com.jakewharton.timber:timber:4.1.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'io.reactivex.rxjava2:rxandroid:' + appReactivexAndroid
     implementation 'io.reactivex.rxjava2:rxjava:' + appReactivexJava
     implementation 'com.squareup.retrofit2:adapter-rxjava2:' + appRetrofit
@@ -117,7 +117,7 @@ dependencies {
 
     /*Material Dialog*/
     implementation project(':materialstyledialoglibrary')
-    implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 
     /*api project(':oauthor common')*/
     implementation project(':library-common')
@@ -150,10 +150,6 @@ dependencies {
     /*Adding detect extension files*/
     implementation 'commons-io:commons-io:2.6'
 
-    /*Image picker
-    implementation project(':image-picker-library')
-    */
-
     /*Time ago*/
     implementation project(':time_ago_library')
 
@@ -173,7 +169,7 @@ dependencies {
     implementation project(':checkoutlibrary')
 
     /*Google ads*/
-    implementation 'com.google.android.gms:play-services-ads:18.1.1'
+    implementation 'com.google.android.gms:play-services-ads:19.4.0'
 
     /*bungeelibrary*/
     implementation project (':bungeelibrary')
@@ -185,13 +181,15 @@ dependencies {
     implementation project(':library-circleprogress')
 
     /*Even Bus*/
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'org.greenrobot:eventbus:3.2.0'
 
     /*Material style dialog*/
     implementation project(':materialdialoglibrary')
 
     /*Animation textview*/
     implementation 'me.grantland:autofittextview:0.2.1'
+
+    implementation 'commons-codec:commons-codec:1.13'
 }
 /*Resolved duplicated for Google api client*/
 
