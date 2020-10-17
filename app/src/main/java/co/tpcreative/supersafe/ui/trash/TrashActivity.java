@@ -10,11 +10,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -44,17 +44,17 @@ import co.tpcreative.supersafe.model.User;
 public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter.ItemSelectedListener{
     private static final String TAG = TrashActivity.class.getSimpleName();
     @BindView(R.id.tv_Audios)
-    TextView tv_Audios;
+    AppCompatTextView tv_Audios;
     @BindView(R.id.tv_Videos)
-    TextView tv_Videos;
+    AppCompatTextView tv_Videos;
     @BindView(R.id.tv_Photos)
-    TextView tv_Photos;
+    AppCompatTextView tv_Photos;
     @BindView(R.id.tv_Others)
-    TextView tv_Others;
+    AppCompatTextView tv_Others;
     @BindView(R.id.btnUpgradeVersion)
-    Button btnUpgradeVersion;
+    AppCompatButton btnUpgradeVersion;
     @BindView(R.id.btnTrash)
-    Button btnTrash;
+    AppCompatButton btnTrash;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.toolbar)

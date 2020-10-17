@@ -9,6 +9,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
@@ -68,19 +72,19 @@ public class AlbumDetailAdapter extends BaseAdapter<ItemModel, BaseHolder> {
 
     public class ItemHolder extends BaseHolder<ItemModel> {
         @BindView(R.id.imgAlbum)
-        ImageView imgAlbum;
+        AppCompatImageView imgAlbum;
         @BindView(R.id.imgVideoCam)
-        ImageView imgVideoCam;
+        AppCompatImageView imgVideoCam;
         @BindView(R.id.tvTitle)
-        TextView tvTitle;
+        AppCompatTextView tvTitle;
         @BindView(R.id.progressingBar)
         ProgressBar progressingBar;
         @BindView(R.id.imgCheck)
-        ImageView imgCheck;
+        AppCompatImageView imgCheck;
         @BindView(R.id.view_alpha)
         View view_alpha;
         @BindView(R.id.imgSelect)
-        ImageView imgSelect;
+        AppCompatImageView imgSelect;
         int mPosition;
         @BindView(R.id.rlHome)
         RelativeLayout rlHome;

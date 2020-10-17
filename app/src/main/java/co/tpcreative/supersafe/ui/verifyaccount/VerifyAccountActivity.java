@@ -12,13 +12,15 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -48,13 +50,13 @@ import co.tpcreative.supersafe.model.GoogleOauth;
 import co.tpcreative.supersafe.model.HelpAndSupport;
 import co.tpcreative.supersafe.model.ThemeApp;
 
-public class VerifyAccountActivity extends BaseActivity implements TextView.OnEditorActionListener ,BaseView{
+public class VerifyAccountActivity extends BaseActivity implements AppCompatTextView.OnEditorActionListener ,BaseView{
 
     private static final String TAG = VerifyAccountActivity.class.getSimpleName();
     @BindView(R.id.imgEdit)
-    ImageView imgEdit;
+    AppCompatImageView imgEdit;
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     @BindView(R.id.llGoogle)
     RelativeLayout llGoogle;
     @BindView(R.id.llAction)
@@ -68,17 +70,17 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @BindView(R.id.edtCode)
     MaterialEditText edtCode;
     @BindView(R.id.btnCancel)
-    Button btnCancel;
+    AppCompatButton btnCancel;
     @BindView(R.id.btnSave)
-    Button btnSave;
+    AppCompatButton btnSave;
     @BindView(R.id.btnSignIn)
-    Button btnSignIn;
+    AppCompatButton btnSignIn;
     private boolean isNext ;
 
     @BindView(R.id.btnReSend)
-    Button btnResend;
+    AppCompatButton btnResend;
     @BindView(R.id.btnSendVerifyCode)
-    Button btnSendVerifyCode;
+    AppCompatButton btnSendVerifyCode;
     @BindView(R.id.progressBarCircularIndeterminateSignIn)
     ProgressBarCircularIndeterminate progressBarCircularIndeterminateSignIn;
     @BindView(R.id.progressBarCircularIndeterminateReSend)
@@ -87,7 +89,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     @BindView(R.id.progressBarCircularIndeterminateVerifyCode)
     ProgressBarCircularIndeterminate progressBarCircularIndeterminateVerifyCode;
     @BindView(R.id.tvEmail)
-    TextView tvEmail;
+    AppCompatTextView tvEmail;
 
     private VerifyAccountPresenter presenter;
 
@@ -161,8 +163,8 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
     }
 
     @Override
-    public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
+    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        if (i == EditorInfo.IME_ACTION_DONE) {
             if (!SuperSafeReceiver.isConnected()){
                 Utils.showDialog(this,getString(R.string.internet));
                 return false;
@@ -388,7 +390,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 .setTitle(R.string.signin_with_google)
                 .setDescription(R.string.choose_google_account)
                 .setHeaderDrawable(R.drawable.ic_google_transparent_margin_60)
-                .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
+                .setHeaderScaleType(AppCompatImageView.ScaleType.CENTER_INSIDE)
                 .setHeaderColor(theme.getPrimaryColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.ok)
@@ -416,7 +418,7 @@ public class VerifyAccountActivity extends BaseActivity implements TextView.OnEd
                 .setTitle(R.string.enable_cloud_sync)
                 .setDescription(R.string.message_prompt)
                 .setHeaderDrawable(R.drawable.ic_drive_cloud)
-                .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
+                .setHeaderScaleType(AppCompatImageView.ScaleType.CENTER_INSIDE)
                 .setHeaderColor(theme.getPrimaryColor())
                 .setCancelable(true)
                 .setPositiveText(R.string.enable_now)

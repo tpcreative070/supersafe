@@ -12,6 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -53,11 +58,11 @@ public class ShareFilesActivity extends BaseActivityNone{
     final List<Integer> mListFile = new ArrayList<>();
     private AlertDialog dialog;
     @BindView(R.id.imgChecked)
-    ImageView imgChecked;
+    AppCompatImageView imgChecked;
     @BindView(R.id.btnGotIt)
-    Button btnGotIt;
+    AppCompatButton btnGotIt;
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     @BindView(R.id.rlProgress)
     RelativeLayout rlProgress;
     private Storage storage;
@@ -99,7 +104,7 @@ public class ShareFilesActivity extends BaseActivityNone{
     }
 
     public void onAddPermission() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE)

@@ -7,13 +7,12 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.snatik.storage.security.SecurityUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -39,7 +38,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     @BindView(R.id.edtEmail)
     MaterialEditText edtEmail;
     @BindView(R.id.btnNext)
-    Button btnNext;
+    AppCompatButton btnNext;
     @BindView(R.id.progressBarCircularIndeterminate)
     ProgressBarCircularIndeterminate progressBarCircularIndeterminate;
     private boolean isNext ;

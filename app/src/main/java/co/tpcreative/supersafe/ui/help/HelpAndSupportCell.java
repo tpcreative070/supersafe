@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.jaychang.srv.SimpleCell;
 import com.jaychang.srv.SimpleViewHolder;
 import butterknife.BindView;
@@ -75,13 +78,13 @@ public class HelpAndSupportCell extends SimpleCell<HelpAndSupport,HelpAndSupport
      * */
     static class ViewHolder extends SimpleViewHolder {
         @BindView(R.id.tvTitle)
-        TextView tvTitle;
+        AppCompatTextView tvTitle;
         @BindView(R.id.imgIcon)
-        ImageView imgIcon;
+        AppCompatImageView imgIcon;
         @BindView(R.id.llHome)
         LinearLayout llHome;
         @BindView(R.id.tvPosition)
-        TextView tvPosition;
+        AppCompatTextView tvPosition;
         ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

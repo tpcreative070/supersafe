@@ -4,12 +4,11 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
-
 import java.util.ArrayList;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -19,7 +18,6 @@ import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.MimeTypeFile;
 import co.tpcreative.supersafe.model.ThemeApp;
 public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiItems> {
-
     RequestOptions options = new RequestOptions()
             .centerCrop()
             .override(200 ,200)
@@ -36,17 +34,13 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.grid_view_item_album_select, null);
-
             viewHolder = new ViewHolder();
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.image_view_album_image);
-            viewHolder.textView = (TextView) convertView.findViewById(R.id.text_view_album_name);
-            viewHolder.imgAudioVideo = (ImageView) convertView.findViewById(R.id.imgAudioVideo);
-
+            viewHolder.imageView = (AppCompatImageView) convertView.findViewById(R.id.image_view_album_image);
+            viewHolder.textView = (AppCompatTextView) convertView.findViewById(R.id.text_view_album_name);
+            viewHolder.imgAudioVideo = (AppCompatImageView) convertView.findViewById(R.id.imgAudioVideo);
             convertView.setTag(viewHolder);
-
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
@@ -104,13 +98,12 @@ public class CustomAlbumSelectAdapter extends CustomGenericAdapter<AlbumMultiIte
             e.printStackTrace();
             Log.d("value customer","error");
         }
-
         return convertView;
     }
 
     private static class ViewHolder {
-        public ImageView imageView;
-        public ImageView imgAudioVideo;
-        public TextView textView;
+        public AppCompatImageView imageView;
+        public AppCompatImageView imgAudioVideo;
+        public AppCompatTextView textView;
     }
 }

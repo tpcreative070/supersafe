@@ -8,10 +8,11 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -32,26 +33,25 @@ import co.tpcreative.supersafe.common.services.SuperSafeReceiver;
 import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
 public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,TextView.OnEditorActionListener{
 
     @BindView(R.id.tvStep1)
-    TextView tvStep1;
+    AppCompatTextView tvStep1;
     @BindView(R.id.edtCode)
-    EditText edtCode;
+    AppCompatEditText edtCode;
     @BindView(R.id.btnSendRequest)
-    Button btnSendRequest;
+    AppCompatButton btnSendRequest;
     @BindView(R.id.btnUnlock)
-    Button btnUnlock;
+    AppCompatButton btnUnlock;
     @BindView(R.id.progressbar_circular)
     CircularProgressBar mCircularProgressBar;
     @BindView(R.id.progressbar_circular_unlock_albums)
     CircularProgressBar mCircularProgressBarUnlock;
     @BindView(R.id.tvPremiumDescription)
-    TextView tvPremiumDescription;
+    AppCompatTextView tvPremiumDescription;
     private UnlockAllAlbumPresenter presenter;
     private boolean isNext;
     private static final String TAG = UnlockAllAlbumActivity.class.getSimpleName();

@@ -10,10 +10,10 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
-import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import java.util.List;
 import butterknife.BindView;
@@ -21,7 +21,6 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.presenter.BaseView;
@@ -41,11 +40,11 @@ public class RestoreActivity extends BaseActivity implements TextView.OnEditorAc
     @BindView(R.id.edtPreviousPIN)
     MaterialEditText edtPreviousPIN;
     @BindView(R.id.btnForgotPin)
-    Button btnForgotPin;
+    AppCompatButton btnForgotPin;
     @BindView(R.id.btnRestoreNow)
-    Button btnRestoreNow;
+    AppCompatButton btnRestoreNow;
     @BindView(R.id.tvWrongPin)
-    TextView tvWrongPin;
+    AppCompatTextView tvWrongPin;
     private AlertDialog dialog;
     private boolean isNext;
     private RestorePresenter presenter;

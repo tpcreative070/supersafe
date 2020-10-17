@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -35,11 +38,11 @@ public class ThemeSettingsActivity extends BaseActivity implements BaseView, The
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.tvPremiumDescription)
-    TextView tvPremiumDescription;
+    AppCompatTextView tvPremiumDescription;
     @BindView(R.id.imgIcon)
-    ImageView imgIcon;
+    AppCompatImageView imgIcon;
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     private boolean isUpdated;
     private ThemeSettingsPresenter presenter;
 

@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import org.greenrobot.eventbus.EventBus;
@@ -33,30 +35,30 @@ public class MeFragment extends BaseFragment implements BaseView{
     @BindView(R.id.nsv)
     NestedScrollView nestedScrollView;
     @BindView(R.id.imgSettings)
-    ImageView imgSettings;
+    AppCompatImageView imgSettings;
     @BindView(R.id.imgPro)
-    ImageView imgPro;
+    AppCompatImageView imgPro;
     @BindView(R.id.tvEmail)
-    TextView tvEmail;
+    AppCompatTextView tvEmail;
     @BindView(R.id.tvStatus)
-    TextView tvStatus;
+    AppCompatTextView tvStatus;
     @BindView(R.id.tvEnableCloud)
-    TextView tvEnableCloud;
+    AppCompatTextView tvEnableCloud;
     @BindView(R.id.llAboutLocal)
     LinearLayout llAboutLocal;
     private MePresenter presenter;
     @BindView(R.id.tvPremiumLeft)
-    TextView tvPremiumLeft;
+    AppCompatTextView tvPremiumLeft;
     @BindView(R.id.tvAudios)
-    TextView tvAudios;
+    AppCompatTextView tvAudios;
     @BindView(R.id.tvPhotos)
-    TextView tvPhotos;
+    AppCompatTextView tvPhotos;
     @BindView(R.id.tvVideos)
-    TextView tvVideos;
+    AppCompatTextView tvVideos;
     @BindView(R.id.tvOther)
-    TextView tvOther;
+    AppCompatTextView tvOther;
     @BindView(R.id.tvAvailableSpaces)
-    TextView tvAvailableSpaces;
+    AppCompatTextView tvAvailableSpaces;
 
     public static MeFragment newInstance(int index) {
         MeFragment fragment = new MeFragment();

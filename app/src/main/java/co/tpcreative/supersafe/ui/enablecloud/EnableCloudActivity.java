@@ -6,14 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
-import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -23,7 +22,6 @@ import butterknife.OnClick;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.request.UserCloudRequest;
@@ -39,9 +37,9 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
     private EnableCloudPresenter presenter;
     private ProgressDialog progressDialog;
     @BindView(R.id.btnLinkGoogleDrive)
-    Button btnLinkGoogleDrive;
+    AppCompatButton btnLinkGoogleDrive;
     @BindView(R.id.btnUserAnotherAccount)
-    Button btnUserAnotherAccount;
+    AppCompatButton btnUserAnotherAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

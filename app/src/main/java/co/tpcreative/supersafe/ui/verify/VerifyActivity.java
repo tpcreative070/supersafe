@@ -9,8 +9,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -35,11 +36,11 @@ public class VerifyActivity extends BaseActivityNoneSlide implements BaseView, T
 
     private static final String TAG = VerifyActivity.class.getSimpleName();
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     @BindView(R.id.btnLogin)
-    Button btnLogin;
+    AppCompatButton btnLogin;
     @BindView(R.id.btnReSend)
-    Button btnResend;
+    AppCompatButton btnResend;
     @BindView(R.id.edtCode)
     MaterialEditText edtCode;
     @BindView(R.id.progressBarCircularIndeterminate)

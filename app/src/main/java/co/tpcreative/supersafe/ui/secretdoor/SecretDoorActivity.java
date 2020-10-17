@@ -2,12 +2,11 @@ package co.tpcreative.supersafe.ui.secretdoor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,20 +21,19 @@ import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.EnumStatus;
 
 public class SecretDoorActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener{
-
     private static final String TAG = SecretDoorActivity.class.getSimpleName();
     @BindView(R.id.btnSwitch)
     SwitchCompat btnSwitch;
     @BindView(R.id.rlScanner)
     RelativeLayout rlScanner;
     @BindView(R.id.tvPremiumDescription)
-    TextView tvPremiumDescription;
+    AppCompatTextView tvPremiumDescription;
     @BindView(R.id.tvOptionItems)
-    TextView tvOptionItems;
+    AppCompatTextView tvOptionItems;
     @BindView(R.id.imgIcons)
-    ImageView imgIcons;
+    AppCompatImageView imgIcons;
     @BindView(R.id.tvStatus)
-    TextView tvStatus;
+    AppCompatTextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

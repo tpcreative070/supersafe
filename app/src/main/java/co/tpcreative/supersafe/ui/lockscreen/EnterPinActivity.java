@@ -16,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
@@ -77,13 +80,13 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @BindView(R.id.indicator_dots)
     IndicatorDots mIndicatorDots;
     @BindView(R.id.title)
-    TextView mTextTitle;
+    AppCompatTextView mTextTitle;
     @BindView(R.id.attempts)
-    TextView mTextAttempts;
+    AppCompatTextView mTextAttempts;
     @BindView(R.id.imgLauncher)
-    ImageView imgLauncher;
+    AppCompatImageView imgLauncher;
     @BindView(R.id.ic_SuperSafe)
-    ImageView ic_SuperSafe;
+    AppCompatImageView ic_SuperSafe;
     @BindView(R.id.rlLockScreen)
     RelativeLayout rlLockScreen;
     @BindView(R.id.rlPreference)
@@ -99,11 +102,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @BindView(R.id.calculator_holder)
     LinearLayout calculator_holder;
     @BindView(R.id.btnDone)
-    Button btnDone;
+    AppCompatButton btnDone;
     @BindView(R.id.imgFingerprint)
-    ImageView imgFingerprint;
+    AppCompatImageView imgFingerprint;
     @BindView(R.id.imgSwitchTypeUnClock)
-    ImageView imgSwitchTypeUnClock;
+    AppCompatImageView imgSwitchTypeUnClock;
     @BindView(R.id.root)
     CoordinatorLayout root;
     @BindView(R.id.toolbar)
@@ -115,9 +118,11 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
     @BindView(R.id.crc_standard)
     CircleProgressView circleProgressView;
     @BindView(R.id.tvAttempt)
-    TextView tvAttempt;
-    @BindView(R.id.result) TextView mResult;
-    @BindView(R.id.formula) TextView mFormula;
+    AppCompatTextView tvAttempt;
+    @BindView(R.id.result)
+    AppCompatTextView mResult;
+    @BindView(R.id.formula)
+    AppCompatTextView mFormula;
     private static CalculatorImpl mCalc;
     private int count = 0;
     private int countAttempt=0;

@@ -2,6 +2,9 @@ package co.tpcreative.supersafe.ui.switchbasic;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -35,11 +38,11 @@ public class SwitchBasicActivity extends BaseActivity {
     private Inventory.Product mProductLifeTime;
 
     @BindView(R.id.tvMonthly)
-    TextView tvMonthly;
+    AppCompatTextView tvMonthly;
     @BindView(R.id.tvYearly)
-    TextView tvYearly;
+    AppCompatTextView tvYearly;
     @BindView(R.id.tvLifeTime)
-    TextView tvLifeTime;
+    AppCompatTextView tvLifeTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

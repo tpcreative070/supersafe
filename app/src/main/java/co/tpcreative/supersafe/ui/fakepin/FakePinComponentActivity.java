@@ -183,7 +183,7 @@ public class FakePinComponentActivity extends BaseActivityNoneSlideFakePin imple
     }
 
     public void onAddPermissionCamera() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.CAMERA)
                 .withListener(new MultiplePermissionsListener() {

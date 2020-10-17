@@ -7,10 +7,10 @@ import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceFragmentCompat;
@@ -47,17 +47,17 @@ public class PremiumActivity extends BaseActivity implements BaseView{
     private static final String TAG = PremiumActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
     @BindView(R.id.scrollView)
-    ScrollView scrollView;
+    NestedScrollView scrollView;
     @BindView(R.id.tvPremiumLeft)
-    TextView tvPremiumLeft;
+    AppCompatTextView tvPremiumLeft;
     @BindView(R.id.tvMonthly)
-    TextView tvMonthly;
+    AppCompatTextView tvMonthly;
     @BindView(R.id.tvYearly)
-    TextView tvYearly;
+    AppCompatTextView tvYearly;
     @BindView(R.id.tvLifeTime)
-    TextView tvLifeTime;
+    AppCompatTextView tvLifeTime;
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     @BindView(R.id.llTwo)
     LinearLayout llTwo;
     /*In app purchase*/

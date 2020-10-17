@@ -19,10 +19,13 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import butterknife.BindView;
 import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -34,14 +37,16 @@ public class AlbumSelectActivity extends HelperActivity {
 
     private static final String TAG = AlbumSelectActivity.class.getSimpleName();
     private ArrayList<AlbumMultiItems> albums;
-    private TextView errorDisplay;
     private ProgressBar progressBar;
-    private GridView gridView;
+    @BindView(R.id.grid_view_album_select)
+    GridView gridView;
     private CustomAlbumSelectAdapter adapter;
     private ActionBar actionBar;
     private ContentObserver observer;
     private Handler handler;
     private Thread thread;
+    @BindView(R.id.text_view_error)
+    AppCompatTextView errorDisplay;
     private final String[] projection = new String[]{
             MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
@@ -66,10 +71,8 @@ public class AlbumSelectActivity extends HelperActivity {
             finish();
         }
         Navigator.limit = intent.getIntExtra(Navigator.INTENT_EXTRA_LIMIT, Navigator.DEFAULT_LIMIT);
-        errorDisplay = (TextView) findViewById(R.id.text_view_error);
         errorDisplay.setVisibility(View.INVISIBLE);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar_album_select);
-        gridView = (GridView) findViewById(R.id.grid_view_album_select);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -17,6 +17,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -47,19 +50,19 @@ import fr.castorflex.android.circularprogressbar.CircularProgressDrawable;
 
 public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView, TextView.OnEditorActionListener{
     @BindView(R.id.tvStep1)
-    TextView tvStep1;
+    AppCompatTextView tvStep1;
     @BindView(R.id.edtCode)
-    EditText edtCode;
+    AppCompatEditText edtCode;
     @BindView(R.id.btnSendRequest)
-    Button btnSendRequest;
+    AppCompatButton btnSendRequest;
     @BindView(R.id.btnReset)
-    Button btnReset;
+    AppCompatButton btnReset;
     @BindView(R.id.progressbar_circular)
     CircularProgressBar mCircularProgressBar;
     @BindView(R.id.llSupport)
     LinearLayout llSupport;
     @BindView(R.id.tvSupport)
-    TextView tvSupport;
+    AppCompatTextView tvSupport;
     private ResetPinPresenter presenter;
     private boolean isNext;
     private Boolean isRestoreFiles;

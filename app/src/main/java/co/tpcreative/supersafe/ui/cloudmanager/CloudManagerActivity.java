@@ -14,6 +14,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import com.afollestad.materialdialogs.DialogAction;
@@ -49,33 +51,33 @@ import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 public class CloudManagerActivity extends BaseGoogleApi implements CompoundButton.OnCheckedChangeListener, BaseView<Long> {
     private static String TAG = CloudManagerActivity.class.getSimpleName();
     @BindView(R.id.tvUploaded)
-    TextView tvUploaded;
+    AppCompatTextView tvUploaded;
     @BindView(R.id.tvLeft)
-    TextView tvLeft;
+    AppCompatTextView tvLeft;
     @BindView(R.id.btnRemoveLimit)
-    Button btnRemoveLimit;
+    AppCompatButton btnRemoveLimit;
     @BindView(R.id.tvSupersafeSpace)
-    TextView tvSupersafeSpace;
+    AppCompatTextView tvSupersafeSpace;
     @BindView(R.id.tvOtherSpace)
-    TextView tvOtherSpace;
+    AppCompatTextView tvOtherSpace;
     @BindView(R.id.tvFreeSpace)
-    TextView tvFreeSpace;
+    AppCompatTextView tvFreeSpace;
     @BindView(R.id.llPremium)
     LinearLayout llPremium;
     @BindView(R.id.llTitle)
     LinearLayout llTitle;
     @BindView(R.id.tvValueSupersafeSpace)
-    TextView tvValueSupersafeSpace;
+    AppCompatTextView tvValueSupersafeSpace;
     @BindView(R.id.tvValueOtherSpace)
-    TextView tvValueOtherSpace;
+    AppCompatTextView tvValueOtherSpace;
     @BindView(R.id.tvValueFreeSpace)
-    TextView tvValueFreeSpace;
+    AppCompatTextView tvValueFreeSpace;
     @BindView(R.id.btnSwitchPauseSync)
     SwitchCompat btnSwitchPauseSync;
     @BindView(R.id.tvDriveAccount)
-    TextView tvDriveAccount;
+    AppCompatTextView tvDriveAccount;
     @BindView(R.id.tvDeviceSaving)
-    TextView tvDeviceSaving;
+    AppCompatTextView tvDeviceSaving;
     @BindView(R.id.switch_SaveSpace)
     SwitchCompat btnSwitchSaveSpace;
     private CloudManagerPresenter presenter;

@@ -9,7 +9,6 @@ public abstract class CustomGenericAdapter<T> extends BaseAdapter {
     protected ArrayList<T> arrayList;
     protected Context context;
     protected LayoutInflater layoutInflater;
-
     protected int size;
 
     public CustomGenericAdapter(Context context, ArrayList<T> arrayList) {

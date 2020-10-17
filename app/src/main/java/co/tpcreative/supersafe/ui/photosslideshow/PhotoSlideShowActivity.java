@@ -18,6 +18,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import com.afollestad.materialdialogs.DialogAction;
@@ -45,7 +46,6 @@ import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent;
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
@@ -57,7 +57,6 @@ import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ExportFiles;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import dmax.dialog.SpotsDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -80,19 +79,19 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
     @BindView(R.id.llBottom)
     LinearLayout llBottom;
     @BindView(R.id.imgArrowBack)
-    ImageView imgArrowBack;
+    AppCompatImageView imgArrowBack;
     @BindView(R.id.imgOverflow)
-    ImageView imgOverflow;
+    AppCompatImageView imgOverflow;
     @BindView(R.id.imgShare)
-    ImageView imgShare;
+    AppCompatImageView imgShare;
     @BindView(R.id.imgExport)
-    ImageView imgExport;
+    AppCompatImageView imgExport;
     @BindView(R.id.imgMove)
-    ImageView imgMove;
+    AppCompatImageView imgMove;
     @BindView(R.id.imgRotate)
-    ImageView imgRotate;
+    AppCompatImageView imgRotate;
     @BindView(R.id.imgDelete)
-    ImageView imgDelete;
+    AppCompatImageView imgDelete;
     private boolean isHide;
     private PhotoSlideShowPresenter presenter;
     private Storage storage;

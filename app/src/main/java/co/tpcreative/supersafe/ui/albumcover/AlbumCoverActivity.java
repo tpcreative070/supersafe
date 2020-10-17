@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -49,7 +51,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     @BindView(R.id.llRecyclerView)
     LinearLayout llRecyclerView;
     @BindView(R.id.tvPremiumDescription)
-    TextView tvPremiumDescription;
+    AppCompatTextView tvPremiumDescription;
 
     private AlbumCoverDefaultAdapter adapterDefault;
     private AlbumCoverAdapter adapterCustom;

@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.request.RequestOptions;
@@ -71,15 +74,15 @@ public class MoveGalleryAdapter extends BaseAdapter<GalleryAlbum, BaseHolder> {
         @BindView(R.id.image)
         SquaredImageView imgAlbum;
         @BindView(R.id.tvTitle)
-        TextView tvTitle;
+        AppCompatTextView tvTitle;
         @BindView(R.id.tvPhotos)
-        TextView tvPhotos;
+        AppCompatTextView tvPhotos;
         @BindView(R.id.tvVideos)
-        TextView tvVideos;
+        AppCompatTextView tvVideos;
         @BindView(R.id.tvAudios)
-        TextView tvAudios;
+        AppCompatTextView tvAudios;
         @BindView(R.id.tvOthers)
-        TextView tvOthers;
+        AppCompatTextView tvOthers;
         private int mPosition;
         private GalleryAlbum data;
 

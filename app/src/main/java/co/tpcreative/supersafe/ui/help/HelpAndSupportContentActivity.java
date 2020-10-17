@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -37,13 +39,13 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
     private static final String TAG = HelpAndSupportContentActivity.class.getSimpleName();
     private HelpAndSupportPresenter presenter;
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     @BindView(R.id.webview)
     AdvancedWebView webview;
     @BindView(R.id.llEmail)
     LinearLayout llEmail;
     @BindView(R.id.tvEmail)
-    TextView tvEmail;
+    AppCompatTextView tvEmail;
     @BindView(R.id.edtSupport)
     MaterialEditText edtSupport;
     private boolean isNext ;

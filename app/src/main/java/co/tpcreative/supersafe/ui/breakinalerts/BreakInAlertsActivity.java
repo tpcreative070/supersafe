@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,9 +46,9 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.tvPremiumDescription)
-    TextView tvPremiumDescription;
+    AppCompatTextView tvPremiumDescription;
     @BindView(R.id.tvStatus)
-    TextView tvStatus;
+    AppCompatTextView tvStatus;
     private BreakInAlertsAdapter adapter;
     private BreakInAlertsPresenter presenter;
 
@@ -174,7 +176,7 @@ public class BreakInAlertsActivity extends BaseActivity implements BaseView, Com
     }
 
     public void onAddPermissionCamera(boolean value) {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.CAMERA)
                 .withListener(new MultiplePermissionsListener() {

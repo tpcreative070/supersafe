@@ -5,6 +5,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import org.greenrobot.eventbus.EventBus;
@@ -27,15 +30,15 @@ public class FakePinActivity extends BaseActivity implements CompoundButton.OnCh
     @BindView(R.id.btnSwitch)
     SwitchCompat btnSwitch;
     @BindView(R.id.tvCreatePin)
-    TextView tvCreatePin;
+    AppCompatTextView tvCreatePin;
     @BindView(R.id.llView)
     LinearLayout llView;
     @BindView(R.id.imgView)
-    ImageView imgView;
+    AppCompatImageView imgView;
     @BindView(R.id.tvPremiumDescription)
-    TextView tvPremiumDescription;
+    AppCompatTextView tvPremiumDescription;
     @BindView(R.id.tvStatus)
-    TextView tvStatus;
+    AppCompatTextView tvStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

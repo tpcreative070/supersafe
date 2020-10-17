@@ -43,7 +43,7 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
     }
 
     public void onAddPermission() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE)

@@ -2,11 +2,11 @@ package co.tpcreative.supersafe.ui.camera;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -56,13 +56,13 @@ public class CameraActivity extends BaseActivity implements
     @BindView(R.id.camera)
     CameraView mCameraView;
     @BindView(R.id.btnSwitch)
-    ImageButton btnSwitch;
+    AppCompatImageButton btnSwitch;
     @BindView(R.id.btnDone)
-    Button btnDone;
+    AppCompatButton btnDone;
     @BindView(R.id.btnFlash)
-    ImageButton btnFlash;
+    AppCompatImageButton btnFlash;
     @BindView(R.id.btnAutoFocus)
-    ImageButton btnAutoFocus;
+    AppCompatImageButton btnAutoFocus;
     @BindView(R.id.take_picture)
     FloatingActionButton take_picture;
     private ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();

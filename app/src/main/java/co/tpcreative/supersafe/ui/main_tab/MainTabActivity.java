@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager.widget.ViewPager;
 import com.afollestad.materialdialogs.DialogAction;
@@ -428,7 +429,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         MaterialDialog.Builder builder =  new MaterialDialog.Builder(this)
                 .title(getString(R.string.create_album))
                 .theme(Theme.LIGHT)
-                .titleColor(getResources().getColor(R.color.black))
+                .titleColor(ContextCompat.getColor(this,R.color.black))
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .negativeText(getString(R.string.cancel))
                 .positiveText(getString(R.string.ok))
@@ -461,7 +462,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
     }
 
     public void onAddPermissionCamera() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.CAMERA)
                 .withListener(new MultiplePermissionsListener() {

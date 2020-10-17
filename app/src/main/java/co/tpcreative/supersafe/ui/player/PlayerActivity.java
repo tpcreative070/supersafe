@@ -10,8 +10,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -57,7 +58,6 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -74,7 +74,7 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
     @BindView(R.id.animationPlayer)
     VusikView animationPlayer;
     @BindView(R.id.tvTitle)
-    TextView tvTitle;
+    AppCompatTextView tvTitle;
     @BindView(R.id.rlTop)
     RelativeLayout rlTop;
     @BindView(R.id.recyclerView)
@@ -115,10 +115,10 @@ public class PlayerActivity extends BasePlayerActivity implements BaseView, Play
             initRecycleView(getLayoutInflater());
             presenter.onGetIntent(this);
         }
-        Drawable note1 = getResources().getDrawable(R.drawable.music_1);
-        Drawable note2 = getResources().getDrawable(R.drawable.ic_music_5);
-        Drawable note3 = getResources().getDrawable(R.drawable.music_3);
-        Drawable note4 = getResources().getDrawable(R.drawable.music_4);
+        Drawable note1 = ContextCompat.getDrawable(this,R.drawable.music_1);
+        Drawable note2 = ContextCompat.getDrawable(this,R.drawable.ic_music_5);
+        Drawable note3 = ContextCompat.getDrawable(this,R.drawable.music_3);
+        Drawable note4 = ContextCompat.getDrawable(this,R.drawable.music_4);
         Drawable[] myImageList = new Drawable[]{note1, note2, note3, note4};
         animationPlayer.setImages(myImageList).start();
         playerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {

@@ -12,6 +12,8 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,17 +41,17 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
 
     private static final String TAG = AccountManagerActivity.class.getSimpleName();
     @BindView(R.id.tvEmail)
-    TextView tvEmail;
+    AppCompatTextView tvEmail;
     @BindView(R.id.tvStatus)
-    TextView tvStatus;
+    AppCompatTextView tvStatus;
     @BindView(R.id.tvLicenseStatus)
-    TextView tvLicenseStatus;
+    AppCompatTextView tvLicenseStatus;
     @BindView(R.id.btnSignOut)
-    Button btnSignOut;
+    AppCompatImageButton btnSignOut;
     @BindView(R.id.tvStatusAccount)
-    TextView tvStatusAccount;
+    AppCompatTextView tvStatusAccount;
     @BindView(R.id.tvPremiumLeft)
-    TextView tvPremiumLeft;
+    AppCompatTextView tvPremiumLeft;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.rlPremiumComplimentary)

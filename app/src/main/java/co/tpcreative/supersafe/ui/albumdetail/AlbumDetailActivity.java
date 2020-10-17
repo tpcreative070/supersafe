@@ -15,12 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -87,15 +87,15 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
     @BindView(R.id.speedDial)
     SpeedDialView mSpeedDialView;
     @BindView(R.id.backdrop)
-    ImageView backdrop;
+    AppCompatImageView backdrop;
     @BindView(R.id.tv_Photos)
-    TextView tv_Photos;
+    AppCompatTextView tv_Photos;
     @BindView(R.id.tv_Videos)
-    TextView tv_Videos;
+    AppCompatTextView tv_Videos;
     @BindView(R.id.tv_Audios)
-    TextView tv_Audios;
+    AppCompatTextView tv_Audios;
     @BindView(R.id.tv_Others)
-    TextView tv_Others;
+    AppCompatTextView tv_Others;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.llBottom)
@@ -616,7 +616,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     /*Init grant permission*/
     public void onAddPermissionCamera() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(
                         Manifest.permission.CAMERA)
                 .withListener(new MultiplePermissionsListener() {
