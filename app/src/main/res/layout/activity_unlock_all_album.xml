@@ -6,21 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/material_gray_100"
     tools:context=".ui.unlockalbum.UnlockAllAlbumActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
@@ -31,7 +28,6 @@
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
     </com.google.android.material.appbar.AppBarLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,22 +36,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <include
                 layout="@layout/layout_premium_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,29 +54,25 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:orientation="vertical">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="@string/step_1"
                     android:textSize="@dimen/text_size_normal"
                     android:textStyle="bold" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvStep1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/request_an_access_code"
                     android:textSize="@dimen/text_size_normal" />
-
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp">
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnSendRequest"
                         android:layout_width="200dp"
                         android:layout_height="@dimen/button_high"
@@ -94,7 +81,6 @@
                         android:padding="10dp"
                         android:text="@string/send_verification_code"
                         android:textColor="@color/white" />
-
                     <fr.castorflex.android.circularprogressbar.CircularProgressBar
                         android:id="@+id/progressbar_circular"
                         android:layout_width="30dp"
@@ -108,23 +94,20 @@
                         android:indeterminateOnly="false"
                         android:visibility="invisible" />
                 </RelativeLayout>
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:text="@string/step_2"
                     android:textSize="@dimen/text_size_normal"
                     android:textStyle="bold" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvStep2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:text="@string/enter_access_code_to_unlock_all_albums"
                     android:textSize="@dimen/text_size_normal" />
-
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtCode"
                     style="@style/RegularTextView"
@@ -142,7 +125,6 @@
                     app:met_primaryColor="?attr/colorAccent"
                     app:met_textColor="@color/material_gray_700"
                     app:met_textColorHint="?attr/colorAccent"/>
-
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -155,8 +137,7 @@
                         android:indeterminate="true"
                         android:indeterminateOnly="false"
                         android:visibility="invisible" />
-
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnUnlock"
                         android:layout_width="200dp"
                         android:layout_height="@dimen/button_high"
@@ -168,6 +149,6 @@
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

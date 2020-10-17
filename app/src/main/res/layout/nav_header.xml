@@ -24,7 +24,7 @@
     android:orientation="vertical"
     android:gravity="bottom">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Username"

@@ -17,4 +17,5 @@ include ':app',
         'bungeelibrary',
         'dialogsuccessprogresslibrary',
         'library-circleprogress',
-        'materialdialoglibrary'
+        'materialdialoglibrary',
+        'material-edit-text'

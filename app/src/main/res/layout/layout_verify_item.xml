@@ -15,7 +15,7 @@
         android:background="@drawable/rectanglebutton_selector"
         android:clickable="true"
         android:gravity="center">
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:padding="6dp"
             android:layout_gravity="center"
             android:id="@+id/buttonImage"

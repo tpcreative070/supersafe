@@ -4,28 +4,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content">
-
     <LinearLayout
         android:layout_centerInParent="true"
         android:orientation="horizontal"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_alignParentLeft="true"
             android:id="@+id/imgAlbum"
             android:layout_width="@dimen/icon_size_50"
             android:layout_height="@dimen/icon_size_50"/>
-
         <LinearLayout
             android:paddingLeft="10dp"
             android:layout_toRightOf="@+id/imgAlbum"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:singleLine="true"
                 android:layout_marginBottom="2dp"
                 android:textColor="@color/black"
@@ -33,15 +29,13 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:singleLine="true"
                 android:layout_marginTop="2dp"
                 android:textSize="@dimen/small"
                 android:id="@+id/tvSizeCreatedDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
         </LinearLayout>
     </LinearLayout>
     <View
@@ -50,5 +44,4 @@
         android:id="@+id/view_alpha"
         android:layout_width="match_parent"
         android:layout_height="70dp" />
-
 </RelativeLayout>

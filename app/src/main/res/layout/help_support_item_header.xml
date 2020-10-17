@@ -14,7 +14,7 @@
         android:layout_marginBottom="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textStyle="bold"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"

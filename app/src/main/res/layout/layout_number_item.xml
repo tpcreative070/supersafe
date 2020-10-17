@@ -6,7 +6,7 @@
     android:clipToPadding="false"
     android:gravity="center"
     android:orientation="vertical">
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:textSize="60dp"
         android:text=""
         android:layout_gravity="center"

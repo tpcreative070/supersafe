@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
         <RelativeLayout
             android:id="@+id/rlHome"
             android:layout_width="match_parent"
@@ -12,7 +11,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
             <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:scaleType="centerCrop"
                 android:id="@+id/imgAlbum"
@@ -20,13 +18,11 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:src="@drawable/image_background_audio_video" />
-
             <View
                 android:id="@+id/view_alpha"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorButton"/>
-
             <co.tpcreative.supersafe.common.views.SquaredImageView
                 android:padding="5dp"
                 android:src="@drawable/ic_done_white"
@@ -35,7 +31,7 @@
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"
                 android:layout_centerInParent="true"/>
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textColor="@color/multiple_image_select_buttonText"
                 android:layout_margin="5dp"
                 android:maxLines="2"
@@ -43,8 +39,7 @@
                 android:layout_gravity="center|top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgVideoCam"
                 android:visibility="visible"
                 android:src="@drawable/baseline_videocam_white_36"
@@ -53,8 +48,6 @@
                 android:layout_alignParentBottom="true"
                 android:layout_width="@dimen/image_size_video_cam"
                 android:layout_height="@dimen/image_size_video_cam"/>
-
-
             <RelativeLayout
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
@@ -62,14 +55,13 @@
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_centerInParent="true"
                     android:id="@+id/imgCheck"
                     android:visibility="invisible"
-                    android:src="@drawable/baseline_check_circle_white_48"
+                    app:srcCompat="@drawable/baseline_check_circle_white_48"
                     android:layout_width="@dimen/image_size_video_cam"
                     android:layout_height="@dimen/image_size_video_cam"/>
-
                 <ProgressBar
                     android:visibility="invisible"
                     android:id="@+id/progressingBar"

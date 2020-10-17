@@ -15,14 +15,14 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView android:id="@android:id/title"
+        <androidx.appcompat.widget.AppCompatTextView android:id="@android:id/title"
             android:textColor="?attr/colorAccent"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_preference_categories_title"/>
-        <TextView android:id="@android:id/summary"
+        <androidx.appcompat.widget.AppCompatTextView android:id="@android:id/summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_preference_categories_summary"/>

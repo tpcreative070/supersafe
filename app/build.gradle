@@ -85,7 +85,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 
     /*Adding Edittext Android Material*/
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    implementation project(':material-edit-text')
 
     /*Waiting for progress*/
     implementation 'com.github.vajro:MaterialDesignLibrary:1.6'

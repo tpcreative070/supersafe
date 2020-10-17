@@ -9,7 +9,7 @@
 	android:paddingStart="8dp"
 	android:paddingTop="4dp"
 	android:id="@+id/rlHome">
-	<TextView
+	<androidx.appcompat.widget.AppCompatTextView
 		android:id="@+id/tvHeader"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

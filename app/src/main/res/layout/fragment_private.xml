@@ -10,13 +10,11 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <androidx.recyclerview.widget.RecyclerView
             android:background="@color/material_gray_200"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </androidx.recyclerview.widget.RecyclerView>
-
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

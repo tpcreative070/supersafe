@@ -12,27 +12,21 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
             <RelativeLayout
                 android:id="@+id/rlSlider"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <co.tpcreative.supersafe.common.views.SquaredImageView
                     android:id="@+id/imgAlbum"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
-
                 <co.tpcreative.supersafe.common.views.SquaredImageView
                     android:clickable="false"
                     android:layout_centerInParent="true"
                     android:id="@+id/imgIcon"
                     android:layout_width="@dimen/finger_icon"
                     android:layout_height="@dimen/finger_icon"/>
-
             </RelativeLayout>
-
-
             <RelativeLayout
                 android:background="@color/white"
                 android:id="@+id/llHeader"
@@ -41,7 +35,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textColor="@color/black"
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"
@@ -54,8 +48,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:tint="@color/material_gray_500"
                     android:padding="5dp"
                     android:layout_centerInParent="true"
@@ -65,7 +58,6 @@
                     android:layout_height="@dimen/ic_album_overflow_height"
                     android:scaleType="centerCrop"
                     app:srcCompat="@drawable/ic_more_vert_black_100dp"/>
-
             </RelativeLayout>
         </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

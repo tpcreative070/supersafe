@@ -20,46 +20,41 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:id="@+id/tvTitle"
                 android:layout_marginBottom="5dp"
                 android:text="@string/audio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
             <LinearLayout
                 android:layout_marginTop="5dp"
                 android:weightSum="4"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:singleLine="true"
                     android:id="@+id/tvPhotos"
                     android:text="@string/photos"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:singleLine="true"
                     android:id="@+id/tvVideos"
                     android:text="@string/videos"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:singleLine="true"
                     android:id="@+id/tvAudios"
                     android:text="@string/audio"
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:singleLine="true"
                     android:id="@+id/tvOthers"
                     android:text="@string/audio"

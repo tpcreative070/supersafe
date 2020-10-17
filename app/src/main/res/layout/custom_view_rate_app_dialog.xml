@@ -3,8 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content">
-
-
     <LinearLayout
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -16,16 +14,14 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textColor="@color/material_gray_700"
             android:textSize="@dimen/small"
             android:id="@+id/tvHappy"
             android:text="@string/happy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textColor="@color/material_gray_700"
             android:textSize="@dimen/small"
             android:id="@+id/tvUnhappy"
@@ -33,9 +29,7 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textColor="@color/material_gray_700"
             android:textSize="@dimen/small"
             android:text="@string/thank_you_feedback"
@@ -43,7 +37,6 @@
             android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
         <LinearLayout
             android:visibility="gone"
             android:background="@color/light_green_a700"
@@ -51,11 +44,11 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_gravity="center"
                 android:layout_width="@dimen/icon_size_30"
                 android:layout_height="@dimen/icon_size_30"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:textSize="@dimen/medium_16"
                 android:id="@+id/btnILoveIt"
                 android:textColor="@color/white"
@@ -66,7 +59,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high" />
         </LinearLayout>
-
         <LinearLayout
             android:visibility="gone"
             android:background="@color/ColorRedV1"
@@ -74,11 +66,11 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_gravity="center"
                 android:layout_width="@dimen/icon_size_30"
                 android:layout_height="@dimen/icon_size_30"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:textSize="@dimen/medium_16"
                 android:id="@+id/btnReportProblem"
                 android:textColor="@color/white"
@@ -88,7 +80,6 @@
                 android:background="@null"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high" />
-
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
