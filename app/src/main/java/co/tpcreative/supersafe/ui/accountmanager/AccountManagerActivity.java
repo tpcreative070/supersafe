@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.accountmanager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -12,9 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,7 +50,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
     @BindView(R.id.tvLicenseStatus)
     AppCompatTextView tvLicenseStatus;
     @BindView(R.id.btnSignOut)
-    AppCompatImageButton btnSignOut;
+    AppCompatButton btnSignOut;
     @BindView(R.id.tvStatusAccount)
     AppCompatTextView tvStatusAccount;
     @BindView(R.id.tvPremiumLeft)
@@ -59,7 +62,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
     @BindView(R.id.rlPremium)
     RelativeLayout rlPremium;
     @BindView(R.id.scrollView)
-    ScrollView scrollView;
+    NestedScrollView scrollView;
     private AccountManagerPresenter presenter;
     private AccountManagerAdapter adapter;
 
@@ -79,7 +82,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
     }
 
     public void onUpdatedView(){
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             tvEmail.setText(mUser.email);
             if (mUser.verified){
@@ -91,7 +94,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
                 tvStatusAccount.setText(getString(R.string.unverified));
             }
         }
-        final boolean isPremium = User.getInstance().isPremium();
+        final boolean isPremium = Utils.isPremium();
         if (isPremium){
             tvLicenseStatus.setTextColor(getResources().getColor(R.color.ColorBlueV1));
             tvLicenseStatus.setText(getString(R.string.premium));
@@ -109,7 +112,10 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
 
     public void initRecycleView(){
         adapter = new AccountManagerAdapter(getLayoutInflater(),this,this);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        if (recyclerView==null){
+            Utils.Log(TAG,"recyclerview is null");
+        }
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
@@ -186,7 +192,7 @@ public class AccountManagerActivity extends BaseGoogleApi implements BaseView ,A
     @OnClick(R.id.btnSignOut)
     public void onSignOut(View view){
         Utils.Log(TAG,"sign out");
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             signOut(new ServiceManager.ServiceManagerSyncDataListener() {
                 @Override

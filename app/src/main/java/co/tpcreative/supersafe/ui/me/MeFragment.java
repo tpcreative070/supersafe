@@ -120,7 +120,7 @@ public class MeFragment extends BaseFragment implements BaseView{
     }
 
     public void onUpdatedView(){
-        final boolean isPremium = User.getInstance().isPremium();
+        final boolean isPremium = Utils.isPremium();
         if (isPremium){
             tvPremiumLeft.setText(getString(R.string.you_are_in_premium_features));
             ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();

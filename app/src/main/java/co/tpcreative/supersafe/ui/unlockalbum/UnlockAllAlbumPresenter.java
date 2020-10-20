@@ -67,7 +67,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                     }
                     else{
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY);
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
                             Utils.setUserPreShare(mUser);
@@ -157,7 +157,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_client_id), request.client_id);
         hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
@@ -211,7 +211,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
             return;
         }
 
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -266,7 +266,7 @@ public class UnlockAllAlbumPresenter extends Presenter<BaseView> {
                         view.onError(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     else{
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
                         Utils.setUserPreShare(mUser);

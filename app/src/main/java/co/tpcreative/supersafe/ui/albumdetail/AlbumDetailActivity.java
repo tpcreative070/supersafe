@@ -884,7 +884,7 @@ public class AlbumDetailActivity extends BaseGalleryActivity implements BaseView
 
     /*Download file*/
     public void onEnableSyncData(){
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             if (mUser.verified){
                 if (!mUser.driveConnected){

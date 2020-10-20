@@ -75,7 +75,7 @@ public class ShareFilesActivity extends BaseActivityNone{
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_files);
-        User mUser = User.getInstance().getUserInfo();
+        User mUser = Utils.getUserInfo();
         if (mUser!=null){
             if (mUser._id!=null){
                 ServiceManager.getInstance().onInitConfigurationFile();

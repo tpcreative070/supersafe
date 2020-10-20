@@ -32,11 +32,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.content.PermissionChecker;
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat;
-import androidx.room.Ignore;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.anjlab.android.iab.v3.PurchaseData;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.api.client.util.Base64;
 import com.google.common.base.Charsets;
@@ -46,11 +44,8 @@ import com.snatik.storage.Storage;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
 import com.snatik.storage.security.SecurityUtil;
-
 import org.apache.commons.io.FilenameUtils;
 import org.greenrobot.eventbus.EventBus;
-import org.solovyev.android.checkout.Purchase;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -72,12 +67,10 @@ import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
 import co.tpcreative.supersafe.common.controller.SingletonManager;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
-import co.tpcreative.supersafe.common.entities.MainCategoryEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.listener.Listener;
 import co.tpcreative.supersafe.common.services.SuperSafeApplication;
-import co.tpcreative.supersafe.model.EnumFileType;
+import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumFormatType;
 import co.tpcreative.supersafe.model.EnumPinAction;
 import co.tpcreative.supersafe.model.EnumStatus;
@@ -85,10 +78,9 @@ import co.tpcreative.supersafe.model.ImportFilesModel;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.MainCategoryModel;
 import co.tpcreative.supersafe.model.MimeTypeFile;
-import co.tpcreative.supersafe.model.SyncItemModel;
+import co.tpcreative.supersafe.model.SyncData;
 import co.tpcreative.supersafe.model.ThemeApp;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -98,6 +90,8 @@ import io.reactivex.disposables.Disposable;
  * Created by pc on 07/16/2017.
  */
 public class Utils {
+
+    final public static String GOOGLE_CONSOLE_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB";
     // utility function
     public  static String  FORMAT_TIME = "yyyy-MM-dd HH:mm:ss";
     public static String FORMAT_TIME_FILE_NAME = "yyyyMMdd_HHmmss";
@@ -677,7 +671,7 @@ public class Utils {
         return false;
     }
 
-    public static Map<String,Object> objectToHashMap(final Purchase items){
+    public static Map<String,Object> objectToHashMap(final PurchaseData items){
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> myMap = new Gson().fromJson(new Gson().toJson(items), type);
         return myMap;
@@ -834,7 +828,7 @@ public class Utils {
 
     public static String getUserId(){
         try{
-            final User mUser = User.getInstance().getUserInfo();
+            final User mUser = getUserInfo();
             if (mUser!=null){
                 return mUser.email;
             }
@@ -847,7 +841,7 @@ public class Utils {
 
     /*Checking allow sync data*/
     public static boolean isAllowSyncData(){
-        return User.getInstance().isAllowRequestDriveApis();
+        return isAllowRequestDriveApis();
     }
 
     public static boolean isPauseSync(){
@@ -872,7 +866,7 @@ public class Utils {
 
     public static String getAccessToken() {
         try {
-            User user = User.getInstance().getUserInfo();
+            User user = getUserInfo();
             if (user != null) {
                return user.author.session_token;
             }
@@ -1190,12 +1184,77 @@ public class Utils {
     public static void checkRequestUploadItemData(){
         final List<ItemModel> mResult = SQLHelper.getItemListUpload();
         if (mResult!=null){
-            if (mResult.size()>0 && User.getInstance().isCheckAllowUpload()){
+            if (mResult.size()>0 && isCheckAllowUpload()){
                ServiceManager.getInstance().onPreparingSyncData();
                return;
             }
         }
         ServiceManager.getInstance().onDefaultValue();
         Utils.Log(TAG,"All items already synced...........");
+    }
+
+    public static boolean isRealCheckedOut(String orderId){
+        if (orderId.contains("GPA")){
+            return true;
+        }
+        return false;
+    }
+
+    public static void setCheckoutItems(CheckoutItems checkoutItems){
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_checkout_items),new Gson().toJson(checkoutItems));
+    }
+
+    public static CheckoutItems getCheckoutItems(){
+        final String value = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_checkout_items),null);
+        if (value!=null){
+            final CheckoutItems mResult = new Gson().fromJson(value,CheckoutItems.class);
+            if (mResult!=null){
+                return mResult;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isPremium(){
+//        if (BuildConfig.DEBUG){
+//            return false;
+//        }
+        final CheckoutItems mCheckout = getCheckoutItems();
+        if (mCheckout!=null){
+            if (mCheckout.isPurchasedLifeTime || mCheckout.isPurchasedOneYears || mCheckout.isPurchasedSixMonths){
+                return true;
+            }
+        }
+        return  false;
+    }
+
+    public static boolean isCheckAllowUpload(){
+        final User mUser = getUserInfo();
+        if (mUser==null){
+            return false;
+        }
+        final SyncData syncData = mUser.syncData;
+        if (!isPremium()){
+            if (syncData!=null){
+                if (syncData.left==0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAllowRequestDriveApis(){
+        final User mUser = getUserInfo();
+        if (mUser!=null){
+            if (mUser.driveConnected){
+                if (mUser.access_token !=null && !mUser.access_token.equals("")){
+                    if (mUser.cloud_id!=null && !mUser.cloud_id.equals("") && !Utils.isPauseSync()){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

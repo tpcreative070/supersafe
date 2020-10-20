@@ -12,21 +12,27 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceFragmentCompat;
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.PurchaseData;
+import com.anjlab.android.iab.v3.PurchaseInfo;
+import com.anjlab.android.iab.v3.SkuDetails;
+import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.gson.Gson;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.solovyev.android.checkout.ActivityCheckout;
-import org.solovyev.android.checkout.Billing;
-import org.solovyev.android.checkout.BillingRequests;
-import org.solovyev.android.checkout.Checkout;
-import org.solovyev.android.checkout.Inventory;
-import org.solovyev.android.checkout.ProductTypes;
-import org.solovyev.android.checkout.Purchase;
-import org.solovyev.android.checkout.RequestListener;
-import org.solovyev.android.checkout.Sku;
+//import org.solovyev.android.checkout.ActivityCheckout;
+//import org.solovyev.android.checkout.Billing;
+//import org.solovyev.android.checkout.BillingRequests;
+//import org.solovyev.android.checkout.Checkout;
+//import org.solovyev.android.checkout.Inventory;
+//import org.solovyev.android.checkout.ProductTypes;
+//import org.solovyev.android.checkout.Purchase;
+//import org.solovyev.android.checkout.RequestListener;
+//import org.solovyev.android.checkout.Sku;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -36,13 +42,15 @@ import co.tpcreative.supersafe.R;
 import co.tpcreative.supersafe.common.Navigator;
 import co.tpcreative.supersafe.common.activity.BaseActivity;
 import co.tpcreative.supersafe.common.presenter.BaseView;
-import co.tpcreative.supersafe.common.services.SuperSafeApplication;
+//import co.tpcreative.supersafe.common.services.SuperSafeApplication;
 import co.tpcreative.supersafe.common.util.Utils;
+import co.tpcreative.supersafe.model.CheckoutItems;
+import co.tpcreative.supersafe.model.EnumPurchase;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.User;
 import co.tpcreative.supersafe.ui.settings.SettingsActivity;
 
-public class PremiumActivity extends BaseActivity implements BaseView{
+public class PremiumActivity extends BaseActivity implements BaseView, BillingProcessor.IBillingHandler {
 
     private static final String TAG = PremiumActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG = SettingsActivity.class.getSimpleName() + "::fragmentTag";
@@ -61,17 +69,10 @@ public class PremiumActivity extends BaseActivity implements BaseView{
     @BindView(R.id.llTwo)
     LinearLayout llTwo;
     /*In app purchase*/
-    private ActivityCheckout mCheckout;
-    private ActivityCheckout mCheckoutLifeTime;
-    private InventoryCallback mInventoryCallback;
-    private InventoryCallbackLifeTime mInventoryCallbackLifeTime;
-    private Inventory.Product mProduct;
-    private Inventory.Product mProductLifeTime;
-    private Sku mMonths;
-    private Sku mYears;
-    private Sku mLifeTime;
-    private boolean isPurchased;
     private PremiumPresenter presenter;
+
+    /*New version*/
+    private BillingProcessor bp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,8 @@ public class PremiumActivity extends BaseActivity implements BaseView{
         presenter.bindView(this);
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
-            fragment = Fragment.instantiate(this, PremiumActivity.SettingsFragment.class.getName());
+            final FragmentFactory mFactory = getSupportFragmentManager().getFragmentFactory();
+            fragment = mFactory.instantiate(ClassLoader.getSystemClassLoader(),SettingsFragment.class.getName());
         }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.content_frame, fragment);
@@ -96,7 +98,7 @@ public class PremiumActivity extends BaseActivity implements BaseView{
     }
 
     public void onUpdatedView(){
-        final boolean isPremium = User.getInstance().isPremium();
+        final boolean isPremium = Utils.isPremium();
         if (isPremium){
             tvTitle.setText(getText(R.string.you_are_in_premium_features));
             tvPremiumLeft.setVisibility(View.GONE);
@@ -116,23 +118,13 @@ public class PremiumActivity extends BaseActivity implements BaseView{
 
     @OnClick(R.id.llMonths)
     public void onClickedMonths(View view){
-        if (mProduct==null){
-            return;
-        }
-        if (User.getInstance().isPremium()){
-            return;
-        }
-        Utils.Log(TAG,"Months");
-        if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
-            if (mMonths!=null){
-                final Purchase purchase = mProduct.getPurchaseInState(mMonths, Purchase.State.PURCHASED);
-                if (purchase != null) {
-                    Toast.makeText(getApplicationContext(),"Already charged",Toast.LENGTH_SHORT).show();
-                    consume(purchase);
-                } else {
-                    Utils.Log(TAG,"value...?"+ new Gson().toJson(mMonths));
-                    purchase(mMonths);
-                }
+        if (BillingProcessor.isIabServiceAvailable(this)){
+            Utils.Log(TAG,"purchase new");
+            if (bp.isSubscribed(getString(R.string.six_months))){
+                Utils.Log(TAG,"Already charged");
+                bp.loadOwnedPurchasesFromGoogle();
+            }else{
+                bp.subscribe(this,getString(R.string.six_months));
             }
         }
     }
@@ -140,44 +132,27 @@ public class PremiumActivity extends BaseActivity implements BaseView{
     @OnClick(R.id.llYears)
     public void onClickedYears(View view){
         Utils.Log(TAG,"Years");
-        if (mProduct==null){
-            return;
-        }
-        if (User.getInstance().isPremium()){
-            return;
-        }
-        if (mProduct.getSkus()!=null && mProduct.getSkus().size()>0){
-            if (mYears!=null){
-                final Purchase purchase = mProduct.getPurchaseInState(mYears, Purchase.State.PURCHASED);
-                if (purchase != null) {
-                    Toast.makeText(getApplicationContext(),"Already charged",Toast.LENGTH_SHORT).show();
-                    consume(purchase);
-                } else {
-                    Utils.Log(TAG,"value...?"+ new Gson().toJson(mYears));
-                    purchase(mYears);
-                }
+        if (BillingProcessor.isIabServiceAvailable(this)){
+            Utils.Log(TAG,"purchase new");
+            if (bp.isSubscribed(getString(R.string.one_years))){
+                Utils.Log(TAG,"Already charged");
+                bp.loadOwnedPurchasesFromGoogle();
+            }else{
+                bp.subscribe(this,getString(R.string.one_years));
             }
         }
     }
 
     @OnClick(R.id.llLifeTime)
     public void onClickedLifeTime(View view){
-        if (mProductLifeTime==null){
-            return;
-        }
-        if (User.getInstance().isPremium()){
-            return;
-        }
-        if (mProductLifeTime.getSkus()!=null && mProductLifeTime.getSkus().size()>0){
-            if (mLifeTime!=null){
-                //final Purchase purchase = mProductLifeTime.getPurchaseInState(mLifeTime, Purchase.State.PURCHASED);
-                if (isPurchased) {
-                    Toast.makeText(getApplicationContext(),"Already charged",Toast.LENGTH_SHORT).show();
-                    //consumeLifeTime(purchase);
-                } else {
-                    Utils.Log(TAG,"value...?"+ new Gson().toJson(mLifeTime));
-                    purchaseLifeTime(mLifeTime);
-                }
+        if (BillingProcessor.isIabServiceAvailable(this)){
+            Utils.Log(TAG,"purchase new");
+            if (bp.isPurchased(getString(R.string.life_time))){
+                Utils.Log(TAG,"Already charged");
+                bp.consumePurchase(getString(R.string.life_time));
+                bp.loadOwnedPurchasesFromGoogle();
+            }else{
+                bp.purchase(this,getString(R.string.life_time));
             }
         }
     }
@@ -207,17 +182,13 @@ public class PremiumActivity extends BaseActivity implements BaseView{
 
     @Override
     protected void onDestroy() {
+        if (bp != null) {
+            bp.release();
+        }
         super.onDestroy();
         Utils.Log(TAG,"OnDestroy");
         EventBus.getDefault().unregister(this);
         presenter.unbindView();
-        /*Destroy In App Purchase*/
-        if (mCheckout!=null){
-            mCheckout.stop();
-        }
-        if (mCheckoutLifeTime!=null){
-            mCheckoutLifeTime.stop();
-        }
     }
 
     @Override
@@ -245,157 +216,13 @@ public class PremiumActivity extends BaseActivity implements BaseView{
     /* Start in app purchase */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCheckout.onActivityResult(requestCode, resultCode, data);
-        mCheckoutLifeTime.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private class InventoryCallback implements Inventory.Callback {
-        @Override
-        public void onLoaded(Inventory.Products products) {
-            final Inventory.Product product = products.get(ProductTypes.SUBSCRIPTION);
-            if (!product.supported) {
-                // billing is not supported, user can't purchase anything
-                return;
-            }
-            mProduct = product;
-            if (mProduct!=null){
-                if (mProduct.getSkus().size()>0){
-                  for (int i=0;i<mProduct.getSkus().size();i++){
-                      Sku index = mProduct.getSkus().get(i);
-                      if (index.id.code.equals(getString(R.string.six_months))){
-                          tvMonthly.setText(index.price);
-                          mMonths = index;
-                      }
-                      else if (index.id.code.equals(getString(R.string.one_years))){
-                          tvYearly.setText(index.price);
-                          mYears = index;
-                      }
-                  }
-                }
-            }
-            Utils.Log(TAG,"value : "+ new Gson().toJson(product));
-        }
-    }
-
-    private class InventoryCallbackLifeTime implements Inventory.Callback {
-        @Override
-        public void onLoaded(Inventory.Products products) {
-            final Inventory.Product product = products.get(ProductTypes.IN_APP);
-            if (!product.supported) {
-                // billing is not supported, user can't purchase anything
-                return;
-            }
-            mProductLifeTime = product;
-            if (mProductLifeTime!=null){
-                if (mProductLifeTime.getSkus().size()>0){
-                    for (int i=0;i<mProductLifeTime.getSkus().size();i++){
-                        Sku index = mProductLifeTime.getSkus().get(i);
-                        if (index.id.code.equals(getString(R.string.life_time))){
-                            tvLifeTime.setText(index.price);
-                            mLifeTime = index;
-                            if (mProductLifeTime.isPurchased(mLifeTime)){
-                                isPurchased = true;
-                            }
-                        }
-                    }
-                }
-            }
-            Utils.Log(TAG,"value : "+ new Gson().toJson(product));
-        }
-    }
-
-    /**
-     * @return {@link RequestListener} that reloads inventory when the action is finished
-     */
-
-    private <T> RequestListener<T> makeRequestListener() {
-        return new RequestListener<T>() {
-            @Override
-            public void onSuccess(@Nonnull T result) {
-                try {
-                    Utils.onWriteLog(new Gson().toJson("Checkout "+result),EnumStatus.CHECKOUT);
-                    if (presenter!=null){
-                        final Purchase purchase = (Purchase) result;
-                        presenter.onAddCheckout(purchase);
-                    }
-                }
-                catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"Error "+e.getMessage(),Toast.LENGTH_SHORT).show();
-                }
-                reloadInventory();
-                reloadInventoryLifeTime();
-            }
-            @Override
-            public void onError(int response, @Nonnull Exception e) {
-                reloadInventory();
-                reloadInventoryLifeTime();
-            }
-        };
-    }
-
-    private void consume(final Purchase purchase) {
-        mCheckout.whenReady(new Checkout.EmptyListener() {
-            @Override
-            public void onReady(@Nonnull BillingRequests requests) {
-                requests.consume(purchase.token, makeRequestListener());
-            }
-        });
-    }
-
-    private void consumeLifeTime(final Purchase purchase) {
-        mCheckout.whenReady(new Checkout.EmptyListener() {
-            @Override
-            public void onReady(@Nonnull BillingRequests requests) {
-                requests.consume(purchase.token, makeRequestListener());
-            }
-        });
+        if (!bp.handleActivityResult(requestCode, resultCode, data))
+            super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void onStartInAppPurchase(){
-        final Billing billing = SuperSafeApplication.getInstance().getBilling();
-        mCheckout = Checkout.forActivity(this, billing);
-        mCheckoutLifeTime = Checkout.forActivity(this,billing);
-        mInventoryCallback = new InventoryCallback();
-        mInventoryCallbackLifeTime  = new InventoryCallbackLifeTime();
-        mCheckout.start();
-        mCheckoutLifeTime.start();
-        reloadInventory();
-        reloadInventoryLifeTime();
-    }
-
-    private void purchase(Sku sku) {
-        final RequestListener<Purchase> listener = makeRequestListener();
-        mCheckout.startPurchaseFlow(sku, null, listener);
-    }
-
-    private void purchaseLifeTime(Sku sku) {
-        final RequestListener<Purchase> listener = makeRequestListener();
-        mCheckoutLifeTime.startPurchaseFlow(sku, null, listener);
-    }
-
-    private void reloadInventory() {
-        List<String> mList = new ArrayList<>();
-        mList.add(getString(R.string.six_months));
-        mList.add(getString(R.string.one_years));
-        //mList.add(getString(R.string.life_time));
-        final Inventory.Request request = Inventory.Request.create();
-        // load purchase info
-        request.loadAllPurchases();
-        // load SKU details
-        request.loadSkus(ProductTypes.SUBSCRIPTION,mList);
-        mCheckout.loadInventory(request, mInventoryCallback);
-    }
-
-    private void reloadInventoryLifeTime() {
-        List<String> mList = new ArrayList<>();
-        mList.add(getString(R.string.life_time));
-        final Inventory.Request request = Inventory.Request.create();
-        // load purchase info
-        request.loadAllPurchases();
-        // load SKU details
-        request.loadSkus(ProductTypes.IN_APP,mList);
-        mCheckoutLifeTime.loadInventory(request, mInventoryCallbackLifeTime);
+        bp = new BillingProcessor(this,Utils.GOOGLE_CONSOLE_KEY, this);
+        bp.initialize();
     }
 
     /*Presenter*/
@@ -427,11 +254,9 @@ public class PremiumActivity extends BaseActivity implements BaseView{
 
     @Override
     public void onSuccessful(String message, EnumStatus status) {
-        switch (status){
-            case CHECKOUT:{
-                onUpdatedView();
-                break;
-            }
+        if (status == EnumStatus.CHECKOUT) {
+            Utils.Log(TAG, message + "-" + status.name());
+            onUpdatedView();
         }
     }
 
@@ -468,5 +293,127 @@ public class PremiumActivity extends BaseActivity implements BaseView{
     @Override
     public void onBackPressed() {
        super.onBackPressed();
+    }
+
+    /*New version*/
+    @Override
+    public void onProductPurchased(String productId, TransactionDetails details) {
+        Utils.Log(TAG,"Checkout detail "+ new Gson().toJson(details));
+        if (details!=null){
+            final PurchaseInfo mInfo = details.purchaseInfo;
+            if (mInfo!=null){
+                final PurchaseData mData = mInfo.purchaseData;
+                if (mData!=null){
+                    onCheckout(mData,EnumPurchase.fromString(mData.productId));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPurchaseHistoryRestored() {
+        Utils.Log(TAG,"onPurchaseHistoryRestored");
+    }
+
+    @Override
+    public void onBillingError(int errorCode, Throwable error) {
+        Utils.Log(TAG,"onBillingError " + error);
+    }
+
+    @Override
+    public void onBillingInitialized() {
+        Utils.Log(TAG,"onBillingInitialized");
+        /*Life time period time*/
+        final SkuDetails mLifeTime =  bp.getPurchaseListingDetails(getString(R.string.life_time));
+        if (mLifeTime!=null){
+            tvLifeTime.setText(mLifeTime.priceText);
+        }
+        /*Six month period time*/
+        final SkuDetails mSixMonths =  bp.getSubscriptionListingDetails(getString(R.string.six_months));
+        if (mSixMonths!=null){
+            tvMonthly.setText(mSixMonths.priceText);
+        }
+        /*One year period time*/
+        final SkuDetails mOneYear =  bp.getSubscriptionListingDetails(getString(R.string.one_years));
+        if (mOneYear!=null){
+            tvYearly.setText(mOneYear.priceText);
+        }
+
+        final TransactionDetails mTransaction = bp.getSubscriptionTransactionDetails(getString(R.string.six_months));
+        if (mTransaction!=null){
+            Utils.Log(TAG,"Result of 6 months " + new Gson().toJson(mTransaction));
+        }
+    }
+
+    public void onCheckout(PurchaseData data, EnumPurchase purchase){
+        CheckoutItems mCheckout = Utils.getCheckoutItems();
+        Utils.Log(TAG,"Call checkout....");
+        switch (purchase){
+            case LIFETIME:
+                if (mCheckout != null) {
+                    mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data.orderId);
+                }
+                else{
+                    mCheckout = new CheckoutItems();
+                    mCheckout.isPurchasedLifeTime = Utils.isRealCheckedOut(data.orderId);
+                }
+                Utils.setCheckoutItems(mCheckout);
+                break;
+            case SIX_MONTHS:
+                if (mCheckout != null) {
+                    if (Utils.isRealCheckedOut(data.orderId)){
+                        if (data.autoRenewing){
+                            mCheckout.isPurchasedSixMonths = true;
+                        }else{
+                            mCheckout.isPurchasedSixMonths = false;
+                        }
+                    }else{
+                        mCheckout.isPurchasedSixMonths = false;
+                    }
+                }
+                else{
+                    mCheckout = new CheckoutItems();
+                    if (Utils.isRealCheckedOut(data.orderId)){
+                        if (data.autoRenewing){
+                            mCheckout.isPurchasedSixMonths = true;
+                        }else{
+                            mCheckout.isPurchasedSixMonths = false;
+                        }
+                    }else{
+                        mCheckout.isPurchasedSixMonths = false;
+                    }
+                }
+                Utils.setCheckoutItems(mCheckout);
+            case ONE_YEAR:
+                if (mCheckout != null) {
+                    if (Utils.isRealCheckedOut(data.orderId)){
+                        if (data.autoRenewing){
+                            mCheckout.isPurchasedOneYears = true;
+                        }else{
+                            mCheckout.isPurchasedOneYears = false;
+                        }
+                    }else{
+                        mCheckout.isPurchasedOneYears = false;
+                    }
+                }
+                else{
+                    mCheckout = new CheckoutItems();
+                    if (Utils.isRealCheckedOut(data.orderId)){
+                        if (data.autoRenewing){
+                            mCheckout.isPurchasedOneYears = true;
+                        }else{
+                            mCheckout.isPurchasedOneYears = false;
+                        }
+                    }else{
+                        mCheckout.isPurchasedOneYears = false;
+                    }
+                }
+                Utils.setCheckoutItems(mCheckout);
+                break;
+            default:
+                Utils.setCheckoutItems(new CheckoutItems());
+                break;
+        }
+        presenter.onAddCheckout(data);
     }
 }

@@ -28,7 +28,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
 
     public ResetPinPresenter(){
         mUser = new User();
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user!=null){
             this.mUser = user;
         }
@@ -67,7 +67,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
                             Utils.setUserPreShare(mUser);
@@ -119,7 +119,7 @@ public class ResetPinPresenter extends Presenter<BaseView> {
                         view.onError(onResponse.message,EnumStatus.REQUEST_CODE);
                     }
                     else{
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
                         this.mUser = mUser;

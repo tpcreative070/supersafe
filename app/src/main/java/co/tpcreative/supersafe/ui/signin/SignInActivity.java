@@ -206,7 +206,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
         Utils.Log(TAG,message +" " + status.name());
         switch (status){
             case SEND_EMAIL:{
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 Navigator.onMoveToVerify(this,mUser);
                 onStopLoading(EnumStatus.SIGN_IN);
                 break;
@@ -218,7 +218,7 @@ public class SignInActivity extends BaseActivityNoneSlide implements TextView.On
     public void onSuccessful(String message, EnumStatus status, User object) {
         switch (status){
             case SIGN_IN:{
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 final EmailToken emailToken = EmailToken.getInstance().convertObject(mUser,EnumStatus.SIGN_IN);
                 presenter.onSendMail(emailToken);
                 break;

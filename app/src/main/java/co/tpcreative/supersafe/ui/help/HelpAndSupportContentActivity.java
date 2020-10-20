@@ -65,7 +65,7 @@ public class HelpAndSupportContentActivity extends BaseActivity implements BaseV
         presenter.bindView(this);
         presenter.onGetDataIntent(this);
 
-        mUser = User.getInstance().getUserInfo();
+        mUser = Utils.getUserInfo();
         tvEmail.setText(mUser.email);
 
         edtSupport.addTextChangedListener(mTextWatcher);

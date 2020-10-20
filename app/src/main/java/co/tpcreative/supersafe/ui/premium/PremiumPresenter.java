@@ -1,14 +1,11 @@
 package co.tpcreative.supersafe.ui.premium;
+import com.anjlab.android.iab.v3.PurchaseData;
 import com.google.gson.Gson;
-import org.solovyev.android.checkout.Purchase;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import co.tpcreative.supersafe.R;
-import co.tpcreative.supersafe.common.controller.PrefsController;
 import co.tpcreative.supersafe.common.controller.ServiceManager;
-import co.tpcreative.supersafe.common.entities.ItemEntity;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
@@ -20,7 +17,6 @@ import co.tpcreative.supersafe.model.CheckoutItems;
 import co.tpcreative.supersafe.model.EnumStatus;
 import co.tpcreative.supersafe.model.ItemModel;
 import co.tpcreative.supersafe.model.User;
-import co.tpcreative.supersafe.common.entities.InstanceGenerator;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -35,7 +31,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
     protected boolean isSaver;
 
     public PremiumPresenter(){
-        mUser = User.getInstance().getUserInfo();
+        mUser = Utils.getUserInfo();
         mList = SQLHelper.getListAllItemsSaved(true,true);
         if (mList==null){
             mList = new ArrayList<>();
@@ -67,7 +63,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         }
     }
 
-    public void onAddCheckout(final Purchase purchase){
+    public void onAddCheckout(final PurchaseData purchase){
         BaseView view = view();
         if (view == null) {
             view.onError("no view", EnumStatus.CHECKOUT);
@@ -81,7 +77,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
             view.onError("no subscriptions", EnumStatus.CHECKOUT);
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.CHECKOUT);
             return;
@@ -90,23 +86,7 @@ public class PremiumPresenter extends Presenter<BaseView>{
         if (purchase==null){
             return;
         }
-
-        final CheckoutItems checkout = new CheckoutItems();
-
-        if (purchase.sku.equals(getString(R.string.six_months))){
-           checkout.isPurchasedSixMonths = true;
-        }
-
-        if (purchase.sku.equals(getString(R.string.one_years))){
-            checkout.isPurchasedOneYears = true;
-        }
-
-        if (purchase.sku.equals(getString(R.string.life_time))){
-            checkout.isPurchasedLifeTime = true;
-        }
-        user.checkout = checkout;
-        Utils.setUserPreShare(user);
-        final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.sku,purchase.state.name(),purchase.token);
+        final CheckoutRequest mCheckout = new CheckoutRequest(mUser.email,purchase.autoRenewing,purchase.orderId,purchase.productId,purchase.purchaseState.name(),purchase.purchaseToken);
         Utils.onWriteLog(new Gson().toJson(mCheckout),EnumStatus.CHECKOUT);
         subscriptions.add(SuperSafeApplication.serverAPI.onCheckout(mCheckout)
                 .subscribeOn(Schedulers.io())

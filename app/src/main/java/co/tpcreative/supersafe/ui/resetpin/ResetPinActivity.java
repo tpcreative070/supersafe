@@ -308,7 +308,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
     public void onSuccessful(String message, EnumStatus status) {
         switch (status){
             case REQUEST_CODE:{
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 Utils.Log(TAG,new Gson().toJson(mUser));
                 btnSendRequest.setText(getString(R.string.send_verification_code));
                 btnSendRequest.setEnabled(false);
@@ -345,7 +345,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
 
     public void onShowDialogWaitingCode(){
         ThemeApp themeApp = ThemeApp.getInstance().getThemeInfo();
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         Utils.Log(TAG,"Preparing "+ new Gson().toJson(mUser));
         new MaterialStyledDialog.Builder(this)
                 .setTitle(R.string.send_code_later)
@@ -361,7 +361,7 @@ public class ResetPinActivity extends BaseVerifyPinActivity implements BaseView,
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Utils.Log(TAG,"positive");
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         Utils.Log(TAG,"Pressed "+ new Gson().toJson(mUser));
                         SingletonResetPin.getInstance().onStartTimer(300000);
                     }

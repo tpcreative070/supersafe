@@ -25,7 +25,7 @@ public class SingletonResetPin {
         }
         ServiceManager.getInstance().onStartService();
         ServiceManager.getInstance().setIsWaitingSendMail(true);
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         Utils.Log(TAG,"Start " +new Gson().toJson(mUser));
         mCountDownTimer = new CountDownTimer(value, 1000) {
             @Override
@@ -38,7 +38,7 @@ public class SingletonResetPin {
             @Override
             public void onFinish() {
                 Utils.Log(TAG,"Finish :");
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 Utils.Log(TAG,new Gson().toJson(mUser));
                 mUser.isWaitingSendMail = true;
                 Utils.setUserPreShare(mUser);
@@ -55,14 +55,14 @@ public class SingletonResetPin {
             mCountDownTimer.cancel();
             mCountDownTimer = null;
             ServiceManager.getInstance().setIsWaitingSendMail(false);
-            final User mUser = User.getInstance().getUserInfo();
+            final User mUser = Utils.getUserInfo();
             mUser.isWaitingSendMail = false;
             Utils.setUserPreShare(mUser);
         }
         else{
             try {
                 ServiceManager.getInstance().setIsWaitingSendMail(false);
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser =Utils.getUserInfo();
                 mUser.isWaitingSendMail = false;
                 Utils.setUserPreShare(mUser);
             }

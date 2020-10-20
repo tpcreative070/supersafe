@@ -141,7 +141,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_client_id), request.client_id);
         hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
@@ -194,7 +194,7 @@ public class SignInPresenter extends Presenter<BaseView<User>> {
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

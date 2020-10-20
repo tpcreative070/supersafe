@@ -256,7 +256,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             mSignInAccount = account;
             onDriveSuccessful();
         } else {
-            final User mUser = User.getInstance().getUserInfo();
+            final User mUser = Utils.getUserInfo();
             if (mUser!=null){
                 mUser.driveConnected = false;
                 Utils.setUserPreShare(mUser);
@@ -351,7 +351,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                     String value = credential.getToken();
                     if (value!=null){
                         Utils.Log(TAG,"access token  start "+ value);
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser!=null){
                             mUser.access_token = String.format(getString(R.string.access_token),value);
                             Utils.setUserPreShare(mUser);
@@ -374,7 +374,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
             super.onPostExecute(accessToken);
             try {
                 if (accessToken != null) {
-                    final User mUser = User.getInstance().getUserInfo();
+                    final User mUser = Utils.getUserInfo();
                     if (mUser != null) {
                         //Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
                         if (ServiceManager.getInstance().getMyService()==null){
@@ -433,7 +433,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
                             @Override
                             public void onSuccessful(String message, EnumStatus status) {
                                 Utils.Log(TAG,"onSuccessful " +message + " - " +status.name());
-                                final User mUser = User.getInstance().getUserInfo();
+                                final User mUser = Utils.getUserInfo();
                                 //ServiceManager.getInstance().onGetListCategoriesSync();
                                 if (mUser != null) {
                                     if (mUser.driveAbout == null) {
@@ -493,7 +493,7 @@ public abstract class BaseGoogleApi extends AppCompatActivity implements SensorF
         mGoogleSignInClient.signOut().addOnCompleteListener(this,new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                final  User mUser = User.getInstance().getUserInfo();
+                final  User mUser = Utils.getUserInfo();
                 if (mUser!=null){
                     mUser.driveConnected = false;
                     Utils.setUserPreShare(mUser);

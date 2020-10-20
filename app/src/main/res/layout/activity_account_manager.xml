@@ -37,7 +37,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:textColor="@color/material_gray_700"
                         android:gravity="left"
                         android:layout_gravity="center"
@@ -72,10 +72,8 @@
                         android:text="@string/your_complimentary_premium"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
-
                 </LinearLayout>
-
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:layout_alignParentTop="true"
                     android:textStyle="bold"
                     android:text="@string/upgrade"
@@ -88,14 +86,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </RelativeLayout>
-
-
             <RelativeLayout
                 android:visibility="gone"
                 android:id="@+id/rlPremium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textStyle="bold"
                     android:textColor="?attr/colorPrimary"
                     android:padding="20dp"
@@ -105,9 +101,7 @@
                     android:text="@string/you_are_in_premium_features"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </RelativeLayout>
-
             <LinearLayout
                 android:paddingTop="20dp"
                 android:paddingLeft="20dp"
@@ -124,8 +118,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
-
             <LinearLayout
                 android:background="@color/white"
                 android:paddingLeft="30dp"
@@ -136,14 +128,14 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:text="@string/license_status"
                     android:layout_weight="0.7"
                     android:gravity="left"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:text="@string/free"
                     android:gravity="right"
                     android:textSize="@dimen/text_size_normal"
@@ -164,8 +156,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"></View>
             </LinearLayout>
-
-
             <LinearLayout
                 android:paddingTop="10dp"
                 android:paddingLeft="20dp"
@@ -173,7 +163,7 @@
                 android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:inputType="textCapCharacters"
                     android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_normal"
@@ -182,8 +172,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
-
             <LinearLayout
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
@@ -193,14 +181,12 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:singleLine="true"
                         android:textStyle="bold"
                         android:text="@string/account"
@@ -210,8 +196,7 @@
                         android:id="@+id/tvEmail"
                         android:gravity="left"
                         android:layout_height="wrap_content"/>
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:textColor="@color/ColorBlueV1"
                         android:id="@+id/tvStatusAccount"
                         android:text="@string/verify"
@@ -222,8 +207,7 @@
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:paddingTop="10dp"
                     android:text="@string/key_primary_email_address_detail_v1"
                     android:gravity="left"
@@ -233,14 +217,12 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-
             <!-- List app was installed on this devices -->
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textColor="?attr/colorAccent"
                     android:textSize="@dimen/text_size_normal"
                     android:paddingLeft="20dp"
@@ -252,17 +234,13 @@
                     android:text="@string/did_you_discover"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
-
             <!-- Action button -->
-
-
             <LinearLayout
                 android:visibility="gone"
                 android:background="@color/white"
@@ -270,7 +248,7 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:layout_marginRight="30dp"
                     android:layout_marginLeft="30dp"
                     android:id="@+id/btnSignOut"
@@ -283,8 +261,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_high" />
             </LinearLayout>
-
         </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

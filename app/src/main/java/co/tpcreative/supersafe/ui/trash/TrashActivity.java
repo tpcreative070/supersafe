@@ -84,7 +84,7 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
     }
 
     public void onUpdatedView(){
-        if (!User.getInstance().isPremium()){
+        if (!Utils.isPremium()){
             llUpgrade.setVisibility(View.VISIBLE);
             rlRecyclerView.setVisibility(View.GONE);
         }
@@ -206,7 +206,7 @@ public class TrashActivity extends BaseActivity implements BaseView,TrashAdapter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (User.getInstance().isPremium()){
+        if (Utils.isPremium()){
             if (toolbar==null){
                 return false;
             }

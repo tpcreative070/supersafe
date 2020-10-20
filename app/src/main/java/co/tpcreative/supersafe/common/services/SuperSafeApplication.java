@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import com.snatik.storage.EncryptConfiguration;
 import com.snatik.storage.Storage;
 import com.snatik.storage.security.SecurityUtil;
-import org.solovyev.android.checkout.Billing;
 import co.tpcreative.supersafe.common.helper.SQLHelper;
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat;
 import co.tpcreative.supersafe.common.util.Utils;
@@ -152,7 +151,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     }
 
     public String getSecretKey() {
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user!=null){
             if (user._id!=null){
                 Utils.Log(TAG,"Get secret key " + user._id);
@@ -201,22 +200,6 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
 
     public static synchronized SuperSafeApplication getInstance() {
         return mInstance;
-    }
-
-    /*In app purchase*/
-
-    private final Billing mBilling = new Billing(this, new Billing.DefaultConfiguration() {
-        /*In app purchase*/
-        String key_purchase = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB";
-        @Override
-        public String getPublicKey() {
-            return key_purchase;
-        }
-    });
-
-    @Nonnull
-    public Billing getBilling() {
-        return mBilling;
     }
 
 
@@ -488,8 +471,7 @@ public class SuperSafeApplication extends MultiDexApplication implements Depende
     @Override
     public String onAuthorToken() {
         try {
-
-            User user = User.getInstance().getUserInfo();
+            User user = Utils.getUserInfo();
             if (user != null) {
                 authorization = user.author.session_token;
                 Utils.onWriteLog(authorization,EnumStatus.REQUEST_ACCESS_TOKEN);

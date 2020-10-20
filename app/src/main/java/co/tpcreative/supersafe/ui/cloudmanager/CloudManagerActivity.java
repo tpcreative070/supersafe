@@ -109,7 +109,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
     }
 
     public void onUpdatedView() {
-        if (User.getInstance().isPremium()) {
+        if (Utils.isPremium()) {
             llPremium.setVisibility(View.GONE);
             llTitle.setVisibility(View.VISIBLE);
         } else {
@@ -132,7 +132,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
         tvSupersafeSpace.setVisibility(View.VISIBLE);
         tvOtherSpace.setVisibility(View.VISIBLE);
         tvFreeSpace.setVisibility(View.VISIBLE);
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         boolean isThrow = false;
         if (mUser != null) {
             DriveAbout driveAbout = mUser.driveAbout;
@@ -313,7 +313,7 @@ public class CloudManagerActivity extends BaseGoogleApi implements CompoundButto
                 break;
             }
             case R.id.switch_SaveSpace: {
-                if (!User.getInstance().isPremium()){
+                if (!Utils.isPremium()){
                     onShowPremium();
                     PrefsController.putBoolean(getString(R.string.key_saving_space), false);
                     btnSwitchSaveSpace.setChecked(false);

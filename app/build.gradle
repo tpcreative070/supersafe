@@ -166,7 +166,8 @@ dependencies {
     implementation project(':fingerprint-auth-library')
 
     /*In app purchase*/
-    implementation project(':checkoutlibrary')
+    //implementation project(':checkoutlibrary')
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
 
     /*Google ads*/
     implementation 'com.google.android.gms:play-services-ads:19.4.0'

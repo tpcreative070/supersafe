@@ -380,7 +380,7 @@ public class EnableCloudActivity extends BaseGoogleApi implements BaseView {
         switch (status){
             case CREATE:{
                 onStopProgressDialog();
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 mUser.cloud_id= message;
                 mUser.driveConnected = true;
                 Utils.setUserPreShare(mUser);

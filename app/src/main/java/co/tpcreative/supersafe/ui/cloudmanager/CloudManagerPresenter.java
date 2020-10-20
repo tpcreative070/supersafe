@@ -185,7 +185,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
             @Override
             public void onSuccessful(String message, EnumStatus status, Integer object) {
                 if (object == 0) {
-                    final User mUser = User.getInstance().getUserInfo();
+                    final User mUser = Utils.getUserInfo();
                     if (mUser != null) {
                         Utils.Log(TAG, "onSuccessful 2");
                         if (mUser.driveAbout != null) {
@@ -204,7 +204,7 @@ public class CloudManagerPresenter extends Presenter<BaseView<Long>> {
                         for (ItemModel index : mList) {
                             countSize += Long.parseLong(index.size);
                         }
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser != null) {
                             if (mUser.driveAbout != null) {
                                 mUser.driveAbout.inAppUsed = countSize;

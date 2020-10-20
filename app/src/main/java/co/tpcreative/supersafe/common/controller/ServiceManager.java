@@ -94,6 +94,7 @@ public class ServiceManager implements BaseServiceView {
             ServiceManager.getInstance().onSyncAuthorDevice();
             ServiceManager.getInstance().onGetDriveAbout();
             Utils.onScanFile(SuperSafeApplication.getInstance(),"scan.log");
+            PremiumManager.getInstance().onStartInAppPurchase();
         }
         //binder comes from server to communicate with method's of
         public void onServiceDisconnected(ComponentName className) {
@@ -518,7 +519,7 @@ public class ServiceManager implements BaseServiceView {
     /*Preparing upload data*/
     private void onPreparingUploadData(){
         Utils.Log(TAG,"onPreparingUploadData");
-        if (!User.getInstance().isCheckAllowUpload()){
+        if (!Utils.isCheckAllowUpload()){
             Utils.Log(TAG,"onPreparingUploadData ==> Left 0. Please wait for next month or upgrade to premium version");
             Utils.onPushEventBus(EnumStatus.DONE);
             Utils.onPushEventBus(EnumStatus.REFRESH);
@@ -1237,7 +1238,7 @@ public class ServiceManager implements BaseServiceView {
 
     public void onSendEmail(){
         if (myService!=null){
-            final User mUser = User.getInstance().getUserInfo();
+            final User mUser = Utils.getUserInfo();
             EmailToken emailToken  = EmailToken.getInstance().convertObject(mUser,EnumStatus.RESET);
             myService.onSendMail(emailToken);
         }
@@ -1554,7 +1555,7 @@ public class ServiceManager implements BaseServiceView {
             case USER_INFO: {
                 Utils.Log(TAG, "Get info successful");
                 ServiceManager.getInstance().onPreparingSyncData();
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 if (mUser.isWaitingSendMail){
                     ServiceManager.getInstance().onSendEmail();
                 }

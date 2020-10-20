@@ -180,7 +180,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         switch (compoundButton.getId()) {
             case R.id.btnSwitch: {
-                if (!User.getInstance().isPremium()) {
+                if (!Utils.isPremium()) {
                     btnSwitch.setChecked(false);
                     onShowPremium();
                     break;
@@ -231,7 +231,7 @@ public class AlbumCoverActivity extends BaseActivity implements BaseView,Compoun
         switch (status){
             case RELOAD:{
                 if (presenter.mMainCategories!=null){
-                    if (User.getInstance().isPremium()) {
+                    if (Utils.isPremium()) {
                         setTitle(presenter.mMainCategories.categories_name);
                         btnSwitch.setChecked(presenter.mMainCategories.isCustom_Cover);
                         llRecyclerView.setVisibility(presenter.mMainCategories.isCustom_Cover?View.VISIBLE : View.INVISIBLE);

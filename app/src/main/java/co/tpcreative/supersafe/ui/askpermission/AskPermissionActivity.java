@@ -52,7 +52,7 @@ public class AskPermissionActivity extends BaseActivityNoneSlide {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         if (report.areAllPermissionsGranted()) {
                             Navigator.onMoveToDashBoard(AskPermissionActivity.this);
-                            final User mUSer = User.getInstance().getUserInfo();
+                            final User mUSer = Utils.getUserInfo();
                             if (mUSer!=null){
                                 mUSer.driveConnected = false;
                                 Utils.setUserPreShare(mUSer);

@@ -136,7 +136,7 @@ public class SettingsActivity extends BaseActivity {
             case Navigator.ENABLE_CLOUD:{
                 Utils.Log(TAG,"onResultResponse :" + resultCode);
                 if (resultCode==RESULT_OK){
-                    final User mUser = User.getInstance().getUserInfo();
+                    final User mUser = Utils.getUserInfo();
                     if (mUser!=null){
                         if (mUser.verified){
                             if (!mUser.driveConnected){
@@ -239,7 +239,7 @@ public class SettingsActivity extends BaseActivity {
                                 Navigator.onMoveThemeSettings(activity);
                                 return true;
                             }
-                            if (!User.getInstance().isPremium()){
+                            if (!Utils.isPremium()){
                                 onShowPremium();
                                 return true;
                             }
@@ -250,7 +250,7 @@ public class SettingsActivity extends BaseActivity {
                                 Navigator.onMoveBreakInAlerts(getContext());
                                 return true;
                             }
-                            if (!User.getInstance().isPremium()){
+                            if (!Utils.isPremium()){
                                 onShowPremium();
                                 return true;
                             }
@@ -261,7 +261,7 @@ public class SettingsActivity extends BaseActivity {
                                 Navigator.onMoveFakePin(getContext());
                                 return true;
                             }
-                            if (!User.getInstance().isPremium()){
+                            if (!Utils.isPremium()){
                                 onShowPremium();
                                 return true;
                             }
@@ -272,7 +272,7 @@ public class SettingsActivity extends BaseActivity {
                                 Navigator.onMoveSecretDoor(getContext());
                                 return true;
                             }
-                            if (!User.getInstance().isPremium()){
+                            if (!Utils.isPremium()){
                                 onShowPremium();
                                 return true;
                             }
@@ -285,7 +285,7 @@ public class SettingsActivity extends BaseActivity {
                             Navigator.onMoveAboutSuperSafe(getContext());
                         }
                         else if (preference.getKey().equals(getString(R.string.key_private_cloud))){
-                            final User mUser = User.getInstance().getUserInfo();
+                            final User mUser = Utils.getUserInfo();
                             if (mUser!=null){
                                 if (mUser.verified){
                                     if (!mUser.driveConnected){
@@ -305,7 +305,7 @@ public class SettingsActivity extends BaseActivity {
                                 Navigator.onMoveUnlockAllAlbums(getContext());
                                 return true;
                             }
-                            if (!User.getInstance().isPremium()){
+                            if (!Utils.isPremium()){
                                 onShowPremium();
                                 return true;
                             }

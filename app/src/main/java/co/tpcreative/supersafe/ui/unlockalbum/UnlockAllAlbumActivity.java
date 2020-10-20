@@ -65,7 +65,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         presenter = new UnlockAllAlbumPresenter();
         presenter.bindView(this);
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             String email = mUser.email;
             if (email!=null){
@@ -188,7 +188,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         if (isNext){
             String code = edtCode.getText().toString().trim();
             final VerifyCodeRequest request = new VerifyCodeRequest();
-            final User mUser = User.getInstance().getUserInfo();
+            final User mUser = Utils.getUserInfo();
             if (mUser!=null){
                 request.code = code;
                 request.user_id = mUser.email;
@@ -228,7 +228,7 @@ public class UnlockAllAlbumActivity extends BaseActivity implements BaseView,Tex
         btnSendRequest.setEnabled(false);
         btnSendRequest.setText("");
         onStartLoading(EnumStatus.REQUEST_CODE);
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             if (mUser.email!=null){
                 final VerifyCodeRequest request = new VerifyCodeRequest();

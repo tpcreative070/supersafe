@@ -115,7 +115,6 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
         if (Utils.isCheckSyncSuggestion()){
             onSuggestionSyncData();
         }
-        PremiumManager.getInstance().onStartInAppPurchase();
         if (presenter.mUser!=null){
             if (presenter.mUser.driveConnected){
                 if (NetworkUtil.pingIpAddress(this)) {
@@ -597,7 +596,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
     @Override
     protected void onPause() {
         super.onPause();
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user!=null){
             if (!user.driveConnected){
                 onAnimationIcon(EnumStatus.SYNC_ERROR);
@@ -861,7 +860,7 @@ public class MainTabActivity extends BaseGoogleApi implements BaseView{
     }
 
     public void onEnableSyncData(){
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             if (mUser.verified){
                 if (!mUser.driveConnected){

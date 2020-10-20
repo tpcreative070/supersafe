@@ -44,7 +44,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
     protected boolean isUserExisting;
 
     public CheckSystemPresenter(){
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user!=null){
             mUser = user;
         }
@@ -198,7 +198,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                         view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
-                        mUser = User.getInstance().getUserInfo();
+                        mUser = Utils.getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
                             final DataResponse mData = onResponse.data;
@@ -212,7 +212,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                             }
                             SuperSafeApplication.getInstance().writeUserSecret(mUser);
                             Utils.setUserPreShare(mUser);
-                            mUser = User.getInstance().getUserInfo();
+                            mUser = Utils.getUserInfo();
                         }
                         view.onSuccessful(onResponse.message,EnumStatus.VERIFY_CODE);
                     }
@@ -276,7 +276,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                                 else{
                                     Utils.Log(TAG,"User is null");
                                 }
-                                mUser = User.getInstance().getUserInfo();
+                                mUser = Utils.getUserInfo();
                                 view.onSuccessful(onResponse.message,EnumStatus.CHANGE_EMAIL);
                             }
                         }
@@ -328,7 +328,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                     }
                     else{
 
-                        User mUser = User.getInstance().getUserInfo();
+                        User mUser = Utils.getUserInfo();
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
                         Utils.setUserPreShare(mUser);
@@ -418,7 +418,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_client_id), request.client_id);
         hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
@@ -471,7 +471,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -524,7 +524,7 @@ public class CheckSystemPresenter extends Presenter<BaseView>{
                     else{
                         final DataResponse mData = onResponse.data;
                         final UserCloudResponse mCloud = mData.userCloud;
-                        mUser = User.getInstance().getUserInfo();
+                        mUser = Utils.getUserInfo();
                         mUser.verified = true;
                         mUser.cloud_id = mCloud.cloud_id;
                         Utils.setUserPreShare(mUser);

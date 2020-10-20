@@ -550,7 +550,7 @@ public class PhotoSlideShowActivity extends BaseGalleryActivity implements View.
 
     /*Download file*/
     public void onEnableSyncData(int position){
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser!=null){
             if (mUser.verified){
                 if (!mUser.driveConnected){

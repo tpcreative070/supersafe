@@ -3,6 +3,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import co.tpcreative.supersafe.common.presenter.BaseView;
 import co.tpcreative.supersafe.common.presenter.Presenter;
+import co.tpcreative.supersafe.common.util.Utils;
 import co.tpcreative.supersafe.model.User;
 
 public class MainTabPresenter extends Presenter<BaseView> {
@@ -11,6 +12,6 @@ public class MainTabPresenter extends Presenter<BaseView> {
     public MainTabPresenter(){
     }
     public void onGetUserInfo(){
-        mUser = User.getInstance().getUserInfo();
+        mUser = Utils.getUserInfo();
     }
 }

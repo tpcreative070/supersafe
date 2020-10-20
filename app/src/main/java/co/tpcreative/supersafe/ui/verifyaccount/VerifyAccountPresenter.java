@@ -35,7 +35,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
     protected User mUser;
 
     public VerifyAccountPresenter(){
-        mUser = User.getInstance().getUserInfo();
+        mUser = Utils.getUserInfo();
         if (mUser==null){
             mUser = new User();
         }
@@ -63,7 +63,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         view.onError(getString(R.string.the_code_not_signed_up),EnumStatus.VERIFY_CODE);
                     }
                     else{
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser!=null){
                             mUser.verified = true;
                             final DataResponse mData = onResponse.data;
@@ -138,7 +138,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                                 else{
                                     Utils.Log(TAG,"User is null");
                                 }
-                                mUser = User.getInstance().getUserInfo();
+                                mUser = Utils.getUserInfo();
                                 view.onSuccessful(onResponse.responseMessage,EnumStatus.CHANGE_EMAIL);
                             }
                         }
@@ -185,7 +185,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
                         view.onError(onResponse.message,EnumStatus.RESEND_CODE);
                     }
                     else{
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         final DataResponse mData = onResponse.data;
                         mUser.code = mData.requestCode.code ;
                         this.mUser = mUser;
@@ -385,7 +385,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_client_id), request.client_id);
         hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
@@ -440,7 +440,7 @@ public class VerifyAccountPresenter extends Presenter<BaseView> {
             return;
         }
 
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

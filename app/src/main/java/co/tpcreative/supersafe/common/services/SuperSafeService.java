@@ -161,7 +161,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (subscriptions == null) {
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser==null){
             return;
         }
@@ -216,7 +216,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.UPDATE_USER_TOKEN)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user==null){
             return;
         }
@@ -237,7 +237,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         isCallRefreshToken = false;
                     }
                     else{
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         final DataResponse mData = onResponse.data;
                         if (mData.user!=null){
                             if (mData.user.author!=null){
@@ -260,7 +260,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         int code  = ((HttpException) throwable).response().code();
                         try {
                             if (code == 403 || code == 400 || code == 401){
-                                final User mUserResponse = User.getInstance().getUserInfo();
+                                final User mUserResponse = Utils.getUserInfo();
                                 if (mUserResponse!=null){
                                     onSignIn(user);
                                 }
@@ -285,7 +285,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
             isCallRefreshToken = false;
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser==null){
             isCallRefreshToken = false;
             return;
@@ -309,7 +309,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         int code  = ((HttpException) throwable).response().code();
                         try {
                             if (code == 403 || code == 400 || code == 401){
-                                final User user = User.getInstance().getUserInfo();
+                                final User user = Utils.getUserInfo();
                                 if (user!=null){
                                     onSignIn(user);
                                 }
@@ -346,7 +346,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_IN);
                     } else {
-                        final User user = User.getInstance().getUserInfo();
+                        final User user = Utils.getUserInfo();
                         final DataResponse mData = onResponse.data;
                         if (mData.user!=null){
                             user.author = mData.user.author;
@@ -375,7 +375,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.GET_DRIVE_ABOUT)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("User is null", EnumStatus.GET_DRIVE_ABOUT);
             return;
@@ -399,7 +399,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     if (onResponse.error != null) {
                         view.onError("Error " + new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         mUser.driveAbout = onResponse;
                         Utils.setUserPreShare(mUser);
                         view.onSuccessful(new Gson().toJson(onResponse), EnumStatus.GET_DRIVE_ABOUT);
@@ -438,7 +438,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view, EnumStatus.GET_LIST_FILES_IN_APP)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.GET_LIST_FILES_IN_APP);
             return;
@@ -509,7 +509,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.CATEGORIES_SYNC)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.CATEGORIES_SYNC);
             return;
@@ -586,7 +586,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.DELETE_CATEGORIES)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.DELETE_CATEGORIES);
             return;
@@ -647,7 +647,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.UPDATE)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.UPDATE);
             return;
@@ -716,7 +716,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.ADD_ITEMS)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.ADD_ITEMS);
             return;
@@ -828,7 +828,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view, EnumStatus.DELETE_SYNC_CLOUD_DATA)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.DELETE_SYNC_CLOUD_DATA);
             return;
@@ -895,7 +895,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.DELETE_SYNC_OWN_DATA)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.DELETE_SYNC_OWN_DATA);
             return;
@@ -957,7 +957,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.GET_LIST_FILE)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("no user", EnumStatus.GET_LIST_FILE);
             return;
@@ -1068,7 +1068,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
 
     public void onDownloadFile(final ItemModel items,boolean isDownloadToExport, final ServiceManager.DownloadServiceListener listener) {
         Utils.Log(TAG, "onDownloadFile !!!!");
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (!mUser.driveConnected) {
             listener.onError("No Drive api connected", EnumStatus.DOWNLOAD);
             return;
@@ -1210,7 +1210,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
 
     public void onUploadFileInAppFolder(final ItemModel items, final ServiceManager.UploadServiceListener listener) {
         Utils.Log(TAG, "onUploadFileInAppFolder");
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         MediaType contentType = MediaType.parse("application/json; charset=UTF-8");
         HashMap<String, Object> content = new HashMap<>();
         DriveEvent contentEvent = new DriveEvent();
@@ -1279,7 +1279,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.GET_DRIVE_ABOUT)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user == null) {
             view.onError("User is null",EnumStatus.GET_DRIVE_ABOUT);
             return;
@@ -1302,14 +1302,14 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     }
                     view.onStopLoading(EnumStatus.GET_DRIVE_ABOUT);
                     if (onResponse.error != null) {
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
                             Utils.setUserPreShare(user);
                         }
                         view.onError(new Gson().toJson(onResponse.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                     } else {
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = true;
                             Utils.setUserPreShare(user);
@@ -1331,7 +1331,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                             final DriveAbout driveAbout = new Gson().fromJson(value, DriveAbout.class);
                             if (driveAbout != null) {
                                 if (driveAbout.error != null) {
-                                    final User mUser = User.getInstance().getUserInfo();
+                                    final User mUser = Utils.getUserInfo();
                                     if (mUser != null) {
                                         user.driveConnected = false;
                                         Utils.setUserPreShare(user);
@@ -1339,7 +1339,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                     view.onError(EnumStatus.GET_DRIVE_ABOUT.name()+"-"+new Gson().toJson(driveAbout.error), EnumStatus.REQUEST_ACCESS_TOKEN);
                                 }
                             } else {
-                                final User mUser = User.getInstance().getUserInfo();
+                                final User mUser = Utils.getUserInfo();
                                 if (mUser != null) {
                                     user.driveConnected = false;
                                     Utils.setUserPreShare(user);
@@ -1347,7 +1347,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                                 view.onError(EnumStatus.GET_DRIVE_ABOUT.name()+" - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN);
                             }
                         } catch (IOException e) {
-                            final User mUser = User.getInstance().getUserInfo();
+                            final User mUser = Utils.getUserInfo();
                             if (mUser != null) {
                                 user.driveConnected = false;
                                 Utils.setUserPreShare(user);
@@ -1356,7 +1356,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                         }
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable.getMessage());
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         if (mUser != null) {
                             user.driveConnected = false;
                             Utils.setUserPreShare(user);
@@ -1381,7 +1381,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     if (onResponse!=null){
                         if (onResponse.version!=null){
                             view.onSuccessful("Successful",EnumStatus.CHECK_VERSION);
-                            final User user = User.getInstance().getUserInfo();
+                            final User user = Utils.getUserInfo();
                             user.version = onResponse.version;
                             Utils.setUserPreShare(user);
                         }
@@ -1408,7 +1408,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.AUTHOR_SYNC)){
             return;
         }
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         String user_id = "null@gmail.com";
         if (user!=null){
             user_id = user.email;
@@ -1448,7 +1448,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.SEND_EMAIL)){
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser==null){
             return;
         }
@@ -1469,7 +1469,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
                     } else if (code == 202) {
                         Utils.Log(TAG, "code " + code);
                         view.onSuccessful("successful", EnumStatus.SEND_EMAIL);
-                        final User mUser = User.getInstance().getUserInfo();
+                        final User mUser = Utils.getUserInfo();
                         mUser.isWaitingSendMail = false;
                         Utils.setUserPreShare(mUser);
                         ServiceManager.getInstance().onDismissServices();
@@ -1496,7 +1496,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.REFRESH)){
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser =Utils.getUserInfo();
         Map<String, Object> hash = new HashMap<>();
         hash.put(getString(R.string.key_client_id), request.client_id);
         hash.put(getString(R.string.key_redirect_uri), request.redirect_uri);
@@ -1542,7 +1542,7 @@ public class SuperSafeService extends PresenterService<BaseServiceView> implemen
         if (isCheckNull(view,EnumStatus.ADD_EMAIL_TOKEN)){
             return;
         }
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         subscriptions.add(SuperSafeApplication.serverAPI.onAddEmailToken(new OutlookMailRequest(mUser.email_token.refresh_token,mUser.email_token.access_token))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

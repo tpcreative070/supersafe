@@ -15,7 +15,7 @@ public class UserRequest implements Serializable {
 
     /*Refresh user token*/
     public UserRequest(){
-        final User mUser = User.getInstance().getUserInfo();
+        final User mUser = Utils.getUserInfo();
         if (mUser==null){
             return;
         }

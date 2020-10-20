@@ -28,7 +28,7 @@ public class EnableCloudPresenter extends Presenter<BaseView>{
     }
 
     public void onUserInfo(){
-        final User user = User.getInstance().getUserInfo();
+        final User user = Utils.getUserInfo();
         if (user!=null){
             mUser = user;
         }

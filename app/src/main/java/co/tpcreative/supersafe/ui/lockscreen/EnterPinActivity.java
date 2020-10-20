@@ -366,7 +366,7 @@ public class EnterPinActivity extends BaseVerifyPinActivity implements BaseView<
         EnumPinAction action = EnumPinAction.values()[value];
         switch (action){
             case NONE:{
-                final User mUser = User.getInstance().getUserInfo();
+                final User mUser = Utils.getUserInfo();
                 if (mUser!=null){
                     ServiceManager.getInstance().onStartService();
                     SingletonResetPin.getInstance().onStop();
