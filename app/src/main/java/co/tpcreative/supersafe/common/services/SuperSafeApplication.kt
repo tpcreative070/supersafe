@@ -3,27 +3,34 @@ import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.ContextWrapper
 import android.os.Environment
 import android.provider.Settings
 import androidx.multidex.MultiDexApplication
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.api.RootAPI
 import co.tpcreative.supersafe.common.apiimportimport.RootAPI
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controllerimport.PrefsController
 import co.tpcreative.supersafe.common.network.Dependencies
+import co.tpcreative.supersafe.common.networkimport.Dependencies
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.User
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.google.gson.Gson
 import com.snatik.storage.EncryptConfiguration
 import com.snatik.storage.Storage
 import java.io.File
 import java.util.*
 
-class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, Application.ActivityLifecycleCallbacks {
+class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesListener<Any?>, Application.ActivityLifecycleCallbacks {
     private var supersafe: String? = null
     private var supersafePrivate: String? = null
     private var supersafeBackup: String? = null
@@ -65,10 +72,10 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
         ServiceManager.Companion.getInstance().setContext(this)
         PrefsController.Builder()
                 .setContext(getApplicationContext())
-                .setMode(ContextWrapper.MODE_PRIVATE)
-                .setPrefsName(getPackageName())
-                .setUseDefaultSharedPreference(true)
-                .build()
+                ?.setMode(ContextWrapper.MODE_PRIVATE)
+                ?.setPrefsName(getPackageName())
+                ?.setUseDefaultSharedPreference(true)
+                ?.build()
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
         PrefsController.putLong(getString(R.string.key_seek_to), 0)
         PrefsController.putInt(getString(R.string.key_lastWindowIndex), 0)
@@ -93,7 +100,7 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
         supersafeDataBaseFolder = "/data/data/" + getInstance().getPackageName() + "/databases/"
         supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/"
         registerActivityLifecycleCallbacks(this)
-        Utils.Companion.Log(TAG, supersafe)
+        Utils.Log(TAG, supersafe)
         options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(Scope(DriveScopes.DRIVE_FILE))
@@ -234,15 +241,15 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
     }
 
     fun initFolder() {
-        if (storage.isDirectoryExists(supersafe) and storage.isDirectoryExists(supersafePrivate) and storage.isDirectoryExists(supersafeBackup) and storage.isDirectoryExists(supersafeLog) and storage.isDirectoryExists(supersafeBreakInAlerts)) {
-            Utils.Companion.Log(TAG, "SuperSafe is existing")
+        if (storage?.isDirectoryExists(supersafe) and storage?.isDirectoryExists(supersafePrivate) and storage?.isDirectoryExists(supersafeBackup) and storage?.isDirectoryExists(supersafeLog) and storage?.isDirectoryExists(supersafeBreakInAlerts)) {
+            Utils.Log(TAG, "SuperSafe is existing")
         } else {
-            storage.createDirectory(supersafe)
-            storage.createDirectory(supersafePrivate)
-            storage.createDirectory(supersafeBackup)
-            storage.createDirectory(supersafeLog)
-            storage.createDirectory(supersafeBreakInAlerts)
-            Utils.Companion.Log(TAG, "SuperSafe was created")
+            storage?.createDirectory(supersafe)
+            storage?.createDirectory(supersafePrivate)
+            storage?.createDirectory(supersafeBackup)
+            storage?.createDirectory(supersafeLog)
+            storage?.createDirectory(supersafeBreakInAlerts)
+            Utils.Log(TAG, "SuperSafe was created")
         }
     }
 
@@ -252,25 +259,25 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
 
     fun writeKey(value: String?) {
         if (!isPermissionWrite()) {
-            Utils.Companion.Log(TAG, "Please grant access permission")
+            Utils.Log(TAG, "Please grant access permission")
             return
         }
-        storage.setEncryptConfiguration(configurationPin)
-        storage.createFile(getSuperSafe() + key, value)
-        Utils.Companion.Log(TAG, "Created key :$value")
+        storage?.setEncryptConfiguration(configurationPin)
+        storage?.createFile(getSuperSafe() + key, value)
+        Utils.Log(TAG, "Created key :$value")
     }
 
     fun readKey(): String? {
         try {
             if (!isPermissionRead()) {
-                Utils.Companion.Log(TAG, "Please grant access permission")
+                Utils.Log(TAG, "Please grant access permission")
                 return ""
             }
             storage.setEncryptConfiguration(configurationPin)
             val isFile = storage.isFileExist(getSuperSafe() + key)
             if (isFile) {
                 val value = storage.readTextFile(getSuperSafe() + key)
-                Utils.Companion.Log(TAG, "Key value is : $value")
+                Utils.Log(TAG, "Key value is : $value")
                 return value
             }
         } catch (e: Exception) {
@@ -282,7 +289,7 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
 
     fun writeUserSecret(user: User?) {
         if (!isPermissionWrite()) {
-            Utils.Companion.Log(TAG, "Please grant access permission")
+            Utils.Log(TAG, "Please grant access permission")
             return
         }
         storage.setEncryptConfiguration(configurationPin)
@@ -292,7 +299,7 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
     fun readUseSecret(): User? {
         try {
             if (!isPermissionRead()) {
-                Utils.Companion.Log(TAG, "Please grant access permission")
+                Utils.Log(TAG, "Please grant access permission")
                 return null
             }
             storage.setEncryptConfiguration(configurationPin)
@@ -300,7 +307,7 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
             if (isFile) {
                 val value = storage.readTextFile(getSuperSafe() + userSecret)
                 if (value != null) {
-                    Utils.Companion.Log(TAG, value)
+                    Utils.Log(TAG, value)
                     val mUser: User = Gson().fromJson(value, User::class.java)
                     if (mUser != null) {
                         return mUser
@@ -316,24 +323,24 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
 
     fun writeFakeKey(value: String?) {
         if (!isPermissionWrite()) {
-            Utils.Companion.Log(TAG, "Please grant access permission")
+            Utils.Log(TAG, "Please grant access permission")
             return
         }
         storage.setEncryptConfiguration(configurationPin)
         storage.createFile(getSuperSafe() + fake_key, value)
-        Utils.Companion.Log(TAG, "Created key :$value")
+        Utils.Log(TAG, "Created key :$value")
     }
 
     fun readFakeKey(): String? {
         if (!isPermissionRead()) {
-            Utils.Companion.Log(TAG, "Please grant access permission")
+            Utils.Log(TAG, "Please grant access permission")
             return ""
         }
         storage.setEncryptConfiguration(configurationPin)
         val isFile = storage.isFileExist(getSuperSafe() + fake_key)
         if (isFile) {
             val value = storage.readTextFile(getSuperSafe() + fake_key)
-            Utils.Companion.Log(TAG, "Key value is : $value")
+            Utils.Log(TAG, "Key value is : $value")
             return value
         }
         return ""
@@ -341,7 +348,7 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
 
     fun onDeleteKey() {
         if (!isPermissionRead()) {
-            Utils.Companion.Log(TAG, "Please grant access permission")
+            Utils.Log(TAG, "Please grant access permission")
             return
         }
         val isFile = storage.isFileExist(getSuperSafe() + key)
@@ -515,7 +522,6 @@ class SuperSafeApplication : MultiDexApplication(), DependenciesListener<Any?>, 
             }
         }
     }
-
 
     val MIGRATION_4_5: Migration = object : Migration(4, 5) {
         override fun migrate(database: SupportSQLiteDatabase) {

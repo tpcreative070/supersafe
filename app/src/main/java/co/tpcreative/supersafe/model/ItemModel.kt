@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.model
-
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EnumFormatType
 import java.io.Serializable
 import java.util.*
 
@@ -84,7 +82,7 @@ class ItemModel : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
-        unique_id = Utils.Companion.getUUId()
+        unique_id = Utils.getUUId()
     }
 
     /*Get data list from local db*/
@@ -121,7 +119,7 @@ class ItemModel : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
-        unique_id = Utils.Companion.getUUId()
+        unique_id = Utils.getUUId()
     }
 
     /*Added item to list from fetch data*/
@@ -158,7 +156,7 @@ class ItemModel : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
-        unique_id = Utils.Companion.getUUId()
+        unique_id = Utils.getUUId()
         val formatTypeFile = EnumFormatType.values()[formatType]
         when (formatTypeFile) {
             EnumFormatType.AUDIO -> {
@@ -176,7 +174,7 @@ class ItemModel : Serializable {
         }
     }
 
-    constructor(isSyncCloud: Boolean, isSyncOwnServer: Boolean, originalSync: Boolean, thumbnailSync: Boolean, degrees: Int, fileType: Int, formatType: Int, title: String?, originalName: String?, thumbnailName: String?, items_id: String?, originalPath: String?, thumbnailPath: String?, global_original_id: String?, global_thumbnail_id: String?, categories_id: String?, categories_local_id: String?, mimeType: String?, fileExtension: String?, enumStatus: EnumStatus?, size: String?, statusProgress: Int, isDeleteLocal: Boolean, isDeleteGlobal: Boolean, deleteAction: Int, isFakePin: Boolean, isSaver: Boolean, isExport: Boolean, isWaitingForExporting: Boolean, custom_items: Int, isUpdate: Boolean) {
+    constructor(isSyncCloud: Boolean, isSyncOwnServer: Boolean, originalSync: Boolean, thumbnailSync: Boolean, degrees: Int, fileType: Int, formatType: Int, title: String?, originalName: String?, thumbnailName: String?, items_id: String?, originalPath: String?, thumbnailPath: String?, global_original_id: String?, global_thumbnail_id: String?, categories_id: String?, categories_local_id: String?, mimeType: String?, fileExtension: String?, enumStatus: EnumStatus, size: String?, statusProgress: Int, isDeleteLocal: Boolean, isDeleteGlobal: Boolean, deleteAction: Int, isFakePin: Boolean, isSaver: Boolean, isExport: Boolean, isWaitingForExporting: Boolean, custom_items: Int, isUpdate: Boolean) {
         this.originalName = originalName
         this.thumbnailName = thumbnailName
         this.items_id = items_id
@@ -210,7 +208,7 @@ class ItemModel : Serializable {
         this.isUpdate = isUpdate
     }
 
-    fun isChecked() : Boolean {
+    fun isChecked() : Boolean? {
         return isChecked
     }
 
@@ -229,21 +227,21 @@ class ItemModel : Serializable {
                 categories_local_id: String?,
                 mimeType: String?,
                 uuId: String?,
-                formatType: EnumFormatType?,
+                formatType: EnumFormatType,
                 degrees: Int,
                 thumbnailSync: Boolean,
                 originalSync: Boolean,
                 global_original_id: String?,
                 global_thumbnail_id: String?,
-                fileType: EnumFileType?,
+                fileType: EnumFileType,
                 originalName: String?,
                 name: String?,
                 thumbnailName: String?,
                 size: String?,
-                progress: EnumStatusProgress?,
+                progress: EnumStatusProgress,
                 isDeleteLocal: Boolean,
                 isDeleteGlobal: Boolean,
-                deleteAction: EnumDelete?,
+                deleteAction: EnumDelete,
                 isFakePin: Boolean,
                 isSaver: Boolean,
                 isExport: Boolean,
@@ -252,7 +250,7 @@ class ItemModel : Serializable {
                 isSyncCloud: Boolean,
                 isSyncOwnServer: Boolean,
                 isUpdate: Boolean,
-                statusAction: EnumStatus?
+                statusAction: EnumStatus
     ) {
         this.fileExtension = fileExtension
         this.originalPath = originalPath
@@ -321,7 +319,7 @@ class ItemModel : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
-        /*Added more condition fields*/unique_id = Utils.Companion.getUUId()
+        /*Added more condition fields*/unique_id = Utils.getUUId()
         global_id = if (isOriginalGlobalId) {
             items.global_original_id
         } else {

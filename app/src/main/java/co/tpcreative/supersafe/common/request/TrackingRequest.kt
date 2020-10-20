@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.request
+import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import java.io.Serializable
@@ -13,13 +14,13 @@ class TrackingRequest(var user_id: String?, var device_id: String?) : Serializab
     var channel_code: String?
 
     init {
-        device_type = SuperSafeApplication.Companion.getInstance().getString(R.string.device_type)
-        manufacturer = SuperSafeApplication.Companion.getInstance().getManufacturer()
-        name_model = SuperSafeApplication.Companion.getInstance().getModel()
-        version = "" + SuperSafeApplication.Companion.getInstance().getVersion()
-        versionRelease = SuperSafeApplication.Companion.getInstance().getVersionRelease()
-        appVersionRelease = BuildCon.VERSION_NAME
-        app_id = SuperSafeApplication.Companion.getInstance().getPackageId()
+        device_type = SuperSafeApplication.getInstance().getString(R.string.device_type)
+        manufacturer = SuperSafeApplication.getInstance().getManufacturer()
+        name_model = SuperSafeApplication.getInstance().getModel()
+        version = "" + SuperSafeApplication.getInstance().getVersion()
+        versionRelease = SuperSafeApplication.getInstance().getVersionRelease()
+        appVersionRelease = BuildConfig.VERSION_NAME
+        app_id = SuperSafeApplication.getInstance().getPackageId()
         channel_code = "C002"
     }
 }

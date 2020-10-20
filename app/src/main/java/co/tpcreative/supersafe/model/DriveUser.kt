@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.modelimport
+package co.tpcreative.supersafe.model
 import java.io.Serializable
 
 class DriveUser : Serializable {

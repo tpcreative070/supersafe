@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.model
-import co.tpcreative.supersafe.modelimport.MainCategoryEntityModel
 import java.io.Serializable
 import java.util.*
 

@@ -1,5 +1,7 @@
 package co.tpcreative.supersafe.model
 
+import co.tpcreative.supersafe.common.entities.ItemEntity
+
 class ItemEntityModel {
     var id = 0
     var originalName: String? = null
@@ -70,7 +72,7 @@ class ItemEntityModel {
         isUpdate = items.isUpdate
     }
 
-    constructor(items: ItemEntity?) {
+    constructor(items: ItemEntity) {
         id = items.id
         originalName = items.originalName
         thumbnailName = items.thumbnailName

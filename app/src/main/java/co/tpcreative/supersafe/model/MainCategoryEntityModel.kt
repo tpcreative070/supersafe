@@ -40,7 +40,7 @@ class MainCategoryEntityModel : Serializable {
         isCustom_Cover = entity.isCustom_Cover
         items_id = entity.items_id
         mainCategories_Local_Id = entity.mainCategories_Local_Id
-        unique_id = Utils.Companion.getUUId()
+        unique_id = Utils.getUUId()
     }
 
     /*push data to local db*/
