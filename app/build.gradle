@@ -2,6 +2,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion appCompileSdkVersion
@@ -50,6 +53,10 @@ android {
     dexOptions {
         preDexLibraries = false
     }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -82,6 +89,7 @@ dependencies {
 
     /*Add butter knife*/
     implementation 'com.jakewharton:butterknife:10.1.0'
+    implementation 'androidx.sqlite:sqlite-ktx:2.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 
     /*Adding Edittext Android Material*/
@@ -185,12 +193,20 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
 
     /*Material style dialog*/
-    implementation project(':materialdialoglibrary')
+    //implementation project(':materialdialoglibrary')
+    implementation 'com.github.michael-rapp:android-material-dialog:5.2.3'
 
     /*Animation textview*/
     implementation 'me.grantland:autofittextview:0.2.1'
 
     implementation 'commons-codec:commons-codec:1.13'
+
+    /*Kotlin*/
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation "androidx.room:room-runtime:$appRoomVersion"
+    kapt "androidx.room:room-compiler:$appRoomVersion"
+    implementation "androidx.room:room-ktx:$appRoomVersion"
 }
 /*Resolved duplicated for Google api client*/
 

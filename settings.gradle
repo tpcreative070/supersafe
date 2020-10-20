@@ -17,5 +17,6 @@ include ':app',
         'bungeelibrary',
         'dialogsuccessprogresslibrary',
         'library-circleprogress',
-        'materialdialoglibrary',
         'material-edit-text'
+
+rootProject.name = "supersafe"
