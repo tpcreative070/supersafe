@@ -1,27 +1,58 @@
 package co.tpcreative.supersafe.common.util
-
 import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Point
+import android.hardware.fingerprint.FingerprintManager
+import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Environment
-import android.os.Handler
+import android.os.*
 import android.text.TextUtils
+import android.util.DisplayMetrics
+import android.util.Patterns
+import android.util.TypedValue
+import android.view.Display
 import android.view.View
+import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
-import co.tpcreative.supersafe.BuildConfigimport
+import android.webkit.MimeTypeMap
+import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
+import androidx.core.content.PermissionChecker
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat
+import co.tpcreative.supersafe.BuildConfig
+import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManager
+import co.tpcreative.supersafe.common.controllerimport.PrefsController
+import co.tpcreative.supersafe.common.controllerimport.ServiceManager
+import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
-import co.tpcreative.supersafe.model.EnumFormatType
-import co.tpcreative.supersafe.model.MimeTypeFile
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
+import com.anjlab.android.iab.v3.PurchaseData
+import com.google.android.material.snackbar.Snackbar
 import com.google.api.client.util.Base64
 import com.google.common.base.Charsets
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.snatik.storage.Storage
+import com.snatik.storage.helpers.OnStorageListener
+import com.snatik.storage.helpers.SizeUnit
+import com.snatik.storage.security.SecurityUtil
+import io.reactivex.Completable
+import io.reactivex.CompletableObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import org.apache.commons.io.FilenameUtils
 import org.greenrobot.eventbus.EventBus
 import java.io.BufferedWriter
 import java.io.File
@@ -36,11 +67,11 @@ import java.util.concurrent.TimeUnit
  * Created by pc on 07/16/2017.
  */
 object Utils  {
-    fun onChangeCategories(mainCategories: MainCategoryModel?): Boolean {
+    fun onChangeCategories(mainCategories: MainCategoryModel): Boolean {
         try {
-            val hex_name = getHexCode(mainCategories.categories_name)
+            val hex_name = mainCategories.categories_name?.let { getHexCode(it) }
             val mIsFakePin: Boolean = mainCategories.isFakePin
-            val response: MainCategoryModel = SQLHelper.getCategoriesItemId(hex_name, mIsFakePin)
+            val response: MainCategoryModel? = SQLHelper.getCategoriesItemId(hex_name, mIsFakePin)
             if (response == null) {
                 mainCategories.categories_hex_name = hex_name
                 mainCategories.isChange = true
@@ -55,26 +86,17 @@ object Utils  {
         return false
     }
 
-        val GOOGLE_CONSOLE_KEY: String? = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB"
+    val GOOGLE_CONSOLE_KEY: String = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB"
 
         // utility function
         var FORMAT_TIME: String? = "yyyy-MM-dd HH:mm:ss"
         var FORMAT_TIME_FILE_NAME: String? = "yyyyMMdd_HHmmss"
         const val COUNT_RATE = 9
         const val START_TIMER: Long = 5000
-        private val storage: Storage? = Storage(SuperSafeApplication.Companion.getInstance())
+        private val storage: Storage = Storage(SuperSafeApplication.getInstance())
         private val TAG = Utils::class.java.simpleName
-        private fun bytesToHexString(bytes: ByteArray?): String? {
-            // http://stackoverflow.com/questions/332079
-            val sb = StringBuffer()
-            for (i in bytes.indices) {
-                val hex = Integer.toHexString(0xFF and bytes.get(i))
-                if (hex.length == 1) {
-                    sb.append('0')
-                }
-                sb.append(hex)
-            }
-            return sb.toString()
+        private fun bytesToHexString(bytes: ByteArray): String {
+            return bytes.joinToString("") { "%02x".format(it) }
         }
 
         fun isValidEmail(target: CharSequence?): Boolean {
@@ -85,7 +107,7 @@ object Utils  {
             return !TextUtils.isEmpty(target)
         }
 
-        fun showDialog(activity: Activity?, message: String?) {
+        fun showDialog(activity: Activity, message: String) {
             val builder = MaterialDialog.Builder(activity)
             builder.title(R.string.confirm)
             builder.content(message)
@@ -93,22 +115,14 @@ object Utils  {
             builder.show()
         }
 
-        fun showDialog(activity: Activity?, message: String?, ls: ServiceManagerSyncDataListener?) {
+        fun showDialog(activity: Activity, message: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
             val builder = MaterialDialog.Builder(activity)
             builder.title(R.string.confirm)
             builder.content(message)
             builder.positiveText(R.string.ok)
             builder.negativeText(R.string.cancel)
-            builder.onNegative(object : SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    ls.onCancel()
-                }
-            })
-            builder.onPositive(object : SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    ls.onCompleted()
-                }
-            })
+            builder.onNegative { dialog, which -> ls.onCancel() }
+            builder.onPositive { dialog, which -> ls.onCompleted() }
             builder.show()
         }
 
@@ -136,13 +150,13 @@ object Utils  {
                 file.close()
                 true
             } catch (e: IOException) {
-                Log(TAG, e.message)
+                e.message?.let { Log(TAG, it) }
                 false
             }
         }
 
-        fun hideSoftKeyboard(context: Activity?) {
-            val view: View = context.getCurrentFocus()
+        fun hideSoftKeyboard(context: Activity) {
+            val view: View? = context.getCurrentFocus()
             if (view != null) {
                 val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -171,14 +185,14 @@ object Utils  {
             }
         }
 
-        fun getPackagePath(context: Context?): File? {
+        fun getPackagePath(context: Context): File {
             return File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                     ".temporary.jpg")
         }
 
         fun getMimeType(url: String?): String? {
             var type: String? = null
-            val extension: String = MimeTypeMap.getFileExtensionFromUrl(url)
+            val extension: String? = MimeTypeMap.getFileExtensionFromUrl(url)
             if (extension != null) {
                 type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
             }
@@ -189,7 +203,7 @@ object Utils  {
             return FilenameUtils.getExtension(url).toLowerCase()
         }
 
-        fun Log(TAG: String?, message: String?) {
+        fun Log(TAG: String, message: String) {
             if (BuildConfig.DEBUG) {
                 android.util.Log.d(TAG, message)
             }
@@ -233,11 +247,11 @@ object Utils  {
             return dateFormat.format(date)
         }
 
-        fun getHexCode(value: String?): String? {
-            return Base64.encodeBase64String(value.toUpperCase().toByteArray(Charsets.UTF_8))
+        fun getHexCode(value: String): String {
+            return Base64.encodeBase64String(value.toUpperCase(Locale.ROOT).toByteArray(Charsets.UTF_8))
         }
 
-        fun onExportAndImportFile(input: String?, output: String?, ls: ServiceManagerSyncDataListener?) {
+        fun onExportAndImportFile(input: String, output: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
             val storage = Storage(SuperSafeApplication.Companion.getInstance())
             val mFile = storage.getFiles(input)
             try {
@@ -261,62 +275,69 @@ object Utils  {
             }
         }
 
-        fun showToast(context: Context?, @StringRes text: Int, isLong: Boolean) {
+        fun showToast(context: Context, @StringRes text: Int, isLong: Boolean) {
             showToast(context, context.getString(text), isLong)
         }
 
-        fun showToast(context: Context?, text: String?, isLong: Boolean) {
+        fun showToast(context: Context, text: String?, isLong: Boolean) {
             Toast.makeText(context, text, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
         }
 
-        fun showInfoSnackbar(view: View?, @StringRes text: Int, isLong: Boolean) {
-            Handler().postDelayed({
-                multilineSnackbar(
-                        Snackbar.make(
-                                view, text,
-                                if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT)
-                ).show()
+        fun showInfoSnackbar(view: View, @StringRes text: Int, isLong: Boolean) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                run {
+                    multilineSnackbar(
+                            Snackbar.make(
+                                    view, text,
+                                    if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT))
+                }
             }, 100)
         }
 
-        fun showGotItSnackbar(view: View?, @StringRes text: Int) {
-            Handler().postDelayed({
-                multilineSnackbar(
-                        Snackbar.make(
-                                view, text, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.got_it, View.OnClickListener { })
-                ).show()
+        fun showGotItSnackbar(view: View, @StringRes text: Int) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                kotlin.run {
+                    multilineSnackbar(
+                            Snackbar.make(
+                                    view, text, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.got_it, View.OnClickListener { })
+                    )
+                }
             }, 200)
         }
 
-        fun showGotItSnackbar(view: View?, @StringRes text: String?) {
-            onObserveData(START_TIMER, Listener {
-                multilineSnackbar(
-                        Snackbar.make(
-                                view, text, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.got_it, View.OnClickListener { })
-                ).show()
+        fun showGotItSnackbar(view: View,text: String) {
+            onObserveData(START_TIMER, object : Listener {
+                override fun onStart() {
+                    multilineSnackbar(
+                            Snackbar.make(
+                                    view, text, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.got_it, View.OnClickListener { })
+                    ).show()
+                }
             })
         }
 
-        fun showGotItSnackbar(view: View?, @StringRes text: Int, ls: ServiceManagerSyncDataListener?) {
-            onObserveData(START_TIMER, Listener {
-                multilineSnackbar(
-                        Snackbar.make(
-                                view, text, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.got_it, View.OnClickListener { ls.onCompleted() })
-                ).show()
+        fun showGotItSnackbar(view: View, @StringRes text: Int, ls: ServiceManager.ServiceManagerSyncDataListener) {
+            onObserveData(START_TIMER, object : Listener {
+                override fun onStart() {
+                    multilineSnackbar(
+                            Snackbar.make(
+                                    view, text, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction(R.string.got_it, View.OnClickListener { ls.onCompleted() })
+                    ).show()
+                }
             })
         }
 
-        private fun multilineSnackbar(snackbar: Snackbar?): Snackbar? {
-            val textView: TextView = snackbar.getView().findViewById(R.id.snackbar_text) as TextView
+        private fun multilineSnackbar(snackbar: Snackbar): Snackbar {
+            val textView: AppCompatTextView = snackbar.view.findViewById(R.id.snackbar_text)
             textView.setMaxLines(5)
             return snackbar
         }
 
-        fun slideToRight(view: View?) {
-            val animate = TranslateAnimation(0, view.getWidth(), 0, 0)
+        fun slideToRight(view: View) {
+            val animate = TranslateAnimation(0F, view.width.toFloat(), 0F, 0F)
             animate.setDuration(500)
             animate.setFillAfter(true)
             view.startAnimation(animate)
@@ -324,8 +345,8 @@ object Utils  {
         }
 
         // To animate view slide out from right to left
-        fun slideToLeft(view: View?) {
-            val animate = TranslateAnimation(0, -view.getWidth(), 0, 0)
+        fun slideToLeft(view: View) {
+            val animate = TranslateAnimation(0F, (-view.width).toFloat(), 0F, 0F)
             animate.setDuration(500)
             animate.setFillAfter(true)
             view.startAnimation(animate)
@@ -333,44 +354,44 @@ object Utils  {
         }
 
         // To animate view slide out from top to bottom
-        fun slideToBottomHeader(view: View?) {
-            val animate = TranslateAnimation(0, 0, -view.getHeight(), 0)
+        fun slideToBottomHeader(view: View) {
+            val animate = TranslateAnimation(0F, 0F, (-view.height).toFloat(), 0F)
             animate.setDuration(500)
             animate.setFillAfter(true)
             view.startAnimation(animate)
         }
 
         // To animate view slide out from bottom to top
-        fun slideToTopHeader(view: View?) {
-            Log(TAG, " " + view.getHeight())
-            val animate = TranslateAnimation(0, 0, 0, -view.getHeight())
+        fun slideToTopHeader(view: View) {
+            Log(TAG, " " + view.height)
+            val animate = TranslateAnimation(0F, 0F, 0F, (-view.height).toFloat())
             animate.setDuration(500)
             animate.setFillAfter(true)
             view.startAnimation(animate)
         }
 
         // To animate view slide out from top to bottom
-        fun slideToBottomFooter(view: View?) {
-            val animate = TranslateAnimation(0, 0, 0, view.getHeight())
+        fun slideToBottomFooter(view: View) {
+            val animate = TranslateAnimation(0F, 0F, 0F, view.height.toFloat())
             animate.setDuration(500)
             animate.setFillAfter(true)
             view.startAnimation(animate)
         }
 
         // To animate view slide out from bottom to top
-        fun slideToTopFooter(view: View?) {
+        fun slideToTopFooter(view: View) {
             Log(TAG, " " + view.getHeight())
-            val animate = TranslateAnimation(0, 0, view.getHeight(), 0)
+            val animate = TranslateAnimation(0F, 0F, view.width.toFloat(), 0F)
             animate.setDuration(500)
             animate.setFillAfter(true)
             view.startAnimation(animate)
         }
 
-        fun stringToHex(content: String?): String? {
+        fun stringToHex(content: String): String? {
             return Base64.encodeBase64String(content.toByteArray(Charsets.UTF_8))
         }
 
-        fun hexToString(hex: String?): String? {
+        fun hexToString(hex: String): String? {
             try {
                 val data = Base64.decodeBase64(hex.toByteArray())
                 return String(data, Charsets.UTF_8)
@@ -380,8 +401,8 @@ object Utils  {
             return null
         }
 
-        fun mediaTypeSupport(): HashMap<String?, MimeTypeFile?>? {
-            val hashMap = HashMap<String?, MimeTypeFile?>()
+        fun mediaTypeSupport(): HashMap<String, MimeTypeFile> {
+            val hashMap = HashMap<String, MimeTypeFile>()
             hashMap["mp4"] = MimeTypeFile(".mp4", EnumFormatType.VIDEO, "video/mp4")
             hashMap["3gp"] = MimeTypeFile(".3gp", EnumFormatType.VIDEO, "video/3gp")
             hashMap["wmv"] = MimeTypeFile(".wmv", EnumFormatType.VIDEO, "video/wmv")
@@ -397,8 +418,8 @@ object Utils  {
             return hashMap
         }
 
-        fun mimeTypeSupport(): HashMap<String?, MimeTypeFile?>? {
-            val hashMap = HashMap<String?, MimeTypeFile?>()
+        fun mimeTypeSupport(): HashMap<String, MimeTypeFile> {
+            val hashMap = HashMap<String, MimeTypeFile>()
             hashMap["video/mp4"] = MimeTypeFile(".mp4", EnumFormatType.VIDEO, "video/mp4")
             hashMap["video/3gp"] = MimeTypeFile(".3gp", EnumFormatType.VIDEO, "video/3gp")
             hashMap["video/wmv"] = MimeTypeFile(".wmv", EnumFormatType.VIDEO, "video/wmv")
@@ -450,7 +471,7 @@ object Utils  {
             return "Exception"
         }
 
-        fun onWriteLog(message: String?, status: EnumStatus?) {
+        fun onWriteLog(message: String?, status: EnumStatus) {
             if (!BuildConfig.DEBUG) {
                 return
             }
@@ -462,7 +483,7 @@ object Utils  {
         }
 
         private fun appendLog(text: String?) {
-            val logFile = File(SuperSafeApplication.Companion.getInstance().getFileLogs())
+            val logFile = File(SuperSafeApplication.getInstance().getFileLogs())
             if (!logFile.exists()) {
                 try {
                     logFile.createNewFile()
@@ -486,26 +507,26 @@ object Utils  {
             }
         }
 
-        fun onWriteLog(action: EnumStatus?, status: EnumStatus?, value: String?) {
+        fun onWriteLog(action: EnumStatus, status: EnumStatus, value: String?) {
             if (!BuildConfig.DEBUG) {
                 return
             }
             onCheck()
-            appendLog("Version " + BuildConfig.VERSION_NAME.toString() + " ; created date time :" + getCurrentDateTime(FORMAT_TIME).toString() + " ; Action :" + action.name.toString() + " ; Status: " + status.name.toString() + " ; message log: " + value)
+            appendLog("Version " + BuildConfig.VERSION_NAME + " ; created date time :" + getCurrentDateTime(FORMAT_TIME).toString() + " ; Action :" + action.name.toString() + " ; Status: " + status.name.toString() + " ; message log: " + value)
         }
 
         fun onCheck() {
-            val file = File(SuperSafeApplication.Companion.getInstance().getFileLogs())
+            val file = File(SuperSafeApplication.getInstance().getFileLogs())
             if (file.exists()) {
-                val mSize = +SuperSafeApplication.Companion.getInstance().getStorage().getSize(file, SizeUnit.MB) as Long
+                val mSize = SuperSafeApplication.getInstance().getStorage()?.getSize(file, SizeUnit.MB) as Long
                 if (mSize > 2) {
-                    SuperSafeApplication.Companion.getInstance().getStorage().deleteFile(file.absolutePath)
+                    SuperSafeApplication.getInstance().getStorage()?.deleteFile(file.absolutePath)
                 }
             }
         }
 
-        fun shareMultiple(files: MutableList<File?>?, context: Activity?) {
-            val uris = ArrayList<Uri?>()
+        fun shareMultiple(files: MutableList<File>, context: Activity) {
+            val uris = ArrayList<Uri>()
             for (file in files) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val uri: Uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID.toString() + ".provider", file)
@@ -522,18 +543,20 @@ object Utils  {
             context.startActivityForResult(Intent.createChooser(intent, context.getString(R.string.share)), Navigator.SHARE)
         }
 
-        private fun getScreenSize(activity: Context?): Point? {
-            val display: Display = (activity as Activity?).getWindowManager().getDefaultDisplay()
+        private fun getScreenSize(activity: Context): Point {
+            val display: Display? = (activity as Activity?)?.getWindowManager()?.getDefaultDisplay()
             val size = Point()
-            display.getSize(size)
+            if (display != null) {
+                display.getSize(size)
+            }
             return size
         }
 
-        fun getScreenWidth(activity: Context?): Int {
+        fun getScreenWidth(activity: Context): Int {
             return getScreenSize(activity).x
         }
 
-        fun getScreenHeight(activity: Context?): Int {
+        fun getScreenHeight(activity: Context): Int {
             return getScreenSize(activity).y
         }
 
@@ -551,18 +574,18 @@ object Utils  {
             return false
         }
 
-        fun getFontString(content: Int, value: String?): String? {
-            val themeApp: ThemeApp = ThemeApp.Companion.getInstance().getThemeInfo()
-            return SuperSafeApplication.Companion.getInstance().getString(content, "<font color='" + themeApp.getAccentColorHex() + "'>" + "<b>" + value + "</b>" + "</font>")
+        fun getFontString(content: Int, value: String): String? {
+            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+            return SuperSafeApplication.getInstance().getString(content, "<font color='" + themeApp?.getAccentColorHex() + "'>" + "<b>" + value + "</b>" + "</font>")
         }
 
         fun getFontString(content: Int, value: String?, fontSize: Int): String? {
-            val themeApp: ThemeApp = ThemeApp.Companion.getInstance().getThemeInfo()
-            return SuperSafeApplication.Companion.getInstance().getString(content, "<font size='" + fontSize + "' color='" + themeApp.getAccentColorHex() + "'>" + "<b>" + value + "</b>" + "</font>")
+            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+            return SuperSafeApplication.getInstance().getString(content, "<font size='" + fontSize + "' color='" + themeApp?.getAccentColorHex() + "'>" + "<b>" + value + "</b>" + "</font>")
         }
 
-        fun appInstalledOrNot(uri: String?): Boolean {
-            val pm: PackageManager = SuperSafeApplication.Companion.getInstance().getPackageManager()
+        fun appInstalledOrNot(uri: String): Boolean {
+            val pm: PackageManager = SuperSafeApplication.getInstance().getPackageManager()
             try {
                 pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES)
                 return true
@@ -578,18 +601,21 @@ object Utils  {
 
         fun onDeleteTemporaryFile() {
             try {
-                val rootDataDir: File = SuperSafeApplication.Companion.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                val list = rootDataDir.listFiles()
-                for (i in list.indices) {
-                    Log(TAG, "File list :" + list[i].absolutePath)
-                    SuperSafeApplication.Companion.getInstance().getStorage().deleteFile(list[i].absolutePath)
+                val rootDataDir: File? = SuperSafeApplication.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                val list = rootDataDir?.listFiles()
+                list.let {
+                    if (it != null) {
+                        for (i in it.indices) {
+                            SuperSafeApplication.getInstance().getStorage()?.deleteFile(it[i].absolutePath)
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
 
-        fun isLandscape(activity: AppCompatActivity?): Boolean {
+        fun isLandscape(activity: AppCompatActivity): Boolean {
             val landscape: Boolean
             val displaymetrics = DisplayMetrics()
             activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics)
@@ -634,7 +660,7 @@ object Utils  {
         }
 
         fun isEnabledFakePin(): Boolean {
-            return PrefsController.getBoolean(SuperSafeApplication.Companion.getInstance().getString(R.string.key_fake_pin), false)
+            return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fake_pin), false)
         }
 
         fun isExistingFakePin(pin: String?, currentPin: String?): Boolean {
@@ -670,16 +696,16 @@ object Utils  {
             }
         }
 
-        fun onObserveData(second: Long, ls: Listener?) {
+        fun onObserveData(second: Long, ls: Listener) {
             Completable.timer(second, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                     .subscribe(object : CompletableObserver {
-                        override fun onSubscribe(d: Disposable?) {}
+                        override fun onSubscribe(d: Disposable) {}
                         override fun onComplete() {
                             Log(TAG, "Completed")
                             ls.onStart()
                         }
 
-                        override fun onError(e: Throwable?) {}
+                        override fun onError(e: Throwable) {}
                     })
         }
 
@@ -687,7 +713,7 @@ object Utils  {
             PrefsController.putInt(SuperSafeApplication.Companion.getInstance().getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
             Log(TAG, "Pressed home button")
             if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
-                Navigator.onMoveToVerifyPin(SuperSafeApplication.Companion.getInstance().getActivity(), EnumPinAction.NONE)
+                SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
                 SingletonManager.Companion.getInstance().setVisitLockScreen(true)
                 Log(TAG, "Verify pin")
             } else {
@@ -697,9 +723,9 @@ object Utils  {
 
         fun getUserInfo(): User? {
             try {
-                val value: String = PrefsController.getString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), null)
+                val value: String? = PrefsController.getString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), null)
                 if (value != null) {
-                    val mUser: User = Gson().fromJson(value, User::class.java)
+                    val mUser: User? = Gson().fromJson(value, User::class.java)
                     if (mUser != null) {
                         return mUser
                     }
@@ -734,13 +760,15 @@ object Utils  {
         fun isCheckSyncSuggestion(): Boolean {
             val name: String = SuperSafeApplication.Companion.getInstance().getString(R.string.key_count_sync)
             val mCount: Int = PrefsController.getInt(name, 0)
-            val mSynced = getUserInfo().driveConnected
-            if (!mSynced) {
-                if (mCount == 5) {
-                    PrefsController.putInt(name, 0)
-                    return true
-                } else {
-                    PrefsController.putInt(name, mCount + 1)
+            val mSynced = getUserInfo()?.driveConnected
+            mSynced?.let {
+                if (!it) {
+                    if (mCount == 5) {
+                        PrefsController.putInt(name, 0)
+                        return true
+                    } else {
+                        PrefsController.putInt(name, mCount + 1)
+                    }
                 }
             }
             return false
@@ -750,7 +778,7 @@ object Utils  {
             try {
                 val user = getUserInfo()
                 if (user != null) {
-                    return user.author.session_token
+                    return user.author?.session_token
                 }
             } catch (e: Exception) {
             }
@@ -762,8 +790,8 @@ object Utils  {
         }
 
         /*Improved sync data*/ /*Filter only item already synced*/
-        fun filterOnlyGlobalOriginalId(list1: MutableList<ItemModel?>?): MutableList<ItemModel?>? {
-            val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+        fun filterOnlyGlobalOriginalId(list1: MutableList<ItemModel>): MutableList<ItemModel>? {
+            val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
             for (index in list1) {
                 if (index.isSyncCloud) {
                     mList.add(index)
@@ -773,23 +801,23 @@ object Utils  {
         }
 
         /*Remove duplicated item for download id*/
-        fun clearListFromDuplicate(globalList: MutableList<ItemModel?>?, localList: MutableList<ItemModel?>?): MutableList<ItemModel?>? {
-            val modelMap: MutableMap<String?, ItemModel?> = HashMap<String?, ItemModel?>()
-            val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
-            if (globalList != null) {
-                if (globalList.size == 0) {
-                    return mList
-                }
+        fun clearListFromDuplicate(globalList: MutableList<ItemModel>, localList: MutableList<ItemModel>): MutableList<ItemModel>? {
+            val modelMap: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
+            val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
+            if (globalList.size == 0) {
+                return mList
             }
 
             /*Merged local data*/
-            val mLocalList: MutableList<ItemModel?>? = getMergedOriginalThumbnailList(false, localList)
+            val mLocalList: MutableList<ItemModel> = getMergedOriginalThumbnailList(false, localList)
             for (index in mLocalList) {
-                modelMap[index.global_id] = index
+                index.global_id?.let {
+                    modelMap[it] = index
+                }
             }
 
             /*Merged global data*/
-            val mGlobalList: MutableList<ItemModel?>? = getMergedOriginalThumbnailList(true, globalList)
+            val mGlobalList: MutableList<ItemModel> = getMergedOriginalThumbnailList(true, globalList)
             Log(TAG, "onPreparingSyncData ==> Index download globalList " + Gson().toJson(globalList))
             Log(TAG, "onPreparingSyncData ==> Index download map " + Gson().toJson(modelMap))
             Log(TAG, "onPreparingSyncData ==> Index download list " + Gson().toJson(mGlobalList))
@@ -809,10 +837,12 @@ object Utils  {
         }
 
         /*Merge list to hash map for upload, download and delete*/
-        fun mergeListToHashMap(mList: MutableList<ItemModel?>?): MutableMap<String?, ItemModel?>? {
-            val map: MutableMap<String?, ItemModel?> = HashMap<String?, ItemModel?>()
+        fun mergeListToHashMap(mList: MutableList<ItemModel>): MutableMap<String, ItemModel> {
+            val map: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
             for (index in mList) {
-                map[index.unique_id] = index
+                index.unique_id?.let {
+                    map[it] = index
+                }
             }
             return map
         }
@@ -821,7 +851,7 @@ object Utils  {
         fun getArrayOfIndexHashMap(mMapDelete: MutableMap<String?, ItemModel?>?): ItemModel? {
             if (mMapDelete != null) {
                 if (mMapDelete.size > 0) {
-                    val model: ItemModel = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
+                    val model: ItemModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
                     Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                     return model
                 }
@@ -833,7 +863,7 @@ object Utils  {
         fun getArrayOfIndexCategoryHashMap(mMapDelete: MutableMap<String?, MainCategoryModel?>?): MainCategoryModel? {
             if (mMapDelete != null) {
                 if (mMapDelete.size > 0) {
-                    val model: MainCategoryModel = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
+                    val model: MainCategoryModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
                     Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                     return model
                 }
@@ -846,7 +876,9 @@ object Utils  {
             try {
                 if (map != null) {
                     if (map.size > 0) {
-                        map.remove(itemModel.unique_id)
+                        itemModel?.unique_id?.let {
+                            map.remove(it)
+                        }
                         return true
                     }
                 }
@@ -857,17 +889,19 @@ object Utils  {
         }
 
         /*Merge list to hash map for upload, download and delete*/
-        fun mergeListToCategoryHashMap(mList: MutableList<MainCategoryModel?>?): MutableMap<String?, MainCategoryModel?>? {
-            val map: MutableMap<String?, MainCategoryModel?> = HashMap<String?, MainCategoryModel?>()
+        fun mergeListToCategoryHashMap(mList: MutableList<MainCategoryModel>): MutableMap<String, MainCategoryModel> {
+            val map: MutableMap<String, MainCategoryModel> = HashMap<String, MainCategoryModel>()
             for (index in mList) {
-                map[index.unique_id] = index
+                index.unique_id?.let {
+                    map[it] = index
+                }
             }
             return map
         }
 
         /*Merge list original and thumbnail as list*/
-        fun getMergedOriginalThumbnailList(isNotSync: Boolean, mDataList: MutableList<ItemModel?>?): MutableList<ItemModel?>? {
-            val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+        fun getMergedOriginalThumbnailList(isNotSync: Boolean, mDataList: MutableList<ItemModel>): MutableList<ItemModel> {
+            val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
             for (index in mDataList) {
                 if (isNotSync) {
                     if (!index.originalSync) {
@@ -899,7 +933,9 @@ object Utils  {
             try {
                 if (map != null) {
                     if (map.size > 0) {
-                        map.remove(itemModel.unique_id)
+                        itemModel?.unique_id?.let {
+                            map.remove(it)
+                        }
                         return true
                     }
                 }
@@ -910,19 +946,21 @@ object Utils  {
         }
 
         /*------------------------Import area-------------------*/ /*Add list to hash map for import*/
-        fun mergeListToHashMapImport(mList: MutableList<ImportFilesModel?>?): MutableMap<String?, ImportFilesModel?>? {
-            val map: MutableMap<String?, ImportFilesModel?> = HashMap<String?, ImportFilesModel?>()
+        fun mergeListToHashMapImport(mList: MutableList<ImportFilesModel>): MutableMap<String, ImportFilesModel>? {
+            val map: MutableMap<String, ImportFilesModel> = HashMap<String, ImportFilesModel>()
             for (index in mList) {
-                map[index.unique_id] = index
+                index.unique_id?.let {
+                    map[it]= index
+                }
             }
             return map
         }
 
         /*Get the first of data for import*/
-        fun getArrayOfIndexHashMapImport(mMapDelete: MutableMap<String?, ImportFilesModel?>?): ImportFilesModel? {
+        fun getArrayOfIndexHashMapImport(mMapDelete: MutableMap<String, ImportFilesModel>?): ImportFilesModel? {
             if (mMapDelete != null) {
                 if (mMapDelete.size > 0) {
-                    val model: ImportFilesModel = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
+                    val model: ImportFilesModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
                     Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                     return model
                 }
@@ -935,7 +973,9 @@ object Utils  {
             try {
                 if (map != null) {
                     if (map.size > 0) {
-                        map.remove(itemModel.unique_id)
+                        itemModel?.unique_id?.let {
+                            map.remove(it)
+                        }
                         return true
                     }
                 }
@@ -954,21 +994,21 @@ object Utils  {
         fun onDeleteItemFolder(item_id: String?) {
             val path: String = SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + item_id
             Log(TAG, "Delete folder $path")
-            SuperSafeApplication.Companion.getInstance().getStorage().deleteDirectory(SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + item_id)
+            SuperSafeApplication.Companion.getInstance().getStorage()!!.deleteDirectory(SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + item_id)
         }
 
         fun onDeleteFile(file_path: String?) {
-            SuperSafeApplication.Companion.getInstance().getStorage().deleteFile(file_path)
+            SuperSafeApplication.Companion.getInstance().getStorage()!!.deleteFile(file_path)
         }
 
         /*Create folder*/
         fun createDestinationDownloadItem(items_id: String?): String? {
-            val path: String = SuperSafeApplication.Companion.getInstance().getSupersafePrivate()
+            val path: String? = SuperSafeApplication.getInstance().getSupersafePrivate()
             return "$path$items_id/"
         }
 
         fun getOriginalPath(currentTime: String?, items_id: String?): String? {
-            val rootPath: String = SuperSafeApplication.Companion.getInstance().getSupersafePrivate()
+            val rootPath: String? = SuperSafeApplication.getInstance().getSupersafePrivate()
             val pathContent = "$rootPath$items_id/"
             createDirectory(pathContent)
             return pathContent + currentTime
@@ -978,7 +1018,7 @@ object Utils  {
         fun createDirectory(path: String?): Boolean {
             val directory = File(path)
             if (directory.exists()) {
-                android.util.Log.w(TAG, "Directory '$path' already exists")
+                Utils.Log(TAG, "Directory '$path' already exists")
                 return false
             }
             return directory.mkdirs()
@@ -990,8 +1030,8 @@ object Utils  {
             } else true
         }
 
-        fun getCheckedList(mList: MutableList<ItemModel?>?): MutableList<ItemModel?>? {
-            val mResult: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+        fun getCheckedList(mList: MutableList<ItemModel>): MutableList<ItemModel> {
+            val mResult: MutableList<ItemModel> = ArrayList<ItemModel>()
             for (index in mList) {
                 if (index.isChecked) {
                     mResult.add(index)
@@ -1002,7 +1042,7 @@ object Utils  {
 
         fun checkSaverToDelete(originalPath: String?, isOriginalGlobalId: Boolean) {
             if (getSaverSpace()) {
-                if (SuperSafeApplication.Companion.getInstance().getStorage().isFileExist(originalPath)) {
+                if (SuperSafeApplication.getInstance().getStorage()!!.isFileExist(originalPath)) {
                     if (isOriginalGlobalId) {
                         onDeleteFile(originalPath)
                     }
@@ -1014,10 +1054,10 @@ object Utils  {
             PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
         }
 
-        fun onScanFile(activity: Context?, nameLogs: String?) {
+        fun onScanFile(activity: Context, nameLogs: String?) {
             if (PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
                 Log(TAG, "Granted permission....")
-                val storage: Storage = SuperSafeApplication.Companion.getInstance().getStorage()
+                val storage: Storage? = SuperSafeApplication.getInstance().getStorage()
                 if (storage != null) {
                     val file = File(storage.externalStorageDirectory + "/" + nameLogs)
                     MediaScannerConnection.scanFile(activity, arrayOf(file.absolutePath), null, null)
@@ -1030,18 +1070,18 @@ object Utils  {
         }
 
         fun checkRequestUploadItemData() {
-            val mResult: MutableList<ItemModel?> = SQLHelper.getItemListUpload()
+            val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
             if (mResult != null) {
                 if (mResult.size > 0 && isCheckAllowUpload()) {
-                    ServiceManager.Companion.getInstance().onPreparingSyncData()
+                    ServiceManager.getInstance()?.onPreparingSyncData()
                     return
                 }
             }
-            ServiceManager.Companion.getInstance().onDefaultValue()
+            ServiceManager.getInstance()?.onDefaultValue()
             Log(TAG, "All items already synced...........")
         }
 
-        fun isRealCheckedOut(orderId: String?): Boolean {
+        fun isRealCheckedOut(orderId: String): Boolean {
             return if (orderId.contains("GPA")) {
                 true
             } else false
@@ -1052,9 +1092,9 @@ object Utils  {
         }
 
         fun getCheckoutItems(): CheckoutItems? {
-            val value: String = PrefsController.getString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_checkout_items), null)
+            val value: String? = PrefsController.getString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_checkout_items), null)
             if (value != null) {
-                val mResult: CheckoutItems = Gson().fromJson(value, CheckoutItems::class.java)
+                val mResult: CheckoutItems? = Gson().fromJson(value, CheckoutItems::class.java)
                 if (mResult != null) {
                     return mResult
                 }

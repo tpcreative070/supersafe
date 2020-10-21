@@ -258,7 +258,7 @@ class ItemEntity : Serializable {
                 return null
             }
             val items: ItemEntity = Gson().fromJson(value, ItemEntity::class.java)
-            Utils.Companion.Log(TAG, Gson().toJson(items))
+            Utils.Log(TAG, Gson().toJson(items))
             return items
         } catch (e: Exception) {
             e.printStackTrace()

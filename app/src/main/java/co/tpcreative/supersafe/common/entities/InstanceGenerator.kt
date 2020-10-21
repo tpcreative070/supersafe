@@ -43,31 +43,31 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.itemsDao()?.insert(cTalkManager)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
     fun onUpdate(cTalkManager: ItemEntity?) {
         try {
             if (cTalkManager == null) {
-                Utils.Companion.Log(TAG, "Null???? ")
+                Utils.Log(TAG, "Null???? ")
                 return
             }
-            Utils.Companion.Log(TAG, "updatedItem " + Gson().toJson(cTalkManager))
+            Utils.Log(TAG, "updatedItem " + Gson().toJson(cTalkManager))
             instance?.itemsDao()?.update(cTalkManager)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
-    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isExport: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isExport: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             if (categories_local_id == null) {
                 return null
             }
             try {
                 val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAll(categories_local_id, isDeleteLocal, isExport, isFakePin)
-                val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+                val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
                 if (mList != null) {
                     for (index in mList) {
                         mData.add(ItemEntityModel(index))
@@ -77,18 +77,18 @@ abstract class InstanceGenerator : RoomDatabase() {
             } catch (e: Exception) {
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         if (categories_local_id == null) {
             return null
         }
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAll(categories_local_id, isDeleteLocal, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -100,13 +100,13 @@ abstract class InstanceGenerator : RoomDatabase() {
         return null
     }
 
-    fun getListItems(categories_local_id: String?, formatType: Int, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListItems(categories_local_id: String?, formatType: Int, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         if (categories_local_id == null) {
             return null
         }
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAll(categories_local_id, formatType, isDeleteLocal, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -118,10 +118,10 @@ abstract class InstanceGenerator : RoomDatabase() {
         return null
     }
 
-    fun getListItems(categories_local_id: String?, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListItems(categories_local_id: String?, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAll(categories_local_id, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -129,15 +129,15 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListAllItems(isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListAllItems(isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAll(isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -145,15 +145,15 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListAllItemsSaved(isSaved: Boolean, isSyncCloud: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListAllItemsSaved(isSaved: Boolean, isSyncCloud: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAllSaved(isSaved, isSyncCloud)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -161,7 +161,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -171,7 +171,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadAllSaved(formatType)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -187,15 +187,15 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getDeleteLocalListItems(isDeleteLocal: Boolean, deleteAction: Int, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getDeleteLocalListItems(isDeleteLocal: Boolean, deleteAction: Int, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadDeleteLocalDataItems(isDeleteLocal, deleteAction, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -203,7 +203,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -213,7 +213,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadDeleteLocalAndGlobalDataItems(isDeleteLocal, isDeleteGlobal, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -223,7 +223,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncDataItems(false, false, EnumStatus.UPLOAD.ordinal, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -233,7 +233,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncDataItemsByCategoriesIdNull(false, false, EnumStatus.UPLOAD.ordinal, isFakePin, "null")
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -249,7 +249,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -259,15 +259,15 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncDataItems(false, false, EnumStatus.DOWNLOAD.ordinal, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListSyncData(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListSyncData(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadSyncData(isSyncCloud, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -275,7 +275,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -285,15 +285,15 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncData(isSyncCloud, isSaver, isWaitingForExporting, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListSyncData(isSyncCloud: Boolean, isSaver: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListSyncData(isSyncCloud: Boolean, isSaver: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadSyncData(isSyncCloud, isSaver, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -301,7 +301,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -311,7 +311,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadItemId(id, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -323,7 +323,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return ItemEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -335,7 +335,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return ItemEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -347,7 +347,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return ItemEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -357,7 +357,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadListItemId(item_id, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -367,15 +367,15 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadItemId(item_id, isSyncCloud, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListItemId(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getListItemId(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadListItemId(isSyncCloud, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -383,7 +383,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -399,15 +399,15 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getLoadListItemUpdate(isUpdate: Boolean, isSyncCloud: Boolean, isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel?>? {
+    fun getLoadListItemUpdate(isUpdate: Boolean, isSyncCloud: Boolean, isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadListItemUpdate(isUpdate, isSyncCloud, isSyncOwnServer, isFakePin)
-            val mData: MutableList<ItemEntityModel?> = ArrayList<ItemEntityModel?>()
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemEntityModel(index))
@@ -415,7 +415,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -425,7 +425,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadListItemId(isSyncCloud, isSyncOwnServer, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -435,7 +435,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             instance?.itemsDao()?.delete(entity)
             return true
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return false
     }
@@ -445,7 +445,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             instance?.mainCategoriesDao()?.delete(entity)
             return true
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return false
     }
@@ -456,7 +456,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             instance?.itemsDao()?.deleteAll(categories_local_id, isFakePin)
             return true
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return false
     }
@@ -469,26 +469,23 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.mainCategoriesDao()?.insert(MainCategoryEntity(item))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
-    fun onUpdate(cTalkManager: MainCategoryEntityModel?) {
+    fun onUpdate(cTalkManager: MainCategoryEntityModel) {
         try {
-            if (cTalkManager == null) {
-                Utils.Companion.Log(TAG, "Null???? ")
-            }
-            Utils.Companion.Log(TAG, "Updated :" + cTalkManager?.categories_id)
+            Utils.Log(TAG, "Updated :" + cTalkManager?.categories_id)
             instance?.mainCategoriesDao()?.update(MainCategoryEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
-    fun getListCategories(isFakePin: Boolean): MutableList<MainCategoryEntityModel?>? {
+    fun getListCategories(isFakePin: Boolean): MutableList<MainCategoryEntityModel>? {
         try {
             val mResult: MutableList<MainCategoryEntity>? = instance?.mainCategoriesDao()?.loadAll(isFakePin)
-            val mData: MutableList<MainCategoryEntityModel?> = ArrayList<MainCategoryEntityModel?>()
+            val mData: MutableList<MainCategoryEntityModel> = ArrayList<MainCategoryEntityModel>()
             if (mResult != null) {
                 for (index in mResult) {
                     mData.add(MainCategoryEntityModel(index))
@@ -496,7 +493,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -512,7 +509,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -528,7 +525,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -545,7 +542,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -561,7 +558,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -573,7 +570,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -588,7 +585,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return 0
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return 0
     }
@@ -598,7 +595,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.mainCategoriesDao()?.loadListAllItemId(categories_hex_name, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -610,7 +607,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -622,7 +619,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResut)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -634,7 +631,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -644,15 +641,15 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.mainCategoriesDao()?.loadItemCategoriesSync(isSyncOwnServer, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun loadListItemCategoriesSync(isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<MainCategoryEntityModel?>? {
+    fun loadListItemCategoriesSync(isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<MainCategoryEntityModel>? {
         try {
             val mList: MutableList<MainCategoryEntity>? = instance?.mainCategoriesDao()?.loadListItemCategoriesSync(isSyncOwnServer, isFakePin)
-            val mData: MutableList<MainCategoryEntityModel?> = ArrayList<MainCategoryEntityModel?>()
+            val mData: MutableList<MainCategoryEntityModel> = ArrayList<MainCategoryEntityModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(MainCategoryEntityModel(index))
@@ -660,7 +657,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -670,7 +667,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.mainCategoriesDao()?.loadListItemCategoriesSync(isSyncOwnServer, limit, isFakePin)
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -683,31 +680,31 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.breakInAlertsDao()?.insert(BreakInAlertsEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
     fun onUpdate(cTalkManager: BreakInAlertsEntityModel?) {
         try {
             if (cTalkManager == null) {
-                Utils.Companion.Log(TAG, "Null???? ")
+                Utils.Log(TAG, "Null???? ")
                 return
             }
             instance?.breakInAlertsDao()?.update(BreakInAlertsEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
     fun onDelete(cTalkManager: BreakInAlertsEntityModel?) {
         try {
             if (cTalkManager == null) {
-                Utils.Companion.Log(TAG, "Null???? ")
+                Utils.Log(TAG, "Null???? ")
                 return
             }
             instance?.breakInAlertsDao()?.delete(BreakInAlertsEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
@@ -729,7 +726,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return mList
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -745,7 +742,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return mList
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -761,7 +758,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return mList
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -790,15 +787,8 @@ abstract class InstanceGenerator : RoomDatabase() {
         //    public abstract SecretDao secretDao();
         @Ignore
         val TAG = InstanceGenerator::class.java.simpleName
-
-
         fun getInstance(context: Context?): InstanceGenerator? {
             if (instance == null) {
-//            instance = Room.databaseBuilder(context,
-//                     InstanceGenerator.class,
-//                     context.getString(R.string.database_name))
-//                     .allowMainThreadQueries()
-//                     .build();
                 instance = Room.databaseBuilder(SuperSafeApplication.getInstance(),
                         InstanceGenerator::class.java, SuperSafeApplication.getInstance().getString(R.string.key_database))
                         .addMigrations(SuperSafeApplication.getInstance().MIGRATION_4_5)

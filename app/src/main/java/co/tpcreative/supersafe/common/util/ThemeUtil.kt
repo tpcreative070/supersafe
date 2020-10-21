@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.util
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.modelimport.ThemeApp
+import co.tpcreative.supersafe.model.ThemeApp
 import java.util.*
 object ThemeUtil {
     const val THEME_PRIMARY = 0
@@ -18,20 +18,20 @@ object ThemeUtil {
     fun getThemeId(theme: Int): Int {
         var themeId = 0
         when (theme) {
-            ThemeUtil.THEME_PRIMARY -> {
+            THEME_PRIMARY -> {
                 themeId = R.style.AppTheme
             }
-            ThemeUtil.THEME_PINK -> themeId = R.style.AppTheme_PINK
-            ThemeUtil.THEME_PURPLE -> themeId = R.style.AppTheme_PURPLE
-            ThemeUtil.THEME_DEEPPURPLE -> themeId = R.style.AppTheme_DEEPPURPLE
-            ThemeUtil.THEME_CYAN -> themeId = R.style.AppTheme_CYAN
-            ThemeUtil.THEME_TEAL -> themeId = R.style.AppTheme_TEAL
-            ThemeUtil.THEME_LIGHTGREEN -> themeId = R.style.AppTheme_LIGHTGREEN
-            ThemeUtil.THEME_LIME -> themeId = R.style.AppTheme_LIME
-            ThemeUtil.THEME_AMBER -> themeId = R.style.AppTheme_AMBER
-            ThemeUtil.THEME_BROWN -> themeId = R.style.AppTheme_BROWN
-            ThemeUtil.THEME_GRAY -> themeId = R.style.AppTheme_GRAY
-            ThemeUtil.THEME_BLUEGRAY -> themeId = R.style.AppTheme_BLUEGRAY
+            THEME_PINK -> themeId = R.style.AppTheme_PINK
+            THEME_PURPLE -> themeId = R.style.AppTheme_PURPLE
+            THEME_DEEPPURPLE -> themeId = R.style.AppTheme_DEEPPURPLE
+            THEME_CYAN -> themeId = R.style.AppTheme_CYAN
+            THEME_TEAL -> themeId = R.style.AppTheme_TEAL
+            THEME_LIGHTGREEN -> themeId = R.style.AppTheme_LIGHTGREEN
+            THEME_LIME -> themeId = R.style.AppTheme_LIME
+            THEME_AMBER -> themeId = R.style.AppTheme_AMBER
+            THEME_BROWN -> themeId = R.style.AppTheme_BROWN
+            THEME_GRAY -> themeId = R.style.AppTheme_GRAY
+            THEME_BLUEGRAY -> themeId = R.style.AppTheme_BLUEGRAY
             else -> {
             }
         }
@@ -44,25 +44,25 @@ object ThemeUtil {
             ThemeUtil.THEME_PRIMARY -> {
                 themeId = R.style.AppTheme
             }
-            ThemeUtil.THEME_PINK -> themeId = R.style.AppTheme_PINK
-            ThemeUtil.THEME_PURPLE -> themeId = R.style.AppTheme_PURPLE
-            ThemeUtil.THEME_DEEPPURPLE -> themeId = R.style.AppTheme_DEEPPURPLE
-            ThemeUtil.THEME_CYAN -> themeId = R.style.AppTheme_CYAN
-            ThemeUtil.THEME_TEAL -> themeId = R.style.AppTheme_TEAL
-            ThemeUtil.THEME_LIGHTGREEN -> themeId = R.style.AppTheme_LIGHTGREEN
-            ThemeUtil.THEME_LIME -> themeId = R.style.AppTheme_LIME
-            ThemeUtil.THEME_AMBER -> themeId = R.style.AppTheme_AMBER
-            ThemeUtil.THEME_BROWN -> themeId = R.style.AppTheme_BROWN
-            ThemeUtil.THEME_GRAY -> themeId = R.style.AppTheme_GRAY
-            ThemeUtil.THEME_BLUEGRAY -> themeId = R.style.AppTheme_BLUEGRAY
+            THEME_PINK -> themeId = R.style.AppTheme_PINK
+            THEME_PURPLE -> themeId = R.style.AppTheme_PURPLE
+            THEME_DEEPPURPLE -> themeId = R.style.AppTheme_DEEPPURPLE
+            THEME_CYAN -> themeId = R.style.AppTheme_CYAN
+            THEME_TEAL -> themeId = R.style.AppTheme_TEAL
+            THEME_LIGHTGREEN -> themeId = R.style.AppTheme_LIGHTGREEN
+            THEME_LIME -> themeId = R.style.AppTheme_LIME
+            THEME_AMBER -> themeId = R.style.AppTheme_AMBER
+            THEME_BROWN -> themeId = R.style.AppTheme_BROWN
+            THEME_GRAY -> themeId = R.style.AppTheme_GRAY
+            THEME_BLUEGRAY -> themeId = R.style.AppTheme_BLUEGRAY
             else -> {
             }
         }
         return themeId
     }
 
-    fun getThemeList(): ArrayList<ThemeApp?>? {
-        val themeAppArrayList: ArrayList<ThemeApp?> = ArrayList<ThemeApp?>()
+    fun getThemeList(): ArrayList<ThemeApp> {
+        val themeAppArrayList: ArrayList<ThemeApp> = ArrayList<ThemeApp>()
         themeAppArrayList.add(ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA"))
         themeAppArrayList.add(ThemeApp(1, R.color.primaryColorPink, R.color.primaryDarkColorPink, R.color.secondaryColorPink, "#448AFF"))
         themeAppArrayList.add(ThemeApp(2, R.color.primaryColorPurple, R.color.primaryDarkColorPurple, R.color.secondaryDarkColorPurple, "#b4c320"))

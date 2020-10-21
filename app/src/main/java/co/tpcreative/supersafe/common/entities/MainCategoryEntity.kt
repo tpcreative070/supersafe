@@ -2,7 +2,7 @@ package co.tpcreative.supersafe.common.entities
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import co.tpcreative.supersafe.modelimport.MainCategoryEntityModel
+import co.tpcreative.supersafe.model.MainCategoryEntityModel
 import java.io.Serializable
 import java.util.*
 

@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.responseimport
+package co.tpcreative.supersafe.common.response
 import co.tpcreative.supersafe.model.*
 import java.io.Serializable
 

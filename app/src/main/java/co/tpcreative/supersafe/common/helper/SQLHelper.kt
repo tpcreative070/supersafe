@@ -2,28 +2,37 @@ package co.tpcreative.supersafe.common.helper
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import androidx.core.content.ContextCompat
 import androidx.room.Ignore
+import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.entities.InstanceGenerator
+import co.tpcreative.supersafe.common.entities.ItemEntity
+import co.tpcreative.supersafe.common.entities.MainCategoryEntity
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.ItemEntityModel
-import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.model.*
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 
 object SQLHelper {
     private val TAG = SQLHelper::class.java.simpleName
-    fun getAllItemList(): MutableList<ItemModel?>? {
-        val list: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getAllListItems()
-        val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
-        for (index in list) {
-            mList.add(ItemModel(index))
+    fun getAllItemList(): MutableList<ItemModel>? {
+        val list: MutableList<ItemEntityModel>? = getInstance()?.getAllListItems()
+        val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
+        if (list!=null){
+            for (index in list) {
+                mList.add(ItemModel(index))
+            }
+            return mList
         }
-        return mList
+        return null
     }
 
     /*Check request delete category*/
-    fun getDeleteCategoryRequest(): MutableList<MainCategoryModel?>? {
-        val mList: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
-        val deleteAlbum: MutableList<MainCategoryEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).geCategoryList(true, false)
+    fun getDeleteCategoryRequest(): MutableList<MainCategoryModel>? {
+        val mList: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
+        val deleteAlbum: MutableList<MainCategoryEntityModel>? = getInstance()?.geCategoryList(true, false)
         if (deleteAlbum != null) {
             for (index in deleteAlbum) {
                 mList.add(MainCategoryModel(index))
@@ -34,9 +43,9 @@ object SQLHelper {
     }
 
     /*Check request delete item*/
-    fun getDeleteItemRequest(): MutableList<ItemModel?>? {
-        val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
-        val mResult: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal, false)
+    fun getDeleteItemRequest(): MutableList<ItemModel>? {
+        val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
+        val mResult: MutableList<ItemEntityModel>? = getInstance()?.getDeleteLocalListItems(true, EnumDelete.DELETE_WAITING.ordinal, false)
         if (mResult != null) {
             for (index in mResult) {
                 mList.add(ItemModel(index))
@@ -47,32 +56,35 @@ object SQLHelper {
     }
 
     /*Delete category*/
-    fun deleteCategory(itemModel: MainCategoryModel?) {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onDelete(MainCategoryEntity(MainCategoryEntityModel(itemModel)))
+    fun deleteCategory(itemModel: MainCategoryModel) {
+        getInstance()?.onDelete(MainCategoryEntity(MainCategoryEntityModel(itemModel)))
     }
 
     /*Delete item*/
-    fun deleteItem(itemModel: ItemModel?) {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onDelete(ItemEntity(ItemEntityModel(itemModel)))
+    fun deleteItem(itemModel: ItemModel) {
+        getInstance()?.onDelete(ItemEntity(ItemEntityModel(itemModel)))
     }
 
     /*Request download item*/
-    fun getItemListDownload(): MutableList<ItemModel?>? {
-        val list: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getItemListDownload(true, false)
-        val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
-        for (index in list) {
-            mList.add(ItemModel(index))
+    fun getItemListDownload(): MutableList<ItemModel>? {
+        val list: MutableList<ItemEntityModel>? = getInstance()?.getItemListDownload(true, false)
+        val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
+        if (list!=null){
+            for (index in list) {
+                mList.add(ItemModel(index))
+            }
+            return mList
         }
-        return mList
+        return null
     }
 
     /*Request upload item*/
-    fun getItemListUpload(): MutableList<ItemModel?>? {
-        val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
-        val mResult: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getRequestUploadData(false)
+    fun getItemListUpload(): MutableList<ItemModel>? {
+        val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
+        val mResult: MutableList<ItemEntityModel>? = getInstance()?.getRequestUploadData(false)
         if (mResult != null) {
             for (index in mResult) {
-                if (!Utils.Companion.isNotEmptyOrNull(index.categories_id)) {
+                if (!Utils.isNotEmptyOrNull(index?.categories_id)) {
                     val categoryModel: MainCategoryModel? = getCategoriesLocalId(index.categories_local_id)
                     if (categoryModel != null) {
                         mList.add(ItemModel(index, categoryModel.categories_id))
@@ -87,28 +99,28 @@ object SQLHelper {
     }
 
     /*Added item*/
-    fun insertedItem(itemModel: ItemModel?) {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onInsert(ItemEntity(ItemEntityModel(itemModel)))
+    fun insertedItem(itemModel: ItemModel) {
+        getInstance()?.onInsert(ItemEntity(ItemEntityModel(itemModel)))
     }
 
     /*Updated item*/
-    fun updatedItem(itemModel: ItemModel?) {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onUpdate(ItemEntity(ItemEntityModel(itemModel)))
+    fun updatedItem(itemModel: ItemModel) {
+        getInstance()?.onUpdate(ItemEntity(ItemEntityModel(itemModel)))
     }
 
     /*Added get item*/
     fun getItemById(items_id: String?): ItemModel? {
-        val items: ItemEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getItemId(items_id, false)
+        val items: ItemEntityModel? = getInstance()?.getItemId(items_id, false)
         return if (items != null) {
             ItemModel(items)
         } else null
     }
 
     /*Get local item list*/
-    fun getDeleteLocalListItems(isDeleteLocal: Boolean, deleteAction: Int, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getDeleteLocalListItems(isDeleteLocal: Boolean, deleteAction: Int, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getDeleteLocalListItems(isDeleteLocal, deleteAction, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getDeleteLocalListItems(isDeleteLocal, deleteAction, isFakePin)
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -121,9 +133,9 @@ object SQLHelper {
     }
 
     /*Get request update item*/
-    fun getRequestUpdateItemList(): MutableList<ItemModel?>? {
-        val mList: MutableList<ItemModel?> = ArrayList<ItemModel?>()
-        val mResult: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getLoadListItemUpdate(true, true, true, false)
+    fun getRequestUpdateItemList(): MutableList<ItemModel>? {
+        val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
+        val mResult: MutableList<ItemEntityModel>? = getInstance()?.getLoadListItemUpdate(true, true, true, false)
         if (mResult != null) {
             for (index in mResult) {
                 mList.add(ItemModel(index))
@@ -134,10 +146,10 @@ object SQLHelper {
     }
 
     /*Get item list*/
-    fun getListItems(categories_local_id: String?, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListItems(categories_local_id: String?, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListItems(categories_local_id, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_local_id, isFakePin)
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -151,7 +163,7 @@ object SQLHelper {
 
     fun getItemId(item_id: String?, isFakePin: Boolean): ItemModel? {
         try {
-            val mResult: ItemEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getItemId(item_id, isFakePin)
+            val mResult: ItemEntityModel? = getInstance()?.getItemId(item_id, isFakePin)
             if (mResult != null) {
                 return ItemModel(mResult)
             }
@@ -161,9 +173,9 @@ object SQLHelper {
     }
 
     /*Get request update category */
-    fun getRequestUpdateCategoryList(): MutableList<MainCategoryModel?>? {
-        val mList: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
-        val deleteAlbum: MutableList<MainCategoryEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getChangedCategoryList()
+    fun getRequestUpdateCategoryList(): MutableList<MainCategoryModel>? {
+        val mList: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
+        val deleteAlbum: MutableList<MainCategoryEntityModel>? = getInstance()?.getChangedCategoryList()
         if (deleteAlbum != null) {
             for (index in deleteAlbum) {
                 mList.add(MainCategoryModel(index))
@@ -174,18 +186,18 @@ object SQLHelper {
     }
 
     /*Added category*/
-    fun insertCategory(mainCategoryModel: MainCategoryModel?) {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onInsert(MainCategoryEntityModel(mainCategoryModel))
+    fun insertCategory(mainCategoryModel: MainCategoryModel) {
+        getInstance()?.onInsert(MainCategoryEntityModel(mainCategoryModel))
     }
 
     /*Update Category*/
-    fun updateCategory(model: MainCategoryModel?) {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onUpdate(MainCategoryEntityModel(model))
+    fun updateCategory(model: MainCategoryModel) {
+        getInstance()?.onUpdate(MainCategoryEntityModel(model))
     }
 
     /*Get category item by id*/
     fun getCategoriesId(categories_id: String?, isFakePin: Boolean): MainCategoryModel? {
-        val mResult: MainCategoryEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getCategoriesId(categories_id, isFakePin)
+        val mResult: MainCategoryEntityModel? = getInstance()?.getCategoriesId(categories_id, isFakePin)
         return if (mResult != null) {
             MainCategoryModel(mResult)
         } else null
@@ -193,7 +205,7 @@ object SQLHelper {
 
     /*Get category item by hex name*/
     fun getCategoriesItemId(categories_hex_name: String?, isFakePin: Boolean): MainCategoryModel? {
-        val mResult: MainCategoryEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getCategoriesItemId(categories_hex_name, isFakePin)
+        val mResult: MainCategoryEntityModel? = getInstance()?.getCategoriesItemId(categories_hex_name, isFakePin)
         return if (mResult != null) {
             MainCategoryModel(mResult)
         } else null
@@ -201,16 +213,16 @@ object SQLHelper {
 
     /*Get local category*/
     fun getCategoriesLocalId(categories_local_id: String?, isFakePin: Boolean): MainCategoryModel? {
-        val mResult: MainCategoryEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getCategoriesLocalId(categories_local_id, isFakePin)
+        val mResult: MainCategoryEntityModel? = getInstance()?.getCategoriesLocalId(categories_local_id, isFakePin)
         return if (mResult != null) {
             MainCategoryModel(mResult)
         } else null
     }
 
-    fun getListCategories(isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel?>? {
+    fun getListCategories(isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
         try {
-            val mList: MutableList<MainCategoryEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListCategories(false, false)
-            val mData: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
+            val mList: MutableList<MainCategoryEntityModel>? = getInstance()?.getListCategories(false, false)
+            val mData: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(MainCategoryModel(index))
@@ -222,10 +234,10 @@ object SQLHelper {
         return null
     }
 
-    fun getListCategories(isFakePin: Boolean): MutableList<MainCategoryModel?>? {
+    fun getListCategories(isFakePin: Boolean): MutableList<MainCategoryModel>? {
         try {
-            val mResult: MutableList<MainCategoryEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListCategories(isFakePin)
-            val mData: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
+            val mResult: MutableList<MainCategoryEntityModel>? = getInstance()?.getListCategories(isFakePin)
+            val mData: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
             if (mResult != null) {
                 for (index in mResult) {
                     mData.add(MainCategoryModel(index))
@@ -239,7 +251,7 @@ object SQLHelper {
 
     fun requestSyncCategories(isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel?>? {
         try {
-            val mList: MutableList<MainCategoryEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).loadListItemCategoriesSync(isSyncOwnServer, isFakePin)
+            val mList: MutableList<MainCategoryEntityModel>? = getInstance()?.loadListItemCategoriesSync(isSyncOwnServer, isFakePin)
             val mData: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
             if (mList != null) {
                 for (index in mList) {
@@ -248,54 +260,54 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getList(): MutableList<MainCategoryModel?>? {
         val mList: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
-        val list: MutableList<MainCategoryModel?>? = getListCategories(false, false)
+        val list: MutableList<MainCategoryModel>? = getListCategories(false, false)
         if (list != null && list.size > 0) {
             mList.addAll(list)
         } else {
-            val map: MutableMap<String?, MainCategoryModel?>? = getMainCategoriesDefault()
-            Utils.Companion.Log(TAG, "No Data " + map.size)
+            val map: MutableMap<String?, MainCategoryModel> = getMainCategoriesDefault()
+            Utils.Log(TAG, "No Data " + map.size)
             for ((_, main) in map) {
                 insertCategory(main)
             }
         }
-        val listDelete: MutableList<ItemModel?>? = getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
+        val listDelete: MutableList<ItemModel>? = getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
         if (listDelete != null) {
             if (listDelete.size > 0) {
                 val items: MainCategoryModel? = getTrashItem()
-                val count: Int = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getLatestItem()
-                items.categories_max = count.toLong()
+                val count: Int? = getInstance()?.getLatestItem()
+                items?.categories_max = count!!.toLong()
                 mList.add(items)
             }
         }
         Collections.sort(mList, Comparator { lhs, rhs ->
-            val count_1 = lhs.categories_max as Int
-            val count_2 = rhs.categories_max as Int
+            val count_1 = lhs?.categories_max as Int
+            val count_2 = rhs?.categories_max as Int
             count_1 - count_2
         })
         return mList
     }
 
-    fun getListMoveGallery(categories_local_id: String?, isFakePin: Boolean): MutableList<MainCategoryModel?>? {
-        val mList: MutableList<MainCategoryModel?>? = getListCategories(categories_local_id, false, isFakePin)
+    fun getListMoveGallery(categories_local_id: String?, isFakePin: Boolean): MutableList<MainCategoryModel>? {
+        val mList: MutableList<MainCategoryModel>? = getListCategories(categories_local_id, false, isFakePin)
         Collections.sort(mList, Comparator { lhs, rhs ->
-            val count_1 = lhs.categories_max as Int
-            val count_2 = rhs.categories_max as Int
+            val count_1 = lhs?.categories_max as Int
+            val count_2 = rhs?.categories_max as Int
             count_1 - count_2
         })
         return mList
     }
 
-    fun getListCategories(categories_local_id: String?, isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel?>? {
+    fun getListCategories(categories_local_id: String?, isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
         try {
-            val mList: MutableList<MainCategoryEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListCategories(categories_local_id, isDelete, isFakePin)
-            val mData: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
+            val mList: MutableList<MainCategoryEntityModel>? = getInstance()?.getListCategories(categories_local_id, isDelete, isFakePin)
+            val mData: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(MainCategoryModel(index))
@@ -303,20 +315,23 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListFakePin(): MutableList<MainCategoryModel?>? {
-        val list: MutableList<MainCategoryModel?>? = getListCategories(true)
-        list.add(getMainItemFakePin())
-        Collections.sort(list, Comparator { lhs, rhs ->
-            val count_1 = lhs.categories_max as Int
-            val count_2 = rhs.categories_max as Int
-            count_1 - count_2
-        })
-        return list
+    fun getListFakePin(): MutableList<MainCategoryModel>? {
+        val list: MutableList<MainCategoryModel>? = getListCategories(true)
+        if (list!=null){
+            getMainItemFakePin()?.let { list.add(it) }
+            Collections.sort(list, Comparator { lhs, rhs ->
+                val count_1 = lhs?.categories_max as Int
+                val count_2 = rhs?.categories_max as Int
+                count_1 - count_2
+            })
+            return list
+        }
+        return null
     }
 
     @Transient
@@ -339,40 +354,40 @@ object SQLHelper {
             "#E040FB",
             "#9E9E9E")
 
-    fun getMainCategoriesDefault(): MutableMap<String?, MainCategoryModel?>? {
-        val map: MutableMap<String?, MainCategoryModel?> = HashMap<String?, MainCategoryModel?>()
-        map[Utils.Companion.getHexCode("1234")] = MainCategoryModel("null", Utils.Companion.getHexCode("1234"), Utils.Companion.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album), ListColor.get(0), ListIcon.get(0), 0, false, false, false, false, "", Utils.Companion.getUUId(), null, false)
-        map[Utils.Companion.getHexCode("1235")] = MainCategoryModel("null", Utils.Companion.getHexCode("1235"), Utils.Companion.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_photos)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_photos), ListColor.get(1), ListIcon.get(1), 1, false, false, false, false, "", Utils.Companion.getUUId(), null, false)
-        map[Utils.Companion.getHexCode("1236")] = MainCategoryModel("null", Utils.Companion.getHexCode("1236"), Utils.Companion.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_videos)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_videos), ListColor.get(2), ListIcon.get(2), 2, false, false, false, false, "", Utils.Companion.getUUId(), null, false)
-        map[Utils.Companion.getHexCode("1237")] = MainCategoryModel("null", Utils.Companion.getHexCode("1237"), Utils.Companion.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_significant_other), ListColor.get(3), ListIcon.get(3), 3, false, false, false, false, "", Utils.Companion.getUUId(), null, false)
+    fun getMainCategoriesDefault(): MutableMap<String?, MainCategoryModel> {
+        val map: MutableMap<String?, MainCategoryModel> = HashMap<String?, MainCategoryModel>()
+        map[Utils.getHexCode("1234")] = MainCategoryModel("null", Utils.getHexCode("1234"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album), ListColor?.get(0), ListIcon?.get(0), 0, false, false, false, false, "", Utils.getUUId(), null, false)
+        map[Utils.getHexCode("1235")] = MainCategoryModel("null", Utils.getHexCode("1235"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor?.get(1), ListIcon?.get(1), 1, false, false, false, false, "", Utils.getUUId(), null, false)
+        map[Utils.getHexCode("1236")] = MainCategoryModel("null", Utils.getHexCode("1236"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_videos)), SuperSafeApplication.getInstance().getString(R.string.key_videos), ListColor?.get(2), ListIcon?.get(2), 2, false, false, false, false, "", Utils.getUUId(), null, false)
+        map[Utils.getHexCode("1237")] = MainCategoryModel("null", Utils.getHexCode("1237"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_significant_other)), SuperSafeApplication.getInstance().getString(R.string.key_significant_other), ListColor?.get(3), ListIcon?.get(3), 3, false, false, false, false, "", Utils.getUUId(), null, false)
         return map
     }
 
-    fun getCategoriesDefault(): MutableList<MainCategoryModel?>? {
-        val list: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
-        list.add(MainCategoryModel("null", null, null, null, ListColor.get(0), ListIcon.get(0), 0, false, false, false, false, "", null, Utils.Companion.getHexCode("1234"), false))
-        list.add(MainCategoryModel("null", null, null, null, ListColor.get(1), ListIcon.get(1), 1, false, false, false, false, "", null, Utils.Companion.getHexCode("1235"), false))
-        list.add(MainCategoryModel("null", null, null, null, ListColor.get(2), ListIcon.get(2), 2, false, false, false, false, "", null, Utils.Companion.getHexCode("1236"), false))
-        list.add(MainCategoryModel("null", null, null, null, ListColor.get(3), ListIcon.get(3), 3, false, false, false, false, "", null, Utils.Companion.getHexCode("1237"), false))
-        list.add(MainCategoryModel("null", null, null, null, ListColor.get(5), ListIcon.get(5), 5, false, false, false, false, "", null, Utils.Companion.getHexCode("1238"), false))
-        list.add(MainCategoryModel("null", null, null, null, ListColor.get(6), ListIcon.get(6), 6, false, false, false, false, "", null, Utils.Companion.getHexCode("1239"), false))
+    fun getCategoriesDefault(): MutableList<MainCategoryModel> {
+        val list: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
+        list.add(MainCategoryModel("null", null, null, null, ListColor?.get(0), ListIcon?.get(0), 0, false, false, false, false, "", null, Utils.getHexCode("1234"), false))
+        list.add(MainCategoryModel("null", null, null, null, ListColor?.get(1), ListIcon?.get(1), 1, false, false, false, false, "", null, Utils.getHexCode("1235"), false))
+        list.add(MainCategoryModel("null", null, null, null, ListColor?.get(2), ListIcon?.get(2), 2, false, false, false, false, "", null, Utils.getHexCode("1236"), false))
+        list.add(MainCategoryModel("null", null, null, null, ListColor?.get(3), ListIcon?.get(3), 3, false, false, false, false, "", null, Utils.getHexCode("1237"), false))
+        list.add(MainCategoryModel("null", null, null, null, ListColor?.get(5), ListIcon?.get(5), 5, false, false, false, false, "", null, Utils.getHexCode("1238"), false))
+        list.add(MainCategoryModel("null", null, null, null, ListColor?.get(6), ListIcon?.get(6), 6, false, false, false, false, "", null, Utils.getHexCode("1239"), false))
         return list
     }
 
     fun getTrashItem(): MainCategoryModel? {
-        return MainCategoryModel("null", Utils.Companion.getUUId(), Utils.Companion.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash), ListColor.get(4), ListIcon.get(4), System.currentTimeMillis(), false, false, false, false, "", null, null, false)
+        return MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_trash), ListColor?.get(4), ListIcon?.get(4), System.currentTimeMillis(), false, false, false, false, "", null, null, false)
     }
 
     fun getMainItemFakePin(): MainCategoryModel? {
-        return MainCategoryModel("null", Utils.Companion.getHexCode("1234"), Utils.Companion.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album), ListColor.get(0), ListIcon.get(0), 0, false, false, false, true, "", null, null, false)
+        return MainCategoryModel("null", Utils.getHexCode("1234"), Utils.getHexCode(SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.Companion.getInstance().getString(R.string.key_main_album), ListColor?.get(0), ListIcon?.get(0), 0, false, false, false, true, "", null, null, false)
     }
 
     fun onAddCategories(categories_hex_name: String?, name: String?, isFakePin: Boolean): Boolean {
         try {
             val main: MainCategoryModel? = getCategoriesItemId(categories_hex_name, isFakePin)
             if (main == null) {
-                val count: Int = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getLatestItem()
-                insertCategory(MainCategoryModel("null", Utils.Companion.getUUId(), Utils.Companion.getHexCode(name), name, ListColor.get(0), ListIcon.get(0), count, false, false, false, isFakePin, "", null, null, false))
+                val count: Int? = getInstance()?.getLatestItem()
+                insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
                 return true
             }
         } catch (e: Exception) {
@@ -385,8 +400,8 @@ object SQLHelper {
         try {
             val main: MainCategoryModel? = getCategoriesItemId(categories_hex_name, isFakePin)
             if (main == null) {
-                val count: Int = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getLatestItem()
-                insertCategory(MainCategoryModel("null", Utils.Companion.getUUId(), Utils.Companion.getHexCode(name), name, ListColor.get(0), ListIcon.get(0), count, false, false, false, isFakePin, "", null, null, false))
+                val count: Int? = getInstance()?.getLatestItem()
+                insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
                 return true
             }
         } catch (e: Exception) {
@@ -397,8 +412,8 @@ object SQLHelper {
 
     fun onChangeCategories(mainCategories: MainCategoryModel?): Boolean {
         try {
-            val hex_name: String = Utils.Companion.getHexCode(mainCategories.categories_name)
-            val mIsFakePin: Boolean = mainCategories.isFakePin
+            val hex_name: String? = Utils.getHexCode(mainCategories?.categories_name)
+            val mIsFakePin: Boolean = mainCategories!!.isFakePin
             val response: MainCategoryModel? = getCategoriesItemId(hex_name, mIsFakePin)
             if (response == null) {
                 mainCategories.categories_hex_name = hex_name
@@ -407,7 +422,7 @@ object SQLHelper {
                 updateCategory(mainCategories)
                 return true
             }
-            Utils.Companion.Log(TAG, "value changed :" + Gson().toJson(response))
+            Utils.Log(TAG, "value changed :" + Gson().toJson(response))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -416,15 +431,15 @@ object SQLHelper {
 
     fun getDrawable(mContext: Context?, name: String?): Drawable? {
         try {
-            val resourceId = mContext.getResources().getIdentifier(name, "drawable", mContext.getPackageName())
-            return mContext.getResources().getDrawable(resourceId)
+            val resourceId = mContext?.getResources()?.getIdentifier(name, "drawable", mContext?.getPackageName())
+            return ContextCompat.getDrawable(mContext!!,resourceId!!)
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
     }
 
-    fun objectToHashMap(items: MainCategoryEntity?): MutableMap<String?, Any?>? {
+    fun objectToHashMap(items: MainCategoryEntity): MutableMap<String, Any>? {
         val type = object : TypeToken<MutableMap<String?, Any?>?>() {}.type
         return Gson().fromJson(Gson().toJson(items), type)
     }
@@ -435,7 +450,7 @@ object SQLHelper {
                 return null
             }
             val items: MainCategoryEntity = Gson().fromJson(value, MainCategoryEntity::class.java)
-            Utils.Companion.Log(TAG, Gson().toJson(items))
+            Utils.Log(TAG, Gson().toJson(items))
             return items
         } catch (e: Exception) {
             e.printStackTrace()
@@ -445,7 +460,7 @@ object SQLHelper {
 
     @Ignore
     fun getCategoriesPosition(mainCategories_Local_Id: String?): MainCategoryModel? {
-        val data: MutableList<MainCategoryModel?>? = getCategoriesDefault()
+        val data: MutableList<MainCategoryModel> = getCategoriesDefault()
         if (mainCategories_Local_Id == null) {
             return null
         }
@@ -457,13 +472,13 @@ object SQLHelper {
         return null
     }
 
-    fun getMainCurrentCategories(): HashMap<String?, MainCategoryModel?>? {
-        val list: MutableList<MainCategoryModel?>? = getListCategories(false)
-        val hashMap: HashMap<String?, MainCategoryModel?> = HashMap<String?, MainCategoryModel?>()
+    fun getMainCurrentCategories(): HashMap<String, MainCategoryModel>? {
+        val list: MutableList<MainCategoryModel>? = getListCategories(false)
+        val hashMap: HashMap<String, MainCategoryModel> = HashMap<String, MainCategoryModel>()
         if (list != null) {
             for (i in list.indices) {
                 val main: MainCategoryModel? = list[i]
-                val categories_id: String = main.categories_id
+                val categories_id: String? = main?.categories_id
                 if (categories_id != null) {
                     hashMap[categories_id] = main
                 }
@@ -472,13 +487,13 @@ object SQLHelper {
         return hashMap
     }
 
-    fun getListItems(categories_local_id: String?, formatType: Int, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListItems(categories_local_id: String?, formatType: Int, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         if (categories_local_id == null) {
             return null
         }
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListItems(categories_local_id, formatType, isDeleteLocal, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_local_id, formatType, isDeleteLocal, isFakePin)
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -492,12 +507,12 @@ object SQLHelper {
 
     fun getItemId(item_id: String?): ItemModel? {
         try {
-            val mResult: ItemEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getItemId(item_id)
+            val mResult: ItemEntityModel? = getInstance()?.getItemId(item_id)
             if (mResult != null) {
                 return ItemModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -508,7 +523,7 @@ object SQLHelper {
                 return null
             }
             try {
-                val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListItems(categories_local_id, isDeleteLocal, isExport, isFakePin)
+                val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_local_id, isDeleteLocal, isExport, isFakePin)
                 val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
                 if (mList != null) {
                     for (index in mList) {
@@ -519,7 +534,7 @@ object SQLHelper {
             } catch (e: Exception) {
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
@@ -529,7 +544,7 @@ object SQLHelper {
             return null
         }
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListItems(categories_local_id, isDeleteLocal, isFakePin)
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_local_id, isDeleteLocal, isFakePin)
             val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
             if (mList != null) {
                 for (index in mList) {
@@ -542,10 +557,10 @@ object SQLHelper {
         return null
     }
 
-    fun getListSyncData(isSyncCloud: Boolean, isSaver: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListSyncData(isSyncCloud: Boolean, isSaver: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListSyncData(isSyncCloud, isSaver, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListSyncData(isSyncCloud, isSaver, isFakePin)
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -553,15 +568,15 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
-    fun getListItemId(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListItemId(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListItemId(isSyncCloud, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItemId(isSyncCloud, isFakePin)
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -569,26 +584,26 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getLatestId(categories_local_id: String?, isDeleteLocal: Boolean, isFakePin: Boolean): ItemModel? {
         try {
-            val mResult: ItemEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getLatestId(categories_local_id, isDeleteLocal, isFakePin)
+            val mResult: ItemEntityModel? = getInstance()?.getLatestId(categories_local_id, isDeleteLocal, isFakePin)
             if (mResult != null) {
                 return ItemModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getListSyncData(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListSyncData(isSyncCloud, isFakePin)
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListSyncData(isSyncCloud, isFakePin)
             val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
             if (mList != null) {
                 for (index in mList) {
@@ -597,14 +612,14 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getListAllItems(isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListAllItems(isDeleteLocal, isFakePin)
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListAllItems(isDeleteLocal, isFakePin)
             val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
             if (mList != null) {
                 for (index in mList) {
@@ -613,14 +628,14 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getListAllItemsSaved(isSaved: Boolean, isSyncCloud: Boolean): MutableList<ItemModel?>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListAllItemsSaved(isSaved, isSyncCloud)
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListAllItemsSaved(isSaved, isSyncCloud)
             val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
             if (mList != null) {
                 for (index in mList) {
@@ -629,14 +644,14 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getListAllItems(isFakePin: Boolean): MutableList<ItemModel?>? {
         try {
-            val mList: MutableList<ItemEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getListAllItems(isFakePin)
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListAllItems(isFakePin)
             val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
             if (mList != null) {
                 for (index in mList) {
@@ -645,25 +660,25 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getCategoriesLocalId(categories_local_id: String?): MainCategoryModel? {
         try {
-            val mResut: MainCategoryEntityModel = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getCategoriesLocalId(categories_local_id)
+            val mResut: MainCategoryEntityModel? = getInstance()?.getCategoriesLocalId(categories_local_id)
             if (mResut != null) {
                 return MainCategoryModel(mResut)
             }
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return null
     }
 
     fun getBreakInAlertsList(): MutableList<BreakInAlertsModel?>? {
-        val mResult: MutableList<BreakInAlertsEntityModel?> = InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getBreakInAlertsList()
+        val mResult: MutableList<BreakInAlertsEntityModel>? = getInstance()?.getBreakInAlertsList()
         val mList: MutableList<BreakInAlertsModel?> = ArrayList<BreakInAlertsModel?>()
         if (mResult != null) {
             for (index in mResult) {
@@ -678,38 +693,34 @@ object SQLHelper {
             if (cTalkManager == null) {
                 return
             }
-            InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onInsert(BreakInAlertsEntityModel(cTalkManager))
+            getInstance()?.onInsert(BreakInAlertsEntityModel(cTalkManager))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
     fun getLatestItem(): Int {
         try {
-            return InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).getLatestItem()
+            return getInstance()!!.getLatestItem()
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
         return 0
     }
 
-    fun onDelete(cTalkManager: BreakInAlertsModel?) {
+    fun onDelete(cTalkManager: BreakInAlertsModel) {
         try {
-            if (cTalkManager == null) {
-                Utils.Companion.Log(TAG, "Null???? ")
-                return
-            }
-            InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onDelete(BreakInAlertsEntityModel(cTalkManager))
+            getInstance()?.onDelete(BreakInAlertsEntityModel(cTalkManager))
         } catch (e: Exception) {
-            Utils.Companion.Log(TAG, e.message)
+            Utils.Log(TAG, e.message)
         }
     }
 
-    fun initInstance(context: Context?) {
-        InstanceGenerator.Companion.getInstance(context)
+    fun onCleanDatabase() {
+        getInstance()?.onCleanDatabase()
     }
 
-    fun onCleanDatabase() {
-        InstanceGenerator.Companion.getInstance(SuperSafeApplication.Companion.getInstance()).onCleanDatabase()
+    fun getInstance(): InstanceGenerator? {
+        return InstanceGenerator.getInstance(SuperSafeApplication.getInstance())
     }
 }
