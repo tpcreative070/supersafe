@@ -52,11 +52,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <co.tpcreative.supersafe.common.views.AdvancedWebView
+                <im.delight.android.webview.AdvancedWebView
                     android:id="@+id/webview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                </co.tpcreative.supersafe.common.views.AdvancedWebView>
+                </im.delight.android.webview.AdvancedWebView>>
 
                 <LinearLayout
                     android:id="@+id/llEmail"

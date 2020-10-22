@@ -43,7 +43,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.itemsDao()?.insert(cTalkManager)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -56,7 +56,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             Utils.Log(TAG, "updatedItem " + Gson().toJson(cTalkManager))
             instance?.itemsDao()?.update(cTalkManager)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -77,7 +77,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             } catch (e: Exception) {
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -129,7 +129,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -145,7 +145,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -161,7 +161,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -171,7 +171,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadAllSaved(formatType)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -187,7 +187,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -203,7 +203,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -213,7 +213,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadDeleteLocalAndGlobalDataItems(isDeleteLocal, isDeleteGlobal, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -223,7 +223,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncDataItems(false, false, EnumStatus.UPLOAD.ordinal, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -233,7 +233,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncDataItemsByCategoriesIdNull(false, false, EnumStatus.UPLOAD.ordinal, isFakePin, "null")
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -249,7 +249,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -259,7 +259,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncDataItems(false, false, EnumStatus.DOWNLOAD.ordinal, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -275,7 +275,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -285,7 +285,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadSyncData(isSyncCloud, isSaver, isWaitingForExporting, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -301,7 +301,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -311,7 +311,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadItemId(id, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -323,7 +323,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return ItemEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -335,7 +335,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return ItemEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -347,7 +347,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return ItemEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -357,7 +357,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadListItemId(item_id, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -367,7 +367,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadItemId(item_id, isSyncCloud, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -383,7 +383,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -399,7 +399,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -415,7 +415,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -425,7 +425,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.itemsDao()?.loadListItemId(isSyncCloud, isSyncOwnServer, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -435,7 +435,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             instance?.itemsDao()?.delete(entity)
             return true
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return false
     }
@@ -445,7 +445,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             instance?.mainCategoriesDao()?.delete(entity)
             return true
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return false
     }
@@ -456,7 +456,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             instance?.itemsDao()?.deleteAll(categories_local_id, isFakePin)
             return true
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return false
     }
@@ -469,7 +469,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.mainCategoriesDao()?.insert(MainCategoryEntity(item))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -478,7 +478,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             Utils.Log(TAG, "Updated :" + cTalkManager?.categories_id)
             instance?.mainCategoriesDao()?.update(MainCategoryEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -493,7 +493,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -509,7 +509,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -525,7 +525,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -542,7 +542,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -558,7 +558,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -570,7 +570,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -585,7 +585,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return 0
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return 0
     }
@@ -595,7 +595,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.mainCategoriesDao()?.loadListAllItemId(categories_hex_name, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -607,7 +607,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -619,7 +619,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResut)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -631,7 +631,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return MainCategoryEntityModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -641,7 +641,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.mainCategoriesDao()?.loadItemCategoriesSync(isSyncOwnServer, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -657,7 +657,7 @@ abstract class InstanceGenerator : RoomDatabase() {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -667,7 +667,7 @@ abstract class InstanceGenerator : RoomDatabase() {
         try {
             return instance?.mainCategoriesDao()?.loadListItemCategoriesSync(isSyncOwnServer, limit, isFakePin)
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -680,7 +680,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.breakInAlertsDao()?.insert(BreakInAlertsEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -692,7 +692,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.breakInAlertsDao()?.update(BreakInAlertsEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -704,7 +704,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             instance?.breakInAlertsDao()?.delete(BreakInAlertsEntity(cTalkManager))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -726,7 +726,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return mList
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -742,7 +742,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return mList
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -758,7 +758,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             }
             return mList
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }

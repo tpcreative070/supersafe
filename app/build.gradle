@@ -192,6 +192,9 @@ dependencies {
     /*Even Bus*/
     implementation 'org.greenrobot:eventbus:3.2.0'
 
+    /*Support web view*/
+    implementation 'com.github.delight-im:Android-AdvancedWebView:v3.2.1'
+
     /*Material style dialog*/
     //implementation project(':materialdialoglibrary')
     implementation 'com.github.michael-rapp:android-material-dialog:5.2.3'
