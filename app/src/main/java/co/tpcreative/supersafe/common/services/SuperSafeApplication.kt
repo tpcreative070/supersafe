@@ -17,8 +17,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.RootAPI
-import co.tpcreative.supersafe.common.controllerimport.PrefsController
-import co.tpcreative.supersafe.common.controllerimport.ServiceManager
+import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
 import co.tpcreative.supersafe.common.network.Dependencies
 import co.tpcreative.supersafe.common.util.Utils
@@ -217,35 +217,35 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         return supersafe
     }
 
-    fun getSupersafePrivate(): String? {
+    fun getSupersafePrivate(): String {
         return supersafePrivate
     }
 
-    fun getSupersafeBackup(): String? {
+    fun getSupersafeBackup(): String {
         return supersafeBackup
     }
 
-    fun getSupersafeLog(): String? {
+    fun getSupersafeLog(): String {
         return supersafeLog
     }
 
-    fun getFileLogs(): String? {
+    fun getFileLogs(): String {
         return "$supersafe/log.txt"
     }
 
-    fun getSupersafeBreakInAlerts(): String? {
+    fun getSupersafeBreakInAlerts(): String {
         return supersafeBreakInAlerts
     }
 
-    fun getSupersafeShare(): String? {
+    fun getSupersafeShare(): String {
         return supersafeShare
     }
 
-    fun getSupersafePicture(): String? {
+    fun getSupersafePicture(): String {
         return supersafePicture
     }
 
-    fun getSupersafeDataBaseFolder(): String? {
+    fun getSupersafeDataBaseFolder(): String {
         return supersafeDataBaseFolder
     }
 

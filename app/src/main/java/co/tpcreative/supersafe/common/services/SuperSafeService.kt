@@ -472,7 +472,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     if (onResponse?.error!!) {
                         Utils.Log(TAG, "onError 1")
                         Utils.Log(TAG, "onCategoriesSync " + Gson().toJson(onResponse))
-                        view.onSuccessful(onResponse?.message, EnumStatus.CATEGORIES_SYNC)
+                        view.onSuccessful(onResponse?.message!!, EnumStatus.CATEGORIES_SYNC)
                     } else {
                         if (onResponse != null) {
                             val mData: DataResponse? = onResponse.data
@@ -541,10 +541,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                     if (onResponse.error!!) {
                         Utils.Log(TAG, "onError 1")
-                        view.onError(onResponse.message, EnumStatus.DELETE_CATEGORIES)
+                        view.onError(onResponse.message!!, EnumStatus.DELETE_CATEGORIES)
                     } else {
                         Utils.Log(TAG, "onDeleteCategoriesSync response" + Gson().toJson(onResponse))
-                        view.onSuccessful(onResponse.message, EnumStatus.DELETE_CATEGORIES)
+                        view.onSuccessful(onResponse.message!!, EnumStatus.DELETE_CATEGORIES)
                     }
                 }, Consumer subscribe@{ throwable: Throwable? ->
                     if (view == null) {
@@ -853,9 +853,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
+                        view.onError(onResponse.message!!, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
                     } else {
-                        view.onSuccessful(onResponse.message, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
+                        view.onSuccessful(onResponse.message!!, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
                     }
                 }, Consumer subscribe@{ throwable: Throwable ->
                     if (view == null) {
@@ -919,7 +919,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError 1")
-                        view.onError(onResponse.message, EnumStatus.GET_LIST_FILE)
+                        view.onError(onResponse.message!!, EnumStatus.GET_LIST_FILE)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         val listCategories: MutableList<MainCategoryModel>? = mData?.categoriesList
@@ -964,7 +964,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     }
                                 }
                             }
-                            view.onSuccessful(mData?.nextPage, EnumStatus.SYNC_READY)
+                            view.onSuccessful(mData?.nextPage!!, EnumStatus.SYNC_READY)
                         } else {
                             val mList: MutableList<ItemModel> = ArrayList()
                             if (mListItemResponse != null) {
@@ -973,7 +973,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                 }
                             }
                             view.onShowListObjects(mList)
-                            view.onSuccessful(mData.nextPage, EnumStatus.LOAD_MORE)
+                            view.onSuccessful(mData.nextPage!!, EnumStatus.LOAD_MORE)
                         }
                     }
                 }, Consumer subscribe@{ throwable: Throwable ->

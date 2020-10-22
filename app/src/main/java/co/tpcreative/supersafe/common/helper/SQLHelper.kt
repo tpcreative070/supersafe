@@ -249,10 +249,10 @@ object SQLHelper {
         return null
     }
 
-    fun requestSyncCategories(isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel?>? {
+    fun requestSyncCategories(isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
         try {
             val mList: MutableList<MainCategoryEntityModel>? = getInstance()?.loadListItemCategoriesSync(isSyncOwnServer, isFakePin)
-            val mData: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
+            val mData: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(MainCategoryModel(index))

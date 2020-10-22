@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.controllerimport
+package co.tpcreative.supersafe.common.controller
 
 import android.annotation.TargetApi
 import android.content.Context

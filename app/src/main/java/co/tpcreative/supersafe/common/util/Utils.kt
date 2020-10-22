@@ -30,9 +30,9 @@ import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controllerimport.PrefsController
-import co.tpcreative.supersafe.common.controllerimport.ServiceManager
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -848,7 +848,7 @@ object Utils  {
         }
 
         /*Get the first of item data*/
-        fun getArrayOfIndexHashMap(mMapDelete: MutableMap<String?, ItemModel?>?): ItemModel? {
+        fun getArrayOfIndexHashMap(mMapDelete: MutableMap<String, ItemModel>?): ItemModel? {
             if (mMapDelete != null) {
                 if (mMapDelete.size > 0) {
                     val model: ItemModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
@@ -860,7 +860,7 @@ object Utils  {
         }
 
         /*Get the first of category data*/
-        fun getArrayOfIndexCategoryHashMap(mMapDelete: MutableMap<String?, MainCategoryModel?>?): MainCategoryModel? {
+        fun getArrayOfIndexCategoryHashMap(mMapDelete: MutableMap<String, MainCategoryModel>): MainCategoryModel? {
             if (mMapDelete != null) {
                 if (mMapDelete.size > 0) {
                     val model: MainCategoryModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
@@ -872,7 +872,7 @@ object Utils  {
         }
 
         /*Delete hash map after delete Google drive or Server system*/
-        fun deletedIndexOfCategoryHashMap(itemModel: MainCategoryModel?, map: MutableMap<String?, MainCategoryModel?>?): Boolean {
+        fun deletedIndexOfCategoryHashMap(itemModel: MainCategoryModel?, map: MutableMap<String, MainCategoryModel>?): Boolean {
             try {
                 if (map != null) {
                     if (map.size > 0) {
@@ -929,7 +929,7 @@ object Utils  {
         }
 
         /*Delete hash map after delete Google drive and Server system*/
-        fun deletedIndexOfHashMap(itemModel: ItemModel?, map: MutableMap<String?, ItemModel?>?): Boolean {
+        fun deletedIndexOfHashMap(itemModel: ItemModel?, map: MutableMap<String, ItemModel>?): Boolean {
             try {
                 if (map != null) {
                     if (map.size > 0) {
@@ -969,7 +969,7 @@ object Utils  {
         }
 
         /*Delete hash map after delete Google drive and Server system for import*/
-        fun deletedIndexOfHashMapImport(itemModel: ImportFilesModel?, map: MutableMap<String?, ImportFilesModel?>?): Boolean {
+        fun deletedIndexOfHashMapImport(itemModel: ImportFilesModel?, map: MutableMap<String, ImportFilesModel>?): Boolean {
             try {
                 if (map != null) {
                     if (map.size > 0) {
