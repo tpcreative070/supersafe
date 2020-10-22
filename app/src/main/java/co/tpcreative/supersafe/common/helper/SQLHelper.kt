@@ -260,7 +260,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -315,7 +315,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -387,7 +387,7 @@ object SQLHelper {
             val main: MainCategoryModel? = getCategoriesItemId(categories_hex_name, isFakePin)
             if (main == null) {
                 val count: Int? = getInstance()?.getLatestItem()
-                insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
+                insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name!!), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
                 return true
             }
         } catch (e: Exception) {
@@ -401,7 +401,7 @@ object SQLHelper {
             val main: MainCategoryModel? = getCategoriesItemId(categories_hex_name, isFakePin)
             if (main == null) {
                 val count: Int? = getInstance()?.getLatestItem()
-                insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
+                insertCategory(MainCategoryModel("null", Utils.getUUId(), Utils.getHexCode(name!!), name, ListColor?.get(0), ListIcon?.get(0), count!!.toLong(), false, false, false, isFakePin, "", null, null, false))
                 return true
             }
         } catch (e: Exception) {
@@ -412,7 +412,7 @@ object SQLHelper {
 
     fun onChangeCategories(mainCategories: MainCategoryModel?): Boolean {
         try {
-            val hex_name: String? = Utils.getHexCode(mainCategories?.categories_name)
+            val hex_name: String? = mainCategories?.categories_name?.let { Utils.getHexCode(it) }
             val mIsFakePin: Boolean = mainCategories!!.isFakePin
             val response: MainCategoryModel? = getCategoriesItemId(hex_name, mIsFakePin)
             if (response == null) {
@@ -512,7 +512,7 @@ object SQLHelper {
                 return ItemModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -534,7 +534,7 @@ object SQLHelper {
             } catch (e: Exception) {
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -568,7 +568,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -584,7 +584,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -596,7 +596,7 @@ object SQLHelper {
                 return ItemModel(mResult)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -612,7 +612,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -628,7 +628,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -644,7 +644,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -660,7 +660,7 @@ object SQLHelper {
                 return mData
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -672,7 +672,7 @@ object SQLHelper {
                 return MainCategoryModel(mResut)
             }
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return null
     }
@@ -695,7 +695,7 @@ object SQLHelper {
             }
             getInstance()?.onInsert(BreakInAlertsEntityModel(cTalkManager))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 
@@ -703,7 +703,7 @@ object SQLHelper {
         try {
             return getInstance()!!.getLatestItem()
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
         return 0
     }
@@ -712,7 +712,7 @@ object SQLHelper {
         try {
             getInstance()?.onDelete(BreakInAlertsEntityModel(cTalkManager))
         } catch (e: Exception) {
-            Utils.Log(TAG, e.message)
+            Utils.Log(TAG, e.message +"")
         }
     }
 

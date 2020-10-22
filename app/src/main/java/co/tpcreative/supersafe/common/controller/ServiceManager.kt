@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.controllerimport
+package co.tpcreative.supersafe.common.controller
 
 import android.content.Context
 import android.graphics.Matrix
@@ -1570,7 +1570,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     interface BaseListener<T> {
-        open fun onShowListObjects(list: MutableList<T?>?)
+        open fun onShowListObjects(list: MutableList<T>?)
         open fun onShowObjects(`object`: T?)
         open fun onError(message: String?, status: EnumStatus?)
         open fun onSuccessful(message: String?, status: EnumStatus?)

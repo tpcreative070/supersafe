@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.model
 import co.tpcreative.supersafe.common.api.response.BaseResponseDrive
 import co.tpcreative.supersafe.common.response.DriveResponse
-import co.tpcreative.supersafe.modelimport.DriveUser
 import java.io.Serializable
 
 class DriveAbout : BaseResponseDrive(), Serializable {
@@ -10,5 +9,5 @@ class DriveAbout : BaseResponseDrive(), Serializable {
     var storageQuota: StorageQuota? = null
 
     /*Create folder*/ /*Drive api queries*/
-    var files: MutableList<DriveResponse?>? = null
+    var files: MutableList<DriveResponse>? = null
 }

@@ -85,7 +85,7 @@ interface RootAPI {
 
     @FormUrlEncoded
     @POST
-    open fun onRefreshEmailToken(@Url url: String?, @FieldMap request: MutableMap<String, Any>): Observable<EmailToken>?
+    open fun onRefreshEmailToken(@Url url: String?, @FieldMap request: MutableMap<String, Any?>): Observable<EmailToken>?
 
     @POST(ADD_EMAIL_TOKEN)
     open fun onAddEmailToken(@Body request: OutlookMailRequest?): Observable<BaseResponse>?
@@ -104,7 +104,7 @@ interface RootAPI {
 
     @Headers("Accept: application/json")
     @DELETE(DELETE_CLOUD_ITEM)
-    open fun onDeleteCloudItem(@Header("Authorization") token: String?, @Path("id") id: String?): Observable<Response<DriveAbout?>>?
+    open fun onDeleteCloudItem(@Header("Authorization") token: String?, @Path("id") id: String?): Observable<Response<DriveAbout>>?
 
     @Headers("Accept: application/json")
     @GET(CHECK_IN_APP_FOLDER_EXITING)

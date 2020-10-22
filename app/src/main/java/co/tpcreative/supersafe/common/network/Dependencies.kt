@@ -1,5 +1,4 @@
-package co.tpcreative.supersafe.common.networkimport
-
+package co.tpcreative.supersafe.common.network
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -10,14 +9,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
 import java.util.*
 
-class Dependencies<T> private constructor(context: Context?) : BaseDependencies() {
+class Dependencies<T> private constructor() : BaseDependencies() {
     private var retrofitInstance: Retrofit.Builder? = null
     private var context: Context? = null
     private var URL: String? = null
     private var dependenciesListener: DependenciesListener<*>? = null
     private var mTimeOut = 1
     fun dependenciesListener(dependenciesListener: DependenciesListener<*>) {
-        Dependencies.Companion.sInstance?.dependenciesListener = dependenciesListener
+        sInstance?.dependenciesListener = dependenciesListener
     }
 
     fun setTimeOutByMinute(minute: Int) {
@@ -26,8 +25,9 @@ class Dependencies<T> private constructor(context: Context?) : BaseDependencies(
         }
     }
 
-    fun setRootURL(url: String?) {
-        URL = url
+    fun setRootURL(url: String?,context: Context) {
+        this.URL = url
+        this.context = context
     }
 
     fun changeApiBaseUrl(newApiBaseUrl: String?) {
@@ -68,9 +68,9 @@ class Dependencies<T> private constructor(context: Context?) : BaseDependencies(
     }
 
     interface DependenciesListener<T> {
-        open fun onObject(): Class<T>
-        open fun onAuthorToken(): String
-        open fun onCustomHeader(): HashMap<String?, String?>
+        fun onObject(): Class<T>
+        fun onAuthorToken(): String
+        fun onCustomHeader(): HashMap<String, String>
     }
 
     companion object {
@@ -78,6 +78,18 @@ class Dependencies<T> private constructor(context: Context?) : BaseDependencies(
         private const val TIMEOUT_MAXIMUM = 30
         lateinit var serverAPI: Any
         var sInstance: Dependencies<*>?= null
+
+        fun getInstance(context : Context,url : String): Dependencies<*> {
+            if (Dependencies.sInstance == null) {
+                if (Dependencies.sInstance == null) {
+                    Dependencies.sInstance = Dependencies<Any>()
+                }
+            }
+            this.sInstance?.URL = url
+            this.sInstance?.context = context
+            return sInstance!!
+        }
+
         val TAG = Dependencies::class.java.simpleName
     }
 }

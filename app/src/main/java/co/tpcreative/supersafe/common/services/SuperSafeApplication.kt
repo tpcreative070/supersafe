@@ -1,55 +1,65 @@
 package co.tpcreative.supersafe.common.services
 import android.Manifest
+import android.accounts.Account
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import androidx.core.content.PermissionChecker
+import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.RootAPI
-import co.tpcreative.supersafe.common.apiimportimport.RootAPI
-import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controllerimport.PrefsController
+import co.tpcreative.supersafe.common.controllerimport.ServiceManager
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
 import co.tpcreative.supersafe.common.network.Dependencies
-import co.tpcreative.supersafe.common.networkimport.Dependencies
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
+import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
+import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.google.api.services.drive.DriveScopes
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.snatik.storage.EncryptConfiguration
 import com.snatik.storage.Storage
+import com.snatik.storage.security.SecurityUtil
 import java.io.File
 import java.util.*
 
-class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesListener<Any?>, Application.ActivityLifecycleCallbacks {
-    private var supersafe: String? = null
-    private var supersafePrivate: String? = null
-    private var supersafeBackup: String? = null
-    private var supersafeBreakInAlerts: String? = null
-    private var supersafeLog: String? = null
-    private var supersafeShare: String? = null
-    private var supersafePicture: String? = null
-    private var supersafeDataBaseFolder: String? = null
+class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesListener<RootAPI>, Application.ActivityLifecycleCallbacks {
+    private lateinit var supersafe: String
+    private lateinit var supersafePrivate: String
+    private lateinit var supersafeBackup: String
+    private lateinit var supersafeBreakInAlerts: String
+    private lateinit var supersafeLog: String
+    private lateinit var supersafeShare: String
+    private lateinit var supersafePicture: String
+    private lateinit var supersafeDataBaseFolder: String
     private var key: String? = null
     private var fake_key: String? = null
     private var userSecret: String? = null
-    private var storage: Storage? = null
+    private lateinit var storage : Storage
     private var configurationFile: EncryptConfiguration? = null
     private var configurationPin: EncryptConfiguration? = null
     private var Orientation = 0
     private var authorization: String? = null
-    private var options: GoogleSignInOptions.Builder? = null
-    private var requiredScopes: MutableSet<Scope?>? = null
-    private var requiredScopesString: MutableList<String?>? = null
+    private lateinit var options: GoogleSignInOptions.Builder
+    private lateinit var requiredScopes: MutableSet<Scope>
+    private lateinit var requiredScopesString: MutableList<String>
     private var isLive = false
     private var secretKey: String? = null
     private var activity: Activity? = null
@@ -58,18 +68,17 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         MobileAds.initialize(this, object : OnInitializationCompleteListener {
             override fun onInitializationComplete(initializationStatus: InitializationStatus?) {}
         })
-        SQLHelper.initInstance(this)
         mInstance = this
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
-        /*Init own service api*/dependencies = Dependencies.Companion.getsInstance(getApplicationContext(), getUrl())
-        dependencies.dependenciesListener(this)
-        dependencies.init()
+        /*Init own service api*/dependencies = Dependencies.getInstance(this, getUrl()!!)
+        dependencies?.dependenciesListener(this)
+        dependencies?.init()
         serverAPI = Dependencies.Companion.serverAPI as RootAPI
         /*Init Drive api*/serverDriveApi = RetrofitHelper().getCityService(getString(R.string.url_google))
         /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getCityService(getString(R.string.url_graph_microsoft))
-        ServiceManager.Companion.getInstance().setContext(this)
+        ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(getApplicationContext())
                 ?.setMode(ContextWrapper.MODE_PRIVATE)
@@ -88,7 +97,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
                 .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build()
         storage = Storage(getApplicationContext())
-        supersafe = storage.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/"
+        supersafe = storage?.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/"
         key = ".encrypt_key"
         fake_key = ".encrypt_fake_key"
         userSecret = ".userSecret"
@@ -111,21 +120,21 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         requiredScopesString = ArrayList()
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA)
         requiredScopesString.add(DriveScopes.DRIVE_FILE)
-        Utils.Companion.onCheckNewVersion()
+        Utils.onCheckNewVersion()
         /*SP-100*/
     }
 
     fun getSecretKey(): String? {
-        val user: User = Utils.Companion.getUserInfo()
+        val user: User? = Utils.getUserInfo()
         if (user != null) {
             if (user._id != null) {
-                Utils.Companion.Log(TAG, "Get secret key " + user._id)
+                Utils.Log(TAG, "Get secret key " + user._id)
                 secretKey = user._id
                 return secretKey
             }
-            Utils.Companion.Log(TAG, "secret id is null")
+            Utils.Log(TAG, "secret id is null")
         } else {
-            Utils.Companion.Log(TAG, "Get secret key null")
+            Utils.Log(TAG, "Get secret key null")
         }
         return SecurityUtil.SECRET_KEY
     }
@@ -148,11 +157,11 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         return configurationFile
     }
 
-    fun getRequiredScopesString(): MutableList<String?>? {
+    fun getRequiredScopesString(): MutableList<String>? {
         return requiredScopesString
     }
 
-    fun getRequiredScopes(): MutableSet<Scope?>? {
+    fun getRequiredScopes(): MutableSet<Scope>? {
         return requiredScopes
     }
 
@@ -161,11 +170,11 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         MultiDex.install(this)
     }
 
-    fun setConnectivityListener(listener: ConnectivityReceiverListener?) {
-        SuperSafeReceiver.Companion.connectivityReceiverListener = listener
+    fun setConnectivityListener(listener: SuperSafeReceiver.ConnectivityReceiverListener?) {
+        SuperSafeReceiver.connectivityReceiverListener = listener
     }
 
-    override fun onActivityCreated(activity: Activity?, bundle: Bundle?) {
+    override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
         if (this.activity == null) {
             this.activity = activity
         }
@@ -175,23 +184,23 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         return activity
     }
 
-    override fun onActivityResumed(activity: Activity?) {
+    override fun onActivityResumed(activity: Activity) {
         ++resumed
     }
 
-    override fun onActivityPaused(activity: Activity?) {
+    override fun onActivityPaused(activity: Activity) {
         ++paused
-        Utils.Companion.Log(TAG, "application is in foreground: " + (resumed > paused))
+        Utils.Log(TAG, "application is in foreground: " + (resumed > paused))
     }
 
-    override fun onActivityStarted(activity: Activity?) {
+    override fun onActivityStarted(activity: Activity) {
         ++started
-        Utils.Companion.Log(TAG, "onActivityStarted")
+        Utils.Log(TAG, "onActivityStarted")
     }
 
-    override fun onActivityStopped(activity: Activity?) {
+    override fun onActivityStopped(activity: Activity) {
         ++stopped
-        Utils.Companion.Log(TAG, "application is visible: " + (started > stopped))
+        Utils.Log(TAG, "application is visible: " + (started > stopped))
     }
 
     fun isApplicationVisible(): Boolean {
@@ -202,8 +211,8 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         return resumed > paused
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity?, bundle: Bundle?) {}
-    override fun onActivityDestroyed(activity: Activity?) {}
+    override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
+    override fun onActivityDestroyed(activity: Activity) {}
     fun getSuperSafe(): String? {
         return supersafe
     }
@@ -308,7 +317,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
                 val value = storage.readTextFile(getSuperSafe() + userSecret)
                 if (value != null) {
                     Utils.Log(TAG, value)
-                    val mUser: User = Gson().fromJson(value, User::class.java)
+                    val mUser: User? = Gson().fromJson(value, User::class.java)
                     if (mUser != null) {
                         return mUser
                     }
@@ -403,31 +412,38 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     }
 
     /*Retrofit and RXJava*/
-    override fun onObject(): Class<*>? {
+
+    override fun onObject(): Class<RootAPI> {
         return RootAPI::class.java
     }
 
-    override fun onAuthorToken(): String? {
+    override fun onAuthorToken(): String {
         try {
-            var user: User? = Utils.Companion.getUserInfo()
+            var user: User? = Utils.getUserInfo()
             if (user != null) {
-                authorization = user.author.session_token
-                Utils.Companion.onWriteLog(authorization, EnumStatus.REQUEST_ACCESS_TOKEN)
+                authorization = ""
+                user.author?.session_token?.let {
+                    authorization = it
+                }
+                Utils.onWriteLog(authorization, EnumStatus.REQUEST_ACCESS_TOKEN)
             } else {
                 user = readUseSecret()
-                authorization = user.author.session_token
+                authorization = ""
+                user?.author?.session_token?.let {
+                    authorization = it
+                }
             }
-            return authorization
+            return authorization!!
         } catch (e: Exception) {
         }
         return SecurityUtil.DEFAULT_TOKEN
     }
 
-    override fun onCustomHeader(): HashMap<String?, String?>? {
-        val hashMap = HashMap<String?, String?>()
+    override fun onCustomHeader(): HashMap<String, String> {
+        val hashMap = HashMap<String, String>()
         hashMap["Content-Type"] = "application/json"
         if (authorization != null) {
-            hashMap["Authorization"] = authorization
+            hashMap.set("Authorization",onAuthorToken())
         }
         return hashMap
     }
@@ -461,12 +477,12 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     }
 
     fun getPackagePath(context: Context?): File? {
-        return File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+        return File(context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
                 ".temporary.jpg")
     }
 
     fun getPackageFolderPath(context: Context?): File? {
-        return File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath())
+        return File(context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.getAbsolutePath())
     }
 
     fun getDefaultStorageFile(mImageFormat: Int): File? {
@@ -478,7 +494,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
 
     fun getKeyHomePressed(): MutableMap<String?, String?>? {
         try {
-            val value: String = PrefsController.getString(getString(R.string.key_home_pressed), null)
+            val value: String? = PrefsController.getString(getString(R.string.key_home_pressed), null)
             if (value != null) {
                 var map: MutableMap<String?, String?> = HashMap()
                 map = Gson().fromJson(value, map.javaClass)
@@ -494,7 +510,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     fun writeKeyHomePressed(value: String?) {
         try {
             val map = getKeyHomePressed()
-            map[value] = value
+            map?.set(value, value)
             PrefsController.putString(getString(R.string.key_home_pressed), Gson().toJson(map))
         } catch (e: Exception) {
             e.printStackTrace()

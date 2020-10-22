@@ -7,11 +7,11 @@ class DataResponse : Serializable {
     var user: User? = null
 
     /*Main category*/
-    var categoriesList: MutableList<MainCategoryModel?>? = null
+    var categoriesList: MutableList<MainCategoryModel>? = null
     var category: MainCategoryModel? = null
 
     /*Items*/
-    var itemsList: MutableList<ItemModel?>? = null
+    var itemsList: MutableList<ItemModel>? = null
 
     /*user cloud*/
     var userCloud: UserCloudResponse? = null

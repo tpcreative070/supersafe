@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.networkimport
+package co.tpcreative.supersafe.common.network
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
