@@ -16,21 +16,20 @@ import androidx.core.content.ContextCompat
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controllerimport.PrefsController
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.commonimport.HomeWatcher
-import co.tpcreative.supersafe.commonimport.SensorFaceUpDownChangeNotifier
-import co.tpcreative.supersafe.commonimport.SensorOrientationChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
 
-abstract class BaseActivity : AppCompatActivity(), SensorOrientationChangeNotifier.Listener {
+abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     var onStartCount = 0
@@ -89,7 +88,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorOrientationChangeNotifi
 
     protected override fun onPause() {
         super.onPause()
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.remove(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
         if (mHomeWatcher != null) {
             Utils.Log(TAG, "Stop home watcher....")
@@ -110,7 +109,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorOrientationChangeNotifi
 
     protected override fun onResume() {
         Utils.Log(TAG, "onResume....")
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.addListener(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
     }
 

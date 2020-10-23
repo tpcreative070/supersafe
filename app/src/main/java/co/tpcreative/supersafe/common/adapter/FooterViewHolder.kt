@@ -2,8 +2,8 @@ package co.tpcreative.supersafe.common.adapter
 import android.view.View
 
 
-class FooterViewHolder(itemView: View) : BaseHolder<Any?>(itemView) {
-    override fun bind(data: Any?, position: Int) {
+class FooterViewHolder<T>(itemView: View) : BaseHolder<T>(itemView) {
+    override fun bind(data: T, position: Int) {
         super.bind(data, position)
     }
 }

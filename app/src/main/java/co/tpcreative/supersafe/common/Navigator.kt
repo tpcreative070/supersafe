@@ -7,6 +7,7 @@ import android.os.Bundle
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafeimport.AboutSuperSafeActivity
+import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity
 import co.tpcreative.supersafe.ui.accountmanagerimport.AccountManagerActivity
 import co.tpcreative.supersafe.ui.albumcoverimport.AlbumCoverActivity
 import co.tpcreative.supersafe.ui.albumdetailimport.AlbumDetailActivity
@@ -27,6 +28,7 @@ import co.tpcreative.supersafe.ui.lockscreenimport.EnterPinActivity
 import co.tpcreative.supersafe.ui.main_tabimport.MainTabActivity
 import co.tpcreative.supersafe.ui.multiselectsimport.AlbumSelectActivity
 import co.tpcreative.supersafe.ui.photosslideshowimport.PhotoSlideShowActivity
+import co.tpcreative.supersafe.ui.player.PlayerActivity
 import co.tpcreative.supersafe.ui.playerimport.PlayerActivity
 import co.tpcreative.supersafe.ui.premiumimport.PremiumActivity
 import co.tpcreative.supersafe.ui.resetpinimport.ResetPinActivity
@@ -204,7 +206,7 @@ object Navigator {
         context.startActivity(intent)
     }
 
-    fun onCheckSystem(context: Activity, googleOauth: GoogleOauth) {
+    fun onCheckSystem(context: Activity, googleOauth: GoogleOauth?) {
         val intent = Intent(context, CheckSystemActivity::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_google_oauth), googleOauth)

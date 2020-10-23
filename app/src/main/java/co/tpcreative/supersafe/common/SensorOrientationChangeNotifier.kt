@@ -33,7 +33,7 @@ class SensorOrientationChangeNotifier private constructor() {
         return mOrientation
     }
 
-    fun addListener(listener: co.tpcreative.supersafe.common.SensorOrientationChangeNotifier.Listener?) {
+    fun addListener(listener: Listener?) {
         if (get(listener) == null) // prevent duplications
             mListeners?.add(WeakReference(listener))
         if (mListeners?.size == 1) {

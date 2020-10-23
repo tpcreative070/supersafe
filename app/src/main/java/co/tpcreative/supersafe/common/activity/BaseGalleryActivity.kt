@@ -14,12 +14,12 @@ import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controllerimport.PrefsController
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.commonimport.HomeWatcher
-import co.tpcreative.supersafe.commonimport.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.HomeWatcher
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.ui.move_galleryimport.MoveGalleryFragment

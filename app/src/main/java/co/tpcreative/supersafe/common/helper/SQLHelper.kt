@@ -517,14 +517,14 @@ object SQLHelper {
         return null
     }
 
-    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isExport: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isExport: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
             if (categories_local_id == null) {
                 return null
             }
             try {
                 val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_local_id, isDeleteLocal, isExport, isFakePin)
-                val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+                val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
                 if (mList != null) {
                     for (index in mList) {
                         mData.add(ItemModel(index))
@@ -677,9 +677,9 @@ object SQLHelper {
         return null
     }
 
-    fun getBreakInAlertsList(): MutableList<BreakInAlertsModel?>? {
+    fun getBreakInAlertsList(): MutableList<BreakInAlertsModel>? {
         val mResult: MutableList<BreakInAlertsEntityModel>? = getInstance()?.getBreakInAlertsList()
-        val mList: MutableList<BreakInAlertsModel?> = ArrayList<BreakInAlertsModel?>()
+        val mList: MutableList<BreakInAlertsModel> = ArrayList<BreakInAlertsModel>()
         if (mResult != null) {
             for (index in mResult) {
                 mList.add(BreakInAlertsModel(index))

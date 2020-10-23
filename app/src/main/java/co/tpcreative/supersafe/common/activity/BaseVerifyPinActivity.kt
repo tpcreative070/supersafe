@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +22,13 @@ import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controllerimport.PrefsController
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.hiddencamera.*
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.commonimport.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee

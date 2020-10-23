@@ -7,7 +7,7 @@ import java.util.*
 
 open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : RecyclerView.Adapter<VH>() {
     protected var inflater: LayoutInflater?
-    protected var mDataSource: MutableList<V>? = Collections.emptyList()
+    protected var mDataSource: MutableList<V> = Collections.emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         TODO("Not yet implemented")
@@ -46,25 +46,25 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
     }
 
     fun appendItem(item: V) {
-        if (mDataSource?.isEmpty()!!) {
+        if (mDataSource.isEmpty()) {
             mDataSource = ArrayList()
         }
-        mDataSource?.add(item)
+        mDataSource.add(item)
         notifyItemInserted(getItemCount())
     }
 
     fun removeAtPosition(position: Int) {
-        if (mDataSource?.size!! > position) {
-            mDataSource?.removeAt(position)
+        if (mDataSource.size > position) {
+            mDataSource.removeAt(position)
             notifyItemRangeRemoved(position, 1)
         }
     }
 
     fun removeAt(position: Int) {
         try {
-            if (mDataSource?.size!! > position) {
+            if (mDataSource.size!! > position) {
                 notifyItemRemoved(position)
-                notifyItemRangeChanged(position, mDataSource!!.size)
+                notifyItemRangeChanged(position, mDataSource.size)
             } else {
                 Utils.Log(BaseAdapter.Companion.TAG, "Can not delete ")
             }
@@ -74,29 +74,29 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
     }
 
     fun appendItems(items: MutableList<V>) {
-        if (mDataSource!!.isEmpty()) {
+        if (mDataSource.isEmpty()) {
             setDataSource(items)
         } else {
             val positionStart = getItemCount() - 1
-            mDataSource!!.addAll(items)
+            mDataSource.addAll(items)
             notifyItemRangeInserted(positionStart, items.size)
         }
     }
 
     fun addItemAtFirst(item: V) {
-        if (mDataSource?.isEmpty()!!) {
+        if (mDataSource.isEmpty()) {
             mDataSource = ArrayList()
         }
-        mDataSource!!.add(0, item)
+        mDataSource.add(0, item)
         notifyItemInserted(0)
     }
 
     fun addAtFirstAndRemoveEnd(item: V) {
-        if (mDataSource?.isEmpty()!!) {
+        if (mDataSource.isEmpty()!!) {
             mDataSource = ArrayList()
         }
-        mDataSource!!.add(0, item)
-        mDataSource!!.removeAt(getItemCount() - 1)
+        mDataSource.add(0, item)
+        mDataSource.removeAt(getItemCount() - 1)
         notifyItemRemoved(getItemCount() - 1)
         notifyItemInserted(0)
     }
