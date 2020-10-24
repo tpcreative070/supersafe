@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.ui.meimport
 
 import android.content.Context
 import android.view.View
+import co.tpcreative.supersafe.common.BaseFragment
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.util.Utils
 import org.greenrobot.eventbus.EventBus

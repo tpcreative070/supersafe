@@ -2,16 +2,17 @@ package co.tpcreative.supersafe.ui.checksystem
 import android.app.Activity
 import android.os.Bundle
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
-import co.tpcreative.supersafe.common.request.ChangeUserIdRequest
-import co.tpcreative.supersafe.common.request.RequestCodeRequest
-import co.tpcreative.supersafe.common.request.SignInRequest
-import co.tpcreative.supersafe.common.request.VerifyCodeRequest
+import co.tpcreative.supersafe.common.request.*
+import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
 import co.tpcreative.supersafe.common.requestimport.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
+import co.tpcreative.supersafe.common.response.UserCloudResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.utilimport.NetworkUtil
@@ -92,14 +93,14 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                                 onSignIn(request)
                                 Utils.Log(TAG, "Login")
                             }
-                            Utils.Log(TAG, "error" + bodys.string())
-                            val msg: String = Gson().toJson(bodys.string())
+                            Utils.Log(TAG, "error" + bodys?.string())
+                            val msg: String = Gson().toJson(bodys?.string())
                             Utils.Log(TAG, msg)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Log(TAG, "Can not call check user" + throwable.message)
+                        Utils.Log(TAG, "Can not call check user" + throwable?.message)
                     }
                     view.onStopLoading(EnumStatus.USER_ID_EXISTING)
                 })?.let { subscriptions?.add(it) }
@@ -130,7 +131,9 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                             email = mUser?.other_email
                         }
                         val emailToken: EmailToken? = EmailToken.getInstance()?.convertObject(mUser!!, EnumStatus.SIGN_IN)
-                        onSendMail(emailToken)
+                        if (emailToken != null) {
+                            onSendMail(emailToken)
+                        }
                         ServiceManager.getInstance()?.onInitConfigurationFile()
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
@@ -145,7 +148,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Log(TAG, "Can not call sign in" + throwable.message)
+                        Utils.Log(TAG, "Can not call sign in" + throwable?.message)
                     }
                     view.onStopLoading(EnumStatus.SIGN_IN)
                 })?.let { subscriptions?.add(it) }
@@ -187,7 +190,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         view.onSuccessful(onResponse.message, EnumStatus.VERIFY_CODE)
                     }
                     Utils.Log(TAG, "Body verify code : " + Gson().toJson(onResponse))
-                }, { throwable: Throwable? ->
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
                         val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         val code = (throwable as HttpException?)?.response()?.code()
@@ -203,7 +206,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Log(TAG, "Can not call verify code" + throwable.message)
+                        Utils.Log(TAG, "Can not call verify code" + throwable?.message)
                     }
                     view.onStopLoading(EnumStatus.VERIFY_CODE)
                 })?.let { subscriptions?.add(it) }
@@ -275,48 +278,50 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        subscriptions?.add(SuperSafeApplication.serverAPI?.onResendCode(RequestCodeRequest(request.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(Consumer<Disposable?> { waiting: Disposable? -> view.onStartLoading(EnumStatus.RESEND_CODE) })
-                .subscribe(Consumer<RootResponse?> { onResponse: RootResponse? ->
+        SuperSafeApplication?.serverAPI?.onResendCode(RequestCodeRequest(request.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
+                ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.RESEND_CODE)
                         view.onStopLoading(EnumStatus.RESEND_CODE)
                     } else {
-                        val mUser: User = Utils.Companion.getUserInfo()
-                        val mData: DataResponse = onResponse.data
-                        mUser.code = mData.requestCode.code
-                        Utils.Companion.setUserPreShare(mUser)
-                        val emailToken: EmailToken = EmailToken.Companion.getInstance().convertObject(mUser, EnumStatus.SIGN_IN)
-                        onSendMail(emailToken)
+                        val mUser: User? = Utils.getUserInfo()
+                        val mData: DataResponse? = onResponse?.data
+                        mUser?.code = mData?.requestCode?.code
+                        Utils.setUserPreShare(mUser)
+                        val emailToken: EmailToken? = mUser?.let { EmailToken.getInstance()?.convertObject(it, EnumStatus.SIGN_IN) }
+                        if (emailToken != null) {
+                            onSendMail(emailToken)
+                        }
                     }
-                    Utils.Companion.Log(TAG, "Body : " + Gson().toJson(onResponse))
-                }, Consumer { throwable: Throwable? ->
+                    Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?).response().errorBody()
-                        val code = (throwable as HttpException?).response().code()
+                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val code = (throwable as HttpException?)?.response()?.code()
                         try {
                             if (code == 401) {
-                                Utils.Companion.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance().onUpdatedUserToken()
+                                Utils.Log(TAG, "code $code")
+                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Companion.Log(TAG, "error" + bodys.string())
-                            val msg: String = Gson().toJson(bodys.string())
-                            Utils.Companion.Log(TAG, msg)
+                            Utils.Log(TAG, "error" + bodys?.string())
+                            val msg: String = Gson().toJson(bodys?.string())
+                            Utils.Log(TAG, msg)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Companion.Log(TAG, "Can not call" + throwable.message)
+                        Utils.Log(TAG, "Can not call" + throwable.message)
                     }
                     view.onStopLoading(EnumStatus.RESEND_CODE)
-                }))
+                })?.let { subscriptions?.add(it) }
     }
 
     /*Email Verify*/
-    fun onSendMail(request: EmailToken?) {
-        Utils.Companion.Log(TAG, "onSendMail.....")
+    fun onSendMail(request: EmailToken) {
+        Utils.Log(TAG, "onSendMail.....")
         val view: BaseView<*> = view() ?: return
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
             return
@@ -324,24 +329,24 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        val response: Call<ResponseBody?> = SuperSafeApplication.Companion.serviceGraphMicrosoft.onSendMail(request.access_token, request)
-        response.enqueue(object : Callback<ResponseBody?> {
-            override fun onResponse(call: Call<ResponseBody?>?, response: Response<ResponseBody?>?) {
+        val response: Call<ResponseBody>? = SuperSafeApplication.serviceGraphMicrosoft?.onSendMail(request?.access_token, request)
+        response?.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>?) {
                 try {
-                    val code = response.code()
+                    val code = response?.code()
                     if (code == 401) {
-                        Utils.Companion.Log(TAG, "code $code")
+                        Utils.Log(TAG, "code $code")
                         onRefreshEmailToken(request)
-                        val errorMessage = response.errorBody().string()
-                        Utils.Companion.Log(TAG, "error$errorMessage")
+                        val errorMessage = response.errorBody()?.string()
+                        Utils.Log(TAG, "error$errorMessage")
                         view.onError(errorMessage, EnumStatus.SEND_EMAIL)
                     } else if (code == 202) {
-                        Utils.Companion.Log(TAG, "code $code")
+                        Utils.Log(TAG, "code $code")
                         view.onSuccessful("Successful", EnumStatus.SEND_EMAIL)
-                        Utils.Companion.Log(TAG, "Body : Send email Successful")
+                        Utils.Log(TAG, "Body : Send email Successful")
                     } else {
-                        Utils.Companion.Log(TAG, "code $code")
-                        Utils.Companion.Log(TAG, "Nothing to do")
+                        Utils.Log(TAG, "code $code")
+                        Utils.Log(TAG, "Nothing to do")
                         view.onError("Null", EnumStatus.SEND_EMAIL)
                     }
                 } catch (e: Exception) {
@@ -349,14 +354,14 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 }
             }
 
-            override fun onFailure(call: Call<ResponseBody?>?, t: Throwable?) {
-                Utils.Companion.Log(TAG, "response failed :" + t.message)
+            override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
+                Utils.Log(TAG, "response failed :" + t.message)
             }
         })
     }
 
-    fun onRefreshEmailToken(request: EmailToken?) {
-        Utils.Companion.Log(TAG, "onRefreshEmailToken.....")
+    fun onRefreshEmailToken(request: EmailToken) {
+        Utils.Log(TAG, "onRefreshEmailToken.....")
         val view: BaseView<*> = view() ?: return
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
             return
@@ -364,48 +369,48 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        val mUser: User = Utils.Companion.getUserInfo()
-        val hash: MutableMap<String?, Any?> = HashMap()
-        hash[getString(R.string.key_client_id)] = request.client_id
-        hash[getString(R.string.key_redirect_uri)] = request.redirect_uri
-        hash[getString(R.string.key_grant_type)] = request.grant_type
-        hash[getString(R.string.key_refresh_token)] = request.refresh_token
-        subscriptions.add(SuperSafeApplication.Companion.serviceGraphMicrosoft.onRefreshEmailToken(RootAPI.Companion.REFRESH_TOKEN, hash)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer<EmailToken?> { onResponse: EmailToken? ->
+        val mUser: User? = Utils.getUserInfo()
+        val hash: MutableMap<String, Any?> = HashMap()
+        hash[SuperSafeApplication.getInstance().getString(R.string.key_client_id)] = request.client_id
+        hash[SuperSafeApplication.getInstance().getString(R.string.key_redirect_uri)] = request.redirect_uri
+        hash[SuperSafeApplication.getInstance().getString(R.string.key_grant_type)] = request.grant_type
+        hash[SuperSafeApplication.getInstance().getString(R.string.key_refresh_token)] = request.refresh_token
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({ onResponse: EmailToken ->
                     if (onResponse != null) {
-                        val token: EmailToken? = mUser.email_token
-                        token.access_token = onResponse.token_type + " " + onResponse.access_token
-                        token.refresh_token = onResponse.refresh_token
-                        token.token_type = onResponse.token_type
-                        Utils.Companion.setUserPreShare(mUser)
+                        val token: EmailToken? = mUser?.email_token
+                        token?.access_token = onResponse.token_type + " " + onResponse.access_token
+                        token?.refresh_token = onResponse.refresh_token
+                        token?.token_type = onResponse.token_type
+                        Utils.setUserPreShare(mUser)
                         onAddEmailToken()
                     }
                     view.onSuccessful("successful", EnumStatus.REFRESH)
-                    Utils.Companion.Log(TAG, "Body refresh : " + Gson().toJson(onResponse))
-                }, Consumer { throwable: Throwable? ->
+                    Utils.Log(TAG, "Body refresh : " + Gson().toJson(onResponse))
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?).response().errorBody()
-                        val code = (throwable as HttpException?).response().code()
+                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val code = (throwable as HttpException?)?.response()?.code()
                         try {
                             if (code == 401) {
-                                Utils.Companion.Log(TAG, "code $code")
+                                Utils.Log(TAG, "code $code")
                             }
-                            Utils.Companion.Log(TAG, "error" + bodys.string())
-                            val msg: String = Gson().toJson(bodys.string())
+                            Utils.Log(TAG, "error" + bodys?.string())
+                            val msg: String = Gson().toJson(bodys?.string())
                             view.onError(msg, EnumStatus.SEND_EMAIL)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Companion.Log(TAG, "Can not call " + throwable.message)
+                        Utils.Log(TAG, "Can not call " + throwable.message)
                     }
-                }))
+                })?.let { subscriptions?.add(it) }
     }
 
     fun onAddEmailToken() {
-        Utils.Companion.Log(TAG, "onSignIn.....")
+        Utils.Log(TAG, "onSignIn.....")
         val view: BaseView<*> = view() ?: return
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
             return
@@ -413,136 +418,138 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        val mUser: User = Utils.Companion.getUserInfo()
-        subscriptions.add(SuperSafeApplication.Companion.serverAPI.onAddEmailToken(OutlookMailRequest(mUser.email_token.refresh_token, mUser.email_token.access_token))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(Consumer<BaseResponse?> { onResponse: BaseResponse? ->
-                    Utils.Companion.Log(TAG, "Body : " + Gson().toJson(onResponse))
-                    val emailToken: EmailToken = EmailToken.Companion.getInstance().convertObject(mUser, EnumStatus.SIGN_IN)
-                    onSendMail(emailToken)
-                }, Consumer { throwable: Throwable? ->
+        val mUser: User? = Utils.getUserInfo()
+        SuperSafeApplication.serverAPI?.onAddEmailToken(OutlookMailRequest(mUser?.email_token?.refresh_token, mUser?.email_token?.access_token))
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.subscribe({ onResponse: BaseResponse ->
+                    Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
+                    val emailToken: EmailToken? = mUser?.let { EmailToken.getInstance()?.convertObject(it, EnumStatus.SIGN_IN) }
+                    if (emailToken != null) {
+                        onSendMail(emailToken)
+                    }
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?).response().errorBody()
-                        val code = (throwable as HttpException?).response().code()
+                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val code = (throwable as HttpException?)?.response()?.code()
                         try {
                             if (code == 403) {
-                                Utils.Companion.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance().onUpdatedUserToken()
+                                Utils.Log(TAG, "code $code")
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val errorMessage: String = bodys.string()
-                            Utils.Companion.Log(TAG, "error$errorMessage")
+                            val errorMessage: String? = bodys?.string()
+                            Utils.Log(TAG, "error$errorMessage")
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Companion.Log(TAG, "Can not call " + throwable.message)
+                        Utils.Log(TAG, "Can not call " + throwable.message)
                     }
-                }))
+                })?.let { subscriptions?.add(it) }
     }
 
-    fun onAddUserCloud(cloudRequest: UserCloudRequest?) {
-        Utils.Companion.Log(TAG, "info")
-        val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
+    fun onAddUserCloud(cloudRequest: UserCloudRequest) {
+        Utils.Log(TAG, "info")
+        val view: BaseView<EmptyModel>? = view() ?: return
+        if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
             return
         }
         if (subscriptions == null) {
             return
         }
-        subscriptions.add(SuperSafeApplication.Companion.serverAPI.onAddUserCloud(cloudRequest)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(Consumer<Disposable?> { __: Disposable? -> view.onStartLoading(EnumStatus.CREATE) })
-                .subscribe(Consumer<RootResponse?> { onResponse: RootResponse? ->
-                    Utils.Companion.Log(TAG, "Body ???: " + Gson().toJson(onResponse))
+        SuperSafeApplication?.serverAPI?.onAddUserCloud(cloudRequest)
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CREATE) }
+                ?.subscribe({ onResponse: RootResponse ->
+                    Utils.Log(TAG, "Body ???: " + Gson().toJson(onResponse))
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.CREATE)
                     } else {
-                        val mData: DataResponse = onResponse.data
-                        val mCloud: UserCloudResponse = mData.userCloud
-                        mUser = Utils.Companion.getUserInfo()
-                        mUser.verified = true
-                        mUser.cloud_id = mCloud.cloud_id
-                        Utils.Companion.setUserPreShare(mUser)
+                        val mData: DataResponse? = onResponse.data
+                        val mCloud: UserCloudResponse? = mData?.userCloud
+                        mUser = Utils.getUserInfo()
+                        mUser?.verified = true
+                        mUser?.cloud_id = mCloud?.cloud_id
+                        Utils.setUserPreShare(mUser)
                         view.onSuccessful(onResponse.message, EnumStatus.CREATE)
                     }
-                    Utils.Companion.Log(TAG, "User info " + Gson().toJson(mUser))
-                }, Consumer { throwable: Throwable? ->
+                    Utils.Log(TAG, "User info " + Gson().toJson(mUser))
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?).response().errorBody()
-                        val code = (throwable as HttpException?).response().code()
+                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val code = (throwable as HttpException?)?.response()?.code()
                         try {
                             if (code == 401) {
-                                Utils.Companion.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance().onUpdatedUserToken()
+                                Utils.Log(TAG, "code $code")
+                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Companion.Log(TAG, "error" + bodys.string())
-                            val msg: String = Gson().toJson(bodys.string())
-                            Utils.Companion.Log(TAG, msg)
+                            Utils.Log(TAG, "error" + bodys?.string())
+                            val msg: String = Gson().toJson(bodys?.string())
+                            Utils.Log(TAG, msg)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Companion.Log(TAG, "Can not call add user cloud" + throwable.message)
+                        Utils.Log(TAG, "Can not call add user cloud" + throwable.message)
                     }
                     view.onStopLoading(EnumStatus.CREATE)
-                }))
+                })?.let { subscriptions?.add(it) }
     }
 
     fun onUserCloudChecking() {
-        Utils.Companion.Log(TAG, "onUserCloudChecking")
-        val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(view.getContext())) {
+        Utils.Log(TAG, "onUserCloudChecking")
+        val view: BaseView<EmptyModel>? = view() ?: return
+        if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
             return
         }
         if (subscriptions == null) {
             return
         }
-        subscriptions.add(SuperSafeApplication.Companion.serverAPI.onCheckUserCloud(UserCloudRequest(mUser.email, SuperSafeApplication.Companion.getInstance().getDeviceId()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(Consumer<Disposable?> { __: Disposable? -> view.onStartLoading(EnumStatus.CLOUD_ID_EXISTING) })
-                .subscribe(Consumer<RootResponse?> { onResponse: RootResponse? ->
-                    Utils.Companion.Log(TAG, "Body : " + Gson().toJson(onResponse))
+        SuperSafeApplication?.serverAPI?.onCheckUserCloud(UserCloudRequest(mUser?.email, SuperSafeApplication.getInstance().getDeviceId()))
+                ?.subscribeOn(Schedulers.io())
+                ?.observeOn(AndroidSchedulers.mainThread())
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CLOUD_ID_EXISTING) }
+                ?.subscribe({ onResponse: RootResponse ->
+                    Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.CLOUD_ID_EXISTING)
                     } else {
-                        val mData: DataResponse = onResponse.data
-                        val mCloudData: UserCloudResponse = mData.userCloud
-                        view.onSuccessful(mCloudData.cloud_id, EnumStatus.CLOUD_ID_EXISTING)
+                        val mData: DataResponse? = onResponse.data
+                        val mCloudData: UserCloudResponse? = mData?.userCloud
+                        view.onSuccessful(mCloudData?.cloud_id, EnumStatus.CLOUD_ID_EXISTING)
                     }
                     view.onStopLoading(EnumStatus.CLOUD_ID_EXISTING)
-                }, Consumer { throwable: Throwable? ->
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?).response().errorBody()
-                        val code = (throwable as HttpException?).response().code()
+                        val body: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val code = (throwable as HttpException?)?.response()?.code()
                         try {
                             if (code == 401) {
-                                Utils.Companion.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance().onUpdatedUserToken()
+                                Utils.Log(TAG, "code $code")
+                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Companion.Log(TAG, "error" + bodys.string())
-                            val msg: String = Gson().toJson(bodys.string())
-                            Utils.Companion.Log(TAG, msg)
+                            Utils.Log(TAG, "error" + body?.string())
+                            val msg: String = Gson().toJson(body?.string())
+                            Utils.Log(TAG, msg)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
-                        Utils.Companion.Log(TAG, "Can not call check user cloud " + throwable.message)
+                        Utils.Log(TAG, "Can not call check user cloud " + throwable.message)
                     }
                     view.onStopLoading(EnumStatus.CLOUD_ID_EXISTING)
-                }))
+                })?.let { subscriptions?.add(it) }
     }
 
     private fun getString(res: Int): String? {
-        val view: BaseView<*> = view()
-        return view.getContext().getString(res)
+        val view: BaseView<EmptyModel>? = view()
+        return view?.getContext()?.getString(res)
     }
 
     init {
-        val user: User = Utils.Companion.getUserInfo()
+        val user: User? = Utils.getUserInfo()
         if (user != null) {
             mUser = user
         }

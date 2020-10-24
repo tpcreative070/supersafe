@@ -1040,7 +1040,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         downloadService?.onProgressingDownload(object : DownloadService.DownLoadServiceListener {
             override fun onDownLoadCompleted(file_name: File?, request: DownloadFileRequest?) {
                 Utils.Log(TAG, "onDownLoadCompleted " + file_name?.getAbsolutePath())
-                listener?.onDownLoadCompleted(file_name, request)
+                if (request != null) {
+                    listener?.onDownLoadCompleted(file_name, request)
+                }
                 val entityModel: ItemModel? = SQLHelper.getItemById(items.items_id)
                 val categoryModel: MainCategoryModel? = SQLHelper.getCategoriesId(items.categories_id, false)
                 if (entityModel != null) {
@@ -1188,7 +1190,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         request?.enqueue(object : Callback<DriveResponse?> {
             override fun onResponse(call: Call<DriveResponse?>?, response: Response<DriveResponse?>?) {
                 Utils.Log(TAG, "response successful :" + Gson().toJson(response?.body()))
-                listener?.onResponseData(response?.body())
+                response?.body()?.let { listener?.onResponseData(it) }
             }
 
             override fun onFailure(call: Call<DriveResponse?>?, t: Throwable?) {
@@ -1420,7 +1422,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         hash[getString(R.string.key_redirect_uri)] = request.redirect_uri
         hash[getString(R.string.key_grant_type)] = request.grant_type
         hash[getString(R.string.key_refresh_token)] = request.refresh_token
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.Companion.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken ->

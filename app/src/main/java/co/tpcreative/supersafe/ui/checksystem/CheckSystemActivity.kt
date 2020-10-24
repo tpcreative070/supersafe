@@ -1,17 +1,43 @@
 package co.tpcreative.supersafe.ui.checksystem
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.os.Handler
+import android.text.Html
+import android.text.InputType
+import android.text.Spanned
+import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import butterknife.BindView
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EmptyModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toSpanned
+import co.tpcreative.supersafe.common.presenter.BaseView
+import co.tpcreative.supersafe.common.request.SignInRequest
+import co.tpcreative.supersafe.common.request.UserCloudRequest
+import co.tpcreative.supersafe.common.request.VerifyCodeRequest
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.ThemeApp
+import com.afollestad.materialdialogs.DialogAction
+import com.google.gson.Gson
+import com.snatik.storage.security.SecurityUtil
+import org.greenrobot.eventbus.ThreadMode
 
-class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
+class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     @BindView(R.id.progressBarCircularIndeterminate)
     var progressBarCircularIndeterminate: ProgressBarCircularIndeterminate? = null
     private var presenter: CheckSystemPresenter? = null
@@ -22,30 +48,30 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
         setContentView(R.layout.activity_check_system)
         val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true)
-        getSupportActionBar().hide()
+        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        getSupportActionBar()?.hide()
         presenter = CheckSystemPresenter()
-        presenter.bindView(this)
-        presenter.getIntent(this)
+        presenter?.bindView(this)
+        presenter?.getIntent(this)
         onStartLoading(EnumStatus.OTHER)
-        if (presenter.googleOauth != null) {
-            val email: String = presenter.googleOauth.email
-            if (email == presenter.mUser.email) {
-                presenter.onCheckUser(presenter.googleOauth.email, presenter.googleOauth.email)
+        if (presenter?.googleOauth != null) {
+            val email: String? = presenter!!.googleOauth?.email
+            if (email == presenter?.mUser?.email) {
+                presenter?.onCheckUser(presenter?.googleOauth?.email, presenter?.googleOauth?.email)
             } else {
                 this.email = email
                 val request = VerifyCodeRequest()
                 request.new_user_id = this.email
                 request.other_email = email
-                request.user_id = presenter.mUser.email
-                request._id = presenter.mUser._id
-                presenter.onChangeEmail(request)
+                request.user_id = presenter?.mUser?.email
+                request._id = presenter?.mUser?._id
+                presenter?.onChangeEmail(request)
             }
         } else {
-            handler.postDelayed(Runnable { presenter.onUserCloudChecking() }, 5000)
+            handler?.postDelayed(Runnable { presenter?.onUserCloudChecking() }, 5000)
         }
-        val themeApp: ThemeApp = ThemeApp.Companion.getInstance().getThemeInfo()
-        progressBarCircularIndeterminate.setBackgroundColor(getResources().getColor(themeApp.getAccentColor()))
+        val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+        progressBarCircularIndeterminate?.setBackgroundColor(ContextCompat.getColor(this,themeApp?.getAccentColor()!!))
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -68,9 +94,9 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
 
     protected override fun onDestroy() {
         super.onDestroy()
-        Utils.Companion.Log(TAG, "OnDestroy")
+        Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter.unbindView()
+        presenter?.unbindView()
     }
 
     protected override fun onStopListenerAWhile() {
@@ -95,19 +121,19 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             Navigator.ENABLE_CLOUD -> if (resultCode == Activity.RESULT_OK) {
-                Utils.Companion.Log(TAG, "onBackPressed onActivity Result")
+                Utils.Log(TAG, "onBackPressed onActivity Result")
                 onBackPressed()
             }
-            else -> Utils.Companion.Log(TAG, "Nothing action")
+            else -> Utils.Log(TAG, "Nothing action")
         }
     }
 
     protected override fun onDriveClientReady() {
-        Utils.Companion.Log(TAG, "onDriveClient")
-        presenter.mUser.driveConnected = true
-        Utils.Companion.setUserPreShare(presenter.mUser)
-        val request = UserCloudRequest(presenter.mUser.email, presenter.mUser.email, SuperSafeApplication.Companion.getInstance().getDeviceId())
-        presenter.onAddUserCloud(request)
+        Utils.Log(TAG, "onDriveClient")
+        presenter?.mUser?.driveConnected = true
+        Utils.setUserPreShare(presenter?.mUser)
+        val request = UserCloudRequest(presenter?.mUser?.email, presenter?.mUser?.email, SuperSafeApplication.getInstance().getDeviceId())
+        presenter?.onAddUserCloud(request)
     }
 
     override fun getActivity(): Activity? {
@@ -115,58 +141,58 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
     }
 
     fun onVerifyInputCode(email: String?) {
-        Utils.Companion.Log(TAG, " User..." + Gson().toJson(presenter.mUser))
+        Utils.Log(TAG, " User..." + Gson().toJson(presenter?.mUser))
         try {
             val dialog = MaterialDialog.Builder(this)
             val next = "<font color='#0091EA'>($email)</font>"
             val value: String = getString(R.string.description_pin_code, next)
             dialog.title(getString(R.string.verify_email))
-            dialog.content(Html.fromHtml(value))
+            dialog.content(value.toSpanned())
             dialog.theme(Theme.LIGHT)
             dialog.inputType(InputType.TYPE_CLASS_NUMBER)
-            dialog.input(getString(R.string.pin_code), null, false, object : InputCallback {
+            dialog.input(getString(R.string.pin_code), null, false, object : MaterialDialog.InputCallback {
                 override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                    Utils.Companion.Log(TAG, "call input code")
+                    Utils.Log(TAG, "call input code")
                     val request = VerifyCodeRequest()
-                    request.user_id = presenter.mUser.email
+                    request.user_id = presenter?.mUser?.email
                     request.code = input.toString().trim { it <= ' ' }
-                    request._id = presenter.mUser._id
-                    request.device_id = SuperSafeApplication.Companion.getInstance().getDeviceId()
-                    presenter.onVerifyCode(request)
+                    request._id = presenter?.mUser?._id
+                    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
+                    presenter?.onVerifyCode(request)
                 }
             })
             dialog.positiveText(getString(R.string.ok))
             dialog.negativeText(getString(R.string.cancel))
-            dialog.onNegative(object : SingleButtonCallback {
+            dialog.onNegative(object : MaterialDialog.SingleButtonCallback {
                 override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                     onStopLoading(EnumStatus.OTHER)
                     onBackPressed()
                 }
             })
             val editText = dialog.show().inputEditText
-            editText.setOnTouchListener(object : OnTouchListener {
+            editText?.setOnTouchListener(object : View.OnTouchListener {
                 override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
-                    view.setFocusable(true)
-                    view.setFocusableInTouchMode(true)
+                    view?.setFocusable(true)
+                    view?.setFocusableInTouchMode(true)
                     return false
                 }
             })
-            editText.setFocusable(false)
+            editText?.setFocusable(false)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    protected override fun onDriveSuccessful() {}
-    protected override fun onDriveError() {}
-    protected override fun onDriveSignOut() {}
-    protected override fun onDriveRevokeAccess() {}
-    override fun onStartLoading(status: EnumStatus?) {
-        progressBarCircularIndeterminate.setVisibility(View.VISIBLE)
+    override fun onDriveSuccessful() {}
+    override fun onDriveError() {}
+    override fun onDriveSignOut() {}
+    override fun onDriveRevokeAccess() {}
+    override fun onStartLoading(status: EnumStatus) {
+        progressBarCircularIndeterminate?.setVisibility(View.VISIBLE)
     }
 
-    override fun onStopLoading(status: EnumStatus?) {
-        progressBarCircularIndeterminate.setVisibility(View.GONE)
+    override fun onStopLoading(status: EnumStatus) {
+        progressBarCircularIndeterminate?.setVisibility(View.GONE)
     }
 
     override fun onError(message: String?) {}
@@ -177,48 +203,48 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
                 Navigator.onEnableCloud(this)
             }
             EnumStatus.CLOUD_ID_EXISTING -> {
-                if (presenter.mUser != null) {
-                    presenter.mUser.cloud_id = message
-                    Utils.Companion.Log(TAG, "CLOUD_ID_EXISTING : $message")
-                    Utils.Companion.setUserPreShare(presenter.mUser)
+                if (presenter?.mUser != null) {
+                    presenter?.mUser?.cloud_id = message
+                    Utils.Log(TAG, "CLOUD_ID_EXISTING : $message")
+                    Utils.setUserPreShare(presenter?.mUser)
                 }
                 Navigator.onEnableCloud(this)
             }
             EnumStatus.CREATE -> {
-                Utils.Companion.Log(TAG, "CREATE.............action")
+                Utils.Log(TAG, "CREATE.............action")
                 onBackPressed()
             }
             EnumStatus.SEND_EMAIL -> {
-                if (presenter.googleOauth != null) {
-                    onVerifyInputCode(presenter.googleOauth.email)
+                if (presenter?.googleOauth != null) {
+                    onVerifyInputCode(presenter?.googleOauth?.email)
                 }
             }
             EnumStatus.USER_ID_EXISTING -> {
-                Utils.Companion.Log(TAG, "USER_ID_EXISTING : $message")
+                Utils.Log(TAG, "USER_ID_EXISTING : $message")
             }
             EnumStatus.CHANGE_EMAIL -> {
-                presenter.onCheckUser(presenter.mUser.email, presenter.mUser.other_email)
+                presenter?.onCheckUser(presenter?.mUser?.email, presenter?.mUser?.other_email)
             }
             EnumStatus.VERIFY_CODE -> {
-                Utils.Companion.Log(TAG, "VERIFY_CODE...........action here")
-                if (presenter.googleOauth != null) {
-                    if (presenter.googleOauth.isEnableSync) {
-                        Utils.Companion.Log(TAG, "Syn google drive")
-                        signOut(object : ServiceManagerSyncDataListener {
+                Utils.Log(TAG, "VERIFY_CODE...........action here")
+                if (presenter?.googleOauth != null) {
+                    if (presenter?.googleOauth?.isEnableSync!!) {
+                        Utils.Log(TAG, "Syn google drive")
+                        signOut(object : ServiceManager.ServiceManagerSyncDataListener {
                             override fun onCompleted() {
                                 onStartLoading(status)
-                                signIn(presenter.mUser.email)
+                                signIn(presenter?.mUser?.email)
                             }
 
                             override fun onError() {
                                 onStartLoading(status)
-                                signIn(presenter.mUser.email)
+                                signIn(presenter?.mUser?.email)
                             }
 
                             override fun onCancel() {}
                         })
                     } else {
-                        Utils.Companion.Log(TAG, "Google drive Sync is disable")
+                        Utils.Log(TAG, "Google drive Sync is disable")
                         onStopLoading(status)
                         onBackPressed()
                     }
@@ -248,16 +274,16 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
             }
             EnumStatus.VERIFY_CODE -> {
                 Toast.makeText(this, "Failed verify code", Toast.LENGTH_SHORT).show()
-                if (presenter.mUser != null) {
-                    onVerifyInputCode(presenter.mUser.email)
+                if (presenter?.mUser != null) {
+                    onVerifyInputCode(presenter?.mUser?.email)
                 }
             }
             EnumStatus.CHANGE_EMAIL -> {
                 val request = SignInRequest()
                 request.user_id = email
                 request.password = SecurityUtil.key_password_default_encrypted
-                request.device_id = SuperSafeApplication.Companion.getInstance().getDeviceId()
-                presenter.onSignIn(request)
+                request.device_id = SuperSafeApplication.getInstance().getDeviceId()
+                presenter?.onSignIn(request)
             }
             EnumStatus.CLOUD_ID_EXISTING -> {
                 Navigator.onEnableCloud(this)
@@ -265,10 +291,10 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<Any?> {
         }
     }
 
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: Any?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<*>?) {}
-    protected override fun startServiceNow() {}
-    protected override fun isSignIn(): Boolean {
+    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
+    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
+    override fun startServiceNow() {}
+    override fun isSignIn(): Boolean {
         return true
     }
 

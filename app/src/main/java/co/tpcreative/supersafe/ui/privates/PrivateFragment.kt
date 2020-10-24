@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import android.view.View
+import co.tpcreative.supersafe.common.BaseFragment
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.util.Utils

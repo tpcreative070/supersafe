@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.model
-
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.controllerimport.PrefsController
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import com.google.gson.Gson
@@ -76,7 +75,7 @@ class ThemeApp : Serializable {
         try {
             val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), null)
             if (value != null) {
-                val mThemeApp: ThemeApp = Gson().fromJson(value, ThemeApp::class.java)
+                val mThemeApp: ThemeApp? = Gson().fromJson(value, ThemeApp::class.java)
                 if (mThemeApp != null) {
                     return mThemeApp
                 }
@@ -92,7 +91,7 @@ class ThemeApp : Serializable {
         return ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
     }
 
-    fun getList(): MutableList<ThemeApp?>? {
+    fun getList(): MutableList<ThemeApp>? {
         try {
             return ThemeUtil.getThemeList()
         } catch (e: Exception) {

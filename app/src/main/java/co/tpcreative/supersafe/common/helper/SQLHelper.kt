@@ -601,10 +601,10 @@ object SQLHelper {
         return null
     }
 
-    fun getListSyncData(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListSyncData(isSyncCloud: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
             val mList: MutableList<ItemEntityModel>? = getInstance()?.getListSyncData(isSyncCloud, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
