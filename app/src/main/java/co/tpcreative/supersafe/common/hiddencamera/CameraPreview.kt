@@ -53,9 +53,7 @@ class CameraPreview(context: Context, private val mCameraCallbacks: CameraCallba
         mHolder?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
     }
 
-
-
-    protected override fun onLayout(b: Boolean, i: Int, i1: Int, i2: Int, i3: Int) {
+    override fun onLayout(b: Boolean, i: Int, i1: Int, i2: Int, i3: Int) {
         //Do nothing
     }
 
@@ -221,7 +219,6 @@ class CameraPreview(context: Context, private val mCameraCallbacks: CameraCallba
     }
 
     init {
-
         //Set surface holder
         initSurfaceView()
     }

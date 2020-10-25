@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.ui.fakepin
 import android.app.Activity
 import android.graphics.Color
 import android.view.*
-import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu

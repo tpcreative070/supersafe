@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.ProgressBar
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import butterknife.BindView
@@ -48,10 +48,10 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
         @BindView(R.id.imgAlbum)
-        var imgAlbum: ImageView? = null
+        var imgAlbum: AppCompatImageView? = null
 
         @BindView(R.id.imgVideoCam)
-        var imgVideoCam: ImageView? = null
+        var imgVideoCam: AppCompatImageView? = null
 
         @BindView(R.id.tvTitle)
         var tvTitle: AppCompatTextView? = null
@@ -60,13 +60,13 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
         var progressingBar: ProgressBar? = null
 
         @BindView(R.id.imgCheck)
-        var imgCheck: ImageView? = null
+        var imgCheck: AppCompatImageView? = null
 
         @BindView(R.id.view_alpha)
         var view_alpha: View? = null
 
         @BindView(R.id.imgSelect)
-        var imgSelect: ImageView? = null
+        var imgSelect: AppCompatImageView? = null
         var mPosition = 0
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)

@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -150,7 +150,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class NumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.buttonNumber)
-        var mNumberButton: Button? = null
+        var mNumberButton: AppCompatButton? = null
 
         @OnClick(R.id.buttonNumber)
         fun onNumberButton(view: View?) {
@@ -169,7 +169,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         var mVerifyButton: LinearLayout? = null
 
         @BindView(R.id.buttonImage)
-        var mButtonImage: ImageView? = null
+        var mButtonImage: AppCompatImageView? = null
 
         @OnClick(R.id.buttonVerify)
         fun onVerifyButton() {

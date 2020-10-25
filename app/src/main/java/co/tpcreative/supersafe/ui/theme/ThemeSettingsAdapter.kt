@@ -3,7 +3,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.OnClick
@@ -41,7 +41,7 @@ class ThemeSettingsAdapter(inflater: LayoutInflater, private val context: Contex
         var imgTheme: CircleImageView? = null
 
         @BindView(R.id.imgChecked)
-        var imgChecked: ImageView? = null
+        var imgChecked: AppCompatImageView? = null
         var mPosition = 0
         var themeApp: ThemeApp? = null
         override fun bind(data: ThemeApp, position: Int) {
