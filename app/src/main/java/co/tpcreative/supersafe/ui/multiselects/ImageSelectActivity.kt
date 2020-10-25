@@ -213,9 +213,9 @@ class ImageSelectActivity : HelperActivity() {
             }
             actionMode = null
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance().getThemeInfo()
+                val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
                 val window = window
-                window.statusBarColor = androidx.core.content.ContextCompat.getColor(applicationContext, themeApp.getPrimaryDarkColor())
+                window.statusBarColor = androidx.core.content.ContextCompat.getColor(applicationContext, themeApp?.getPrimaryDarkColor()!!)
             }
         }
     }
