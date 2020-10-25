@@ -16,7 +16,7 @@
 package co.tpcreative.supersafe.common.hiddencamera
 import android.content.Context
 import android.hardware.Camera
-import co.tpcreative.supersafe.common.hiddencamera.configimport.*
+import co.tpcreative.supersafe.common.hiddencamera.config.*
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import java.io.File
 
