@@ -75,7 +75,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         /*Init own service api*/dependencies = Dependencies.getInstance(this, getUrl()!!)
         dependencies?.dependenciesListener(this)
         dependencies?.init()
-        serverAPI = Dependencies.Companion.serverAPI as RootAPI
+        serverAPI = Dependencies.serverAPI as RootAPI
         /*Init Drive api*/serverDriveApi = RetrofitHelper().getCityService(getString(R.string.url_google))
         /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getCityService(getString(R.string.url_graph_microsoft))
         ServiceManager.getInstance()?.setContext(this)

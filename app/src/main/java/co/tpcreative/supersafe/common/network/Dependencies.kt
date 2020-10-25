@@ -80,9 +80,9 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         var sInstance: Dependencies<*>?= null
 
         fun getInstance(context : Context,url : String): Dependencies<*> {
-            if (Dependencies.sInstance == null) {
-                if (Dependencies.sInstance == null) {
-                    Dependencies.sInstance = Dependencies<Any>()
+            if (sInstance == null) {
+                if (sInstance == null) {
+                    sInstance = Dependencies<Any>()
                 }
             }
             this.sInstance?.URL = url
