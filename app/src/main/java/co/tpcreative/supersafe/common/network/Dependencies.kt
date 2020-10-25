@@ -53,13 +53,11 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         return retrofitInstance!!.build()!!.create(tClass)
     }
 
-    protected override fun getHeaders(): HashMap<String?, String?>? {
+    override fun getHeaders(): HashMap<String?, String?>? {
         val hashMap = HashMap<String?, String?>()
         var oauthToken: String? = null
         if (dependenciesListener != null) {
-            if (dependenciesListener!!.onCustomHeader() != null) {
-                hashMap.putAll(dependenciesListener!!.onCustomHeader())
-            }
+            hashMap.putAll(dependenciesListener!!.onCustomHeader())
             oauthToken = dependenciesListener!!.onAuthorToken()
         }
         if (oauthToken != null) {
@@ -68,7 +66,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         return hashMap
     }
 
-    protected override fun getTimeOut(): Int {
+    override fun getTimeOut(): Int {
         return mTimeOut
     }
 
@@ -79,8 +77,6 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     }
 
     companion object {
-        private const val DISK_CACHE_SIZE = 50 * 1024 * 1024 // 50MB
-        private const val TIMEOUT_MAXIMUM = 30
         var serverAPI: Any? = null
         var sInstance: Dependencies<Any>?= null
         fun getInstance(context: Context, url: String): Dependencies<*> {
