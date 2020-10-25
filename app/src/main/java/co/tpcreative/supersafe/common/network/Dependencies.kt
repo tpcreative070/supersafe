@@ -9,6 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
 import java.util.*
 
+
 class Dependencies<T> private constructor() : BaseDependencies() {
     private var retrofitInstance: Retrofit.Builder? = null
     private var context: Context? = null
@@ -25,7 +26,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         }
     }
 
-    fun setRootURL(url: String?,context: Context) {
+    fun setRootURL(url: String?, context: Context) {
         this.URL = url
         this.context = context
     }
@@ -36,6 +37,10 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     }
 
     fun init() {
+        if (serverAPI == null) {
+            val okHttpClient = provideOkHttpClientDefault()
+            serverAPI = (sInstance?.provideRestApi(okHttpClient, dependenciesListener!!.onObject() as Nothing) as T)!!
+        }
     }
 
     fun provideRestApi(okHttpClient: OkHttpClient, tClass: Class<T>): T {
@@ -79,7 +84,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         lateinit var serverAPI: Any
         var sInstance: Dependencies<*>?= null
 
-        fun getInstance(context : Context,url : String): Dependencies<*> {
+        fun getInstance(context: Context, url: String): Dependencies<*> {
             if (sInstance == null) {
                 if (sInstance == null) {
                     sInstance = Dependencies<Any>()
