@@ -367,6 +367,6 @@ class PremiumActivity : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.I
 
     companion object {
         private val TAG = PremiumActivity::class.java.simpleName
-        private val FRAGMENT_TAG: String? = SettingsActivity::class.java.getSimpleName() + "::fragmentTag"
+        private val FRAGMENT_TAG: String? = SettingsFragment::class.java.getSimpleName() + "::fragmentTag"
     }
 }

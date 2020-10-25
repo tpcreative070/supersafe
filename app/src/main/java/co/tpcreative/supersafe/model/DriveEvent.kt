@@ -8,7 +8,7 @@ class DriveEvent : Serializable {
     var fileType = 0
     fun convertToHex(value: String?): String? {
         try {
-            return Utils.stringToHex(value)
+            return value?.let { Utils.stringToHex(it) }
         } catch (e: Exception) {
             Utils.Log(DriveEvent.Companion.TAG, "Error :" + e.message)
             Utils.onWriteLog(DriveEvent.Companion.TAG + "-" + e.message, EnumStatus.WRITE_FILE)
@@ -19,7 +19,7 @@ class DriveEvent : Serializable {
 
     fun hexToObject(value: String?): DriveEvent? {
         try {
-            val result: String? = Utils.hexToString(value)
+            val result: String? = value?.let { Utils.hexToString(it) }
             return Gson().fromJson(result, DriveEvent::class.java)
         } catch (e: Exception) {
             Utils.Log(DriveEvent.Companion.TAG, "Error :" + e.message)

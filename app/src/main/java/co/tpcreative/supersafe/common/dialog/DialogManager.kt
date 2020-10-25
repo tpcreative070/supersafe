@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.common.dialog
 import android.content.Context
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.dialogimport.DialogListener
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 

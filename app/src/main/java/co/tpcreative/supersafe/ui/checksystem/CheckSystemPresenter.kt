@@ -370,7 +370,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
             return
         }
         val mUser: User? = Utils.getUserInfo()
-        val hash: MutableMap<String, Any?> = HashMap()
+        val hash: MutableMap<String?, Any?> = HashMap()
         hash[SuperSafeApplication.getInstance().getString(R.string.key_client_id)] = request.client_id
         hash[SuperSafeApplication.getInstance().getString(R.string.key_redirect_uri)] = request.redirect_uri
         hash[SuperSafeApplication.getInstance().getString(R.string.key_grant_type)] = request.grant_type

@@ -89,7 +89,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         Utils.Log(TAG, "Connected :$isConnected")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*>? = view()
         if (view != null) {
             if (isConnected) {
                 view.onSuccessful("Connected network", EnumStatus.CONNECTED)
@@ -100,7 +100,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     }
 
     override fun onActionScreenOff() {
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*>? = view()
         if (view != null) {
             view.onSuccessful("Screen Off", EnumStatus.SCREEN_OFF)
         }
@@ -175,7 +175,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     }
 
     fun onUpdateUserToken() {
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*>? = view()
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.UPDATE_USER_TOKEN)) {
             return
         }
@@ -193,7 +193,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.responseMessage, EnumStatus.UPDATE_USER_TOKEN)
+                        view?.onError(onResponse.responseMessage, EnumStatus.UPDATE_USER_TOKEN)
                         isCallRefreshToken = false
                     } else {
                         val mUser: User? = Utils.getUserInfo()
@@ -206,7 +206,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                 mAuthor?.session_token = mAuthorGlobal?.session_token
                                 mUser?.author = mAuthor
                                 Utils.setUserPreShare(mUser)
-                                view.onSuccessful(onResponse.message, EnumStatus.UPDATE_USER_TOKEN)
+                                view?.onSuccessful(onResponse.message, EnumStatus.UPDATE_USER_TOKEN)
                                 Utils.onWriteLog(Gson().toJson(mUser), EnumStatus.UPDATE_USER_TOKEN)
                                 onDeleteOldAccessToken(mUserRequest)
                             }
@@ -226,7 +226,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                             }
                             val errorMessage: String? = bodys?.string()
                             Utils.Log(TAG, "error update access token $errorMessage")
-                            view.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN)
+                            view?.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN)
                             Utils.onWriteLog(errorMessage, EnumStatus.UPDATE_USER_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
@@ -239,7 +239,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     }
 
     fun onDeleteOldAccessToken(request: UserRequest) {
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*>? = view()
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.UPDATE_USER_TOKEN)) {
             isCallRefreshToken = false
             return
@@ -256,7 +256,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.responseMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
+                        view?.onError(onResponse.responseMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
                     } else {
                         ServiceManager.Companion.getInstance()?.onPreparingSyncData()
                     }
@@ -273,7 +273,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                             }
                             val errorMessage: String? = bodys?.string()
                             Utils.Log(TAG, "error old delete access token $errorMessage")
-                            view.onError(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
+                            view?.onError(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
                             Utils.onWriteLog(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
@@ -287,7 +287,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onSignIn(request: User?) {
         Utils.Log(TAG, "onSignIn request")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*>? = view()
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.SIGN_IN)) {
             return
         }
@@ -301,7 +301,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body response sign in: " + Gson().toJson(onResponse))
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.SIGN_IN)
+                        view?.onError(onResponse.message, EnumStatus.SIGN_IN)
                     } else {
                         val user: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
@@ -328,7 +328,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     }
 
     fun getDriveAbout() {
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*> = view()!!
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.GET_DRIVE_ABOUT)) {
             return
         }
@@ -1296,7 +1296,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     /*TrackHandler*/
     fun onCheckVersion() {
         Utils.Log(TAG, "onCheckVersion")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*> = view()!!
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.CHECK_VERSION)) {
             return
         }
@@ -1328,7 +1328,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onSyncAuthorDevice() {
         Utils.Log(TAG, "onSyncAuthorDevice")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*> = view()!!
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.AUTHOR_SYNC)) {
             return
         }
@@ -1368,7 +1368,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     /*Email token*/
     fun onSendMail(request: EmailToken) {
         Utils.Log(TAG, "onSendMail.....")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*> = view()!!
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.SEND_EMAIL)) {
             return
         }
@@ -1412,12 +1412,12 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onRefreshEmailToken(request: EmailToken) {
         Utils.Log(TAG, "onRefreshEmailToken.....")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*> = view()!!
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.REFRESH)) {
             return
         }
         val mUser: User? = Utils.getUserInfo()
-        val hash: MutableMap<String, Any?> = HashMap()
+        val hash: MutableMap<String?, Any?> = HashMap()
         hash[getString(R.string.key_client_id)] = request.client_id
         hash[getString(R.string.key_redirect_uri)] = request.redirect_uri
         hash[getString(R.string.key_grant_type)] = request.grant_type
@@ -1458,7 +1458,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onAddEmailToken() {
         Utils.Log(TAG, "onSignIn.....")
-        val view: BaseServiceView<*> = view()
+        val view: BaseServiceView<*> = view()!!
         if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.ADD_EMAIL_TOKEN)) {
             return
         }

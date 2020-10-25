@@ -25,7 +25,7 @@ open class PresenterService<V> : Service() {
         subscriptions = CompositeDisposable()
     }
 
-    protected fun view(): BaseServiceView<*> {
+    protected fun view(): V? {
         return view
     }
 

@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.model
-import co.tpcreative.supersafe.modelimport.ListItem
 
 class EventItem(private val event: Event, enumEvent: EnumEvent) : ListItem() {
     var enumEvent: EnumEvent

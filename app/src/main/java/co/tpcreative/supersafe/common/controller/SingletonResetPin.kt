@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.controller
 import android.os.CountDownTimer
-import co.tpcreative.supersafe.common.controllerimport.ServiceManager
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User

@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.model
-import co.tpcreative.supersafe.modelimport.ListItem
 import java.util.*
 
 class HeaderItem(private val date: Date) : ListItem() {

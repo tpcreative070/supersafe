@@ -24,8 +24,8 @@ import android.hardware.Camera
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.WorkerThread
-import co.tpcreative.supersafe.common.hiddencamera.configimport.CameraImageFormat
-import co.tpcreative.supersafe.common.hiddencamera.configimport.CameraRotation
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
+import co.tpcreative.supersafe.common.hiddencamera.config.CameraRotation
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
