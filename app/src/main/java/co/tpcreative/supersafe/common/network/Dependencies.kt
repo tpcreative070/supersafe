@@ -39,7 +39,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     fun init() {
         if (serverAPI == null) {
             val okHttpClient = provideOkHttpClientDefault()
-            serverAPI = (sInstance?.provideRestApi(okHttpClient, dependenciesListener!!.onObject() as Nothing) as T)!!
+            serverAPI = (sInstance?.provideRestApi(okHttpClient, dependenciesListener?.onObject()!! as Nothing) as T)!!
         }
     }
 
@@ -83,18 +83,14 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         private const val TIMEOUT_MAXIMUM = 30
         lateinit var serverAPI: Any
         var sInstance: Dependencies<*>?= null
-
         fun getInstance(context: Context, url: String): Dependencies<*> {
             if (sInstance == null) {
-                if (sInstance == null) {
-                    sInstance = Dependencies<Any>()
-                }
+                sInstance = Dependencies<Any>()
             }
             this.sInstance?.URL = url
             this.sInstance?.context = context
             return sInstance!!
         }
-
         val TAG = Dependencies::class.java.simpleName
     }
 }
