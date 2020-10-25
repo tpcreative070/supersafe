@@ -40,7 +40,7 @@ import com.snatik.storage.security.SecurityUtil
 import java.io.File
 import java.util.*
 
-class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesListener<RootAPI>, Application.ActivityLifecycleCallbacks {
+class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesListener<Any>, Application.ActivityLifecycleCallbacks {
     private lateinit var supersafe: String
     private lateinit var supersafePrivate: String
     private lateinit var supersafeBackup: String
@@ -413,8 +413,9 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
 
     /*Retrofit and RXJava*/
 
-    override fun onObject(): Class<RootAPI> {
-        return RootAPI::class.java
+
+    override fun onObject(): Class<Any> {
+        return RootAPI.javaClass
     }
 
     override fun onAuthorToken(): String {

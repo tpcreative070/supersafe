@@ -14,9 +14,9 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     private var retrofitInstance: Retrofit.Builder? = null
     private var context: Context? = null
     private var URL: String? = null
-    private var dependenciesListener: DependenciesListener<*>? = null
+    private var dependenciesListener: DependenciesListener<T>? = null
     private var mTimeOut = 1
-    fun dependenciesListener(dependenciesListener: DependenciesListener<*>) {
+    fun dependenciesListener(dependenciesListener: DependenciesListener<Any>?) {
         sInstance?.dependenciesListener = dependenciesListener
     }
 
@@ -39,7 +39,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     fun init() {
         if (serverAPI == null) {
             val okHttpClient = provideOkHttpClientDefault()
-            serverAPI = (sInstance?.provideRestApi(okHttpClient, dependenciesListener?.onObject()!! as Nothing) as T)!!
+            serverAPI = sInstance?.dependenciesListener?.onObject()?.let { sInstance?.provideRestApi(okHttpClient, it) }
         }
     }
 
@@ -72,7 +72,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         return mTimeOut
     }
 
-    interface DependenciesListener<T> {
+    interface DependenciesListener<T>{
         fun onObject(): Class<T>
         fun onAuthorToken(): String
         fun onCustomHeader(): HashMap<String, String>
@@ -81,11 +81,11 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     companion object {
         private const val DISK_CACHE_SIZE = 50 * 1024 * 1024 // 50MB
         private const val TIMEOUT_MAXIMUM = 30
-        lateinit var serverAPI: Any
-        var sInstance: Dependencies<*>?= null
+        var serverAPI: Any? = null
+        var sInstance: Dependencies<Any>?= null
         fun getInstance(context: Context, url: String): Dependencies<*> {
             if (sInstance == null) {
-                sInstance = Dependencies<Any>()
+                sInstance = Dependencies()
             }
             this.sInstance?.URL = url
             this.sInstance?.context = context
