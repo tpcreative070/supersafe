@@ -25,7 +25,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
-        </com.google.android.material.appbar.CollapsingToolbarLayout>>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <RelativeLayout
         android:visibility="invisible"
@@ -48,7 +48,7 @@
             app:circleProgressTextSize="@dimen/icon_size_60"
             app:circleProgressTextColor="@color/white"
             app:circleProgressValue="100"/>
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textSize="@dimen/text_size_normal"
             android:textColor="@color/material_gray_200"
             android:layout_marginTop="20dp"
@@ -82,7 +82,7 @@
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_marginRight="10dp"
                     android:textStyle="bold"
                     android:textColor="@color/white"
@@ -90,14 +90,14 @@
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:src="@drawable/baseline_help_outline_white_48"
                     android:layout_width="@dimen/icon_size"
                     android:layout_height="@dimen/icon_size" />
             </LinearLayout>
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:visibility="gone"
                 android:layout_gravity="center"
                 android:layout_marginRight="10dp"
@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="80dp">
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgLauncher"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
@@ -124,7 +124,7 @@
                     android:layout_gravity="center"
                     android:src="@drawable/ic_launcher"
                     android:visibility="invisible" />
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
                     android:textStyle="bold"
@@ -158,14 +158,14 @@
                     android:layout_height="@dimen/default_button_size"
                     android:layout_alignParentRight="true"
                     android:onClick="onDelete">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_centerInParent="true"
                         android:src="@drawable/ic_backspace" />
                 </RelativeLayout>
             </RelativeLayout>
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold"
                 android:id="@+id/attempts"
@@ -188,7 +188,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_margin="@dimen/lockview_margin"
                     android:scrollbars="none" />
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:visibility="gone"
                     android:src="@drawable/baseline_fingerprint_white_48"
                     android:id="@+id/imgFingerprint"

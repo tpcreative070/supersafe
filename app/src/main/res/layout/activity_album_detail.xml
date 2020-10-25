@@ -6,14 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/detail_backdrop_height"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
@@ -24,15 +22,13 @@
             app:expandedTitleMarginStart="20dp"
             app:expandedTitleMarginBottom="40dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
-
             <LinearLayout
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
@@ -43,8 +39,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/linear_high">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:paddingBottom="4dp"
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Photos"
@@ -53,8 +48,7 @@
                     android:layout_gravity="center|left|bottom"
                     android:layout_weight="1"
                     android:text="@string/photos_default"/>
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Videos"
                     android:layout_width="0dp"
@@ -62,8 +56,7 @@
                     android:layout_gravity="center|left|bottom"
                     android:layout_weight="1"
                     android:text="@string/videos_default"/>
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Audios"
                     android:layout_width="0dp"
@@ -71,8 +64,7 @@
                     android:layout_gravity="center|left|bottom"
                     android:layout_weight="1"
                     android:text="@string/audios_default"/>
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Others"
                     android:layout_width="0dp"
@@ -81,17 +73,14 @@
                     android:layout_weight="1"
                     android:text="@string/others_default"/>
             </LinearLayout>
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>>
     </com.google.android.material.appbar.AppBarLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -103,20 +92,17 @@
             android:clipToPadding="false"
             android:scrollbars="vertical"/>
     </RelativeLayout>
-
     <FrameLayout
         android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/gallery_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
     <com.leinardi.android.speeddial.SpeedDialOverlayLayout
         android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:clickable_overlay="true"/>
-
     <com.leinardi.android.speeddial.SpeedDialView
         android:id="@+id/speedDial"
         android:layout_width="wrap_content"
@@ -129,7 +115,6 @@
         app:sdMainFabClosedSrc="@drawable/baseline_add_white_24"
         app:sdMainFabOpenedSrc="@drawable/baseline_add_white_24"
         app:sdOverlayLayout="@id/overlay" />
-
     <include
         android:id="@+id/footer"
         android:layout_alignParentBottom="true"

@@ -48,7 +48,7 @@
             android:background="@color/material_gray_100"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvStatus"
                 android:text="@string/disabled"
                 android:layout_centerInParent="true"
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:textStyle="bold"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"

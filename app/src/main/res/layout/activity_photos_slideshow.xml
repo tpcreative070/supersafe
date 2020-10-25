@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/colorDark"
     tools:context=".ui.photosslideshow.PhotoSlideShowActivity">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,27 +14,21 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-
         <FrameLayout
             android:visibility="gone"
             android:id="@+id/gallery_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
-
         <co.tpcreative.supersafe.common.views.HackyViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-
         <RelativeLayout
             android:background="#7F000000"
             android:id="@+id/rlTop"
             android:layout_width="match_parent"
             android:layout_height="50dp">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgArrowBack"
                 android:layout_marginLeft="7dp"
                 android:padding="7dp"
@@ -44,14 +37,12 @@
                 android:src="@drawable/baseline_arrow_back_white_36"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_toRightOf="@+id/imgArrowBack"
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgOverflow"
                 android:padding="7dp"
                 android:layout_alignParentRight="true"
@@ -59,9 +50,7 @@
                 android:src="@drawable/baseline_more_vert_white_36"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"/>
-
         </RelativeLayout>
-
         <LinearLayout
             android:id="@+id/llBottom"
             android:background="#7F000000"

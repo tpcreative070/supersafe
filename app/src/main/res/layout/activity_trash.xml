@@ -24,7 +24,7 @@
             app:expandedTitleMarginBottom="40dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/linear_high">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:paddingBottom="4dp"
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Photos"
@@ -53,7 +53,7 @@
                     android:layout_weight="1"
                     android:text="@string/photos_default"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Videos"
                     android:layout_width="0dp"
@@ -62,7 +62,7 @@
                     android:layout_weight="1"
                     android:text="@string/videos_default"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Audios"
                     android:layout_width="0dp"
@@ -71,7 +71,7 @@
                     android:layout_weight="1"
                     android:text="@string/audios_default"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tv_Others"
                     android:layout_width="0dp"
@@ -112,7 +112,7 @@
         android:layout_gravity="bottom|end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:textSize="@dimen/text_size_normal"
             android:textStyle="bold"
             android:id="@+id/btnTrash"
@@ -139,12 +139,12 @@
             android:layout_margin="20dp"
             android:orientation="horizontal">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size"
                 android:src="@drawable/ic_premium_icon" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -158,13 +158,13 @@
             android:layout_margin="20dp"
             android:orientation="vertical">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/what_trash" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -176,7 +176,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:orientation="vertical">
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnUpgradeVersion"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_high"

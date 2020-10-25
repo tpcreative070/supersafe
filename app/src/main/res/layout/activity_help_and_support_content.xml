@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.help.HelpAndSupportContentActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -44,8 +43,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textColor="?attr/colorPrimaryDark"
                     android:textSize="@dimen/text_size_xlarge"
                     android:id="@+id/tvTitle"
@@ -63,16 +61,14 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:textSize="@dimen/text_size_normal"
                         android:text="@string/from"
                         android:textColor="?attr/preference_summary"
                         android:gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:paddingLeft="20dp"
                         android:layout_gravity="left|center"
                         android:textSize="@dimen/text_size_normal"

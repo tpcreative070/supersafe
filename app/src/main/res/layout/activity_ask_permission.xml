@@ -13,16 +13,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_marginTop="100dp"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
             android:src="@drawable/ic_launcher"
             android:layout_width="80dp"
             android:layout_height="80dp"/>
-
         <LinearLayout
             android:orientation="vertical"
             android:layout_marginTop="20dp"
@@ -32,24 +29,21 @@
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_marginBottom="20dp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_xlarge"
                 android:text="@string/keep_safety"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_marginBottom="50dp"
                 android:textColor="@color/colorTextDark"
                 android:textSize="@dimen/text_size_large"
                 android:text="@string/allow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:layout_marginBottom="10dp"
                 android:id="@+id/btnGrantAccess"
                 android:textSize="@dimen/text_size_normal"
@@ -58,8 +52,7 @@
                 android:text="@string/grant_access"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high" />
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnExit"
                 android:textSize="@dimen/text_size_normal"
                 android:textColor="@color/colorButtonDark"
@@ -67,7 +60,6 @@
                 android:text="@string/exit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
         </LinearLayout>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

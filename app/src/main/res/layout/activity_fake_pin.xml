@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.fakepin.FakePinActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
-        </com.google.android.material.appbar.CollapsingToolbarLayout>>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -46,7 +45,7 @@
             android:background="@color/material_gray_100"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvStatus"
                 android:text="@string/disabled"
                 android:layout_centerInParent="true"
@@ -60,16 +59,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
-
-
         <include
             layout="@layout/layout_premium_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             ></include>
-
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvCreatePin"
             android:textStyle="bold"
             android:paddingTop="20dp"
@@ -81,20 +76,18 @@
             android:text="@string/create_fake_pin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
         <LinearLayout
             android:id="@+id/llView"
             android:paddingRight="20dp"
             android:paddingLeft="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgView"
                 android:tint="?attr/colorPrimaryDark"
                 android:src="@drawable/baseline_remove_red_eye_white_48"
                 android:layout_width="@dimen/image_size_custom_40"
                 android:layout_height="@dimen/image_size_custom_40"/>
         </LinearLayout>
-
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

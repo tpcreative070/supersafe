@@ -14,9 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnUpgrade"
             android:background="@null"
             android:textStyle="bold"
@@ -26,8 +24,7 @@
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvTitle"
             android:layout_marginTop="60dp"
             android:gravity="center"
@@ -38,8 +35,7 @@
             android:text="@string/premium_expired"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="90dp"
@@ -51,9 +47,6 @@
             android:text="@string/upgrade_to_premium_for_the_best_supersafe_experiences"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-
-
         <LinearLayout
             android:layout_marginBottom="20dp"
             android:layout_alignParentBottom="true"
@@ -63,14 +56,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:weightSum="3"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <LinearLayout
                     android:id="@+id/llMonths"
                     android:layout_marginRight="5dp"
@@ -80,8 +71,7 @@
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_width="0dp">
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:padding="10dp"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -91,23 +81,20 @@
                         android:text="@string/monthly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvMonthly"
                         android:layout_marginTop="10dp"
                         android:layout_gravity="center"
                         android:text="$9.99"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:text="@string/per_month"
                         android:layout_gravity="center"
                         android:layout_marginTop="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
-
-
                 <LinearLayout
                     android:id="@+id/llYears"
                     android:layout_marginRight="5dp"
@@ -117,8 +104,7 @@
                     android:orientation="vertical"
                     android:layout_weight="1"
                     android:layout_width="0dp">
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:padding="10dp"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -128,15 +114,14 @@
                         android:text="@string/yearly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvYearly"
                         android:layout_marginTop="10dp"
                         android:layout_gravity="center"
                         android:text="$9.99"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:text="@string/per_year"
                         android:layout_gravity="center"
                         android:layout_marginTop="5dp"
@@ -153,8 +138,7 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="130dp">
-
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:padding="10dp"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -164,7 +148,7 @@
                         android:text="@string/tv_life_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvLifeTime"
                         android:gravity="center"
                         android:layout_gravity="center"
@@ -173,7 +157,6 @@
                         android:layout_height="match_parent"/>
                 </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

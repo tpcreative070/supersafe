@@ -49,13 +49,13 @@
                     android:layout_height="wrap_content"
                     android:background="?attr/colorPrimary"
                     android:orientation="vertical">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:tint="?attr/colorAccent"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_premium_icon" />
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:textStyle="bold"
                         android:id="@+id/tvTitle"
                         android:layout_width="match_parent"
@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvPremiumLeft"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                             android:orientation="vertical"
                             android:layout_weight="1"
                             android:layout_width="0dp">
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:padding="10dp"
                                 android:gravity="center"
                                 android:layout_gravity="center"
@@ -105,14 +105,14 @@
                                 android:text="@string/monthly"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvMonthly"
                                 android:layout_marginTop="10dp"
                                 android:layout_gravity="center"
                                 android:text="$9.99"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:text="@string/per_month"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="5dp"
@@ -128,7 +128,7 @@
                             android:orientation="vertical"
                             android:layout_weight="1"
                             android:layout_width="0dp">
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:padding="10dp"
                                 android:gravity="center"
                                 android:layout_gravity="center"
@@ -138,14 +138,14 @@
                                 android:text="@string/yearly"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvYearly"
                                 android:layout_marginTop="10dp"
                                 android:layout_gravity="center"
                                 android:text="$9.99"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:text="@string/per_year"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="5dp"
@@ -161,8 +161,7 @@
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="130dp">
-
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:padding="10dp"
                                 android:gravity="center"
                                 android:layout_gravity="center"
@@ -172,7 +171,7 @@
                                 android:text="@string/tv_life_time"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tvLifeTime"
                                 android:gravity="center"
                                 android:layout_gravity="center"
@@ -199,7 +198,7 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:text="@string/what_is_basic"
                         android:layout_marginBottom="5dp"
                         android:textSize="@dimen/text_size_preference_item_title"
@@ -209,7 +208,7 @@
                         android:textColor="?attr/preference_title"
                         android:ellipsize="marquee"
                         android:fadingEdge="horizontal" />
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:text="@string/what_is_basic_detail"
                         android:textSize="@dimen/text_size_preference_item_summary"
                         android:layout_width="match_parent"

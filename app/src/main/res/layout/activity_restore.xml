@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.restore.RestoreActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -36,8 +35,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:textStyle="bold"
             android:visibility="invisible"
             android:id="@+id/btnForgotPin"
@@ -47,9 +45,7 @@
             android:layout_alignParentRight="true"
             android:layout_width="110dp"
             android:layout_height="@dimen/button_high" />
-
-
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:visibility="invisible"
             android:textSize="@dimen/text_size_normal"
             android:id="@+id/tvWrongPin"
@@ -60,7 +56,6 @@
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <com.rengwuxian.materialedittext.MaterialEditText
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
@@ -78,8 +73,7 @@
             app:met_textColor="@color/material_gray_700"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnRestoreNow"
             android:layout_marginTop="30dp"
             android:textColor="@color/colorDisableText"

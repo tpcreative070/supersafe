@@ -6,21 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.help.HelpAndSupportContentActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
@@ -31,18 +28,15 @@
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
     </com.google.android.material.appbar.AppBarLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <include
             layout="@layout/layout_premium_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"></include>
-
         <RelativeLayout
             android:id="@+id/rlSwitch"
             android:layout_width="match_parent"
@@ -52,15 +46,13 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="15dp">
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerInParent="true"
                 android:text="@string/set_custom_covers"
                 android:textSize="@dimen/text_size_normal" />
-
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/btnSwitch"
                 android:layout_width="wrap_content"
@@ -68,12 +60,10 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true" />
         </RelativeLayout>
-
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <LinearLayout
                 android:id="@+id/llRecyclerView"
                 android:layout_width="match_parent"
@@ -81,30 +71,24 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical">
-
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
                     android:text="@string/default_icon"
                     android:textColor="?attr/colorAccent" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewDefault"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
-
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="20dp"
                     android:text="@string/custom_icon"
                     android:textColor="?attr/colorAccent" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewCustom"
                     android:layout_width="match_parent"

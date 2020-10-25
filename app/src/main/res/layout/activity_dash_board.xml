@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_marginBottom="50dp"
                 android:layout_centerInParent="true"
                 android:layout_above="@+id/tvWelcome"
@@ -30,8 +30,7 @@
                 android:layout_gravity="center"
                 android:layout_width="80dp"
                 android:layout_height="80dp"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_large"
                 android:textColor="@color/white"
                 android:gravity="center"
@@ -40,7 +39,7 @@
                 android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:layout_marginTop="20dp"
                 android:gravity="center"
@@ -50,7 +49,6 @@
                 android:textColor="@color/colorTextDark"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
         </RelativeLayout>
 
         <LinearLayout
@@ -72,7 +70,6 @@
                 android:text="@string/sign_up"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_high"/>
-
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLogin"
                 android:textSize="@dimen/text_size_normal"
@@ -81,7 +78,6 @@
                 android:text="@string/login_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
         </LinearLayout>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,14 +18,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewLog"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dip"
         android:ems="10">
-    </TextView>
-    <Button
+    </androidx.appcompat.widget.AppCompatTextView>
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/buttonAction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

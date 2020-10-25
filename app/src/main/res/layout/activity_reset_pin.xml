@@ -45,36 +45,31 @@
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textColor="?attr/colorAccent"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/forgot_your_pin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 android:text="@string/step_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvStep1"
                 android:layout_marginTop="10dp"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/request_an_access_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-
             <RelativeLayout
                 android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:layout_centerInParent="true"
                     android:id="@+id/btnSendRequest"
                     android:textColor="@color/white"
@@ -83,7 +78,6 @@
                     android:background="@drawable/bg_button_rounded"
                     android:layout_width="200dp"
                     android:layout_height="@dimen/button_high" />
-
                 <fr.castorflex.android.circularprogressbar.CircularProgressBar
                     android:visibility="invisible"
                     android:layout_centerInParent="true"
@@ -97,25 +91,20 @@
                     android:indeterminate="true"
                     android:indeterminateOnly="false"/>
             </RelativeLayout>
-
-
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:layout_marginTop="20dp"
                 android:textStyle="bold"
                 android:text="@string/step_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvStep2"
                 android:layout_marginTop="10dp"
                 android:textSize="@dimen/text_size_normal"
                 android:text="@string/request_enter_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtCode"
                 style="@style/RegularTextView"
@@ -133,8 +122,7 @@
                 app:met_primaryColor="?attr/colorAccent"
                 app:met_textColor="?attr/colorAccent"
                 app:met_textColorHint="?attr/colorAccent" />
-
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnReset"
                 android:enabled="false"
                 android:textColor="@color/white"
@@ -144,27 +132,24 @@
                 android:background="@drawable/bg_button_disable_rounded"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/button_high"/>
-
             <LinearLayout
                 android:id="@+id/llSupport"
                 android:layout_marginTop="20dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:textSize="@dimen/text_size_normal"
                     android:text="@string/did_not_receive_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:clickable="false"
                     android:autoLink="web|email"
                     android:textSize="@dimen/text_size_normal"
                     android:id="@+id/tvSupport"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

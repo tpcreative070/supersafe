@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_marginLeft="@dimen/margin_left"
                 android:layout_marginRight="@dimen/margin_right"
                 android:textColor="@color/white"
@@ -100,7 +100,7 @@
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"/>
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnNext"
                     android:textColor="@color/colorDisableText"
                     android:background="@drawable/bg_button_disable_rounded"

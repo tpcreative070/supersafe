@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_title"
                 android:textColor="@color/colorTextDark"
                 android:gravity="center"
@@ -119,7 +119,7 @@
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"/>
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:layout_marginBottom="20dp"
                     android:id="@+id/btnFinish"
                     android:textColor="@color/colorDisableText"
