@@ -6,44 +6,42 @@ import android.os.Build
 import android.os.Bundle
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.aboutsupersafeimport.AboutSuperSafeActivity
+import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity
-import co.tpcreative.supersafe.ui.accountmanagerimport.AccountManagerActivity
-import co.tpcreative.supersafe.ui.albumcoverimport.AlbumCoverActivity
-import co.tpcreative.supersafe.ui.albumdetailimport.AlbumDetailActivity
-import co.tpcreative.supersafe.ui.askpermissionimport.AskPermissionActivity
-import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsActivity
+import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity
+import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity
+import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity
 import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivity
-import co.tpcreative.supersafe.ui.cameraimport.CameraActivity
-import co.tpcreative.supersafe.ui.checksystemimport.CheckSystemActivity
-import co.tpcreative.supersafe.ui.cloudmanagerimport.CloudManagerActivity
-import co.tpcreative.supersafe.ui.dashboardimport.DashBoardActivity
-import co.tpcreative.supersafe.ui.enablecloudimport.EnableCloudActivity
-import co.tpcreative.supersafe.ui.facedownimport.FaceDownActivity
-import co.tpcreative.supersafe.ui.fakepinimport.FakePinActivity
-import co.tpcreative.supersafe.ui.fakepinimport.FakePinComponentActivity
-import co.tpcreative.supersafe.ui.helpimport.HelpAndSupportActivity
-import co.tpcreative.supersafe.ui.helpimport.HelpAndSupportContentActivity
-import co.tpcreative.supersafe.ui.lockscreenimport.EnterPinActivity
-import co.tpcreative.supersafe.ui.main_tabimport.MainTabActivity
-import co.tpcreative.supersafe.ui.multiselectsimport.AlbumSelectActivity
-import co.tpcreative.supersafe.ui.photosslideshowimport.PhotoSlideShowActivity
+import co.tpcreative.supersafe.ui.camera.CameraActivity
+import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity
+import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity
+import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity
+import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity
+import co.tpcreative.supersafe.ui.facedown.FaceDownActivity
+import co.tpcreative.supersafe.ui.fakepin.FakePinActivity
+import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity
+import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity
+import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity
+import co.tpcreative.supersafe.ui.main_tab.MainTabActivity
+import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
+import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity
 import co.tpcreative.supersafe.ui.player.PlayerActivity
-import co.tpcreative.supersafe.ui.playerimport.PlayerActivity
-import co.tpcreative.supersafe.ui.premiumimport.PremiumActivity
-import co.tpcreative.supersafe.ui.resetpinimport.ResetPinActivity
-import co.tpcreative.supersafe.ui.restoreimport.RestoreActivity
-import co.tpcreative.supersafe.ui.secretdoorimport.SecretDoorActivity
-import co.tpcreative.supersafe.ui.secretdoorimport.SecretDoorSetUpActivity
+import co.tpcreative.supersafe.ui.premium.PremiumActivity
+import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity
+import co.tpcreative.supersafe.ui.restore.RestoreActivity
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity
 import co.tpcreative.supersafe.ui.settings.SettingsActivity
-import co.tpcreative.supersafe.ui.settingsimport.AlbumSettingsActivity
-import co.tpcreative.supersafe.ui.signinimport.SignInActivity
-import co.tpcreative.supersafe.ui.signupimport.SignUpActivity
-import co.tpcreative.supersafe.ui.themeimport.ThemeSettingsActivity
-import co.tpcreative.supersafe.ui.trashimport.TrashActivity
-import co.tpcreative.supersafe.ui.unlockalbumimport.UnlockAllAlbumActivity
-import co.tpcreative.supersafe.ui.verifyaccountimport.VerifyAccountActivity
-import co.tpcreative.supersafe.ui.verifyimport.VerifyActivity
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity
+import co.tpcreative.supersafe.ui.signin.SignInActivity
+import co.tpcreative.supersafe.ui.signup.SignUpActivity
+import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity
+import co.tpcreative.supersafe.ui.trash.TrashActivity
+import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity
+import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity
+import co.tpcreative.supersafe.ui.verify.VerifyActivity
 import java.util.*
 
 object Navigator {
@@ -115,32 +113,32 @@ object Navigator {
     }
 
     fun onMoveSetPin(context: Context, action: EnumPinAction) {
-        val intent: Intent = EnterPinActivity.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToVerifyPin(activity: Activity, action: EnumPinAction) {
-        val intent: Intent = EnterPinActivity.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinActivity.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         activity.startActivityForResult(intent, Navigator.VERIFY_PIN)
     }
 
     fun onMoveToChangePin(context: Context, action: EnumPinAction) {
-        val intent: Intent = EnterPinActivity.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToFakePin(context: Context, action: EnumPinAction) {
-        val intent: Intent = EnterPinActivity.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToResetPin(context: Context, action: EnumPinAction) {
-        val intent: Intent = EnterPinActivity.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
+        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
