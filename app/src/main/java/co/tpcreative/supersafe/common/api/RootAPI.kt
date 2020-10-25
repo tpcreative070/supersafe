@@ -85,7 +85,7 @@ interface RootAPI {
 
     @FormUrlEncoded
     @POST
-    open fun onRefreshEmailToken(@Url url: String?, @FieldMap request: MutableMap<String, Any?>): Observable<EmailToken>?
+    open fun onRefreshEmailToken(@Url url: String?, @FieldMap request: MutableMap<String?, Any?>): Observable<EmailToken>?
 
     @POST(ADD_EMAIL_TOKEN)
     open fun onAddEmailToken(@Body request: OutlookMailRequest?): Observable<BaseResponse>?

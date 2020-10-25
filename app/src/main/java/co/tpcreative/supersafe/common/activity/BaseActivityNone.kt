@@ -20,7 +20,7 @@ abstract class BaseActivityNone : AppCompatActivity() {
     var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     var onStartCount = 0
-    protected var storage: Storage? = null
+    protected open var storage: Storage? = null
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()
