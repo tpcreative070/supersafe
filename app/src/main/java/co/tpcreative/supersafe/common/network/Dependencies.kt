@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.network
 import android.content.Context
+import co.tpcreative.supersafe.common.api.RootAPI
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -81,7 +82,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         var sInstance: Dependencies<Any>?= null
         fun getInstance(context: Context, url: String): Dependencies<*> {
             if (sInstance == null) {
-                sInstance = Dependencies()
+                sInstance = Dependencies<Any>()
             }
             this.sInstance?.URL = url
             this.sInstance?.context = context
