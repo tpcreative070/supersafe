@@ -43,14 +43,14 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         }
     }
 
-    fun provideRestApi(okHttpClient: OkHttpClient, tClass: Class<T>): T {
+    private fun provideRestApi(okHttpClient: OkHttpClient, tClass: Class<T>): T {
         val gson: Gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC).create()
         retrofitInstance = Retrofit.Builder()
                 .baseUrl(URL)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        return retrofitInstance!!.build()!!.create(tClass)
+        return retrofitInstance!!.build().create(tClass)
     }
 
     override fun getHeaders(): HashMap<String?, String?>? {
