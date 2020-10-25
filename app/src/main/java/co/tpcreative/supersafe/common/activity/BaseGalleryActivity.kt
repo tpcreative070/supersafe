@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.activity
-import android.app.FragmentManager
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.os.Build
@@ -9,6 +8,7 @@ import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import butterknife.ButterKnife
 import butterknife.Unbinder
 import co.tpcreative.supersafe.R
@@ -22,7 +22,7 @@ import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.ui.move_galleryimport.MoveGalleryFragment
+import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment
 import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
 
@@ -34,9 +34,9 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     protected var storage: Storage? = null
     private var fragment: MoveGalleryFragment? = null
     protected fun attachFragment(layoutId: Int) {
-        fragment = MoveGalleryFragment.Companion.newInstance() as MoveGalleryFragment
-        val fragmentManager: FragmentManager = getFragmentManager()
-        fragmentManager.beginTransaction().replace(layoutId, fragment).commit()
+        fragment = MoveGalleryFragment.newInstance() as MoveGalleryFragment
+        val fragmentManager: FragmentManager = supportFragmentManager
+        fragmentManager.beginTransaction().replace(layoutId, fragment!!).commit()
     }
 
     protected fun openAlbum() {

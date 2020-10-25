@@ -265,8 +265,8 @@ object SQLHelper {
         return null
     }
 
-    fun getList(): MutableList<MainCategoryModel?>? {
-        val mList: MutableList<MainCategoryModel?> = ArrayList<MainCategoryModel?>()
+    fun getList(): MutableList<MainCategoryModel>? {
+        val mList: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
         val list: MutableList<MainCategoryModel>? = getListCategories(false, false)
         if (list != null && list.size > 0) {
             mList.addAll(list)
@@ -283,7 +283,9 @@ object SQLHelper {
                 val items: MainCategoryModel? = getTrashItem()
                 val count: Int? = getInstance()?.getLatestItem()
                 items?.categories_max = count!!.toLong()
-                mList.add(items)
+                if (items != null) {
+                    mList.add(items)
+                }
             }
         }
         Collections.sort(mList, Comparator { lhs, rhs ->
@@ -539,13 +541,13 @@ object SQLHelper {
         return null
     }
 
-    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListItems(categories_local_id: String?, isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         if (categories_local_id == null) {
             return null
         }
         try {
             val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_local_id, isDeleteLocal, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -617,10 +619,10 @@ object SQLHelper {
         return null
     }
 
-    fun getListAllItems(isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListAllItems(isDeleteLocal: Boolean, isFakePin: Boolean): MutableList<ItemModel>? {
         try {
             val mList: MutableList<ItemEntityModel>? = getInstance()?.getListAllItems(isDeleteLocal, isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -633,10 +635,10 @@ object SQLHelper {
         return null
     }
 
-    fun getListAllItemsSaved(isSaved: Boolean, isSyncCloud: Boolean): MutableList<ItemModel?>? {
+    fun getListAllItemsSaved(isSaved: Boolean, isSyncCloud: Boolean): MutableList<ItemModel>? {
         try {
             val mList: MutableList<ItemEntityModel>? = getInstance()?.getListAllItemsSaved(isSaved, isSyncCloud)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))
@@ -649,10 +651,10 @@ object SQLHelper {
         return null
     }
 
-    fun getListAllItems(isFakePin: Boolean): MutableList<ItemModel?>? {
+    fun getListAllItems(isFakePin: Boolean): MutableList<ItemModel>? {
         try {
             val mList: MutableList<ItemEntityModel>? = getInstance()?.getListAllItems(isFakePin)
-            val mData: MutableList<ItemModel?> = ArrayList<ItemModel?>()
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
             if (mList != null) {
                 for (index in mList) {
                     mData.add(ItemModel(index))

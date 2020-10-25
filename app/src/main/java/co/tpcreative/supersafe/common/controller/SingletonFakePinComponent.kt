@@ -1,7 +1,5 @@
 package co.tpcreative.supersafe.common.controller
 
-import co.tpcreative.supersafe.common.controllerimport.PremiumManager
-
 class SingletonFakePinComponent {
     private var ls: SingletonPrivateFragmentListener? = null
     fun setListener(ls: SingletonPrivateFragmentListener?) {

@@ -14,7 +14,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        if (holder is FooterViewHolder) {
+        if (holder is FooterViewHolder<*>) {
             return
         }
         holder.bind(mDataSource!!.get(position)!!, position)

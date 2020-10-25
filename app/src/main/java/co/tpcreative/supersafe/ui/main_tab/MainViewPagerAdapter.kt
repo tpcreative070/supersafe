@@ -4,8 +4,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.ui.meimport.MeFragment
-import co.tpcreative.supersafe.ui.privatesimport.PrivateFragment
+import co.tpcreative.supersafe.ui.me.MeFragment
+import co.tpcreative.supersafe.ui.privates.PrivateFragment
 import java.util.*
 /**
  *

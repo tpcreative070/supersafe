@@ -1,32 +1,64 @@
 package co.tpcreative.supersafe.ui.main_tab
 import android.Manifest
-import android.R
+import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.os.Bundle
+import android.text.InputType
+import android.view.*
+import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager.widget.ViewPager
+import butterknife.BindView
+import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.activity.BaseGoogleApi
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManager
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.controllerimport.PremiumManager
+import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
+import co.tpcreative.supersafe.common.presenter.BaseView
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.Categories
-import co.tpcreative.supersafe.model.Image
-import co.tpcreative.supersafe.model.MimeTypeFile
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.common.utilimport.NetworkUtil
+import co.tpcreative.supersafe.common.views.AnimationsContainer
+import co.tpcreative.supersafe.model.*
+import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.DexterError
 import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.PermissionRequestErrorListener
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.leinardi.android.speeddial.SpeedDialActionItem
+import com.leinardi.android.speeddial.SpeedDialView
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
-class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
+class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     @BindView(R.id.speedDial)
     var mSpeedDialView: SpeedDialView? = null
 
@@ -46,7 +78,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     var viewFloatingButton: View? = null
     private var adapter: MainViewPagerAdapter? = null
     private var presenter: MainTabPresenter? = null
-    var animation: FramesSequenceAnimation? = null
+    var animation: AnimationsContainer.FramesSequenceAnimation? = null
     private var menuItem: MenuItem? = null
     private var previousStatus: EnumStatus? = null
     private val mInterstitialAd: InterstitialAd? = null
@@ -56,51 +88,55 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
         setContentView(R.layout.activity_main_tab)
         initSpeedDial(true)
         setSupportActionBar(toolbar)
-        toolbar.inflateMenu(R.menu.main_tab)
-        val ab: ActionBar = getSupportActionBar()
-        ab.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24)
-        ab.setDisplayHomeAsUpEnabled(true)
+        toolbar?.inflateMenu(R.menu.main_tab)
+        val ab: ActionBar? = getSupportActionBar()
+        ab?.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24)
+        ab?.setDisplayHomeAsUpEnabled(true)
         setupViewPager(viewPager)
-        tabLayout.setupWithViewPager(viewPager)
+        tabLayout?.setupWithViewPager(viewPager)
         PrefsController.putBoolean(getString(R.string.key_running), true)
         presenter = MainTabPresenter()
-        presenter.bindView(this)
-        presenter.onGetUserInfo()
+        presenter?.bindView(this)
+        presenter?.onGetUserInfo()
         onShowSuggestion()
-        if (Utils.Companion.isCheckSyncSuggestion()) {
+        if (Utils.isCheckSyncSuggestion()) {
             onSuggestionSyncData()
         }
-        if (presenter.mUser != null) {
-            if (presenter.mUser.driveConnected) {
+        if (presenter!!.mUser != null) {
+            if (presenter!!.mUser?.driveConnected!!) {
                 if (NetworkUtil.pingIpAddress(this)) {
                     return
                 }
-                Utils.Companion.onObserveData(2000, Listener { onAnimationIcon(EnumStatus.DONE) })
+                Utils.onObserveData(2000, object :Listener {
+                    override fun onStart() {
+                        onAnimationIcon(EnumStatus.DONE)
+                    }
+                })
             }
         }
-        Utils.Companion.Log(TAG, "system access token : " + Utils.Companion.getAccessToken())
+        Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
     }
 
     private fun showInterstitial() {
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show()
+        if (mInterstitialAd?.isLoaded()!!) {
+            mInterstitialAd?.show()
         }
     }
 
     fun onShowSuggestion() {
         val isFirstFile: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_files), false)
         if (!isFirstFile) {
-            val mList: MutableList<ItemModel?> = SQLHelper.getListAllItems(false)
+            val mList: MutableList<ItemModel>? = SQLHelper.getListAllItems(false)
             if (mList != null && mList.size > 0) {
                 PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
                 return
             }
-            viewFloatingButton.setVisibility(View.VISIBLE)
+            viewFloatingButton?.setVisibility(View.VISIBLE)
             onSuggestionAddFiles()
         } else {
             val isFirstEnableSyncData: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_enable_sync_data), false)
             if (!isFirstEnableSyncData) {
-                if (presenter.mUser.driveConnected) {
+                if (presenter?.mUser?.driveConnected!!) {
                     PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
                 }
                 onSuggestionSyncData()
@@ -109,7 +145,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {
-        Utils.Companion.Log(TAG, "onOrientationChange")
+        Utils.Log(TAG, "onOrientationChange")
         onFaceDown(isFaceDown)
     }
 
@@ -117,10 +153,10 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.REGISTER_OR_LOGIN -> {
-                rlOverLay.setVisibility(View.INVISIBLE)
+                rlOverLay?.setVisibility(View.INVISIBLE)
             }
             EnumStatus.UNLOCK -> {
-                rlOverLay.setVisibility(View.INVISIBLE)
+                rlOverLay?.setVisibility(View.INVISIBLE)
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
             EnumStatus.FINISH -> {
@@ -128,44 +164,44 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
             }
             EnumStatus.PRIVATE_DONE -> {
                 if (mSpeedDialView != null) {
-                    mSpeedDialView.show()
+                    mSpeedDialView?.show()
                 }
             }
             EnumStatus.DOWNLOAD -> {
                 runOnUiThread(Runnable {
-                    Utils.Companion.Log(TAG, "sync value " + event.name)
+                    Utils.Log(TAG, "sync value " + event.name)
                     onAnimationIcon(event)
                 })
             }
             EnumStatus.UPLOAD -> {
                 runOnUiThread(Runnable {
-                    Utils.Companion.Log(TAG, "sync value " + event.name)
+                    Utils.Log(TAG, "sync value " + event.name)
                     onAnimationIcon(event)
                 })
             }
             EnumStatus.DONE -> {
                 runOnUiThread(Runnable {
-                    Utils.Companion.Log(TAG, "sync value " + event.name)
+                    Utils.Log(TAG, "sync value " + event.name)
                     onAnimationIcon(event)
                 })
             }
             EnumStatus.SYNC_ERROR -> {
                 runOnUiThread(Runnable {
-                    Utils.Companion.Log(TAG, "sync value " + event.name)
+                    Utils.Log(TAG, "sync value " + event.name)
                     onAnimationIcon(event)
                 })
             }
             EnumStatus.REQUEST_ACCESS_TOKEN -> {
                 runOnUiThread(Runnable {
-                    Utils.Companion.Log(TAG, "Request token")
+                    Utils.Log(TAG, "Request token")
                     getAccessToken()
                 })
             }
             EnumStatus.SHOW_FLOATING_BUTTON -> {
-                runOnUiThread(Runnable { mSpeedDialView.show() })
+                runOnUiThread(Runnable { mSpeedDialView?.show() })
             }
             EnumStatus.HIDE_FLOATING_BUTTON -> {
-                runOnUiThread(Runnable { mSpeedDialView.hide() })
+                runOnUiThread(Runnable { mSpeedDialView?.hide() })
             }
             EnumStatus.CONNECTED -> {
                 getAccessToken()
@@ -179,13 +215,11 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
         }
     }
 
-    fun onAlert(content: String?) {
+    fun onAlert(content: String) {
         MaterialDialog.Builder(this).title("Alert")
                 .content(content)
                 .positiveText("Ok")
-                .onPositive(object : SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {}
-                })
+                .onPositive { dialog, which -> }
                 .show()
     }
 
@@ -196,21 +230,21 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
         }
         onCallLockScreen()
         onRegisterHomeWatcher()
-        presenter.onGetUserInfo()
-        ServiceManager.Companion.getInstance().setRequestShareIntent(false)
-        Utils.Companion.Log(TAG, "onResume")
+        presenter?.onGetUserInfo()
+        ServiceManager.getInstance()?.setRequestShareIntent(false)
+        Utils.Log(TAG, "onResume")
     }
 
     protected override fun onDestroy() {
         super.onDestroy()
-        Utils.Companion.Log(TAG, "OnDestroy")
-        Utils.Companion.onUpdatedCountRate()
+        Utils.Log(TAG, "OnDestroy")
+        Utils.onUpdatedCountRate()
         EventBus.getDefault().unregister(this)
         PrefsController.putBoolean(getString(R.string.second_loads), true)
-        if (SingletonManager.Companion.getInstance().isReloadMainTab()) {
-            SingletonManager.Companion.getInstance().setReloadMainTab(false)
+        if (SingletonManager.getInstance().isReloadMainTab()) {
+            SingletonManager.getInstance().setReloadMainTab(false)
         } else {
-            ServiceManager.Companion.getInstance().onDismissServices()
+            ServiceManager.getInstance()?.onDismissServices()
         }
     }
 
@@ -218,15 +252,15 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             R.id.home -> {
-                Utils.Companion.Log(TAG, "Home action")
+                Utils.Log(TAG, "Home action")
                 if (presenter != null) {
-                    if (presenter.mUser.verified) {
-                        Navigator.onManagerAccount(getActivity())
+                    if (presenter?.mUser?.verified!!) {
+                        Navigator.onManagerAccount(getActivity()!!)
                     } else {
-                        Navigator.onVerifyAccount(getActivity())
+                        Navigator.onVerifyAccount(getActivity()!!)
                     }
                 }
                 return true
@@ -248,18 +282,18 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     }
 
     private fun setupViewPager(viewPager: ViewPager?) {
-        viewPager.setOffscreenPageLimit(3)
-        adapter = MainViewPagerAdapter(getSupportFragmentManager())
-        viewPager.setAdapter(adapter)
+        viewPager?.offscreenPageLimit = 3
+        adapter = MainViewPagerAdapter(supportFragmentManager)
+        viewPager?.adapter = adapter
     }
 
     private fun initSpeedDial(addActionItems: Boolean) {
-        Utils.Companion.Log(TAG, "Init floating button")
-        val mThemeApp: ThemeApp = ThemeApp.Companion.getInstance().getThemeInfo()
+        Utils.Log(TAG, "Init floating button")
+        val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (addActionItems) {
-            var drawable: Drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24)
-            mSpeedDialView.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
+            var drawable: Drawable? = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24)
+            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
                             getTheme()))
                     .setLabel(getString(R.string.camera))
                     .setLabelColor(Color.WHITE)
@@ -267,27 +301,27 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                             getTheme()))
                     .create())
             drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24)
-            mSpeedDialView.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
+            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
                             getTheme()))
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                             getTheme()))
                     .create())
-            mSpeedDialView.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp.getPrimaryColor(),
+            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
                             getTheme()))
                     .setLabel(getString(R.string.album))
                     .setLabelColor(getResources().getColor(R.color.white))
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                             getTheme()))
                     .create())
-            mSpeedDialView.show()
+            mSpeedDialView?.show()
         }
 
         //Set main action clicklistener.
-        mSpeedDialView.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+        mSpeedDialView?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
             override fun onMainActionSelected(): Boolean {
                 return false // True to keep the Speed Dial open
             }
@@ -295,14 +329,14 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
             override fun onToggleChanged(isOpen: Boolean) {
                 //mSpeedDialView.setMainFabOpenedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
                 //mSpeedDialView.setMainFabClosedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
-                Utils.Companion.Log(TAG, "Speed dial toggle state changed. Open = $isOpen")
+                Utils.Log(TAG, "Speed dial toggle state changed. Open = $isOpen")
             }
         })
 
         //Set option fabs clicklisteners.
-        mSpeedDialView.setOnActionSelectedListener(object : OnActionSelectedListener {
+        mSpeedDialView?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
             override fun onActionSelected(actionItem: SpeedDialActionItem?): Boolean {
-                when (actionItem.getId()) {
+                when (actionItem?.getId()) {
                     R.id.fab_album -> {
                         onShowDialog()
                         return false // false will close it without animation
@@ -329,24 +363,24 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                 .inputType(InputType.TYPE_CLASS_TEXT)
                 .negativeText(getString(R.string.cancel))
                 .positiveText(getString(R.string.ok))
-                .input(null, null, object : InputCallback {
+                .input(null, null, object : MaterialDialog.InputCallback {
                     override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                        Utils.Companion.Log(TAG, "Value")
+                        Utils.Log(TAG, "Value")
                         val value = input.toString()
-                        val base64Code: String = Utils.Companion.getHexCode(value)
-                        val item: MainCategoryModel = SQLHelper.getTrashItem()
-                        val result: String = item.categories_hex_name
+                        val base64Code: String = Utils.getHexCode(value)
+                        val item: MainCategoryModel? = SQLHelper.getTrashItem()
+                        val result: String? = item?.categories_hex_name
                         if (base64Code == result) {
                             Toast.makeText(this@MainTabActivity, "This name already existing", Toast.LENGTH_SHORT).show()
                         } else {
                             val response: Boolean = SQLHelper.onAddCategories(base64Code, value, false)
                             if (response) {
                                 Toast.makeText(this@MainTabActivity, "Created album successful", Toast.LENGTH_SHORT).show()
-                                ServiceManager.Companion.getInstance().onPreparingSyncCategoryData()
+                                ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                             } else {
                                 Toast.makeText(this@MainTabActivity, "Album name already existing", Toast.LENGTH_SHORT).show()
                             }
-                            SingletonPrivateFragment.Companion.getInstance().onUpdateView()
+                            SingletonPrivateFragment.getInstance()?.onUpdateView()
                         }
                     }
                 })
@@ -359,89 +393,87 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                         Manifest.permission.CAMERA)
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        if (report.areAllPermissionsGranted()) {
-                            val list: MutableList<MainCategoryModel?> = SQLHelper.getList()
+                        if (report?.areAllPermissionsGranted()!!) {
+                            val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
                             if (list != null) {
                                 Navigator.onMoveCamera(this@MainTabActivity, list[0])
                             }
                         } else {
-                            Utils.Companion.Log(TAG, "Permission is denied")
+                            Utils.Log(TAG, "Permission is denied")
                         }
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             /*Miss add permission in manifest*/
-                            Utils.Companion.Log(TAG, "request permission is failed")
+                            Utils.Log(TAG, "request permission is failed")
                         }
                     }
 
                     override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
                         /* ... */
-                        token.continuePermissionRequest()
+                        token?.continuePermissionRequest()
                     }
                 })
-                .withErrorListener(object : PermissionRequestErrorListener {
-                    override fun onError(error: DexterError?) {
-                        Utils.Companion.Log(TAG, "error ask permission")
-                    }
-                }).onSameThread().check()
+                .withErrorListener {
+                    Utils.Log(TAG, "error ask permission")
+                }.onSameThread().check()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Utils.Companion.Log(TAG, "Selected album :")
+        Utils.Log(TAG, "Selected album :")
         when (requestCode) {
             Navigator.COMPLETED_RECREATE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     SingletonManager.Companion.getInstance().setReloadMainTab(true)
                     Navigator.onMoveToMainTab(this)
-                    Utils.Companion.Log(TAG, "New Activity")
+                    Utils.Log(TAG, "New Activity")
                 } else {
-                    Utils.Companion.Log(TAG, "Nothing Updated theme")
+                    Utils.Log(TAG, "Nothing Updated theme")
                 }
             }
             Navigator.CAMERA_ACTION -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    Utils.Companion.Log(TAG, "reload data")
-                    SingletonPrivateFragment.Companion.getInstance().onUpdateView()
+                    Utils.Log(TAG, "reload data")
+                    SingletonPrivateFragment.getInstance()?.onUpdateView()
                 } else {
-                    Utils.Companion.Log(TAG, "Nothing to do on Camera")
+                    Utils.Log(TAG, "Nothing to do on Camera")
                 }
             }
             Navigator.PHOTO_SLIDE_SHOW -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    Utils.Companion.Log(TAG, "reload data")
-                    SingletonPrivateFragment.Companion.getInstance().onUpdateView()
+                    Utils.Log(TAG, "reload data")
+                    SingletonPrivateFragment.getInstance()?.onUpdateView()
                 } else {
-                    Utils.Companion.Log(TAG, "Nothing to do on Camera")
+                    Utils.Log(TAG, "Nothing to do on Camera")
                 }
             }
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    val images: ArrayList<Image?> = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
-                    val mListImportFiles: MutableList<ImportFilesModel?> = ArrayList<ImportFilesModel?>()
+                    val images: ArrayList<Image>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
+                    val mListImportFiles: MutableList<ImportFilesModel> = ArrayList<ImportFilesModel>()
                     var i = 0
-                    val l = images.size
-                    while (i < l) {
+                    val l = images?.size
+                    while (i < l!!) {
                         val path = images[i].path
                         val name = images[i].name
                         val id = "" + images[i].id
-                        val mimeType: String = Utils.Companion.getMimeType(path)
-                        Utils.Companion.Log(TAG, "mimeType $mimeType")
-                        Utils.Companion.Log(TAG, "name $name")
-                        Utils.Companion.Log(TAG, "path $path")
-                        val fileExtension: String = Utils.Companion.getFileExtension(path)
-                        Utils.Companion.Log(TAG, "file extension " + Utils.Companion.getFileExtension(path))
+                        val mimeType: String? = Utils.getMimeType(path)
+                        Utils.Log(TAG, "mimeType $mimeType")
+                        Utils.Log(TAG, "name $name")
+                        Utils.Log(TAG, "path $path")
+                        val fileExtension: String? = Utils.getFileExtension(path)
+                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path))
                         try {
-                            val mimeTypeFile: MimeTypeFile = Utils.Companion.mediaTypeSupport().get(fileExtension)
+                            val mimeTypeFile: MimeTypeFile = Utils.mediaTypeSupport().get(fileExtension)
                                     ?: return
                             mimeTypeFile.name = name
-                            val list: MutableList<MainCategoryModel?> = SQLHelper.getList()
+                            val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
                             if (list == null) {
-                                Utils.Companion.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
+                                Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
                                 return
                             }
                             val mCategory: MainCategoryModel? = list[0]
-                            Utils.Companion.Log(TAG, "Show category " + Gson().toJson(mCategory))
+                            Utils.Log(TAG, "Show category " + Gson().toJson(mCategory))
                             val importFiles = ImportFilesModel(list[0], mimeTypeFile, path, i, false)
                             mListImportFiles.add(importFiles)
                         } catch (e: Exception) {
@@ -449,14 +481,14 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                         }
                         i++
                     }
-                    ServiceManager.Companion.getInstance().setListImport(mListImportFiles)
-                    ServiceManager.Companion.getInstance().onPreparingImportData()
+                    ServiceManager.getInstance()?.setListImport(mListImportFiles)
+                    ServiceManager.getInstance()?.onPreparingImportData()
                 } else {
-                    Utils.Companion.Log(TAG, "Nothing to do on Gallery")
+                    Utils.Log(TAG, "Nothing to do on Gallery")
                 }
             }
             else -> {
-                Utils.Companion.Log(TAG, "Nothing to do")
+                Utils.Log(TAG, "Nothing to do")
             }
         }
     }
@@ -466,18 +498,18 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
         if (toolbar == null) {
             return false
         }
-        toolbar.inflateMenu(R.menu.main_tab)
-        menuItem = toolbar.getMenu().getItem(0)
+        toolbar?.inflateMenu(R.menu.main_tab)
+        menuItem = toolbar?.getMenu()?.getItem(0)
         return true
     }
 
-    fun getMenuItem(): MenuItem? {
+    private fun getMenuItem(): MenuItem? {
         return menuItem
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
-        val user: User = Utils.Companion.getUserInfo()
+        val user: User? = Utils.getUserInfo()
         if (user != null) {
             if (!user.driveConnected) {
                 onAnimationIcon(EnumStatus.SYNC_ERROR)
@@ -486,23 +518,23 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     }
 
     override fun onBackPressed() {
-        if (mSpeedDialView.isOpen()) {
-            mSpeedDialView.close()
+        if (mSpeedDialView?.isOpen()!!) {
+            mSpeedDialView?.close()
         } else {
-            PremiumManager.Companion.getInstance().onStop()
-            Utils.Companion.onDeleteTemporaryFile()
-            Utils.Companion.onExportAndImportFile(SuperSafeApplication.Companion.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.Companion.getInstance().getSupersafeBackup(), object : ServiceManagerSyncDataListener {
+            PremiumManager.getInstance().onStop()
+            Utils.onDeleteTemporaryFile()
+            Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), object : ServiceManager.ServiceManagerSyncDataListener {
                 override fun onCompleted() {
-                    Utils.Companion.Log(TAG, "Exporting successful")
+                    Utils.Log(TAG, "Exporting successful")
                 }
 
                 override fun onError() {
-                    Utils.Companion.Log(TAG, "Exporting error")
+                    Utils.Log(TAG, "Exporting error")
                 }
 
                 override fun onCancel() {}
             })
-            SuperSafeApplication.Companion.getInstance().writeUserSecret(presenter.mUser)
+            SuperSafeApplication.getInstance().writeUserSecret(presenter?.mUser)
             val isPressed: Boolean = PrefsController.getBoolean(getString(R.string.we_are_a_team), false)
             if (isPressed) {
                 super.onBackPressed()
@@ -511,7 +543,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                 if (isSecondLoad) {
                     val isPositive: Boolean = PrefsController.getBoolean(getString(R.string.we_are_a_team_positive), false)
                     mCountToRate = PrefsController.getInt(getString(R.string.key_count_to_rate), 0)
-                    if (!isPositive && mCountToRate > Utils.Companion.COUNT_RATE) {
+                    if (!isPositive && mCountToRate > Utils.COUNT_RATE) {
                         onAskingRateApp()
                     } else {
                         super.onBackPressed()
@@ -524,49 +556,49 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     }
 
     fun onAnimationIcon(status: EnumStatus?) {
-        Utils.Companion.Log(TAG, "value : " + status.name)
+        Utils.Log(TAG, "value : " + status?.name)
         if (getMenuItem() == null) {
-            Utils.Companion.Log(TAG, "Menu is nulll")
+            Utils.Log(TAG, "Menu is nulll")
             return
         }
         if (previousStatus == status && status == EnumStatus.DOWNLOAD) {
-            Utils.Companion.Log(TAG, "Action here 1")
+            Utils.Log(TAG, "Action here 1")
             return
         }
         if (previousStatus == status && status == EnumStatus.UPLOAD) {
-            Utils.Companion.Log(TAG, "Action here 2")
+            Utils.Log(TAG, "Action here 2")
             return
         }
         val item = getMenuItem()
         if (animation != null) {
-            animation.stop()
+            animation?.stop()
         }
-        Utils.Companion.Log(TAG, "Calling AnimationsContainer........................")
-        Utils.Companion.onWriteLog("Calling AnimationsContainer", EnumStatus.CREATE)
+        Utils.Log(TAG, "Calling AnimationsContainer........................")
+        Utils.onWriteLog("Calling AnimationsContainer", EnumStatus.CREATE)
         previousStatus = status
-        animation = AnimationsContainer.Companion.getInstance().createSplashAnim(item, status)
-        animation.start()
+        animation = AnimationsContainer.getInstance()?.createSplashAnim(item, status)
+        animation?.start()
     }
 
     /*MainTab View*/
-    override fun onStartLoading(status: EnumStatus?) {}
-    override fun onStopLoading(status: EnumStatus?) {}
+    override fun onStartLoading(status: EnumStatus) {}
+    override fun onStopLoading(status: EnumStatus) {}
     override fun getContext(): Context? {
         return getApplicationContext()
     }
 
-    protected override fun onDriveClientReady() {}
-    protected override fun isSignIn(): Boolean {
+    override fun onDriveClientReady() {}
+    override fun isSignIn(): Boolean {
         return false
     }
 
-    protected override fun onDriveSuccessful() {
+    override fun onDriveSuccessful() {
         onCheckRequestSignOut()
     }
 
-    protected override fun onDriveError() {}
-    protected override fun onDriveSignOut() {}
-    protected override fun onDriveRevokeAccess() {}
+    override fun onDriveError() {}
+    override fun onDriveSignOut() {}
+    override fun onDriveRevokeAccess() {}
     override fun onError(message: String?, status: EnumStatus?) {}
     override fun onError(message: String?) {}
     override fun onSuccessful(message: String?) {}
@@ -575,9 +607,9 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
         return this
     }
 
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: Any?) {}
-    protected override fun startServiceNow() {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<*>?) {}
+    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
+    override fun startServiceNow() {}
+    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     fun onSuggestionAddFiles() {
         TapTargetView.showFor(this,  // `this` is an Activity
                 TapTarget.forView(viewFloatingButton, getString(R.string.tap_here_to_add_items), getString(R.string.tap_here_to_add_items_description))
@@ -595,34 +627,34 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                     // The listener can listen for regular clicks, long clicks or cancels
                     override fun onTargetClick(view: TapTargetView?) {
                         super.onTargetClick(view) // This call is optional
-                        mSpeedDialView.open()
-                        view.dismiss(true)
-                        viewFloatingButton.setVisibility(View.GONE)
+                        mSpeedDialView?.open()
+                        view?.dismiss(true)
+                        viewFloatingButton?.setVisibility(View.GONE)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
                     }
 
                     override fun onOuterCircleClick(view: TapTargetView?) {
                         super.onOuterCircleClick(view)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
-                        view.dismiss(true)
-                        viewFloatingButton.setVisibility(View.GONE)
-                        Utils.Companion.Log(TAG, "onOuterCircleClick")
+                        view?.dismiss(true)
+                        viewFloatingButton?.setVisibility(View.GONE)
+                        Utils.Log(TAG, "onOuterCircleClick")
                     }
 
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                         super.onTargetDismissed(view, userInitiated)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
-                        view.dismiss(true)
-                        viewFloatingButton.setVisibility(View.GONE)
-                        Utils.Companion.Log(TAG, "onTargetDismissed")
+                        view?.dismiss(true)
+                        viewFloatingButton?.setVisibility(View.GONE)
+                        Utils.Log(TAG, "onTargetDismissed")
                     }
 
                     override fun onTargetCancel(view: TapTargetView?) {
                         super.onTargetCancel(view)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
-                        view.dismiss(true)
-                        viewFloatingButton.setVisibility(View.GONE)
-                        Utils.Companion.Log(TAG, "onTargetCancel")
+                        view?.dismiss(true)
+                        viewFloatingButton?.setVisibility(View.GONE)
+                        Utils.Log(TAG, "onTargetCancel")
                     }
                 })
     }
@@ -644,36 +676,36 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                     override fun onTargetClick(view: TapTargetView?) {
                         super.onTargetClick(view) // This call is optional
                         onEnableSyncData()
-                        view.dismiss(true)
+                        view?.dismiss(true)
                         PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        Utils.Companion.Log(TAG, "onTargetClick")
+                        Utils.Log(TAG, "onTargetClick")
                     }
 
                     override fun onOuterCircleClick(view: TapTargetView?) {
                         super.onOuterCircleClick(view)
                         PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        view.dismiss(true)
-                        Utils.Companion.Log(TAG, "onOuterCircleClick")
+                        view?.dismiss(true)
+                        Utils.Log(TAG, "onOuterCircleClick")
                     }
 
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                         super.onTargetDismissed(view, userInitiated)
                         PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        view.dismiss(true)
-                        Utils.Companion.Log(TAG, "onTargetDismissed")
+                        view?.dismiss(true)
+                        Utils.Log(TAG, "onTargetDismissed")
                     }
 
                     override fun onTargetCancel(view: TapTargetView?) {
                         super.onTargetCancel(view)
                         PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        view.dismiss(true)
-                        Utils.Companion.Log(TAG, "onTargetCancel")
+                        view?.dismiss(true)
+                        Utils.Log(TAG, "onTargetCancel")
                     }
                 })
     }
 
     fun onEnableSyncData() {
-        val mUser: User = Utils.Companion.getUserInfo()
+        val mUser: User? = Utils.getUserInfo()
         if (mUser != null) {
             if (mUser.verified) {
                 if (!mUser.driveConnected) {
@@ -688,10 +720,10 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
     }
 
     fun onAskingRateApp() {
-        val inflater: LayoutInflater = getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater: LayoutInflater = getContext()?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.custom_view_rate_app_dialog, null)
-        val happy: TextView? = view.findViewById<TextView?>(R.id.tvHappy)
-        val unhappy: TextView? = view.findViewById<TextView?>(R.id.tvUnhappy)
+        val happy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvHappy)
+        val unhappy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvUnhappy)
         val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
                 .title(getString(R.string.how_are_we_doing))
                 .customView(view, true)
@@ -701,23 +733,23 @@ class MainTabActivity : BaseGoogleApi(), BaseView<Any?> {
                 .positiveText(getString(R.string.i_love_it))
                 .negativeText(getString(R.string.report_problem))
                 .neutralText(getString(R.string.no_thanks))
-                .onNeutral(object : SingleButtonCallback {
+                .onNeutral(object : MaterialDialog.SingleButtonCallback {
                     override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                         PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
                         finish()
                     }
                 })
-                .onNegative(object : SingleButtonCallback {
+                .onNegative(object : MaterialDialog.SingleButtonCallback {
                     override fun onClick(dialog: MaterialDialog, which: DialogAction) {
                         val categories = Categories(1, getString(R.string.contact_support))
                         val support = HelpAndSupport(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
-                        Navigator.onMoveReportProblem(getContext(), support)
+                        Navigator.onMoveReportProblem(getContext()!!, support)
                         PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
                     }
                 })
-                .onPositive(object : SingleButtonCallback {
+                .onPositive(object : MaterialDialog.SingleButtonCallback {
                     override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                        Utils.Companion.Log(TAG, "Positive")
+                        Utils.Log(TAG, "Positive")
                         onRateApp()
                         PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
                         PrefsController.putBoolean(getString(R.string.we_are_a_team_positive), true)
