@@ -33,7 +33,7 @@ class DriveDescription : Serializable {
     var custom_items = 0
     fun convertToHex(value: String?): String? {
         try {
-            return Utils.stringToHex(value)
+            return value?.let { Utils.stringToHex(it) }
         } catch (e: Exception) {
             Utils.Log(TAG, "Error :" + e.message)
             e.printStackTrace()
@@ -44,7 +44,7 @@ class DriveDescription : Serializable {
 
     fun hexToObject(value: String?): DriveDescription? {
         try {
-            val result: String? = Utils.hexToString(value)
+            val result: String? = value?.let { Utils.hexToString(it) }
             return Gson().fromJson(result, DriveDescription::class.java)
         } catch (e: Exception) {
             Utils.Log(TAG, "Error :" + e.message)
