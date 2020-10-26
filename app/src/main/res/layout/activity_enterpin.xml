@@ -128,7 +128,7 @@
                     android:layout_marginLeft="40dp"
                     android:layout_marginRight="40dp"
                     android:textStyle="bold"
-                    android:id="@+id/title"
+                    android:id="@+id/tvTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
@@ -168,7 +168,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_normal"
                 android:textStyle="bold"
-                android:id="@+id/attempts"
+                android:id="@+id/tvTopAttempts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

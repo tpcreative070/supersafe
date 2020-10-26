@@ -10,21 +10,11 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import butterknife.BindView
-import butterknife.OnClick
-import butterknife.OnLongClick
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseVerifyPinActivity
 import co.tpcreative.supersafe.common.listener.Listener
@@ -36,6 +26,7 @@ import org.greenrobot.eventbus.EventBus
 import java.io.File
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.*
+import co.tpcreative.supersafe.common.extension.instantiate
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.hiddencamera.CameraConfig
 import co.tpcreative.supersafe.common.hiddencamera.CameraError
@@ -46,102 +37,37 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.*
 import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumStatus
-import com.github.kratorius.circleprogress.CircleProgressView
 import com.multidots.fingerprintauth.FingerPrintAuthHelper
+import kotlinx.android.synthetic.main.activity_enterpin.*
+import kotlinx.android.synthetic.main.footer_layout.*
 import kotlinx.android.synthetic.main.include_calculator.*
 import me.grantland.widget.AutofitHelper
 
 class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener {
-    @BindView(R.id.pinlockView)
-    var mPinLockView: PinLockView? = null
-
-    @BindView(R.id.indicator_dots)
-    var mIndicatorDots: IndicatorDots? = null
-
-    @BindView(R.id.title)
-    var mTextTitle: AppCompatTextView? = null
-
-    @BindView(R.id.attempts)
-    var mTextAttempts: AppCompatTextView? = null
-
-    @BindView(R.id.imgLauncher)
-    var imgLauncher: AppCompatImageView? = null
-
-    @BindView(R.id.ic_SuperSafe)
-    var ic_SuperSafe: AppCompatImageView? = null
-
-    @BindView(R.id.rlLockScreen)
-    var rlLockScreen: RelativeLayout? = null
-
-    @BindView(R.id.rlPreference)
-    var rlPreference: RelativeLayout? = null
-
-    @BindView(R.id.llForgotPin)
-    var llForgotPin: LinearLayout? = null
-
-    @BindView(R.id.rlButton)
-    var rlButton: RelativeLayout? = null
-
-    @BindView(R.id.rlDots)
-    var rlDots: RelativeLayout? = null
-
-    @BindView(R.id.rlSecretDoor)
-    var rlSecretDoor: RelativeLayout? = null
-
-    @BindView(R.id.calculator_holder)
-    var calculator_holder: LinearLayout? = null
-
-    @BindView(R.id.btnDone)
-    var btnDone: AppCompatButton? = null
-
-    @BindView(R.id.imgFingerprint)
-    var imgFingerprint: AppCompatImageView? = null
-
-    @BindView(R.id.imgSwitchTypeUnClock)
-    var imgSwitchTypeUnClock: AppCompatImageView? = null
-
-    @BindView(R.id.root)
-    var root: CoordinatorLayout? = null
-
-    @BindView(R.id.toolbar)
-    var toolbar: Toolbar? = null
-
-    @BindView(R.id.llLockScreen_1)
-    var llLockScreen_1: LinearLayout? = null
-
-    @BindView(R.id.rlAttempt)
-    var rlAttempt: RelativeLayout? = null
-
-    @BindView(R.id.crc_standard)
-    var circleProgressView: CircleProgressView? = null
-
-    @BindView(R.id.tvAttempt)
-    var tvAttempt: AppCompatTextView? = null
-
     private var count = 0
     private var countAttempt = 0
-    private var isFingerprint = false
+    var isFingerprint = false
     private var mFirstPin: String? = ""
     private var mCameraConfig: CameraConfig? = null
     private var mFingerPrintAuthHelper: FingerPrintAuthHelper? = null
     private var mRealPin: String? = Utils.getPinFromSharedPreferences()
     private var mFakePin: String? = Utils.getFakePinFromSharedPreferences()
     private var isFakePinEnabled: Boolean = Utils.isEnabledFakePin()
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enterpin)
-        toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        initUI()
         presenter = LockScreenPresenter()
         presenter?.bindView(this)
         val result: Int = getIntent().getIntExtra(EXTRA_SET_PIN, 0)
         mPinAction = EnumPinAction.values()[result]
         val resultNext: Int = getIntent().getIntExtra(EXTRA_ENUM_ACTION, 0)
         mPinActionNext = EnumPinAction.values()[resultNext]
-        SingletonScreenLock.Companion.getInstance()?.setListener(this)
+        SingletonScreenLock.getInstance()?.setListener(this)
         enumPinPreviousAction = mPinAction
         when (mPinAction) {
             EnumPinAction.SET -> {
@@ -157,7 +83,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     if (Utils.isSensorAvailable()) {
                         val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
                         if (isFingerPrintUnLock) {
-                            imgSwitchTypeUnClock?.setVisibility(View.VISIBLE)
+                            imgSwitchTypeUnClock?.visibility = View.VISIBLE
                             isFingerprint = isFingerPrintUnLock
                             onSetVisitFingerprintView(isFingerprint)
                             Utils.Log(TAG, "Action find fingerPrint")
@@ -165,10 +91,10 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     }
                     val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
                     if (value) {
-                        imgSwitchTypeUnClock?.setVisibility(View.INVISIBLE)
+                        imgSwitchTypeUnClock?.visibility = View.INVISIBLE
                         changeLayoutSecretDoor(true)
                     } else {
-                        calculator_holder?.setVisibility(View.INVISIBLE)
+                        calculator_holder?.visibility = View.INVISIBLE
                         onDisplayView()
                         onDisplayText()
                     }
@@ -192,18 +118,14 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                 Utils.Log(TAG, "Noting to do")
             }
         }
-        imgLauncher?.setOnLongClickListener(object : View.OnLongClickListener {
-            override fun onLongClick(view: View?): Boolean {
-                changeLayoutSecretDoor(false)
-                return false
-            }
-        })
-        ic_SuperSafe?.setOnLongClickListener(object : View.OnLongClickListener {
-            override fun onLongClick(view: View?): Boolean {
-                changeLayoutSecretDoor(false)
-                return false
-            }
-        })
+        imgLauncher?.setOnLongClickListener {
+            changeLayoutSecretDoor(false)
+            false
+        }
+        ic_SuperSafe?.setOnLongClickListener {
+            changeLayoutSecretDoor(false)
+            false
+        }
         if (Utils.isSensorAvailable()) {
             mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this)
         }
@@ -277,8 +199,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                 val remain = (response?.div(countAttempt))?.times(100)
                 val result = remain as Int
                 Utils.Log(TAG, "Result $result")
-                circleProgressView?.setValue(result)
-                circleProgressView?.setText(seconds)
+                crc_standard.setValue(result)
+                crc_standard.setText(seconds)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -302,9 +224,9 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {}
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
-        SingletonManager.Companion.getInstance().setVisitLockScreen(false)
+        SingletonManager.getInstance().setVisitLockScreen(false)
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
         val action = EnumPinAction.values()[value]
         when (action) {
@@ -322,34 +244,23 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         Utils.Log(TAG, "onDestroy")
     }
 
-    @OnClick(R.id.btnDone)
-    fun onClickedDone() {
-        finish()
-    }
-
     fun onDelete(view: View?) {
         Utils.Log(TAG, "onDelete here")
-        if (mPinLockView != null) {
-            mPinLockView?.onDeleteClicked()
+        if (pinlockView != null) {
+            pinlockView.onDeleteClicked()
         }
     }
 
-    /*Forgot pin*/
-    @OnClick(R.id.llForgotPin)
-    fun onForgotPin(view: View?) {
-        Navigator.onMoveToForgotPin(this, false)
-    }
-
     fun onSetVisitableForgotPin(value: Int) {
-        llForgotPin?.setVisibility(value)
+        llForgotPin?.visibility = value
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
-        SingletonManager.Companion.getInstance().setVisitLockScreen(true)
+        SingletonManager.getInstance().setVisitLockScreen(true)
         Utils.Log(TAG, "onResume")
-        if (mPinLockView != null) {
-            mPinLockView?.resetPinLockView()
+        if (pinlockView != null) {
+            pinlockView.resetPinLockView()
         }
         onSetVisitableForgotPin(View.GONE)
         if (mFingerPrintAuthHelper != null) {
@@ -360,16 +271,16 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         isFakePinEnabled = Utils.isEnabledFakePin()
     }
 
-    fun onInitPin() {
-        mIndicatorDots?.setActivity(this)
-        mPinLockView?.attachIndicatorDots(mIndicatorDots)
-        mPinLockView?.setPinLockListener(pinLockListener)
-        mPinLockView?.setPinLength(PIN_LENGTH)
-        mIndicatorDots?.setIndicatorType(IndicatorDots.IndicatorType.Companion.FILL_WITH_ANIMATION)
+    private fun onInitPin() {
+        indicator_dots?.setActivity(this)
+        pinlockView.attachIndicatorDots(indicator_dots)
+        pinlockView.setPinLockListener(pinLockListener)
+        pinlockView.setPinLength(PIN_LENGTH)
+        indicator_dots.setIndicatorType(IndicatorDots.IndicatorType.FILL_WITH_ANIMATION)
         onInitHiddenCamera()
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
         if (mFingerPrintAuthHelper != null) {
             mFingerPrintAuthHelper?.stopAuth()
@@ -381,8 +292,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
             EnumPinAction.SET -> {
                 if (mFirstPin == "") {
                     mFirstPin = pin
-                    mTextTitle?.setText(getString(R.string.pinlock_secondPin))
-                    mPinLockView?.resetPinLockView()
+                    tvTitle.setText(getString(R.string.pinlock_secondPin))
+                    pinlockView.resetPinLockView()
                 } else {
                     if (pin == mFirstPin) {
                         Utils.writePinToSharedPreferences(pin)
@@ -403,8 +314,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
             EnumPinAction.CHANGE -> {
                 if (mFirstPin == "") {
                     mFirstPin = pin
-                    mTextTitle?.setText(getString(R.string.pinlock_secondPin))
-                    mPinLockView?.resetPinLockView()
+                    tvTitle.setText(getString(R.string.pinlock_secondPin))
+                    pinlockView.resetPinLockView()
                 } else {
                     if (pin == mFirstPin) {
                         if (Utils.isExistingFakePin(pin, mFakePin)) {
@@ -421,8 +332,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
             EnumPinAction.FAKE_PIN -> {
                 if (mFirstPin == "") {
                     mFirstPin = pin
-                    mTextTitle?.setText(getString(R.string.pinlock_secondPin))
-                    mPinLockView?.resetPinLockView()
+                    tvTitle.text = getString(R.string.pinlock_secondPin)
+                    pinlockView.resetPinLockView()
                 } else {
                     if (pin == mFirstPin) {
                         if (Utils.isExistingRealPin(pin, mRealPin)) {
@@ -439,8 +350,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
             EnumPinAction.RESET -> {
                 if (mFirstPin == "") {
                     mFirstPin = pin
-                    mTextTitle?.setText(getString(R.string.pinlock_secondPin))
-                    mPinLockView?.resetPinLockView()
+                    tvTitle.text = getString(R.string.pinlock_secondPin)
+                    pinlockView.resetPinLockView()
                 } else {
                     if (pin == mFirstPin) {
                         if (Utils.isExistingFakePin(pin, mFakePin)) {
@@ -477,11 +388,9 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     presenter?.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
                 }
             }
-
             override fun onError() {
                 Utils.Log(TAG, "Exporting error")
             }
-
             override fun onCancel() {}
         })
     }
@@ -489,7 +398,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     private fun checkPin(pin: String?, isCompleted: Boolean) {
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
-                if (SingletonManager.Companion.getInstance().isVisitFakePin()) {
+                if (SingletonManager.getInstance().isVisitFakePin()) {
                     if (pin == mFakePin && isFakePinEnabled) {
                         presenter?.onChangeStatus(EnumStatus.FAKE_PIN, EnumPinAction.DONE)
                     } else {
@@ -535,7 +444,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     }
 
     private fun shake() {
-        val objectAnimator: ObjectAnimator = ObjectAnimator.ofFloat(mPinLockView, "translationX", 0f, 25f, -25f, 25f, -25f, 15f, -15f, 6f, -6f, 0f).setDuration(1000)
+        val objectAnimator: ObjectAnimator = ObjectAnimator.ofFloat(pinlockView, "translationX", 0f, 25f, -25f, 25f, -25f, 15f, -15f, 6f, -6f, 0f).setDuration(1000)
         objectAnimator.start()
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
@@ -546,7 +455,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     val attemptWaiting = count * 10000.toLong()
                     mPinAction = EnumPinAction.ATTEMPT
                     onDisplayView()
-                    SingletonScreenLock.Companion.getInstance()?.onStartTimer(attemptWaiting)
+                    SingletonScreenLock.getInstance()?.onStartTimer(attemptWaiting)
                 }
             }
             EnumPinAction.VERIFY_TO_CHANGE -> {
@@ -557,7 +466,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     val attemptWaiting = count * 10000.toLong()
                     mPinAction = EnumPinAction.ATTEMPT
                     onDisplayView()
-                    SingletonScreenLock.Companion.getInstance()?.onStartTimer(attemptWaiting)
+                    SingletonScreenLock.getInstance()?.onStartTimer(attemptWaiting)
                 }
             }
         }
@@ -568,73 +477,73 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         when (mPinAction) {
             EnumPinAction.SET -> {
                 shake()
-                mTextTitle?.setText(title)
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                pinlockView.resetPinLockView()
                 mFirstPin = ""
             }
             EnumPinAction.CHANGE -> {
                 shake()
-                mTextTitle?.setText(title)
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                pinlockView.resetPinLockView()
                 mFirstPin = ""
             }
             EnumPinAction.FAKE_PIN -> {
                 shake()
-                mTextTitle?.setText(title)
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                pinlockView.resetPinLockView()
                 mFirstPin = ""
             }
             EnumPinAction.RESET -> {
                 shake()
-                mTextTitle?.setText(title)
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                pinlockView.resetPinLockView()
                 mFirstPin = ""
             }
             EnumPinAction.VERIFY -> {
                 shake()
-                mTextTitle?.setText(title)
-                mTextAttempts?.setText(getString(R.string.pinlock_wrongpin))
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                tvTopAttempts?.text = getString(R.string.pinlock_wrongpin)
+                pinlockView.resetPinLockView()
             }
             EnumPinAction.VERIFY_TO_CHANGE -> {
                 shake()
-                mTextTitle?.setText(title)
-                mTextAttempts?.setText(getString(R.string.pinlock_wrongpin))
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                tvTopAttempts?.text = getString(R.string.pinlock_wrongpin)
+                pinlockView.resetPinLockView()
             }
             EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
                 shake()
-                mTextTitle?.setText(title)
-                mTextAttempts?.setText(getString(R.string.pinlock_wrongpin))
-                mPinLockView?.resetPinLockView()
+                tvTitle.text = title
+                tvTopAttempts?.text = getString(R.string.pinlock_wrongpin)
+                pinlockView.resetPinLockView()
             }
         }
     }
 
     private fun changeLayoutSecretDoor(isVisit: Boolean) {
         if (isVisit) {
-            mTextTitle?.setVisibility(View.INVISIBLE)
-            rlButton?.setVisibility(View.INVISIBLE)
-            rlDots?.setVisibility(View.INVISIBLE)
-            mTextAttempts?.setVisibility(View.INVISIBLE)
+            tvTitle.visibility = View.INVISIBLE
+            rlButton?.visibility = View.INVISIBLE
+            rlDots?.visibility = View.INVISIBLE
+            tvTopAttempts?.visibility = View.INVISIBLE
             val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
             if (options) {
-                imgLauncher?.setVisibility(View.INVISIBLE)
-                rlSecretDoor?.setVisibility(View.INVISIBLE)
-                calculator_holder?.setVisibility(View.VISIBLE)
+                imgLauncher?.visibility = View.INVISIBLE
+                rlSecretDoor?.visibility = View.INVISIBLE
+                calculator_holder?.visibility = View.VISIBLE
             } else {
-                imgLauncher?.setVisibility(View.VISIBLE)
-                rlSecretDoor?.setVisibility(View.VISIBLE)
-                calculator_holder?.setVisibility(View.INVISIBLE)
+                imgLauncher?.visibility = View.VISIBLE
+                rlSecretDoor?.visibility = View.VISIBLE
+                calculator_holder?.visibility = View.INVISIBLE
             }
         } else {
-            mTextTitle?.setVisibility(View.VISIBLE)
-            rlButton?.setVisibility(View.VISIBLE)
-            rlDots?.setVisibility(View.VISIBLE)
-            mTextAttempts?.setVisibility(View.VISIBLE)
-            mTextAttempts?.setText("")
-            imgLauncher?.setVisibility(View.INVISIBLE)
-            rlSecretDoor?.setVisibility(View.INVISIBLE)
+            tvTitle.visibility = View.VISIBLE
+            rlButton?.visibility = View.VISIBLE
+            rlDots?.visibility = View.VISIBLE
+            tvTopAttempts.visibility = View.VISIBLE
+            tvTopAttempts.text = ""
+            imgLauncher?.visibility = View.INVISIBLE
+            rlSecretDoor?.visibility = View.INVISIBLE
             calculator_holder?.setVisibility(View.INVISIBLE)
             if (Utils.isSensorAvailable()) {
                 val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
@@ -655,7 +564,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         Utils.Log(TAG, "EnumPinAction 1:...." + action?.name)
         when (status) {
             EnumStatus.VERIFY -> {
-                mTextAttempts?.setText("")
+                tvTopAttempts?.setText("")
                 Utils.Log(TAG, "Result here")
                 mPinAction = action
                 when (action) {
@@ -665,12 +574,12 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                         onDisplayView()
                     }
                     EnumPinAction.FAKE_PIN -> {
-                        mPinLockView?.resetPinLockView()
+                        pinlockView.resetPinLockView()
                         onDisplayText()
                         onDisplayView()
                     }
                     EnumPinAction.CHANGE -> {
-                        mPinLockView?.resetPinLockView()
+                        pinlockView.resetPinLockView()
                         onDisplayText()
                         onDisplayView()
                     }
@@ -790,46 +699,46 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         Utils.Log(TAG, "EnumPinAction 2:...." + mPinAction?.name)
         when (mPinAction) {
             EnumPinAction.SET -> {
-                rlLockScreen?.setVisibility(View.VISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.VISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.VERIFY -> {
-                rlLockScreen?.setVisibility(View.VISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.VISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.VERIFY_TO_CHANGE -> {
-                rlLockScreen?.setVisibility(View.VISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.VISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.CHANGE -> {
-                rlLockScreen?.setVisibility(View.VISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.VISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.INIT_PREFERENCE -> {
-                rlLockScreen?.setVisibility(View.INVISIBLE)
-                rlPreference?.setVisibility(View.VISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.INVISIBLE
+                rlPreference?.visibility = View.VISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
-                rlLockScreen?.setVisibility(View.VISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.VISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.FAKE_PIN -> {
-                rlLockScreen?.setVisibility(View.VISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.INVISIBLE)
+                rlLockScreen?.visibility = View.VISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.INVISIBLE
             }
             EnumPinAction.ATTEMPT -> {
-                rlLockScreen?.setVisibility(View.INVISIBLE)
-                rlPreference?.setVisibility(View.INVISIBLE)
-                rlAttempt?.setVisibility(View.VISIBLE)
+                rlLockScreen?.visibility = View.INVISIBLE
+                rlPreference?.visibility = View.INVISIBLE
+                rlAttempt?.visibility = View.VISIBLE
                 val result: String = kotlin.String.format(getString(R.string.in_correct_pin), count.toString() + "", countAttempt.toString() + "")
-                tvAttempt?.setText(result)
+                tvAttempt?.text = result
                 Utils.Log(TAG, mPinAction!!.name)
             }
         }
@@ -839,46 +748,46 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         Utils.Log(TAG, "EnumPinAction 3:...." + mPinAction?.name)
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
-                mTextTitle?.setVisibility(View.INVISIBLE)
-                imgLauncher?.setVisibility(View.VISIBLE)
-                imgLauncher?.setEnabled(false)
+                tvTitle.visibility = View.INVISIBLE
+                imgLauncher?.visibility = View.VISIBLE
+                imgLauncher?.isEnabled = false
             }
             EnumPinAction.VERIFY_TO_CHANGE -> {
-                mTextTitle?.setText(getString(R.string.pinlock_confirm_your_pin))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_confirm_your_pin)
+                tvTitle.visibility = View.VISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
             EnumPinAction.CHANGE -> {
-                mTextTitle?.setText(getString(R.string.pinlock_confirm_create))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_confirm_create)
+                tvTitle.visibility = View.VISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
             EnumPinAction.INIT_PREFERENCE -> {
-                mTextTitle?.setText(getString(R.string.pinlock_confirm_your_pin))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_confirm_your_pin)
+                tvTitle.visibility = View.VISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
             EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN -> {
-                mTextTitle?.setText(getString(R.string.pinlock_confirm_your_pin))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_confirm_your_pin)
+                tvTitle.visibility = View.VISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
             EnumPinAction.FAKE_PIN -> {
-                mTextTitle?.setText(getString(R.string.pinlock_confirm_create))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_confirm_create)
+                tvTitle.visibility = View.VISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
             EnumPinAction.SET -> {
-                mTextTitle?.setText(getString(R.string.pinlock_settitle))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                mTextAttempts?.setVisibility(View.INVISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_settitle)
+                tvTitle.visibility = View.VISIBLE
+                tvTopAttempts?.visibility = View.INVISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
             EnumPinAction.RESET -> {
-                mTextTitle?.setText(getString(R.string.pinlock_settitle))
-                mTextTitle?.setVisibility(View.VISIBLE)
-                mTextAttempts?.setVisibility(View.INVISIBLE)
-                imgLauncher?.setVisibility(View.INVISIBLE)
+                tvTitle.text = getString(R.string.pinlock_settitle)
+                tvTitle.visibility = View.VISIBLE
+                tvTopAttempts?.visibility = View.INVISIBLE
+                imgLauncher?.visibility = View.INVISIBLE
             }
         }
     }
@@ -904,41 +813,30 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
 
     /*Call back end at finger print*/
     fun initActionBar(isInit: Boolean) {
-        val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(isInit)
+        supportActionBar?.setDisplayHomeAsUpEnabled(isInit)
     }
 
     override fun onStartLoading(status: EnumStatus) {}
     override fun onStopLoading(status: EnumStatus) {}
     override fun getContext(): Context? {
-        return getApplicationContext()
-    }
-
-    @OnClick(R.id.imgSwitchTypeUnClock)
-    fun onClickedSwitchTypeUnlock(view: View?) {
-        isFingerprint = if (isFingerprint) {
-            false
-        } else {
-            true
-        }
-        onSetVisitFingerprintView(isFingerprint)
+        return this
     }
 
     fun onSetVisitFingerprintView(isFingerprint: Boolean) {
         if (isFingerprint) {
-            mPinLockView?.setVisibility(View.INVISIBLE)
-            imgFingerprint?.setVisibility(View.VISIBLE)
-            rlDots?.setVisibility(View.INVISIBLE)
-            mTextAttempts?.setText(getString(R.string.use_your_fingerprint_to_unlock_supersafe))
-            mTextAttempts?.setVisibility(View.VISIBLE)
-            mTextTitle?.setText("")
+            pinlockView.visibility = View.INVISIBLE
+            imgFingerprint?.visibility = View.VISIBLE
+            rlDots?.visibility = View.INVISIBLE
+            tvTopAttempts?.text = getString(R.string.use_your_fingerprint_to_unlock_supersafe)
+            tvTopAttempts?.visibility = View.VISIBLE
+            tvTitle.text = ""
         } else {
-            mPinLockView?.setVisibility(View.VISIBLE)
-            imgFingerprint?.setVisibility(View.INVISIBLE)
-            rlDots?.setVisibility(View.VISIBLE)
-            mTextAttempts?.setText("")
-            mTextTitle?.setText(getString(R.string.pinlock_title))
+            pinlockView.visibility = View.VISIBLE
+            imgFingerprint?.visibility = View.INVISIBLE
+            rlDots?.visibility = View.VISIBLE
+            tvTopAttempts?.text = ""
+            tvTitle.text = getString(R.string.pinlock_title)
         }
     }
 
@@ -970,18 +868,18 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             /*Changing pin*/mChangePin = findPreference(getString(R.string.key_change_pin)) as MyPreference?
-            mChangePin?.setOnPreferenceChangeListener(createChangeListener())
-            mChangePin?.setOnPreferenceClickListener(createActionPreferenceClickListener())
+            mChangePin?.onPreferenceChangeListener = createChangeListener()
+            mChangePin?.onPreferenceClickListener = createActionPreferenceClickListener()
             /*Face down*/mFaceDown = findPreference(getString(R.string.key_face_down_lock)) as MySwitchPreference?
             val switchFaceDown: Boolean = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false)
-            mFaceDown?.setOnPreferenceChangeListener(createChangeListener())
-            mFaceDown?.setOnPreferenceClickListener(createActionPreferenceClickListener())
+            mFaceDown?.onPreferenceChangeListener = createChangeListener()
+            mFaceDown?.onPreferenceClickListener = createActionPreferenceClickListener()
             mFaceDown?.setDefaultValue(switchFaceDown)
             Utils.Log(TAG, "default $switchFaceDown")
             /*FingerPrint*/mFingerPrint = findPreference(getString(R.string.key_fingerprint_unlock)) as MySwitchPreference?
             val switchFingerPrint: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
-            mFingerPrint?.setOnPreferenceChangeListener(createChangeListener())
-            mFingerPrint?.setOnPreferenceClickListener(createActionPreferenceClickListener())
+            mFingerPrint?.onPreferenceChangeListener = createChangeListener()
+            mFingerPrint?.onPreferenceClickListener = createActionPreferenceClickListener()
             mFingerPrint?.setDefaultValue(switchFingerPrint)
         }
 
@@ -991,11 +889,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     }
 
     fun onLauncherPreferences() {
-        var fragment: Fragment? = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG)
-        if (fragment == null) {
-            fragment = Fragment.instantiate(this, co.tpcreative.supersafe.ui.lockscreen.EnterPinAct.SettingsFragment::class.java.name)
-        }
-        val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction()
+        val fragment: Fragment = supportFragmentManager.instantiate(SettingsFragment::class.java.name)
+        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.content_frame, fragment)
         transaction.commit()
     }
@@ -1021,13 +916,13 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     override fun onCameraError(errorCode: Int) {
         super.onCameraError(errorCode)
         when (errorCode) {
-            CameraError.Companion.ERROR_CAMERA_OPEN_FAILED -> {
+            CameraError.ERROR_CAMERA_OPEN_FAILED -> {
             }
-            CameraError.Companion.ERROR_IMAGE_WRITE_FAILED -> {
+            CameraError.ERROR_IMAGE_WRITE_FAILED -> {
             }
-            CameraError.Companion.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE -> {
+            CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE -> {
             }
-            CameraError.Companion.ERROR_DOES_NOT_HAVE_FRONT_CAMERA -> showMessage(getString(R.string.error_not_having_camera))
+            CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA -> showMessage(getString(R.string.error_not_having_camera))
         }
     }
 
@@ -1058,7 +953,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         }
         mCameraConfig?.getBuilder(SuperSafeApplication.getInstance())
                 ?.setPin(pin)
-        mCameraConfig?.getBuilder(SuperSafeApplication.getInstance())?.setImageFile(SuperSafeApplication.getInstance().getDefaultStorageFile(CameraImageFormat.Companion.FORMAT_JPEG))
+        mCameraConfig?.getBuilder(SuperSafeApplication.getInstance())?.setImageFile(SuperSafeApplication.getInstance().getDefaultStorageFile(CameraImageFormat.FORMAT_JPEG))
         takePicture()
     }
 
@@ -1077,73 +972,16 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         tvFormula?.text = value
     }
 
-    @OnClick(R.id.btn_plus)
-    fun plusClicked() {
-        mCalc?.handleOperation(Constants.PLUS)
-    }
-
-    @OnClick(R.id.btn_minus)
-    fun minusClicked() {
-        mCalc?.handleOperation(Constants.MINUS)
-    }
-
-    @OnClick(R.id.btn_multiply)
-    fun multiplyClicked() {
-        mCalc?.handleOperation(Constants.MULTIPLY)
-    }
-
-    @OnClick(R.id.btn_divide)
-    fun divideClicked() {
-        mCalc?.handleOperation(Constants.DIVIDE)
-    }
-
-    @OnClick(R.id.btn_modulo)
-    fun moduloClicked() {
-        mCalc?.handleOperation(Constants.MODULO)
-    }
-
-    @OnClick(R.id.btn_power)
-    fun powerClicked() {
-        mCalc?.handleOperation(Constants.POWER)
-    }
-
-    @OnClick(R.id.btn_root)
-    fun rootClicked() {
-        mCalc?.handleOperation(Constants.ROOT)
-    }
-
-    @OnClick(R.id.btn_clear)
-    fun clearClicked() {
-        mCalc?.handleClear()
-    }
-
-    @OnLongClick(R.id.btn_clear)
-    fun clearLongClicked(): Boolean {
-        mCalc?.handleReset()
-        return true
-    }
-
-    @OnClick(R.id.btn_equals)
-    fun equalsClicked() {
-        mCalc?.handleEquals()
-    }
-
-    @OnClick(R.id.btn_decimal, R.id.btn_0, R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4, R.id.btn_5, R.id.btn_6, R.id.btn_7, R.id.btn_8, R.id.btn_9)
-    fun numpadClick(view: View?) {
-        view?.getId()?.let { numpadClicked(it) }
-    }
-
     fun numpadClicked(id: Int) {
         mCalc?.numpadClicked(id)
     }
 
     companion object {
         val TAG = EnterPinAct::class.java.simpleName
-        private val FRAGMENT_TAG: String? = co.tpcreative.supersafe.ui.settings.SettingsActivity::class.java.getSimpleName() + "::fragmentTag"
         val EXTRA_SET_PIN: String? = "SET_PIN"
         val EXTRA_ENUM_ACTION: String? = "ENUM_ACTION"
         private const val PIN_LENGTH = 100
-        private var mCalc: CalculatorImpl? = null
+        var mCalc: CalculatorImpl? = null
         private var mPinAction: EnumPinAction? = null
         private var enumPinPreviousAction: EnumPinAction? = null
         private var mPinActionNext: EnumPinAction? = null
