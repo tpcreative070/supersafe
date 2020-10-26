@@ -6,10 +6,10 @@ import android.content.*
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.media.ThumbnailUtils
 import android.os.IBinder
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
@@ -116,19 +116,19 @@ class ServiceManager : BaseServiceView<Any?> {
         if (Utils.getUserId() == null) {
             return
         }
-        Utils.Log(ServiceManager.Companion.TAG, "onPreparingSyncData...???")
+        Utils.Log(TAG, "onPreparingSyncData...???")
         if (!Utils.isAllowSyncData()) {
-            Utils.Log(ServiceManager.Companion.TAG, "onPreparingSyncData is unauthorized $isDownloadData")
+            Utils.Log(TAG, "onPreparingSyncData is unauthorized $isDownloadData")
             Utils.onWriteLog(EnumStatus.AUTHOR_SYNC, EnumStatus.AUTHOR_SYNC, "onPreparingSyncData is unauthorized")
             return
         }
         if (isGetItemList) {
-            Utils.Log(ServiceManager.Companion.TAG, "onPreparingSyncData is getting item list. Please wait")
+            Utils.Log(TAG, "onPreparingSyncData is getting item list. Please wait")
             Utils.onWriteLog(EnumStatus.GET_LIST_FILE, EnumStatus.ERROR, "onPreparingSyncData is getting item list. Please wait")
             return
         }
         if (isDownloadData) {
-            Utils.Log(ServiceManager.TAG, "onPreparingSyncData is downloading. Please wait")
+            Utils.Log(TAG, "onPreparingSyncData is downloading. Please wait")
             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.ERROR, "onPreparingSyncData is downloading. Please wait")
             return
         }
@@ -138,17 +138,17 @@ class ServiceManager : BaseServiceView<Any?> {
             return
         }
         if (isDeleteItemData) {
-            Utils.Log(ServiceManager.TAG, "onPreparingSyncData is deleting. Please wait")
+            Utils.Log(TAG, "onPreparingSyncData is deleting. Please wait")
             Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.ERROR, "onPreparingSyncData is deleting. Please wait")
             return
         }
         if (isDeleteCategoryData) {
-            Utils.Log(ServiceManager.TAG, "onPreparingSyncData is deleting category. Please wait")
+            Utils.Log(TAG, "onPreparingSyncData is deleting category. Please wait")
             Utils.onWriteLog(EnumStatus.DELETE_CATEGORIES, EnumStatus.ERROR, "onPreparingSyncData is deleting category. Please wait")
             return
         }
         if (isImportData) {
-            Utils.Log(ServiceManager.TAG, "onPreparingSyncData is importing. Please wait")
+            Utils.Log(TAG, "onPreparingSyncData is importing. Please wait")
             Utils.onWriteLog(EnumStatus.IMPORTING, EnumStatus.ERROR, "onPreparingSyncData is importing. Please wait")
             return
         }
@@ -297,7 +297,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             onUpdateCategoryData(mUpdatedItem)
                             isUpdateCategoryData = true
                             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.DONE, Gson().toJson(itemModel))
-                            Utils.Log(ServiceManager.Companion.TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
+                            Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -353,7 +353,7 @@ class ServiceManager : BaseServiceView<Any?> {
                     } else {
                         isDeleteCategoryData = false
                         Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(mainCategoryModel))
-                        Utils.Log(ServiceManager.Companion.TAG, "Deleted completely...............")
+                        Utils.Log(TAG, "Deleted completely...............")
                         Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DELETED_CATEGORY_SUCCESSFULLY, "Total uploading " + mMapDeleteCategory.size)
                         onPreparingDownloadData(mDownloadList)
                     }
@@ -496,7 +496,7 @@ class ServiceManager : BaseServiceView<Any?> {
         if (myService != null) {
             mStart = 20
             Utils.onPushEventBus(EnumStatus.UPLOAD)
-            myService?.onUploadFileInAppFolder(itemModel, object : ServiceManager.UploadServiceListener {
+            myService?.onUploadFileInAppFolder(itemModel, object : UploadServiceListener {
                 override fun onProgressUpdate(percentage: Int) {
                     isUploadData = true
                     if (mStart == percentage) {
@@ -504,13 +504,8 @@ class ServiceManager : BaseServiceView<Any?> {
                         mStart += 20
                     }
                 }
-
                 override fun onFinish() {}
                 override fun onResponseData(response: DriveResponse) {
-                    if (response == null) {
-                        isUploadData = false
-                        return
-                    }
                     response.id?.let {
                         onInsertItem(itemModel, it, object : ServiceManagerInsertItem {
                             override fun onCancel() {
@@ -559,12 +554,12 @@ class ServiceManager : BaseServiceView<Any?> {
                             val mUploadItem: ItemModel? = Utils.getArrayOfIndexHashMap(mMapUpload)
                             if (mUploadItem != null) {
                                 onUploadData(mUploadItem)
-                                Utils.Log(ServiceManager.Companion.TAG, "Next upload item..............." + Gson().toJson(mUploadItem))
+                                Utils.Log(TAG, "Next upload item..............." + Gson().toJson(mUploadItem))
                                 isUploadData = true
                             } else {
                                 isUploadData = false
                                 onPreparingUpdateItemData()
-                                Utils.Log(ServiceManager.Companion.TAG, "Upload completely...............")
+                                Utils.Log(TAG, "Upload completely...............")
                                 Utils.onWriteLog(EnumStatus.UPLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
                                 Utils.onPushEventBus(EnumStatus.UPLOAD_COMPLETED)
                                 Utils.onPushEventBus(EnumStatus.DONE)
@@ -587,7 +582,7 @@ class ServiceManager : BaseServiceView<Any?> {
             val itemModel: ItemModel? = Utils.getArrayOfIndexHashMap(mMapUpdateItem)
             if (itemModel != null) {
                 Utils.onWriteLog(EnumStatus.UPDATE, EnumStatus.PROGRESS, "Total updating " + mMapUpdateItem.size)
-                Utils.Log(ServiceManager.Companion.TAG, "onPreparingUpdateItemData ==> total: " + mMapUpdateItem.size)
+                Utils.Log(TAG, "onPreparingUpdateItemData ==> total: " + mMapUpdateItem.size)
                 onUpdateItemData(itemModel)
             }
         } else {
@@ -605,7 +600,6 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String, status: EnumStatus) {
                     isUpdateItemData = false
                 }
-
                 override fun onSuccessful(message: String, status: EnumStatus) {
                     isUpdateItemData = false
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapUpdateItem)) {
@@ -643,11 +637,11 @@ class ServiceManager : BaseServiceView<Any?> {
         if (itemModel != null) {
             Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.PROGRESS, "Total Delete category " + mMapDeleteItem.size)
             onDeleteData(itemModel)
-            Utils.Log(ServiceManager.Companion.TAG, "Preparing to delete data " + mMapDeleteItem.size)
+            Utils.Log(TAG, "Preparing to delete data " + mMapDeleteItem.size)
         } else {
-            Utils.Log(ServiceManager.Companion.TAG, "Not found item to upload")
-            Utils.Log(ServiceManager.Companion.TAG, "Not found item to delete ")
-            Utils.Log(ServiceManager.Companion.TAG, "Sync items completely======>ready to test")
+            Utils.Log(TAG, "Not found item to upload")
+            Utils.Log(TAG, "Not found item to delete ")
+            Utils.Log(TAG, "Sync items completely======>ready to test")
             isDeleteItemData = false
             isHandleLogic = false
             Utils.onPushEventBus(EnumStatus.DONE)
@@ -674,7 +668,6 @@ class ServiceManager : BaseServiceView<Any?> {
                     override fun onError(message: String, status: EnumStatus) {
                         isDeleteItemData = false
                     }
-
                     override fun onSuccessful(message: String, status: EnumStatus) {
                         if (Utils.deletedIndexOfHashMap(itemModel, mMapDeleteItem)) {
                             /*Delete local db and folder name*/
@@ -688,15 +681,15 @@ class ServiceManager : BaseServiceView<Any?> {
                             } else {
                                 isDeleteItemData = false
                                 Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(itemModel))
-                                Utils.Log(ServiceManager.Companion.TAG, "Deleted completely...............")
+                                Utils.Log(TAG, "Deleted completely...............")
                                 Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DELETED_ITEM_SUCCESSFULLY, "Total deleted " + mMapDeleteItem.size)
-                                Utils.Log(ServiceManager.Companion.TAG, "Not found item to upload")
-                                Utils.Log(ServiceManager.Companion.TAG, "Not found item to delete ")
-                                Utils.Log(ServiceManager.Companion.TAG, "Sync items completely======>ready to test")
+                                Utils.Log(TAG, "Not found item to upload")
+                                Utils.Log(TAG, "Not found item to delete ")
+                                Utils.Log(TAG, "Sync items completely======>ready to test")
                                 isHandleLogic = false
                                 Utils.onPushEventBus(EnumStatus.DONE)
                                 Utils.checkRequestUploadItemData()
-                                SingletonPrivateFragment.Companion.getInstance()?.onUpdateView()
+                                SingletonPrivateFragment.getInstance()?.onUpdateView()
                             }
                         }
                     }
@@ -744,14 +737,14 @@ class ServiceManager : BaseServiceView<Any?> {
 
     /*Import data from gallery*/
     private fun onImportData(importFiles: ImportFilesModel) {
-        subscriptions = Observable.create<Any?>(ObservableOnSubscribe<Any?> { subscriber: ObservableEmitter<Any?>? ->
-            val mMimeTypeFile: MimeTypeFile = importFiles?.mimeTypeFile!!
+        subscriptions = Observable.create<Any?> { subscriber: ObservableEmitter<Any?>? ->
+            val mMimeTypeFile: MimeTypeFile = importFiles.mimeTypeFile!!
             val enumTypeFile = mMimeTypeFile.formatType
-            val mPath: String = importFiles?.path!!
+            val mPath: String = importFiles.path!!
             val mMimeType = mMimeTypeFile.mimeType
             val mMainCategories: MainCategoryModel = importFiles.mainCategories!!
-            val categories_id: String = mMainCategories?.categories_id!!
-            val categories_local_id: String = mMainCategories?.categories_local_id!!
+            val categories_id: String = mMainCategories.categories_id!!
+            val categories_local_id: String = mMainCategories.categories_local_id!!
             val isFakePin: Boolean = mMainCategories.isFakePin
             val uuId: String = importFiles.unique_id!!
             var thumbnail: Bitmap? = null
@@ -939,7 +932,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
             }
             Utils.Log(TAG, "End up RXJava")
-        })
+        }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
@@ -947,29 +940,29 @@ class ServiceManager : BaseServiceView<Any?> {
                     val mResponse: ResponseRXJava? = response as ResponseRXJava?
                     try {
                         if (mResponse?.isWorking!!) {
-                            val items: ItemModel = mResponse?.items!!
+                            val items: ItemModel = mResponse.items!!
                             var mb: Long
                             val enumFormatType = EnumFormatType.values()[items.formatType]
                             when (enumFormatType) {
                                 EnumFormatType.AUDIO -> {
                                     if (storage?.isFileExist(items.originalPath)!!) {
-                                        mb = +storage?.getSize(File(items.originalPath), SizeUnit.B) as Long
+                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B) as Long
                                         items.size = "" + mb
                                         SQLHelper.insertedItem(items)
                                     }
                                 }
                                 EnumFormatType.FILES -> {
                                     if (storage?.isFileExist(items.originalPath)!!) {
-                                        mb = +storage?.getSize(File(items.originalPath), SizeUnit.B) as Long
+                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B) as Long
                                         items.size = "" + mb
                                         SQLHelper.insertedItem(items)
                                     }
                                 }
                                 else -> {
-                                    if (storage?.isFileExist(items.originalPath)!! && storage?.isFileExist(items.thumbnailPath)!!) {
-                                        mb = +storage?.getSize(File(items.originalPath), SizeUnit.B) as Long
-                                        if (storage?.isFileExist(items.thumbnailPath)) {
-                                            mb += +storage?.getSize(File(items.thumbnailPath), SizeUnit.B) as Long
+                                    if (storage?.isFileExist(items.originalPath)!! && storage.isFileExist(items.thumbnailPath)!!) {
+                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B) as Long
+                                        if (storage.isFileExist(items.thumbnailPath)) {
+                                            mb += +storage.getSize(File(items.thumbnailPath), SizeUnit.B) as Long
                                         }
                                         items.size = "" + mb
                                         SQLHelper.insertedItem(items)
@@ -1029,7 +1022,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                 listImport.clear()
                                 Utils.Log(TAG, "Imported data completely")
                                 Utils.onPushEventBus(EnumStatus.IMPORTED_COMPLETELY)
-                                ServiceManager.Companion.getInstance()?.onPreparingSyncData()
+                                onPreparingSyncData()
                             }
                         }
                     }
@@ -1112,9 +1105,9 @@ class ServiceManager : BaseServiceView<Any?> {
         }
         var intent: Intent? = null
         intent = Intent(mContext, SuperSafeService::class.java)
-        intent.putExtra(ServiceManager.Companion.TAG, "Message")
+        intent.putExtra(TAG, "Message")
         myConnection?.let { mContext?.bindService(intent, it, Context.BIND_AUTO_CREATE) }
-        Utils.Log(ServiceManager.Companion.TAG, "onStartService")
+        Utils.Log(TAG, "onStartService")
     }
 
     fun onStartService() {
@@ -1147,7 +1140,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     private fun getString(res: Int): String? {
-        return SuperSafeApplication.Companion.getInstance().getString(res)
+        return SuperSafeApplication.getInstance().getString(res)
     }
 
     /*User info*/
@@ -1203,11 +1196,11 @@ class ServiceManager : BaseServiceView<Any?> {
                 val originalPath = pathContent + currentTime
                 val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
                 val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, categories_id, categories_local_id, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                storage?.createFileByteDataNoEncrypt(SuperSafeApplication.Companion.getInstance(), mData, object : OnStorageListener {
+                storage?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance(), mData, object : OnStorageListener {
                     override fun onSuccessful() {}
                     override fun onSuccessful(path: String?) {
                         try {
-                            val file: File = Compressor(SuperSafeApplication.Companion.getInstance())
+                            val file: File = Compressor(SuperSafeApplication.getInstance())
                                     .setMaxWidth(1032)
                                     .setMaxHeight(774)
                                     .setQuality(85)
@@ -1222,7 +1215,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                 response.isWorking = true
                                 subscriber?.onNext(response)
                                 subscriber?.onComplete()
-                                Utils.Log(ServiceManager.Companion.TAG, "CreatedFile successful")
+                                Utils.Log(TAG, "CreatedFile successful")
                             } else {
                                 response.isWorking = false
                                 subscriber?.onNext(response)
@@ -1278,7 +1271,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                     val main: MainCategoryModel = mResponse.categories as MainCategoryModel
                                     main.items_id = mItem.items_id
                                     SQLHelper.updateCategory(main)
-                                    Utils.Log(ServiceManager.Companion.TAG, "Special main categories " + Gson().toJson(main))
+                                    Utils.Log(TAG, "Special main categories " + Gson().toJson(main))
                                 }
                             }
                         }
@@ -1293,7 +1286,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             if (mItem.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView()
                             } else {
-                                SingletonPrivateFragment.Companion.getInstance()?.onUpdateView()
+                                SingletonPrivateFragment.getInstance()?.onUpdateView()
                                 getInstance()?.onPreparingSyncData()
                             }
                         }
@@ -1303,7 +1296,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
     fun onExportingFiles() {
         Utils.Log(TAG, "Export amount files :" + mListExport.size)
-        subscriptions = Observable.create<Any?>(ObservableOnSubscribe<Any?> { subscriber: ObservableEmitter<Any?>? ->
+        subscriptions = Observable.create<Any?>({ subscriber: ObservableEmitter<Any?>? ->
             setExporting(true)
             var isWorking = false
             var exportFiles: ExportFiles? = null
@@ -1320,7 +1313,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 val mInput: File = exportFiles?.input as File
                 val mOutPut: File = exportFiles.output as File
                 try {
-                    val storage = Storage(SuperSafeApplication.Companion.getInstance())
+                    val storage = Storage(SuperSafeApplication.getInstance())
                     storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
                     val mCipher = storage.getCipher(Cipher.DECRYPT_MODE)
                     val formatType = EnumFormatType.values()[exportFiles.formatType]
@@ -1373,7 +1366,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 EventBus.getDefault().post(EnumStatus.STOP_PROGRESS)
                 setExporting(false)
                 mListExport.clear()
-                ServiceManager.Companion.getInstance()?.onPreparingSyncData()
+                onPreparingSyncData()
             }
         })
                 .subscribeOn(Schedulers.computation())
@@ -1416,16 +1409,16 @@ class ServiceManager : BaseServiceView<Any?> {
             }
             EnumStatus.CONNECTED -> {
                 EventBus.getDefault().post(EnumStatus.CONNECTED)
-                ServiceManager.Companion.getInstance()?.onGetUserInfo()
-                PremiumManager.Companion.getInstance().onStartInAppPurchase()
+                onGetUserInfo()
+                PremiumManager.getInstance().onStartInAppPurchase()
             }
             EnumStatus.DISCONNECTED -> {
                 onDefaultValue()
-                Utils.Log(ServiceManager.Companion.TAG, "Disconnect")
+                Utils.Log(TAG, "Disconnect")
             }
             EnumStatus.USER_INFO -> {
-                Utils.Log(ServiceManager.Companion.TAG, "Get info successful")
-                ServiceManager.Companion.getInstance()?.onPreparingSyncData()
+                Utils.Log(TAG, "Get info successful")
+                onPreparingSyncData()
                 val mUser: User? = Utils.getUserInfo()
                 mUser?.let {
                     if (it.isWaitingSendMail){
@@ -1434,7 +1427,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
             }
             EnumStatus.UPDATE_USER_TOKEN -> {
-                ServiceManager.Companion.getInstance()?.onPreparingSyncData()
+               onPreparingSyncData()
             }
         }
     }
@@ -1477,7 +1470,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
 
                 override fun onDownLoadCompleted(file_name: File?, request: DownloadFileRequest) {
-                    Utils.Log(ServiceManager.Companion.TAG, "onDownLoadCompleted ==> onDownLoadCompleted:" + file_name?.getAbsolutePath())
+                    Utils.Log(TAG, "onDownLoadCompleted ==> onDownLoadCompleted:" + file_name?.getAbsolutePath())
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapDownloadToExportFiles)) {
                         /*Delete local db and folder name*/
                         val mDownloadItem: ItemModel? = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles)
@@ -1513,9 +1506,9 @@ class ServiceManager : BaseServiceView<Any?> {
                                 onDownLoadDataToExportFiles(mDownloadItem)
                                 isDownloadToExportFiles = true
                                 Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
-                                Utils.Log(ServiceManager.Companion.TAG, "Next download item..............." + Gson().toJson(mDownloadItem))
+                                Utils.Log(TAG, "Next download item..............." + Gson().toJson(mDownloadItem))
                             } else {
-                                Utils.Log(ServiceManager.Companion.TAG, "Download completely...............")
+                                Utils.Log(TAG, "Download completely...............")
                                 Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
                                 Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DOWNLOAD_COMPLETED, "Total downloading " + mMapDownloadToExportFiles.size)
                                 isDownloadToExportFiles = false
@@ -1546,7 +1539,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
     fun onDismissServices() {
         if (isDownloadData || isUploadData || isDownloadToExportFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData || isWaitingSendMail || isUpdateItemData || isHandleLogic || isSyncCategory || isGetItemList || isUpdateCategoryData) {
-            Utils.Log(ServiceManager.Companion.TAG, "Progress....................!!!!:")
+            Utils.Log(TAG, "Progress....................!!!!:")
         } else {
             onDefaultValue()
             if (myService != null) {
@@ -1569,41 +1562,41 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     interface ServiceManagerSyncDataListener {
-        open fun onCompleted()
-        open fun onError()
-        open fun onCancel()
+        fun onCompleted()
+        fun onError()
+        fun onCancel()
     }
 
     interface ServiceManagerGalleySyncDataListener {
-        open fun onCompleted(importFiles: ImportFilesModel?)
-        open fun onFailed(importFiles: ImportFilesModel?)
+        fun onCompleted(importFiles: ImportFilesModel?)
+        fun onFailed(importFiles: ImportFilesModel?)
     }
 
     /*Upload Service*/
     interface UploadServiceListener {
-        open fun onProgressUpdate(percentage: Int)
-        open fun onFinish()
-        open fun onResponseData(response: DriveResponse)
-        open fun onError(message: String?, status: EnumStatus?)
+        fun onProgressUpdate(percentage: Int)
+        fun onFinish()
+        fun onResponseData(response: DriveResponse)
+        fun onError(message: String?, status: EnumStatus?)
     }
 
     interface DownloadServiceListener {
-        open fun onProgressDownload(percentage: Int)
-        open fun onDownLoadCompleted(file_name: File?, request: DownloadFileRequest)
-        open fun onError(message: String?, status: EnumStatus?)
+        fun onProgressDownload(percentage: Int)
+        fun onDownLoadCompleted(file_name: File?, request: DownloadFileRequest)
+        fun onError(message: String?, status: EnumStatus?)
     }
 
     interface BaseListener<T> {
-        open fun onShowListObjects(list: MutableList<T>)
-        open fun onShowObjects(`object`: T)
-        open fun onError(message: String, status: EnumStatus)
-        open fun onSuccessful(message: String, status: EnumStatus)
+        fun onShowListObjects(list: MutableList<T>)
+        fun onShowObjects(`object`: T)
+        fun onError(message: String, status: EnumStatus)
+        fun onSuccessful(message: String, status: EnumStatus)
     }
 
     interface ServiceManagerInsertItem {
-        open fun onCancel()
-        open fun onError(message: String?, status: EnumStatus?)
-        open fun onSuccessful(message: String?, status: EnumStatus?)
+        fun onCancel()
+        fun onError(message: String?, status: EnumStatus?)
+        fun onSuccessful(message: String?, status: EnumStatus?)
     }
 
     companion object {

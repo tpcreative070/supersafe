@@ -67,7 +67,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         return storage
     }
 
-    fun onInitReceiver() {
+    private fun onInitReceiver() {
         Utils.Log(TAG, "onInitReceiver")
         val intentFilter = IntentFilter()
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
