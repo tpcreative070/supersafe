@@ -30,10 +30,12 @@ class SignInPresenter : Presenter<BaseView<User>>() {
     fun onSignIn(request: SignInRequest) {
         Utils.Log(TAG, "onSignIn " + Gson().toJson(request))
         val view: BaseView<User>? = view() ?: return
-        if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
+        if (NetworkUtil.pingIpAddress(view?.getContext()!!)) {
+            Utils.Log(TAG,"network is null")
             return
         }
         if (subscriptions == null) {
+            Utils.Log(TAG,"Subscrition is null")
             return
         }
         SuperSafeApplication.serverAPI?.onSignIn(request)

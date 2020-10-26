@@ -16,7 +16,7 @@ import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivit
 import co.tpcreative.supersafe.ui.camera.CameraActivity
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity
-import co.tpcreative.supersafe.ui.dashboard.DashBoardActivity
+import co.tpcreative.supersafe.ui.dashboard.DashBoardAct
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity
 import co.tpcreative.supersafe.ui.facedown.FaceDownActivity
 import co.tpcreative.supersafe.ui.fakepin.FakePinActivity
@@ -35,7 +35,7 @@ import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity
 import co.tpcreative.supersafe.ui.settings.SettingsActivity
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity
-import co.tpcreative.supersafe.ui.signin.SignInActivity
+import co.tpcreative.supersafe.ui.signin.SignInAct
 import co.tpcreative.supersafe.ui.signup.SignUpActivity
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity
 import co.tpcreative.supersafe.ui.trash.TrashActivity
@@ -88,12 +88,12 @@ object Navigator {
     }
 
     fun onMoveToLogin(context: Context?) {
-        val intent = Intent(context, SignInActivity::class.java)
+        val intent = Intent(context, SignInAct::class.java)
         context?.startActivity(intent)
     }
 
     fun onMoveToDashBoard(context: Context?) {
-        val intent = Intent(context, DashBoardActivity::class.java)
+        val intent = Intent(context, DashBoardAct::class.java)
         context?.startActivity(intent)
     }
 

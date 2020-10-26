@@ -63,7 +63,7 @@
             android:label="@string/key_lock_screen"/>
         <activity android:name=".ui.main_tab.MainTabActivity"/>
         <activity
-            android:name=".ui.signin.SignInActivity"
+            android:name=".ui.signin.SignInAct"
             android:label="@string/key_sign_in"/>
         <activity
             android:name=".ui.verify.VerifyActivity"
@@ -71,7 +71,7 @@
         <activity
             android:name=".ui.askpermission.AskPermissionActivity"/>
         <activity
-            android:name=".ui.dashboard.DashBoardActivity"/>
+            android:name=".ui.dashboard.DashBoardAct"/>
         <activity
             android:name=".ui.signup.SignUpActivity"
             android:label="@string/key_sign_up"/>

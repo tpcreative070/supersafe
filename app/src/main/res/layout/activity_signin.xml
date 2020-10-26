@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.signin.SignInActivity">
+    tools:context=".ui.signin.SignInAct">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
@@ -84,12 +84,9 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
-
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                     android:visibility="invisible"
                     android:id="@+id/progressBarCircularIndeterminate"
@@ -99,7 +96,6 @@
                     android:background="@color/white"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"/>
-
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnNext"
                     android:textColor="@color/colorDisableText"
