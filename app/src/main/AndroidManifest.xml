@@ -61,7 +61,7 @@
         <activity
             android:name=".ui.lockscreen.EnterPinAct"
             android:label="@string/key_lock_screen"/>
-        <activity android:name=".ui.main_tab.MainTabActivity"/>
+        <activity android:name=".ui.main_tab.MainTabAct"/>
         <activity
             android:name=".ui.signin.SignInAct"
             android:label="@string/key_sign_in"/>

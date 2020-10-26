@@ -40,7 +40,7 @@ class DashBoardAct : BaseActivityNoneSlide() {
     fun onShowRestore() {
         try {
             val builder = MaterialDialog.Builder(this)
-            val themeApp: ThemeApp? = ThemeApp.Companion.getInstance()?.getThemeInfo()
+            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
             builder.setHeaderBackground(themeApp?.getAccentColor()!!)
             builder.setTitle(getString(R.string.key_restore))
             builder.setMessage(getString(R.string.restore_detail))
@@ -54,15 +54,14 @@ class DashBoardAct : BaseActivityNoneSlide() {
                     isCancel = false
                 }
             })
-            builder.setNegativeButton(getText(R.string.key_delete), object : DialogInterface.OnClickListener {
+            builder.setNegativeButton(getString(R.string.key_delete), object : DialogInterface.OnClickListener {
                 override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                    SuperSafeApplication.Companion.getInstance().deleteFolder()
-                    SuperSafeApplication.Companion.getInstance().initFolder()
+                    SuperSafeApplication.getInstance().deleteFolder()
+                    SuperSafeApplication.getInstance().initFolder()
                     PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear().apply()
                     isCancel = false
                 }
-            })
-                    .setOnDismissListener(object : DialogInterface.OnDismissListener {
+            }).setOnDismissListener(object : DialogInterface.OnDismissListener {
                         override fun onDismiss(dialogInterface: DialogInterface?) {
                             Utils.Log(TAG, "Dismiss")
                             if (isCancel) {
@@ -75,11 +74,11 @@ class DashBoardAct : BaseActivityNoneSlide() {
                 override fun onShow(dialogInterface: DialogInterface?) {
                     val positive = dialog.findViewById<AppCompatButton?>(android.R.id.button1)
                     val negative = dialog.findViewById<AppCompatButton?>(android.R.id.button2)
-                    val textView: AppCompatTextView? = dialog.findViewById<AppCompatTextView?>(R.id.message)
+                    val textView: AppCompatTextView? = dialog.findViewById(android.R.id.message)
                     if (positive != null && negative != null && textView != null) {
                         positive.setTextColor(ContextCompat.getColor(getApplicationContext(), themeApp?.getAccentColor()!!))
                         negative.setTextColor(ContextCompat.getColor(getApplicationContext(), themeApp.getAccentColor()))
-                        textView.setTextSize(16f)
+                        textView.textSize = (16f)
                         positive.textSize = 14f
                         negative.textSize = 14f
                     }

@@ -7,14 +7,11 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.util.Utils
+import kotlinx.android.synthetic.main.layout_number_item.view.*
+import kotlinx.android.synthetic.main.layout_verify_item.view.*
 
 class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mCustomizationOptionsBundle: CustomizationOptionsBundle? = null
@@ -46,7 +43,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    private fun configureNumberButtonHolder(holder: NumberViewHolder, position: Int) {
+    private fun configureNumberButtonHolder(holder: NumberViewHolder?, position: Int) {
         if (holder != null) {
             if (position == 9) {
                 holder.mNumberButton?.setVisibility(View.GONE)
@@ -149,45 +146,33 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class NumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.buttonNumber)
-        var mNumberButton: AppCompatButton? = null
-
-        @OnClick(R.id.buttonNumber)
-        fun onNumberButton(view: View?) {
-            if (mOnNumberClickListener != null) {
-                mOnNumberClickListener?.onNumberClicked(view?.getTag() as Int)
-                mNumberButton?.startAnimation(scale())
-            }
-        }
+        val mNumberButton = itemView.buttonNumber
         init {
-            ButterKnife.bind(this, itemView)
+            itemView.buttonNumber.setOnClickListener {
+                if (mOnNumberClickListener != null) {
+                    mOnNumberClickListener?.onNumberClicked(it?.getTag() as Int)
+                    itemView.buttonNumber?.startAnimation(scale())
+                }
+            }
         }
     }
 
     inner class VerifyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.buttonVerify)
-        var mVerifyButton: LinearLayout? = null
-
-        @BindView(R.id.buttonImage)
-        var mButtonImage: AppCompatImageView? = null
-
-        @OnClick(R.id.buttonVerify)
-        fun onVerifyButton() {
-            if (mCustomizationOptionsBundle?.isShowVerifyButton()!! && mPinLength > 0) {
-                if (mOnVerifyClickListener != null) {
-                    mOnVerifyClickListener?.onVerifyClicked()
-                    mVerifyButton?.startAnimation(scale())
-                    Utils.Log(TAG, "Verified button")
-                } else {
-                    Utils.Log(TAG, "mOnVerifyClickListener Null")
-                }
-            } else {
-                Utils.Log(TAG, "Pin length Null")
-            }
-        }
-
+        val mButtonImage = itemView.buttonImage
         init {
-            ButterKnife.bind(this, itemView)
+            itemView.buttonVerify.setOnClickListener {
+                if (mCustomizationOptionsBundle?.isShowVerifyButton()!! && mPinLength > 0) {
+                    if (mOnVerifyClickListener != null) {
+                        mOnVerifyClickListener?.onVerifyClicked()
+                        itemView.buttonVerify.startAnimation(scale())
+                        Utils.Log(TAG, "Verified button")
+                    } else {
+                        Utils.Log(TAG, "mOnVerifyClickListener Null")
+                    }
+                } else {
+                    Utils.Log(TAG, "Pin length Null")
+                }
+            }
         }
     }
 

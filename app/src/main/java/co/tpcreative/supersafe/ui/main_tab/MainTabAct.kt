@@ -10,16 +10,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
@@ -42,40 +39,21 @@ import com.afollestad.materialdialogs.Theme
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.gms.ads.InterstitialAd
-import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.DexterError
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
+import kotlinx.android.synthetic.main.activity_main_tab.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
-class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
-    @BindView(R.id.speedDial)
-    var mSpeedDialView: SpeedDialView? = null
-
-    @BindView(R.id.viewpager)
-    var viewPager: ViewPager? = null
-
-    @BindView(R.id.toolbar)
-    var toolbar: Toolbar? = null
-
-    @BindView(R.id.tabs)
-    var tabLayout: TabLayout? = null
-
-    @BindView(R.id.rlOverLay)
-    var rlOverLay: RelativeLayout? = null
-
-    @BindView(R.id.viewFloatingButton)
-    var viewFloatingButton: View? = null
+class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     private var adapter: MainViewPagerAdapter? = null
     private var presenter: MainTabPresenter? = null
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
@@ -83,17 +61,17 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     private var previousStatus: EnumStatus? = null
     private val mInterstitialAd: InterstitialAd? = null
     private var mCountToRate = 0
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
         initSpeedDial(true)
         setSupportActionBar(toolbar)
         toolbar?.inflateMenu(R.menu.main_tab)
-        val ab: ActionBar? = getSupportActionBar()
+        val ab: ActionBar? = supportActionBar
         ab?.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24)
         ab?.setDisplayHomeAsUpEnabled(true)
-        setupViewPager(viewPager)
-        tabLayout?.setupWithViewPager(viewPager)
+        setupViewPager(viewpager)
+        tabs.setupWithViewPager(viewpager)
         PrefsController.putBoolean(getString(R.string.key_running), true)
         presenter = MainTabPresenter()
         presenter?.bindView(this)
@@ -163,8 +141,8 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                 Navigator.onMoveToFaceDown(this)
             }
             EnumStatus.PRIVATE_DONE -> {
-                if (mSpeedDialView != null) {
-                    mSpeedDialView?.show()
+                if (speedDial != null) {
+                    speedDial?.show()
                 }
             }
             EnumStatus.DOWNLOAD -> {
@@ -198,10 +176,10 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                 })
             }
             EnumStatus.SHOW_FLOATING_BUTTON -> {
-                runOnUiThread(Runnable { mSpeedDialView?.show() })
+                runOnUiThread(Runnable { speedDial?.show() })
             }
             EnumStatus.HIDE_FLOATING_BUTTON -> {
-                runOnUiThread(Runnable { mSpeedDialView?.hide() })
+                runOnUiThread(Runnable { speedDial?.hide() })
             }
             EnumStatus.CONNECTED -> {
                 getAccessToken()
@@ -223,7 +201,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                 .show()
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -235,7 +213,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
         Utils.Log(TAG, "onResume")
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         Utils.onUpdatedCountRate()
@@ -248,7 +226,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
         }
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
@@ -291,50 +269,47 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
         Utils.Log(TAG, "Init floating button")
         val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (addActionItems) {
-            var drawable: Drawable? = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24)
-            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
-                            getTheme()))
+            var drawable: Drawable? = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_camera_white_24)
+            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                            theme))
                     .setLabel(getString(R.string.camera))
                     .setLabelColor(Color.WHITE)
-                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                            getTheme()))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
+                            theme))
                     .create())
-            drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24)
-            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
-                            getTheme()))
+            drawable = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_white_24)
+            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                            theme))
                     .setLabel(R.string.photo)
                     .setLabelColor(getResources().getColor(R.color.white))
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                            getTheme()))
+                            theme))
                     .create())
-            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
-                            getTheme()))
+            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                            theme))
                     .setLabel(getString(R.string.album))
-                    .setLabelColor(getResources().getColor(R.color.white))
-                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                            getTheme()))
+                    .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
+                            theme))
                     .create())
-            mSpeedDialView?.show()
+            speedDial?.show()
         }
 
         //Set main action clicklistener.
-        mSpeedDialView?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+        speedDial?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
             override fun onMainActionSelected(): Boolean {
                 return false // True to keep the Speed Dial open
             }
-
             override fun onToggleChanged(isOpen: Boolean) {
-                //mSpeedDialView.setMainFabOpenedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
-                //mSpeedDialView.setMainFabClosedDrawable(AppCompatResources.getDrawable(getContext(), R.drawable.baseline_add_white_24));
                 Utils.Log(TAG, "Speed dial toggle state changed. Open = $isOpen")
             }
         })
 
         //Set option fabs clicklisteners.
-        mSpeedDialView?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
+        speedDial?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
             override fun onActionSelected(actionItem: SpeedDialActionItem?): Boolean {
                 when (actionItem?.getId()) {
                     R.id.fab_album -> {
@@ -342,7 +317,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                         return false // false will close it without animation
                     }
                     R.id.fab_photo -> {
-                        Navigator.onMoveToAlbum(this@MainTabActivity)
+                        Navigator.onMoveToAlbum(this@MainTabAct)
                         return false // closes without animation (same as mSpeedDialView.close(false); return false;)
                     }
                     R.id.fab_camera -> {
@@ -371,14 +346,14 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                         val item: MainCategoryModel? = SQLHelper.getTrashItem()
                         val result: String? = item?.categories_hex_name
                         if (base64Code == result) {
-                            Toast.makeText(this@MainTabActivity, "This name already existing", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@MainTabAct, "This name already existing", Toast.LENGTH_SHORT).show()
                         } else {
                             val response: Boolean = SQLHelper.onAddCategories(base64Code, value, false)
                             if (response) {
-                                Toast.makeText(this@MainTabActivity, "Created album successful", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@MainTabAct, "Created album successful", Toast.LENGTH_SHORT).show()
                                 ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                             } else {
-                                Toast.makeText(this@MainTabActivity, "Album name already existing", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@MainTabAct, "Album name already existing", Toast.LENGTH_SHORT).show()
                             }
                             SingletonPrivateFragment.getInstance()?.onUpdateView()
                         }
@@ -396,7 +371,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                         if (report?.areAllPermissionsGranted()!!) {
                             val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
                             if (list != null) {
-                                Navigator.onMoveCamera(this@MainTabActivity, list[0])
+                                Navigator.onMoveCamera(this@MainTabAct, list[0])
                             }
                         } else {
                             Utils.Log(TAG, "Permission is denied")
@@ -407,7 +382,6 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                             Utils.Log(TAG, "request permission is failed")
                         }
                     }
-
                     override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
                         /* ... */
                         token?.continuePermissionRequest()
@@ -518,8 +492,8 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     }
 
     override fun onBackPressed() {
-        if (mSpeedDialView?.isOpen()!!) {
-            mSpeedDialView?.close()
+        if (speedDial?.isOpen()!!) {
+            speedDial?.close()
         } else {
             PremiumManager.getInstance().onStop()
             Utils.onDeleteTemporaryFile()
@@ -527,11 +501,9 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                 override fun onCompleted() {
                     Utils.Log(TAG, "Exporting successful")
                 }
-
                 override fun onError() {
                     Utils.Log(TAG, "Exporting error")
                 }
-
                 override fun onCancel() {}
             })
             SuperSafeApplication.getInstance().writeUserSecret(presenter?.mUser)
@@ -627,7 +599,7 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
                     // The listener can listen for regular clicks, long clicks or cancels
                     override fun onTargetClick(view: TapTargetView?) {
                         super.onTargetClick(view) // This call is optional
-                        mSpeedDialView?.open()
+                        speedDial?.open()
                         view?.dismiss(true)
                         viewFloatingButton?.setVisibility(View.GONE)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
@@ -775,6 +747,6 @@ class MainTabActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     }
 
     companion object {
-        private val TAG = MainTabActivity::class.java.simpleName
+        private val TAG = MainTabAct::class.java.simpleName
     }
 }

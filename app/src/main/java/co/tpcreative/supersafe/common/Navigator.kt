@@ -24,7 +24,7 @@ import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity
 import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity
 import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
-import co.tpcreative.supersafe.ui.main_tab.MainTabActivity
+import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity
 import co.tpcreative.supersafe.ui.player.PlayerActivity
@@ -74,7 +74,7 @@ object Navigator {
     const val DEFAULT_LIMIT = 20
     var limit = 0
     fun onMoveToMainTab(context: Context?) {
-        val intent = Intent(context, MainTabActivity::class.java)
+        val intent = Intent(context, MainTabAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context?.startActivity(intent)

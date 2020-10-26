@@ -24,7 +24,6 @@ class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
         return fragments?.size!!
     }
 
-
     override fun setPrimaryItem(container: ViewGroup, position: Int, `object`: Any) {
         if (getCurrentFragment() !== `object`) {
             currentFragment = `object` as Fragment?
