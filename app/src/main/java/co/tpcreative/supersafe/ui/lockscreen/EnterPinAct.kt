@@ -48,9 +48,10 @@ import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumStatus
 import com.github.kratorius.circleprogress.CircleProgressView
 import com.multidots.fingerprintauth.FingerPrintAuthHelper
+import kotlinx.android.synthetic.main.include_calculator.*
 import me.grantland.widget.AutofitHelper
 
-class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener {
+class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener {
     @BindView(R.id.pinlockView)
     var mPinLockView: PinLockView? = null
 
@@ -117,11 +118,6 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
     @BindView(R.id.tvAttempt)
     var tvAttempt: AppCompatTextView? = null
 
-    @BindView(R.id.result)
-    var mResult: AppCompatTextView? = null
-
-    @BindView(R.id.formula)
-    var mFormula: AppCompatTextView? = null
     private var count = 0
     private var countAttempt = 0
     private var isFingerprint = false
@@ -213,8 +209,8 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
         }
         onInitPin()
         /*Calculator init*/mCalc = CalculatorImpl(this)
-        AutofitHelper.create(mResult)
-        AutofitHelper.create(mFormula)
+        AutofitHelper.create(tvResult)
+        AutofitHelper.create(tvFormula)
         Utils.Log(TAG, "onCreated->EnterPinActivity")
     }
 
@@ -477,7 +473,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
                 val mUser: User? = SuperSafeApplication.getInstance().readUseSecret()
                 if (mUser != null) {
                     Utils.setUserPreShare(mUser)
-                    Navigator.onMoveToMainTab(this@EnterPinActivity)
+                    Navigator.onMoveToMainTab(this@EnterPinAct)
                     presenter?.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
                 }
             }
@@ -741,7 +737,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
                                 if (SingletonManager.Companion.getInstance().isVisitFakePin()) {
                                     finish()
                                 } else {
-                                    Navigator.onMoveFakePinComponent(this@EnterPinActivity)
+                                    Navigator.onMoveFakePinComponent(this@EnterPinAct)
                                 }
                             }
                         })
@@ -997,7 +993,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
     fun onLauncherPreferences() {
         var fragment: Fragment? = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG)
         if (fragment == null) {
-            fragment = Fragment.instantiate(this, co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity.SettingsFragment::class.java.name)
+            fragment = Fragment.instantiate(this, co.tpcreative.supersafe.ui.lockscreen.EnterPinAct.SettingsFragment::class.java.name)
         }
         val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction()
         transaction.replace(R.id.content_frame, fragment)
@@ -1068,7 +1064,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
 
     /*Calculator action*/
     override fun setValue(value: String?) {
-        mResult?.setText(value)
+        tvResult.text = value
     }
 
     // used only by Robolectric
@@ -1078,7 +1074,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
     }
 
     override fun setFormula(value: String?) {
-        mFormula?.setText(value)
+        tvFormula?.text = value
     }
 
     @OnClick(R.id.btn_plus)
@@ -1142,7 +1138,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
     }
 
     companion object {
-        val TAG = EnterPinActivity::class.java.simpleName
+        val TAG = EnterPinAct::class.java.simpleName
         private val FRAGMENT_TAG: String? = co.tpcreative.supersafe.ui.settings.SettingsActivity::class.java.getSimpleName() + "::fragmentTag"
         val EXTRA_SET_PIN: String? = "SET_PIN"
         val EXTRA_ENUM_ACTION: String? = "ENUM_ACTION"
@@ -1153,7 +1149,7 @@ class EnterPinActivity : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calcu
         private var mPinActionNext: EnumPinAction? = null
         private var presenter: LockScreenPresenter? = null
         fun getIntent(context: Context?, action: Int, actionNext: Int): Intent? {
-            val intent = Intent(context, EnterPinActivity::class.java)
+            val intent = Intent(context, EnterPinAct::class.java)
             intent.putExtra(EXTRA_SET_PIN, action)
             intent.putExtra(EXTRA_ENUM_ACTION, actionNext)
             return intent

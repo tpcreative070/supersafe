@@ -156,15 +156,15 @@ class IndicatorDots @JvmOverloads constructor(context: Context?, attrs: Attribut
     init {
         val typedArray: TypedArray? = context?.obtainStyledAttributes(attrs, R.styleable.PinLockView)
         try {
-            mDotDiameter = typedArray?.getDimension(R.styleable.PinLockView_dotDiameter, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.dot_diameter)) as Int
-            mDotSpacing = typedArray?.getDimension(R.styleable.PinLockView_dotSpacing, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.dot_spacing)) as Int
-            mFillDrawable = typedArray?.getResourceId(R.styleable.PinLockView_dotFilledBackground,
+            mDotDiameter = typedArray?.getDimension(R.styleable.PinLockView_dotDiameter, ResourceUtils.getDimensionInPx(getContext(), R.dimen.dot_diameter))!!.toInt()
+            mDotSpacing = typedArray.getDimension(R.styleable.PinLockView_dotSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.dot_spacing)).toInt()
+            mFillDrawable = typedArray.getResourceId(R.styleable.PinLockView_dotFilledBackground,
                     R.drawable.dot_filled)
             mEmptyDrawable = typedArray.getResourceId(R.styleable.PinLockView_dotEmptyBackground,
                     R.drawable.dot_empty)
             mPinLength = typedArray.getInt(R.styleable.PinLockView_pinLength, DEFAULT_PIN_LENGTH)
             mIndicatorType = typedArray.getInt(R.styleable.PinLockView_indicatorType,
-                    IndicatorType.FIXED)
+                    FIXED)
         } finally {
             typedArray?.recycle()
         }

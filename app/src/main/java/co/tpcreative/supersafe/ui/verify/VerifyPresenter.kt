@@ -28,7 +28,6 @@ import co.tpcreative.supersafe.model.EmailToken
 import co.tpcreative.supersafe.model.EnumStatus
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
 
@@ -55,7 +54,7 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onVerifyCode(request!!)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable -> view.onStartLoading(EnumStatus.VERIFY_CODE) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.VERIFY_CODE) }
                 ?.subscribe(Consumer subscribe@{ onResponse: RootResponse ->
                     view.onStopLoading(EnumStatus.VERIFY_CODE)
                     if (onResponse.error) {
@@ -78,14 +77,14 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
                         }
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
-                }, Consumer { throwable: Throwable ->
+                }, { throwable: Throwable ->
                     if (throwable is HttpException) {
                         val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         val code = (throwable as HttpException?)?.response()?.code()
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())
@@ -109,10 +108,10 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        SuperSafeApplication?.serverAPI?.onResendCode(RequestCodeRequest(request?.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
+        SuperSafeApplication.serverAPI?.onResendCode(RequestCodeRequest(request?.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe { view?.onStartLoading(EnumStatus.RESEND_CODE) }
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.RESEND_CODE)
@@ -182,7 +181,6 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
                     e.printStackTrace()
                 }
             }
-
             override fun onFailure(call: Call<ResponseBody?>?, t: Throwable?) {
                 Utils.Log(TAG, "response failed :" + t?.message)
             }
@@ -192,7 +190,7 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onRefreshEmailToken(request: EmailToken?) {
         Utils.Log(TAG, "onRefreshEmailToken.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -204,7 +202,7 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
         hash[getString(R.string.key_redirect_uri)] = request?.redirect_uri
         hash[getString(R.string.key_grant_type)] = request?.grant_type
         hash[getString(R.string.key_refresh_token)] = request?.refresh_token
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.Companion.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken? ->

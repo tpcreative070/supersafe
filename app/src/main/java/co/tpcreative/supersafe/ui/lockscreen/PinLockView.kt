@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
-import co.tpcreative.supersafe.ui.lockscreen.ResourceUtils
 
 /**
  * Represents a numeric lock view which can used to taken numbers as input.
@@ -138,18 +137,18 @@ class PinLockView : RecyclerView {
         val typedArray: TypedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.PinLockView)
         try {
             mPinLength = typedArray.getInt(R.styleable.PinLockView_pinLength, DEFAULT_PIN_LENGTH)
-            mHorizontalSpacing = typedArray.getDimension(R.styleable.PinLockView_keypadHorizontalSpacing, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.default_horizontal_spacing)) as Int
-            mVerticalSpacing = typedArray.getDimension(R.styleable.PinLockView_keypadVerticalSpacing, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.default_vertical_spacing)) as Int
-            mTextColor = typedArray.getColor(R.styleable.PinLockView_keypadTextColor, ResourceUtils.Companion.getColor(getContext(), R.color.text_numberpressed))
-            mTextSize = typedArray.getDimension(R.styleable.PinLockView_keypadTextSize, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.default_text_size)) as Int
-            mButtonSize = typedArray.getDimension(R.styleable.PinLockView_keypadButtonSize, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.default_button_size)) as Int
-            mVerifyButtonWidthSize = typedArray.getDimension(R.styleable.PinLockView_keypadVerifyButtonSize, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.default_verify_button_size_height)) as Int
-            mVerifyButtonHeightSize = typedArray.getDimension(R.styleable.PinLockView_keypadVerifyButtonSize, ResourceUtils.Companion.getDimensionInPx(getContext(), R.dimen.default_verify_button_size_height)) as Int
+            mHorizontalSpacing = typedArray.getDimension(R.styleable.PinLockView_keypadHorizontalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_horizontal_spacing)).toInt()
+            mVerticalSpacing = typedArray.getDimension(R.styleable.PinLockView_keypadVerticalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_vertical_spacing)).toInt()
+            mTextColor = typedArray.getColor(R.styleable.PinLockView_keypadTextColor, ResourceUtils.getColor(getContext(), R.color.text_numberpressed))
+            mTextSize = typedArray.getDimension(R.styleable.PinLockView_keypadTextSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_text_size)).toInt()
+            mButtonSize = typedArray.getDimension(R.styleable.PinLockView_keypadButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_button_size)).toInt()
+            mVerifyButtonWidthSize = typedArray.getDimension(R.styleable.PinLockView_keypadVerifyButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_verify_button_size_height)).toInt()
+            mVerifyButtonHeightSize = typedArray.getDimension(R.styleable.PinLockView_keypadVerifyButtonSize, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_verify_button_size_height)).toInt()
             mButtonBackgroundDrawable = typedArray.getDrawable(R.styleable.PinLockView_keypadButtonBackgroundDrawable)
             mVerifyButtonDrawable = typedArray.getDrawable(R.styleable.PinLockView_keypadVerifyButtonDrawable)
             mShowVerifyButton = typedArray.getBoolean(R.styleable.PinLockView_keypadShowVerifyButton, true)
-            mVerifyButtonPressedColor = typedArray.getColor(R.styleable.PinLockView_keypadVerifyButtonPressedColor, ResourceUtils.Companion.getColor(getContext(), R.color.teal_a700))
-            mTextColorNormal = typedArray.getColor(R.styleable.PinLockView_keypadVerifyButtonPressedColor, ResourceUtils.Companion.getColor(getContext(), R.color.material_gray_400))
+            mVerifyButtonPressedColor = typedArray.getColor(R.styleable.PinLockView_keypadVerifyButtonPressedColor, ResourceUtils.getColor(getContext(), R.color.teal_a700))
+            mTextColorNormal = typedArray.getColor(R.styleable.PinLockView_keypadVerifyButtonPressedColor, ResourceUtils.getColor(getContext(), R.color.material_gray_400))
         } finally {
             typedArray.recycle()
         }

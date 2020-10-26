@@ -42,12 +42,12 @@ class SecretDoorSetUpActivity : BaseActivity(), Calculator {
     @BindView(R.id.calculator_holder)
     var calculator_holder: LinearLayout? = null
 
-    @BindView(R.id.result)
+    @BindView(R.id.tvResult)
     var mResult: AppCompatTextView? = null
 
-    @BindView(R.id.formula)
+    @BindView(R.id.tvFormula)
     var mFormula: AppCompatTextView? = null
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_secret_door_set_up)
         val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)

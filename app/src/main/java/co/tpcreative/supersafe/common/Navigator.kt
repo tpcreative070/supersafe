@@ -23,7 +23,7 @@ import co.tpcreative.supersafe.ui.fakepin.FakePinActivity
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity
 import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity
 import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinActivity
+import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
 import co.tpcreative.supersafe.ui.main_tab.MainTabActivity
 import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity
@@ -41,7 +41,7 @@ import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity
 import co.tpcreative.supersafe.ui.trash.TrashActivity
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity
-import co.tpcreative.supersafe.ui.verify.VerifyActivity
+import co.tpcreative.supersafe.ui.verify.VerifyAct
 import java.util.*
 
 object Navigator {
@@ -105,7 +105,7 @@ object Navigator {
     }
 
     fun onMoveToVerify(context: Context?, user: User?) {
-        val intent = Intent(context, VerifyActivity::class.java)
+        val intent = Intent(context, VerifyAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context?.getString(R.string.key_data), user)
         intent.putExtras(bundle)
@@ -113,12 +113,12 @@ object Navigator {
     }
 
     fun onMoveSetPin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.SET.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToVerifyPin(activity: Activity, action: EnumPinAction) {
-        val intent: Intent? = EnterPinActivity.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinAct.getIntent(activity, EnumPinAction.VERIFY.ordinal, action.ordinal)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -126,17 +126,17 @@ object Navigator {
     }
 
     fun onMoveToChangePin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.INIT_PREFERENCE.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToFakePin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.VERIFY_TO_CHANGE_FAKE_PIN.ordinal, action.ordinal)
         context.startActivity(intent)
     }
 
     fun onMoveToResetPin(context: Context, action: EnumPinAction) {
-        val intent: Intent? = EnterPinActivity.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
+        val intent: Intent? = EnterPinAct.getIntent(context, EnumPinAction.RESET.ordinal, action.ordinal)
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)

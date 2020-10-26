@@ -50,7 +50,7 @@ class SignInPresenter : Presenter<BaseView<User>>() {
                         val mData: DataResponse? = onResponse.data
                         Utils.setUserPreShare(mData?.user)
                         ServiceManager.getInstance()?.onInitConfigurationFile()
-                        view?.onSuccessful(onResponse.message, EnumStatus.SIGN_IN, mData?.user)
+                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_IN, mData?.user)
                     }
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
@@ -118,7 +118,7 @@ class SignInPresenter : Presenter<BaseView<User>>() {
     fun onRefreshEmailToken(request: EmailToken) {
         Utils.Log(TAG, "onRefreshEmailToken.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -131,13 +131,13 @@ class SignInPresenter : Presenter<BaseView<User>>() {
         hash[getString(R.string.key_grant_type)] = request.grant_type
         hash[getString(R.string.key_refresh_token)] = request.refresh_token
         Utils.Log(TAG, "Refresh token : " + Gson().toJson(hash))
-        SuperSafeApplication.Companion.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken? ->
                     if (onResponse != null) {
                         val token: EmailToken? = mUser?.email_token
-                        token?.access_token = onResponse?.token_type + " " + onResponse.access_token
+                        token?.access_token = onResponse.token_type + " " + onResponse.access_token
                         token?.refresh_token = onResponse.refresh_token
                         token?.token_type = onResponse.token_type
                         Utils.setUserPreShare(mUser)
@@ -168,7 +168,7 @@ class SignInPresenter : Presenter<BaseView<User>>() {
     fun onAddEmailToken() {
         Utils.Log(TAG, "onSignIn.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
