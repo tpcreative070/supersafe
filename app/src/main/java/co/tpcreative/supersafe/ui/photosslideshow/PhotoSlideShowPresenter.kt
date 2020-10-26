@@ -51,7 +51,7 @@ class PhotoSlideShowPresenter : Presenter<BaseView<EmptyModel>>() {
             val mItem: ItemModel? = SQLHelper.getItemId(items?.items_id, items?.isFakePin!!)
             if (mItem != null) {
                 if (mItem.isFakePin) {
-                    storage?.deleteDirectory(SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + mItem.items_id)
+                    storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mItem.items_id)
                     SQLHelper.deleteItem(mItem)
                 } else {
                     mItem.isDeleteLocal = true

@@ -74,7 +74,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
         androidReceiver = SuperSafeReceiver()
         registerReceiver(androidReceiver, intentFilter)
-        SuperSafeApplication.Companion.getInstance().setConnectivityListener(this)
+        SuperSafeApplication.getInstance().setConnectivityListener(this)
     }
 
     override fun onDestroy() {

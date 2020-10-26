@@ -289,9 +289,9 @@ object SQLHelper {
             }
         }
         Collections.sort(mList, Comparator { lhs, rhs ->
-            val count_1 = lhs?.categories_max as Int
-            val count_2 = rhs?.categories_max as Int
-            count_1 - count_2
+            val count_1 = lhs?.categories_max!!
+            val count_2 = rhs?.categories_max!!
+            count_1.toInt() - count_2.toInt()
         })
         return mList
     }
@@ -299,9 +299,9 @@ object SQLHelper {
     fun getListMoveGallery(categories_local_id: String?, isFakePin: Boolean): MutableList<MainCategoryModel>? {
         val mList: MutableList<MainCategoryModel>? = getListCategories(categories_local_id, false, isFakePin)
         Collections.sort(mList, Comparator { lhs, rhs ->
-            val count_1 = lhs?.categories_max as Int
-            val count_2 = rhs?.categories_max as Int
-            count_1 - count_2
+            val count_1 = lhs?.categories_max!!
+            val count_2 = rhs?.categories_max!!
+            count_1.toInt() - count_2.toInt()
         })
         return mList
     }

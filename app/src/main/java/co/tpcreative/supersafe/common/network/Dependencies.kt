@@ -15,7 +15,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     private var retrofitInstance: Retrofit.Builder? = null
     private var context: Context? = null
     private var URL: String? = null
-    private var dependenciesListener: DependenciesListener<T>? = null
+    private var dependenciesListener: DependenciesListener<Any>? = null
     private var mTimeOut = 1
     fun dependenciesListener(dependenciesListener: DependenciesListener<Any>?) {
         sInstance?.dependenciesListener = dependenciesListener
@@ -40,18 +40,18 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     fun init() {
         if (serverAPI == null) {
             val okHttpClient = provideOkHttpClientDefault()
-            serverAPI = sInstance?.dependenciesListener?.onObject()?.let { sInstance?.provideRestApi(okHttpClient, it) }
+            serverAPI = sInstance?.provideRestApi(okHttpClient)
         }
     }
 
-    private fun provideRestApi(okHttpClient: OkHttpClient, tClass: Class<T>): T {
+    private fun provideRestApi(okHttpClient: OkHttpClient): RootAPI {
         val gson: Gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC).create()
         retrofitInstance = Retrofit.Builder()
                 .baseUrl(URL)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        return retrofitInstance!!.build().create(tClass)
+        return retrofitInstance!!.build().create(RootAPI::class.java)
     }
 
     override fun getHeaders(): HashMap<String?, String?>? {
@@ -78,7 +78,7 @@ class Dependencies<T> private constructor() : BaseDependencies() {
     }
 
     companion object {
-        var serverAPI: Any? = null
+        var serverAPI: RootAPI? = null
         var sInstance: Dependencies<Any>?= null
         fun getInstance(context: Context, url: String): Dependencies<*> {
             if (sInstance == null) {

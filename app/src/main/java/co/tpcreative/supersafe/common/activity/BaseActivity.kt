@@ -75,7 +75,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         if (isFaceDown) {
             val result: Boolean = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false)
             if (result) {
-                Navigator.onMoveToFaceDown(SuperSafeApplication.Companion.getInstance())
+                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }
         }
     }
@@ -178,10 +178,10 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         val action = EnumPinAction.values()[value]
         when (action) {
             EnumPinAction.SCREEN_LOCK -> {
-                if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
+                if (!SingletonManager.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
                     Utils.Log(TAG, "Pressed home button")
-                    SingletonManager.Companion.getInstance().setVisitLockScreen(true)
+                    SingletonManager.getInstance().setVisitLockScreen(true)
                     Utils.Log(TAG, "Verify pin")
                 } else {
                     Utils.Log(TAG, "Verify pin already")
@@ -191,7 +191,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-        if (SingletonManager.Companion.getInstance().isAnimation()) {
+        if (SingletonManager.getInstance().isAnimation()) {
             if (onStartCount > 1) {
                 this.overridePendingTransition(R.animator.anim_slide_in_right,
                         R.animator.anim_slide_out_right)
@@ -200,7 +200,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
             }
         } else {
             Bungee.zoom(this)
-            SingletonManager.Companion.getInstance().setAnimation(true)
+            SingletonManager.getInstance().setAnimation(true)
         }
     }
 

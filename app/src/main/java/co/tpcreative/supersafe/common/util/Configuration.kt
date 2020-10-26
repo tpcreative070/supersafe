@@ -81,8 +81,8 @@ class Configuration private constructor(builder: Configuration.Builder) {
             spaceSize = 4
             photoMaxWidth = 120
             checkBoxColor = -0xc0ae4b
-            dialogHeight = Configuration.Companion.DIALOG_HALF
-            dialogMode = Configuration.Companion.DIALOG_GRID
+            dialogHeight = Configuration.DIALOG_HALF
+            dialogMode = Configuration.DIALOG_GRID
             maximum = 9
             tip = null
             ablumsTitle = null

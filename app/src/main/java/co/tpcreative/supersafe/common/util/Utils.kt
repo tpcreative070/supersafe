@@ -166,13 +166,13 @@ object Utils  {
         fun hideKeyboard(view: View?) {
             // Check if no view has focus:
             if (view != null) {
-                val inputManager = SuperSafeApplication.Companion.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputManager = SuperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
             }
         }
 
         fun dpToPx(dp: Int): Int {
-            val r: Resources = SuperSafeApplication.Companion.getInstance().getResources()
+            val r: Resources = SuperSafeApplication.getInstance().getResources()
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     dp.toFloat(), r.displayMetrics) as Int
         }
@@ -180,7 +180,7 @@ object Utils  {
         fun showKeyboard(view: View?) {
             // Check if no view has focus:
             if (view != null) {
-                val inputManager = SuperSafeApplication.Companion.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputManager = SuperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
             }
         }
@@ -252,7 +252,7 @@ object Utils  {
         }
 
         fun onExportAndImportFile(input: String, output: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
-            val storage = Storage(SuperSafeApplication.Companion.getInstance())
+            val storage = Storage(SuperSafeApplication.getInstance())
             val mFile = storage.getFiles(input)
             try {
                 for (index in mFile) {
@@ -476,9 +476,9 @@ object Utils  {
                 return
             }
             if (status == null) {
-                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.Companion.getInstance().getSupersafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Content--- :" + message, true)
+                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Content--- :" + message, true)
             } else {
-                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.Companion.getInstance().getSupersafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Status---- :" + status.name + " ----Content--- :" + message, true)
+                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Status---- :" + status.name + " ----Content--- :" + message, true)
             }
         }
 
@@ -563,10 +563,10 @@ object Utils  {
         fun isSensorAvailable(): Boolean {
             try {
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    ActivityCompat.checkSelfPermission(SuperSafeApplication.Companion.getInstance(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED &&
-                            SuperSafeApplication.Companion.getInstance().getSystemService(FingerprintManager::class.java).isHardwareDetected()
+                    ActivityCompat.checkSelfPermission(SuperSafeApplication.getInstance(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED &&
+                            SuperSafeApplication.getInstance().getSystemService(FingerprintManager::class.java).isHardwareDetected()
                 } else {
-                    FingerprintManagerCompat.from(SuperSafeApplication.Companion.getInstance()).isHardwareDetected()
+                    FingerprintManagerCompat.from(SuperSafeApplication.getInstance()).isHardwareDetected()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -641,22 +641,22 @@ object Utils  {
 
         fun writePinToSharedPreferences(pin: String?) {
             //PrefsController.putString(getString(R.string.key_pin),Utils.sha256(pin));
-            SuperSafeApplication.Companion.getInstance().writeKey(pin)
+            SuperSafeApplication.getInstance().writeKey(pin)
         }
 
         fun getPinFromSharedPreferences(): String? {
             //PrefsController.getString(getString(R.string.key_pin), "");
-            return SuperSafeApplication.Companion.getInstance().readKey()
+            return SuperSafeApplication.getInstance().readKey()
         }
 
         fun writeFakePinToSharedPreferences(pin: String?) {
             //PrefsController.putString(getString(R.string.key_pin),Utils.sha256(pin));
-            SuperSafeApplication.Companion.getInstance().writeFakeKey(pin)
+            SuperSafeApplication.getInstance().writeFakeKey(pin)
         }
 
         fun getFakePinFromSharedPreferences(): String? {
             //PrefsController.getString(getString(R.string.key_pin), "");
-            return SuperSafeApplication.Companion.getInstance().readFakeKey()
+            return SuperSafeApplication.getInstance().readFakeKey()
         }
 
         fun isEnabledFakePin(): Boolean {
@@ -676,23 +676,23 @@ object Utils  {
         }
 
         fun onCheckNewVersion() {
-            val current_code_version: Int = PrefsController.getInt(SuperSafeApplication.Companion.getInstance().getString(R.string.current_code_version), 0)
+            val current_code_version: Int = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version), 0)
             if (current_code_version == BuildConfig.VERSION_CODE) {
                 Log(TAG, "Already install this version")
                 return
             } else {
-                PrefsController.putInt(SuperSafeApplication.Companion.getInstance().getString(R.string.current_code_version), BuildConfig.VERSION_CODE)
-                PrefsController.putBoolean(SuperSafeApplication.Companion.getInstance().getString(R.string.we_are_a_team), false)
+                PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version), BuildConfig.VERSION_CODE)
+                PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.we_are_a_team), false)
                 Log(TAG, "New install this version")
             }
         }
 
         fun onUpdatedCountRate() {
-            val count: Int = PrefsController.getInt(SuperSafeApplication.Companion.getInstance().getString(R.string.key_count_to_rate), 0)
+            val count: Int = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate), 0)
             if (count > 999) {
-                PrefsController.putInt(SuperSafeApplication.Companion.getInstance().getString(R.string.key_count_to_rate), 0)
+                PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate), 0)
             } else {
-                PrefsController.putInt(SuperSafeApplication.Companion.getInstance().getString(R.string.key_count_to_rate), count + 1)
+                PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_count_to_rate), count + 1)
             }
         }
 
@@ -710,11 +710,11 @@ object Utils  {
         }
 
         fun onHomePressed() {
-            PrefsController.putInt(SuperSafeApplication.Companion.getInstance().getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
+            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
             Log(TAG, "Pressed home button")
-            if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
+            if (!SingletonManager.getInstance().isVisitLockScreen()) {
                 SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
-                SingletonManager.Companion.getInstance().setVisitLockScreen(true)
+                SingletonManager.getInstance().setVisitLockScreen(true)
                 Log(TAG, "Verify pin")
             } else {
                 Log(TAG, "Verify pin already")
@@ -723,7 +723,7 @@ object Utils  {
 
         fun getUserInfo(): User? {
             try {
-                val value: String? = PrefsController.getString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), null)
+                val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_user), null)
                 if (value != null) {
                     val mUser: User? = Gson().fromJson(value, User::class.java)
                     if (mUser != null) {
@@ -754,11 +754,11 @@ object Utils  {
         }
 
         fun isPauseSync(): Boolean {
-            return PrefsController.getBoolean(SuperSafeApplication.Companion.getInstance().getString(R.string.key_pause_cloud_sync), false)
+            return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
         }
 
         fun isCheckSyncSuggestion(): Boolean {
-            val name: String = SuperSafeApplication.Companion.getInstance().getString(R.string.key_count_sync)
+            val name: String = SuperSafeApplication.getInstance().getString(R.string.key_count_sync)
             val mCount: Int = PrefsController.getInt(name, 0)
             val mSynced = getUserInfo()?.driveConnected
             mSynced?.let {
@@ -987,18 +987,18 @@ object Utils  {
 
         /*Check saver space*/
         fun getSaverSpace(): Boolean {
-            return PrefsController.getBoolean(SuperSafeApplication.Companion.getInstance().getString(R.string.key_saving_space), false)
+            return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
         }
 
         /*Delete folder*/
         fun onDeleteItemFolder(item_id: String?) {
-            val path: String = SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + item_id
+            val path: String = SuperSafeApplication.getInstance().getSupersafePrivate() + item_id
             Log(TAG, "Delete folder $path")
-            SuperSafeApplication.Companion.getInstance().getStorage()!!.deleteDirectory(SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + item_id)
+            SuperSafeApplication.getInstance().getStorage()!!.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + item_id)
         }
 
         fun onDeleteFile(file_path: String?) {
-            SuperSafeApplication.Companion.getInstance().getStorage()!!.deleteFile(file_path)
+            SuperSafeApplication.getInstance().getStorage()!!.deleteFile(file_path)
         }
 
         /*Create folder*/

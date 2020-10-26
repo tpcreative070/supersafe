@@ -60,7 +60,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
 
     override fun getTheme(): Resources.Theme? {
         val theme: Resources.Theme = super.getTheme()
-        val result: ThemeApp? = ThemeApp.Companion.getInstance()?.getThemeInfo()
+        val result: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (result != null) {
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true)
         }
@@ -89,7 +89,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
 
     protected override fun onPause() {
         super.onPause()
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.remove(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         stopCamera()
     }
 
@@ -98,7 +98,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
     }
 
     protected override fun onResume() {
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.addListener(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         Utils.Log(TAG, "Action here........onResume")
         if (mCachedCameraConfig != null) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -140,7 +140,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
 
     protected override fun onStart() {
         super.onStart()
-        if (SingletonManager.Companion.getInstance().isAnimation()) {
+        if (SingletonManager.getInstance().isAnimation()) {
             if (onStartCount > 1) {
                 Bungee.fade(this)
             } else if (onStartCount == 1) {
@@ -148,7 +148,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
             }
         } else {
             Bungee.zoom(this)
-            SingletonManager.Companion.getInstance().setAnimation(true)
+            SingletonManager.getInstance().setAnimation(true)
         }
     }
     /*Hidden camera*/
@@ -192,10 +192,10 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
     protected fun startCamera(cameraConfig: CameraConfig?) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) { //check if the camera permission is available
-            onCameraError(CameraError.Companion.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE)
-        } else if (cameraConfig?.getFacing() == CameraFacing.Companion.FRONT_FACING_CAMERA
+            onCameraError(CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE)
+        } else if (cameraConfig?.getFacing() == CameraFacing.FRONT_FACING_CAMERA
                 && !HiddenCameraUtils.isFrontCameraAvailable(this)) {   //Check if for the front camera
-            onCameraError(CameraError.Companion.ERROR_DOES_NOT_HAVE_FRONT_CAMERA)
+            onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA)
         } else {
             mCachedCameraConfig = cameraConfig
             if (cameraConfig != null) {

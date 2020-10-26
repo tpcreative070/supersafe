@@ -31,7 +31,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
     override fun onBillingError(errorCode: Int, error: Throwable?) {}
     override fun onBillingInitialized() {
         /*Checking life time in-app*/
-        if (bp.isPurchased(SuperSafeApplication.Companion.getInstance().getString(R.string.life_time))) {
+        if (bp.isPurchased(SuperSafeApplication.getInstance().getString(R.string.life_time))) {
             val details: TransactionDetails? = bp.getPurchaseTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.life_time))
             if (details != null) {
                 val mPurchaseData: PurchaseData = details.purchaseInfo.purchaseData
@@ -44,7 +44,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 onCheckout(mPurchaseData, EnumPurchase.SIX_MONTHS)
             }
         } else if (bp.isSubscribed(SuperSafeApplication.getInstance().getString(R.string.one_years))) {
-            val details: TransactionDetails? = bp.getSubscriptionTransactionDetails(SuperSafeApplication.Companion.getInstance().getString(R.string.one_years))
+            val details: TransactionDetails? = bp.getSubscriptionTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.one_years))
             if (details != null) {
                 val mPurchaseData: PurchaseData = details.purchaseInfo.purchaseData
                 onCheckout(mPurchaseData, EnumPurchase.ONE_YEAR)

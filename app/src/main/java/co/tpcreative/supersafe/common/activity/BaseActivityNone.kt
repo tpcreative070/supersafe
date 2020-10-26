@@ -33,7 +33,7 @@ abstract class BaseActivityNone : AppCompatActivity() {
 
     override fun getTheme(): Resources.Theme? {
         val theme: Resources.Theme = super.getTheme()
-        val result: ThemeApp? = ThemeApp.Companion.getInstance()?.getThemeInfo()
+        val result: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (result != null) {
             theme.applyStyle(R.style.AppTheme_Share, true)
         }

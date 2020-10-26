@@ -250,8 +250,8 @@ class PhotoSlideShowActivity : BaseGalleryActivity(), View.OnClickListener, Base
                     ?.setPhotoMaxWidth(120)
                     ?.setLocalCategoriesId(presenter?.mainCategories?.categories_local_id)
                     ?.setCheckBoxColor(-0xc0ae4b)
-                    ?.setDialogHeight(Configuration.Companion.DIALOG_HALF)
-                    ?.setDialogMode(Configuration.Companion.DIALOG_LIST)
+                    ?.setDialogHeight(Configuration.DIALOG_HALF)
+                    ?.setDialogMode(Configuration.DIALOG_LIST)
                     ?.setMaximum(9)
                     ?.setTip(null)
                     ?.setAblumsTitle(null)
@@ -551,9 +551,9 @@ class PhotoSlideShowActivity : BaseGalleryActivity(), View.OnClickListener, Base
                                     when (formatType) {
                                         EnumFormatType.AUDIO -> {
                                             val input = File(index.originalPath)
-                                            var output: File? = File(SuperSafeApplication.Companion.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                output = File(SuperSafeApplication.Companion.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
+                                                output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
                                             }
                                             if (storage?.isFileExist(input.absolutePath)!!) {
                                                 if (output != null) {
@@ -597,7 +597,7 @@ class PhotoSlideShowActivity : BaseGalleryActivity(), View.OnClickListener, Base
                                             val input = File(path)
                                             var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                output = File(SuperSafeApplication.Companion.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
+                                                output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
                                             }
                                             if (storage?.isFileExist(input.absolutePath)!!) {
                                                 presenter?.mListShare?.add(output!!)
@@ -620,9 +620,9 @@ class PhotoSlideShowActivity : BaseGalleryActivity(), View.OnClickListener, Base
                                     when (formatType) {
                                         EnumFormatType.AUDIO -> {
                                             val input = File(index.originalPath)
-                                            var output: File? = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.title)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                output = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                                output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
                                             }
                                             if (storage?.isFileExist(input.absolutePath)!!) {
                                                 presenter?.mListShare?.add(output!!)
@@ -632,9 +632,9 @@ class PhotoSlideShowActivity : BaseGalleryActivity(), View.OnClickListener, Base
                                         }
                                         EnumFormatType.FILES -> {
                                             val input = File(index.originalPath)
-                                            var output: File? = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.title)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                output = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                                output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
                                             }
                                             if (storage?.isFileExist(input.absolutePath)!!) {
                                                 presenter?.mListShare?.add(output!!)

@@ -24,19 +24,19 @@ class CameraConfig {
     private var mContext: Context? = null
 
     @CameraResolution.SupportedResolution
-    private var mResolution: Int = CameraResolution.Companion.MEDIUM_RESOLUTION
+    private var mResolution: Int = CameraResolution.MEDIUM_RESOLUTION
 
     @CameraFacing.SupportedCameraFacing
-    private var mFacing: Int = CameraFacing.Companion.REAR_FACING_CAMERA
+    private var mFacing: Int = CameraFacing.REAR_FACING_CAMERA
 
     @CameraImageFormat.SupportedImageFormat
-    private var mImageFormat: Int = CameraImageFormat.Companion.FORMAT_JPEG
+    private var mImageFormat: Int = CameraImageFormat.FORMAT_JPEG
 
     @CameraResolution.SupportedResolution
-    private var mImageRotation: Int = CameraRotation.Companion.ROTATION_0
+    private var mImageRotation: Int = CameraRotation.ROTATION_0
 
     @CameraFocus.SupportedCameraFocus
-    private var mCameraFocus: Int = CameraFocus.Companion.AUTO
+    private var mCameraFocus: Int = CameraFocus.AUTO
     private var mImageFile: File? = null
     private var mPin: String? = null
     fun getBuilder(context: Context?): CameraConfig.Builder? {
@@ -51,9 +51,9 @@ class CameraConfig {
 
     fun getFocusMode(): String? {
         return when (mCameraFocus) {
-            CameraFocus.Companion.AUTO -> Camera.Parameters.FOCUS_MODE_AUTO
-            CameraFocus.Companion.CONTINUOUS_PICTURE -> Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
-            CameraFocus.Companion.NO_FOCUS -> null
+            CameraFocus.AUTO -> Camera.Parameters.FOCUS_MODE_AUTO
+            CameraFocus.CONTINUOUS_PICTURE -> Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
+            CameraFocus.NO_FOCUS -> null
             else -> throw RuntimeException("Invalid camera focus mode.")
         }
     }
@@ -96,7 +96,7 @@ class CameraConfig {
         fun setCameraResolution(@CameraResolution.SupportedResolution resolution: Int): co.tpcreative.supersafe.common.hiddencamera.CameraConfig.Builder? {
 
             //Validate input
-            if (resolution != CameraResolution.Companion.HIGH_RESOLUTION && resolution != CameraResolution.Companion.MEDIUM_RESOLUTION && resolution != CameraResolution.Companion.LOW_RESOLUTION) {
+            if (resolution != CameraResolution.HIGH_RESOLUTION && resolution != CameraResolution.MEDIUM_RESOLUTION && resolution != CameraResolution.LOW_RESOLUTION) {
                 throw RuntimeException("Invalid camera resolution.")
             }
             mResolution = resolution
@@ -116,8 +116,8 @@ class CameraConfig {
          */
         fun setCameraFacing(@CameraFacing.SupportedCameraFacing cameraFacing: Int): co.tpcreative.supersafe.common.hiddencamera.CameraConfig.Builder? {
             //Validate input
-            if (cameraFacing != CameraFacing.Companion.REAR_FACING_CAMERA &&
-                    cameraFacing != CameraFacing.Companion.FRONT_FACING_CAMERA) {
+            if (cameraFacing != CameraFacing.REAR_FACING_CAMERA &&
+                    cameraFacing != CameraFacing.FRONT_FACING_CAMERA) {
                 throw RuntimeException("Invalid camera facing value.")
             }
             mFacing = cameraFacing
@@ -137,7 +137,7 @@ class CameraConfig {
          */
         fun setCameraFocus(@CameraFocus.SupportedCameraFocus focusMode: Int): co.tpcreative.supersafe.common.hiddencamera.CameraConfig.Builder? {
             //Validate input
-            if (focusMode != CameraFocus.Companion.AUTO && focusMode != CameraFocus.Companion.CONTINUOUS_PICTURE && focusMode != CameraFocus.Companion.NO_FOCUS) {
+            if (focusMode != CameraFocus.AUTO && focusMode != CameraFocus.CONTINUOUS_PICTURE && focusMode != CameraFocus.Companion.NO_FOCUS) {
                 throw RuntimeException("Invalid camera focus mode.")
             }
             mCameraFocus = focusMode
@@ -156,8 +156,8 @@ class CameraConfig {
          */
         fun setImageFormat(@CameraImageFormat.SupportedImageFormat imageFormat: Int): co.tpcreative.supersafe.common.hiddencamera.CameraConfig.Builder? {
             //Validate input
-            if (imageFormat != CameraImageFormat.Companion.FORMAT_JPEG &&
-                    imageFormat != CameraImageFormat.Companion.FORMAT_PNG) {
+            if (imageFormat != CameraImageFormat.FORMAT_JPEG &&
+                    imageFormat != CameraImageFormat.FORMAT_PNG) {
                 throw RuntimeException("Invalid output image format.")
             }
             mImageFormat = imageFormat
@@ -220,7 +220,7 @@ class CameraConfig {
             return File(SuperSafeApplication.getInstance().getSupersafeBreakInAlerts()
                     + File.separator
                     + "IMG_" + System.currentTimeMillis() //IMG_214515184113123.png
-                    + if (mImageFormat == CameraImageFormat.Companion.FORMAT_JPEG) ".jpeg" else ".png")
+                    + if (mImageFormat == CameraImageFormat.FORMAT_JPEG) ".jpeg" else ".png")
         }
     }
 }

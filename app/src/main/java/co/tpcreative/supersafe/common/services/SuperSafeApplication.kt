@@ -27,8 +27,6 @@ import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.initialization.InitializationStatus
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
@@ -65,10 +63,8 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     private var activity: Activity? = null
     override fun onCreate() {
         super.onCreate()
-        MobileAds.initialize(this, object : OnInitializationCompleteListener {
-            override fun onInitializationComplete(initializationStatus: InitializationStatus?) {}
-        })
         mInstance = this
+        MobileAds.initialize(this) { }
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
@@ -520,7 +516,6 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
 
     companion object{
         private val TAG = SuperSafeApplication::class.java.simpleName
-        private var mInstance: SuperSafeApplication? = null
         private var resumed = 0
         private var paused = 0
         private var started = 0
@@ -530,13 +525,9 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         var serverAPI: RootAPI? = null
         var serverDriveApi: RootAPI? = null
         var serviceGraphMicrosoft: RootAPI? = null
-        @Volatile private var INSTANCE: SuperSafeApplication? = null
+        @Volatile private var mInstance: SuperSafeApplication? = null
         fun  getInstance(): SuperSafeApplication {
-            return INSTANCE?: synchronized(this){
-                SuperSafeApplication().also {
-                    INSTANCE = it
-                }
-            }
+            return mInstance as SuperSafeApplication
         }
     }
 
