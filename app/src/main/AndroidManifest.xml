@@ -93,7 +93,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.albumdetail.AlbumDetailActivity"
+            android:name=".ui.albumdetail.AlbumDetailAct"
             android:label="" />
         <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity"/>
         <activity

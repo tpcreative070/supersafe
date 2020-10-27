@@ -31,7 +31,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     protected var actionBar: ActionBar? = null
     var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
-    protected var storage: Storage? = null
+    var storage: Storage? = null
     private var fragment: MoveGalleryFragment? = null
     var TAG : String = this::class.java.simpleName
     protected fun attachFragment(layoutId: Int) {
@@ -40,11 +40,11 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         fragmentManager.beginTransaction().replace(layoutId, fragment!!).commit()
     }
 
-    protected fun openAlbum() {
+    fun openAlbum() {
         fragment?.openAlbum()
     }
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()
         onStartCount = 1

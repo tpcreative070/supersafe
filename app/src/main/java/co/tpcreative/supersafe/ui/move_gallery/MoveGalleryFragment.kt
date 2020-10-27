@@ -194,7 +194,7 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
     }
 
     private fun dp2px(dp: Float): Int {
-        return (dp * activity?.resources?.displayMetrics?.density!! + 0.5f) as Int
+        return (dp * activity?.resources?.displayMetrics?.density!! + 0.5f).toInt()
     }
 
     private fun getGallerWidth(container: ViewGroup?): Int {

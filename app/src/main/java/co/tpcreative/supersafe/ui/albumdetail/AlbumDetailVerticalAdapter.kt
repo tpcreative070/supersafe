@@ -4,12 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
-import butterknife.OnLongClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -24,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.custom_item_verical.view.*
 
 class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions? = RequestOptions()
@@ -69,33 +65,26 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
-        @BindView(R.id.imgAlbum)
-        var imgAlbum: AppCompatImageView? = null
-
-        @BindView(R.id.tvTitle)
-        var tvTitle: AppCompatTextView? = null
-
-        @BindView(R.id.tvSizeCreatedDate)
-        var tvSizeCreatedDate: AppCompatTextView? = null
-
-        @BindView(R.id.view_alpha)
-        var alpha: View? = null
+        val imgAlbum = itemView.imgAlbum
+        val tvTitle = itemView.tvTitle
+        val tvSizeCreatedDate = itemView.tvSizeCreatedDate
+        var alpha = itemView.view_alpha
         var mPosition = 0
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
             mPosition = position
             Utils.Log(TAG, "Position $position")
             if (data.isChecked) {
-                alpha?.setAlpha(0.5f)
+                alpha?.alpha = 0.5f
             } else {
-                alpha?.setAlpha(0.0f)
+                alpha?.alpha = 0.0f
             }
             try {
                 val path: String? = data.thumbnailPath
                 val formatTypeFile = EnumFormatType.values()[data.formatType]
-                tvTitle?.setText(data.title)
+                tvTitle?.text = data.title
                 val value: String? = data.size?.toLong()?.let { ConvertUtils.byte2FitMemorySize(it) }
-                tvSizeCreatedDate?.setText(value + " created " + Utils.getCurrentDate(data.originalName))
+                tvSizeCreatedDate?.text = value + " created " + Utils.getCurrentDate(data.originalName)
                 when (formatTypeFile) {
                     EnumFormatType.AUDIO -> {
                         Glide.with(context!!)
@@ -104,7 +93,7 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
                     }
                     EnumFormatType.VIDEO -> {
                         if (storage?.isFileExist(path)!!) {
-                            imgAlbum?.setRotation(data.degrees.toFloat())
+                            imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(storage.readFile(path))
                                     .apply(options!!).into(imgAlbum!!)
@@ -112,7 +101,7 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
                     }
                     EnumFormatType.IMAGE -> {
                         if (storage?.isFileExist(path)!!) {
-                            imgAlbum?.setRotation(data.degrees.toFloat())
+                            imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(storage.readFile(path))
                                     .apply(options!!).into(imgAlbum!!)
@@ -127,17 +116,14 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
 
-        @OnClick(R.id.rlHome)
-        fun onClicked(view: View?) {
-            itemSelectedListener?.onClickItem(mPosition)
-        }
-
-        @OnLongClick(R.id.rlHome)
-        fun onLongClickedItem(view: View?): Boolean {
-            itemSelectedListener?.onLongClickItem(mPosition)
-            return true
+            itemView.rlHome.setOnClickListener {
+                itemSelectedListener?.onClickItem(mPosition)
+            }
+            itemView.rlHome.setOnLongClickListener {
+                itemSelectedListener?.onLongClickItem(mPosition)
+                true
+            }
         }
     }
 

@@ -8,19 +8,13 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.OnClick
 import cn.pedant.SweetAlert.SweetAlertDialog
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
@@ -29,7 +23,6 @@ import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
-import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailAdapter
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.bumptech.glide.Priority
@@ -45,10 +38,8 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
 import co.tpcreative.supersafe.model.*
-import com.afollestad.materialdialogs.DialogAction
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.CollapsingToolbarLayout
@@ -60,41 +51,17 @@ import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import dmax.dialog.SpotsDialog
+import kotlinx.android.synthetic.main.activity_album_detail.*
+import kotlinx.android.synthetic.main.footer_items_detail_album.*
 import org.greenrobot.eventbus.ThreadMode
 
-class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.ItemSelectedListener, AlbumDetailVerticalAdapter.ItemSelectedListener {
-    @BindView(R.id.recyclerView)
-    var recyclerView: RecyclerView? = null
-
-    @BindView(R.id.speedDial)
-    var mSpeedDialView: SpeedDialView? = null
-
-    @BindView(R.id.backdrop)
-    var backdrop: AppCompatImageView? = null
-
-    @BindView(R.id.tv_Photos)
-    var tv_Photos: AppCompatTextView? = null
-
-    @BindView(R.id.tv_Videos)
-    var tv_Videos: AppCompatTextView? = null
-
-    @BindView(R.id.tv_Audios)
-    var tv_Audios: AppCompatTextView? = null
-
-    @BindView(R.id.tv_Others)
-    var tv_Others: AppCompatTextView? = null
-
-    @BindView(R.id.toolbar)
-    var toolbar: Toolbar? = null
-
-    @BindView(R.id.llBottom)
-    var llBottom: LinearLayout? = null
-    private var presenter: AlbumDetailPresenter? = null
+class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.ItemSelectedListener, AlbumDetailVerticalAdapter.ItemSelectedListener {
+    var presenter: AlbumDetailPresenter? = null
     private var adapter: AlbumDetailAdapter? = null
     private var verticalAdapter: AlbumDetailVerticalAdapter? = null
     private var isReload = false
     private var actionMode: ActionMode? = null
-    private var countSelected = 0
+    var countSelected = 0
     private var isSelectAll = false
     private var dialog: AlertDialog? = null
     var mDialogProgress: SweetAlertDialog? = null
@@ -106,9 +73,10 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             .error(R.color.colorPrimary)
             .priority(Priority.HIGH)
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_detail)
+        initUI()
         storage = Storage(this)
         storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
         initSpeedDial(true)
@@ -116,14 +84,13 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         presenter?.bindView(this)
         onInit()
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val collapsingToolbar: CollapsingToolbarLayout = findViewById<CollapsingToolbarLayout?>(R.id.collapsing_toolbar)
-        collapsingToolbar.setTitle(presenter?.mainCategories?.categories_name)
+        collapsingToolbar.title = presenter?.mainCategories?.categories_name
         val mList: MutableList<ItemModel>? = presenter?.mainCategories?.isFakePin?.let { SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, it) }
         val items: ItemModel? = SQLHelper.getItemId(presenter?.mainCategories?.items_id)
         if (items != null && mList != null && mList.size > 0) {
-            val formatTypeFile = EnumFormatType.values()[items.formatType]
-            when (formatTypeFile) {
+            when (EnumFormatType.values()[items.formatType]) {
                 EnumFormatType.AUDIO -> {
                     try {
                         val myColor = Color.parseColor(presenter?.mainCategories?.image)
@@ -173,14 +140,14 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 }
             }
         }
-        llBottom?.setVisibility(View.GONE)
+        llBottom?.visibility = View.GONE
         /*Root Fragment*/attachFragment(R.id.gallery_root)
         recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 Utils.Log(TAG, "Scrolling change listener")
                 if (actionMode != null) {
-                    mSpeedDialView?.setVisibility(View.INVISIBLE)
+                    speedDial?.visibility = View.INVISIBLE
                 }
             }
         })
@@ -223,7 +190,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                             }
                         }
                         EnumStatus.EXPORT -> {
-                            runOnUiThread(Runnable { Toast.makeText(this@AlbumDetailActivity, "Exported at " + SuperSafeApplication.Companion.getInstance().getSupersafePicture(), Toast.LENGTH_LONG).show() })
+                            runOnUiThread(Runnable { Toast.makeText(this@AlbumDetailAct, "Exported at " + SuperSafeApplication.getInstance().getSupersafePicture(), Toast.LENGTH_LONG).show() })
                         }
                     }
                 } catch (e: Exception) {
@@ -234,20 +201,18 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 mDialogProgress?.setTitleText("Success!")
                         ?.setConfirmText("OK")
                         ?.changeAlertType(SweetAlertDialog.SUCCESS_TYPE)
-                mDialogProgress?.setConfirmClickListener(object : SweetAlertDialog.OnSweetClickListener {
-                    override fun onClick(sweetAlertDialog: SweetAlertDialog?) {
-                        sweetAlertDialog?.dismiss()
-                        var i = 0
-                        while (i < presenter?.mList?.size!!) {
-                            val items: ItemModel? = presenter?.mList?.get(i)
-                            if (items?.isChecked!!) {
-                                items?.isSaver = false
-                            }
-                            i++
+                mDialogProgress?.setConfirmClickListener { sweetAlertDialog ->
+                    sweetAlertDialog?.dismiss()
+                    var i = 0
+                    while (i < presenter?.mList?.size!!) {
+                        val items: ItemModel? = presenter?.mList?.get(i)
+                        if (items?.isChecked!!) {
+                            items?.isSaver = false
                         }
-                        onClickedExport()
+                        i++
                     }
-                })
+                    onExport()
+                }
                 Utils.Log(TAG, "already sync ")
             }
             EnumStatus.DOWNLOAD_FAILED -> {
@@ -258,7 +223,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -267,7 +232,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         ServiceManager.getInstance()?.setRequestShareIntent(false)
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
@@ -283,7 +248,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         Utils.Log(TAG, "onStop Album")
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
@@ -296,18 +261,20 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             return false
         }
         toolbar?.inflateMenu(R.menu.menu_album_detail)
-        menuItem = toolbar?.getMenu()?.getItem(0)
+        menuItem = toolbar?.menu?.getItem(0)
         val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
         if (isVertical) {
-            menuItem?.setIcon(ContextCompat.getDrawable(this,R.drawable.baseline_view_comfy_white_48))
+            menuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_view_comfy_white_48)
         } else {
-            menuItem?.setIcon(ContextCompat.getDrawable(this,R.drawable.baseline_format_list_bulleted_white_48))
+            menuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_format_list_bulleted_white_48)
         }
         return true
     }
 
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.action_album_settings -> {
                 Navigator.onAlbumSettings(this, presenter?.mainCategories!!)
                 return true
@@ -317,7 +284,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                     actionMode = toolbar?.startActionMode(callback)
                 }
                 countSelected = 0
-                actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
+                actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
                 Utils.Log(TAG, "Action here")
                 return true
             }
@@ -325,15 +292,19 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 if (menuItem != null) {
                     val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
                     if (isVertical) {
-                        menuItem?.setIcon(ContextCompat.getDrawable(this,R.drawable.baseline_format_list_bulleted_white_48))
+                        menuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_format_list_bulleted_white_48)
                         PrefsController.putBoolean(getString(R.string.key_vertical_adapter), false)
                         onInit()
                     } else {
-                        menuItem?.setIcon(ContextCompat.getDrawable(this,R.drawable.baseline_view_comfy_white_48))
+                        menuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_view_comfy_white_48)
                         PrefsController.putBoolean(getString(R.string.key_vertical_adapter), true)
                         onInit()
                     }
                 }
+            }
+            android.R.id.home -> {
+                finish()
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
@@ -349,8 +320,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
         } else {
             try {
-                val formatType = EnumFormatType.values()[presenter?.mList?.get(position)?.formatType!!]
-                when (formatType) {
+                when (EnumFormatType.values()[presenter?.mList?.get(position)?.formatType!!]) {
                     EnumFormatType.FILES -> {
                         Toast.makeText(getContext(), "Can not support to open type of this file", Toast.LENGTH_SHORT).show()
                     }
@@ -373,59 +343,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             actionMode = toolbar?.startActionMode(callback)
         }
         toggleSelection(position)
-        actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
-    }
-
-    @OnClick(R.id.imgShare)
-    fun onClickedShare(view: View?) {
-        if (countSelected > 0) {
-            storage?.createDirectory(SuperSafeApplication.getInstance().getSupersafeShare())
-            presenter?.status = EnumStatus.SHARE
-            onShowDialog(presenter?.status)
-        }
-    }
-
-    @OnClick(R.id.imgExport)
-    fun onClickedExport() {
-        if (countSelected > 0) {
-            storage?.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture())
-            presenter?.status = EnumStatus.EXPORT
-            var isSaver = false
-            var spaceAvailable: Long = 0
-            for (i in presenter?.mList?.indices!!) {
-                val items: ItemModel? = presenter?.mList?.get(i)
-                if (items?.isSaver!! && items?.isChecked) {
-                    isSaver = true
-                    spaceAvailable += items.size?.toLong()!!
-                }
-            }
-            val availableSpaceOS: Long = Utils.getAvailableSpaceInBytes()
-            if (availableSpaceOS < spaceAvailable) {
-                val request_spaces = spaceAvailable - availableSpaceOS
-                val result: String? = ConvertUtils.byte2FitMemorySize(request_spaces)
-                val message: String = kotlin.String.format(getString(R.string.your_space_is_not_enough_to), "export. ", "Request spaces: $result")
-                Utils.showDialog(this, message)
-            } else {
-                if (isSaver) {
-                    onEnableSyncData()
-                } else {
-                    onShowDialog(presenter?.status)
-                }
-            }
-        }
-    }
-
-    @OnClick(R.id.imgDelete)
-    fun onClickedDelete(view: View?) {
-        if (countSelected > 0) {
-            presenter?.status = EnumStatus.DELETE
-            onShowDialog(presenter?.status)
-        }
-    }
-
-    @OnClick(R.id.imgMove)
-    fun onClickedMove(view: View?) {
-        openAlbum()
+        actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
     }
 
     private fun onStartProgressing() {
@@ -434,7 +352,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 if (dialog == null) {
                     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                     dialog = SpotsDialog.Builder()
-                            .setContext(this@AlbumDetailActivity)
+                            .setContext(this@AlbumDetailAct)
                             .setDotColor(themeApp?.getAccentColor()!!)
                             .setMessage(getString(R.string.exporting))
                             .setCancelable(true)
@@ -468,36 +386,36 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
     override fun onStartLoading(status: EnumStatus) {}
     override fun onStopLoading(status: EnumStatus) {}
     override fun getContext(): Context? {
-        return getApplicationContext()
+        return applicationContext
     }
 
     /*Init Floating View*/
     private fun initSpeedDial(addActionItems: Boolean) {
         val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (addActionItems) {
-            var drawable: Drawable? = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_camera_white_24)
-            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
-                            getTheme()))
+            var drawable: Drawable? = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_camera_white_24)
+            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                            theme))
                     .setLabel(getString(R.string.camera))
                     .setLabelColor(Color.WHITE)
-                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                            getTheme()))
+                    .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
+                            theme))
                     .create())
             drawable = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.baseline_photo_white_24)
-            mSpeedDialView?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(getResources(), mThemeApp?.getPrimaryColor()!!,
-                            getTheme()))
+            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
+                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                            theme))
                     .setLabel(R.string.photo)
-                    .setLabelColor(getResources().getColor(R.color.white))
+                    .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
                     .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                            getTheme()))
+                            theme))
                     .create())
-            mSpeedDialView?.setMainFabAnimationRotateAngle(180f)
+            speedDial?.setMainFabAnimationRotateAngle(180f)
         }
 
         //Set main action clicklistener.
-        mSpeedDialView?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
+        speedDial?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
             override fun onMainActionSelected(): Boolean {
                 return false // True to keep the Speed Dial open
             }
@@ -508,12 +426,12 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         })
 
         //Set option fabs clicklisteners.
-        mSpeedDialView?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
+        speedDial?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
             override fun onActionSelected(actionItem: SpeedDialActionItem?): Boolean {
                 when (actionItem?.getId()) {
                     R.id.fab_album -> return false // false will close it without animation
                     R.id.fab_photo -> {
-                        Navigator.onMoveToAlbum(this@AlbumDetailActivity)
+                        Navigator.onMoveToAlbum(this@AlbumDetailAct)
                         return false // closes without animation (same as mSpeedDialView.close(false); return false;)
                     }
                     R.id.fab_camera -> {
@@ -527,8 +445,8 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
     }
 
     override fun onBackPressed() {
-        if (mSpeedDialView?.isOpen()!!) {
-            mSpeedDialView?.close()
+        if (speedDial?.isOpen!!) {
+            speedDial?.close()
         } else if (actionMode != null) {
             actionMode?.finish()
         } else {
@@ -544,7 +462,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report?.areAllPermissionsGranted()!!) {
-                            presenter?.mainCategories?.let { Navigator.onMoveCamera(this@AlbumDetailActivity, it) }
+                            presenter?.mainCategories?.let { Navigator.onMoveCamera(this@AlbumDetailAct, it) }
                         } else {
                             Utils.Log(TAG, "Permission is denied")
                         }
@@ -571,26 +489,26 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         try {
             val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
             if (isVertical) {
-                recyclerView?.getRecycledViewPool()?.clear()
+                recyclerView?.recycledViewPool?.clear()
                 verticalAdapter = AlbumDetailVerticalAdapter(getLayoutInflater(), this, this)
-                val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(getApplicationContext())
-                recyclerView?.setLayoutManager(mLayoutManager)
-                while (recyclerView?.getItemDecorationCount()!! > 0) {
+                val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(applicationContext)
+                recyclerView?.layoutManager = mLayoutManager
+                while (recyclerView?.itemDecorationCount!! > 0) {
                     recyclerView?.removeItemDecorationAt(0)
                 }
                 recyclerView?.addItemDecoration(DividerItemDecoration(this, 0))
-                recyclerView?.setAdapter(verticalAdapter)
+                recyclerView?.adapter = verticalAdapter
                 verticalAdapter?.setDataSource(presenter?.mList)
             } else {
-                recyclerView?.getRecycledViewPool()?.clear()
-                adapter = AlbumDetailAdapter(layoutInflater, getApplicationContext(), this)
-                val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(getApplicationContext(), 3)
-                recyclerView?.setLayoutManager(mLayoutManager)
-                while (recyclerView?.getItemDecorationCount()!! > 0) {
+                recyclerView?.recycledViewPool?.clear()
+                adapter = AlbumDetailAdapter(layoutInflater, applicationContext, this)
+                val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(applicationContext, 3)
+                recyclerView?.layoutManager = mLayoutManager
+                while (recyclerView?.itemDecorationCount!! > 0) {
                     recyclerView?.removeItemDecorationAt(0)
                 }
                 recyclerView?.addItemDecoration(GridSpacingItemDecoration(3, 4, true))
-                recyclerView?.setAdapter(adapter)
+                recyclerView?.adapter = adapter
                 adapter?.setDataSource(presenter?.mList)
             }
         } catch (e: Exception) {
@@ -620,111 +538,25 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 .titleColor(ContextCompat.getColor(this,R.color.black))
                 .negativeText(getString(R.string.cancel))
                 .positiveText(getString(R.string.ok))
-                .onNegative(object : MaterialDialog.SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                        presenter?.status = EnumStatus.CANCEL
-                    }
-                })
-                .onPositive(object : MaterialDialog.SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                        val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
-                        when (status) {
-                            EnumStatus.SHARE -> {
-                                EventBus.getDefault().post(EnumStatus.START_PROGRESS)
-                                presenter?.mListShare?.clear()
-                                var i = 0
-                                while (i < presenter?.mList?.size!!) {
-                                    val index: ItemModel? = presenter?.mList?.get(i)
-                                    if (index != null) {
-                                        if (index.isChecked) {
-                                            val formatType = EnumFormatType.values()[index.formatType]
-                                            when (formatType) {
-                                                EnumFormatType.AUDIO -> {
-                                                    val input = File(index.originalPath)
-                                                    var output: File? = File(SuperSafeApplication.Companion.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
-                                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                        output = File(SuperSafeApplication.Companion.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                                    }
-                                                    if (storage?.isFileExist(input.absolutePath)!!) {
-                                                        if (output != null) {
-                                                            presenter?.mListShare?.add(output)
-                                                        }
-                                                        val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                        mListExporting.add(exportFiles)
-                                                    }
-                                                }
-                                                EnumFormatType.FILES -> {
-                                                    val input = File(index.originalPath)
-                                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
-                                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                                    }
-                                                    if (storage?.isFileExist(input.absolutePath)!!) {
-                                                        if (output != null) {
-                                                            presenter?.mListShare?.add(output)
-                                                        }
-                                                        val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                        mListExporting.add(exportFiles)
-                                                    }
-                                                }
-                                                EnumFormatType.VIDEO -> {
-                                                    val input = File(index.originalPath)
-                                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
-                                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                                    }
-                                                    if (storage?.isFileExist(input.absolutePath)!!) {
-                                                        if (output != null) {
-                                                            presenter?.mListShare?.add(output)
-                                                        }
-                                                        val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                        mListExporting.add(exportFiles)
-                                                    }
-                                                }
-                                                else -> {
-                                                    var path = ""
-                                                    path = if (index.mimeType == getString(R.string.key_gif)) {
-                                                        index.originalPath!!
-                                                    } else {
-                                                        index.thumbnailPath!!
-                                                    }
-                                                    val input = File(path)
-                                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
-                                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                                    }
-                                                    if (storage?.isFileExist(input.absolutePath)!!) {
-                                                        if (output != null) {
-                                                            presenter?.mListShare?.add(output)
-                                                        }
-                                                        val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                        mListExporting.add(exportFiles)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    i++
-                                }
-                                onStartProgressing()
-                                ServiceManager.getInstance()?.setmListExport(mListExporting)
-                                ServiceManager.getInstance()?.onExportingFiles()
-                            }
-                            EnumStatus.EXPORT -> {
-                                EventBus.getDefault().post(EnumStatus.START_PROGRESS)
-                                presenter?.mListShare?.clear()
-                                var i = 0
-                                while (i < presenter?.mList?.size!!) {
-                                    val index: ItemModel? = presenter?.mList?.get(i)
-                                    if (index?.isChecked!!) {
+                .onNegative { dialog, which -> presenter?.status = EnumStatus.CANCEL }
+                .onPositive { dialog, which ->
+                    val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
+                    when (status) {
+                        EnumStatus.SHARE -> {
+                            EventBus.getDefault().post(EnumStatus.START_PROGRESS)
+                            presenter?.mListShare?.clear()
+                            var i = 0
+                            while (i < presenter?.mList?.size!!) {
+                                val index: ItemModel? = presenter?.mList?.get(i)
+                                if (index != null) {
+                                    if (index.isChecked) {
                                         val formatType = EnumFormatType.values()[index.formatType]
                                         when (formatType) {
                                             EnumFormatType.AUDIO -> {
                                                 val input = File(index.originalPath)
-                                                Utils.Log(TAG, "Name :" + index.originalName)
-                                                var output: File? = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.title)
+                                                var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                                 if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                    output = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                                    output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
                                                 }
                                                 if (storage?.isFileExist(input.absolutePath)!!) {
                                                     if (output != null) {
@@ -736,10 +568,9 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                                             }
                                             EnumFormatType.FILES -> {
                                                 val input = File(index.originalPath)
-                                                Utils.Log(TAG, "Name :" + index.originalName)
-                                                var output: File? = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.title)
+                                                var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                                 if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                    output = File(SuperSafeApplication.Companion.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                                    output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
                                                 }
                                                 if (storage?.isFileExist(input.absolutePath)!!) {
                                                     if (output != null) {
@@ -751,9 +582,9 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                                             }
                                             EnumFormatType.VIDEO -> {
                                                 val input = File(index.originalPath)
-                                                var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                                var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                                 if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                    output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                                    output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
                                                 }
                                                 if (storage?.isFileExist(input.absolutePath)!!) {
                                                     if (output != null) {
@@ -764,10 +595,16 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                                                 }
                                             }
                                             else -> {
-                                                val input = File(index.originalPath)
-                                                var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                                var path = ""
+                                                path = if (index.mimeType == getString(R.string.key_gif)) {
+                                                    index.originalPath!!
+                                                } else {
+                                                    index.thumbnailPath!!
+                                                }
+                                                val input = File(path)
+                                                var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                                 if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                                    output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                                    output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
                                                 }
                                                 if (storage?.isFileExist(input.absolutePath)!!) {
                                                     if (output != null) {
@@ -776,22 +613,97 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                                                     val exportFiles = ExportFiles(input, output, i, false, index.formatType)
                                                     mListExporting.add(exportFiles)
                                                 }
-                                                Utils.Log(TAG, "Exporting file " + input.absolutePath)
                                             }
                                         }
                                     }
-                                    i++
                                 }
-                                onStartProgressing()
-                                ServiceManager.getInstance()?.setmListExport(mListExporting)
-                                ServiceManager.getInstance()?.onExportingFiles()
+                                i++
                             }
-                            EnumStatus.DELETE -> {
-                                presenter?.onDelete()
+                            onStartProgressing()
+                            ServiceManager.getInstance()?.setmListExport(mListExporting)
+                            ServiceManager.getInstance()?.onExportingFiles()
+                        }
+                        EnumStatus.EXPORT -> {
+                            EventBus.getDefault().post(EnumStatus.START_PROGRESS)
+                            presenter?.mListShare?.clear()
+                            var i = 0
+                            while (i < presenter?.mList?.size!!) {
+                                val index: ItemModel? = presenter?.mList?.get(i)
+                                if (index?.isChecked!!) {
+                                    val formatType = EnumFormatType.values()[index.formatType]
+                                    when (formatType) {
+                                        EnumFormatType.AUDIO -> {
+                                            val input = File(index.originalPath)
+                                            Utils.Log(TAG, "Name :" + index.originalName)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                            if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                                output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                            }
+                                            if (storage?.isFileExist(input.absolutePath)!!) {
+                                                if (output != null) {
+                                                    presenter?.mListShare?.add(output)
+                                                }
+                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
+                                                mListExporting.add(exportFiles)
+                                            }
+                                        }
+                                        EnumFormatType.FILES -> {
+                                            val input = File(index.originalPath)
+                                            Utils.Log(TAG, "Name :" + index.originalName)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                            if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                                output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                            }
+                                            if (storage?.isFileExist(input.absolutePath)!!) {
+                                                if (output != null) {
+                                                    presenter?.mListShare?.add(output)
+                                                }
+                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
+                                                mListExporting.add(exportFiles)
+                                            }
+                                        }
+                                        EnumFormatType.VIDEO -> {
+                                            val input = File(index.originalPath)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                            if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                                output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                            }
+                                            if (storage?.isFileExist(input.absolutePath)!!) {
+                                                if (output != null) {
+                                                    presenter?.mListShare?.add(output)
+                                                }
+                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
+                                                mListExporting.add(exportFiles)
+                                            }
+                                        }
+                                        else -> {
+                                            val input = File(index.originalPath)
+                                            var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                            if (storage?.isFileExist(output?.absolutePath)!!) {
+                                                output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                            }
+                                            if (storage?.isFileExist(input.absolutePath)!!) {
+                                                if (output != null) {
+                                                    presenter?.mListShare?.add(output)
+                                                }
+                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
+                                                mListExporting.add(exportFiles)
+                                            }
+                                            Utils.Log(TAG, "Exporting file " + input.absolutePath)
+                                        }
+                                    }
+                                }
+                                i++
                             }
+                            onStartProgressing()
+                            ServiceManager.getInstance()?.setmListExport(mListExporting)
+                            ServiceManager.getInstance()?.onExportingFiles()
+                        }
+                        EnumStatus.DELETE -> {
+                            presenter?.onDelete()
                         }
                     }
-                })
+                }
         builder.show()
     }
 
@@ -902,17 +814,17 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         when (status) {
             EnumStatus.RELOAD -> {
                 val photos: String = kotlin.String.format(getString(R.string.photos_default), "" + presenter?.photos)
-                tv_Photos?.setText(photos)
+                tv_Photos?.text = photos
                 val videos: String = kotlin.String.format(getString(R.string.videos_default), "" + presenter?.videos)
-                tv_Videos?.setText(videos)
+                tv_Videos?.text = videos
                 val audios: String = kotlin.String.format(getString(R.string.audios_default), "" + presenter?.audios)
-                tv_Audios?.setText(audios)
+                tv_Audios?.text = audios
                 val others: String = kotlin.String.format(getString(R.string.others_default), "" + presenter?.others)
-                tv_Others?.setText(others)
+                tv_Others?.text = others
                 if (actionMode != null) {
                     countSelected = 0
                     actionMode?.finish()
-                    llBottom?.setVisibility(View.GONE)
+                    llBottom?.visibility = View.GONE
                     isReload = true
                 }
                 val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
@@ -924,13 +836,13 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             }
             EnumStatus.REFRESH -> {
                 val photos: String = kotlin.String.format(getString(R.string.photos_default), "" + presenter?.photos)
-                tv_Photos?.setText(photos)
+                tv_Photos?.text = photos
                 val videos: String = kotlin.String.format(getString(R.string.videos_default), "" + presenter?.videos)
-                tv_Videos?.setText(videos)
+                tv_Videos?.text = videos
                 val audios: String = kotlin.String.format(getString(R.string.audios_default), "" + presenter?.audios)
-                tv_Audios?.setText(audios)
+                tv_Audios?.text = audios
                 val others: String = kotlin.String.format(getString(R.string.others_default), "" + presenter?.others)
-                tv_Others?.setText(others)
+                tv_Others?.text = others
                 val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
                 if (isVertical) {
                     verticalAdapter?.getDataSource()?.clear()
@@ -941,7 +853,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                 }
             }
             EnumStatus.DELETE -> {
-                SingletonPrivateFragment.Companion.getInstance()?.onUpdateView()
+                SingletonPrivateFragment.getInstance()?.onUpdateView()
                 if (actionMode != null) {
                     actionMode?.finish()
                 }
@@ -970,7 +882,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
     /*Action mode*/
     private val callback: ActionMode.Callback? = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            mode?.getMenuInflater()
+            mode?.menuInflater
             menuInflater?.inflate(R.menu.menu_select, menu)
             actionMode = mode
             countSelected = 0
@@ -986,7 +898,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         }
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            val i = item?.getItemId()
+            val i = item?.itemId
             if (i == R.id.menu_item_select_all) {
                 isSelectAll = !isSelectAll
                 selectAll()
@@ -1003,7 +915,6 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                 if (themeApp != null) {
-                    val window: Window = getWindow()
                     window.statusBarColor = ContextCompat.getColor(getContext()!!, themeApp.getPrimaryDarkColor())
                 }
             }
@@ -1040,8 +951,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
                     val items: ItemModel? = presenter?.mList?.get(i)
                     if (items?.isChecked!!) {
                         items.isChecked = false
-                        val formatType = EnumFormatType.values()[items.formatType]
-                        when (formatType) {
+                        when (EnumFormatType.values()[items.formatType]) {
                             EnumFormatType.IMAGE -> {
                                 items.isSaver = isSaver
                                 SQLHelper.updatedItem(items)
@@ -1107,7 +1017,7 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
             countSelected = countSelect
             onShowUI()
             onUpdateAdapter(EnumStatus.UPDATE_ENTIRE_ADAPTER, 0)
-            actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
+            actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1117,11 +1027,11 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
         try {
             runOnUiThread(Runnable {
                 if (countSelected == 0) {
-                    llBottom?.setVisibility(View.GONE)
-                    mSpeedDialView?.setVisibility(View.VISIBLE)
+                    llBottom?.visibility = View.GONE
+                    speedDial?.visibility = View.VISIBLE
                 } else {
-                    llBottom?.setVisibility(View.VISIBLE)
-                    mSpeedDialView?.setVisibility(View.INVISIBLE)
+                    llBottom?.visibility = View.VISIBLE
+                    speedDial?.visibility = View.INVISIBLE
                 }
             })
         } catch (e: Exception) {
@@ -1221,6 +1131,5 @@ class AlbumDetailActivity : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAda
     }
 
     companion object {
-        private val TAG = AlbumDetailActivity::class.java.simpleName
     }
 }

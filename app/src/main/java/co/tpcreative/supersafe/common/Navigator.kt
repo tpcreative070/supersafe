@@ -9,7 +9,7 @@ import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity
 import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity
-import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity
+import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailAct
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionAct
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity
 import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivity
@@ -164,7 +164,7 @@ object Navigator {
     }
 
     fun onMoveAlbumDetail(context: Activity, mainCategories: MainCategoryModel) {
-        val intent = Intent(context, AlbumDetailActivity::class.java)
+        val intent = Intent(context, AlbumDetailAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_main_categories), mainCategories)
         intent.putExtras(bundle)
