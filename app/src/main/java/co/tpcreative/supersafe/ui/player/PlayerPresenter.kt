@@ -15,8 +15,8 @@ import java.util.*
 class PlayerPresenter : Presenter<BaseView<EmptyModel>>() {
     var mItems: ItemModel? = null
     protected var mainCategories: MainCategoryModel? = null
-    var mList: MutableList<ItemModel>?
-    var mListSource: MutableList<MediaSource>?
+    var mList: MutableList<ItemModel>? = ArrayList<ItemModel>()
+    var mListSource: MutableList<MediaSource>? = ArrayList<MediaSource>()
     fun onGetIntent(activity: Activity?) {
         val view: BaseView<EmptyModel>? = view()
         val bundle: Bundle? = activity?.getIntent()?.getExtras()
@@ -45,8 +45,4 @@ class PlayerPresenter : Presenter<BaseView<EmptyModel>>() {
         }
     }
 
-    init {
-        mList = ArrayList<ItemModel>()
-        mListSource = ArrayList<MediaSource>()
-    }
 }

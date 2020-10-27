@@ -38,7 +38,9 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
     fun getIntent(activity: Activity?) {
         try {
             val bundle: Bundle? = activity?.getIntent()?.getExtras()
-            googleOauth = bundle?.get(getString(R.string.key_google_oauth)) as GoogleOauth
+            bundle?.get(getString(R.string.key_google_oauth))?.let {
+                googleOauth = it as GoogleOauth
+            }
             Utils.Log(TAG, "≈ " + Gson().toJson(googleOauth))
         } catch (e: Exception) {
             e.printStackTrace()

@@ -907,7 +907,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         }
         val access_token = user.access_token
         Utils.Log(TAG, "access_token : $access_token")
-        SuperSafeApplication.serverAPI?.onListFilesSync(SyncItemsRequest(user.email, user.cloud_id, SuperSafeApplication.Companion.getInstance().getDeviceId(), true, nextPage))
+        SuperSafeApplication.serverAPI?.onListFilesSync(SyncItemsRequest(user.email, user.cloud_id, SuperSafeApplication.getInstance().getDeviceId(), true, nextPage))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe(Consumer subscribe@{ onResponse: RootResponse ->
@@ -964,7 +964,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     }
                                 }
                             }
-                            view.onSuccessful(mData?.nextPage!!, EnumStatus.SYNC_READY)
+                            view.onSuccessful("", EnumStatus.SYNC_READY)
                         } else {
                             val mList: MutableList<ItemModel> = ArrayList()
                             if (mListItemResponse != null) {

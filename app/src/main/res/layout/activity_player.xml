@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.player.PlayerActivity">
+    tools:context=".ui.player.PlayerAct">
     <RelativeLayout
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,7 +16,7 @@
             app:shutter_background_color="@color/yellow_700"
             app:show_buffering="true"
             android:layout_alignParentBottom="true"
-            android:id="@+id/simpleexoplayerview"
+            android:id="@+id/playerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
         <dyanamitechetan.vusikview.VusikView

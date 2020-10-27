@@ -4,12 +4,7 @@ import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -18,6 +13,8 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.activity_player.view.tvTitle
+import kotlinx.android.synthetic.main.item_player.view.*
 
 class PlayerAdapter(inflater: LayoutInflater, private val mContext: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     private val storage: Storage?
@@ -41,29 +38,25 @@ class PlayerAdapter(inflater: LayoutInflater, private val mContext: Context?, it
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
-        @BindView(R.id.tvTitle)
-        var tvTitle: AppCompatTextView? = null
-        @BindView(R.id.imgPlaying)
-        var imgPlaying: AppCompatImageView? = null
+        val tvTitle = itemView.tvTitle
+        var imgPlaying = itemView.imgPlaying
         private var mPosition = 0
         private var data: ItemModel? = null
         override fun bind(mData: ItemModel, position: Int) {
             super.bind(mData, position)
             data = mData
             if (data?.isChecked!!) {
-                imgPlaying?.setVisibility(View.VISIBLE)
+                imgPlaying?.visibility = View.VISIBLE
             } else {
-                imgPlaying?.setVisibility(View.INVISIBLE)
+                imgPlaying?.visibility = View.INVISIBLE
             }
             themeApp?.getAccentColor()?.let { ContextCompat.getColor(SuperSafeApplication.getInstance(), it) }?.let { imgPlaying?.setColorFilter(it, PorterDuff.Mode.SRC_IN) }
             Utils.Log(TAG, "position :" + data?.isChecked)
-            tvTitle?.setText(data?.title)
+            tvTitle?.text = data?.title
             mPosition = position
-        }
-
-        @OnClick(R.id.rl_item)
-        fun onClickedItem(view: View?) {
-            ls?.onClickGalleryItem(mPosition)
+            itemView.rl_item.setOnClickListener {
+                ls?.onClickGalleryItem(mPosition)
+            }
         }
     }
 

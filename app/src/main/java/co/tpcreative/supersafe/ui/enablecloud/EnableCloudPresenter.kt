@@ -12,8 +12,6 @@ import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
 import retrofit2.HttpException
@@ -45,7 +43,7 @@ class EnableCloudPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication?.serverAPI?.onAddUserCloud(cloudRequest)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable -> view.onStartLoading(EnumStatus.CREATE) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CREATE) }
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                     if (onResponse.error) {
@@ -61,7 +59,7 @@ class EnableCloudPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())

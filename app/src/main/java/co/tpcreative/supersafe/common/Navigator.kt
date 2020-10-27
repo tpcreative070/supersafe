@@ -17,7 +17,7 @@ import co.tpcreative.supersafe.ui.camera.CameraActivity
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemAct
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerAct
 import co.tpcreative.supersafe.ui.dashboard.DashBoardAct
-import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity
+import co.tpcreative.supersafe.ui.enablecloud.EnableCloudAct
 import co.tpcreative.supersafe.ui.facedown.FaceDownActivity
 import co.tpcreative.supersafe.ui.fakepin.FakePinActivity
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity
@@ -27,7 +27,7 @@ import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
 import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowAct
-import co.tpcreative.supersafe.ui.player.PlayerActivity
+import co.tpcreative.supersafe.ui.player.PlayerAct
 import co.tpcreative.supersafe.ui.premium.PremiumAct
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity
 import co.tpcreative.supersafe.ui.restore.RestoreActivity
@@ -197,7 +197,7 @@ object Navigator {
     }
 
     fun onEnableCloud(context: Activity) {
-        val intent = Intent(context, EnableCloudActivity::class.java)
+        val intent = Intent(context, EnableCloudAct::class.java)
         context.startActivityForResult(intent,ENABLE_CLOUD)
     }
 
@@ -215,7 +215,7 @@ object Navigator {
     }
 
     fun onPlayer(context: Context, items: ItemModel, main: MainCategoryModel) {
-        val intent = Intent(context, PlayerActivity::class.java)
+        val intent = Intent(context, PlayerAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_items), items)
         bundle.putSerializable(context.getString(R.string.key_main_categories), main)

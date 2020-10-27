@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.model
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import java.io.Serializable
 import java.util.*
@@ -326,5 +327,15 @@ class ItemModel : Serializable {
             items.global_thumbnail_id
         }
         this.isOriginalGlobalId = isOriginalGlobalId
+    }
+
+    /*Get dynamic path of thumbnail*/
+    fun geThumbnail() : String{
+        return SuperSafeApplication.getInstance().getSupersafePrivate()+ "/"+ items_id +"/"+thumbnailName
+    }
+
+    /*Get dynamic path of original*/
+    fun getOriginal() : String{
+        return SuperSafeApplication.getInstance().getSupersafePrivate()+ "/"+ items_id +"/"+originalName
     }
 }

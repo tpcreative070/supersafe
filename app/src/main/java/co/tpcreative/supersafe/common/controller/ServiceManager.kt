@@ -179,7 +179,7 @@ class ServiceManager : BaseServiceView<Any?> {
         }
         mDownloadList.clear()
         Utils.Log(TAG, "onPreparingSyncData...onGetItemList")
-        ServiceManager.getInstance()?.onGetItemList("0")
+        onGetItemList("0")
     }
 
     private fun onGetItemList(next: String) {
@@ -204,7 +204,7 @@ class ServiceManager : BaseServiceView<Any?> {
                     } else if (status == EnumStatus.SYNC_READY) {
                         /*Start sync*/
                         isGetItemList = false
-                        SingletonPrivateFragment.Companion.getInstance()?.onUpdateView()
+                        SingletonPrivateFragment.getInstance()?.onUpdateView()
                         onPreparingSyncCategoryData()
                         Utils.Log(TAG, "Start to sync data.......")
                     }

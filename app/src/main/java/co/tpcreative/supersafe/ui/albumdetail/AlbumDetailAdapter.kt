@@ -67,14 +67,14 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
             mPosition = position
             Utils.Log(TAG, "Position $position")
             if (data.isChecked) {
-                view_alpha?.setAlpha(0.5f)
+                view_alpha?.alpha = 0.5f
                 imgSelect?.visibility = View.VISIBLE
             } else {
-                view_alpha?.setAlpha(0.0f)
+                view_alpha?.alpha = 0.0f
                 imgSelect?.visibility = View.INVISIBLE
             }
             try {
-                val path: String? = data.thumbnailPath
+                var path: String? = data.geThumbnail()
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam?.visibility = View.VISIBLE

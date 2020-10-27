@@ -110,7 +110,7 @@
             android:name=".ui.accountmanager.AccountManagerAct"
             android:label="@string/account" />
         <activity
-            android:name=".ui.enablecloud.EnableCloudActivity"
+            android:name=".ui.enablecloud.EnableCloudAct"
             android:label="@string/enable_cloud_sync" />
         <activity
             android:name=".ui.cloudmanager.CloudManagerAct"
@@ -159,6 +159,6 @@
         <activity android:name=".ui.albumcover.AlbumCoverActivity"/>
         <activity android:name=".ui.switchbasic.SwitchBasicActivity"/>
         <!--Portrait model for special mode-->
-        <activity android:name=".ui.player.PlayerActivity"/>
+        <activity android:name=".ui.player.PlayerAct"/>
     </application>
 </manifest>
