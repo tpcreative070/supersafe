@@ -92,8 +92,8 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
                 .setChuckSize(1024 * 2)
                 .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build()
-        storage = Storage(getApplicationContext())
-        supersafe = storage?.getExternalStorageDirectory() + "/.SuperSafe_DoNot_Delete/"
+        storage = Storage(this)
+        supersafe = getExternalFilesDir(null)?.absolutePath + "/SuperSafe_DoNot_Delete/"
         key = ".encrypt_key"
         fake_key = ".encrypt_fake_key"
         userSecret = ".userSecret"
@@ -246,14 +246,14 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     }
 
     fun initFolder() {
-        if (storage?.isDirectoryExists(supersafe) and storage?.isDirectoryExists(supersafePrivate) and storage?.isDirectoryExists(supersafeBackup) and storage?.isDirectoryExists(supersafeLog) and storage?.isDirectoryExists(supersafeBreakInAlerts)) {
+        if (storage.isDirectoryExists(supersafe) and storage.isDirectoryExists(supersafePrivate) and storage.isDirectoryExists(supersafeBackup) and storage.isDirectoryExists(supersafeLog) and storage.isDirectoryExists(supersafeBreakInAlerts)) {
             Utils.Log(TAG, "SuperSafe is existing")
         } else {
-            storage?.createDirectory(supersafe)
-            storage?.createDirectory(supersafePrivate)
-            storage?.createDirectory(supersafeBackup)
-            storage?.createDirectory(supersafeLog)
-            storage?.createDirectory(supersafeBreakInAlerts)
+            storage.createDirectory(supersafe)
+            storage.createDirectory(supersafePrivate)
+            storage.createDirectory(supersafeBackup)
+            storage.createDirectory(supersafeLog)
+            storage.createDirectory(supersafeBreakInAlerts)
             Utils.Log(TAG, "SuperSafe was created")
         }
     }

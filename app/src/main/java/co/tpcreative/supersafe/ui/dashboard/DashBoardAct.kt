@@ -16,9 +16,8 @@ import com.google.gson.Gson
 import de.mrapp.android.dialog.MaterialDialog
 
 class DashBoardAct : BaseActivityNoneSlide() {
-    val TAG : String = DashBoardAct::class.java.simpleName
     private var isCancel = true
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dash_board)
         initUI()

@@ -20,7 +20,6 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
     }
 
     fun onDeleteAlbum(position: Int) {
-        val view: BaseView<EmptyModel>? = view()
         try {
             val main: MainCategoryModel? = mList?.get(position)
             if (main != null) {
@@ -43,7 +42,6 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
     }
 
     fun onEmptyTrash() {
-        val view: BaseView<EmptyModel>? = view()
         try {
             val mList: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
             for (i in mList?.indices!!) {

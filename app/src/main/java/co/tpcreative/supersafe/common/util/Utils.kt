@@ -1,15 +1,19 @@
 package co.tpcreative.supersafe.common.util
 import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.hardware.fingerprint.FingerprintManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Patterns
@@ -20,6 +24,7 @@ import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
@@ -27,12 +32,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.PermissionChecker
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
+import androidx.core.net.toFile
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -54,10 +60,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.apache.commons.io.FilenameUtils
 import org.greenrobot.eventbus.EventBus
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
+import java.io.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -209,6 +212,14 @@ object Utils  {
             }
         }
 
+    fun <T>Log(clazz: Class<T>, content: Any?){
+        if (content is String){
+            Log(clazz.simpleName, content)
+        }else{
+            Log(clazz.simpleName, Gson().toJson(content))
+        }
+    }
+
         fun getUUId(): String? {
             return try {
                 UUID.randomUUID().toString()
@@ -306,7 +317,7 @@ object Utils  {
             }, 200)
         }
 
-        fun showGotItSnackbar(view: View,text: String) {
+        fun showGotItSnackbar(view: View, text: String) {
             onObserveData(START_TIMER, object : Listener {
                 override fun onStart() {
                     multilineSnackbar(
@@ -1058,18 +1069,63 @@ object Utils  {
             if (PermissionChecker.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
                 Log(TAG, "Granted permission....")
                 val storage: Storage? = SuperSafeApplication.getInstance().getStorage()
+                val path = SuperSafeApplication.getInstance().getSuperSafe()
                 if (storage != null) {
                     val file = File(storage.externalStorageDirectory + "/" + nameLogs)
                     MediaScannerConnection.scanFile(activity, arrayOf(file.absolutePath), null, null)
                     MediaScannerConnection.scanFile(activity, arrayOf(storage.externalStorageDirectory), null, null)
-                    storage.createFile(storage.externalStorageDirectory + "/" + nameLogs, "")
+                    storage.createFile(path + "/" + nameLogs, "")
+//                    val bm: Bitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
+//                    saveImage(bm)
+//                    saveScanLog()
                 }
             } else {
                 Log(TAG, "No permission")
             }
         }
 
-        fun checkRequestUploadItemData() {
+    /*Request from android greater than or equally*/
+    fun saveScanLog(){
+        val resolver = SuperSafeApplication.getInstance().contentResolver
+        val contentValues = ContentValues()
+        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "image1")
+        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS +"/supersafe")
+        val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+        resolver.openOutputStream(uri!!).use {
+            try {
+               // it?.write("Hello".toByteArray())
+                val finalBitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, it)
+                it?.flush()
+                it?.close()
+                Utils.Log(TAG, "Created file successfully")
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                Utils.Log(TAG, "Could not create file")
+            }
+        }
+    }
+
+    fun saveImage(finalBitmap: Bitmap) {
+        val root: String = SuperSafeApplication.getInstance().getSuperSafe()!!
+        val myDir = File(root)
+        myDir.mkdirs()
+        val file = File(myDir, "text.jpg")
+        try {
+            val out = FileOutputStream(file)
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            out.flush()
+            out.close()
+            Utils.Log(TAG, "Created file successfully")
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            Utils.Log(TAG, "Could not create file")
+        }
+    }
+
+
+    fun checkRequestUploadItemData() {
             val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
             if (mResult != null) {
                 if (mResult.size > 0 && isCheckAllowUpload()) {

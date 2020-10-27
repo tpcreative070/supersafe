@@ -37,7 +37,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListener, MoveGalleryView {
-    private val TAG = MoveGalleryFragment::class.java.simpleName
     private var mAlbumColumnNumber = 0
     private var mAdapterAlbumGrid: MoveGalleryAdapter? = null
     private var mConfig: Configuration? = null

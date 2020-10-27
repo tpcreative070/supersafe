@@ -25,10 +25,9 @@ class MePresenter : Presenter<BaseView<EmptyModel>>() {
             audios = 0
             others = 0
             val mList: MutableList<ItemModel>? = SQLHelper.getListAllItems(false, false)
-            if (mList != null) {
-                for (index in mList) {
-                    val enumTypeFile = EnumFormatType.values()[index.formatType]
-                    when (enumTypeFile) {
+            mList?.let {
+                it.forEach { index ->
+                    when (EnumFormatType.values()[index.formatType]) {
                         EnumFormatType.IMAGE -> {
                             photos += 1
                         }

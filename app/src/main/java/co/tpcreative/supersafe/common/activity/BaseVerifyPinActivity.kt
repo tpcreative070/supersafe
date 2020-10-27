@@ -42,7 +42,8 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
     private var mCameraPreview: CameraPreview? = null
     private var mCachedCameraConfig: CameraConfig? = null
     var onStartCount = 0
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    var TAG : String = this::class.java.simpleName
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()
         storage = Storage(this)
@@ -81,7 +82,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
         unbinder = ButterKnife.bind(this)
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         stopCamera()
         unbinder?.unbind()

@@ -54,6 +54,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     protected var actionBar: ActionBar? = null
     private var mHomeWatcher: HomeWatcher? = null
     private var onStartCount = 0
+    var TAG : String = this::class.java.simpleName
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()
@@ -482,7 +483,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     }
 
     companion object {
-        private val TAG = BaseGoogleApi::class.java.simpleName
         protected const val REQUEST_CODE_SIGN_IN = 0
     }
 }

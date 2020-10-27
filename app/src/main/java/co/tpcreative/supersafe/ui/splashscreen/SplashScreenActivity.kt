@@ -32,7 +32,7 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
     @BindView(R.id.rlScreen)
     var rlScreen: RelativeLayout? = null
     private val DELAY = 2000
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
@@ -49,10 +49,10 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
             val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
             PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
         }
-        value = SuperSafeApplication.Companion.getInstance().readKey()
+        value = SuperSafeApplication.getInstance().readKey()
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access), false)
         isRunning = PrefsController.getBoolean(getString(R.string.key_running), false)
-        grant_access = if (SuperSafeApplication.Companion.getInstance().isGrantAccess()) {
+        grant_access = if (SuperSafeApplication.getInstance().isGrantAccess()) {
             true
         } else {
             false

@@ -16,11 +16,11 @@ import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 
 abstract class BaseActivityNone : AppCompatActivity() {
-    private val TAG = BaseActivityNone::class.java.simpleName
     var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     var onStartCount = 0
     protected open var storage: Storage? = null
+    var TAG : String = this::class.java.simpleName
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()

@@ -4,68 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.widget.NestedScrollView
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.BaseFragment
-import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.SyncData
-import co.tpcreative.supersafe.model.ThemeApp
+import kotlinx.android.synthetic.main.fragment_me.*
 import org.greenrobot.eventbus.EventBus
 
 class MeFragment : BaseFragment(), BaseView<EmptyModel> {
-    @BindView(R.id.nsv)
-    var nestedScrollView: NestedScrollView? = null
 
-    @BindView(R.id.imgSettings)
-    var imgSettings: AppCompatImageView? = null
-
-    @BindView(R.id.imgPro)
-    var imgPro: AppCompatImageView? = null
-
-    @BindView(R.id.tvEmail)
-    var tvEmail: AppCompatTextView? = null
-
-    @BindView(R.id.tvStatus)
-    var tvStatus: AppCompatTextView? = null
-
-    @BindView(R.id.tvEnableCloud)
-    var tvEnableCloud: AppCompatTextView? = null
-
-    @BindView(R.id.llAboutLocal)
-    var llAboutLocal: LinearLayout? = null
-    private var presenter: MePresenter? = null
-
-    @BindView(R.id.tvPremiumLeft)
-    var tvPremiumLeft: AppCompatTextView? = null
-
-    @BindView(R.id.tvAudios)
-    var tvAudios: AppCompatTextView? = null
-
-    @BindView(R.id.tvPhotos)
-    var tvPhotos: AppCompatTextView? = null
-
-    @BindView(R.id.tvVideos)
-    var tvVideos: AppCompatTextView? = null
-
-    @BindView(R.id.tvOther)
-    var tvOther: AppCompatTextView? = null
-
-    @BindView(R.id.tvAvailableSpaces)
-    var tvAvailableSpaces: AppCompatTextView? = null
-
+    var presenter: MePresenter? = null
     override fun getLayoutId(): Int {
         return 0
     }
@@ -75,56 +27,9 @@ class MeFragment : BaseFragment(), BaseView<EmptyModel> {
                 R.layout.fragment_me, viewGroup, false) as ConstraintLayout
     }
 
-    protected override fun work() {
+    override fun work() {
         super.work()
-        nestedScrollView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            if (scrollY > oldScrollY) {
-                Utils.Log(TAG, "hide")
-            } else {
-                Utils.Log(TAG, "show")
-            }
-        })
-        presenter = MePresenter()
-        presenter?.bindView(this)
-        presenter?.onShowUserInfo()
-        if (presenter?.mUser != null) {
-            if (presenter?.mUser?.verified!!) {
-                tvStatus?.setText(getString(R.string.view_user_info))
-            } else {
-                tvStatus?.setText(getString(R.string.verify_change))
-            }
-            tvEmail?.setText(presenter?.mUser?.email)
-        }
-    }
-
-    fun onUpdatedView() {
-        val isPremium: Boolean = Utils.isPremium()
-        if (isPremium) {
-            tvPremiumLeft?.setText(getString(R.string.you_are_in_premium_features))
-            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-            tvPremiumLeft?.setTextColor(ContextCompat.getColor(activity!!,themeApp?.getPrimaryColor()!!))
-            if (presenter?.mUser?.driveConnected!!) {
-                tvEnableCloud?.setText(getString(R.string.no_limited_cloud_sync_storage))
-            } else {
-                tvEnableCloud?.setText(getString(R.string.enable_cloud_sync))
-            }
-        } else {
-            if (presenter?.mUser?.driveConnected!!) {
-                val value: String?
-                val syncData: SyncData? = presenter?.mUser?.syncData
-                if (syncData != null) {
-                    val result: Int = Navigator.LIMIT_UPLOAD - syncData.left
-                    value = kotlin.String.format(getString(R.string.monthly_used), result.toString() + "", "" + Navigator.LIMIT_UPLOAD)
-                } else {
-                    value = kotlin.String.format(getString(R.string.monthly_used), "0", "" + Navigator.LIMIT_UPLOAD)
-                }
-                tvEnableCloud?.setText(value)
-            } else {
-                tvEnableCloud?.setText(getString(R.string.enable_cloud_sync))
-            }
-            val sourceString: String? = Utils.getFontString(R.string.upgrade_premium_to_use_full_features, getString(R.string.premium_uppercase))
-            tvPremiumLeft?.setText(sourceString?.toSpanned())
-        }
+        initUI()
     }
 
     override fun onDestroy() {
@@ -142,10 +47,10 @@ class MeFragment : BaseFragment(), BaseView<EmptyModel> {
         Utils.Log(TAG, "onPause")
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        Utils.Log(TAG, "visit :$isVisibleToUser")
-        if (isVisibleToUser) {
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        Utils.Log(TAG, "visit :$menuVisible")
+        if (menuVisible) {
             EventBus.getDefault().post(EnumStatus.HIDE_FLOATING_BUTTON)
             onUpdatedView()
         }
@@ -160,52 +65,16 @@ class MeFragment : BaseFragment(), BaseView<EmptyModel> {
         try {
             if (presenter?.mUser != null) {
                 if (presenter?.mUser?.verified!!) {
-                    tvStatus?.setText(getString(R.string.view_user_info))
+                    tvStatus?.text = getString(R.string.view_user_info)
                 } else {
-                    tvStatus?.setText(getString(R.string.verify_change))
+                    tvStatus?.text = getString(R.string.verify_change)
                 }
-                tvEmail?.setText(presenter?.mUser?.email)
+                tvEmail?.text = presenter?.mUser?.email
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
         Utils.Log(TAG, "OnResume")
-    }
-
-    @OnClick(R.id.llSettings)
-    fun onSettings(view: View?) {
-        Navigator.onSettings(getActivity()!!)
-    }
-
-    @OnClick(R.id.llAccount)
-    fun onVerifyAccount(view: View?) {
-        if (presenter?.mUser != null) {
-            if (presenter?.mUser?.verified!!) {
-                Navigator.onManagerAccount(getActivity()!!)
-            } else {
-                Navigator.onVerifyAccount(getActivity()!!)
-            }
-        }
-    }
-
-    @OnClick(R.id.llEnableCloud)
-    fun onEnableCloud(view: View?) {
-        if (presenter?.mUser != null) {
-            if (presenter?.mUser?.verified!!) {
-                if (!(presenter?.mUser?.driveConnected)!!) {
-                    Navigator.onCheckSystem(getActivity()!!, null)
-                } else {
-                    Navigator.onManagerCloud(getActivity()!!)
-                }
-            } else {
-                Navigator.onVerifyAccount(getActivity()!!)
-            }
-        }
-    }
-
-    @OnClick(R.id.llPremium)
-    fun onClickedPremium(view: View?) {
-        context?.let { Navigator.onMoveToPremium(it) }
     }
 
     override fun onStartLoading(status: EnumStatus) {}
@@ -221,15 +90,15 @@ class MeFragment : BaseFragment(), BaseView<EmptyModel> {
         when (status) {
             EnumStatus.RELOAD -> {
                 val photos: String = kotlin.String.format(getString(R.string.photos_default), "" + presenter?.photos)
-                tvPhotos?.setText(photos)
+                tvPhotos?.text =photos
                 val videos: String = kotlin.String.format(getString(R.string.videos_default), "" + presenter?.videos)
-                tvVideos?.setText(videos)
+                tvVideos?.text = videos
                 val audios: String = kotlin.String.format(getString(R.string.audios_default), "" + presenter?.audios)
-                tvAudios?.setText(audios)
+                tvAudios?.text = audios
                 val others: String = kotlin.String.format(getString(R.string.others_default), "" + presenter?.others)
-                tvOther?.setText(others)
+                tvOther?.text = others
                 val availableSpaces: String? = ConvertUtils.byte2FitMemorySize(Utils.getAvailableSpaceInBytes())
-                tvAvailableSpaces?.setText(availableSpaces)
+                tvAvailableSpaces?.text = availableSpaces
             }
         }
     }
@@ -238,12 +107,11 @@ class MeFragment : BaseFragment(), BaseView<EmptyModel> {
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 
     companion object {
-        private val TAG = MeFragment::class.java.simpleName
         fun newInstance(index: Int): MeFragment? {
             val fragment = MeFragment()
             val b = Bundle()
             b.putInt("index", index)
-            fragment.setArguments(b)
+            fragment.arguments = b
             return fragment
         }
     }

@@ -35,24 +35,21 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
     private var presenter: PrivatePresenter? = null
     private var adapter: PrivateAdapter? = null
     var isClicked = false
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
-    protected override fun getLayoutId(inflater: LayoutInflater?, viewGroup: ViewGroup?): View? {
+    override fun getLayoutId(inflater: LayoutInflater?, viewGroup: ViewGroup?): View? {
         val view: ConstraintLayout = inflater?.inflate(
                 R.layout.fragment_private, viewGroup, false) as ConstraintLayout
         recyclerView = view.findViewById(R.id.recyclerView)
         initRecycleView(inflater)
-        SingletonPrivateFragment.Companion.getInstance()?.setListener(this)
+        SingletonPrivateFragment.getInstance()?.setListener(this)
         return view
     }
 
-    protected override fun getLayoutId(): Int {
+    override fun getLayoutId(): Int {
         return 0
     }
 
-    protected override fun work() {
+    override fun work() {
         presenter = PrivatePresenter()
         presenter?.bindView(this)
         presenter?.getData()
@@ -67,12 +64,12 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
     }
 
     fun initRecycleView(layoutInflater: LayoutInflater?) {
-        adapter = layoutInflater?.let { PrivateAdapter(it, getContext(), this) }
-        val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(getContext(), 2)
-        recyclerView?.setLayoutManager(mLayoutManager)
+        adapter = layoutInflater?.let { PrivateAdapter(it, context, this) }
+        val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
+        recyclerView?.layoutManager = mLayoutManager
         recyclerView?.addItemDecoration(GridSpacingItemDecoration(2, 10, true))
-        recyclerView?.setItemAnimator(DefaultItemAnimator())
-        recyclerView?.setAdapter(adapter)
+        recyclerView?.itemAnimator = DefaultItemAnimator()
+        recyclerView?.adapter = adapter
     }
 
     override fun onClickItem(position: Int) {
@@ -80,17 +77,16 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
             Utils.Log(TAG, "Deny onClick $position")
             return
         }
-        Log.d(TAG, "Position :$position")
         try {
             val value: String = Utils.getHexCode(getString(R.string.key_trash))
             if (value == presenter?.mList?.get(position)?.categories_hex_name) {
-                Navigator.onMoveTrash(getActivity()!!)
+                Navigator.onMoveTrash(activity!!)
             } else {
                 val mainCategories: MainCategoryModel? = presenter?.mList?.get(position)
                 val pin: String? = mainCategories?.pin
                 isClicked = true
                 if (pin == "") {
-                    Navigator.onMoveAlbumDetail(getActivity()!!, mainCategories)
+                    Navigator.onMoveAlbumDetail(activity!!, mainCategories)
                 } else {
                     onShowChangeCategoriesNameDialog(mainCategories)
                 }
@@ -117,7 +113,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
 
     override fun onEmptyTrash(position: Int) {
         try {
-            DialogManager.Companion.getInstance()?.onStartDialog(context!!, R.string.delete_all, R.string.are_you_sure_you_want_to_empty_trash, object : DialogListener {
+            DialogManager.getInstance()?.onStartDialog(context!!, R.string.delete_all, R.string.are_you_sure_you_want_to_empty_trash, object : DialogListener {
                 override fun onClickButton() {
                     presenter?.onEmptyTrash()
                 }
@@ -135,10 +131,6 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
         Utils.Log(TAG, "onResume")
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun onUpdateView() {
         if (presenter != null) {
             presenter?.getData()
@@ -150,19 +142,14 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
         Utils.Log(TAG, "onStop")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     private fun dpToPx(dp: Int): Int {
         val r: Resources = getResources()
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics))
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        Log.d(TAG, "visit :$isVisibleToUser")
-        if (isVisibleToUser) {
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        if (menuVisible) {
             EventBus.getDefault().post(EnumStatus.SHOW_FLOATING_BUTTON)
         }
     }

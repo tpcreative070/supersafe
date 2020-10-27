@@ -33,6 +33,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     private var fragment: MoveGalleryFragment? = null
+    var TAG : String = this::class.java.simpleName
     protected fun attachFragment(layoutId: Int) {
         fragment = MoveGalleryFragment.newInstance() as MoveGalleryFragment
         val fragmentManager: FragmentManager = supportFragmentManager

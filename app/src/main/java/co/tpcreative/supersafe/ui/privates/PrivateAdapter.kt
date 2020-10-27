@@ -3,12 +3,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.*
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -24,6 +20,7 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.private_item.view.*
 
 class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
     private val storage: Storage?
@@ -31,7 +28,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
     private val TAG = PrivateAdapter::class.java.simpleName
     var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp?.getAccentColor()!!)
-    var options: RequestOptions? = RequestOptions()
+    var options: RequestOptions = RequestOptions()
             .centerCrop()
             .override(400, 400)
             .placeholder(themeApp?.getPrimaryColor()!!)
@@ -50,15 +47,9 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
 
     inner class ItemHolder(itemView: View) : BaseHolder<MainCategoryModel>(itemView) {
         private var data: MainCategoryModel? = null
-
-        @BindView(R.id.imgAlbum)
-        var imgAlbum: AppCompatImageView? = null
-
-        @BindView(R.id.tvTitle)
-        var tvTitle: AppCompatTextView? = null
-
-        @BindView(R.id.imgIcon)
-        var imgIcon: AppCompatImageView? = null
+        val imgAlbum = itemView.imgAlbum
+        val tvTitle = itemView.tvTitle
+        var imgIcon = itemView.imgIcon
         var mPosition = 0
         override fun bind(data: MainCategoryModel, position: Int) {
             super.bind(data, position)
@@ -72,7 +63,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                             if (context != null) {
                                 Glide.with(context)
                                         .load(note1)
-                                        .apply(options!!)
+                                        .apply(options)
                                         .into(imgAlbum!!)
                             }
                             imgIcon?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))
@@ -80,9 +71,9 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                         EnumFormatType.FILES -> {
                             Glide.with(context!!)
                                     .load(note1)
-                                    .apply(options!!)
+                                    .apply(options)
                                     .into(imgAlbum!!)
-                            imgIcon?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_insert_drive_file_white_48))
+                            imgIcon?.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.baseline_insert_drive_file_white_48))
                         }
                         else -> {
                             try {
@@ -90,7 +81,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                                     imgAlbum?.setRotation(items.degrees.toFloat())
                                     Glide.with(context!!)
                                             .load(storage.readFile(items.thumbnailPath))
-                                            .apply(options!!)
+                                            .apply(options)
                                             .into(imgAlbum!!)
                                     imgIcon?.setVisibility(View.INVISIBLE)
                                 } else {
@@ -110,7 +101,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                     val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(data.mainCategories_Local_Id)
                     if (mainCategories != null) {
                         imgIcon?.setImageDrawable(SQLHelper.getDrawable(SuperSafeApplication.getInstance(), mainCategories.icon))
-                        imgIcon?.setVisibility(View.VISIBLE)
+                        imgIcon?.visibility = View.VISIBLE
                         try {
                             val myColor = Color.parseColor(mainCategories.image)
                             imgAlbum?.setBackgroundColor(myColor)
@@ -120,7 +111,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                     } else {
                         imgAlbum?.setImageResource(0)
                         imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
-                        imgIcon?.setVisibility(View.VISIBLE)
+                        imgIcon?.visibility = View.VISIBLE
                         try {
                             val myColor = Color.parseColor(data.image)
                             imgAlbum?.setBackgroundColor(myColor)
@@ -132,7 +123,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
             } else {
                 imgAlbum?.setImageResource(0)
                 imgIcon?.setImageResource(R.drawable.baseline_https_white_48)
-                imgIcon?.setVisibility(View.VISIBLE)
+                imgIcon?.visibility = View.VISIBLE
                 try {
                     val myColor = Color.parseColor(data.image)
                     imgAlbum?.setBackgroundColor(myColor)
@@ -140,27 +131,25 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                     e.printStackTrace()
                 }
             }
-            tvTitle?.setText(data.categories_name)
+            tvTitle?.text = data.categories_name
+            Utils.Log(TAG,"Category name "+ data.categories_name)
             mPosition = position
-        }
+            itemView.rlHome.setOnClickListener {
+                Utils.Log(TAG, "Position $mPosition")
+                itemSelectedListener?.onClickItem(mPosition)
+            }
 
-        @OnClick(R.id.rlHome)
-        fun onClicked(view: View?) {
-            Utils.Log(TAG, "Position $mPosition")
-            itemSelectedListener?.onClickItem(mPosition)
-        }
-
-        @OnClick(R.id.overflow)
-        fun onClickedOverFlow(view: View) {
-            if (data?.categories_hex_name == Utils.getHexCode(context!!.getString(R.string.key_trash))) {
-                showPopupMenu(view, R.menu.menu_trash_album, mPosition)
-            } else if (data?.categories_hex_name == Utils.getHexCode(context.getString(R.string.key_main_album))) {
-                showPopupMenu(view, R.menu.menu_main_album, mPosition)
-            } else {
-                if (data?.pin == "") {
-                    showPopupMenu(view, R.menu.menu_album, mPosition)
+            itemView.overflow.setOnClickListener {
+                if (data.categories_hex_name == Utils.getHexCode(context!!.getString(R.string.key_trash))) {
+                    showPopupMenu(it, R.menu.menu_trash_album, mPosition)
+                } else if (data.categories_hex_name == Utils.getHexCode(context.getString(R.string.key_main_album))) {
+                    showPopupMenu(it, R.menu.menu_main_album, mPosition)
                 } else {
-                    showPopupMenu(view, R.menu.menu_main_album, mPosition)
+                    if (data.pin == "") {
+                        showPopupMenu(it, R.menu.menu_album, mPosition)
+                    } else {
+                        showPopupMenu(it, R.menu.menu_main_album, mPosition)
+                    }
                 }
             }
         }
@@ -198,15 +187,15 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
-        open fun onSetting(position: Int)
-        open fun onDeleteAlbum(position: Int)
-        open fun onEmptyTrash(position: Int)
+        fun onClickItem(position: Int)
+        fun onSetting(position: Int)
+        fun onDeleteAlbum(position: Int)
+        fun onEmptyTrash(position: Int)
     }
 
     init {
         storage = Storage(context)
-        storage.setEncryptConfiguration(SuperSafeApplication.Companion.getInstance().getConfigurationFile())
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
         this.itemSelectedListener = itemSelectedListener
     }
 }

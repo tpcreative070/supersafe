@@ -28,6 +28,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
     var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
+    var TAG : String = this::class.java.simpleName
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onStartCount = 1

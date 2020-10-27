@@ -10,7 +10,7 @@ import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity
 import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailActivity
-import co.tpcreative.supersafe.ui.askpermission.AskPermissionActivity
+import co.tpcreative.supersafe.ui.askpermission.AskPermissionAct
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity
 import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivity
 import co.tpcreative.supersafe.ui.camera.CameraActivity
@@ -94,11 +94,13 @@ object Navigator {
 
     fun onMoveToDashBoard(context: Context?) {
         val intent = Intent(context, DashBoardAct::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context?.startActivity(intent)
     }
 
     fun onMoveGrantAccess(context: Context?) {
-        val intent = Intent(context, AskPermissionActivity::class.java)
+        val intent = Intent(context, AskPermissionAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context?.startActivity(intent)

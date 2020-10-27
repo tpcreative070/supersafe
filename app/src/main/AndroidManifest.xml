@@ -69,7 +69,7 @@
             android:name=".ui.verify.VerifyAct"
             android:label="@string/verify"/>
         <activity
-            android:name=".ui.askpermission.AskPermissionActivity"/>
+            android:name=".ui.askpermission.AskPermissionAct"/>
         <activity
             android:name=".ui.dashboard.DashBoardAct"/>
         <activity
