@@ -231,8 +231,8 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.home -> {
+        when (item.itemId) {
+            android.R.id.home -> {
                 Utils.Log(TAG, "Home action")
                 if (presenter != null) {
                     if (presenter?.mUser?.verified!!) {

@@ -9,7 +9,7 @@ import co.tpcreative.supersafe.model.EnumStatus
 import java.util.*
 
 class AccountManagerPresenter : Presenter<BaseView<EmptyModel>?>() {
-    var mList: MutableList<AppLists>?
+    var mList: MutableList<AppLists>? = ArrayList<AppLists>()
     fun getData() {
         val view: BaseView<EmptyModel>? = view()
         val qrScanner: Boolean? = Utils.appInstalledOrNot(getString(R.string.qrscanner_package_name)!!)
@@ -28,7 +28,4 @@ class AccountManagerPresenter : Presenter<BaseView<EmptyModel>?>() {
         private val TAG = AccountManagerPresenter::class.java.simpleName
     }
 
-    init {
-        mList = ArrayList<AppLists>()
-    }
 }

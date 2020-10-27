@@ -23,14 +23,12 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerAdapter.ItemSelectedListener {
-
     var presenter: AccountManagerPresenter? = null
     var adapter: AccountManagerAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_manager)
         intUI()
-
         presenter = AccountManagerPresenter()
         presenter?.bindView(this)
         presenter?.getData()
