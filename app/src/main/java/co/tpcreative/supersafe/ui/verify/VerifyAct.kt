@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
-import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
@@ -29,16 +28,7 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initUI()
-        presenter = VerifyPresenter()
-        presenter?.bindView(this)
-        presenter?.getIntent(this)
-        val result: String? = presenter?.user?.email?.let { Utils.getFontString(R.string.verify_title, it) }
-        tvTitle?.text = result?.toSpanned()
-        edtCode?.setOnEditorActionListener(this)
-        edtCode?.addTextChangedListener(mTextWatcher)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -86,7 +76,7 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
     }
 
     /*Detecting textWatch*/
-    private val mTextWatcher: TextWatcher? = object : TextWatcher {
+    val mTextWatcher: TextWatcher? = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val value = s.toString().trim { it <= ' ' }
             isNext = if (Utils.isValid(value)) {
@@ -158,8 +148,4 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
 
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
-
-    companion object {
-        private val TAG = VerifyAct::class.java.simpleName
-    }
 }

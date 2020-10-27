@@ -36,7 +36,7 @@ import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity
 import co.tpcreative.supersafe.ui.settings.SettingsActivity
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity
 import co.tpcreative.supersafe.ui.signin.SignInAct
-import co.tpcreative.supersafe.ui.signup.SignUpActivity
+import co.tpcreative.supersafe.ui.signup.SignUpAct
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity
 import co.tpcreative.supersafe.ui.trash.TrashActivity
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity
@@ -145,7 +145,7 @@ object Navigator {
     }
 
     fun onMoveToSignUp(context: Context) {
-        val intent = Intent(context, SignUpActivity::class.java)
+        val intent = Intent(context, SignUpAct::class.java)
         context.startActivity(intent)
     }
 

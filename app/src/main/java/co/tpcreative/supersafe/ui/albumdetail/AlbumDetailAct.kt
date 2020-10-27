@@ -28,7 +28,6 @@ import com.afollestad.materialdialogs.Theme
 import com.bumptech.glide.Priority
 import com.karumi.dexter.listener.PermissionRequest
 import com.leinardi.android.speeddial.SpeedDialView
-import com.snatik.storage.Storage
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.File
@@ -40,9 +39,7 @@ import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
 import co.tpcreative.supersafe.model.*
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -60,7 +57,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     private var adapter: AlbumDetailAdapter? = null
     private var verticalAdapter: AlbumDetailVerticalAdapter? = null
     private var isReload = false
-    private var actionMode: ActionMode? = null
+    var actionMode: ActionMode? = null
     var countSelected = 0
     private var isSelectAll = false
     private var dialog: AlertDialog? = null
@@ -77,80 +74,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_detail)
         initUI()
-        storage = Storage(this)
-        storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-        initSpeedDial(true)
-        presenter = AlbumDetailPresenter()
-        presenter?.bindView(this)
-        onInit()
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        val collapsingToolbar: CollapsingToolbarLayout = findViewById<CollapsingToolbarLayout?>(R.id.collapsing_toolbar)
-        collapsingToolbar.title = presenter?.mainCategories?.categories_name
-        val mList: MutableList<ItemModel>? = presenter?.mainCategories?.isFakePin?.let { SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, it) }
-        val items: ItemModel? = SQLHelper.getItemId(presenter?.mainCategories?.items_id)
-        if (items != null && mList != null && mList.size > 0) {
-            when (EnumFormatType.values()[items.formatType]) {
-                EnumFormatType.AUDIO -> {
-                    try {
-                        val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                        backdrop?.setBackgroundColor(myColor)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-                EnumFormatType.FILES -> {
-                    try {
-                        val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                        backdrop?.setBackgroundColor(myColor)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-                else -> {
-                    if (storage?.isFileExist(items.thumbnailPath)!!) {
-                        backdrop?.setRotation(items.degrees.toFloat())
-                        Glide.with(this)
-                                .load(storage?.readFile(items.thumbnailPath))
-                                .apply(options!!)
-                                .into(backdrop!!)
-                    } else {
-                        backdrop?.setImageResource(0)
-                        val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                        backdrop?.setBackgroundColor(myColor)
-                    }
-                }
-            }
-        } else {
-            backdrop?.setImageResource(0)
-            val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(presenter?.mainCategories?.mainCategories_Local_Id)
-            if (mainCategories != null) {
-                try {
-                    val myColor = Color.parseColor(mainCategories.image)
-                    backdrop?.setBackgroundColor(myColor)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            } else {
-                try {
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        llBottom?.visibility = View.GONE
-        /*Root Fragment*/attachFragment(R.id.gallery_root)
-        recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                Utils.Log(TAG, "Scrolling change listener")
-                if (actionMode != null) {
-                    speedDial?.visibility = View.INVISIBLE
-                }
-            }
-        })
+        attachFragment(R.id.gallery_root)
     }
 
     fun onInit() {
@@ -390,7 +314,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     }
 
     /*Init Floating View*/
-    private fun initSpeedDial(addActionItems: Boolean) {
+    fun initSpeedDial(addActionItems: Boolean) {
         val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (addActionItems) {
             var drawable: Drawable? = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_camera_white_24)

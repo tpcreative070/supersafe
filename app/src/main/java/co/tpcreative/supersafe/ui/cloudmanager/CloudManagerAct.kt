@@ -32,12 +32,6 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cloud_manager)
         initUI()
-        storage = Storage(this)
-        presenter = CloudManagerPresenter()
-        presenter?.bindView(this)
-        onShowUI()
-        onUpdatedView()
-        presenter?.onGetDriveAbout()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

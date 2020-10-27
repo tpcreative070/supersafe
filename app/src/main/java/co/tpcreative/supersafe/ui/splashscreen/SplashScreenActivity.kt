@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.Window
 import android.view.WindowManager
-import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
-import butterknife.BindView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
@@ -20,6 +18,7 @@ import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -28,9 +27,6 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
     private var value: String? = ""
     private var grant_access = false
     private var isRunning = false
-
-    @BindView(R.id.rlScreen)
-    var rlScreen: RelativeLayout? = null
     private val DELAY = 2000
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -129,11 +125,4 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {}
-    override fun onPause() {
-        super.onPause()
-    }
-
-    companion object {
-        private val TAG = SplashScreenActivity::class.java.simpleName
-    }
 }

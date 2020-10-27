@@ -33,9 +33,6 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signin)
         initUI()
-        presenter = SignInPresenter()
-        presenter?.bindView(this)
-        ServiceManager.getInstance()?.onStartService()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -39,10 +39,6 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_account)
         initUI()
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        presenter = VerifyAccountPresenter()
-        presenter?.bindView(this)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

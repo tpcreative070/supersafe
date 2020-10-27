@@ -54,8 +54,8 @@ import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
 class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
-    private var adapter: MainViewPagerAdapter? = null
-    private var presenter: MainTabPresenter? = null
+    var adapter: MainViewPagerAdapter? = null
+    var presenter: MainTabPresenter? = null
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
     private var menuItem: MenuItem? = null
     private var previousStatus: EnumStatus? = null
@@ -64,62 +64,8 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
-        initSpeedDial()
-        setSupportActionBar(toolbar)
-        toolbar?.inflateMenu(R.menu.main_tab)
-        val ab: ActionBar? = supportActionBar
-        ab?.setHomeAsUpIndicator(R.drawable.baseline_account_circle_white_24)
-        ab?.setDisplayHomeAsUpEnabled(true)
-        setupViewPager(viewpager)
-        tabs.setupWithViewPager(viewpager)
-        PrefsController.putBoolean(getString(R.string.key_running), true)
-        presenter = MainTabPresenter()
-        presenter?.bindView(this)
-        presenter?.onGetUserInfo()
-        onShowSuggestion()
-        if (Utils.isCheckSyncSuggestion()) {
-            onSuggestionSyncData()
-        }
-        if (presenter!!.mUser != null) {
-            if (presenter!!.mUser?.driveConnected!!) {
-                if (NetworkUtil.pingIpAddress(this)) {
-                    return
-                }
-                Utils.onObserveData(2000, object :Listener {
-                    override fun onStart() {
-                        onAnimationIcon(EnumStatus.DONE)
-                    }
-                })
-            }
-        }
+        initUI()
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
-    }
-
-    private fun showInterstitial() {
-        if (mInterstitialAd?.isLoaded()!!) {
-            mInterstitialAd?.show()
-        }
-    }
-
-    fun onShowSuggestion() {
-        val isFirstFile: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_files), false)
-        if (!isFirstFile) {
-            val mList: MutableList<ItemModel>? = SQLHelper.getListAllItems(false)
-            if (mList != null && mList.size > 0) {
-                PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
-                return
-            }
-            viewFloatingButton?.setVisibility(View.VISIBLE)
-            onSuggestionAddFiles()
-        } else {
-            val isFirstEnableSyncData: Boolean = PrefsController.getBoolean(getString(R.string.key_is_first_enable_sync_data), false)
-            if (!isFirstEnableSyncData) {
-                if (presenter?.mUser?.driveConnected!!) {
-                    PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                }
-                onSuggestionSyncData()
-            }
-        }
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {
@@ -193,14 +139,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         }
     }
 
-    fun onAlert(content: String) {
-        MaterialDialog.Builder(this).title("Alert")
-                .content(content)
-                .positiveText("Ok")
-                .onPositive { dialog, which -> }
-                .show()
-    }
-
     override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -257,137 +195,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun setupViewPager(viewPager: ViewPager?) {
-        viewPager?.offscreenPageLimit = 3
-        adapter = MainViewPagerAdapter(supportFragmentManager)
-        viewPager?.adapter = adapter
-    }
-
-    private fun initSpeedDial() {
-        Utils.Log(TAG, "Init floating button")
-        val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        var drawable: Drawable? = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_camera_white_24)
-        speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
-                .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
-                        theme))
-                .setLabel(getString(R.string.camera))
-                .setLabelColor(Color.WHITE)
-                .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
-                        theme))
-                .create())
-        drawable = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_white_24)
-        speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
-                        theme))
-                .setLabel(R.string.photo)
-                .setLabelColor(ContextCompat.getColor(getActivity()!!,R.color.white))
-                .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                        theme))
-                .create())
-        speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
-                .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
-                        theme))
-                .setLabel(getString(R.string.album))
-                .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
-                .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
-                        theme))
-                .create())
-        speedDial?.show()
-
-        //Set main action clicklistener.
-        speedDial?.setOnChangeListener(object : SpeedDialView.OnChangeListener {
-            override fun onMainActionSelected(): Boolean {
-                return false // True to keep the Speed Dial open
-            }
-            override fun onToggleChanged(isOpen: Boolean) {
-                Utils.Log(TAG, "Speed dial toggle state changed. Open = $isOpen")
-            }
-        })
-
-        //Set option fabs clicklisteners.
-        speedDial?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
-            override fun onActionSelected(actionItem: SpeedDialActionItem?): Boolean {
-                when (actionItem?.getId()) {
-                    R.id.fab_album -> {
-                        onShowDialog()
-                        return false // false will close it without animation
-                    }
-                    R.id.fab_photo -> {
-                        Navigator.onMoveToAlbum(this@MainTabAct)
-                        return false // closes without animation (same as mSpeedDialView.close(false); return false;)
-                    }
-                    R.id.fab_camera -> {
-                        onAddPermissionCamera()
-                        return false
-                    }
-                }
-                return true // To keep the Speed Dial open
-            }
-        })
-    }
-
-    fun onShowDialog() {
-        val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-                .title(getString(R.string.create_album))
-                .theme(Theme.LIGHT)
-                .titleColor(ContextCompat.getColor(this, R.color.black))
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .negativeText(getString(R.string.cancel))
-                .positiveText(getString(R.string.ok))
-                .input(null, null, object : MaterialDialog.InputCallback {
-                    override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                        Utils.Log(TAG, "Value")
-                        val value = input.toString()
-                        val base64Code: String = Utils.getHexCode(value)
-                        val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                        val result: String? = item?.categories_hex_name
-                        if (base64Code == result) {
-                            Toast.makeText(this@MainTabAct, "This name already existing", Toast.LENGTH_SHORT).show()
-                        } else {
-                            val response: Boolean = SQLHelper.onAddCategories(base64Code, value, false)
-                            if (response) {
-                                Toast.makeText(this@MainTabAct, "Created album successful", Toast.LENGTH_SHORT).show()
-                                ServiceManager.getInstance()?.onPreparingSyncCategoryData()
-                            } else {
-                                Toast.makeText(this@MainTabAct, "Album name already existing", Toast.LENGTH_SHORT).show()
-                            }
-                            SingletonPrivateFragment.getInstance()?.onUpdateView()
-                        }
-                    }
-                })
-        builder.show()
-    }
-
-    fun onAddPermissionCamera() {
-        Dexter.withContext(this)
-                .withPermissions(
-                        Manifest.permission.CAMERA)
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        if (report?.areAllPermissionsGranted()!!) {
-                            val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
-                            if (list != null) {
-                                Navigator.onMoveCamera(this@MainTabAct, list[0])
-                            }
-                        } else {
-                            Utils.Log(TAG, "Permission is denied")
-                        }
-                        // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
-                            /*Miss add permission in manifest*/
-                            Utils.Log(TAG, "request permission is failed")
-                        }
-                    }
-                    override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
-                        /* ... */
-                        token?.continuePermissionRequest()
-                    }
-                })
-                .withErrorListener {
-                    Utils.Log(TAG, "error ask permission")
-                }.onSameThread().check()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

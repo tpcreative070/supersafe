@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.signin
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
@@ -9,7 +10,10 @@ import kotlinx.android.synthetic.main.activity_signin.*
 
 fun SignInAct.initUI(){
     setSupportActionBar(toolbar)
-    getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    presenter = SignInPresenter()
+    presenter?.bindView(this)
+    ServiceManager.getInstance()?.onStartService()
     edtEmail?.setOnEditorActionListener(this)
     edtEmail?.addTextChangedListener(mTextWatcher)
     btnNext.setOnClickListener {

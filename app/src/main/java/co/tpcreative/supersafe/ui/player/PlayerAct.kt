@@ -66,45 +66,6 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
         initUI()
-        presenter = PlayerPresenter()
-        presenter?.bindView(this)
-        try {
-            storage = Storage(this)
-            storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-            mCipher = storage?.getCipher(Cipher.DECRYPT_MODE)
-            mSecretKeySpec = SecretKeySpec(storage?.getmConfiguration()?.secretKey, SecurityUtil.AES_ALGORITHM)
-            mIvParameterSpec = IvParameterSpec(storage?.getmConfiguration()?.ivParameter)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        seekTo = PrefsController.getLong(getString(R.string.key_seek_to), 0)
-        lastWindowIndex = PrefsController.getInt(getString(R.string.key_lastWindowIndex), 0)
-        if (mCipher != null) {
-            initRecycleView(layoutInflater)
-            presenter?.onGetIntent(this)
-        }
-        val note1: Drawable? = ContextCompat.getDrawable(this, R.drawable.music_1)
-        val note2: Drawable? = ContextCompat.getDrawable(this, R.drawable.ic_music_5)
-        val note3: Drawable? = ContextCompat.getDrawable(this, R.drawable.music_3)
-        val note4: Drawable? = ContextCompat.getDrawable(this, R.drawable.music_4)
-        val myImageList = arrayOf<Drawable?>(note1, note2, note3, note4)
-        animationPlayer?.setImages(myImageList)?.start()
-        playerView?.setControllerVisibilityListener { visibility ->
-            if (tvTitle != null) {
-                tvTitle?.visibility = visibility
-                rlTop?.visibility = visibility
-                recyclerView?.visibility = visibility
-            }
-        }
-        isPortrait = true
-        try {
-            if (themeApp != null) {
-                tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
-            }
-        } catch (e: Exception) {
-            val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
-            PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
-        }
     }
 
     override fun onClickGalleryItem(position: Int) {
@@ -182,8 +143,7 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
                     Utils.Log(TAG, " mcipher is null")
                     return
                 }
-                val formatType = EnumFormatType.values()[presenter?.mItems?.formatType!!]
-                when (formatType) {
+                when (EnumFormatType.values()[presenter?.mItems?.formatType!!]) {
                     EnumFormatType.AUDIO -> {
                         animationPlayer?.startNotesFall()
                         animationPlayer?.visibility = View.VISIBLE
@@ -195,7 +155,7 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
                         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 }
-                tvTitle?.setText(presenter?.mItems?.title)
+                tvTitle?.text = presenter?.mItems?.title
                 adapter?.setDataSource(presenter?.mList)
                 playVideo()
             }

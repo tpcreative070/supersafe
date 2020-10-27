@@ -29,13 +29,6 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_manager)
         intUI()
-        presenter = AccountManagerPresenter()
-        presenter?.bindView(this)
-        presenter?.getData()
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        onUpdatedView()
-        scrollView?.smoothScrollTo(0, 0)
     }
 
     fun onUpdatedView() {
@@ -120,7 +113,7 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
     override fun onDriveClientReady() {}
     override fun onDriveSuccessful() {
         Utils.Log(TAG, "onDriveSuccessful")
-        btnSignOut?.setVisibility(View.VISIBLE)
+        btnSignOut?.visibility = View.VISIBLE
     }
 
     override fun onDriveError() {
@@ -139,7 +132,7 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
     override fun onStopLoading(status: EnumStatus) {}
     override fun startServiceNow() {}
     override fun getContext(): Context? {
-        return getApplicationContext()
+        return applicationContext
     }
 
     override fun onError(message: String?, status: EnumStatus?) {}

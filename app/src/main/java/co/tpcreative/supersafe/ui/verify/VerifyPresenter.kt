@@ -34,12 +34,12 @@ import okhttp3.ResponseBody
 class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
     var user: User?
     fun getIntent(activity: Activity?) {
-        val view: BaseView<EmptyModel>? = view()
         val bundle: Bundle? = activity?.getIntent()?.getExtras()
         val result = bundle?.get(activity.getString(R.string.key_data)) as User?
         if (result != null) {
             user = result
         }
+        Utils.Log("VerifyPresenter" , Gson().toJson(user))
     }
 
     fun onVerifyCode(request: VerifyCodeRequest?) {

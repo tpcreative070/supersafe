@@ -10,11 +10,17 @@ import kotlinx.android.synthetic.main.activity_account_manager.*
 
 fun AccountManagerAct.intUI(){
     TAG = this::class.java.simpleName
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    presenter = AccountManagerPresenter()
+    presenter?.bindView(this)
+    presenter?.getData()
+    onUpdatedView()
+    scrollView?.smoothScrollTo(0, 0)
     initRecycleView()
     btnUpgrade.setOnClickListener {
         Navigator.onMoveToPremium(this)
     }
-
     rlPremiumComplimentary.setOnClickListener {
         Navigator.onMoveToPremium(this)
     }

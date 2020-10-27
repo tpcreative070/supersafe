@@ -13,6 +13,10 @@ fun EnableCloudAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.hide()
+    presenter = EnableCloudPresenter()
+    presenter?.bindView(this)
+    presenter?.onUserInfo()
+    Utils.Log(TAG, "Enable cloud...........")
     btnLinkGoogleDrive.setOnClickListener {
         btnUserAnotherAccount?.isEnabled = false
         btnLinkGoogleDrive?.isEnabled = false

@@ -31,7 +31,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_premium)
-         initUI()
+        initUI()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

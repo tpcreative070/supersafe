@@ -29,7 +29,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onStartCount = 1
         if (savedInstanceState == null) {
@@ -67,18 +67,18 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         Log.d(TAG, "action here")
     }
 
-    protected override fun onStop() {
+    override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop....")
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
         unbinder?.unbind()
         super.onDestroy()
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
@@ -88,7 +88,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         Utils.Log(TAG, "onResume....")
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
@@ -136,7 +136,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
-            R.id.home -> {
+            android.R.id.home -> {
                 finish()
                 return true
             }
@@ -144,7 +144,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         return super.onOptionsItemSelected(item)
     }
 
-    protected override fun onStart() {
+    override fun onStart() {
         super.onStart()
         if (SingletonManager.Companion.getInstance().isAnimation()) {
             if (onStartCount > 1) {

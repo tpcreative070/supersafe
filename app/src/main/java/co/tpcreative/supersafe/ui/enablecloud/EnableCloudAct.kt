@@ -28,10 +28,6 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enable_cloud)
         initUI()
-        presenter = EnableCloudPresenter()
-        presenter?.bindView(this)
-        presenter?.onUserInfo()
-        Utils.Log(TAG, "Enable cloud...........")
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

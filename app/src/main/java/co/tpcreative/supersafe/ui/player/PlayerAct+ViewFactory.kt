@@ -1,7 +1,9 @@
 package co.tpcreative.supersafe.ui.player
 import android.content.pm.ActivityInfo
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.LayoutInflater
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.ThemeApp
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
@@ -20,11 +24,56 @@ import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.gson.Gson
+import com.snatik.storage.Storage
+import com.snatik.storage.security.SecurityUtil
 import kotlinx.android.synthetic.main.activity_player.*
 import java.io.File
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 fun PlayerAct.initUI(){
     TAG = this::class.java.simpleName
+    presenter = PlayerPresenter()
+    presenter?.bindView(this)
+    try {
+        val storage = Storage(this)
+        storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
+        mCipher = storage?.getCipher(Cipher.DECRYPT_MODE)
+        mSecretKeySpec = SecretKeySpec(storage?.getmConfiguration()?.secretKey, SecurityUtil.AES_ALGORITHM)
+        mIvParameterSpec = IvParameterSpec(storage?.getmConfiguration()?.ivParameter)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    seekTo = PrefsController.getLong(getString(R.string.key_seek_to), 0)
+    lastWindowIndex = PrefsController.getInt(getString(R.string.key_lastWindowIndex), 0)
+    if (mCipher != null) {
+        initRecycleView(layoutInflater)
+        presenter?.onGetIntent(this)
+    }
+    val note1: Drawable? = ContextCompat.getDrawable(this, R.drawable.music_1)
+    val note2: Drawable? = ContextCompat.getDrawable(this, R.drawable.ic_music_5)
+    val note3: Drawable? = ContextCompat.getDrawable(this, R.drawable.music_3)
+    val note4: Drawable? = ContextCompat.getDrawable(this, R.drawable.music_4)
+    val myImageList = arrayOf<Drawable?>(note1, note2, note3, note4)
+    animationPlayer?.setImages(myImageList)?.start()
+    playerView?.setControllerVisibilityListener { visibility ->
+        if (tvTitle != null) {
+            tvTitle?.visibility = visibility
+            rlTop?.visibility = visibility
+            recyclerView?.visibility = visibility
+        }
+    }
+    isPortrait = true
+    try {
+        if (themeApp != null) {
+            tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
+        }
+    } catch (e: Exception) {
+        val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
+        PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
+    }
     imgArrowBack.setOnClickListener {
         val isLandscape: Boolean = Utils.isLandscape(this)
         if (isLandscape) {

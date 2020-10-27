@@ -14,6 +14,10 @@ import kotlinx.android.synthetic.main.activity_verify_account.*
 import java.util.ArrayList
 
 fun VerifyAccountAct.initUI(){
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    presenter = VerifyAccountPresenter()
+    presenter?.bindView(this)
     imgEdit?.setColorFilter(ContextCompat.getColor(this, R.color.colorBackground), PorterDuff.Mode.SRC_ATOP)
     edtCode?.addTextChangedListener(mTextWatcher)
     edtEmail?.addTextChangedListener(mTextWatcher)
@@ -21,7 +25,7 @@ fun VerifyAccountAct.initUI(){
     edtEmail?.setOnEditorActionListener(this)
     if (presenter?.mUser != null) {
         if (presenter?.mUser?.email != null) {
-            tvEmail?.setText(presenter?.mUser?.email)
+            tvEmail?.text = presenter?.mUser?.email
             val sourceString: String = getString(R.string.verify_title, "<font color='#000000'>" + presenter?.mUser?.email + "</font>")
             tvTitle?.text = sourceString.toSpanned()
         }
@@ -30,7 +34,6 @@ fun VerifyAccountAct.initUI(){
     progressBarCircularIndeterminateSignIn?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
     progressBarCircularIndeterminateReSend?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
     progressBarCircularIndeterminateVerifyCode?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
-
     llGoogle.setOnClickListener {
         onShowDialog()
     }

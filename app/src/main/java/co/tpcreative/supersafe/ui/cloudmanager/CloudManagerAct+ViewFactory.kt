@@ -14,6 +14,7 @@ import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.Theme
+import com.snatik.storage.Storage
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_cloud_manager.*
 import kotlinx.android.synthetic.main.custom_view_dialog.view.*
@@ -21,6 +22,12 @@ import kotlinx.android.synthetic.main.custom_view_dialog.view.*
 fun CloudManagerAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    storage = Storage(this)
+    presenter = CloudManagerPresenter()
+    presenter?.bindView(this)
+    onShowUI()
+    onUpdatedView()
+    presenter?.onGetDriveAbout()
     btnSwitchPauseSync?.setOnCheckedChangeListener(this)
     switch_SaveSpace?.setOnCheckedChangeListener(this)
     val lefFiles: String = kotlin.String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD)
