@@ -9,23 +9,15 @@ import android.os.*
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.*
-import android.widget.AdapterView
-import android.widget.GridView
-import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.Image
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter
-import kotlinx.android.synthetic.main.activity_album_detail.*
-import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import kotlinx.android.synthetic.main.activity_image_select.*
-import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 import java.util.*
 
@@ -39,11 +31,11 @@ class ImageSelectActivity : HelperActivity() {
     private var handler: Handler? = null
     private var thread: Thread? = null
     private val projection: Array<String> = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA)
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_select)
         setView(findViewById(R.id.layout_image_select))
-        setSupportActionBar(toolbarCustom)
+        setSupportActionBar(toolbar as Toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val intent: Intent? = intent
         if (intent == null) {
@@ -51,15 +43,13 @@ class ImageSelectActivity : HelperActivity() {
         }
         album = intent?.getStringExtra(Navigator.INTENT_EXTRA_ALBUM)
         text_view_error?.visibility = View.INVISIBLE
-        grid_view_image_select?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (actionMode == null) {
-                    actionMode = toolbar?.startActionMode(callback)
-                }
-                toggleSelection(position)
-                actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+        grid_view_image_select?.setOnItemClickListener { parent, view, position, id ->
+            if (actionMode == null) {
+                actionMode = toolbar?.startActionMode(callback)
             }
-        })
+            toggleSelection(position)
+            actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+        }
     }
 
     override fun onStart() {
@@ -120,7 +110,6 @@ class ImageSelectActivity : HelperActivity() {
     override fun onResume() {
         super.onResume()
         onRegisterHomeWatcher()
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(ImageSelectActivity.class.getSimpleName());
     }
 
     override fun onStop() {
@@ -159,13 +148,13 @@ class ImageSelectActivity : HelperActivity() {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 3 else metrics.widthPixels / 5
             adapter?.setLayoutParams(size)
         }
-        grid_view_image_select?.setNumColumns(if (orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5)
+        grid_view_image_select?.numColumns = if (orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.getItemId()) {
-            R.id.home -> {
-                onBackPressed()
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
                 true
             }
             else -> {
@@ -192,7 +181,7 @@ class ImageSelectActivity : HelperActivity() {
         }
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            val i = item?.getItemId()
+            val i = item?.itemId
             if (i == R.id.menu_item_add_image) {
                 sendIntent()
                 return true
@@ -377,8 +366,8 @@ class ImageSelectActivity : HelperActivity() {
     }
 
     override fun hideViews() {
-        progress_bar_image_select?.setVisibility(View.INVISIBLE)
-        grid_view_image_select?.setVisibility(View.INVISIBLE)
+        progress_bar_image_select?.visibility = View.INVISIBLE
+        grid_view_image_select?.visibility = View.INVISIBLE
     }
 
     companion object {

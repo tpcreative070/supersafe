@@ -11,12 +11,8 @@ import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.GridView
 import android.widget.ProgressBar
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.util.Utils
@@ -35,14 +31,12 @@ class AlbumSelectActivity : HelperActivity() {
     private var handler: Handler? = null
     private var thread: Thread? = null
 
-    @BindView(R.id.text_view_error)
-    var errorDisplay: AppCompatTextView? = null
     private val projection: Array<String?>? = arrayOf(
             MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.DATA)
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_select)
         setView(findViewById(R.id.layout_album_select))
@@ -60,15 +54,13 @@ class AlbumSelectActivity : HelperActivity() {
             finish()
         }
         Navigator.limit = intent?.getIntExtra(Navigator.INTENT_EXTRA_LIMIT, Navigator.DEFAULT_LIMIT)!!
-        errorDisplay?.setVisibility(View.INVISIBLE)
+        text_view_error?.visibility = View.INVISIBLE
         progressBar = findViewById<View?>(R.id.progress_bar_album_select) as ProgressBar?
-        grid_view_album_select?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
-            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val intent = Intent(applicationContext, ImageSelectActivity::class.java)
-                intent.putExtra(Navigator.INTENT_EXTRA_ALBUM, albums?.get(position)?.name)
-                startActivityForResult(intent, Navigator.REQUEST_CODE)
-            }
-        })
+        grid_view_album_select?.setOnItemClickListener { parent, view, position, id ->
+            val intent = Intent(applicationContext, ImageSelectActivity::class.java)
+            intent.putExtra(Navigator.INTENT_EXTRA_ALBUM, albums?.get(position)?.name)
+            startActivityForResult(intent, Navigator.REQUEST_CODE)
+        }
     }
 
     override fun onStart() {
@@ -80,14 +72,14 @@ class AlbumSelectActivity : HelperActivity() {
                         loadAlbums()
                     }
                     Navigator.FETCH_STARTED -> {
-                        progressBar?.setVisibility(View.VISIBLE)
-                        grid_view_album_select?.setVisibility(View.INVISIBLE)
+                        progressBar?.visibility = View.VISIBLE
+                        grid_view_album_select?.visibility = View.INVISIBLE
                     }
                     Navigator.FETCH_COMPLETED -> {
                         if (adapter == null) {
                             adapter = CustomAlbumSelectAdapter(applicationContext, albums)
                             grid_view_album_select?.setAdapter(adapter)
-                            progressBar?.setVisibility(View.INVISIBLE)
+                            progressBar?.visibility = View.INVISIBLE
                             grid_view_album_select?.setVisibility(View.VISIBLE)
                             orientationBasedUI(resources.configuration.orientation)
                         } else {
@@ -95,8 +87,8 @@ class AlbumSelectActivity : HelperActivity() {
                         }
                     }
                     Navigator.ERROR -> {
-                        progressBar?.setVisibility(View.INVISIBLE)
-                        errorDisplay?.setVisibility(View.VISIBLE)
+                        progressBar?.visibility = View.INVISIBLE
+                        text_view_error?.visibility = View.VISIBLE
                     }
                     else -> {
                         super.handleMessage(msg)
@@ -163,7 +155,7 @@ class AlbumSelectActivity : HelperActivity() {
         finish()
     }
 
-    protected override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Navigator.REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             setResult(Activity.RESULT_OK, data)
@@ -172,8 +164,8 @@ class AlbumSelectActivity : HelperActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.getItemId()) {
-            R.id.home -> {
+        return when (item.itemId) {
+            android.R.id.home -> {
                 onBackPressed()
                 true
             }
@@ -285,8 +277,8 @@ class AlbumSelectActivity : HelperActivity() {
     }
 
     override fun hideViews() {
-        progressBar?.setVisibility(View.INVISIBLE)
-        grid_view_album_select?.setVisibility(View.INVISIBLE)
+        progressBar?.visibility = View.INVISIBLE
+        grid_view_album_select?.visibility = View.INVISIBLE
     }
 
     companion object {

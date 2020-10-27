@@ -754,6 +754,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             }
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
+                    Utils.Log(TAG,"Response data here")
                     val images: ArrayList<Image>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
                     val mListImportFiles: MutableList<ImportFilesModel>? = ArrayList<ImportFilesModel>()
                     var i = 0
