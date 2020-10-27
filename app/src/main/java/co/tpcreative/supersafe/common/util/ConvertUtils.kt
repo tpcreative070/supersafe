@@ -221,13 +221,13 @@ class ConvertUtils private constructor() {
             return if (byteSize < 0) {
                 "shouldn't be less than zero!"
             } else if (byteSize < MemoryConstants.KB) {
-                String.format("%.1f B", byteSize as Double)
+                String.format("%.1f B", byteSize.toDouble())
             } else if (byteSize < MemoryConstants.MB) {
-                String.format("%.1f KB", byteSize as Double / MemoryConstants.KB)
+                String.format("%.1f KB", byteSize.toDouble() / MemoryConstants.KB)
             } else if (byteSize < MemoryConstants.GB) {
-                String.format("%.1f MB", byteSize as Double / MemoryConstants.MB)
+                String.format("%.1f MB", byteSize.toDouble() / MemoryConstants.MB)
             } else {
-                String.format("%.1f GB", byteSize as Double / MemoryConstants.GB)
+                String.format("%.1f GB", byteSize.toDouble() / MemoryConstants.GB)
             }
         }
 

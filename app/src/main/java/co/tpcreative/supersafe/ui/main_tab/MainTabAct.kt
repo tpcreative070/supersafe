@@ -64,7 +64,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
-        initSpeedDial(true)
+        initSpeedDial()
         setSupportActionBar(toolbar)
         toolbar?.inflateMenu(R.menu.main_tab)
         val ab: ActionBar? = supportActionBar
@@ -265,38 +265,36 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         viewPager?.adapter = adapter
     }
 
-    private fun initSpeedDial(addActionItems: Boolean) {
+    private fun initSpeedDial() {
         Utils.Log(TAG, "Init floating button")
         val mThemeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        if (addActionItems) {
-            var drawable: Drawable? = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_camera_white_24)
-            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
-                            theme))
-                    .setLabel(getString(R.string.camera))
-                    .setLabelColor(Color.WHITE)
-                    .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
-                            theme))
-                    .create())
-            drawable = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_white_24)
-            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
-                            theme))
-                    .setLabel(R.string.photo)
-                    .setLabelColor(getResources().getColor(R.color.white))
-                    .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
-                            theme))
-                    .create())
-            speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
-                    .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
-                            theme))
-                    .setLabel(getString(R.string.album))
-                    .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
-                    .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
-                            theme))
-                    .create())
-            speedDial?.show()
-        }
+        var drawable: Drawable? = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_camera_white_24)
+        speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_camera, drawable)
+                .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                        theme))
+                .setLabel(getString(R.string.camera))
+                .setLabelColor(Color.WHITE)
+                .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
+                        theme))
+                .create())
+        drawable = AppCompatResources.getDrawable(applicationContext, R.drawable.baseline_photo_white_24)
+        speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_photo, drawable)
+                .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                        theme))
+                .setLabel(R.string.photo)
+                .setLabelColor(ContextCompat.getColor(getActivity()!!,R.color.white))
+                .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
+                        theme))
+                .create())
+        speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
+                .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
+                        theme))
+                .setLabel(getString(R.string.album))
+                .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
+                .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
+                        theme))
+                .create())
+        speedDial?.show()
 
         //Set main action clicklistener.
         speedDial?.setOnChangeListener(object : SpeedDialView.OnChangeListener {

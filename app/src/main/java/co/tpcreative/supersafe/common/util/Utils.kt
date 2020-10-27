@@ -646,7 +646,7 @@ object Utils  {
         fun getAvailableSpaceInBytes(): Long {
             var availableSpace = -1L
             val stat = StatFs(Environment.getExternalStorageDirectory().path)
-            availableSpace = stat.getAvailableBlocks() as Long * stat.getBlockSize() as Long
+            availableSpace = stat.getAvailableBlocks().toLong()!! * stat.getBlockSize().toLong()!!
             return availableSpace
         }
 
