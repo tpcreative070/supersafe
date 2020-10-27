@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.ui.multiselects.adapter
-
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.BaseAdapter

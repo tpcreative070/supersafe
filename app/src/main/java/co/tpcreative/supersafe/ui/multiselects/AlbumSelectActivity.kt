@@ -23,15 +23,13 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.AlbumMultiItems
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter
+import kotlinx.android.synthetic.main.activity_album_select.*
 import java.io.File
 import java.util.*
 
 class AlbumSelectActivity : HelperActivity() {
     private var albums: ArrayList<AlbumMultiItems>? = null
     private var progressBar: ProgressBar? = null
-
-    @BindView(R.id.grid_view_album_select)
-    var gridView: GridView? = null
     private var adapter: CustomAlbumSelectAdapter? = null
     private var observer: ContentObserver? = null
     private var handler: Handler? = null
@@ -64,7 +62,7 @@ class AlbumSelectActivity : HelperActivity() {
         Navigator.limit = intent?.getIntExtra(Navigator.INTENT_EXTRA_LIMIT, Navigator.DEFAULT_LIMIT)!!
         errorDisplay?.setVisibility(View.INVISIBLE)
         progressBar = findViewById<View?>(R.id.progress_bar_album_select) as ProgressBar?
-        gridView?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+        grid_view_album_select?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
             override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val intent = Intent(applicationContext, ImageSelectActivity::class.java)
                 intent.putExtra(Navigator.INTENT_EXTRA_ALBUM, albums?.get(position)?.name)
@@ -83,14 +81,14 @@ class AlbumSelectActivity : HelperActivity() {
                     }
                     Navigator.FETCH_STARTED -> {
                         progressBar?.setVisibility(View.VISIBLE)
-                        gridView?.setVisibility(View.INVISIBLE)
+                        grid_view_album_select?.setVisibility(View.INVISIBLE)
                     }
                     Navigator.FETCH_COMPLETED -> {
                         if (adapter == null) {
                             adapter = CustomAlbumSelectAdapter(applicationContext, albums)
-                            gridView?.setAdapter(adapter)
+                            grid_view_album_select?.setAdapter(adapter)
                             progressBar?.setVisibility(View.INVISIBLE)
-                            gridView?.setVisibility(View.VISIBLE)
+                            grid_view_album_select?.setVisibility(View.VISIBLE)
                             orientationBasedUI(resources.configuration.orientation)
                         } else {
                             adapter?.notifyDataSetChanged()
@@ -140,7 +138,7 @@ class AlbumSelectActivity : HelperActivity() {
         if (adapter != null) {
             adapter?.releaseResources()
         }
-        gridView?.setOnItemClickListener(null)
+        grid_view_album_select?.setOnItemClickListener(null)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -156,7 +154,7 @@ class AlbumSelectActivity : HelperActivity() {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 2 else metrics.widthPixels / 4
             adapter?.setLayoutParams(size)
         }
-        gridView?.setNumColumns(if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4)
+        grid_view_album_select?.setNumColumns(if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4)
     }
 
     override fun onBackPressed() {
@@ -288,7 +286,7 @@ class AlbumSelectActivity : HelperActivity() {
 
     override fun hideViews() {
         progressBar?.setVisibility(View.INVISIBLE)
-        gridView?.setVisibility(View.INVISIBLE)
+        grid_view_album_select?.setVisibility(View.INVISIBLE)
     }
 
     companion object {

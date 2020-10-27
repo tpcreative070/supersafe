@@ -17,6 +17,7 @@ import co.tpcreative.supersafe.model.ThemeApp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.grid_view_item_image_select.view.*
 import java.util.*
 
 class CustomImageSelectAdapter(context: Context?, images: ArrayList<Image>?) : CustomGenericAdapter<Image>(context, images) {
@@ -35,13 +36,13 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<Image>?) : C
         if (convertView == null) {
             convertView = layoutInflater?.inflate(R.layout.grid_view_item_image_select, null)
             viewHolder = ViewHolder()
-            viewHolder.imageView = convertView?.findViewById<View?>(R.id.image_view_image_select) as AppCompatImageView?
-            viewHolder.imgAudioVideo = convertView?.findViewById<View?>(R.id.imgAudioVideo) as AppCompatImageView?
-            viewHolder.tvTitle = convertView?.findViewById<View?>(R.id.tvTitle) as AppCompatTextView?
-            viewHolder.view = convertView?.findViewById(R.id.view_alpha)
+            viewHolder.imageView = convertView?.image_view_image_select
+            viewHolder.imgAudioVideo = convertView?.imgAudioVideo
+            viewHolder.tvTitle = convertView?.tvTitle
+            viewHolder.view = convertView?.view_alpha
             convertView?.setTag(viewHolder)
         } else {
-            viewHolder = convertView.tag as CustomImageSelectAdapter.ViewHolder
+            viewHolder = convertView.tag as ViewHolder
         }
         viewHolder.imageView?.layoutParams?.width = size
         viewHolder.imageView?.layoutParams?.height = size

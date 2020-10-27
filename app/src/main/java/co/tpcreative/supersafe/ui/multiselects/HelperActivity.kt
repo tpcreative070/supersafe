@@ -102,7 +102,7 @@ open class HelperActivity : BaseActivity() {
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -110,13 +110,13 @@ open class HelperActivity : BaseActivity() {
         onRegisterHomeWatcher()
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

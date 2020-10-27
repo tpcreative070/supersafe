@@ -22,6 +22,10 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.Image
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter
+import kotlinx.android.synthetic.main.activity_album_detail.*
+import kotlinx.android.synthetic.main.activity_album_detail.toolbar
+import kotlinx.android.synthetic.main.activity_image_select.*
+import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 import java.util.*
 
@@ -34,37 +38,26 @@ class ImageSelectActivity : HelperActivity() {
     private var observer: ContentObserver? = null
     private var handler: Handler? = null
     private var thread: Thread? = null
-
-    @BindView(R.id.toolbar)
-    var toolbar: Toolbar? = null
-
-    @BindView(R.id.text_view_error)
-    var errorDisplay: AppCompatTextView? = null
-
-    @BindView(R.id.progress_bar_image_select)
-    var progressBar: ProgressBar? = null
-    var gridView: GridView? = null
     private val projection: Array<String> = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA)
     protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_select)
         setView(findViewById(R.id.layout_image_select))
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbarCustom)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val intent: Intent? = intent
         if (intent == null) {
             finish()
         }
         album = intent?.getStringExtra(Navigator.INTENT_EXTRA_ALBUM)
-        errorDisplay?.setVisibility(View.INVISIBLE)
-        gridView = findViewById<GridView?>(R.id.grid_view_image_select)
-        gridView?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
+        text_view_error?.visibility = View.INVISIBLE
+        grid_view_image_select?.setOnItemClickListener(object : AdapterView.OnItemClickListener {
             override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (actionMode == null) {
                     actionMode = toolbar?.startActionMode(callback)
                 }
                 toggleSelection(position)
-                actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
+                actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
             }
         })
     }
@@ -78,8 +71,8 @@ class ImageSelectActivity : HelperActivity() {
                         loadImages()
                     }
                     Navigator.FETCH_STARTED -> {
-                        progressBar?.setVisibility(View.VISIBLE)
-                        gridView?.setVisibility(View.INVISIBLE)
+                        progress_bar_image_select?.visibility = View.VISIBLE
+                        grid_view_image_select?.visibility = View.INVISIBLE
                     }
                     Navigator.FETCH_COMPLETED -> {
 
@@ -90,9 +83,9 @@ class ImageSelectActivity : HelperActivity() {
                         due to the activity being restarted or content being changed.
                          */if (adapter == null) {
                             adapter = CustomImageSelectAdapter(applicationContext, images)
-                            gridView?.setAdapter(adapter)
-                            progressBar?.setVisibility(View.INVISIBLE)
-                            gridView?.setVisibility(View.VISIBLE)
+                            grid_view_image_select?.setAdapter(adapter)
+                            progress_bar_image_select?.visibility = View.INVISIBLE
+                            grid_view_image_select?.visibility = View.VISIBLE
                             orientationBasedUI(resources.configuration.orientation)
                         } else {
                             adapter?.notifyDataSetChanged()
@@ -106,8 +99,8 @@ class ImageSelectActivity : HelperActivity() {
                         }
                     }
                     Navigator.ERROR -> {
-                        progressBar?.setVisibility(View.INVISIBLE)
-                        errorDisplay?.setVisibility(View.VISIBLE)
+                        progress_bar_image_select?.visibility = View.INVISIBLE
+                        text_view_error?.visibility = View.VISIBLE
                     }
                     else -> {
                         super.handleMessage(msg)
@@ -150,7 +143,7 @@ class ImageSelectActivity : HelperActivity() {
         if (adapter != null) {
             adapter?.releaseResources()
         }
-        gridView?.setOnItemClickListener(null)
+        grid_view_image_select?.setOnItemClickListener(null)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -166,7 +159,7 @@ class ImageSelectActivity : HelperActivity() {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 3 else metrics.widthPixels / 5
             adapter?.setLayoutParams(size)
         }
-        gridView?.setNumColumns(if (orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5)
+        grid_view_image_select?.setNumColumns(if (orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -384,8 +377,8 @@ class ImageSelectActivity : HelperActivity() {
     }
 
     override fun hideViews() {
-        progressBar?.setVisibility(View.INVISIBLE)
-        gridView?.setVisibility(View.INVISIBLE)
+        progress_bar_image_select?.setVisibility(View.INVISIBLE)
+        grid_view_image_select?.setVisibility(View.INVISIBLE)
     }
 
     companion object {

@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.multiselects.adapter
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
@@ -18,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import java.util.*
+import kotlinx.android.synthetic.main.grid_view_item_album_select.view.*
 
 class CustomAlbumSelectAdapter(context: Context?, albums: ArrayList<AlbumMultiItems>?) : CustomGenericAdapter<AlbumMultiItems>(context, albums) {
     var options: RequestOptions? = RequestOptions()
@@ -34,24 +34,22 @@ class CustomAlbumSelectAdapter(context: Context?, albums: ArrayList<AlbumMultiIt
         if (convertView == null) {
             convertView = layoutInflater?.inflate(R.layout.grid_view_item_album_select, null)
             viewHolder = ViewHolder()
-            viewHolder.imageView = convertView?.findViewById<View?>(R.id.image_view_album_image) as AppCompatImageView?
-            viewHolder.textView = convertView?.findViewById<View?>(R.id.text_view_album_name) as AppCompatTextView?
-            viewHolder.imgAudioVideo = convertView?.findViewById<View?>(R.id.imgAudioVideo) as AppCompatImageView?
+            viewHolder.imageView = convertView?.image_view_album_image
+            viewHolder.textView = convertView?.text_view_album_name
+            viewHolder.imgAudioVideo = convertView?.imgAudioVideo
             convertView?.setTag(viewHolder)
         } else {
             viewHolder = convertView.tag as ViewHolder
         }
         viewHolder.imageView?.layoutParams?.width = size
         viewHolder.imageView?.layoutParams?.height = size
-        viewHolder.textView?.setText(arrayList?.get(position)?.name)
+        viewHolder.textView?.text = arrayList?.get(position)?.name
         val data: AlbumMultiItems? = arrayList?.get(position)
         try {
             val extensionFile: String? = Utils.getFileExtension(data?.cover)
-            Log.d("value customer", extensionFile +"")
             val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(extensionFile)
             if (mimeTypeFile != null) {
-                val formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType?.ordinal!!]
-                when (formatTypeFile) {
+                when (EnumFormatType.values()[mimeTypeFile.formatType?.ordinal!!]) {
                     EnumFormatType.AUDIO -> {
                         viewHolder.imgAudioVideo?.visibility = View.VISIBLE
                         viewHolder.imgAudioVideo?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))
