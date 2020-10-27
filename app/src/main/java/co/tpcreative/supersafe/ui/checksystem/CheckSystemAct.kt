@@ -4,74 +4,34 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.text.Html
-import android.text.InputType
-import android.text.Spanned
-import android.view.MotionEvent
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import butterknife.BindView
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
-import com.gc.materialdesign.views.ProgressBarCircularIndeterminate
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.request.UserCloudRequest
-import co.tpcreative.supersafe.common.request.VerifyCodeRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.ThemeApp
-import com.afollestad.materialdialogs.DialogAction
-import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
+import kotlinx.android.synthetic.main.activity_check_system.*
 import org.greenrobot.eventbus.ThreadMode
 
-class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
-    @BindView(R.id.progressBarCircularIndeterminate)
-    var progressBarCircularIndeterminate: ProgressBarCircularIndeterminate? = null
-    private var presenter: CheckSystemPresenter? = null
-    var handler: Handler? = Handler()
+class CheckSystemAct : BaseGoogleApi(), BaseView<EmptyModel> {
+    var presenter: CheckSystemPresenter? = null
+    var handler: Handler? = Handler(Looper.getMainLooper())
     var email: String? = null
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_check_system)
-        val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-        getSupportActionBar()?.hide()
-        presenter = CheckSystemPresenter()
-        presenter?.bindView(this)
-        presenter?.getIntent(this)
-        onStartLoading(EnumStatus.OTHER)
-        if (presenter?.googleOauth != null) {
-            val email: String? = presenter!!.googleOauth?.email
-            if (email == presenter?.mUser?.email) {
-                presenter?.onCheckUser(presenter?.googleOauth?.email, presenter?.googleOauth?.email)
-            } else {
-                this.email = email
-                val request = VerifyCodeRequest()
-                request.new_user_id = this.email
-                request.other_email = email
-                request.user_id = presenter?.mUser?.email
-                request._id = presenter?.mUser?._id
-                presenter?.onChangeEmail(request)
-            }
-        } else {
-            handler?.postDelayed(Runnable { presenter?.onUserCloudChecking() }, 5000)
-        }
-        val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        progressBarCircularIndeterminate?.setBackgroundColor(ContextCompat.getColor(this,themeApp?.getAccentColor()!!))
+        initUI()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -83,23 +43,22 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
         onRegisterHomeWatcher()
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(CheckSystemActivity.class.getSimpleName());
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
         presenter?.unbindView()
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
@@ -108,7 +67,7 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     }
 
     override fun getContext(): Context? {
-        return getApplicationContext()
+        return applicationContext
     }
 
     override fun onBackPressed() {
@@ -128,7 +87,7 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
         }
     }
 
-    protected override fun onDriveClientReady() {
+    override fun onDriveClientReady() {
         Utils.Log(TAG, "onDriveClient")
         presenter?.mUser?.driveConnected = true
         Utils.setUserPreShare(presenter?.mUser)
@@ -140,59 +99,16 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
         return this
     }
 
-    fun onVerifyInputCode(email: String?) {
-        Utils.Log(TAG, " User..." + Gson().toJson(presenter?.mUser))
-        try {
-            val dialog = MaterialDialog.Builder(this)
-            val next = "<font color='#0091EA'>($email)</font>"
-            val value: String = getString(R.string.description_pin_code, next)
-            dialog.title(getString(R.string.verify_email))
-            dialog.content(value.toSpanned())
-            dialog.theme(Theme.LIGHT)
-            dialog.inputType(InputType.TYPE_CLASS_NUMBER)
-            dialog.input(getString(R.string.pin_code), null, false, object : MaterialDialog.InputCallback {
-                override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                    Utils.Log(TAG, "call input code")
-                    val request = VerifyCodeRequest()
-                    request.user_id = presenter?.mUser?.email
-                    request.code = input.toString().trim { it <= ' ' }
-                    request._id = presenter?.mUser?._id
-                    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-                    presenter?.onVerifyCode(request)
-                }
-            })
-            dialog.positiveText(getString(R.string.ok))
-            dialog.negativeText(getString(R.string.cancel))
-            dialog.onNegative(object : MaterialDialog.SingleButtonCallback {
-                override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                    onStopLoading(EnumStatus.OTHER)
-                    onBackPressed()
-                }
-            })
-            val editText = dialog.show().inputEditText
-            editText?.setOnTouchListener(object : View.OnTouchListener {
-                override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
-                    view?.setFocusable(true)
-                    view?.setFocusableInTouchMode(true)
-                    return false
-                }
-            })
-            editText?.setFocusable(false)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
     override fun onDriveSuccessful() {}
     override fun onDriveError() {}
     override fun onDriveSignOut() {}
     override fun onDriveRevokeAccess() {}
     override fun onStartLoading(status: EnumStatus) {
-        progressBarCircularIndeterminate?.setVisibility(View.VISIBLE)
+        progressBarCircularIndeterminate?.visibility = View.VISIBLE
     }
 
     override fun onStopLoading(status: EnumStatus) {
-        progressBarCircularIndeterminate?.setVisibility(View.GONE)
+        progressBarCircularIndeterminate?.visibility = View.GONE
     }
 
     override fun onError(message: String?) {}
@@ -260,7 +176,7 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
             EnumStatus.RESEND_CODE -> {
             }
             EnumStatus.CREATE -> {
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
                 onStopLoading(status)
             }
             EnumStatus.SIGN_UP -> {
@@ -297,8 +213,7 @@ class CheckSystemActivity : BaseGoogleApi(), BaseView<EmptyModel> {
     override fun isSignIn(): Boolean {
         return true
     }
-
     companion object {
-        private val TAG = CheckSystemActivity::class.java.simpleName
+        private val TAG = CheckSystemAct::class.java.simpleName
     }
 }

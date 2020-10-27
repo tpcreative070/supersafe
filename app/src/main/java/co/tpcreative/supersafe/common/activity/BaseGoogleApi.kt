@@ -36,8 +36,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.Scope
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
@@ -55,12 +53,12 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     private var mHomeWatcher: HomeWatcher? = null
     private var onStartCount = 0
     var TAG : String = this::class.java.simpleName
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = getSupportActionBar()
+        actionBar = supportActionBar
         onStartCount = 1
         if (savedInstanceState == null) {
-            if (SingletonManager.Companion.getInstance().isReloadMainTab()) {
+            if (SingletonManager.getInstance().isReloadMainTab()) {
                 Bungee.fade(this)
             } else {
                 this.overridePendingTransition(R.animator.anim_slide_in_left,
@@ -82,7 +80,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     override fun getTheme(): Resources.Theme? {
         val theme: Resources.Theme = super.getTheme()
-        val result: ThemeApp? = ThemeApp.Companion.getInstance()?.getThemeInfo()
+        val result: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (result != null) {
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true)
         }
@@ -111,7 +109,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         if (isFaceDown) {
             val result: Boolean = PrefsController.getBoolean(getString(R.string.key_face_down_lock), false)
             if (result) {
-                Navigator.onMoveToFaceDown(SuperSafeApplication.Companion.getInstance())
+                Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }
         }
     }
@@ -126,9 +124,9 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         }
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.remove(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
         if (mHomeWatcher != null) {
             Utils.Log(TAG, "Stop home watcher....")
@@ -136,19 +134,19 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         }
     }
 
-    protected override fun onStop() {
+    override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop")
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         if (unbinder != null) {
             unbinder?.unbind()
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
     }
@@ -176,14 +174,9 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                 }
                 mHomeWatcher?.stopWatch()
             }
-
             override fun onHomeLongPressed() {}
         })
         mHomeWatcher?.startWatch()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 
     override fun onLowMemory() {
@@ -196,8 +189,8 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.home -> {
+        when (item.itemId) {
+            android.R.id.home -> {
                 finish()
                 return true
             }
@@ -205,16 +198,16 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         return super.onOptionsItemSelected(item)
     }
 
-    protected override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
         val action = EnumPinAction.values()[value]
         when (action) {
             EnumPinAction.SCREEN_LOCK -> {
-                if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
+                if (!SingletonManager.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }
                     Utils.Log(TAG, "Pressed home button")
-                    SingletonManager.Companion.getInstance().setVisitLockScreen(true)
+                    SingletonManager.getInstance().setVisitLockScreen(true)
                     Utils.Log(TAG, "Verify pin")
                 } else {
                     Utils.Log(TAG, "Verify pin already")
@@ -226,7 +219,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         }
         val account: GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
         if (account != null && GoogleSignIn.hasPermissions(account, Scope(DriveScopes.DRIVE_FILE), Scope(DriveScopes.DRIVE_APPDATA))) {
-            getGoogleSignInClient(account.getAccount())
+            getGoogleSignInClient(account.account)
             initializeDriveClient(account)
             mSignInAccount = account
             onDriveSuccessful()
@@ -240,7 +233,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             }
         }
         Utils.Log(TAG, "onStart..........")
-        if (SingletonManager.Companion.getInstance().isAnimation()) {
+        if (SingletonManager.getInstance().isAnimation()) {
             if (onStartCount > 1) {
                 this.overridePendingTransition(R.animator.anim_slide_in_right,
                         R.animator.anim_slide_out_right)
@@ -249,7 +242,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             }
         } else {
             Bungee.zoom(this)
-            SingletonManager.Companion.getInstance().setAnimation(true)
+            SingletonManager.getInstance().setAnimation(true)
         }
     }
 
@@ -257,7 +250,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         Utils.Log(TAG, "Sign in")
         val account = Account(email, GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE)
         mGoogleSignInClient = SuperSafeApplication.getInstance().getGoogleSignInOptions(account)?.let { GoogleSignIn.getClient(this, it) }
-        startActivityForResult(mGoogleSignInClient?.getSignInIntent(), REQUEST_CODE_SIGN_IN)
+        startActivityForResult(mGoogleSignInClient?.signInIntent, REQUEST_CODE_SIGN_IN)
     }
 
     private fun getGoogleSignInClient(account: Account?): GoogleSignInClient? {
@@ -282,9 +275,9 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                     return
                 }
                 val getAccountTask: Task<GoogleSignInAccount?> = GoogleSignIn.getSignedInAccountFromIntent(data)
-                if (getAccountTask.isSuccessful()) {
+                if (getAccountTask.isSuccessful) {
                     Utils.Log(TAG, "sign in successful")
-                    initializeDriveClient(getAccountTask.getResult())
+                    initializeDriveClient(getAccountTask.result)
                     onDriveSuccessful()
                 } else {
                     onDriveError()
@@ -305,7 +298,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     }
 
     private inner class GetAccessToken : AsyncTask<Account?, Void?, String?>() {
-        protected override fun doInBackground(vararg accounts: Account?): String? {
+         override fun doInBackground(vararg accounts: Account?): String? {
             try {
                 if (accounts == null) {
                     return null
@@ -314,11 +307,11 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                     return null
                 }
                 val credential: GoogleAccountCredential = GoogleAccountCredential.usingOAuth2(
-                        SuperSafeApplication.Companion.getInstance(), SuperSafeApplication.Companion.getInstance().getRequiredScopesString())
+                        SuperSafeApplication.getInstance(), SuperSafeApplication.getInstance().getRequiredScopesString())
                 Utils.Log(TAG, "Account :" + Gson().toJson(accounts))
-                credential.setSelectedAccount(accounts[0])
+                credential.selectedAccount = accounts[0]
                 try {
-                    val value: String = credential.getToken()
+                    val value: String? = credential.getToken()
                     if (value != null) {
                         Utils.Log(TAG, "access token  start $value")
                         val mUser: User? = Utils.getUserInfo()
@@ -339,13 +332,12 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             return null
         }
 
-        protected override fun onPostExecute(accessToken: String?) {
+        override fun onPostExecute(accessToken: String?) {
             super.onPostExecute(accessToken)
             try {
                 if (accessToken != null) {
                     val mUser: User? = Utils.getUserInfo()
                     if (mUser != null) {
-                        //Log.d(TAG, "Call getDriveAbout " + new Gson().toJson(mUser));
                         if (ServiceManager.getInstance()?.getMyService() == null) {
                             Utils.Log(TAG, "SuperSafeService is null")
                             startServiceNow()
@@ -378,18 +370,15 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                             override fun getContext(): Context? {
                                 return getContext()
                             }
-
                             override fun getActivity(): Activity? {
                                 return this@BaseGoogleApi
                             }
-
                             override fun onSuccessful(message: String?, status: EnumStatus?) {
                                 Utils.Log(TAG, "onSuccessful " + message + " - " + status?.name)
                                 val mUser: User? = Utils.getUserInfo()
-                                //ServiceManager.getInstance().onGetListCategoriesSync();
                                 if (mUser != null) {
                                     if (mUser.driveAbout == null) {
-                                        ServiceManager.Companion.getInstance()?.onGetDriveAbout()
+                                        ServiceManager.getInstance()?.onGetDriveAbout()
                                     }
                                 }
                                 if (isSignIn()) {
@@ -400,7 +389,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                         })
                     }
                 }
-                //Log.d(TAG, "response token : " + String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), accessToken));
             } catch (e: Exception) {
                 e.printStackTrace()
                 Utils.Log(TAG, "Call onDriveClientReady")
@@ -417,7 +405,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         mSignInAccount = signInAccount
         Utils.Log(TAG, "Google client ready")
         Utils.Log(TAG, "Account :" + mSignInAccount?.getAccount())
-        GetAccessToken().execute(mSignInAccount?.getAccount())
+        GetAccessToken().execute(mSignInAccount?.account)
     }
 
     /**
@@ -432,33 +420,25 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     protected abstract fun startServiceNow()
     protected abstract fun onStopListenerAWhile()
     protected fun signOut() {
-        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this, object : OnCompleteListener<Void?> {
-            override fun onComplete(task: Task<Void?>) {
-                val mUser: User? = Utils.getUserInfo()
-                if (mUser != null) {
-                    mUser.driveConnected = false
-                    Utils.setUserPreShare(mUser)
-                }
-                onDriveSignOut()
+        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this) {
+            val mUser: User? = Utils.getUserInfo()
+            if (mUser != null) {
+                mUser.driveConnected = false
+                Utils.setUserPreShare(mUser)
             }
-        })
+            onDriveSignOut()
+        }
     }
 
-    protected fun signOut(ls: ServiceManager.ServiceManagerSyncDataListener) {
+    fun signOut(ls: ServiceManager.ServiceManagerSyncDataListener) {
         Utils.Log(TAG, "Call signOut")
         if (mGoogleSignInClient == null) {
             return
         }
-        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this, object : OnCompleteListener<Void?> {
-            override fun onComplete(task: Task<Void?>) {
-                onDriveSignOut()
-                ls.onCompleted()
-            }
-        })?.addOnFailureListener(object : OnFailureListener {
-            override fun onFailure(e: Exception) {
-                ls.onError()
-            }
-        })
+        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this) {
+            onDriveSignOut()
+            ls.onCompleted()
+        }?.addOnFailureListener { ls.onError() }
     }
 
     protected fun revokeAccess() {
@@ -466,13 +446,10 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             return
         }
         Utils.Log(TAG, "onRevokeAccess")
-        mGoogleSignInClient?.revokeAccess()?.addOnCompleteListener(this,
-                object : OnCompleteListener<Void?> {
-                    override fun onComplete(task: Task<Void?>) {
-                        onDriveRevokeAccess()
-                        PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), false)
-                    }
-                })
+        mGoogleSignInClient?.revokeAccess()?.addOnCompleteListener(this) {
+            onDriveRevokeAccess()
+            PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), false)
+        }
     }
 
     protected fun onCheckRequestSignOut() {

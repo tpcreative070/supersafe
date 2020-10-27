@@ -36,9 +36,9 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = getSupportActionBar()
+        actionBar = supportActionBar
         onStartCount = 1
         if (savedInstanceState == null) {
             this.overridePendingTransition(R.animator.anim_slide_in_left,
@@ -53,7 +53,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
     }
 
     protected open fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
-        context.getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(ContextCompat
+        context.supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat
                 .getColor(context,colorPrimary)))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window: Window = context.getWindow()
@@ -83,11 +83,10 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         super.setContentView(layoutResID)
-        Log.d(TAG, "action here")
         unbinder = ButterKnife.bind(this)
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
@@ -97,18 +96,18 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         }
     }
 
-    protected override fun onStop() {
+    override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop....")
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
         unbinder?.unbind()
         super.onDestroy()
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         Utils.Log(TAG, "onResume....")
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
@@ -126,8 +125,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
             override fun onHomePressed() {
                 Utils.Log(TAG, "HomePressed")
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (val action = EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         Utils.onHomePressed()
                         onStopListenerAWhile()
@@ -146,10 +144,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         mHomeWatcher?.startWatch()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     override fun onLowMemory() {
         super.onLowMemory()
         System.gc()
@@ -164,8 +158,8 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.home -> {
+        when (item.itemId) {
+            android.R.id.home -> {
                 finish()
                 return true
             }
@@ -173,11 +167,10 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         return super.onOptionsItemSelected(item)
     }
 
-    protected override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        val action = EnumPinAction.values()[value]
-        when (action) {
+        when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }

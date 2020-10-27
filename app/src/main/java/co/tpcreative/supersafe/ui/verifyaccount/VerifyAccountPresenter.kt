@@ -23,7 +23,6 @@ import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
@@ -48,7 +47,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onVerifyCode(request!!)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe { waiting: Disposable -> view?.onStartLoading(EnumStatus.VERIFY_CODE) }
+                ?.doOnSubscribe { view?.onStartLoading(EnumStatus.VERIFY_CODE) }
                 ?.subscribe(Consumer subscribe@{ onResponse: RootResponse ->
                     view?.onStopLoading(EnumStatus.VERIFY_CODE)
                     if (onResponse.error) {
@@ -162,10 +161,10 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onResendCode(RequestCodeRequest(request?.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ view?.onStartLoading(EnumStatus.RESEND_CODE) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view?.onError(onResponse.message, EnumStatus.RESEND_CODE)
+                        view.onError(onResponse.message, EnumStatus.RESEND_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
@@ -189,7 +188,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     } else {
                         Utils.Log(TAG, "Can not call" + throwable?.message)
                     }
-                    view?.onStopLoading(EnumStatus.RESEND_CODE)
+                    view.onStopLoading(EnumStatus.RESEND_CODE)
                 })?.let { subscriptions?.add(it) }
     }
 
@@ -205,7 +204,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication?.serverAPI?.onCheckUserId(UserRequest())
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable? -> view.onStartLoading(EnumStatus.CHECK) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CHECK) }
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                     if (onResponse.error) {
@@ -225,7 +224,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             } else if (code == 403) {
                                 val request = SignInRequest()
                                 request.user_id = email
@@ -256,10 +255,10 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
             return
         }
         Utils.Log(TAG, Gson().toJson(mUser))
-        SuperSafeApplication?.serverAPI?.onSignIn(request!!)
+        SuperSafeApplication.serverAPI?.onSignIn(request!!)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe(Consumer<Disposable?> { waiting: Disposable? -> view?.onStartLoading(EnumStatus.SIGN_IN) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.SIGN_IN) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
                         view?.onError(onResponse.message, EnumStatus.SIGN_IN)
@@ -279,7 +278,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())
@@ -290,7 +289,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable?.message)
                     }
-                    view?.onStopLoading(EnumStatus.SIGN_IN)
+                    view.onStopLoading(EnumStatus.SIGN_IN)
                 })?.let { subscriptions?.add(it) }
     }
 
@@ -339,7 +338,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onRefreshEmailToken(request: EmailToken?) {
         Utils.Log(TAG, "onRefreshEmailToken....." + Gson().toJson(request))
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -410,7 +409,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 403) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             val errorMessage: String? = bodys?.string()
                             Utils.Log(TAG, "error$errorMessage")

@@ -20,7 +20,6 @@ import co.tpcreative.supersafe.model.*
 import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
@@ -58,7 +57,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication?.serverAPI?.onCheckUserId(UserRequest())
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable -> view.onStartLoading(EnumStatus.USER_ID_EXISTING) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.USER_ID_EXISTING) }
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                     if (onResponse.error!!) {
@@ -73,7 +72,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         val request = SignInRequest()
                         request.user_id = email
                         request.password = SecurityUtil.key_password_default_encrypted
-                        request.device_id = SuperSafeApplication.Companion.getInstance().getDeviceId()
+                        request.device_id = SuperSafeApplication.getInstance().getDeviceId()
                         onSignIn(request)
                         isUserExisting = !onResponse.error
                     }
@@ -89,7 +88,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                                 val request = SignInRequest()
                                 request.user_id = email
                                 request.password = SecurityUtil.key_password_default_encrypted
-                                request.device_id = SuperSafeApplication.Companion.getInstance().getDeviceId()
+                                request.device_id = SuperSafeApplication.getInstance().getDeviceId()
                                 onSignIn(request)
                                 Utils.Log(TAG, "Login")
                             }
@@ -118,7 +117,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onSignIn(request)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable -> view.onStartLoading(EnumStatus.SIGN_IN) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.SIGN_IN) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
                         view.onError(onResponse.message, EnumStatus.SIGN_IN)
@@ -166,7 +165,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onVerifyCode(request)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting : Disposable -> view.onStartLoading(EnumStatus.VERIFY_CODE) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.VERIFY_CODE) }
                 ?.subscribe(Consumer subscribe@{ onResponse: RootResponse ->
                     if (onResponse.error) {
                         view.onError(getString(R.string.the_code_not_signed_up), EnumStatus.VERIFY_CODE)
@@ -183,7 +182,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                                 mUser?.premium = mData.premium
                                 Utils.Log(TAG, "Saved.............")
                             }
-                            SuperSafeApplication.Companion.getInstance().writeUserSecret(mUser)
+                            SuperSafeApplication.getInstance().writeUserSecret(mUser)
                             Utils.setUserPreShare(mUser)
                             mUser = Utils.getUserInfo()
                         }
@@ -197,7 +196,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())
@@ -225,7 +224,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onUpdateUser(ChangeUserIdRequest(request))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable -> view.onStartLoading(EnumStatus.CHANGE_EMAIL) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CHANGE_EMAIL) }
                 ?.subscribe({ onResponse: RootResponse ->
                     view.onStopLoading(EnumStatus.CHANGE_EMAIL)
                     if (onResponse.error) {
@@ -254,7 +253,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())
@@ -304,7 +303,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())
@@ -323,7 +322,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onSendMail(request: EmailToken) {
         Utils.Log(TAG, "onSendMail.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -363,7 +362,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onRefreshEmailToken(request: EmailToken) {
         Utils.Log(TAG, "onRefreshEmailToken.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -412,7 +411,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onAddEmailToken() {
         Utils.Log(TAG, "onSignIn.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -483,7 +482,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + bodys?.string())
                             val msg: String = Gson().toJson(bodys?.string())
@@ -528,7 +527,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "error" + body?.string())
                             val msg: String = Gson().toJson(body?.string())

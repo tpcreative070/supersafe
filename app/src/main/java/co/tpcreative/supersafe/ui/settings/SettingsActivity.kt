@@ -14,7 +14,6 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -31,26 +30,26 @@ import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.model.User
 import de.mrapp.android.dialog.MaterialDialog
+import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class SettingsActivity : BaseActivity() {
     private var isChangedTheme = false
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         activity = this
-        val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-        var fragment = supportFragmentManager.instantiate(SettingsFragment::class.java.name)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val fragment = supportFragmentManager.instantiate(SettingsFragment::class.java.name)
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.content_frame, fragment)
         transaction.commit()
     }
 
-    protected override fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
+    override fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
         context.getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(ContextCompat
                 .getColor(context!!,colorPrimary)))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -65,10 +64,10 @@ class SettingsActivity : BaseActivity() {
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.RECREATE -> {
-                val themeApp: ThemeApp? = ThemeApp.Companion.getInstance()?.getThemeInfo()
+                val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                 themeApp?.getPrimaryColor()?.let { setStatusBarColored(this, it, themeApp.getPrimaryDarkColor()) }
                 var fragment: Fragment = supportFragmentManager.instantiate(SettingsFragment::class.java.name)
-                val transaction: FragmentTransaction = getSupportFragmentManager().beginTransaction()
+                val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.content_frame, fragment)
                 transaction.commit()
                 isChangedTheme = true
@@ -85,7 +84,7 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -99,7 +98,7 @@ class SettingsActivity : BaseActivity() {
         EventBus.getDefault().unregister(this)
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
@@ -107,7 +106,7 @@ class SettingsActivity : BaseActivity() {
         onFaceDown(isFaceDown)
     }
 
-    protected override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             Navigator.THEME_SETTINGS -> {
@@ -144,8 +143,8 @@ class SettingsActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.home -> {
+        when (item.itemId) {
+            android.R.id.home -> {
                 onBackPressed()
                 return true
             }
@@ -199,63 +198,63 @@ class SettingsActivity : BaseActivity() {
                         Navigator.onMoveThemeSettings(activity!!)
                     } else if (preference.key == getString(R.string.key_break_in_alert)) {
                         if (BuildConfig.DEBUG) {
-                            Navigator.onMoveBreakInAlerts(getContext()!!)
+                            Navigator.onMoveBreakInAlerts(context!!)
                             return@OnPreferenceClickListener true
                         }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
-                        Navigator.onMoveBreakInAlerts(getContext()!!)
+                        Navigator.onMoveBreakInAlerts(context!!)
                     } else if (preference.key == getString(R.string.key_fake_pin)) {
                         if (BuildConfig.DEBUG) {
-                            Navigator.onMoveFakePin(getContext()!!)
+                            Navigator.onMoveFakePin(context!!)
                             return@OnPreferenceClickListener true
                         }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
-                        Navigator.onMoveFakePin(getContext()!!)
+                        Navigator.onMoveFakePin(context!!)
                     } else if (preference.key == getString(R.string.key_secret_door)) {
                         if (BuildConfig.DEBUG) {
-                            Navigator.onMoveSecretDoor(getContext()!!)
+                            Navigator.onMoveSecretDoor(context!!)
                             return@OnPreferenceClickListener true
                         }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
-                        Navigator.onMoveSecretDoor(getContext()!!)
+                        Navigator.onMoveSecretDoor(context!!)
                     } else if (preference.key == getString(R.string.key_help_support)) {
-                        Navigator.onMoveHelpSupport(getContext()!!)
+                        Navigator.onMoveHelpSupport(context!!)
                     } else if (preference.key == getString(R.string.key_about_SuperSafe)) {
-                        Navigator.onMoveAboutSuperSafe(getContext()!!)
+                        Navigator.onMoveAboutSuperSafe(context!!)
                     } else if (preference.key == getString(R.string.key_private_cloud)) {
                         val mUser: User? = Utils.getUserInfo()
                         if (mUser != null) {
                             if (mUser.verified) {
                                 if (!mUser.driveConnected) {
-                                    Navigator.onCheckSystem(getActivity()!!, null)
+                                    Navigator.onCheckSystem(activity!!, null)
                                 } else {
-                                    Navigator.onManagerCloud(getContext()!!)
+                                    Navigator.onManagerCloud(context!!)
                                 }
                             } else {
-                                Navigator.onVerifyAccount(getContext()!!)
+                                Navigator.onVerifyAccount(context!!)
                             }
                         }
                     } else if (preference.key == getString(R.string.key_album_lock)) {
                         if (BuildConfig.DEBUG) {
-                            Navigator.onMoveUnlockAllAlbums(getContext()!!)
+                            Navigator.onMoveUnlockAllAlbums(context!!)
                             return@OnPreferenceClickListener true
                         }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
-                        Navigator.onMoveUnlockAllAlbums(getContext()!!)
+                        Navigator.onMoveUnlockAllAlbums(context!!)
                     } else if (preference.key == getString(R.string.key_upgrade)) {
-                        Navigator.onMoveToPremium(getContext()!!)
+                        Navigator.onMoveToPremium(context!!)
                     } else if (preference.key == getString(R.string.key_privacy_policy)) {
                         Utils.Log(TAG, "Log here")
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.tvPrimacyPolicy)))
@@ -271,59 +270,59 @@ class SettingsActivity : BaseActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             /*Account*/mAccount = findPreference(getString(R.string.key_account))
-            mAccount?.setOnPreferenceChangeListener(createChangeListener())
-            mAccount?.setOnPreferenceClickListener(createActionPreferenceClickListener())
+            mAccount?.onPreferenceChangeListener = createChangeListener()
+            mAccount?.onPreferenceClickListener = createActionPreferenceClickListener()
 
             /*Lock Screen*/mLockScreen = findPreference(getString(R.string.key_lock_screen))
-            mLockScreen?.setOnPreferenceChangeListener(createChangeListener())
-            mLockScreen?.setOnPreferenceClickListener(createActionPreferenceClickListener())
+            mLockScreen?.onPreferenceChangeListener = createChangeListener()
+            mLockScreen?.onPreferenceClickListener = createActionPreferenceClickListener()
 
             /*Update ThemeApp*/mTheme = findPreference(getString(R.string.key_theme))
-            mTheme?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mTheme?.setOnPreferenceChangeListener(createChangeListener())
+            mTheme?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mTheme?.onPreferenceChangeListener = createChangeListener()
 
             /*Break-In-Alerts*/mBreakInAlerts = findPreference(getString(R.string.key_break_in_alert))
-            mBreakInAlerts?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mBreakInAlerts?.setOnPreferenceChangeListener(createChangeListener())
+            mBreakInAlerts?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mBreakInAlerts?.onPreferenceChangeListener = createChangeListener()
 
             /*Fake-Pin*/mFakePin = findPreference(getString(R.string.key_fake_pin))
-            mFakePin?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mFakePin?.setOnPreferenceChangeListener(createChangeListener())
+            mFakePin?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mFakePin?.onPreferenceChangeListener = createChangeListener()
 
             /*Secret door*/mSecretDoor = findPreference(getString(R.string.key_secret_door))
-            mSecretDoor?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mSecretDoor?.setOnPreferenceChangeListener(createChangeListener())
+            mSecretDoor?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mSecretDoor?.onPreferenceChangeListener = createChangeListener()
 
             /*Private Cloud*/mPrivateCloud = findPreference(getString(R.string.key_private_cloud))
-            mPrivateCloud?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mPrivateCloud?.setOnPreferenceChangeListener(createChangeListener())
+            mPrivateCloud?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mPrivateCloud?.onPreferenceChangeListener = createChangeListener()
 
             /*Help And support*/mHelpSupport = findPreference(getString(R.string.key_help_support))
-            mHelpSupport?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mHelpSupport?.setOnPreferenceChangeListener(createChangeListener())
+            mHelpSupport?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mHelpSupport?.onPreferenceChangeListener = createChangeListener()
 
             /*About SuperSafe*/mPrivacyPolicy = findPreference(getString(R.string.key_privacy_policy))
-            mPrivacyPolicy?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mPrivacyPolicy?.setOnPreferenceChangeListener(createChangeListener())
+            mPrivacyPolicy?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mPrivacyPolicy?.onPreferenceChangeListener = createChangeListener()
 
             /*Album Lock*/mAlbumLock = findPreference(getString(R.string.key_album_lock))
-            mAlbumLock?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mAlbumLock?.setOnPreferenceChangeListener(createChangeListener())
+            mAlbumLock?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mAlbumLock?.onPreferenceChangeListener = createChangeListener()
 
             /*Upgrade*/mUpgrade = findPreference(getString(R.string.key_upgrade))
-            mUpgrade?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mUpgrade?.setOnPreferenceChangeListener(createChangeListener())
+            mUpgrade?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mUpgrade?.onPreferenceChangeListener = createChangeListener()
 
             /*Version*/mVersion = findPreference(getString(R.string.key_version_app))
-            mVersion?.setOnPreferenceChangeListener(createChangeListener())
-            mVersion?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mVersion?.setSummary(java.lang.String.format(getString(R.string.key_super_safe_version), BuildConfig.VERSION_NAME))
+            mVersion?.onPreferenceChangeListener = createChangeListener()
+            mVersion?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mVersion?.summary = String.format(getString(R.string.key_super_safe_version), BuildConfig.VERSION_NAME)
 
 
             /*Rate app*/mRateApp = findPreference(getString(R.string.key_rate))
-            mRateApp?.setOnPreferenceChangeListener(createChangeListener())
-            mRateApp?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mRateApp?.setVisible(false)
+            mRateApp?.onPreferenceChangeListener = createChangeListener()
+            mRateApp?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mRateApp?.isVisible = false
         }
 
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -359,25 +358,21 @@ class SettingsActivity : BaseActivity() {
                 builder.showHeader(true)
                 builder.setPositiveButton(getString(R.string.get_premium), object : DialogInterface.OnClickListener {
                     override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                        Navigator.onMoveToPremium(getContext()!!)
+                        Navigator.onMoveToPremium(context!!)
                     }
                 })
-                builder.setNegativeButton(getText(R.string.later), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialogInterface: DialogInterface?, i: Int) {}
-                })
+                builder.setNegativeButton(getText(R.string.later)) { dialogInterface, i -> }
                 val dialog = builder.show()
-                builder.setOnShowListener(object : DialogInterface.OnShowListener {
-                    override fun onShow(dialogInterface: DialogInterface?) {
-                        val positive = dialog.findViewById<Button?>(android.R.id.button1)
-                        val negative = dialog.findViewById<Button?>(android.R.id.button2)
-                        val textView: AppCompatTextView? = dialog.findViewById<View?>(android.R.id.message) as AppCompatTextView?
-                        if (positive != null && negative != null && textView != null) {
-                            positive.setTextColor(ContextCompat.getColor(context!!,themeApp?.getAccentColor()!!))
-                            negative.setTextColor(ContextCompat.getColor(context!!,themeApp.getAccentColor()!!))
-                            textView.setTextSize(16f)
-                        }
+                builder.setOnShowListener {
+                    val positive = dialog.findViewById<Button?>(android.R.id.button1)
+                    val negative = dialog.findViewById<Button?>(android.R.id.button2)
+                    val textView: AppCompatTextView? = dialog.findViewById<View?>(android.R.id.message) as AppCompatTextView?
+                    if (positive != null && negative != null && textView != null) {
+                        positive.setTextColor(ContextCompat.getColor(context!!, themeApp?.getAccentColor()!!))
+                        negative.setTextColor(ContextCompat.getColor(context!!, themeApp.getAccentColor()!!))
+                        textView.setTextSize(16f)
                     }
-                })
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -386,7 +381,6 @@ class SettingsActivity : BaseActivity() {
 
     companion object {
         private val TAG = SettingsActivity::class.java.simpleName
-        private val FRAGMENT_TAG: String? = SettingsActivity::class.java.simpleName + "::fragmentTag"
         private var activity: Activity? = null
     }
 }

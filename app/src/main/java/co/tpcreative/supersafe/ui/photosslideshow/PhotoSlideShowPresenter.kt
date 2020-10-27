@@ -16,7 +16,7 @@ import java.util.*
 class PhotoSlideShowPresenter : Presenter<BaseView<EmptyModel>>() {
     private val TAG = PhotoSlideShowPresenter::class.java.simpleName
     protected var items: ItemModel? = null
-    var mList: MutableList<ItemModel>?
+    var mList: MutableList<ItemModel>? = ArrayList<ItemModel>()
     var mListShare: MutableList<File>? = ArrayList()
     var status: EnumStatus = EnumStatus.OTHER
     protected var storage: Storage? = null
@@ -67,7 +67,4 @@ class PhotoSlideShowPresenter : Presenter<BaseView<EmptyModel>>() {
         }
     }
 
-    init {
-        mList = ArrayList<ItemModel>()
-    }
 }

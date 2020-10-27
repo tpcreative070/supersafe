@@ -7,15 +7,15 @@ import android.os.Bundle
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
-import co.tpcreative.supersafe.ui.accountmanager.AccountManagerActivity
+import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAct
 import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailAct
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionAct
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity
 import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivity
 import co.tpcreative.supersafe.ui.camera.CameraActivity
-import co.tpcreative.supersafe.ui.checksystem.CheckSystemActivity
-import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerActivity
+import co.tpcreative.supersafe.ui.checksystem.CheckSystemAct
+import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerAct
 import co.tpcreative.supersafe.ui.dashboard.DashBoardAct
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudActivity
 import co.tpcreative.supersafe.ui.facedown.FaceDownActivity
@@ -26,9 +26,9 @@ import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
 import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
-import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowActivity
+import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowAct
 import co.tpcreative.supersafe.ui.player.PlayerActivity
-import co.tpcreative.supersafe.ui.premium.PremiumActivity
+import co.tpcreative.supersafe.ui.premium.PremiumAct
 import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity
 import co.tpcreative.supersafe.ui.restore.RestoreActivity
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity
@@ -40,7 +40,7 @@ import co.tpcreative.supersafe.ui.signup.SignUpActivity
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity
 import co.tpcreative.supersafe.ui.trash.TrashActivity
 import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity
-import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountActivity
+import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountAct
 import co.tpcreative.supersafe.ui.verify.VerifyAct
 import java.util.*
 
@@ -172,7 +172,7 @@ object Navigator {
     }
 
     fun onPhotoSlider(context: Activity, items: ItemModel, mList: MutableList<ItemModel>, mainCategories: MainCategoryModel) {
-        val intent = Intent(context, PhotoSlideShowActivity::class.java)
+        val intent = Intent(context, PhotoSlideShowAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_items), items)
         bundle.putSerializable(context.getString(R.string.key_list_items), mList as ArrayList<*>?)
@@ -187,12 +187,12 @@ object Navigator {
     }
 
     fun onVerifyAccount(context: Context) {
-        val intent = Intent(context, VerifyAccountActivity::class.java)
+        val intent = Intent(context, VerifyAccountAct::class.java)
         context.startActivity(intent)
     }
 
     fun onManagerAccount(context: Context) {
-        val intent = Intent(context, AccountManagerActivity::class.java)
+        val intent = Intent(context, AccountManagerAct::class.java)
         context.startActivity(intent)
     }
 
@@ -202,12 +202,12 @@ object Navigator {
     }
 
     fun onManagerCloud(context: Context) {
-        val intent = Intent(context, CloudManagerActivity::class.java)
+        val intent = Intent(context, CloudManagerAct::class.java)
         context.startActivity(intent)
     }
 
     fun onCheckSystem(context: Activity, googleOauth: GoogleOauth?) {
-        val intent = Intent(context, CheckSystemActivity::class.java)
+        val intent = Intent(context, CheckSystemAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_google_oauth), googleOauth)
         intent.putExtras(bundle)
@@ -322,7 +322,7 @@ object Navigator {
     }
 
     fun onMoveToPremium(context: Context) {
-        val intent = Intent(context, PremiumActivity::class.java)
+        val intent = Intent(context, PremiumAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }

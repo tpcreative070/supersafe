@@ -95,7 +95,7 @@
         <activity
             android:name=".ui.albumdetail.AlbumDetailAct"
             android:label="" />
-        <activity android:name=".ui.photosslideshow.PhotoSlideShowActivity"/>
+        <activity android:name=".ui.photosslideshow.PhotoSlideShowAct"/>
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings" />
@@ -103,19 +103,19 @@
             android:name=".ui.help.HelpAndSupportActivity"
             android:label="@string/help" />
         <activity
-            android:name=".ui.verifyaccount.VerifyAccountActivity"
+            android:name=".ui.verifyaccount.VerifyAccountAct"
             android:label="@string/verify"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.accountmanager.AccountManagerActivity"
+            android:name=".ui.accountmanager.AccountManagerAct"
             android:label="@string/account" />
         <activity
             android:name=".ui.enablecloud.EnableCloudActivity"
             android:label="@string/enable_cloud_sync" />
         <activity
-            android:name=".ui.cloudmanager.CloudManagerActivity"
+            android:name=".ui.cloudmanager.CloudManagerAct"
             android:label="@string/cloud_manager" />
-        <activity android:name=".ui.checksystem.CheckSystemActivity"/>
+        <activity android:name=".ui.checksystem.CheckSystemAct"/>
         <activity
             android:name=".ui.trash.TrashActivity"
             android:label="@string/key_trash" />
@@ -153,7 +153,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.premium.PremiumActivity"
+            android:name=".ui.premium.PremiumAct"
             android:label="@string/premium" />
         <activity android:name=".ui.restore.RestoreActivity"/>
         <activity android:name=".ui.albumcover.AlbumCoverActivity"/>

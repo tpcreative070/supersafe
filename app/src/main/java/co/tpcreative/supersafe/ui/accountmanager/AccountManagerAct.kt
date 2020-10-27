@@ -5,76 +5,37 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Html
 import android.view.View
-import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.widget.NestedScrollView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
-import co.tpcreative.supersafe.common.adapter.DividerItemDecoration
-import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.AppLists
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
-import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAdapter
+import kotlinx.android.synthetic.main.activity_account_manager.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class AccountManagerActivity : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerAdapter.ItemSelectedListener {
-    @BindView(R.id.tvEmail)
-    var tvEmail: AppCompatTextView? = null
+class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerAdapter.ItemSelectedListener {
 
-    @BindView(R.id.tvStatus)
-    var tvStatus: AppCompatTextView? = null
-
-    @BindView(R.id.tvLicenseStatus)
-    var tvLicenseStatus: AppCompatTextView? = null
-
-    @BindView(R.id.btnSignOut)
-    var btnSignOut: AppCompatButton? = null
-
-    @BindView(R.id.tvStatusAccount)
-    var tvStatusAccount: AppCompatTextView? = null
-
-    @BindView(R.id.tvPremiumLeft)
-    var tvPremiumLeft: AppCompatTextView? = null
-
-    @BindView(R.id.recyclerView)
-    var recyclerView: RecyclerView? = null
-
-    @BindView(R.id.rlPremiumComplimentary)
-    var rlPremiumComplimentary: RelativeLayout? = null
-
-    @BindView(R.id.rlPremium)
-    var rlPremium: RelativeLayout? = null
-
-    @BindView(R.id.scrollView)
-    var scrollView: NestedScrollView? = null
-    private var presenter: AccountManagerPresenter? = null
-    private var adapter: AccountManagerAdapter? = null
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    var presenter: AccountManagerPresenter? = null
+    var adapter: AccountManagerAdapter? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_manager)
-        initRecycleView()
+        intUI()
+
         presenter = AccountManagerPresenter()
         presenter?.bindView(this)
         presenter?.getData()
-        val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         onUpdatedView()
         scrollView?.smoothScrollTo(0, 0)
     }
@@ -82,39 +43,28 @@ class AccountManagerActivity : BaseGoogleApi(), BaseView<EmptyModel>, AccountMan
     fun onUpdatedView() {
         val mUser: User? = Utils.getUserInfo()
         if (mUser != null) {
-            tvEmail?.setText(mUser.email)
+            tvEmail?.text = mUser.email
             if (mUser.verified) {
                 tvStatusAccount?.setTextColor(ContextCompat.getColor(this,R.color.ColorBlueV1))
-                tvStatusAccount?.setText(getString(R.string.verified))
+                tvStatusAccount?.text = getString(R.string.verified)
             } else {
                 tvStatusAccount?.setTextColor(ContextCompat.getColor(this,R.color.red))
-                tvStatusAccount?.setText(getString(R.string.unverified))
+                tvStatusAccount?.text = getString(R.string.unverified)
             }
         }
         val isPremium: Boolean = Utils.isPremium()
         if (isPremium) {
             tvLicenseStatus?.setTextColor(ContextCompat.getColor(this,R.color.ColorBlueV1))
-            tvLicenseStatus?.setText(getString(R.string.premium))
-            rlPremium?.setVisibility(View.VISIBLE)
-            rlPremiumComplimentary?.setVisibility(View.GONE)
+            tvLicenseStatus?.text = getString(R.string.premium)
+            rlPremium?.visibility = View.VISIBLE
+            rlPremiumComplimentary?.visibility = View.GONE
         } else {
-            rlPremium?.setVisibility(View.GONE)
-            rlPremiumComplimentary?.setVisibility(View.VISIBLE)
-            tvLicenseStatus?.setText(getString(R.string.free))
+            rlPremium?.visibility = View.GONE
+            rlPremiumComplimentary?.visibility = View.VISIBLE
+            tvLicenseStatus?.text = getString(R.string.free)
             val sourceString: String? = Utils.getFontString(R.string.upgrade_premium_to_use_full_features, getString(R.string.premium_uppercase))
-            tvPremiumLeft?.setText(Html.fromHtml(sourceString))
+            tvPremiumLeft?.text = sourceString?.toSpanned()
         }
-    }
-
-    fun initRecycleView() {
-        adapter = AccountManagerAdapter(getLayoutInflater(), this, this)
-        val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
-        if (recyclerView == null) {
-            Utils.Log(TAG, "recyclerview is null")
-        }
-        recyclerView?.setLayoutManager(mLayoutManager)
-        recyclerView?.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-        recyclerView?.setAdapter(adapter)
     }
 
     override fun onClickItem(position: Int) {
@@ -146,7 +96,7 @@ class AccountManagerActivity : BaseGoogleApi(), BaseView<EmptyModel>, AccountMan
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -154,48 +104,19 @@ class AccountManagerActivity : BaseGoogleApi(), BaseView<EmptyModel>, AccountMan
         onRegisterHomeWatcher()
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
         presenter?.unbindView()
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
     override fun onOrientationChange(isFaceDown: Boolean) {
         onFaceDown(isFaceDown)
-    }
-
-    @OnClick(R.id.btnUpgrade)
-    fun onClickedUpgrade(view: View?) {
-        Navigator.onMoveToPremium(this)
-    }
-
-    @OnClick(R.id.rlPremiumComplimentary)
-    fun onClickedUpgrade() {
-        Navigator.onMoveToPremium(this)
-    }
-
-    @OnClick(R.id.btnSignOut)
-    fun onSignOut(view: View?) {
-        Utils.Log(TAG, "sign out")
-        val mUser: User? = Utils.getUserInfo()
-        if (mUser != null) {
-            signOut(object : ServiceManager.ServiceManagerSyncDataListener {
-                override fun onCompleted() {
-                    mUser.verified = false
-                    mUser.driveConnected = false
-                    Utils.setUserPreShare(mUser)
-                    onBackPressed()
-                }
-
-                override fun onError() {}
-                override fun onCancel() {}
-            })
-        }
     }
 
     override fun onDriveClientReady() {}
@@ -245,6 +166,6 @@ class AccountManagerActivity : BaseGoogleApi(), BaseView<EmptyModel>, AccountMan
     }
 
     companion object {
-        private val TAG = AccountManagerActivity::class.java.simpleName
+        private val TAG = AccountManagerAct::class.java.simpleName
     }
 }

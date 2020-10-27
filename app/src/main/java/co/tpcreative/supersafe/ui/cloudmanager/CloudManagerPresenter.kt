@@ -18,15 +18,14 @@ import com.snatik.storage.Storage
 class CloudManagerPresenter : Presenter<BaseView<Long>>() {
     var sizeFile: Long = 0
     var sizeSaverFiles: Long = 0
-    protected var storage: Storage?
+    protected var storage: Storage? = Storage(SuperSafeApplication.getInstance())
     fun onGetSaveData() {
         sizeSaverFiles = 0
         val view: BaseView<Long>? = view()
         val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(true, false)
         if (mList != null) {
             for (index in mList) {
-                val formatType = EnumFormatType.values()[index.formatType]
-                when (formatType) {
+                when (EnumFormatType.values()[index.formatType]) {
                     EnumFormatType.IMAGE -> {
                         sizeSaverFiles += index.size?.toLong()!!
                     }
@@ -67,8 +66,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(true, false, false)
         if (mList != null && mList.size > 0) {
             for (i in mList.indices) {
-                val formatType = EnumFormatType.values()[mList[i].formatType]
-                when (formatType) {
+                when (EnumFormatType.values()[mList[i].formatType]) {
                     EnumFormatType.IMAGE -> {
                         mList[i].isSaver = true
                         SQLHelper.updatedItem(mList[i])
@@ -90,7 +88,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
             view?.onError("No internet connection", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
-        if (ServiceManager.Companion.getInstance()?.getMyService() == null) {
+        if (ServiceManager.getInstance()?.getMyService() == null) {
             view?.onError("Service is null", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
@@ -100,12 +98,10 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
             override fun onError(message: String?) {
                 Utils.Log(TAG, message+"")
             }
-
             override fun onError(message: String?, status: EnumStatus?) {
                 Utils.Log(TAG, message + "--" + status?.name)
                 view.onError(message, status)
             }
-
             override fun onSuccessful(message: String?) {}
             override fun onSuccessful(message: String?, status: EnumStatus?) {
                 onGetList()
@@ -116,12 +112,10 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
             override fun onSuccessful(message: String?, status: EnumStatus?, `object`: Long?) {
                 Utils.Log(TAG, message + "--" + status?.name)
             }
-
             override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<Long>?) {}
             override fun getContext(): Context? {
                 return null
             }
-
             override fun getActivity(): Activity? {
                 return null
             }
@@ -209,7 +203,4 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         private val TAG = CloudManagerPresenter::class.java.simpleName
     }
 
-    init {
-        storage = Storage(SuperSafeApplication.Companion.getInstance())
-    }
 }
