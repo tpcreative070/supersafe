@@ -327,8 +327,8 @@ object SQLHelper {
         if (list!=null){
             getMainItemFakePin()?.let { list.add(it) }
             Collections.sort(list, Comparator { lhs, rhs ->
-                val count_1 = lhs?.categories_max as Int
-                val count_2 = rhs?.categories_max as Int
+                val count_1 = lhs?.categories_max!!.toInt()
+                val count_2 = rhs?.categories_max!!.toInt()
                 count_1 - count_2
             })
             return list

@@ -345,7 +345,7 @@ class PlayerActivity : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter
         super.onSaveInstanceState(outState)
         val seekPosition: Long? = player?.getCurrentPosition()
         outState.putBoolean(getString(R.string.key_rotate), isPortrait)
-        PrefsController.putLong(getString(R.string.key_seek_to), seekPosition as Long)
+        PrefsController.putLong(getString(R.string.key_seek_to), seekPosition!!.toLong())
         PrefsController.putInt(getString(R.string.key_lastWindowIndex), player!!.getCurrentWindowIndex())
         Utils.Log(TAG, "Saved------------------------ " + seekPosition + " - " + player?.getCurrentWindowIndex())
     }

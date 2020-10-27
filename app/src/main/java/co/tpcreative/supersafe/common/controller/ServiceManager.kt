@@ -946,23 +946,23 @@ class ServiceManager : BaseServiceView<Any?> {
                             when (enumFormatType) {
                                 EnumFormatType.AUDIO -> {
                                     if (storage?.isFileExist(items.originalPath)!!) {
-                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B) as Long
+                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
                                         items.size = "" + mb
                                         SQLHelper.insertedItem(items)
                                     }
                                 }
                                 EnumFormatType.FILES -> {
                                     if (storage?.isFileExist(items.originalPath)!!) {
-                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B) as Long
+                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
                                         items.size = "" + mb
                                         SQLHelper.insertedItem(items)
                                     }
                                 }
                                 else -> {
                                     if (storage?.isFileExist(items.originalPath)!! && storage.isFileExist(items.thumbnailPath)!!) {
-                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B) as Long
+                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
                                         if (storage.isFileExist(items.thumbnailPath)) {
-                                            mb += +storage.getSize(File(items.thumbnailPath), SizeUnit.B) as Long
+                                            mb += +storage.getSize(File(items.thumbnailPath), SizeUnit.B).toLong()
                                         }
                                         items.size = "" + mb
                                         SQLHelper.insertedItem(items)
@@ -1261,9 +1261,9 @@ class ServiceManager : BaseServiceView<Any?> {
                             val mItem: ItemModel = mResponse.items as ItemModel
                             var mb: Long
                             if (storage?.isFileExist(mItem.originalPath)!! && storage?.isFileExist(mItem.thumbnailPath)) {
-                                mb = +storage?.getSize(File(mItem.originalPath), SizeUnit.B) as Long
+                                mb = +storage?.getSize(File(mItem.originalPath), SizeUnit.B).toLong()
                                 if (storage?.isFileExist(mItem.thumbnailPath)) {
-                                    mb += +storage.getSize(File(mItem.thumbnailPath), SizeUnit.B) as Long
+                                    mb += +storage.getSize(File(mItem.thumbnailPath), SizeUnit.B).toLong()
                                 }
                                 mItem.size = "" + mb
                                 SQLHelper.insertedItem(mItem)

@@ -119,7 +119,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
     private fun getBytesToRead(bytesToRead: Int): Int {
         return if (mBytesRemaining == C.LENGTH_UNSET.toLong()) {
             bytesToRead
-        } else Math.min(mBytesRemaining, bytesToRead.toLong()) as Int
+        } else Math.min(mBytesRemaining, bytesToRead.toLong()).toInt()
     }
 
     override fun getUri(): Uri? {

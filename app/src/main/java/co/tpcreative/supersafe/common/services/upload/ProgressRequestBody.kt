@@ -57,7 +57,7 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
 
     private inner class ProgressUpdater(private val mUploaded: Long, private val mTotal: Long) : Runnable {
         override fun run() {
-            val percent = (100 * mUploaded / mTotal) as Int
+            val percent = (100 * mUploaded / mTotal).toInt()
             if (percent == 100) {
                 mListener?.onFinish()
             } else {

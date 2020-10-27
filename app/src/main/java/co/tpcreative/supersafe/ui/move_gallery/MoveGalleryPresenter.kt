@@ -23,8 +23,8 @@ class MoveGalleryPresenter : Presenter<MoveGalleryView>() {
                 if (main.categories_local_id != categories_local_id) {
                     list?.add(main)
                     Collections.sort(list, Comparator { lhs, rhs ->
-                        val count_1 = lhs.categories_max as Int
-                        val count_2 = rhs.categories_max as Int
+                        val count_1 = lhs.categories_max.toInt()
+                        val count_2 = rhs.categories_max.toInt()
                         count_1 - count_2
                     })
                 }

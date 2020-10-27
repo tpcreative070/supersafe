@@ -44,15 +44,15 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
                 //Long allTimeForDownloading = (elapsedTime * responseBody.contentLength() / bytesRead);
                 //Long remainingTime = allTimeForDownloading - elapsedTime;
                 totalBytesRead += if (bytesRead != -1L) bytesRead else 0
-                val percent = if (bytesRead == -1L) 100f else totalBytesRead as Float / responseBody?.contentLength() as Float * 100
+                val percent = if (bytesRead == -1L) 100f else totalBytesRead.toFloat() / responseBody?.contentLength()!!.toFloat() * 100
                 if (progressListener != null) {
                     try {
                         if (percent > 1) {
                             if (percent > 99) {
-                                progressListener.onAttachmentDownloadUpdate(percent as Int)
+                                progressListener.onAttachmentDownloadUpdate(percent.toInt())
                                 progressListener.onAttachmentDownloadedSuccess()
                             } else {
-                                progressListener.onAttachmentDownloadUpdate(percent as Int)
+                                progressListener.onAttachmentDownloadUpdate(percent.toInt())
                             }
                             progressListener.onAttachmentTotalDownload(allBytes, totalBytesRead)
                             val elapsedTime = System.currentTimeMillis() - startTime!!

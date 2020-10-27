@@ -71,7 +71,7 @@ class UploadService {
                 val yourEntity: HttpEntity = builder.build()
                 val myEntity = ProgressiveEntity(yourEntity, object : ProgressiveEntity.ProgressListener {
                     override fun transferred(num: Long) {
-                        val percent = (num / totalSize as Float * 100) as Int
+                        val percent = (num / totalSize.toFloat() * 100).toInt()
                         listener?.onProgressing(percent, totalSize)
                     }
 
@@ -127,7 +127,7 @@ class UploadService {
                 val yourEntity: HttpEntity = builder.build()
                 val myEntity = ProgressiveEntity(yourEntity, object : ProgressiveEntity.ProgressListener {
                     override fun transferred(num: Long) {
-                        val percent = (num / totalSize as Float * 100) as Int
+                        val percent = (num / totalSize.toFloat() * 100).toInt()
                         listener?.onProgressing(percent, totalSize)
                     }
 

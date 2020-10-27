@@ -177,7 +177,7 @@ object Utils  {
         fun dpToPx(dp: Int): Int {
             val r: Resources = SuperSafeApplication.getInstance().getResources()
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                    dp.toFloat(), r.displayMetrics) as Int
+                    dp.toFloat(), r.displayMetrics).toInt()
         }
 
         fun showKeyboard(view: View?) {
@@ -529,7 +529,7 @@ object Utils  {
         fun onCheck() {
             val file = File(SuperSafeApplication.getInstance().getFileLogs())
             if (file.exists()) {
-                val mSize = SuperSafeApplication.getInstance().getStorage()?.getSize(file, SizeUnit.MB) as Long
+                val mSize = SuperSafeApplication.getInstance().getStorage()?.getSize(file, SizeUnit.MB)!!.toLong()
                 if (mSize > 2) {
                     SuperSafeApplication.getInstance().getStorage()?.deleteFile(file.absolutePath)
                 }

@@ -150,7 +150,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         init {
             itemView.buttonNumber.setOnClickListener {
                 if (mOnNumberClickListener != null) {
-                    mOnNumberClickListener?.onNumberClicked(it?.getTag() as Int)
+                    mOnNumberClickListener?.onNumberClicked(it?.tag as Int)
                     itemView.buttonNumber?.startAnimation(scale())
                 }
             }

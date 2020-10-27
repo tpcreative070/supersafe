@@ -179,7 +179,7 @@ class MDCheckBox @JvmOverloads constructor(context: Context?, attrs: AttributeSe
             return 0
         }
         val density = context.resources.displayMetrics.density
-        return Math.ceil(density * value.toDouble()) as Int
+        return Math.ceil(density * value.toDouble()).toInt()
     }
 
     companion object {

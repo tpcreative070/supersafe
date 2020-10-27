@@ -771,8 +771,8 @@ abstract class InstanceGenerator : RoomDatabase() {
                 mList.add(BreakInAlertsEntityModel(index))
             }
             Collections.sort(mList, Comparator { lhs, rhs ->
-                val count_1 = lhs.id as Int
-                val count_2 = rhs.id as Int
+                val count_1 = lhs.id.toInt()
+                val count_2 = rhs.id.toInt()
                 count_1 - count_2
             })
         }

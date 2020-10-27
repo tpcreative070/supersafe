@@ -563,7 +563,7 @@ class ConvertUtils private constructor() {
          */
         fun dp2px(dpValue: Float): Int {
             val scale: Float = SuperSafeApplication.Companion.getInstance().getResources().getDisplayMetrics().density
-            return (dpValue * scale + 0.5f) as Int
+            return (dpValue * scale + 0.5f).toInt()
         }
 
         /**
@@ -573,8 +573,8 @@ class ConvertUtils private constructor() {
          * @return value of dp
          */
         fun px2dp(pxValue: Float): Int {
-            val scale: Float = SuperSafeApplication.Companion.getInstance().getResources().getDisplayMetrics().density
-            return (pxValue / scale + 0.5f) as Int
+            val scale: Float = SuperSafeApplication.getInstance().getResources().getDisplayMetrics().density
+            return (pxValue / scale + 0.5f).toInt()
         }
 
         /**
@@ -584,8 +584,8 @@ class ConvertUtils private constructor() {
          * @return value of px
          */
         fun sp2px(spValue: Float): Int {
-            val fontScale: Float = SuperSafeApplication.Companion.getInstance().getResources().getDisplayMetrics().scaledDensity
-            return (spValue * fontScale + 0.5f) as Int
+            val fontScale: Float = SuperSafeApplication.getInstance().getResources().getDisplayMetrics().scaledDensity
+            return (spValue * fontScale + 0.5f).toInt()
         }
 
         /**
@@ -595,8 +595,8 @@ class ConvertUtils private constructor() {
          * @return value of sp
          */
         fun px2sp(pxValue: Float): Int {
-            val fontScale: Float = SuperSafeApplication.Companion.getInstance().getResources().getDisplayMetrics().scaledDensity
-            return (pxValue / fontScale + 0.5f) as Int
+            val fontScale: Float = SuperSafeApplication.getInstance().getResources().getDisplayMetrics().scaledDensity
+            return (pxValue / fontScale + 0.5f).toInt()
         }
 
         ///////////////////////////////////////////////////////////////////////////
