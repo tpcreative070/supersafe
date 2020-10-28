@@ -26,7 +26,6 @@ import co.tpcreative.supersafe.model.MainCategoryModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
-import org.greenrobot.eventbus.EventBus
 
 class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
     private var recyclerView: RecyclerView? = null
@@ -192,7 +191,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
                         Navigator.onMoveAlbumDetail(getActivity()!!, mainCategories)
                         dialog.dismiss()
                     } else {
-                        Utils.onBasicAlertNotifify(activity!!,getString(R.string.wrong_password))
+                        Utils.onBasicAlertNotify(activity!!,message = getString(R.string.wrong_password))
                         dialog.getInputField().setText("")
                     }
                 }

@@ -19,6 +19,7 @@ import co.tpcreative.supersafe.common.request.VerifyCodeRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.common.util.UtilsListener
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
@@ -106,7 +107,7 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
     override fun onEditorAction(textView: TextView?, actionId: Int, keyEvent: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             if (!SuperSafeReceiver.isConnected()) {
-                Utils.showDialog(this, getString(R.string.internet))
+                Utils.onBasicAlertNotify(this,message = getString(R.string.internet),title = "Alert")
                 return false
             }
             return false
@@ -150,14 +151,14 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
                 btnSendRequest?.setEnabled(true)
                 btnUnlock?.text = getString(R.string.unlock_all_albums)
                 btnUnlock?.isEnabled = true
-                Utils.showGotItSnackbar(tvStep1!!, message!!)
+                Utils.onBasicAlertNotify(this,message = message!!,title = "Alert")
             }
             EnumStatus.SEND_EMAIL -> {
-                Utils.showGotItSnackbar(tvStep1!!, message!!)
+                Utils.onBasicAlertNotify(this,message = message!!,title = "Alert")
             }
             EnumStatus.VERIFY -> {
                 btnUnlock?.text = getString(R.string.unlock_all_albums)
-                Utils.showGotItSnackbar(tvStep1!!, message!!)
+                Utils.onBasicAlertNotify(this,message = message!!,title = "Alert")
             }
         }
     }
@@ -171,7 +172,7 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
             EnumStatus.SEND_EMAIL -> {
                 onStopLoading(EnumStatus.REQUEST_CODE)
                 btnSendRequest?.text = getString(R.string.send_verification_code)
-                Toast.makeText(this, "Sent the code to your email. Please check it", Toast.LENGTH_SHORT).show()
+                Utils.onBasicAlertNotify(this,message = "Code has been sent to your email. Please check it",title = "Alert")
             }
             EnumStatus.VERIFY -> {
                 btnUnlock?.text = getString(R.string.unlock_all_albums)
@@ -185,12 +186,13 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
                     }
                 }
                 SingletonPrivateFragment.getInstance()?.onUpdateView()
-                Utils.showGotItSnackbar(currentFocus!!, R.string.unlocked_successful, object : ServiceManager.ServiceManagerSyncDataListener {
-                    override fun onCompleted() {
+                Utils.onAlertNotify(this,"Unlocked Album",getString(R.string.unlocked_successful),object  : UtilsListener {
+                    override fun onNegative() {
+                        TODO("Not yet implemented")
+                    }
+                    override fun onPositive() {
                         finish()
                     }
-                    override fun onError() {}
-                    override fun onCancel() {}
                 })
             }
             else -> {

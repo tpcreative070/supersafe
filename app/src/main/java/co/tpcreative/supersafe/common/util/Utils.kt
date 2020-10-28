@@ -1198,11 +1198,31 @@ object Utils  {
             return false
         }
 
-    fun onBasicAlertNotifify(context: Activity,message: String) {
+    fun onBasicAlertNotify(context: Activity,title: String? = "Warning",message: String) {
         Alerter.create(context)
-                .setTitle("Warning")
+                .setTitle(title!!)
                 .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
                 .setText(message)
                 .show()
     }
+
+    fun onAlertNotify(context: Activity,title:String,message: String,listener: UtilsListener){
+        Alerter.create(context)
+                .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
+                .setTitle(title)
+                .setText(message)
+                .setDuration(10000)
+                .addButton("Yes", R.style.AlertButton, View.OnClickListener {
+                    listener.onPositive()
+                })
+//                .addButton("No", R.style.AlertButton, View.OnClickListener {
+//                    listener.onNegative()
+//                })
+                .show()
+    }
+}
+
+interface UtilsListener {
+    fun onPositive()
+    fun onNegative()
 }
