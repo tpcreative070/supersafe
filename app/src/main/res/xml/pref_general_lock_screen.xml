@@ -22,8 +22,5 @@
             android:key="@string/key_fingerprint_unlock"
             android:summary="@string/key_fingerprint_unlock_detail"
             android:title="@string/key_fingerprint_unlock"/>
-
-
-
     </co.tpcreative.supersafe.common.preference.MyPreferenceCategory>
 </androidx.preference.PreferenceScreen>

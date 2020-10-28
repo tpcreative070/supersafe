@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_launcher"
+            app:srcCompat="@drawable/ic_launcher"
             android:layout_width="100dp"
             android:layout_height="100dp"/>
     </RelativeLayout>
