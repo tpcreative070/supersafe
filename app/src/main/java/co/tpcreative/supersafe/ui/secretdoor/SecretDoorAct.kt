@@ -1,40 +1,29 @@
-package co.tpcreative.supersafe.ui.breakinalerts
+package co.tpcreative.supersafe.ui.secretdoor
 import android.os.Bundle
-import android.view.Window
-import android.view.WindowManager
+import android.widget.CompoundButton
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumStatus
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.activity_break_in_alerts_detail.*
+import kotlinx.android.synthetic.main.activity_secret_door.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.io.File
 
-class BreakInAlertsDetailActivity : BaseActivity() {
-    var options: RequestOptions? = RequestOptions()
-            .centerCrop()
-            .override(400, 600)
-            .priority(Priority.HIGH)
-
+class SecretDoorAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_break_in_alerts_detail)
-        val bundle: Bundle? = getIntent().getExtras()
-        val inAlerts: BreakInAlertsModel? = bundle?.get(getString(R.string.key_break_in_alert)) as BreakInAlertsModel
-        if (inAlerts != null) {
-            Glide.with(this)
-                    .load(File(inAlerts.fileName))
-                    .apply(options!!).into(imgPicture!!)
+        setContentView(R.layout.activity_secret_door)
+        initUI()
+    }
+
+    override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
+        if (!b) {
+            PrefsController.putBoolean(getString(R.string.key_secret_door), b)
         }
+        tvStatus?.text = if (b) getString(R.string.enabled) else getString(R.string.disabled)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -52,6 +41,16 @@ class BreakInAlertsDetailActivity : BaseActivity() {
             EventBus.getDefault().register(this)
         }
         onRegisterHomeWatcher()
+        val value: Boolean = PrefsController.getBoolean(getString(R.string.key_secret_door), false)
+        val options: Boolean = PrefsController.getBoolean(getString(R.string.key_calculator), false)
+        btnSwitch?.isChecked = value
+        if (options) {
+            tvOptionItems?.text = getString(R.string.calculator)
+            imgIcons?.setImageResource(R.drawable.ic_calculator)
+        } else {
+            tvOptionItems?.text = getString(R.string.virus_scanner)
+            imgIcons?.setImageResource(R.drawable.baseline_donut_large_white_48)
+        }
     }
 
     override fun onDestroy() {

@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
@@ -24,12 +22,11 @@ import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
 
 abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
-    var unbinder: Unbinder? = null
     var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onStartCount = 2
         storage = Storage(this)
@@ -58,22 +55,20 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         super.setContentView(layoutResID)
-        unbinder = ButterKnife.bind(this)
         Log.d(TAG, "action here")
     }
 
-    protected override fun onStop() {
+    override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop....")
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
-        unbinder?.unbind()
         super.onDestroy()
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
@@ -83,7 +78,7 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         Utils.Log(TAG, "onResume....")
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
@@ -139,7 +134,7 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
         return super.onOptionsItemSelected(item)
     }
 
-    protected override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
         val action = EnumPinAction.values()[value]

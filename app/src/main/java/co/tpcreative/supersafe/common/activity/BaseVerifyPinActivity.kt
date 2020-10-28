@@ -17,8 +17,6 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
@@ -35,7 +33,6 @@ import spencerstudios.com.bungeelib.Bungee
 import java.io.File
 
 abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, SensorFaceUpDownChangeNotifier.Listener {
-    var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     protected var storage: Storage? = null
     /*Hidden camera*/
@@ -79,26 +76,24 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         super.setContentView(layoutResID)
-        unbinder = ButterKnife.bind(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         stopCamera()
-        unbinder?.unbind()
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         stopCamera()
     }
 
-    protected override fun onStop() {
+    override fun onStop() {
         super.onStop()
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         Utils.Log(TAG, "Action here........onResume")
         if (mCachedCameraConfig != null) {
@@ -139,7 +134,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
         return super.onOptionsItemSelected(item)
     }
 
-    protected override fun onStart() {
+    override fun onStart() {
         super.onStart()
         if (SingletonManager.getInstance().isAnimation()) {
             if (onStartCount > 1) {

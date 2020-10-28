@@ -13,8 +13,6 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.Navigator
@@ -30,7 +28,6 @@ import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
 
 abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
-    var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
@@ -83,7 +80,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         super.setContentView(layoutResID)
-        unbinder = ButterKnife.bind(this)
     }
 
     override fun onPause() {
@@ -103,7 +99,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
 
     override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
-        unbinder?.unbind()
         super.onDestroy()
     }
 

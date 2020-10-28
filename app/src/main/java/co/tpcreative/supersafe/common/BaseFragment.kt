@@ -3,17 +3,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import co.tpcreative.supersafe.common.util.Utils
 import com.google.gson.Gson
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 abstract class BaseFragment : Fragment() {
-    protected var unbinder: Unbinder? = null
     var isLoaded = false
     var isDead = false
     private val lock = ReentrantLock()
@@ -24,12 +20,10 @@ abstract class BaseFragment : Fragment() {
         isDead = false
         val viewResponse = getLayoutId(inflater, container)
         return if (viewResponse != null) {
-            unbinder = ButterKnife.bind(this, viewResponse)
             //work()
             viewResponse
         } else {
             val view: View = inflater.inflate(getLayoutId(), container, false)
-            unbinder = ButterKnife.bind(this, view)
             //work()
             view
         }
@@ -47,7 +41,6 @@ abstract class BaseFragment : Fragment() {
     override fun onDestroyView() {
         isDead = true
         super.onDestroyView()
-        unbinder?.unbind()
         hide()
     }
 

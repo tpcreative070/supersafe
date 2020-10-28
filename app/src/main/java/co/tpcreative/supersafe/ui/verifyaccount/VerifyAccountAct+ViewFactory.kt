@@ -6,14 +6,16 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.Categories
 import co.tpcreative.supersafe.model.HelpAndSupport
 import co.tpcreative.supersafe.model.ThemeApp
 import kotlinx.android.synthetic.main.activity_verify_account.*
-import java.util.ArrayList
+import java.util.*
 
 fun VerifyAccountAct.initUI(){
+    TAG = this::class.java.simpleName
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     presenter = VerifyAccountPresenter()
@@ -91,4 +93,32 @@ fun VerifyAccountAct.initUI(){
             onVerifyCode()
         }
     }
+}
+
+
+fun VerifyAccountAct.onChangedEmail() {
+    val new_user_id: String = edtEmail?.text.toString().toLowerCase(Locale.ROOT).trim({ it <= ' ' })
+    tvEmail?.text = new_user_id
+    val sourceString: String = getString(R.string.verify_title, "<font color='#000000'>$new_user_id</font>")
+    tvTitle?.text = sourceString.toSpanned()
+    if (new_user_id == presenter?.mUser?.email) {
+        return
+    }
+    val request = VerifyCodeRequest()
+    request.new_user_id = new_user_id
+    request.user_id = presenter?.mUser?.email
+    request._id = presenter?.mUser?._id
+    presenter?.onChangeEmail(request)
+    Utils.hideSoftKeyboard(this)
+    Utils.hideKeyboard(edtEmail)
+}
+
+fun VerifyAccountAct.onVerifyCode() {
+    val request = VerifyCodeRequest()
+    request.code = edtCode?.getText().toString().trim({ it <= ' ' })
+    request.user_id = presenter?.mUser?.email
+    request._id = presenter?.mUser?._id
+    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
+    presenter?.onVerifyCode(request)
+    Utils.hideSoftKeyboard(this)
 }

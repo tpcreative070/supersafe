@@ -16,10 +16,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
-import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.request.VerifyCodeRequest
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
@@ -28,13 +25,13 @@ import kotlinx.android.synthetic.main.activity_verify_account.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
+
 
 class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseView<EmptyModel> {
     var isNext = false
     var presenter: VerifyAccountPresenter? = null
-    private var isBack = true
-    private var isSync = true
+    var isBack = true
+    var isSync = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_account)
@@ -125,35 +122,6 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: android.text.Editable?) {}
-    }
-
-
-
-    fun onChangedEmail() {
-        val new_user_id: String = edtEmail?.text.toString().toLowerCase(Locale.ROOT).trim({ it <= ' ' })
-        tvEmail?.text = new_user_id
-        val sourceString: String = getString(R.string.verify_title, "<font color='#000000'>$new_user_id</font>")
-        tvTitle?.text = sourceString.toSpanned()
-        if (new_user_id == presenter?.mUser?.email) {
-            return
-        }
-        val request = VerifyCodeRequest()
-        request.new_user_id = new_user_id
-        request.user_id = presenter?.mUser?.email
-        request._id = presenter?.mUser?._id
-        presenter?.onChangeEmail(request)
-        Utils.hideSoftKeyboard(this)
-        Utils.hideKeyboard(edtEmail)
-    }
-
-    fun onVerifyCode() {
-        val request = VerifyCodeRequest()
-        request.code = edtCode?.getText().toString().trim({ it <= ' ' })
-        request.user_id = presenter?.mUser?.email
-        request._id = presenter?.mUser?._id
-        request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-        presenter?.onVerifyCode(request)
-        Utils.hideSoftKeyboard(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -299,7 +267,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
             EnumStatus.RESEND_CODE -> {
             }
             EnumStatus.VERIFY_CODE -> {
-                progressBarCircularIndeterminateVerifyCode?.setVisibility(View.INVISIBLE)
+                progressBarCircularIndeterminateVerifyCode?.visibility = View.INVISIBLE
                 btnSendVerifyCode?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
                 btnSendVerifyCode?.text = getString(R.string.send_verification_code)
             }
@@ -338,8 +306,4 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
 
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
-
-    companion object {
-        private val TAG = VerifyAccountAct::class.java.simpleName
-    }
 }

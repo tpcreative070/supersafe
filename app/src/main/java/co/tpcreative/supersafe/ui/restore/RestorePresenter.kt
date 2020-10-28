@@ -10,5 +10,4 @@ class RestorePresenter : Presenter<BaseView<EmptyModel>>() {
     fun onGetData() {
         mUser = SuperSafeApplication.getInstance().readUseSecret()
     }
-    fun onRestoreData() {}
 }

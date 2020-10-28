@@ -29,7 +29,7 @@ import java.io.IOException
 import java.util.*
 
 class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
-    var mListCategories: MutableList<MainCategoryModel>?
+    var mListCategories: MutableList<MainCategoryModel>? = SQLHelper.getListCategories(false)
     fun onVerifyCode(request: VerifyCodeRequest) {
         Utils.Log(TAG, "info")
         val view: BaseView<EmptyModel>? = view()
@@ -130,7 +130,7 @@ class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onRefreshEmailToken(request: EmailToken) {
         Utils.Log(TAG, "onRefreshEmailToken.....")
         val view: BaseView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.Companion.getInstance())) {
+        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
             return
         }
         if (subscriptions == null) {
@@ -142,7 +142,7 @@ class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
         hash[getString(R.string.key_redirect_uri)] = request.redirect_uri
         hash[getString(R.string.key_grant_type)] = request.grant_type
         hash[getString(R.string.key_refresh_token)] = request.refresh_token
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.Companion.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken? ->
@@ -279,7 +279,4 @@ class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
         private val TAG = UnlockAllAlbumPresenter::class.java.simpleName
     }
 
-    init {
-        mListCategories = SQLHelper.getListCategories(false)
-    }
 }

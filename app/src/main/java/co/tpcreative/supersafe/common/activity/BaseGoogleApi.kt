@@ -13,8 +13,6 @@ import android.view.WindowManager
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
@@ -48,7 +46,6 @@ import java.io.IOException
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mSignInAccount: GoogleSignInAccount? = null
     private var mGoogleSignInClient: GoogleSignInClient? = null
-    var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     private var mHomeWatcher: HomeWatcher? = null
     private var onStartCount = 0
@@ -118,7 +115,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         try {
             super.setContentView(layoutResID)
             Utils.Log(TAG, "action here")
-            unbinder = ButterKnife.bind(this)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -141,9 +137,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     override fun onDestroy() {
         super.onDestroy()
-        if (unbinder != null) {
-            unbinder?.unbind()
-        }
     }
 
     override fun onResume() {

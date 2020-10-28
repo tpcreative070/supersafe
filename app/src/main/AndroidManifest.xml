@@ -117,14 +117,14 @@
             android:label="@string/cloud_manager" />
         <activity android:name=".ui.checksystem.CheckSystemAct"/>
         <activity
-            android:name=".ui.trash.TrashActivity"
+            android:name=".ui.trash.TrashAct"
             android:label="@string/key_trash" />
         <activity android:name=".ui.settings.AlbumSettingsActivity"/>
         <activity
-            android:name=".ui.resetpin.ResetPinActivity"
+            android:name=".ui.resetpin.ResetPinAct"
             android:label="@string/reset_pin" />
         <activity
-            android:name=".ui.theme.ThemeSettingsActivity"
+            android:name=".ui.theme.ThemeSettingsAct"
             android:label="@string/key_update_theme" />
         <activity
             android:name=".ui.breakinalerts.BreakInAlertsAct"
@@ -132,18 +132,18 @@
         <activity
             android:name=".ui.fakepin.FakePinAct"
             android:label="@string/key_fake_pin" />
-        <activity android:name=".ui.secretdoor.SecretDoorActivity"
+        <activity android:name=".ui.secretdoor.SecretDoorAct"
             android:label="@string/key_secret_door"/>
         <activity android:name=".ui.aboutsupersafe.AboutSuperSafeActivity"/>
         <activity android:name=".ui.breakinalerts.BreakInAlertsDetailActivity"/>
-        <activity android:name=".ui.secretdoor.SecretDoorSetUpActivity"/>
+        <activity android:name=".ui.secretdoor.SecretDoorSetUpAct"/>
         <activity android:name=".ui.facedown.FaceDownActivity"/>
         <activity
-            android:name=".ui.unlockalbum.UnlockAllAlbumActivity"
+            android:name=".ui.unlockalbum.UnlockAllAlbumAct"
             android:label="@string/unlock_all_albums" />
         <activity android:name=".ui.help.HelpAndSupportContentAct"
             android:label="@string/help"/>
-        <activity android:name=".ui.sharefiles.ShareFilesActivity"
+        <activity android:name=".ui.sharefiles.ShareFilesAct"
             android:theme="@style/AppTheme.Share">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -155,9 +155,9 @@
         <activity
             android:name=".ui.premium.PremiumAct"
             android:label="@string/premium" />
-        <activity android:name=".ui.restore.RestoreActivity"/>
+        <activity android:name=".ui.restore.RestoreAct"/>
         <activity android:name=".ui.albumcover.AlbumCoverAct"/>
-        <activity android:name=".ui.switchbasic.SwitchBasicActivity"/>
+        <activity android:name=".ui.switchbasic.SwitchBasicAct"/>
         <!--Portrait model for special mode-->
         <activity android:name=".ui.player.PlayerAct"/>
     </application>

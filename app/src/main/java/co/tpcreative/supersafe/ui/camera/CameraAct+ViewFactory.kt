@@ -1,12 +1,9 @@
 package co.tpcreative.supersafe.ui.camera
-
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.ActionBar
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils

@@ -39,8 +39,7 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
         audios = 0
         others = 0
         for (index in mList!!) {
-            val enumTypeFile = EnumFormatType.values()[index.formatType]
-            when (enumTypeFile) {
+            when (EnumFormatType.values()[index.formatType]) {
                 EnumFormatType.IMAGE -> {
                     photos += 1
                 }

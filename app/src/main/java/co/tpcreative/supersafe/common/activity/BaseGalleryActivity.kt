@@ -9,8 +9,6 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import butterknife.ButterKnife
-import butterknife.Unbinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
@@ -28,7 +26,6 @@ import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
 
 abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {
-    var unbinder: Unbinder? = null
     protected var actionBar: ActionBar? = null
     var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
@@ -72,8 +69,6 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         super.setContentView(layoutResID)
-        Log.d(TAG, "action here")
-        unbinder = ButterKnife.bind(this)
     }
 
     protected fun onFaceDown(isFaceDown: Boolean) {
@@ -85,17 +80,16 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         }
     }
 
-    protected override fun onStop() {
+    override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop....")
     }
 
-    protected override fun onDestroy() {
-        unbinder?.unbind()
+    override fun onDestroy() {
         super.onDestroy()
     }
 
-    protected override fun onPause() {
+    override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.Companion.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
@@ -105,7 +99,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         Utils.Log(TAG, "Action here........onResume")
         SensorFaceUpDownChangeNotifier.Companion.getInstance()?.addListener(this)
         super.onResume()
@@ -165,7 +159,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         return super.onOptionsItemSelected(item)
     }
 
-    protected override fun onStart() {
+    override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
         val action = EnumPinAction.values()[value]

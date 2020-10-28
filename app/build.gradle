@@ -88,9 +88,8 @@ dependencies {
     implementation "com.leinardi.android:speed-dial:3.1.1"
 
     /*Add butter knife*/
-    implementation 'com.jakewharton:butterknife:10.1.0'
     implementation 'androidx.sqlite:sqlite-ktx:2.1.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+
 
     /*Adding Edittext Android Material*/
     implementation project(':material-edit-text')

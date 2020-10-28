@@ -29,17 +29,17 @@ import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowAct
 import co.tpcreative.supersafe.ui.player.PlayerAct
 import co.tpcreative.supersafe.ui.premium.PremiumAct
-import co.tpcreative.supersafe.ui.resetpin.ResetPinActivity
-import co.tpcreative.supersafe.ui.restore.RestoreActivity
-import co.tpcreative.supersafe.ui.secretdoor.SecretDoorActivity
-import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpActivity
+import co.tpcreative.supersafe.ui.resetpin.ResetPinAct
+import co.tpcreative.supersafe.ui.restore.RestoreAct
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorAct
+import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpAct
 import co.tpcreative.supersafe.ui.settings.SettingsActivity
 import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity
 import co.tpcreative.supersafe.ui.signin.SignInAct
 import co.tpcreative.supersafe.ui.signup.SignUpAct
-import co.tpcreative.supersafe.ui.theme.ThemeSettingsActivity
-import co.tpcreative.supersafe.ui.trash.TrashActivity
-import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumActivity
+import co.tpcreative.supersafe.ui.theme.ThemeSettingsAct
+import co.tpcreative.supersafe.ui.trash.TrashAct
+import co.tpcreative.supersafe.ui.unlockalbum.UnlockAllAlbumAct
 import co.tpcreative.supersafe.ui.verifyaccount.VerifyAccountAct
 import co.tpcreative.supersafe.ui.verify.VerifyAct
 import java.util.*
@@ -224,7 +224,7 @@ object Navigator {
     }
 
     fun onMoveTrash(context: Context) {
-        val intent = Intent(context, TrashActivity::class.java)
+        val intent = Intent(context, TrashAct::class.java)
         context.startActivity(intent)
     }
 
@@ -237,15 +237,15 @@ object Navigator {
     }
 
     fun onMoveToForgotPin(context: Context, isRestoreFile: Boolean) {
-        val intent = Intent(context, ResetPinActivity::class.java)
+        val intent = Intent(context, ResetPinAct::class.java)
         val bundle = Bundle()
-        bundle.putBoolean(ResetPinActivity::class.java.getSimpleName(), isRestoreFile)
+        bundle.putBoolean(ResetPinAct::class.java.getSimpleName(), isRestoreFile)
         intent.putExtras(bundle)
         context.startActivity(intent)
     }
 
     fun onMoveThemeSettings(context: Activity) {
-        val intent = Intent(context, ThemeSettingsActivity::class.java)
+        val intent = Intent(context, ThemeSettingsAct::class.java)
         context.startActivityForResult(intent, Navigator.THEME_SETTINGS)
     }
 
@@ -280,12 +280,12 @@ object Navigator {
     }
 
     fun onMoveSecretDoor(context: Context) {
-        val intent = Intent(context, SecretDoorActivity::class.java)
+        val intent = Intent(context, SecretDoorAct::class.java)
         context.startActivity(intent)
     }
 
     fun onMoveSecretDoorSetUp(context: Activity) {
-        val intent = Intent(context, SecretDoorSetUpActivity::class.java)
+        val intent = Intent(context, SecretDoorSetUpAct::class.java)
         context.startActivityForResult(intent, Navigator.SECRET_DOOR_SUET_UP)
     }
 
@@ -300,7 +300,7 @@ object Navigator {
     }
 
     fun onMoveUnlockAllAlbums(context: Context) {
-        val intent = Intent(context, UnlockAllAlbumActivity::class.java)
+        val intent = Intent(context, UnlockAllAlbumAct::class.java)
         context.startActivity(intent)
     }
 
@@ -328,7 +328,7 @@ object Navigator {
     }
 
     fun onMoveRestore(context: Context) {
-        val intent = Intent(context, RestoreActivity::class.java)
+        val intent = Intent(context, RestoreAct::class.java)
         context.startActivity(intent)
     }
 

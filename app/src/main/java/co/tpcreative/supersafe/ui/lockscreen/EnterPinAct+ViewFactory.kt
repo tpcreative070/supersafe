@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.ui.lockscreen
 import android.animation.ObjectAnimator
 import android.view.View
-import butterknife.OnClick
-import butterknife.OnLongClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController

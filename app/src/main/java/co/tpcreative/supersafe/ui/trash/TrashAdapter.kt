@@ -4,12 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -19,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.album_detail_item.view.*
 import tpcreative.co.qrscanner.common.extension.setColorFilter
 
 
@@ -47,106 +43,90 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
-        @BindView(R.id.imgAlbum)
-        var imgAlbum: AppCompatImageView? = null
-
-        @BindView(R.id.imgVideoCam)
-        var imgVideoCam: AppCompatImageView? = null
-
-        @BindView(R.id.tvTitle)
-        var tvTitle: AppCompatTextView? = null
-
-        @BindView(R.id.progressingBar)
-        var progressingBar: ProgressBar? = null
-
-        @BindView(R.id.imgCheck)
-        var imgCheck: AppCompatImageView? = null
-
-        @BindView(R.id.view_alpha)
-        var view_alpha: View? = null
-
-        @BindView(R.id.imgSelect)
-        var imgSelect: AppCompatImageView? = null
+        val imgAlbum = itemView.imgAlbum
+        val imgVideoCam = itemView.imgVideoCam
+        val tvTitle = itemView.tvTitle
+        val progressingBar = itemView.progressingBar
+        val imgCheck = itemView.imgCheck
+        val view_alpha = itemView.view_alpha
+        var imgSelect = itemView.imgSelect
         var mPosition = 0
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
             mPosition = position
             if (data.isChecked) {
-                view_alpha?.setAlpha(0.5f)
-                imgSelect?.setVisibility(View.VISIBLE)
+                view_alpha?.alpha = 0.5f
+                imgSelect?.visibility = View.VISIBLE
             } else {
-                view_alpha?.setAlpha(0.0f)
-                imgSelect?.setVisibility(View.INVISIBLE)
+                view_alpha?.alpha = 0.0f
+                imgSelect?.visibility = View.INVISIBLE
             }
             try {
                 val path: String? = data.thumbnailPath
                 storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-                val formatTypeFile = EnumFormatType.values()[data.formatType]
-                when (formatTypeFile) {
+                when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
-                        imgVideoCam?.setVisibility(View.VISIBLE)
+                        imgVideoCam?.visibility = View.VISIBLE
                         imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))
-                        tvTitle?.setVisibility(View.VISIBLE)
-                        tvTitle?.setText(data.title)
+                        tvTitle?.visibility = View.VISIBLE
+                        tvTitle?.text = data.title
                         Glide.with(context!!)
                                 .load(note1)
                                 .apply(options).into(imgAlbum!!)
                     }
                     EnumFormatType.FILES -> {
-                        imgVideoCam?.setVisibility(View.VISIBLE)
+                        imgVideoCam?.visibility = View.VISIBLE
                         imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_insert_drive_file_white_48))
-                        tvTitle?.setVisibility(View.VISIBLE)
-                        tvTitle?.setText(data.title)
+                        tvTitle?.visibility = View.VISIBLE
+                        tvTitle?.text = data.title
                         Glide.with(context!!)
                                 .load(note1)
                                 .apply(options).into(imgAlbum!!)
                     }
                     EnumFormatType.VIDEO -> {
-                        imgVideoCam?.setVisibility(View.VISIBLE)
+                        imgVideoCam?.visibility = View.VISIBLE
                         imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_videocam_white_36))
-                        tvTitle?.setVisibility(View.INVISIBLE)
+                        tvTitle?.visibility = View.INVISIBLE
                         if (storage?.isFileExist(path)!!) {
-                            imgAlbum?.setRotation(data.degrees.toFloat())
+                            imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(storage?.readFile(path))
                                     .apply(options).into(imgAlbum!!)
                         }
                     }
                     EnumFormatType.IMAGE -> {
-                        tvTitle?.setVisibility(View.INVISIBLE)
-                        imgVideoCam?.setVisibility(View.INVISIBLE)
+                        tvTitle?.visibility = View.INVISIBLE
+                        imgVideoCam?.visibility = View.INVISIBLE
                         if (storage?.isFileExist(path)!!) {
-                            imgAlbum?.setRotation(data.degrees.toFloat())
+                            imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
                                     .load(storage?.readFile(path))
                                     .apply(options).into(imgAlbum!!)
                         }
                     }
                 }
-                progressingBar?.getIndeterminateDrawable()?.setColorFilter(ContextCompat.getColor(context!!,themeApp?.getAccentColor()!!),EnumMode.DST_ATOP)
-                val progress = EnumStatusProgress.values()[data.statusProgress]
-                when (progress) {
+                progressingBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(context!!,themeApp?.getAccentColor()!!),EnumMode.DST_ATOP)
+                when (EnumStatusProgress.values()[data.statusProgress]) {
                     EnumStatusProgress.PROGRESSING -> {
-                        imgCheck?.setVisibility(View.INVISIBLE)
-                        progressingBar?.setVisibility(View.VISIBLE)
+                        imgCheck?.visibility = View.INVISIBLE
+                        progressingBar?.visibility = View.VISIBLE
                     }
                     EnumStatusProgress.DONE -> {
-                        imgCheck?.setVisibility(View.VISIBLE)
-                        progressingBar?.setVisibility(View.INVISIBLE)
+                        imgCheck?.visibility = View.VISIBLE
+                        progressingBar?.visibility = View.INVISIBLE
                     }
                     else -> {
-                        imgCheck?.setVisibility(View.INVISIBLE)
-                        progressingBar?.setVisibility(View.INVISIBLE)
+                        imgCheck?.visibility = View.INVISIBLE
+                        progressingBar?.visibility = View.INVISIBLE
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
 
-        @OnClick(R.id.rlHome)
-        fun onClicked(view: View?) {
-            itemSelectedListener?.onClickItem(mPosition)
+            itemView.rlHome.setOnClickListener {
+                itemSelectedListener?.onClickItem(mPosition)
+            }
         }
     }
 

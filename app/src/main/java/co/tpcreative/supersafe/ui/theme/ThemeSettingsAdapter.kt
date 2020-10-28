@@ -3,10 +3,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -15,7 +12,7 @@ import co.tpcreative.supersafe.model.ThemeApp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
-import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.theme_item.view.*
 
 class ThemeSettingsAdapter(inflater: LayoutInflater, private val context: Context?, private val itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ThemeApp, BaseHolder<ThemeApp>>(inflater) {
     private val TAG = ThemeSettingsAdapter::class.java.simpleName
@@ -37,42 +34,35 @@ class ThemeSettingsAdapter(inflater: LayoutInflater, private val context: Contex
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ThemeApp>(itemView) {
-        @BindView(R.id.imgTheme)
-        var imgTheme: CircleImageView? = null
-
-        @BindView(R.id.imgChecked)
-        var imgChecked: AppCompatImageView? = null
+        val imgTheme = itemView.imgTheme
+        val imgChecked = itemView.imgChecked
         var mPosition = 0
         var themeApp: ThemeApp? = null
         override fun bind(data: ThemeApp, position: Int) {
             super.bind(data, position)
             mPosition = position
-            //imgTheme.setBackgroundColor(data.getPrimaryColor());
             Glide.with(context!!)
-                    .load(ContextCompat.getDrawable(context!!,data.getPrimaryColor()))
+                    .load(ContextCompat.getDrawable(context,data.getPrimaryColor()))
                     .apply(options).into(imgTheme!!)
             themeApp = data
             if (data.isCheck) {
-                imgChecked?.setVisibility(View.VISIBLE)
+                imgChecked?.visibility = View.VISIBLE
             } else {
-                imgChecked?.setVisibility(View.INVISIBLE)
+                imgChecked?.visibility = View.INVISIBLE
             }
             Utils.Log(TAG, "Change position $position")
-        }
-
-        @OnClick(R.id.rlHome)
-        fun onClicked(view: View?) {
-            if (itemSelectedListener != null) {
-                for (i in mDataSource.indices) {
-                    if (mDataSource[i].isCheck) {
-                        mDataSource[i].isCheck = false
-                        notifyItemChanged(i)
+            itemView.rlHome.setOnClickListener {
+                if (itemSelectedListener != null) {
+                    for (i in mDataSource.indices) {
+                        if (mDataSource[i].isCheck) {
+                            mDataSource[i].isCheck = false
+                            notifyItemChanged(i)
+                        }
                     }
+                    mDataSource[mPosition].isCheck = true
+                    itemSelectedListener.onClickItem(mPosition)
                 }
-                mDataSource[mPosition].isCheck = true
-                itemSelectedListener.onClickItem(mPosition)
             }
         }
     }
-
 }

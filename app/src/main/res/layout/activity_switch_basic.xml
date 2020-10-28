@@ -5,7 +5,7 @@
     android:background="?attr/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.switchbasic.SwitchBasicActivity">
+    tools:context=".ui.switchbasic.SwitchBasicAct">
 
     <RelativeLayout
         app:layout_constraintLeft_toLeftOf="parent"

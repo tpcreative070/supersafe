@@ -10,8 +10,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -28,7 +26,6 @@ import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.Theme
 import com.bumptech.glide.Glide
@@ -41,7 +38,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_settings)
         presenter = AlbumSettingsPresenter()
@@ -64,7 +61,7 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -73,14 +70,14 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
         presenter?.getData()
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
         presenter?.unbindView()
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
@@ -91,7 +88,7 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
     override fun onStartLoading(status: EnumStatus) {}
     override fun onStopLoading(status: EnumStatus) {}
     override fun getContext(): Context? {
-        return getApplicationContext()
+        return applicationContext
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
@@ -136,30 +133,29 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             /*change categories name*/mName = findPreference(getString(R.string.key_name)) as MyPreferenceAlbumSettings?
-            mName?.setOnPreferenceChangeListener(createChangeListener())
-            mName?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mName?.setSummary(presenter?.mMainCategories?.categories_name)
+            mName?.onPreferenceChangeListener = createChangeListener()
+            mName?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mName?.summary = presenter?.mMainCategories?.categories_name
             mLockAlbum = findPreference(getString(R.string.key_album_lock)) as MyPreferenceAlbumSettings?
-            mLockAlbum?.setOnPreferenceChangeListener(createChangeListener())
-            mLockAlbum?.setOnPreferenceClickListener(createActionPreferenceClickListener())
+            mLockAlbum?.onPreferenceChangeListener = createChangeListener()
+            mLockAlbum?.onPreferenceClickListener = createActionPreferenceClickListener()
             val isPin: String? = presenter?.mMainCategories?.pin
             if (isPin == "") {
-                mLockAlbum?.setSummary(getString(R.string.unlocked))
+                mLockAlbum?.summary = getString(R.string.unlocked)
             } else {
-                mLockAlbum?.setSummary(getString(R.string.locked))
+                mLockAlbum?.summary = getString(R.string.locked)
             }
 
             /*Album cover*/mAlbumCover = findPreference(getString(R.string.key_album_cover)) as MyPreferenceAlbumSettings?
-            mAlbumCover?.setOnPreferenceClickListener(createActionPreferenceClickListener())
-            mAlbumCover?.setOnPreferenceChangeListener(createChangeListener())
+            mAlbumCover?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mAlbumCover?.onPreferenceChangeListener = createChangeListener()
             mAlbumCover?.onUpdatedView = {
                 if (mAlbumCover?.imageViewCover != null) {
                     val main: MainCategoryModel? = presenter?.mMainCategories
                     if (main?.pin == "") {
                         val items: ItemModel? = SQLHelper.getItemId(main?.items_id)
                         if (items != null) {
-                            val formatTypeFile = EnumFormatType.values()[items.formatType]
-                            when (formatTypeFile) {
+                            when (EnumFormatType.values()[items.formatType]) {
                                 EnumFormatType.AUDIO -> {
                                     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                                     val note1: Drawable? = ContextCompat.getDrawable(context!!,themeApp?.getAccentColor()!!)
@@ -212,8 +208,8 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                                     e.printStackTrace()
                                 }
                             } else {
-                                mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(getContext(), main.icon))
-                                mAlbumCover?.imgViewSuperSafe?.setVisibility(View.VISIBLE)
+                                mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(context, main.icon))
+                                mAlbumCover?.imgViewSuperSafe?.visibility = View.VISIBLE
                                 try {
                                     val myColor = Color.parseColor(main.image)
                                     mAlbumCover?.imageViewCover?.setBackgroundColor(myColor)
@@ -225,7 +221,7 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                     } else {
                         mAlbumCover?.imageViewCover?.setImageResource(0)
                         mAlbumCover?.imgViewSuperSafe?.setImageResource(R.drawable.baseline_https_white_48)
-                        mAlbumCover?.imgViewSuperSafe?.setVisibility(View.VISIBLE)
+                        mAlbumCover?.imgViewSuperSafe?.visibility = View.VISIBLE
                         try {
                             val myColor = Color.parseColor(main?.image)
                             mAlbumCover?.imageViewCover?.setBackgroundColor(myColor)
@@ -239,8 +235,8 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                 }
             }
             if (SingletonManager.Companion.getInstance().isVisitFakePin()) {
-                mLockAlbum?.setVisible(false)
-                mAlbumCover?.setVisible(false)
+                mLockAlbum?.isVisible = false
+                mAlbumCover?.isVisible = false
             }
         }
 
@@ -284,11 +280,7 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                     .autoDismiss(false)
                     .negativeText(getString(R.string.cancel))
                     .positiveText(positiveAction!!)
-                    .onNegative(object : MaterialDialog.SingleButtonCallback {
-                        override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                            dialog.dismiss()
-                        }
-                    })
+                    .onNegative { dialog, which -> dialog.dismiss() }
                     .input(null, name, object : MaterialDialog.InputCallback {
                         override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
                             when (enumStatus) {
@@ -300,28 +292,28 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                                     val result: String? = item?.categories_hex_name
                                     val main: String? = Utils.getHexCode(getString(R.string.key_main_album))
                                     if (presenter?.mMainCategories == null) {
-                                        Toast.makeText(getContext(), "Can not change category name", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Can not change category name", Toast.LENGTH_SHORT).show()
                                         dialog.dismiss()
                                         return
                                     } else if (base64Code == result) {
-                                        Toast.makeText(getContext(), "This name already existing", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "This name already existing", Toast.LENGTH_SHORT).show()
                                         dialog.dismiss()
                                         return
                                     } else if (base64Code == main) {
-                                        Toast.makeText(getContext(), "This name already existing", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "This name already existing", Toast.LENGTH_SHORT).show()
                                         dialog.dismiss()
                                         return
                                     } else {
                                         presenter?.mMainCategories?.categories_name = value
                                         val response: Boolean = SQLHelper.onChangeCategories(presenter?.mMainCategories)
                                         if (response) {
-                                            Toast.makeText(getContext(), "Changed album successful", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Changed album successful", Toast.LENGTH_SHORT).show()
                                             mName?.setSummary(presenter?.mMainCategories?.categories_name)
                                             if (!presenter?.mMainCategories?.isFakePin!!) {
                                                 ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                                             }
                                         } else {
-                                            Toast.makeText(getContext(), "Album name already existing.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Album name already existing.", Toast.LENGTH_SHORT).show()
                                         }
                                         if (!(presenter?.mMainCategories?.isFakePin)!!) {
                                             SingletonPrivateFragment.getInstance()?.onUpdateView()
@@ -335,7 +327,7 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                                             presenter?.mMainCategories?.pin = ""
                                             SQLHelper.updateCategory(presenter?.mMainCategories!!)
                                             mLockAlbum?.setSummary(getString(R.string.unlocked))
-                                            SingletonPrivateFragment.Companion.getInstance()?.onUpdateView()
+                                            SingletonPrivateFragment.getInstance()?.onUpdateView()
                                             dialog.dismiss()
                                         } else {
                                             Utils.showInfoSnackbar(getView()!!, R.string.wrong_password, true)

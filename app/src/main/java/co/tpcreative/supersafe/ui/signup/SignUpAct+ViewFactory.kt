@@ -1,8 +1,4 @@
 package co.tpcreative.supersafe.ui.signup
-
-import android.view.View
-import androidx.appcompat.widget.Toolbar
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.request.SignUpRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
