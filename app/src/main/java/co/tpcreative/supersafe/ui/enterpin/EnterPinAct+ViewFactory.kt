@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.enterpin
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.view.View
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -101,7 +102,7 @@ fun EnterPinAct.initUI(){
     }
 
     btnDone.setOnClickListener {
-        finish()
+       Navigator.onMoveToFaceDown(this)
     }
 
     btn_decimal.setOnClickListener {

@@ -148,7 +148,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
         if (menuVisible) {
-            EventBus.getDefault().post(EnumStatus.SHOW_FLOATING_BUTTON)
+            Utils.onPushEventBus(EnumStatus.SHOW_FLOATING_BUTTON)
         }
     }
 
@@ -162,7 +162,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
                     getActivity()?.runOnUiThread(Runnable {
                         if (adapter != null) {
                             adapter?.setDataSource(presenter?.mList)
-                            EventBus.getDefault().post(EnumStatus.PRIVATE_DONE)
+                            Utils.onPushEventBus(EnumStatus.PRIVATE_DONE)
                             Utils.Log(TAG, "Reload")
                         }
                     })

@@ -1,14 +1,9 @@
 package co.tpcreative.supersafe.ui.main_tab
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.CompoundButton
-import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatTextView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
@@ -23,15 +18,9 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
-import com.github.javiersantos.materialstyleddialogs.enums.Style
-import com.google.android.gms.ads.InterstitialAd
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_enable_cloud.*
 import kotlinx.android.synthetic.main.activity_main_tab.*
 import kotlinx.android.synthetic.main.activity_main_tab.toolbar
 import org.greenrobot.eventbus.EventBus
@@ -45,7 +34,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
     private var menuItem: MenuItem? = null
     private var previousStatus: EnumStatus? = null
-    private val mInterstitialAd: InterstitialAd? = null
     private var mCountToRate = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +50,11 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.REGISTER_OR_LOGIN -> {
-                rlOverLay?.setVisibility(View.INVISIBLE)
+                rlOverLay?.visibility = View.INVISIBLE
             }
             EnumStatus.UNLOCK -> {
-                rlOverLay?.setVisibility(View.INVISIBLE)
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                rlOverLay?.visibility = View.INVISIBLE
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
@@ -346,7 +334,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     override fun onStartLoading(status: EnumStatus) {}
     override fun onStopLoading(status: EnumStatus) {}
     override fun getContext(): Context? {
-        return getApplicationContext()
+        return applicationContext
     }
 
     override fun onDriveClientReady() {}
@@ -419,113 +407,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                         Utils.Log(TAG, "onTargetCancel")
                     }
                 })
-    }
-
-    fun onSuggestionSyncData() {
-        TapTargetView.showFor(this,  // `this` is an Activity
-                TapTarget.forToolbarMenuItem(toolbar, R.id.action_sync, getString(R.string.tap_here_to_enable_sync_data), getString(R.string.tap_here_to_enable_sync_data_description))
-                        .titleTextSize(25)
-                        .titleTextColor(R.color.white)
-                        .descriptionTextColor(R.color.colorPrimary)
-                        .descriptionTextSize(17)
-                        .outerCircleColor(R.color.colorButton)
-                        .transparentTarget(true)
-                        .targetCircleColor(R.color.white)
-                        .cancelable(true)
-                        .dimColor(R.color.white),
-                object : TapTargetView.Listener() {
-                    // The listener can listen for regular clicks, long clicks or cancels
-                    override fun onTargetClick(view: TapTargetView?) {
-                        super.onTargetClick(view) // This call is optional
-                        onEnableSyncData()
-                        view?.dismiss(true)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        Utils.Log(TAG, "onTargetClick")
-                    }
-
-                    override fun onOuterCircleClick(view: TapTargetView?) {
-                        super.onOuterCircleClick(view)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        view?.dismiss(true)
-                        Utils.Log(TAG, "onOuterCircleClick")
-                    }
-
-                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-                        super.onTargetDismissed(view, userInitiated)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        view?.dismiss(true)
-                        Utils.Log(TAG, "onTargetDismissed")
-                    }
-
-                    override fun onTargetCancel(view: TapTargetView?) {
-                        super.onTargetCancel(view)
-                        PrefsController.putBoolean(getString(R.string.key_is_first_enable_sync_data), true)
-                        view?.dismiss(true)
-                        Utils.Log(TAG, "onTargetCancel")
-                    }
-                })
-    }
-
-    fun onEnableSyncData() {
-        val mUser: User? = Utils.getUserInfo()
-        if (mUser != null) {
-            if (mUser.verified) {
-                if (!mUser.driveConnected) {
-                    Navigator.onCheckSystem(this, null)
-                } else {
-                    Navigator.onManagerCloud(this)
-                }
-            } else {
-                Navigator.onVerifyAccount(this)
-            }
-        }
-    }
-
-    fun onAskingRateApp() {
-        val inflater: LayoutInflater = getContext()?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.custom_view_rate_app_dialog, null)
-        val happy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvHappy)
-        val unhappy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvUnhappy)
-        val builder: MaterialDialog = MaterialDialog(this)
-                .title(text = getString(R.string.how_are_we_doing))
-                .customView(view = view, scrollable = true)
-                .cancelable(true)
-                .positiveButton(text = getString(R.string.i_love_it))
-                .negativeButton(text =  getString(R.string.report_problem))
-                .neutralButton(text = getString(R.string.no_thanks))
-                .neutralButton {
-                    PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                    finish()
-                }
-                .negativeButton {
-                    val categories = Categories(1, getString(R.string.contact_support))
-                    val support = HelpAndSupport(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
-                    Navigator.onMoveReportProblem(getContext()!!, support)
-                    PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                }
-                .positiveButton {
-                    Utils.Log(TAG, "Positive")
-                    onRateApp()
-                    PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                    PrefsController.putBoolean(getString(R.string.we_are_a_team_positive), true)
-                }
-        builder.show()
-    }
-
-    fun onRateApp() {
-        val uri = Uri.parse("market://details?id=" + getString(R.string.supersafe_live))
-        val goToMarket = Intent(Intent.ACTION_VIEW, uri)
-        // To count with Play market backstack, After pressing back button,
-        // to taken back to our application, we need to add following flags to intent.
-        goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or
-                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-        try {
-            startActivity(goToMarket)
-        } catch (e: ActivityNotFoundException) {
-            startActivity(Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=" + getString(R.string.supersafe_live))))
-        }
     }
 
     companion object {

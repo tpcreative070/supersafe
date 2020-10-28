@@ -113,7 +113,7 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
             }
             EnumStatus.MOVE -> {
                 dialog?.dismiss()
-                EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
+                Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                 if (mListener != null) {
                     mListener?.onMoveAlbumSuccessful()
                 }

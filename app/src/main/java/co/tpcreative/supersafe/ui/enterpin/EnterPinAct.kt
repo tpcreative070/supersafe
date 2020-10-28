@@ -224,7 +224,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                     }
                     EnumPinAction.DONE -> {
                         /*Unlock for real pin*/SingletonManager.getInstance().setAnimation(false)
-                        EventBus.getDefault().post(EnumStatus.UNLOCK)
+                        Utils.onPushEventBus(EnumStatus.UNLOCK)
                         Utils.onObserveData(100, object : Listener{
                             override fun onStart() {
                                finish()
@@ -312,10 +312,9 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         when (mPinAction) {
             EnumPinAction.VERIFY -> {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (EnumPinAction.values()[value]) {
                     EnumPinAction.SCREEN_LOCK -> {
-                        EventBus.getDefault().post(EnumStatus.FINISH)
+                        Utils.onPushEventBus(EnumStatus.FINISH)
                         Navigator.onMoveToFaceDown(this)
                         Utils.Log(TAG, "onStillScreenLock ???")
                     }

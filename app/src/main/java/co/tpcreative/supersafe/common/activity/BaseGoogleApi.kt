@@ -95,7 +95,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                 Utils.Log(TAG, "Lock screen")
             }
             else -> {
-                EventBus.getDefault().post(EnumStatus.REGISTER_OR_LOGIN)
+                Utils.onPushEventBus(EnumStatus.REGISTER_OR_LOGIN)
                 Utils.Log(TAG, "Nothing to do " + action.name)
             }
         }

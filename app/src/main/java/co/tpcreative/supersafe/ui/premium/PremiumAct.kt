@@ -75,7 +75,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pref_general_premium)
-            EventBus.getDefault().post(EnumStatus.PREMIUM)
+            Utils.onPushEventBus(EnumStatus.PREMIUM)
         }
     }
 

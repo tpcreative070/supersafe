@@ -93,7 +93,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                 val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
                 when (status) {
                     EnumStatus.SHARE -> {
-                        EventBus.getDefault().post(EnumStatus.START_PROGRESS)
+                        Utils.onPushEventBus(EnumStatus.START_PROGRESS)
                         presenter?.mListShare?.clear()
                         val index: ItemModel? = presenter?.mList?.get(position)
                         if (index != null) {
@@ -162,7 +162,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                         ServiceManager.getInstance()?.onExportingFiles()
                     }
                     EnumStatus.EXPORT -> {
-                        EventBus.getDefault().post(EnumStatus.START_PROGRESS)
+                        Utils.onPushEventBus(EnumStatus.START_PROGRESS)
                         presenter?.mListShare?.clear()
                         val index: ItemModel? = presenter?.mList?.get(position)
                         if (index != null) {

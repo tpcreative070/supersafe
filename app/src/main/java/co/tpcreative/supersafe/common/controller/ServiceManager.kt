@@ -986,7 +986,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         if (mResponse?.isWorking!!) {
                             val items: ItemModel = mResponse?.items as ItemModel
                             GalleryCameraMediaManager.getInstance()?.setProgressing(false)
-                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
+                            Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                             if (items.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView()
                             } else {
@@ -1282,7 +1282,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         if (mResponse?.isWorking!!) {
                             val mItem: ItemModel = mResponse.items as ItemModel
                             GalleryCameraMediaManager.getInstance()?.setProgressing(false)
-                            EventBus.getDefault().post(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
+                            Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                             if (mItem.isFakePin) {
                                 SingletonFakePinComponent.getInstance().onUpdateView()
                             } else {
@@ -1363,7 +1363,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
             } else {
                 Utils.Log(TAG, "Exporting file............................Done")
-                EventBus.getDefault().post(EnumStatus.STOP_PROGRESS)
+                Utils.onPushEventBus(EnumStatus.STOP_PROGRESS)
                 setExporting(false)
                 mListExport.clear()
                 onPreparingSyncData()
@@ -1378,7 +1378,7 @@ class ServiceManager : BaseServiceView<Any?> {
     override fun onError(message: String?, status: EnumStatus) {
         Utils.Log(TAG, "onError response :" + message + " - " + status.name)
         if (status == EnumStatus.REQUEST_ACCESS_TOKEN) {
-            EventBus.getDefault().post(EnumStatus.REQUEST_ACCESS_TOKEN)
+            Utils.onPushEventBus(EnumStatus.REQUEST_ACCESS_TOKEN)
             Utils.Log(TAG, "Request token on global")
         }
     }
@@ -1408,7 +1408,7 @@ class ServiceManager : BaseServiceView<Any?> {
             EnumStatus.GET_DRIVE_ABOUT -> {
             }
             EnumStatus.CONNECTED -> {
-                EventBus.getDefault().post(EnumStatus.CONNECTED)
+                Utils.onPushEventBus(EnumStatus.CONNECTED)
                 onGetUserInfo()
                 PremiumManager.getInstance().onStartInAppPurchase()
             }

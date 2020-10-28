@@ -53,7 +53,7 @@ class ThemeSettingsAct : BaseActivity(), BaseView<EmptyModel>, ThemeSettingsAdap
         EventBus.getDefault().unregister(this)
         presenter?.unbindView()
         if (isUpdated) {
-            EventBus.getDefault().post(EnumStatus.RECREATE)
+            Utils.onPushEventBus(EnumStatus.RECREATE)
         }
     }
 

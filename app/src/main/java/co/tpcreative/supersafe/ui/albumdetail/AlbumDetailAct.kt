@@ -466,7 +466,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
                     when (status) {
                         EnumStatus.SHARE -> {
-                            EventBus.getDefault().post(EnumStatus.START_PROGRESS)
+                            Utils.onPushEventBus(EnumStatus.START_PROGRESS)
                             presenter?.mListShare?.clear()
                             var i = 0
                             while (i < presenter?.mList?.size!!) {
@@ -547,7 +547,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                             ServiceManager.getInstance()?.onExportingFiles()
                         }
                         EnumStatus.EXPORT -> {
-                            EventBus.getDefault().post(EnumStatus.START_PROGRESS)
+                            Utils.onPushEventBus(EnumStatus.START_PROGRESS)
                             presenter?.mListShare?.clear()
                             var i = 0
                             while (i < presenter?.mList?.size!!) {

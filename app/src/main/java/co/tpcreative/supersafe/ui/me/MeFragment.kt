@@ -51,7 +51,7 @@ class MeFragment : BaseFragment(), BaseView<EmptyModel> {
         super.setMenuVisibility(menuVisible)
         Utils.Log(TAG, "visit :$menuVisible")
         if (menuVisible) {
-            EventBus.getDefault().post(EnumStatus.HIDE_FLOATING_BUTTON)
+            Utils.onPushEventBus(EnumStatus.HIDE_FLOATING_BUTTON)
             onUpdatedView()
         }
     }

@@ -40,8 +40,7 @@ fun SecretDoorAct.initUI(){
 
 fun SecretDoorAct.onChooseOptionItems() {
     val dialog: MaterialDialog = MaterialDialog(this)
-            .listItems(res = R.array.select_option)
-            .listItems { dialog, position, text ->
+            .listItems (res = R.array.select_option){ dialog, position, text ->
                 Utils.Log(TAG, "position $position")
                 when (position) {
                     0 -> {
