@@ -192,7 +192,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
                         Navigator.onMoveAlbumDetail(getActivity()!!, mainCategories)
                         dialog.dismiss()
                     } else {
-                        Utils.showInfoSnackbar(view = view!!, R.string.wrong_password, true)
+                        Utils.onBasicAlertNotifify(activity!!,getString(R.string.wrong_password))
                         dialog.getInputField().setText("")
                     }
                 }

@@ -121,8 +121,8 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                 val remain = (response?.div(countAttempt))?.times(100)
                 val result = remain!!.toInt()
                 Utils.Log(TAG, "Result $result")
-                crc_standard.setValue(result)
-                crc_standard.setText(seconds)
+                crc_standard.value = result
+                crc_standard.text = seconds
             } catch (e: Exception) {
                 e.printStackTrace()
             }

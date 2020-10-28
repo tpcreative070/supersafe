@@ -24,15 +24,14 @@ import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
 import android.webkit.MimeTypeMap
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.PermissionChecker
 import androidx.core.hardware.fingerprint.FingerprintManagerCompat
-import androidx.core.net.toFile
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -54,6 +53,7 @@ import com.snatik.storage.Storage
 import com.snatik.storage.helpers.OnStorageListener
 import com.snatik.storage.helpers.SizeUnit
 import com.snatik.storage.security.SecurityUtil
+import com.tapadoo.alerter.Alerter
 import io.reactivex.Completable
 import io.reactivex.CompletableObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -118,7 +118,7 @@ object Utils  {
             builder.show()
         }
 
-        fun showDialog(activity: Activity,@StringRes message: Int, ls: ServiceManager.ServiceManagerSyncDataListener) {
+        fun showDialog(activity: Activity, @StringRes message: Int, ls: ServiceManager.ServiceManagerSyncDataListener) {
             val builder = MaterialDialog(activity)
             builder.title(R.string.confirm)
             builder.message(message)
@@ -1090,7 +1090,7 @@ object Utils  {
         val contentValues = ContentValues()
         contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "image1")
         contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS +"/supersafe")
+        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/supersafe")
         val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
         resolver.openOutputStream(uri!!).use {
             try {
@@ -1198,4 +1198,11 @@ object Utils  {
             return false
         }
 
+    fun onBasicAlertNotifify(context: Activity,message: String) {
+        Alerter.create(context)
+                .setTitle("Warning")
+                .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
+                .setText(message)
+                .show()
+    }
 }

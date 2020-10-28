@@ -203,6 +203,8 @@ dependencies {
 
     implementation 'commons-codec:commons-codec:1.13'
 
+    implementation 'com.tapadoo.android:alerter:6.2.0'
+
     /*Kotlin*/
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$kotlin_core_version"
