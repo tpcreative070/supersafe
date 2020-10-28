@@ -21,8 +21,8 @@ import co.tpcreative.supersafe.ui.enablecloud.EnableCloudAct
 import co.tpcreative.supersafe.ui.facedown.FaceDownActivity
 import co.tpcreative.supersafe.ui.fakepin.FakePinAct
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentAct
-import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity
-import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity
+import co.tpcreative.supersafe.ui.help.HelpAndSupportAct
+import co.tpcreative.supersafe.ui.help.HelpAndSupportContentAct
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
 import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
@@ -290,7 +290,7 @@ object Navigator {
     }
 
     fun onMoveHelpSupport(context: Context) {
-        val intent = Intent(context, HelpAndSupportActivity::class.java)
+        val intent = Intent(context, HelpAndSupportAct::class.java)
         context.startActivity(intent)
     }
 
@@ -305,7 +305,7 @@ object Navigator {
     }
 
     fun onMoveHelpAndSupportContent(context: Context, helpAndSupport: HelpAndSupport) {
-        val intent = Intent(context, HelpAndSupportContentActivity::class.java)
+        val intent = Intent(context, HelpAndSupportContentAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(HelpAndSupport::class.java.getSimpleName(), helpAndSupport)
         intent.putExtras(bundle)
@@ -313,7 +313,7 @@ object Navigator {
     }
 
     fun onMoveReportProblem(context: Context, helpAndSupport: HelpAndSupport) {
-        val intent = Intent(context, HelpAndSupportContentActivity::class.java)
+        val intent = Intent(context, HelpAndSupportContentAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val bundle = Bundle()
         bundle.putSerializable(HelpAndSupport::class.java.getSimpleName(), helpAndSupport)

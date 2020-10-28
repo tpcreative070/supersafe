@@ -9,11 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
@@ -25,47 +21,22 @@ import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
-import com.rengwuxian.materialedittext.MaterialEditText
 import dmax.dialog.SpotsDialog
-import im.delight.android.webview.AdvancedWebView
+import kotlinx.android.synthetic.main.activity_help_and_support_content.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, TextView.OnEditorActionListener {
-    private var presenter: HelpAndSupportPresenter? = null
-
-    @BindView(R.id.tvTitle)
-    var tvTitle: AppCompatTextView? = null
-
-    @BindView(R.id.webview)
-    var webview: AdvancedWebView? = null
-
-    @BindView(R.id.llEmail)
-    var llEmail: LinearLayout? = null
-
-    @BindView(R.id.tvEmail)
-    var tvEmail: AppCompatTextView? = null
-
-    @BindView(R.id.edtSupport)
-    var edtSupport: MaterialEditText? = null
-    private var isNext = false
-    private var mUser: User? = null
-    private var dialog: AlertDialog? = null
-    private var menuItem: MenuItem? = null
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEditorActionListener {
+    var presenter: HelpAndSupportPresenter? = null
+    var isNext = false
+    var mUser: User? = null
+    var dialog: AlertDialog? = null
+    var menuItem: MenuItem? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_help_and_support_content)
-        val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-        presenter = HelpAndSupportPresenter()
-        presenter?.bindView(this)
-        presenter?.onGetDataIntent(this)
-        mUser = Utils.getUserInfo()
-        tvEmail?.setText(mUser?.email)
-        edtSupport?.addTextChangedListener(mTextWatcher)
-        edtSupport?.setOnEditorActionListener(this)
+        iniUI()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -77,7 +48,7 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
@@ -86,13 +57,13 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
         onRegisterHomeWatcher()
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 
@@ -107,7 +78,7 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
         when (status) {
             EnumStatus.SEND_EMAIL -> {
                 onStopProgressing()
-                Utils.showGotItSnackbar(getCurrentFocus()!!, R.string.send_email_failed)
+                Utils.showGotItSnackbar(currentFocus!!, R.string.send_email_failed)
                 edtSupport?.setText("")
             }
         }
@@ -119,14 +90,14 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
         when (status) {
             EnumStatus.RELOAD -> {
                 if (presenter?.content?.content == getString(R.string.contact_support_content)) {
-                    llEmail?.setVisibility(View.VISIBLE)
-                    edtSupport?.setVisibility(View.VISIBLE)
-                    webview?.setVisibility(View.GONE)
+                    llEmail?.visibility = View.VISIBLE
+                    edtSupport?.visibility = View.VISIBLE
+                    webview?.visibility = View.GONE
                 } else {
-                    tvTitle?.setText(presenter?.content?.title)
-                    llEmail?.setVisibility(View.GONE)
-                    edtSupport?.setVisibility(View.GONE)
-                    webview?.setVisibility(View.VISIBLE)
+                    tvTitle?.text = presenter?.content?.title
+                    llEmail?.visibility = View.GONE
+                    edtSupport?.visibility = View.GONE
+                    webview?.visibility = View.VISIBLE
                     presenter?.content?.content?.let { webview?.loadUrl(it) }
                 }
             }
@@ -169,14 +140,10 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
         return false
     }
 
-    private val mTextWatcher: TextWatcher? = object : TextWatcher {
+    val mTextWatcher: TextWatcher? = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val value = s.toString().trim { it <= ' ' }
-            isNext = if (Utils.isValid(value)) {
-                true
-            } else {
-                false
-            }
+            isNext = Utils.isValid(value)
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -188,22 +155,18 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
         getMenuInflater().inflate(R.menu.menu_help_support, menu)
         menuItem = menu?.findItem(R.id.menu_item_send)
         if (presenter != null) {
-            if (presenter?.content?.content == getString(R.string.contact_support_content)) {
-                menuItem?.setVisible(true)
-            } else {
-                menuItem?.setVisible(false)
-            }
+            menuItem?.isVisible = presenter?.content?.content == getString(R.string.contact_support_content)
         }
         Utils.Log(TAG, "Menu.............")
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.menu_item_send -> {
                 if (isNext) {
-                    val content: String? = edtSupport?.getText().toString()
-                    val emailToken: EmailToken? = EmailToken?.getInstance()?.convertTextObject(mUser!!, content!!)
+                    val content: String? = edtSupport?.text.toString()
+                    val emailToken: EmailToken? = EmailToken.getInstance()?.convertTextObject(mUser!!, content!!)
                     if (emailToken != null) {
                         presenter?.onSendMail(emailToken, content)
                     }
@@ -220,7 +183,7 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
             runOnUiThread(Runnable {
                 if (dialog == null) {
                     dialog = SpotsDialog.Builder()
-                            .setContext(this@HelpAndSupportContentActivity)
+                            .setContext(this@HelpAndSupportContentAct)
                             .setMessage(getString(R.string.Sending))
                             .setCancelable(true)
                             .build()
@@ -248,6 +211,6 @@ class HelpAndSupportContentActivity : BaseActivity(), BaseView<EmptyModel>, Text
     }
 
     companion object {
-        private val TAG = HelpAndSupportContentActivity::class.java.simpleName
+        private val TAG = HelpAndSupportContentAct::class.java.simpleName
     }
 }

@@ -100,7 +100,7 @@
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/settings" />
         <activity
-            android:name=".ui.help.HelpAndSupportActivity"
+            android:name=".ui.help.HelpAndSupportAct"
             android:label="@string/help" />
         <activity
             android:name=".ui.verifyaccount.VerifyAccountAct"
@@ -141,7 +141,7 @@
         <activity
             android:name=".ui.unlockalbum.UnlockAllAlbumActivity"
             android:label="@string/unlock_all_albums" />
-        <activity android:name=".ui.help.HelpAndSupportContentActivity"
+        <activity android:name=".ui.help.HelpAndSupportContentAct"
             android:label="@string/help"/>
         <activity android:name=".ui.sharefiles.ShareFilesActivity"
             android:theme="@style/AppTheme.Share">

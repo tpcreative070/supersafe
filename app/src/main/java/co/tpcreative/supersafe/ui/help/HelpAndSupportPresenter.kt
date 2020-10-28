@@ -14,7 +14,6 @@ import co.tpcreative.supersafe.common.utilimport.NetworkUtil
 import co.tpcreative.supersafe.model.*
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -25,7 +24,7 @@ import java.io.IOException
 import java.util.*
 
 class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
-    var mList: MutableList<HelpAndSupport>?
+    var mList: MutableList<HelpAndSupport>? = ArrayList<HelpAndSupport>()
     var content: HelpAndSupport?
     fun onGetList() {
         mList?.clear()
@@ -191,7 +190,6 @@ class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
     }
 
     init {
-        mList = ArrayList<HelpAndSupport>()
         content = HelpAndSupport()
     }
 }
