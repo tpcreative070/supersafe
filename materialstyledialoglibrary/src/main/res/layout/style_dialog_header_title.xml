@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/mdStyledDialogTitle"
             android:gravity="start"
             android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
             style="@style/MaterialStyledDialogs_TitleHeader"/>
     </RelativeLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/mdStyledDialogDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

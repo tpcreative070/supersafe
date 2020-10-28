@@ -26,5 +26,5 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.recyclerview:recyclerview:' + appRecyclerView
+    implementation "androidx.recyclerview:recyclerview:$appRecyclerView"
 }

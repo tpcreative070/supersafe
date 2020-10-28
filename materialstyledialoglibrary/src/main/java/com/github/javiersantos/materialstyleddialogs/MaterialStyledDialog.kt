@@ -93,9 +93,9 @@ class MaterialStyledDialog(
         val dialogPic =
             contentView.findViewById(R.id.mdStyledHeaderPic) as AppCompatImageView?
         val dialogTitle =
-            contentView.findViewById(R.id.mdStyledDialogTitle) as TextView
+            contentView.findViewById(R.id.mdStyledDialogTitle) as AppCompatTextView
         val dialogDescription =
-            contentView.findViewById(R.id.mdStyledDialogDescription) as TextView
+            contentView.findViewById(R.id.mdStyledDialogDescription) as AppCompatTextView
         val dialogCustomViewGroup =
             contentView.findViewById(R.id.mdStyledDialogCustomView) as FrameLayout
         val dialogDivider =
