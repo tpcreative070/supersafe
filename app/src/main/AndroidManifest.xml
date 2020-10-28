@@ -59,7 +59,7 @@
         </provider>
         <!-- Enter pin code -->
         <activity
-            android:name=".ui.lockscreen.EnterPinAct"
+            android:name=".ui.enterpin.EnterPinAct"
             android:label="@string/key_lock_screen"/>
         <activity android:name=".ui.main_tab.MainTabAct"/>
         <activity

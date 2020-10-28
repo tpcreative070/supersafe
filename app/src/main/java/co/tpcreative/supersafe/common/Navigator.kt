@@ -23,7 +23,7 @@ import co.tpcreative.supersafe.ui.fakepin.FakePinAct
 import co.tpcreative.supersafe.ui.fakepin.FakePinComponentAct
 import co.tpcreative.supersafe.ui.help.HelpAndSupportAct
 import co.tpcreative.supersafe.ui.help.HelpAndSupportContentAct
-import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
+import co.tpcreative.supersafe.ui.enterpin.EnterPinAct
 import co.tpcreative.supersafe.ui.main_tab.MainTabAct
 import co.tpcreative.supersafe.ui.multiselects.AlbumSelectActivity
 import co.tpcreative.supersafe.ui.photosslideshow.PhotoSlideShowAct

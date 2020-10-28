@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.lockscreen
+package co.tpcreative.supersafe.ui.enterpin
 import android.graphics.PorterDuff
 import android.util.TypedValue
 import android.view.LayoutInflater

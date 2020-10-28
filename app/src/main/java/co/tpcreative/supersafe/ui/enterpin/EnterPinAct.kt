@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.lockscreen
+package co.tpcreative.supersafe.ui.enterpin
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -150,8 +150,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         super.onDestroy()
         SingletonManager.getInstance().setVisitLockScreen(false)
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        val action = EnumPinAction.values()[value]
-        when (action) {
+        when (EnumPinAction.values()[value]) {
             EnumPinAction.NONE -> {
                 val mUser: User? = Utils.getUserInfo()
                 if (mUser != null) {
@@ -224,7 +223,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
                         onDisplayView()
                     }
                     EnumPinAction.DONE -> {
-                        /*Unlock for real pin*/SingletonManager.Companion.getInstance().setAnimation(false)
+                        /*Unlock for real pin*/SingletonManager.getInstance().setAnimation(false)
                         EventBus.getDefault().post(EnumStatus.UNLOCK)
                         Utils.onObserveData(100, object : Listener{
                             override fun onStart() {

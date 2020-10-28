@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.lockscreen
+package co.tpcreative.supersafe.ui.enterpin
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.model.EnumPinAction

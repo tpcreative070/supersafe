@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.lockscreen
+package co.tpcreative.supersafe.ui.enterpin
 import android.animation.LayoutTransition
 import android.app.Activity
 import android.content.Context
@@ -10,9 +10,9 @@ import android.widget.LinearLayout
 import androidx.annotation.IntDef
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.ui.lockscreen.IndicatorDots.IndicatorType.Companion.FILL
-import co.tpcreative.supersafe.ui.lockscreen.IndicatorDots.IndicatorType.Companion.FILL_WITH_ANIMATION
-import co.tpcreative.supersafe.ui.lockscreen.IndicatorDots.IndicatorType.Companion.FIXED
+import co.tpcreative.supersafe.ui.enterpin.IndicatorDots.IndicatorType.Companion.FILL
+import co.tpcreative.supersafe.ui.enterpin.IndicatorDots.IndicatorType.Companion.FILL_WITH_ANIMATION
+import co.tpcreative.supersafe.ui.enterpin.IndicatorDots.IndicatorType.Companion.FIXED
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 

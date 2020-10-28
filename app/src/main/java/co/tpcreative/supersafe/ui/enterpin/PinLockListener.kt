@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.lockscreen
+package co.tpcreative.supersafe.ui.enterpin
 /**
  * The listener that triggers callbacks for various events
  * in the [PinLockView]
