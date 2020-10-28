@@ -468,7 +468,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         SuperSafeApplication?.serverAPI?.onCategoriesSync(mCategories)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({ onResponse: RootResponse ->
+                ?.subscribe({ onResponse: RootResponse? ->
                     if (onResponse?.error!!) {
                         Utils.Log(TAG, "onError 1")
                         Utils.Log(TAG, "onCategoriesSync " + Gson().toJson(onResponse))

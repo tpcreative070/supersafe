@@ -5,10 +5,7 @@ import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -17,6 +14,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.model.ThemeApp
+import kotlinx.android.synthetic.main.album_cover_item.view.*
 
 class AlbumCoverDefaultAdapter(inflater: LayoutInflater, private val context: Context?, private val itemSelectedListener: ItemSelectedListener?) : BaseAdapter<MainCategoryModel, BaseHolder<MainCategoryModel>>(inflater) {
     private val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
@@ -34,14 +32,10 @@ class AlbumCoverDefaultAdapter(inflater: LayoutInflater, private val context: Co
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<MainCategoryModel>(itemView) {
-        @BindView(R.id.imgAlbum)
-        var imgAlbum: AppCompatImageView? = null
-        @BindView(R.id.imgIcon)
-        var imgIcon: AppCompatImageView? = null
-        @BindView(R.id.imgSelect)
-        var imgSelect: AppCompatImageView? = null
-        @BindView(R.id.view_alpha)
-        var view_alpha: View? = null
+        val imgAlbum = itemView.imgAlbum
+        val imgIcon = itemView.imgIcon
+        val imgSelect = itemView.imgSelect
+        val view_alpha = itemView.view_alpha
         var mPosition = 0
         var categories: MainCategoryModel? = null
         override fun bind(data: MainCategoryModel, position: Int) {
@@ -50,28 +44,26 @@ class AlbumCoverDefaultAdapter(inflater: LayoutInflater, private val context: Co
             Utils.Log(TAG, "load data")
             categories = data
             if (data.isChecked) {
-                view_alpha?.setAlpha(0.5f)
+                view_alpha?.alpha = 0.5f
                 imgIcon?.setColorFilter(ContextCompat.getColor(SuperSafeApplication.getInstance(),themeApp!!.getAccentColor()), PorterDuff.Mode.SRC_IN)
-                imgSelect?.setVisibility(View.VISIBLE)
+                imgSelect?.visibility = View.VISIBLE
             } else {
-                imgIcon?.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN)
-                view_alpha?.setAlpha(0.0f)
-                imgSelect?.setVisibility(View.INVISIBLE)
+                imgIcon?.setColorFilter(ContextCompat.getColor(SuperSafeApplication.getInstance(),R.color.white), PorterDuff.Mode.SRC_IN)
+                view_alpha?.alpha = 0.0f
+                imgSelect?.visibility = View.INVISIBLE
             }
             try {
                 imgAlbum?.setImageResource(0)
                 val myColor = Color.parseColor(categories?.image)
                 imgAlbum?.setBackgroundColor(myColor)
                 imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, categories?.icon))
-                imgIcon?.setVisibility(View.VISIBLE)
+                imgIcon?.visibility = View.VISIBLE
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-
-        @OnClick(R.id.rlHome)
-        fun onClicked(view: View?) {
-            itemSelectedListener?.onClickedDefaultItem(mPosition)
+            itemView.rlHome.setOnClickListener {
+                itemSelectedListener?.onClickedDefaultItem(mPosition)
+            }
         }
     }
 

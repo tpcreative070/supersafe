@@ -4,11 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -23,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.album_cover_item.view.*
 
 class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?, mainCategories: MainCategoryModel?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions? = RequestOptions()
@@ -49,21 +46,12 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
-        @BindView(R.id.imgAlbum)
-        var imgAlbum: AppCompatImageView? = null
-
-        @BindView(R.id.imgIcon)
-        var imgIcon: AppCompatImageView? = null
-
-        @BindView(R.id.imgSelect)
-        var imgSelect: AppCompatImageView? = null
-
-        @BindView(R.id.view_alpha)
-        var view_alpha: View? = null
+        val imgAlbum = itemView.imgAlbum
+        val imgIcon = itemView.imgIcon
+        val imgSelect = itemView.imgSelect
+        val view_alpha = itemView.view_alpha
         var mPosition = 0
-
-        @BindView(R.id.rlHome)
-        var rlHome: RelativeLayout? = null
+        var rlHome = itemView.rlHome
         var items: ItemModel? = null
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
@@ -71,15 +59,14 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
             Utils.Log(TAG, "load data")
             items = data
             if (data.isChecked) {
-                view_alpha?.setAlpha(0.5f)
-                imgSelect?.setVisibility(View.VISIBLE)
+                view_alpha?.alpha = 0.5f
+                imgSelect?.visibility = View.VISIBLE
             } else {
-                view_alpha?.setAlpha(0.0f)
-                imgSelect?.setVisibility(View.INVISIBLE)
+                view_alpha?.alpha = 0.0f
+                imgSelect?.visibility = View.INVISIBLE
             }
             try {
-                val formatTypeFile = EnumFormatType.values()[items!!.formatType]
-                when (formatTypeFile) {
+                when (EnumFormatType.values()[items!!.formatType]) {
                     EnumFormatType.AUDIO -> {
                         val note1 = ContextCompat.getDrawable(context!!,themeApp!!.getAccentColor())
                         Glide.with(context)
@@ -104,14 +91,14 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
                                         .load(storage.readFile(items?.thumbnailPath))
                                         .apply(options!!)
                                         .into(imgAlbum!!)
-                                imgIcon?.setVisibility(View.INVISIBLE)
+                                imgIcon?.visibility = View.INVISIBLE
                                 Utils.Log(TAG, "load data 2")
                             } else {
                                 imgAlbum?.setImageResource(0)
                                 val myColor = Color.parseColor(categories?.image)
                                 imgAlbum?.setBackgroundColor(myColor)
                                 imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, categories?.icon))
-                                imgIcon?.setVisibility(View.VISIBLE)
+                                imgIcon?.visibility = View.VISIBLE
                                 Utils.Log(TAG, "load data 3")
                             }
                         } catch (e: Exception) {
@@ -122,11 +109,9 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-
-        @OnClick(R.id.rlHome)
-        fun onClicked(view: View?) {
-            itemSelectedListener?.onClickItem(mPosition)
+            itemView.rlHome.setOnClickListener {
+                itemSelectedListener?.onClickItem(mPosition)
+            }
         }
     }
 

@@ -8,7 +8,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAct
-import co.tpcreative.supersafe.ui.albumcover.AlbumCoverActivity
+import co.tpcreative.supersafe.ui.albumcover.AlbumCoverAct
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailAct
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionAct
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity
@@ -333,7 +333,7 @@ object Navigator {
     }
 
     fun onMoveAlbumCover(context: Activity, categories: MainCategoryModel) {
-        val intent = Intent(context, AlbumCoverActivity::class.java)
+        val intent = Intent(context, AlbumCoverAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(MainCategoryModel::class.java.getSimpleName(), categories)
         intent.putExtras(bundle)

@@ -156,7 +156,7 @@
             android:name=".ui.premium.PremiumAct"
             android:label="@string/premium" />
         <activity android:name=".ui.restore.RestoreActivity"/>
-        <activity android:name=".ui.albumcover.AlbumCoverActivity"/>
+        <activity android:name=".ui.albumcover.AlbumCoverAct"/>
         <activity android:name=".ui.switchbasic.SwitchBasicActivity"/>
         <!--Portrait model for special mode-->
         <activity android:name=".ui.player.PlayerAct"/>
