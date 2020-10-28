@@ -12,15 +12,15 @@ import co.tpcreative.supersafe.ui.albumcover.AlbumCoverAct
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailAct
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionAct
 import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsAct
-import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivity
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsDetailActivity
 import co.tpcreative.supersafe.ui.camera.CameraAct
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemAct
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerAct
 import co.tpcreative.supersafe.ui.dashboard.DashBoardAct
 import co.tpcreative.supersafe.ui.enablecloud.EnableCloudAct
 import co.tpcreative.supersafe.ui.facedown.FaceDownActivity
-import co.tpcreative.supersafe.ui.fakepin.FakePinActivity
-import co.tpcreative.supersafe.ui.fakepin.FakePinComponentActivity
+import co.tpcreative.supersafe.ui.fakepin.FakePinAct
+import co.tpcreative.supersafe.ui.fakepin.FakePinComponentAct
 import co.tpcreative.supersafe.ui.help.HelpAndSupportActivity
 import co.tpcreative.supersafe.ui.help.HelpAndSupportContentActivity
 import co.tpcreative.supersafe.ui.lockscreen.EnterPinAct
@@ -263,19 +263,19 @@ object Navigator {
     }
 
     fun onMoveFakePin(context: Context) {
-        val intent = Intent(context, FakePinActivity::class.java)
+        val intent = Intent(context, FakePinAct::class.java)
         context.startActivity(intent)
     }
 
     fun onMoveFakePinComponent(context: Context) {
-        val intent = Intent(context, FakePinComponentActivity::class.java)
+        val intent = Intent(context, FakePinComponentAct::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
     fun onMoveFakePinComponentInside(context: Context) {
-        val intent = Intent(context, FakePinComponentActivity::class.java)
+        val intent = Intent(context, FakePinComponentAct::class.java)
         context.startActivity(intent)
     }
 

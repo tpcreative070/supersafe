@@ -77,7 +77,7 @@
             android:label="@string/key_sign_up"/>
         <activity android:name=".ui.camera.CameraAct"/>
         <activity
-            android:name=".ui.fakepin.FakePinComponentActivity"/>
+            android:name=".ui.fakepin.FakePinComponentAct"/>
         <activity
             android:name=".ui.multiselects.AlbumSelectActivity"
             android:label="@string/select_album">
@@ -130,7 +130,7 @@
             android:name=".ui.breakinalerts.BreakInAlertsAct"
             android:label="@string/key_break_in_alert" />
         <activity
-            android:name=".ui.fakepin.FakePinActivity"
+            android:name=".ui.fakepin.FakePinAct"
             android:label="@string/key_fake_pin" />
         <activity android:name=".ui.secretdoor.SecretDoorActivity"
             android:label="@string/key_secret_door"/>

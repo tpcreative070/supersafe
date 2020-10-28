@@ -28,7 +28,6 @@ class FakePinComponentPresenter : Presenter<BaseView<EmptyModel>>() {
     }
 
     fun onDeleteAlbum(position: Int) {
-        val view: BaseView<EmptyModel>? = view()
         try {
             val main: MainCategoryModel? = mList?.get(position)
             if (main != null) {
@@ -36,7 +35,7 @@ class FakePinComponentPresenter : Presenter<BaseView<EmptyModel>>() {
                 if (mListItems != null) {
                     for (index in mListItems) {
                         SQLHelper.deleteItem(index)
-                        storage?.deleteDirectory(SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + index.items_id)
+                        storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id)
                     }
                 }
                 SQLHelper.deleteCategory(main)
