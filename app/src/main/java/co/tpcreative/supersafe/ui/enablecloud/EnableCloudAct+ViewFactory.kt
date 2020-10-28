@@ -5,6 +5,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
+import com.afollestad.materialdialogs.checkbox.checkBoxPrompt
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import kotlinx.android.synthetic.main.activity_enable_cloud.*
 
@@ -47,9 +48,12 @@ fun EnableCloudAct.onShowWarning(cloud_id: String?) {
             .setCancelable(true)
             .setPositiveText(R.string.select_again)
             .setNegativeText(R.string.cancel)
-            .setCheckBox(false, R.string.enable_cloud)
-            .onPositive { dialog, which -> Utils.Log(TAG, "positive") }
-            .onNegative { dialog, which -> }
+            .onPositive {
+
+            }
+            .onNegative {
+            }
+            .setCheckBox(checkbox = false, titleRes = R.string.enable_cloud)
             .show()
 }
 
@@ -70,8 +74,8 @@ fun EnableCloudAct.onShowWarningAnotherAccount() {
             .setCancelable(true)
             .setPositiveText(R.string.user_another)
             .setNegativeText(R.string.cancel)
-            .setCheckBox(false, R.string.enable_cloud)
-            .onPositive { dialog, which ->
+            .setCheckBox(checkbox = false, titleRes = R.string.enable_cloud)
+            .onPositive {
                 Utils.Log(TAG, "positive")
                 val cloud_id: String? = presenter?.mUser?.cloud_id
                 if (cloud_id == null) {
@@ -80,7 +84,7 @@ fun EnableCloudAct.onShowWarningAnotherAccount() {
                     ServiceManager.getInstance()?.onPickUpNewEmailNoTitle(this@onShowWarningAnotherAccount, cloud_id)
                 }
             }
-            .onNegative { dialog, which ->
+            .onNegative {
                 btnUserAnotherAccount?.isEnabled = true
                 btnLinkGoogleDrive?.isEnabled = true
             }

@@ -3,7 +3,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -24,10 +23,9 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
-import co.tpcreative.supersafe.ui.privates.PrivateAdapter
-import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
+import com.afollestad.materialdialogs.input.getInputField
+import com.afollestad.materialdialogs.input.input
 import org.greenrobot.eventbus.EventBus
 
 class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.ItemSelectedListener, SingletonPrivateFragment.SingletonPrivateFragmentListener {
@@ -178,34 +176,26 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     fun onShowChangeCategoriesNameDialog(mainCategories: MainCategoryModel?) {
-        val builder: MaterialDialog.Builder = MaterialDialog.Builder(getActivity()!!)
-                .title(getString(R.string.album_is_locked))
-                .content(getString(R.string.enter_a_password_for_this_album))
-                .theme(Theme.LIGHT)
-                .titleColor(getResources().getColor(R.color.black))
-                .inputType(InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                .negativeText(getString(R.string.cancel))
-                .autoDismiss(false)
-                .canceledOnTouchOutside(false)
-                .onNegative(object : MaterialDialog.SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+        val builder: MaterialDialog = MaterialDialog(getActivity()!!)
+                .title(R.string.album_is_locked)
+                .message(R.string.enter_a_password_for_this_album)
+                .negativeButton(R.string.cancel)
+                .cancelable(true)
+                .cancelOnTouchOutside(false)
+                .negativeButton {
+                    isClicked = false
+                }
+                .positiveButton(R.string.open)
+                .input(hintRes = R.string.type_password, inputType = (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD), allowEmpty = false){ dialog, text->
+                    isClicked = false
+                    if (mainCategories?.pin == text.toString()) {
+                        Navigator.onMoveAlbumDetail(getActivity()!!, mainCategories)
                         dialog.dismiss()
-                        isClicked = false
+                    } else {
+                        Utils.showInfoSnackbar(view = view!!, R.string.wrong_password, true)
+                        dialog.getInputField().setText("")
                     }
-                })
-                .positiveText(getString(R.string.open))
-                .input(null, null, object : MaterialDialog.InputCallback {
-                    override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                        isClicked = false
-                        if (mainCategories?.pin == input.toString()) {
-                            Navigator.onMoveAlbumDetail(getActivity()!!, mainCategories)
-                            dialog.dismiss()
-                        } else {
-                            Utils.showInfoSnackbar(getView()!!, R.string.wrong_password, true)
-                            dialog.inputEditText?.setText("")
-                        }
-                    }
-                })
+                }
         builder.show()
     }
 

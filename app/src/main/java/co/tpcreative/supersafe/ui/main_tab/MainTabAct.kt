@@ -1,22 +1,14 @@
 package co.tpcreative.supersafe.ui.main_tab
-import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.text.InputType
 import android.view.*
-import android.widget.Toast
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.content.res.AppCompatResources
+import android.widget.CompoundButton
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.viewpager.widget.ViewPager
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
@@ -26,28 +18,22 @@ import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.controllerimport.PremiumManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.utilimport.NetworkUtil
 import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
-import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
+import com.afollestad.materialdialogs.customview.customView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
+import com.github.javiersantos.materialstyleddialogs.enums.Style
 import com.google.android.gms.ads.InterstitialAd
 import com.google.gson.Gson
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.leinardi.android.speeddial.SpeedDialActionItem
-import com.leinardi.android.speeddial.SpeedDialView
+import kotlinx.android.synthetic.main.activity_enable_cloud.*
 import kotlinx.android.synthetic.main.activity_main_tab.*
+import kotlinx.android.synthetic.main.activity_main_tab.toolbar
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -67,7 +53,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         initUI()
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
     }
-
     override fun onOrientationChange(isFaceDown: Boolean) {
         Utils.Log(TAG, "onOrientationChange")
         onFaceDown(isFaceDown)
@@ -501,38 +486,30 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         val view: View = inflater.inflate(R.layout.custom_view_rate_app_dialog, null)
         val happy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvHappy)
         val unhappy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvUnhappy)
-        val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-                .title(getString(R.string.how_are_we_doing))
-                .customView(view, true)
-                .theme(Theme.LIGHT)
+        val builder: MaterialDialog = MaterialDialog(this)
+                .title(text = getString(R.string.how_are_we_doing))
+                .customView(view = view, scrollable = true)
                 .cancelable(true)
-                .titleColor(getResources().getColor(R.color.black))
-                .positiveText(getString(R.string.i_love_it))
-                .negativeText(getString(R.string.report_problem))
-                .neutralText(getString(R.string.no_thanks))
-                .onNeutral(object : MaterialDialog.SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                        PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                        finish()
-                    }
-                })
-                .onNegative(object : MaterialDialog.SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                        val categories = Categories(1, getString(R.string.contact_support))
-                        val support = HelpAndSupport(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
-                        Navigator.onMoveReportProblem(getContext()!!, support)
-                        PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                    }
-                })
-                .onPositive(object : MaterialDialog.SingleButtonCallback {
-                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
-                        Utils.Log(TAG, "Positive")
-                        onRateApp()
-                        PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
-                        PrefsController.putBoolean(getString(R.string.we_are_a_team_positive), true)
-                    }
-                })
-        builder.build().show()
+                .positiveButton(text = getString(R.string.i_love_it))
+                .negativeButton(text =  getString(R.string.report_problem))
+                .neutralButton(text = getString(R.string.no_thanks))
+                .neutralButton {
+                    PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
+                    finish()
+                }
+                .negativeButton {
+                    val categories = Categories(1, getString(R.string.contact_support))
+                    val support = HelpAndSupport(categories, getString(R.string.contact_support), getString(R.string.contact_support_content), null)
+                    Navigator.onMoveReportProblem(getContext()!!, support)
+                    PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
+                }
+                .positiveButton {
+                    Utils.Log(TAG, "Positive")
+                    onRateApp()
+                    PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
+                    PrefsController.putBoolean(getString(R.string.we_are_a_team_positive), true)
+                }
+        builder.show()
     }
 
     fun onRateApp() {

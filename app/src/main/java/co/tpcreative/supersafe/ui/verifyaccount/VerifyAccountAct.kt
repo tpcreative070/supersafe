@@ -197,7 +197,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
                     Utils.Log(TAG, "checked :$b")
                     isSync = b
                 }
-                .onPositive { dialog, which ->
+                .onPositive {
                     Utils.Log(TAG, "positive")
                     ServiceManager.getInstance()?.onPickUpNewEmail(this@VerifyAccountAct)
                 }
@@ -216,11 +216,11 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
                 .setPositiveText(R.string.enable_now)
                 .setNegativeText(R.string.cancel)
                 .setCheckBox(false, R.string.enable_cloud)
-                .onPositive { dialog, which ->
+                .onPositive {
                     Utils.Log(TAG, "positive")
                     Navigator.onCheckSystem(this@VerifyAccountAct, null)
                 }
-                .onNegative { dialog, which -> finish() }
+                .onNegative {  finish() }
                 .show()
     }
 

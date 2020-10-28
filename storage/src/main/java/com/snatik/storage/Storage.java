@@ -490,8 +490,6 @@ public class Storage {
         }
     }
 
-
-
     public Cipher getCipher(int mode) {
         if (mConfiguration != null && mConfiguration.isEncrypted()) {
             try {
@@ -670,7 +668,6 @@ public class Storage {
         if (!file.isFile()) {
             return false;
         }
-
         FileInputStream inStream = null;
         FileOutputStream outStream = null;
         try {
@@ -701,7 +698,6 @@ public class Storage {
         class Reader extends Thread {
             byte[] array = null;
         }
-
         Reader reader = new Reader() {
             public void run() {
                 LinkedList<ImmutablePair<byte[], Integer>> chunks = new LinkedList<ImmutablePair<byte[], Integer>>();
@@ -731,9 +727,7 @@ public class Storage {
                 } catch (Exception e) {
                     // very bad
                 }
-
                 array = new byte[globalSize];
-
                 // append all chunks to one array
                 int offset = 0;
                 for (ImmutablePair<byte[], Integer> chunk : chunks) {

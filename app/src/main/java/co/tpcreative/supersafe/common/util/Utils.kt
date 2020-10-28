@@ -111,21 +111,21 @@ object Utils  {
         }
 
         fun showDialog(activity: Activity, message: String) {
-            val builder = MaterialDialog.Builder(activity)
+            val builder = MaterialDialog(activity)
             builder.title(R.string.confirm)
-            builder.content(message)
-            builder.positiveText(R.string.ok)
+            builder.message(text = message)
+            builder.positiveButton(R.string.ok)
             builder.show()
         }
 
-        fun showDialog(activity: Activity, message: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
-            val builder = MaterialDialog.Builder(activity)
+        fun showDialog(activity: Activity,@StringRes message: Int, ls: ServiceManager.ServiceManagerSyncDataListener) {
+            val builder = MaterialDialog(activity)
             builder.title(R.string.confirm)
-            builder.content(message)
-            builder.positiveText(R.string.ok)
-            builder.negativeText(R.string.cancel)
-            builder.onNegative { dialog, which -> ls.onCancel() }
-            builder.onPositive { dialog, which -> ls.onCompleted() }
+            builder.message(message)
+            builder.positiveButton(R.string.ok)
+            builder.negativeButton(R.string.cancel)
+            builder.negativeButton {ls.onCancel() }
+            builder.positiveButton {ls.onCompleted() }
             builder.show()
         }
 
@@ -1159,9 +1159,9 @@ object Utils  {
         }
 
         fun isPremium(): Boolean {
-//        if (BuildConfig.DEBUG){
-//            return false;
-//        }
+        if (BuildConfig.DEBUG){
+            return true
+        }
             val mCheckout: CheckoutItems? = getCheckoutItems()
             if (mCheckout != null) {
                 if (mCheckout.isPurchasedLifeTime || mCheckout.isPurchasedOneYears || mCheckout.isPurchasedSixMonths) {

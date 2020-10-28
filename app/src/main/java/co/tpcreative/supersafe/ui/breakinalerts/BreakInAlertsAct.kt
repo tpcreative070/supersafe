@@ -71,7 +71,7 @@ class BreakInAlertsAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.On
             R.id.menu_item_select_all -> {
                 if (presenter?.mList == null || presenter?.mList!!.size == 0) {
                 }
-                Utils.showDialog(this, getString(R.string.are_you_sure_delete_all_items), object : ServiceManager.ServiceManagerSyncDataListener {
+                Utils.showDialog(this, R.string.are_you_sure_delete_all_items, object : ServiceManager.ServiceManagerSyncDataListener {
                     override fun onCompleted() {
                         presenter?.onDeleteAll()
                     }

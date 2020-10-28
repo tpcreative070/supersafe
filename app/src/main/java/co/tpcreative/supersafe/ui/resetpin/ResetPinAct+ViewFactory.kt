@@ -14,6 +14,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.model.User
+import com.afollestad.materialdialogs.checkbox.checkBoxPrompt
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
@@ -121,13 +122,13 @@ fun ResetPinAct.onShowDialogWaitingCode() {
             .setPositiveText(R.string.continue_value)
             .setNegativeText(R.string.cancel)
             .setCheckBox(false, R.string.enable_cloud)
-            .onPositive { dialog, which ->
+            .onPositive {
                 Utils.Log(TAG, "positive")
                 val mUser: User? = Utils.getUserInfo()
                 Utils.Log(TAG, "Pressed " + Gson().toJson(mUser))
                 SingletonResetPin.getInstance()?.onStartTimer(300000)
             }
-            .onNegative { dialog, which -> finish() }
+            .onNegative { finish() }
             .show()
 }
 

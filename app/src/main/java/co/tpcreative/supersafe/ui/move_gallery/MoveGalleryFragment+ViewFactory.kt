@@ -21,7 +21,7 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.VerticalSpaceItemDecoration
 import co.tpcreative.supersafe.model.MainCategoryModel
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
+import com.afollestad.materialdialogs.input.input
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
@@ -80,34 +80,29 @@ fun MoveGalleryFragment.openAlbum() {
 }
 
 fun MoveGalleryFragment.onShowDialog() {
-    val builder: MaterialDialog.Builder = MaterialDialog.Builder(activity!!)
-            .title(getString(R.string.create_album))
-            .theme(Theme.LIGHT)
-            .titleColor(ContextCompat.getColor(SuperSafeApplication.getInstance(), R.color.black))
-            .inputType(InputType.TYPE_CLASS_TEXT)
-            .negativeText(getString(R.string.cancel))
-            .positiveText(getString(R.string.ok))
-            .input(null, null, object : MaterialDialog.InputCallback {
-                override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                    val value = input.toString()
-                    val base64Code: String = Utils.getHexCode(value)
-                    val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                    val result: String? = item?.categories_hex_name
-                    if (base64Code == result) {
-                        Toast.makeText(activity, "This name already existing", Toast.LENGTH_SHORT).show()
+    val builder: MaterialDialog = MaterialDialog(activity!!)
+            .title(text = getString(R.string.create_album))
+            .negativeButton(text = getString(R.string.cancel))
+            .positiveButton(text =  getString(R.string.ok))
+            .input(inputType = InputType.TYPE_CLASS_TEXT,allowEmpty = false) { dialog ,input ->
+                val value = input.toString()
+                val base64Code: String = Utils.getHexCode(value)
+                val item: MainCategoryModel? = SQLHelper.getTrashItem()
+                val result: String? = item?.categories_hex_name
+                if (base64Code == result) {
+                    Toast.makeText(activity, "This name already existing", Toast.LENGTH_SHORT).show()
+                } else {
+                    val response: Boolean = SQLHelper.onAddCategories(base64Code, value, mConfig?.isFakePIN!!)
+                    if (response) {
+                        Toast.makeText(activity, "Created album successful", Toast.LENGTH_SHORT).show()
+                        presenter?.getData(mConfig?.localCategoriesId, mConfig?.isFakePIN!!)
+                        SingletonPrivateFragment.getInstance()?.onUpdateView()
+                        ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                     } else {
-                        val response: Boolean = SQLHelper.onAddCategories(base64Code, value, mConfig?.isFakePIN!!)
-                        if (response) {
-                            Toast.makeText(activity, "Created album successful", Toast.LENGTH_SHORT).show()
-                            presenter?.getData(mConfig?.localCategoriesId, mConfig?.isFakePIN!!)
-                            SingletonPrivateFragment.getInstance()?.onUpdateView()
-                            ServiceManager.getInstance()?.onPreparingSyncCategoryData()
-                        } else {
-                            Toast.makeText(activity, "Album name already existing", Toast.LENGTH_SHORT).show()
-                        }
+                        Toast.makeText(activity, "Album name already existing", Toast.LENGTH_SHORT).show()
                     }
                 }
-            })
+            }
     builder.show()
 }
 

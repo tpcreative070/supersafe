@@ -19,7 +19,7 @@ import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.model.ThemeApp
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
+import com.afollestad.materialdialogs.input.input
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -110,14 +110,11 @@ fun FakePinComponentAct.initSpeedDial() {
 }
 
 fun FakePinComponentAct.onShowDialog() {
-    val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-            .title(getString(R.string.create_album))
-            .theme(Theme.LIGHT)
-            .titleColor(ContextCompat.getColor(this,R.color.black))
-            .inputType(InputType.TYPE_CLASS_TEXT)
-            .negativeText(getString(R.string.cancel))
-            .positiveText(getString(R.string.ok))
-            .input(null, null) { dialog, input ->
+    val builder: MaterialDialog = MaterialDialog(this)
+            .title(text = getString(R.string.create_album))
+            .negativeButton(text = getString(R.string.cancel))
+            .positiveButton(text = getString(R.string.ok))
+            .input(inputType = InputType.TYPE_CLASS_TEXT,hint = null,hintRes = null) { dialog, input ->
                 Utils.Log(TAG, "Value")
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)

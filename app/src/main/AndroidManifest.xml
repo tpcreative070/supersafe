@@ -97,7 +97,7 @@
             android:label="" />
         <activity android:name=".ui.photosslideshow.PhotoSlideShowAct"/>
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".ui.settings.SettingsAct"
             android:label="@string/settings" />
         <activity
             android:name=".ui.help.HelpAndSupportAct"
@@ -119,7 +119,7 @@
         <activity
             android:name=".ui.trash.TrashAct"
             android:label="@string/key_trash" />
-        <activity android:name=".ui.settings.AlbumSettingsActivity"/>
+        <activity android:name=".ui.settings.AlbumSettingsAct"/>
         <activity
             android:name=".ui.resetpin.ResetPinAct"
             android:label="@string/reset_pin" />

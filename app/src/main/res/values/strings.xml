@@ -504,6 +504,7 @@
     <string name="lock_album">Lock Album</string>
     <string name="enter_a_password_for_this_album">Enter a password for this album.</string>
     <string name="remove_password">Remove password</string>
+    <string name="type_password">Type password</string>
     <string name="unlock">Unlock</string>
     <string name="wrong_password">Wrong password</string>
     <string name="album_is_locked">Album is locked</string>

@@ -11,7 +11,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.snatik.storage.Storage
 import dmax.dialog.SpotsDialog
 import io.reactivex.Observable
@@ -72,14 +71,12 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
         EnumStatus.MOVE -> {
         }
     }
-    val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-            .title(getString(R.string.confirm))
-            .theme(Theme.LIGHT)
-            .content(content)
-            .titleColor(getResources().getColor(R.color.black))
-            .negativeText(getString(R.string.cancel))
-            .positiveText(getString(R.string.ok))
-            .onNegative { dialog, which ->
+    val builder: MaterialDialog = MaterialDialog(this)
+            .title(text = getString(R.string.confirm))
+            .message(text = content)
+            .negativeButton(text = getString(R.string.cancel))
+            .positiveButton(text = getString(R.string.ok))
+            .negativeButton {
                 val items: ItemModel? = presenter?.mList?.get(position)
                 val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
                 when (EnumFormatType.values()[items?.formatType!!]) {
@@ -92,7 +89,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                     }
                 }
             }
-            .onPositive { dialog, which ->
+            .positiveButton {
                 val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
                 when (status) {
                     EnumStatus.SHARE -> {

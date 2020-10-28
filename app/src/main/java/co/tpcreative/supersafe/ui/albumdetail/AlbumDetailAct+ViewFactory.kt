@@ -135,7 +135,7 @@ fun AlbumDetailAct.onExport(){
             val request_spaces = spaceAvailable - availableSpaceOS
             val result: String? = ConvertUtils.byte2FitMemorySize(request_spaces)
             val message: String = kotlin.String.format(getString(R.string.your_space_is_not_enough_to), "export. ", "Request spaces: $result")
-            Utils.showDialog(this, message)
+            Utils.showDialog(this, message = message)
         } else {
             if (isSaver) {
                 onEnableSyncData()

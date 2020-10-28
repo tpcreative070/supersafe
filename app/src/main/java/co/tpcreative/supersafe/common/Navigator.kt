@@ -33,8 +33,8 @@ import co.tpcreative.supersafe.ui.resetpin.ResetPinAct
 import co.tpcreative.supersafe.ui.restore.RestoreAct
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorAct
 import co.tpcreative.supersafe.ui.secretdoor.SecretDoorSetUpAct
-import co.tpcreative.supersafe.ui.settings.SettingsActivity
-import co.tpcreative.supersafe.ui.settings.AlbumSettingsActivity
+import co.tpcreative.supersafe.ui.settings.SettingsAct
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsAct
 import co.tpcreative.supersafe.ui.signin.SignInAct
 import co.tpcreative.supersafe.ui.signup.SignUpAct
 import co.tpcreative.supersafe.ui.theme.ThemeSettingsAct
@@ -182,7 +182,7 @@ object Navigator {
     }
 
     fun onSettings(context: Activity) {
-        val intent = Intent(context, SettingsActivity::class.java)
+        val intent = Intent(context, SettingsAct::class.java)
         context.startActivityForResult(intent,COMPLETED_RECREATE)
     }
 
@@ -229,7 +229,7 @@ object Navigator {
     }
 
     fun onAlbumSettings(context: Context, items: MainCategoryModel) {
-        val intent = Intent(context, AlbumSettingsActivity::class.java)
+        val intent = Intent(context, AlbumSettingsAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_main_categories), items)
         intent.putExtras(bundle)

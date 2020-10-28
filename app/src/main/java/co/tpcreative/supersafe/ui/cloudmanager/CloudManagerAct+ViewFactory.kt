@@ -13,7 +13,8 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.afollestad.materialdialogs.Theme
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.input.input
 import com.snatik.storage.Storage
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_cloud_manager.*
@@ -139,20 +140,17 @@ fun CloudManagerAct.onShowDialog() {
     val inflater: LayoutInflater = getContext()?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val view: View = inflater.inflate(R.layout.custom_view_dialog, null)
     view.tvSpaceRequired?.text = kotlin.String.format(getString(R.string.space_required), presenter?.sizeFile?.let { ConvertUtils.byte2FitMemorySize(it) })
-    val builder: com.afollestad.materialdialogs.MaterialDialog.Builder = com.afollestad.materialdialogs.MaterialDialog.Builder(this)
-            .title(getString(R.string.download_private_cloud_files))
-            .customView(view, false)
-            .theme(Theme.LIGHT)
+    val builder : com.afollestad.materialdialogs.MaterialDialog = com.afollestad.materialdialogs.MaterialDialog(this)
+            .title(text = getString(R.string.download_private_cloud_files))
+            .customView(view = view,scrollable =  false)
             .cancelable(false)
-            .titleColor(ContextCompat.getColor(getContext()!!,R.color.black))
-            .inputType(InputType.TYPE_CLASS_TEXT)
-            .negativeText(getString(R.string.cancel))
-            .onNegative { dialog, which ->
+            .negativeButton(text = getString(R.string.cancel))
+            .negativeButton {
                 Utils.Log(TAG, "negative")
                 switch_SaveSpace?.isChecked = true
             }
-            .positiveText(getString(R.string.download))
-            .onPositive { dialog, which ->
+            .positiveButton(text = getString(R.string.download))
+            .positiveButton {
                 Utils.Log(TAG, "positive")
                 PrefsController.putBoolean(getString(R.string.key_saving_space), false)
                 presenter?.onDisableSaverSpace(EnumStatus.DOWNLOAD)

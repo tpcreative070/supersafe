@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.trash
 import android.view.LayoutInflater
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +7,6 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import kotlinx.android.synthetic.main.activity_trash.*
 
 fun TrashAct.initUI(){
@@ -44,15 +42,13 @@ fun TrashAct.initRecycleView(layoutInflater: LayoutInflater) {
     recyclerView?.adapter = adapter
 }
 
-fun TrashAct.onShowDialog(message: String?, isEmpty: Boolean) {
-    val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-            .title(getString(R.string.confirm))
-            .theme(Theme.LIGHT)
-            .content(message!!)
-            .titleColor(ContextCompat.getColor(getContext()!!,R.color.black))
-            .negativeText(getString(R.string.cancel))
-            .positiveText(getString(R.string.ok))
-            .onPositive { dialog, which -> presenter?.onDeleteAll(isEmpty) }
+fun TrashAct.onShowDialog(message: String, isEmpty: Boolean) {
+    val builder: MaterialDialog = MaterialDialog(this)
+            .title(R.string.confirm)
+            .message(text = message)
+            .negativeButton(R.string.cancel)
+            .positiveButton(R.string.ok)
+            .positiveButton {  presenter?.onDeleteAll(isEmpty) }
     builder.show()
 }
 

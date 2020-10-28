@@ -5,6 +5,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.util.Utils
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItems
 import kotlinx.android.synthetic.main.activity_secret_door.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
 
@@ -38,9 +39,9 @@ fun SecretDoorAct.initUI(){
 }
 
 fun SecretDoorAct.onChooseOptionItems() {
-    val dialog: MaterialDialog = MaterialDialog.Builder(this)
-            .items(R.array.select_option)
-            .itemsCallback { dialog, itemView, position, text ->
+    val dialog: MaterialDialog = MaterialDialog(this)
+            .listItems(res = R.array.select_option)
+            .listItems { dialog, position, text ->
                 Utils.Log(TAG, "position $position")
                 when (position) {
                     0 -> {
@@ -65,6 +66,6 @@ fun SecretDoorAct.onChooseOptionItems() {
                     }
                 }
             }
-            .build()
+
     dialog.show()
 }

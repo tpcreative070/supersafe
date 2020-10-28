@@ -86,8 +86,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     fun onCallLockScreen() {
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        val action = EnumPinAction.values()[value]
-        when (action) {
+        when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SPLASH_SCREEN -> {
                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -155,8 +154,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
             override fun onHomePressed() {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (val action = EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         Utils.onHomePressed()
                         onStopListenerAWhile()

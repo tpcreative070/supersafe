@@ -3,14 +3,13 @@ import android.graphics.Typeface
 import android.text.InputType
 import android.text.SpannableString
 import android.view.View
-import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.util.CalculatorImpl
 import co.tpcreative.supersafe.common.util.Constants
 import co.tpcreative.supersafe.common.util.Utils
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
+import com.afollestad.materialdialogs.input.input
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.android.synthetic.main.activity_secret_door_set_up.*
@@ -158,16 +157,13 @@ fun SecretDoorSetUpAct.numpadClicked(id: Int) {
 }
 
 fun SecretDoorSetUpAct.onShowDialog() {
-    val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-            .title(getString(R.string.enable_secret_door))
-            .content(getString(R.string.enable_secret_door_detail))
-            .theme(Theme.LIGHT)
-            .titleColor(ContextCompat.getColor(this,R.color.black))
-            .inputType(InputType.TYPE_CLASS_TEXT)
-            .negativeText(getString(R.string.cancel))
-            .positiveText(getString(R.string.ok))
-            .onPositive { dialog, which -> PrefsController.putBoolean(getString(R.string.key_secret_door), true) }
-            .onNegative { dialog, which ->
+    val builder: MaterialDialog = MaterialDialog(this)
+            .title(text = getString(R.string.enable_secret_door))
+            .message(text = getString(R.string.enable_secret_door_detail))
+            .negativeButton(text = getString(R.string.cancel))
+            .positiveButton(text = getString(R.string.ok))
+            .positiveButton {  PrefsController.putBoolean(getString(R.string.key_secret_door), true) }
+            .negativeButton {
                 PrefsController.putBoolean(getString(R.string.key_secret_door), false)
                 onBackPressed()
             }

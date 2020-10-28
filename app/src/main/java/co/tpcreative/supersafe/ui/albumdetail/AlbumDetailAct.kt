@@ -24,7 +24,6 @@ import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.bumptech.glide.Priority
 import com.karumi.dexter.listener.PermissionRequest
 import com.leinardi.android.speeddial.SpeedDialView
@@ -49,6 +48,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_album_detail.*
+import kotlinx.android.synthetic.main.activity_album_detail.toolbar
+import kotlinx.android.synthetic.main.activity_image_select.*
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
 import org.greenrobot.eventbus.ThreadMode
 
@@ -455,15 +456,13 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             EnumStatus.MOVE -> {
             }
         }
-        val builder: MaterialDialog.Builder = MaterialDialog.Builder(this)
-                .title(getString(R.string.confirm))
-                .theme(Theme.LIGHT)
-                .content(content!!)
-                .titleColor(ContextCompat.getColor(this,R.color.black))
-                .negativeText(getString(R.string.cancel))
-                .positiveText(getString(R.string.ok))
-                .onNegative { dialog, which -> presenter?.status = EnumStatus.CANCEL }
-                .onPositive { dialog, which ->
+        val builder: MaterialDialog = MaterialDialog(this)
+                .title(text = getString(R.string.confirm))
+                .message (text =content!!)
+                .negativeButton(text = getString(R.string.cancel))
+                .positiveButton(text = getString(R.string.ok))
+                .negativeButton { presenter?.status = EnumStatus.CANCEL }
+                .positiveButton {
                     val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
                     when (status) {
                         EnumStatus.SHARE -> {
