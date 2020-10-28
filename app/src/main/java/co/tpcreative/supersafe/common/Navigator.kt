@@ -11,9 +11,9 @@ import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAct
 import co.tpcreative.supersafe.ui.albumcover.AlbumCoverAct
 import co.tpcreative.supersafe.ui.albumdetail.AlbumDetailAct
 import co.tpcreative.supersafe.ui.askpermission.AskPermissionAct
-import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsActivity
+import co.tpcreative.supersafe.ui.breakinalerts.BreakInAlertsAct
 import co.tpcreative.supersafe.ui.breakinalertsimport.BreakInAlertsDetailActivity
-import co.tpcreative.supersafe.ui.camera.CameraActivity
+import co.tpcreative.supersafe.ui.camera.CameraAct
 import co.tpcreative.supersafe.ui.checksystem.CheckSystemAct
 import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerAct
 import co.tpcreative.supersafe.ui.dashboard.DashBoardAct
@@ -150,7 +150,7 @@ object Navigator {
     }
 
     fun onMoveCamera(activity: Activity, mainCategories: MainCategoryModel) {
-        val intent = Intent(activity, CameraActivity::class.java)
+        val intent = Intent(activity, CameraAct::class.java)
         val bundle = Bundle()
         bundle.putSerializable(activity.getString(R.string.key_main_categories), mainCategories)
         intent.putExtras(bundle)
@@ -250,7 +250,7 @@ object Navigator {
     }
 
     fun onMoveBreakInAlerts(context: Context) {
-        val intent = Intent(context, BreakInAlertsActivity::class.java)
+        val intent = Intent(context, BreakInAlertsAct::class.java)
         context.startActivity(intent)
     }
 

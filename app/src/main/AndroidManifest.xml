@@ -75,7 +75,7 @@
         <activity
             android:name=".ui.signup.SignUpAct"
             android:label="@string/key_sign_up"/>
-        <activity android:name=".ui.camera.CameraActivity"/>
+        <activity android:name=".ui.camera.CameraAct"/>
         <activity
             android:name=".ui.fakepin.FakePinComponentActivity"/>
         <activity
@@ -127,7 +127,7 @@
             android:name=".ui.theme.ThemeSettingsActivity"
             android:label="@string/key_update_theme" />
         <activity
-            android:name=".ui.breakinalerts.BreakInAlertsActivity"
+            android:name=".ui.breakinalerts.BreakInAlertsAct"
             android:label="@string/key_break_in_alert" />
         <activity
             android:name=".ui.fakepin.FakePinActivity"

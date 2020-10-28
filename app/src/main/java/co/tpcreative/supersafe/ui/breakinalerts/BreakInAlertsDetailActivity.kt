@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.breakinalertsimport
+package co.tpcreative.supersafe.ui.breakinalerts
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
@@ -26,7 +26,7 @@ class BreakInAlertsDetailActivity : BaseActivity() {
             .override(400, 600)
             .priority(Priority.HIGH)
 
-    protected override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
@@ -49,18 +49,17 @@ class BreakInAlertsDetailActivity : BaseActivity() {
         }
     }
 
-    protected override fun onResume() {
+    override fun onResume() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
         onRegisterHomeWatcher()
-        //SuperSafeApplication.getInstance().writeKeyHomePressed(BreakInAlertsDetailActivity.class.getSimpleName());
     }
 
-    protected override fun onDestroy() {
+    override fun onDestroy() {
         super.onDestroy()
-        Utils.Log(BaseActivity.Companion.TAG, "OnDestroy")
+        Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
     }
 
