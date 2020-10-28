@@ -19,6 +19,7 @@ class MainCategoryModel : Serializable {
     var pin: String? = null
     var isCustom_Cover = false
     var items_id: String? = null
+    /*Set cover default icon*/
     var mainCategories_Local_Id: String? = null
     var unique_id: String? = null
 

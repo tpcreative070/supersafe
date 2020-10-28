@@ -71,7 +71,7 @@ class AlbumCoverPresenter : Presenter<BaseView<EmptyModel>>() {
                 mListMainCategories?.get(i)?.isChecked = false
             }
         }
-        Utils.Log(TAG, "List :" + mList?.size)
+        Utils.Log(TAG, "List :" + mListMainCategories?.size)
         view?.onSuccessful("Successful", EnumStatus.GET_LIST_FILE)
         return mList
     }

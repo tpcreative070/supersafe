@@ -73,6 +73,8 @@ fun AlbumCoverAct.onShowPremium() {
                 positive.setTextColor(ContextCompat.getColor(getContext()!!, themeApp!!.getAccentColor()))
                 negative.setTextColor(ContextCompat.getColor(getContext()!!, themeApp.getAccentColor()))
                 textView.setTextSize(16f)
+                positive.textSize = 14f
+                negative.textSize = 14f
             }
         }
     } catch (e: Exception) {

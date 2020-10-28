@@ -433,7 +433,7 @@ object SQLHelper {
 
     fun getDrawable(mContext: Context?, name: String?): Drawable? {
         try {
-            val resourceId = mContext?.getResources()?.getIdentifier(name, "drawable", mContext?.getPackageName())
+            val resourceId = mContext?.resources?.getIdentifier(name, "drawable", mContext.getPackageName())
             return ContextCompat.getDrawable(mContext!!,resourceId!!)
         } catch (e: Exception) {
             e.printStackTrace()

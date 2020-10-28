@@ -49,8 +49,8 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
         presenter?.getData(this)
         val toolbar: Toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-        storage = Storage(getApplicationContext())
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        storage = Storage(applicationContext)
         storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
         onSetUpPreference()
     }
@@ -203,8 +203,8 @@ class AlbumSettingsActivity : BaseActivity(), BaseView<EmptyModel> {
                             mAlbumCover?.imageViewCover?.setImageResource(0)
                             val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(main.mainCategories_Local_Id)
                             if (mainCategories != null) {
-                                mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(getContext(), mainCategories.icon))
-                                mAlbumCover?.imgViewSuperSafe?.setVisibility(View.VISIBLE)
+                                mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(context, mainCategories.icon))
+                                mAlbumCover?.imgViewSuperSafe?.visibility = View.VISIBLE
                                 try {
                                     val myColor = Color.parseColor(mainCategories.image)
                                     mAlbumCover?.imageViewCover?.setBackgroundColor(myColor)

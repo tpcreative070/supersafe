@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import com.google.gson.Gson
 import com.snatik.storage.Storage
 import java.util.*
 
@@ -16,6 +17,7 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
         val view: BaseView<EmptyModel>? = view()
         mList = SQLHelper.getList()
         storage = Storage(SuperSafeApplication.getInstance())
+        Utils.Log(TAG,Gson().toJson(mList))
         view?.onSuccessful("Successful", EnumStatus.RELOAD)
     }
 

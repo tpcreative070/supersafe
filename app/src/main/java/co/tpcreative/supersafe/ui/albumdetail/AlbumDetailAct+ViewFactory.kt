@@ -27,8 +27,7 @@ fun AlbumDetailAct.initUI(){
     onInit()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    val collapsingToolbar: CollapsingToolbarLayout = findViewById<CollapsingToolbarLayout?>(R.id.collapsing_toolbar)
-    collapsingToolbar.title = presenter?.mainCategories?.categories_name
+    collapsing_toolbar.title = presenter?.mainCategories?.categories_name
     val mList: MutableList<ItemModel>? = presenter?.mainCategories?.isFakePin?.let { SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, it) }
     val items: ItemModel? = SQLHelper.getItemId(presenter?.mainCategories?.items_id)
     if (items != null && mList != null && mList.size > 0) {
@@ -51,7 +50,7 @@ fun AlbumDetailAct.initUI(){
             }
             else -> {
                 if (storage?.isFileExist(items.thumbnailPath)!!) {
-                    backdrop?.setRotation(items.degrees.toFloat())
+                    backdrop?.rotation = items.degrees.toFloat()
                     Glide.with(this)
                             .load(storage?.readFile(items.thumbnailPath))
                             .apply(options!!)
