@@ -4,16 +4,11 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
-import androidx.appcompat.widget.AppCompatTextView
-import butterknife.BindView
-import butterknife.OnClick
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.views.SquaredImageView
 import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.GalleryAlbum
 import co.tpcreative.supersafe.model.ItemModel
@@ -21,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.snatik.storage.Storage
+import kotlinx.android.synthetic.main.item_move_gallery.view.*
 
 class MoveGalleryAdapter(inflater: LayoutInflater, private val mContext: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<GalleryAlbum, BaseHolder<GalleryAlbum>>(inflater) {
     private val storage: Storage?
@@ -48,26 +44,14 @@ class MoveGalleryAdapter(inflater: LayoutInflater, private val mContext: Context
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<GalleryAlbum>(itemView) {
-        @BindView(R.id.rl_item)
-        var rl_item: RelativeLayout? = null
 
-        @BindView(R.id.image)
-        var imgAlbum: SquaredImageView? = null
-
-        @BindView(R.id.tvTitle)
-        var tvTitle: AppCompatTextView? = null
-
-        @BindView(R.id.tvPhotos)
-        var tvPhotos: AppCompatTextView? = null
-
-        @BindView(R.id.tvVideos)
-        var tvVideos: AppCompatTextView? = null
-
-        @BindView(R.id.tvAudios)
-        var tvAudios: AppCompatTextView? = null
-
-        @BindView(R.id.tvOthers)
-        var tvOthers: AppCompatTextView? = null
+        val rl_item = itemView.rl_item
+        val imgAlbum = itemView.image
+        val tvTitle = itemView.tvTitle
+        val tvPhotos = itemView.tvPhotos
+        val tvVideos = itemView.tvVideos
+        val tvAudios = itemView.tvAudios
+        var tvOthers = itemView.tvOthers
         private var mPosition = 0
         private var data: GalleryAlbum? = null
         override fun bind(mData: GalleryAlbum, position: Int) {
@@ -75,8 +59,7 @@ class MoveGalleryAdapter(inflater: LayoutInflater, private val mContext: Context
             data = mData
             val items: ItemModel? = SQLHelper.getLatestId(data?.main?.categories_local_id, false, data?.main?.isFakePin!!)
             if (items != null) {
-                val formatTypeFile = EnumFormatType.values()[items.formatType]
-                when (formatTypeFile) {
+                when (EnumFormatType.values()[items.formatType]) {
                     EnumFormatType.AUDIO -> {
                         Glide.with(mContext!!)
                                 .load(R.drawable.bg_button_rounded)
@@ -118,17 +101,15 @@ class MoveGalleryAdapter(inflater: LayoutInflater, private val mContext: Context
             val videos = String.format(mContext.getString(R.string.videos_default), "" + data?.videos)
             val audios = String.format(mContext.getString(R.string.audios_default), "" + data?.audios)
             val others = String.format(mContext.getString(R.string.others_default), "" + data?.audios)
-            tvPhotos?.setText(photos)
-            tvVideos?.setText(videos)
-            tvAudios?.setText(audios)
-            tvOthers?.setText(others)
-            tvTitle?.setText(data?.main?.categories_name)
+            tvPhotos?.text = photos
+            tvVideos?.text = videos
+            tvAudios?.text = audios
+            tvOthers?.text = others
+            tvTitle?.text = data?.main?.categories_name
             mPosition = position
-        }
-
-        @OnClick(R.id.rl_item)
-        fun onClickedItem(view: View?) {
-            ls?.onClickGalleryItem(mPosition)
+            rl_item.setOnClickListener {
+                ls?.onClickGalleryItem(mPosition)
+            }
         }
     }
 

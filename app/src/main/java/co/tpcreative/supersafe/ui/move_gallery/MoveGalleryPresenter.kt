@@ -8,7 +8,7 @@ import co.tpcreative.supersafe.model.*
 import java.util.*
 
 class MoveGalleryPresenter : Presenter<MoveGalleryView>() {
-    var mList: MutableList<GalleryAlbum>?
+    var mList: MutableList<GalleryAlbum>? = ArrayList<GalleryAlbum>()
     protected var videos = 0
     protected var photos = 0
     protected var audios = 0
@@ -79,7 +79,7 @@ class MoveGalleryPresenter : Presenter<MoveGalleryView>() {
                     SQLHelper.updatedItem(item)
                 }
             }
-            ServiceManager.Companion.getInstance()?.onPreparingUpdateItemData()
+            ServiceManager.getInstance()?.onPreparingUpdateItemData()
             SingletonPrivateFragment.getInstance()?.onUpdateView()
             view.onSuccessful("Successful", EnumStatus.MOVE)
         } else {
@@ -91,7 +91,4 @@ class MoveGalleryPresenter : Presenter<MoveGalleryView>() {
         private val TAG = MoveGalleryPresenter::class.java.simpleName
     }
 
-    init {
-        mList = ArrayList<GalleryAlbum>()
-    }
 }

@@ -23,6 +23,7 @@ import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment
+import co.tpcreative.supersafe.ui.move_gallery.openAlbum
 import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
 

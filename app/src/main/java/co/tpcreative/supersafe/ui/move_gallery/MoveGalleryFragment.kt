@@ -2,48 +2,30 @@ package co.tpcreative.supersafe.ui.move_gallery
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.BaseFragment
-import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
-import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
-import co.tpcreative.supersafe.common.views.VerticalSpaceItemDecoration
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ItemModel
-import co.tpcreative.supersafe.model.MainCategoryModel
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.Theme
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.gson.Gson
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListener, MoveGalleryView {
-    private var mAlbumColumnNumber = 0
-    private var mAdapterAlbumGrid: MoveGalleryAdapter? = null
-    private var mConfig: Configuration? = null
-    private var dialog: BottomSheetDialog? = null
-    private var mBehavior: BottomSheetBehavior<*>? = null
-    private var mListener: OnGalleryAttachedListener? = null
-    private var presenter: MoveGalleryPresenter? = null
+    var mAlbumColumnNumber = 0
+    var mAdapterAlbumGrid: MoveGalleryAdapter? = null
+    var mConfig: Configuration? = null
+    var dialog: BottomSheetDialog? = null
+    var mBehavior: BottomSheetBehavior<*>? = null
+    var mListener: OnGalleryAttachedListener? = null
+    var presenter: MoveGalleryPresenter? = null
 
     interface OnGalleryAttachedListener {
         open fun getConfiguration(): Configuration?
@@ -53,15 +35,7 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mConfig = mListener?.getConfiguration()
-        if (mConfig == null) {
-            return
-        }
-        mAdapterAlbumGrid = MoveGalleryAdapter(activity!!.layoutInflater, activity, this)
-        presenter = MoveGalleryPresenter()
-        presenter?.bindView(this)
-        Utils.Log(TAG, Gson().toJson(mConfig))
-        presenter?.getData(mConfig!!.localCategoriesId, mConfig!!.isFakePIN)
+        iniUI()
     }
 
     override fun onStart() {
@@ -119,86 +93,6 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
     override fun onClickGalleryItem(position: Int) {
         presenter?.onMoveItemsToAlbum(position)
         Utils.Log(TAG, "Position :$position")
-    }
-
-    fun openAlbum() {
-        if (mConfig == null) {
-            dialog?.dismiss()
-            return
-        }
-        val screenHeight: Int = Utils.getScreenHeight(activity!!)
-        if (dialog != null && dialog?.isShowing()!!) {
-            dialog?.dismiss()
-            return
-        }
-        dialog = BottomSheetDialog(activity!!)
-        val view: View = LayoutInflater.from(activity).inflate(R.layout.layout_gallery, null)
-        val lp: ViewGroup.LayoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, screenHeight)
-        view.layoutParams = lp
-        val mGalleryView: RecyclerView? = view.findViewById<View?>(R.id.recycler_view) as RecyclerView?
-        val llCreateAlbum: LinearLayout? = view.findViewById<LinearLayout>(R.id.llCreateAlbum)
-        llCreateAlbum?.setOnClickListener(View.OnClickListener { onShowDialog() })
-        if (mConfig?.dialogMode!! >= Configuration.DIALOG_GRID) {
-            mGalleryView?.setLayoutManager(GridLayoutManager(activity, mAlbumColumnNumber))
-            mGalleryView?.addItemDecoration(GridSpacingItemDecoration(mAlbumColumnNumber, dp2px(mConfig!!.spaceSize.toFloat()), true))
-            mGalleryView?.setItemAnimator(DefaultItemAnimator())
-            mGalleryView?.setAdapter(mAdapterAlbumGrid)
-            mAdapterAlbumGrid?.setDataSource(presenter?.mList)
-        } else {
-            mGalleryView?.setLayoutManager(LinearLayoutManager(activity))
-            mGalleryView?.addItemDecoration(VerticalSpaceItemDecoration(dp2px(mConfig!!.spaceSize.toFloat())))
-            mGalleryView?.setItemAnimator(DefaultItemAnimator())
-            mGalleryView?.setAdapter(mAdapterAlbumGrid)
-            mAdapterAlbumGrid?.setDataSource(presenter?.mList)
-        }
-        dialog?.setContentView(view)
-        mBehavior = BottomSheetBehavior.from(view.parent as View)
-        if (mConfig?.dialogHeight!! < 0) {
-            mBehavior?.setPeekHeight(if (mConfig?.dialogHeight!! <= Configuration.DIALOG_HALF) screenHeight / 2 else screenHeight)
-        } else {
-            if (mConfig?.dialogHeight!! >= screenHeight) screenHeight else mConfig?.dialogHeight?.let { mBehavior?.setPeekHeight(it) }
-        }
-        dialog?.show()
-    }
-
-    fun onShowDialog() {
-        val builder: MaterialDialog.Builder = MaterialDialog.Builder(activity!!)
-                .title(getString(R.string.create_album))
-                .theme(Theme.LIGHT)
-                .titleColor(ContextCompat.getColor(SuperSafeApplication.getInstance(),R.color.black))
-                .inputType(InputType.TYPE_CLASS_TEXT)
-                .negativeText(getString(R.string.cancel))
-                .positiveText(getString(R.string.ok))
-                .input(null, null, object : MaterialDialog.InputCallback {
-                    override fun onInput(dialog: MaterialDialog, input: CharSequence?) {
-                        val value = input.toString()
-                        val base64Code: String = Utils.getHexCode(value)
-                        val item: MainCategoryModel? = SQLHelper.getTrashItem()
-                        val result: String? = item?.categories_hex_name
-                        if (base64Code == result) {
-                            Toast.makeText(activity, "This name already existing", Toast.LENGTH_SHORT).show()
-                        } else {
-                            val response: Boolean = SQLHelper.onAddCategories(base64Code, value, mConfig?.isFakePIN!!)
-                            if (response) {
-                                Toast.makeText(activity, "Created album successful", Toast.LENGTH_SHORT).show()
-                                presenter?.getData(mConfig?.localCategoriesId, mConfig?.isFakePIN!!)
-                                SingletonPrivateFragment.getInstance()?.onUpdateView()
-                                ServiceManager.getInstance()?.onPreparingSyncCategoryData()
-                            } else {
-                                Toast.makeText(activity, "Album name already existing", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                })
-        builder.show()
-    }
-
-    private fun dp2px(dp: Float): Int {
-        return (dp * activity?.resources?.displayMetrics?.density!! + 0.5f).toInt()
-    }
-
-    private fun getGallerWidth(container: ViewGroup?): Int {
-        return Utils.getScreenWidth(activity!!) - (container?.getPaddingLeft()!! - container?.getPaddingRight())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
