@@ -71,8 +71,7 @@ fun PlayerAct.initUI(){
             tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
         }
     } catch (e: Exception) {
-        val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
-        PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
     }
     imgArrowBack.setOnClickListener {
         val isLandscape: Boolean = Utils.isLandscape(this)

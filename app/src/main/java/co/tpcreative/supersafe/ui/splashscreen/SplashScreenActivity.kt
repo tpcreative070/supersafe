@@ -42,8 +42,7 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
                 rlScreen?.setBackgroundColor(ContextCompat.getColor(this,themeApp.getPrimaryColor()))
             }
         } catch (e: Exception) {
-            val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
-            PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
+            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object),0)
         }
         value = SuperSafeApplication.getInstance().readKey()
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access), false)

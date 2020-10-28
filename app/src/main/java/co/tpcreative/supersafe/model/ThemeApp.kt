@@ -3,7 +3,6 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
-import com.google.gson.Gson
 import java.io.Serializable
 import java.util.*
 
@@ -73,19 +72,15 @@ class ThemeApp : Serializable {
 
     fun getThemeInfo(): ThemeApp? {
         try {
-            val value: String? = PrefsController.getString(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), null)
-            if (value != null) {
-                val mThemeApp: ThemeApp? = Gson().fromJson(value, ThemeApp::class.java)
-                if (mThemeApp != null) {
-                    return mThemeApp
-                }
-            } else {
-                val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
-                PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
+            val value: Int = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+            val mThem: List<ThemeApp> = ThemeUtil.getThemeList()
+            if (mThem.size > value) {
+                return mThem[value]
+            }else {
+                PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
             }
         } catch (e: Exception) {
-            val themeApp = ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
-            PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_theme_object), Gson().toJson(themeApp))
+            PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
             e.printStackTrace()
         }
         return ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
