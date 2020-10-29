@@ -6,7 +6,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import java.util.*
 
 open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : RecyclerView.Adapter<VH>() {
-    protected var inflater: LayoutInflater?
+    protected var inflater: LayoutInflater? = inflater
     protected var mDataSource: MutableList<V> = Collections.emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -17,7 +17,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
         if (holder is FooterViewHolder<*>) {
             return
         }
-        holder.bind(mDataSource!!.get(position)!!, position)
+        holder.bind(mDataSource[position]!!, position)
         holder.event()
     }
 
@@ -26,16 +26,19 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
     }
 
     fun getItem(position: Int): V? {
-        return mDataSource?.get(position)
+        return mDataSource.get(position)
     }
 
     override fun getItemCount(): Int {
-        return mDataSource!!.size
+        return mDataSource.size
     }
 
     fun setDataSource(dataSource: MutableList<V>?) {
         try {
-            this.mDataSource = ArrayList(dataSource)
+            this.mDataSource = ArrayList()
+            dataSource?.let {
+                this.mDataSource = it
+            }
             notifyDataSetChanged()
         } catch (e: IllegalStateException) {
         }
@@ -66,7 +69,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
                 notifyItemRemoved(position)
                 notifyItemRangeChanged(position, mDataSource.size)
             } else {
-                Utils.Log(BaseAdapter.Companion.TAG, "Can not delete ")
+                Utils.Log(TAG, "Can not delete ")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -77,7 +80,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
         if (mDataSource.isEmpty()) {
             setDataSource(items)
         } else {
-            val positionStart = getItemCount() - 1
+            val positionStart = itemCount - 1
             mDataSource.addAll(items)
             notifyItemRangeInserted(positionStart, items.size)
         }
@@ -96,8 +99,8 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
             mDataSource = ArrayList()
         }
         mDataSource.add(0, item)
-        mDataSource.removeAt(getItemCount() - 1)
-        notifyItemRemoved(getItemCount() - 1)
+        mDataSource.removeAt(itemCount - 1)
+        notifyItemRemoved(itemCount - 1)
         notifyItemInserted(0)
     }
 
@@ -105,7 +108,4 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
         private val TAG = BaseAdapter::class.java.simpleName
     }
 
-    init {
-        this.inflater = inflater
-    }
 }

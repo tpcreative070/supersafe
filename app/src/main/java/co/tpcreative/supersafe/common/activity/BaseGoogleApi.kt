@@ -39,7 +39,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.drive.DriveScopes
 import com.google.gson.Gson
-import org.greenrobot.eventbus.EventBus
 import spencerstudios.com.bungeelib.Bungee
 import java.io.IOException
 
@@ -252,7 +251,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     /**
      * Handles resolution callbacks.
      */
-    protected override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_CODE_SIGN_IN -> {

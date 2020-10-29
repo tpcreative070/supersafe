@@ -3,14 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "29.0.3"
-
+    compileSdkVersion appCompileSdkVersion
+    buildToolsVersion appBuildToolsVersion
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 29
-        versionCode 302
-        versionName "3.0.2"
+        minSdkVersion appMinSdkVersion
+        targetSdkVersion appTargetSdkVersion
+        versionCode 1
+        versionName "1.11.0"
     }
     buildTypes {
         release {

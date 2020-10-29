@@ -8,6 +8,7 @@ import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.Settings
 import androidx.core.content.PermissionChecker
 import androidx.multidex.MultiDex
@@ -26,7 +27,6 @@ import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.bumptech.glide.request.target.ImageViewTarget
-import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
@@ -64,7 +64,6 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     override fun onCreate() {
         super.onCreate()
         mInstance = this
-        MobileAds.initialize(this) { }
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
@@ -76,9 +75,9 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getCityService(getString(R.string.url_graph_microsoft))
         ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
-                .setContext(getApplicationContext())
+                .setContext(applicationContext)
                 ?.setMode(ContextWrapper.MODE_PRIVATE)
-                ?.setPrefsName(getPackageName())
+                ?.setPrefsName(packageName)
                 ?.setUseDefaultSharedPreference(true)
                 ?.build()
         PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
@@ -103,7 +102,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         supersafeLog = supersafe + "log/"
         supersafeBreakInAlerts = supersafe + "break_in_alerts/"
         supersafeShare = supersafe + "share/"
-        supersafeDataBaseFolder = "/data/data/" + getInstance().getPackageName() + "/databases/"
+        supersafeDataBaseFolder = "/data/data/" + getInstance().packageName + "/databases/"
         supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/"
         registerActivityLifecycleCallbacks(this)
         Utils.Log(TAG, supersafe)

@@ -55,8 +55,8 @@ class HomeWatcher(private val mContext: Context?) {
     }
 
     interface OnHomePressedListener {
-        open fun onHomePressed()
-        open fun onHomeLongPressed()
+        fun onHomePressed()
+        fun onHomeLongPressed()
     }
 
     companion object {
