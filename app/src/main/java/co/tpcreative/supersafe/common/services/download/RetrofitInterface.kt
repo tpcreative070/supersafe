@@ -12,32 +12,32 @@ import retrofit2.http.*
 interface RetrofitInterface {
     @Streaming
     @GET
-    open fun downloadFileByUrl(@Url fileUrl: String?): Call<ResponseBody>?
+    fun downloadFileByUrl(@Url fileUrl: String?): Call<ResponseBody>?
 
     // Retrofit 2 GET request for rxjava
     @Streaming
     @GET
-    open fun downloadFileByUrlRx(@Url fileUrl: String?): Observable<Response<ResponseBody>>?
+    fun downloadFileByUrlRx(@Url fileUrl: String?): Observable<Response<ResponseBody>>?
 
     @Streaming
     @POST(DOWNLOAD)
-    open fun downloadFile(@Body request: DownloadFileRequest?): Observable<Response<ResponseBody>>?
+    fun downloadFile(@Body request: DownloadFileRequest?): Observable<Response<ResponseBody>>?
 
     @Streaming
     @POST
-    open fun downloadFile(@Url fileUrl: String?, @Body request: DownloadFileRequest?): Observable<Response<ResponseBody>>?
+    fun downloadFile(@Url fileUrl: String?, @Body request: DownloadFileRequest?): Observable<Response<ResponseBody>>?
 
     @GET
     @Streaming
-    open fun downloadFile(@Url fileUrl: String?): Observable<Response<ResponseBody>>?
+    fun downloadFile(@Url fileUrl: String?): Observable<Response<ResponseBody>>?
 
     @GET(DOWNLOAD)
     @Streaming
-    open fun downloadFile(): Observable<Response<ResponseBody?>?>?
+    fun downloadFile(): Observable<Response<ResponseBody?>?>?
 
     @GET
     @Streaming
-    open fun downloadDriveFile(@Url url: String?, @Header("Authorization") authToken: String?): Observable<Response<ResponseBody>>?
+    fun downloadDriveFile(@Url url: String?, @Header("Authorization") authToken: String?): Observable<Response<ResponseBody>>?
 
     companion object {
         const val DOWNLOAD: String = "/api/file/download"

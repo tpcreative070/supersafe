@@ -84,14 +84,14 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
     }
 
     interface ProgressResponseBodyListener {
-        open fun onAttachmentDownloadedSuccess()
-        open fun onAttachmentDownloadedError(message: String?)
-        open fun onAttachmentDownloadUpdate(percent: Int)
-        open fun onAttachmentElapsedTime(elapsed: Long)
-        open fun onAttachmentAllTimeForDownloading(all: Long)
-        open fun onAttachmentRemainingTime(all: Long)
-        open fun onAttachmentSpeedPerSecond(all: Double)
-        open fun onAttachmentTotalDownload(totalByte: Long, totalByteDownloaded: Long)
+        fun onAttachmentDownloadedSuccess()
+        fun onAttachmentDownloadedError(message: String?)
+        fun onAttachmentDownloadUpdate(percent: Int)
+        fun onAttachmentElapsedTime(elapsed: Long)
+        fun onAttachmentAllTimeForDownloading(all: Long)
+        fun onAttachmentRemainingTime(all: Long)
+        fun onAttachmentSpeedPerSecond(all: Double)
+        fun onAttachmentTotalDownload(totalByte: Long, totalByteDownloaded: Long)
     }
 
     companion object {

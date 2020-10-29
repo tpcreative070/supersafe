@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.services.upload
-import co.tpcreative.supersafe.common.services.upload.MultiUploadService
 import org.apache.http.entity.mime.HttpMultipartMode
 import org.apache.http.entity.mime.MultipartEntity
 import java.io.FilterOutputStream
@@ -29,7 +28,7 @@ class MultiUploadService : MultipartEntity {
     }
 
     interface ProgressListener {
-        open fun transferred(num: Long)
+        fun transferred(num: Long)
     }
 
     class CountingOutputStream(out: OutputStream?,

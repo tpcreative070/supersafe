@@ -6,7 +6,6 @@
 package co.tpcreative.supersafe.common.services.upload
 import android.util.Log
 import co.tpcreative.supersafe.common.api.request.UploadingFileRequest
-import co.tpcreative.supersafe.common.services.upload.ProgressiveEntity
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
@@ -42,7 +41,7 @@ class UploadService {
     }
 
     private var subscriptions: Disposable? = null
-    fun setListener(listener: co.tpcreative.supersafe.common.services.upload.UploadService.UploadServiceListener?, url: String?) {
+    fun setListener(listener: UploadServiceListener?, url: String?) {
         this.listener = listener
         this.url = url
     }
@@ -158,9 +157,9 @@ class UploadService {
     }
 
     interface UploadServiceListener {
-        open fun onUploadCompleted(response: String?, request: UploadingFileRequest?)
-        open fun onProgressing(percent: Int, total: Long)
-        open fun onSpeed(speed: Double)
+        fun onUploadCompleted(response: String?, request: UploadingFileRequest?)
+        fun onProgressing(percent: Int, total: Long)
+        fun onSpeed(speed: Double)
     }
 
     companion object {

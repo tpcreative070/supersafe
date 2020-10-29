@@ -50,7 +50,7 @@ class ProgressiveEntity(entity: HttpEntity?, progressListener: ProgressListener?
         yourEntity!!.writeTo(ProxyOutputStream(outstream, listener))
     }
 
-    inner class ProxyOutputStream(proxy: OutputStream?, private val progressListener: co.tpcreative.supersafe.common.services.upload.ProgressiveEntity.ProgressListener?) : FilterOutputStream(proxy) {
+    inner class ProxyOutputStream(proxy: OutputStream?, private val progressListener:ProgressListener?) : FilterOutputStream(proxy) {
         private var transferred: Long = 0
         var startTime: Long? = System.currentTimeMillis()
 

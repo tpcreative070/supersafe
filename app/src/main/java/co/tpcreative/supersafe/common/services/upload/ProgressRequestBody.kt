@@ -14,9 +14,9 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
     private var type: String? = null
 
     interface UploadCallbacks {
-        open fun onProgressUpdate(percentage: Int)
-        open fun onError()
-        open fun onFinish()
+        fun onProgressUpdate(percentage: Int)
+        fun onError()
+        fun onFinish()
     }
 
     override fun contentType(): MediaType? {
