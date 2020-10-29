@@ -17,20 +17,19 @@ import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.model.User
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_splash_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class SplashScreenActivity : BaseActivityNoneSlide() {
+class SplashScreenAct : BaseActivityNoneSlide() {
     private var value: String? = ""
     private var grant_access = false
     private var isRunning = false
     private val DELAY = 2000
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         /*Black list*/if (SuperSafeApplication.getInstance().getDeviceId() == "66801ac00252fe84") {
@@ -71,7 +70,7 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
                     if (isRunning) {
                         if ("" != value) {
                             PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
-                            Navigator.onMoveToMainTab(this@SplashScreenActivity)
+                            Navigator.onMoveToMainTab(this@SplashScreenAct)
                         } else {
                             SuperSafeApplication.getInstance().deleteFolder()
                             SuperSafeApplication.getInstance().initFolder()
@@ -79,13 +78,13 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
                             Utils.setUserPreShare(User())
                             SQLHelper.getList()
                             PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), true)
-                            Navigator.onMoveToDashBoard(this@SplashScreenActivity)
+                            Navigator.onMoveToDashBoard(this@SplashScreenAct)
                         }
                     } else {
-                        Navigator.onMoveToDashBoard(this@SplashScreenActivity)
+                        Navigator.onMoveToDashBoard(this@SplashScreenAct)
                     }
                 } else {
-                    Navigator.onMoveGrantAccess(this@SplashScreenActivity)
+                    Navigator.onMoveGrantAccess(this@SplashScreenAct)
                 }
                 finish()
             }
@@ -119,7 +118,7 @@ class SplashScreenActivity : BaseActivityNoneSlide() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_tab, menu)
+        menuInflater.inflate(R.menu.main_tab, menu)
         return true
     }
 

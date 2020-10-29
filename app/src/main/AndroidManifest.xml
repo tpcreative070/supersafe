@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeLaunch">
         <activity
-            android:name=".ui.splashscreen.SplashScreenActivity">
+            android:name=".ui.splashscreen.SplashScreenAct">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.MAIN"/>

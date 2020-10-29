@@ -1107,14 +1107,15 @@ object Utils  {
         }
     }
 
-    fun saveImage(finalBitmap: Bitmap) {
+    fun saveImage() {
+        val bm: Bitmap = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources, R.drawable.ic_drive_cloud)
         val root: String = SuperSafeApplication.getInstance().getSuperSafe()!!
         val myDir = File(root)
         myDir.mkdirs()
         val file = File(myDir, "text.jpg")
         try {
             val out = FileOutputStream(file)
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, out)
             out.flush()
             out.close()
             Utils.Log(TAG, "Created file successfully")
@@ -1123,7 +1124,6 @@ object Utils  {
             Utils.Log(TAG, "Could not create file")
         }
     }
-
 
     fun checkRequestUploadItemData() {
             val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
@@ -1198,7 +1198,7 @@ object Utils  {
             return false
         }
 
-    fun onBasicAlertNotify(context: Activity,title: String? = "Warning",message: String) {
+    fun onBasicAlertNotify(context: Activity, title: String? = "Warning", message: String) {
         Alerter.create(context)
                 .setTitle(title!!)
                 .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
@@ -1206,7 +1206,7 @@ object Utils  {
                 .show()
     }
 
-    fun onAlertNotify(context: Activity,title:String,message: String,listener: UtilsListener){
+    fun onAlertNotify(context: Activity, title: String, message: String, listener: UtilsListener){
         Alerter.create(context)
                 .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
                 .setTitle(title)
