@@ -9,20 +9,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.annotation.LayoutRes
-import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.hiddencamera.*
-import co.tpcreative.supersafe.common.hiddencamera.config.CameraFacing
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
@@ -30,22 +25,16 @@ import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
-import java.io.File
 
-abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, SensorFaceUpDownChangeNotifier.Listener {
+abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     protected var actionBar: ActionBar? = null
     protected var storage: Storage? = null
-    /*Hidden camera*/
-    private var mCameraPreview: CameraPreview? = null
-    private var mCachedCameraConfig: CameraConfig? = null
     var onStartCount = 0
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()
         storage = Storage(this)
-        //Add the camera preview surface to the root of the activity view.
-        mCameraPreview = addPreView()
         if (savedInstanceState == null) {
             Bungee.fade(this)
         } else {
@@ -80,13 +69,11 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
 
     override fun onDestroy() {
         super.onDestroy()
-        stopCamera()
     }
 
     override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
-        stopCamera()
     }
 
     override fun onStop() {
@@ -96,14 +83,6 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
     override fun onResume() {
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         Utils.Log(TAG, "Action here........onResume")
-        if (mCachedCameraConfig != null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                return
-            }
-            startCamera(mCachedCameraConfig)
-        }
         super.onResume()
     }
 
@@ -147,85 +126,6 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), CameraCallbacks, Sen
             SingletonManager.getInstance().setAnimation(true)
         }
     }
-    /*Hidden camera*/
-    /**
-     * Add camera preview to the root of the activity layout.
-     *
-     * @return [CameraPreview] that was added to the view.
-     */
-    private fun addPreView(): CameraPreview? {
-        //create fake camera view
-        val cameraSourceCameraPreview = CameraPreview(this, this)
-        cameraSourceCameraPreview.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        val view: View = (getWindow().getDecorView().getRootView() as ViewGroup).getChildAt(0)
-        if (view is LinearLayout) {
-            val linearLayout: LinearLayout = view as LinearLayout
-            val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(1, 1)
-            linearLayout.addView(cameraSourceCameraPreview, params)
-        } else if (view is RelativeLayout) {
-            val relativeLayout: RelativeLayout = view as RelativeLayout
-            val params: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(1, 1)
-            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE)
-            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-            relativeLayout.addView(cameraSourceCameraPreview, params)
-        } else if (view is FrameLayout) {
-            val frameLayout: FrameLayout = view as FrameLayout
-            val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(1, 1)
-            frameLayout.addView(cameraSourceCameraPreview, params)
-        } else {
-            throw RuntimeException("Root view of the activity/fragment cannot be other than Linear/Relative/Frame layout")
-        }
-        return cameraSourceCameraPreview
-    }
-
-    /**
-     * Start the hidden camera. Make sure that you check for the runtime permissions before you start
-     * the camera.
-     *
-     * @param cameraConfig camera configuration [CameraConfig]
-     */
-    @RequiresPermission(Manifest.permission.CAMERA)
-    protected fun startCamera(cameraConfig: CameraConfig?) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) { //check if the camera permission is available
-            onCameraError(CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE)
-        } else if (cameraConfig?.getFacing() == CameraFacing.FRONT_FACING_CAMERA
-                && !HiddenCameraUtils.isFrontCameraAvailable(this)) {   //Check if for the front camera
-            onCameraError(CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA)
-        } else {
-            mCachedCameraConfig = cameraConfig
-            if (cameraConfig != null) {
-                mCameraPreview?.startCameraInternal(cameraConfig)
-            }
-        }
-    }
-
-    /**
-     * Call this method to capture the image using the camera you initialized. Don't forget to
-     * initialize the camera using [.startCamera] before using this function.
-     */
-    protected fun takePicture() {
-        if (mCameraPreview != null) {
-            if (mCameraPreview?.isSafeToTakePictureInternal()!!) {
-                mCameraPreview?.takePictureInternal()
-            }
-        } else {
-            throw RuntimeException("Background camera not initialized. Call startCamera() to initialize the camera.")
-        }
-    }
-
-    /**
-     * Stop and release the camera forcefully.
-     */
-    protected fun stopCamera() {
-        mCachedCameraConfig = null //Remove config.
-        if (mCameraPreview != null) {
-            mCameraPreview?.stopPreviewAndFreeCamera()
-        }
-    }
-
-    override fun onImageCapture(imageFile: File, pin: String) {}
-    override fun onCameraError(errorCode: Int) {}
 
     companion object {
         val TAG = BaseVerifyPinActivity::class.java.simpleName

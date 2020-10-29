@@ -202,12 +202,16 @@ dependencies {
 
     implementation 'com.tapadoo.android:alerter:6.2.0'
 
+    implementation project(':library-hidden-camera')
+
     /*Kotlin*/
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$kotlin_core_version"
     implementation "androidx.room:room-runtime:$appRoomVersion"
     kapt "androidx.room:room-compiler:$appRoomVersion"
     implementation "androidx.room:room-ktx:$appRoomVersion"
+    /*Duplicate class com.google.common.util.concurrent.ListenableFuture found in modules jetified-guava-20.0 (com.google.guava:guava:20.0) and jetified-listenablefuture-1.0 (com.google.guava:listenablefuture:1.0)*/
+    implementation "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava"
 }
 /*Resolved duplicated for Google api client*/
 

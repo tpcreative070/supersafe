@@ -14,6 +14,9 @@ class BreakInAlertsPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onGetData() {
         val view: BaseView<EmptyModel>? = view()
         mList = SQLHelper.getBreakInAlertsList()
+        mList?.sortByDescending {
+            it.id
+        }
         view?.onSuccessful("Successful", EnumStatus.RELOAD)
         Utils.Log(TAG, "Result :" + Gson().toJson(mList))
     }

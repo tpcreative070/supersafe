@@ -16,6 +16,7 @@ include ':app',
         'bungeelibrary',
         'dialogsuccessprogresslibrary',
         'library-circleprogress',
-        'material-edit-text'
+        'material-edit-text',
+        'library-hidden-camera'
 
 rootProject.name = "supersafe"

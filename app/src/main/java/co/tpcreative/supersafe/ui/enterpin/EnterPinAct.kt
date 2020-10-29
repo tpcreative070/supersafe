@@ -21,35 +21,35 @@ import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.User
 import com.multidots.fingerprintauth.FingerPrintAuthCallback
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.*
 import co.tpcreative.supersafe.common.extension.instantiate
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.hiddencamera.CameraConfig
-import co.tpcreative.supersafe.common.hiddencamera.CameraError
-import co.tpcreative.supersafe.common.hiddencamera.config.*
 import co.tpcreative.supersafe.common.preference.MyPreference
 import co.tpcreative.supersafe.common.preference.MySwitchPreference
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.*
 import co.tpcreative.supersafe.model.BreakInAlertsModel
 import co.tpcreative.supersafe.model.EnumStatus
+import com.cottacush.android.hiddencam.CameraType
+import com.cottacush.android.hiddencam.HiddenCam
+import com.cottacush.android.hiddencam.OnImageCapturedListener
 import com.multidots.fingerprintauth.FingerPrintAuthHelper
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.include_calculator.*
 
-class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener {
+class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator, FingerPrintAuthCallback, SingletonMultipleListener.Listener, SingletonScreenLock.SingletonScreenLockListener , OnImageCapturedListener{
     var count = 0
     var countAttempt = 0
     var isFingerprint = false
     var mFirstPin: String? = ""
-    var mCameraConfig: CameraConfig? = null
     var mFingerPrintAuthHelper: FingerPrintAuthHelper? = null
     var mRealPin: String? = Utils.getPinFromSharedPreferences()
     var mFakePin: String? = Utils.getFakePinFromSharedPreferences()
     var isFakePinEnabled: Boolean = Utils.isEnabledFakePin()
+    var hiddenCam : HiddenCam? = null
+    var mPinAlert = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -163,6 +163,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
             }
         }
         Utils.Log(TAG, "onDestroy")
+        hiddenCam?.destroy()
     }
 
     fun onDelete(view: View?) {
@@ -445,45 +446,23 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
     }
 
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EnumPinAction>?) {}
-    override fun onImageCapture(imageFile: File, pin: String) {
-        super.onImageCapture(imageFile, pin)
-        val inAlerts = BreakInAlertsModel()
-        inAlerts.fileName = imageFile.absolutePath
-        inAlerts.pin = pin
-        inAlerts.time = System.currentTimeMillis()
-        SQLHelper.onInsert(inAlerts)
-    }
 
-    override fun onCameraError(errorCode: Int) {
-        super.onCameraError(errorCode)
-        when (errorCode) {
-            CameraError.ERROR_CAMERA_OPEN_FAILED -> {
-            }
-            CameraError.ERROR_IMAGE_WRITE_FAILED -> {
-            }
-            CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE -> {
-            }
-            CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA -> showMessage(getString(R.string.error_not_having_camera))
-        }
-    }
+
 
     fun onInitHiddenCamera() {
         val value: Boolean = PrefsController.getBoolean(getString(R.string.key_break_in_alert), false)
         if (!value) {
             return
         }
-        mCameraConfig = CameraConfig()
-                .getBuilder(this)
-                ?.setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
-                ?.setCameraResolution(CameraResolution.HIGH_RESOLUTION)
-                ?.setImageFormat(CameraImageFormat.FORMAT_JPEG)
-                ?.setImageRotation(CameraRotation.ROTATION_270)
-                ?.setCameraFocus(CameraFocus.AUTO)
-                ?.build()
+        hiddenCam =  HiddenCam(
+                imageCapturedListener = this,
+                baseFileDirectory = File(SuperSafeApplication.getInstance().getSupersafeBreakInAlerts()),
+                context = this,
+                cameraType = CameraType.FRONT_CAMERA)
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            //Start camera preview
-            startCamera(mCameraConfig)
+            hiddenCam?.start()
         }
     }
 
@@ -492,10 +471,10 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         if (!value) {
             return
         }
-        mCameraConfig?.getBuilder(SuperSafeApplication.getInstance())
-                ?.setPin(pin)
-        mCameraConfig?.getBuilder(SuperSafeApplication.getInstance())?.setImageFile(SuperSafeApplication.getInstance().getDefaultStorageFile(CameraImageFormat.FORMAT_JPEG))
-        takePicture()
+        pin?.let {
+            this.mPinAlert = it
+        }
+        hiddenCam?.captureImage()
     }
 
     /*Calculator action*/
@@ -515,6 +494,18 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
 
     fun numpadClicked(id: Int) {
         mCalc?.numpadClicked(id)
+    }
+
+    override fun onImageCaptured(image: File) {
+        val inAlerts = BreakInAlertsModel()
+        inAlerts.fileName = image.absolutePath
+        inAlerts.pin = mPinAlert
+        inAlerts.time = System.currentTimeMillis()
+        SQLHelper.onInsert(inAlerts)
+    }
+
+    override fun onImageCaptureError(e: Throwable?) {
+        TODO("Not yet implemented")
     }
 
     companion object {

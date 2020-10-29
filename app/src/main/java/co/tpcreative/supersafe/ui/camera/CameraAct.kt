@@ -164,7 +164,6 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
     //        }
     //    };
     companion object {
-        private val TAG = CameraAct::class.java.simpleName
         private val FLASH_OPTIONS: Array<Flash>? = arrayOf<Flash>(
                 Flash.AUTO,
                 Flash.OFF,

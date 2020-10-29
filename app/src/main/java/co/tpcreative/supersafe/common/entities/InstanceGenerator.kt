@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.entitiesimport.ItemsDao
+import co.tpcreative.supersafe.common.entities.ItemsDao
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.BreakInAlertsEntityModel

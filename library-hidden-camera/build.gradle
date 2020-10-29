@@ -1,7 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-
 android {
     compileSdkVersion appCompileSdkVersion
     buildToolsVersion appBuildToolsVersion
@@ -25,19 +23,18 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    sourceSets {
+        main.res.srcDirs = [
+                'src/main/res',
+                'src/main/res-public'
+        ]
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    //implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.core:core-ktx:$kotlin_core_version"
     implementation "androidx.appcompat:appcompat:$appSupportVersion"
-    implementation 'com.afollestad.material-dialogs:core:3.3.0'
+   // implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + versions.kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "androidx.camera:camera-core:$versions_cameraX"
+    implementation "androidx.camera:camera-camera2:$versions_cameraX"
 }
