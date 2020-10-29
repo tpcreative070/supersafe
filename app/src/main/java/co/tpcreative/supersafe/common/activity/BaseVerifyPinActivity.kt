@@ -1,27 +1,23 @@
 package co.tpcreative.supersafe.common.activity
-import android.Manifest
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import co.infinum.goldfinger.Goldfinger
+import co.infinum.goldfinger.Goldfinger.PromptParams
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.SingletonManager
+import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.hiddencamera.*
+import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 import spencerstudios.com.bungeelib.Bungee
@@ -105,7 +101,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
-            R.id.home -> {
+            android.R.id.home -> {
                 finish()
                 return true
             }
@@ -130,4 +126,23 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
     companion object {
         val TAG = BaseVerifyPinActivity::class.java.simpleName
     }
+
+    /*Biometric*/
+    open fun buildPromptParams(): PromptParams? {
+        return PromptParams.Builder(this)
+                .title("Biometric")
+                .description("Authenticate Fingerprint to unlock") /* Device credentials can be used here */ //            .deviceCredentialsAllowed(true)
+                .negativeButtonText("Cancel")
+                .build()
+    }
+
+    open fun handleGoldfingerResult(result: Goldfinger.Result) {
+//        if (result.type() == Goldfinger.Type.SUCCESS || result.type() == Goldfinger.Type.ERROR) {
+//            val formattedResult = String.format("%s - %s", result.type().toString(), result.reason().toString())
+//        }
+        if (result.type() == Goldfinger.Type.SUCCESS){
+            onBiometricSuccessful()
+        }
+    }
+    abstract fun onBiometricSuccessful()
 }

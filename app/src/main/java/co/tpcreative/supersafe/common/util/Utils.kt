@@ -1,15 +1,16 @@
 package co.tpcreative.supersafe.common.util
 import android.Manifest
 import android.app.Activity
+import android.app.KeyguardManager
 import android.content.ContentValues
 import android.content.Context
+import android.content.Context.KEYGUARD_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Point
-import android.hardware.fingerprint.FingerprintManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
@@ -27,11 +28,10 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.app.ActivityCompat
+import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.PermissionChecker
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -569,20 +569,6 @@ object Utils  {
 
         fun getScreenHeight(activity: Context): Int {
             return getScreenSize(activity).y
-        }
-
-        fun isSensorAvailable(): Boolean {
-            try {
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    ActivityCompat.checkSelfPermission(SuperSafeApplication.getInstance(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED &&
-                            SuperSafeApplication.getInstance().getSystemService(FingerprintManager::class.java).isHardwareDetected()
-                } else {
-                    FingerprintManagerCompat.from(SuperSafeApplication.getInstance()).isHardwareDetected()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return false
         }
 
         fun getFontString(content: Int, value: String): String? {
@@ -1219,6 +1205,27 @@ object Utils  {
 //                    listener.onNegative()
 //                })
                 .show()
+    }
+
+    fun isHardwareAvailable(): Boolean{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            val bm = BiometricManager.from(SuperSafeApplication.getInstance())
+            val canAuthenticate = bm.canAuthenticate()
+            !(canAuthenticate == BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE || canAuthenticate == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE)
+
+        } else {
+            false
+        }
+    }
+
+    fun isSensorAvailable(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            val bm = BiometricManager.from(SuperSafeApplication.getInstance())
+            val canAuthenticate = bm.canAuthenticate()
+            (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS)
+        } else {
+            false
+        }
     }
 }
 

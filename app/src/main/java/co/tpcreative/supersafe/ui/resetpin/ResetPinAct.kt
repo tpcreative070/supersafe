@@ -155,4 +155,7 @@ class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEd
     override fun onError(message: String?) {}
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
+
+    override fun onBiometricSuccessful() {
+    }
 }

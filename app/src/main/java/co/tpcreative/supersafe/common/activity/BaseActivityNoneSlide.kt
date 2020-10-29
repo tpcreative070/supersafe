@@ -98,8 +98,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
             override fun onHomePressed() {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (val action = EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         Utils.onHomePressed()
                         onStopListenerAWhile()

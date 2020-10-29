@@ -93,8 +93,7 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
         mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
             override fun onHomePressed() {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (val action = EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         Utils.onHomePressed()
                         onStopListenerAWhile()
@@ -124,7 +123,7 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
-            R.id.home -> {
+            android.R.id.home -> {
                 finish()
                 return true
             }
@@ -135,8 +134,7 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
     override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        val action = EnumPinAction.values()[value]
-        when (action) {
+        when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }

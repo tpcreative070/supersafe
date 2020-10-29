@@ -169,9 +169,6 @@ dependencies {
     /*simplerecyclerviewlibrary*/
     implementation project(':simplerecyclerviewlibrary')
 
-    /*Fingerprint*/
-    implementation project(':fingerprint-auth-library')
-
     /*In app purchase*/
     //implementation project(':checkoutlibrary')
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
@@ -203,6 +200,9 @@ dependencies {
     implementation 'com.tapadoo.android:alerter:6.2.0'
 
     implementation project(':library-hidden-camera')
+
+    /*Finger print*/
+    implementation 'co.infinum:goldfinger:2.0.1'
 
     /*Kotlin*/
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

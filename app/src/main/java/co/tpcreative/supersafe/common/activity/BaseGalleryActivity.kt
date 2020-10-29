@@ -149,8 +149,8 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
-            R.id.home -> {
+        when (item.itemId) {
+            android.R.id.home -> {
                 finish()
                 return true
             }
@@ -161,8 +161,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        val action = EnumPinAction.values()[value]
-        when (action) {
+        when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.Companion.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }

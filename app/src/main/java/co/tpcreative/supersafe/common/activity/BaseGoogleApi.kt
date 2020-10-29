@@ -191,8 +191,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     override fun onStart() {
         super.onStart()
         val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-        val action = EnumPinAction.values()[value]
-        when (action) {
+        when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SCREEN_LOCK -> {
                 if (!SingletonManager.getInstance().isVisitLockScreen()) {
                     SuperSafeApplication.getInstance().getActivity()?.let { Navigator.onMoveToVerifyPin(it, EnumPinAction.NONE) }

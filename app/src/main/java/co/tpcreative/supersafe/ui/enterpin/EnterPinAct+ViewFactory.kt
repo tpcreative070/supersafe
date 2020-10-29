@@ -1,7 +1,7 @@
 package co.tpcreative.supersafe.ui.enterpin
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.view.View
+import co.infinum.goldfinger.Goldfinger
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
@@ -15,7 +15,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
-import com.multidots.fingerprintauth.FingerPrintAuthHelper
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.footer_layout.*
 import kotlinx.android.synthetic.main.include_calculator.*
@@ -90,10 +89,14 @@ fun EnterPinAct.initUI(){
         false
     }
     if (Utils.isSensorAvailable()) {
-        mFingerPrintAuthHelper = FingerPrintAuthHelper.getHelper(this, this)
+        val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+        if (isFingerPrintUnLock) {
+            initBiometric()
+        }
     }
     onInitPin()
-    /*Calculator init*/EnterPinAct.mCalc = CalculatorImpl(this)
+    /*Calculator init*/
+    EnterPinAct.mCalc = CalculatorImpl(this)
     AutofitHelper.create(tvResult)
     AutofitHelper.create(tvFormula)
     Utils.Log(TAG, "onCreated->EnterPinActivity")
@@ -192,6 +195,12 @@ fun EnterPinAct.initUI(){
         }
         onSetVisitFingerprintView(isFingerprint)
     }
+    imgFingerprint.setOnClickListener {
+        val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
+        if (isFingerPrintUnLock) {
+            startBiometricPrompt()
+        }
+    }
 }
 
 
@@ -206,9 +215,11 @@ fun EnterPinAct.onRestore() {
                 EnterPinAct.presenter?.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
             }
         }
+
         override fun onError() {
             Utils.Log(TAG, "Exporting error")
         }
+
         override fun onCancel() {}
     })
 }
@@ -362,18 +373,18 @@ fun EnterPinAct.changeLayoutSecretDoor(isVisit: Boolean) {
         tvTopAttempts.text = ""
         imgLauncher?.visibility = View.INVISIBLE
         rlSecretDoor?.visibility = View.INVISIBLE
-        calculator_holder?.setVisibility(View.INVISIBLE)
+        calculator_holder?.visibility = View.INVISIBLE
         if (Utils.isSensorAvailable()) {
             val isFingerPrintUnLock: Boolean = PrefsController.getBoolean(getString(R.string.key_fingerprint_unlock), false)
             if (isFingerPrintUnLock) {
-                imgSwitchTypeUnClock?.setVisibility(View.VISIBLE)
+                imgSwitchTypeUnClock?.visibility = View.VISIBLE
                 isFingerprint = isFingerPrintUnLock
                 onSetVisitFingerprintView(isFingerprint)
             } else {
-                imgSwitchTypeUnClock?.setVisibility(View.GONE)
+                imgSwitchTypeUnClock?.visibility = View.GONE
             }
         } else {
-            imgSwitchTypeUnClock?.setVisibility(View.GONE)
+            imgSwitchTypeUnClock?.visibility = View.GONE
         }
     }
 }
@@ -563,6 +574,24 @@ fun EnterPinAct.setPin(pin: String?) {
                 }
             }
         }
+    }
+}
+
+fun EnterPinAct.initBiometric(){
+    goldfinger = Goldfinger.Builder(this)
+            .logEnabled(true)
+            .build()
+    startBiometricPrompt()
+}
+
+fun EnterPinAct.startBiometricPrompt(){
+    if (goldfinger!!.canAuthenticate()){
+        goldfinger!!.authenticate(buildPromptParams()!!, object : Goldfinger.Callback {
+            override fun onError(e: Exception) {}
+            override fun onResult(result: Goldfinger.Result) {
+                handleGoldfingerResult(result)
+            }
+        })
     }
 }
 
