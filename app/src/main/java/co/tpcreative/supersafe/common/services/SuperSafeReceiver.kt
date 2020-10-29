@@ -24,8 +24,8 @@ class SuperSafeReceiver : BroadcastReceiver() {
     }
 
     interface ConnectivityReceiverListener {
-        open fun onNetworkConnectionChanged(isConnected: Boolean)
-        open fun onActionScreenOff()
+        fun onNetworkConnectionChanged(isConnected: Boolean)
+        fun onActionScreenOff()
     }
 
     companion object {

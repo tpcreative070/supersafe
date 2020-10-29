@@ -3,7 +3,6 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
@@ -55,7 +54,6 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
 
     override fun setContentView(@LayoutRes layoutResID: Int) {
         super.setContentView(layoutResID)
-        Log.d(TAG, "action here")
     }
 
     override fun onStop() {

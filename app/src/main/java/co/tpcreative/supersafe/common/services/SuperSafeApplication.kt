@@ -8,7 +8,6 @@ import android.content.ContextWrapper
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.Settings
 import androidx.core.content.PermissionChecker
 import androidx.multidex.MultiDex
@@ -92,6 +91,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
                 .setEncryptContent(SecurityUtil.IVX, SecurityUtil.SECRET_KEY, SecurityUtil.SALT)
                 .build()
         storage = Storage(this)
+
         //supersafe = getExternalFilesDir(null)?.absolutePath + "/SuperSafe_DoNot_Delete/"
         supersafe = storage.externalStorageDirectory + "/SuperSafe_DoNot_Delete/"
         key = ".encrypt_key"

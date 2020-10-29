@@ -42,7 +42,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
                 camera?.flash = FLASH_OPTIONS?.get(mCurrentFlash)
             }
             R.id.btnSwitch -> if (camera != null) {
-                val facing: Facing = camera?.getFacing()!!
+                val facing: Facing = camera?.facing!!
                 if (facing == Facing.FRONT) {
                     camera?.facing = Facing.BACK
                 } else {
@@ -98,7 +98,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
         EventBus.getDefault().unregister(this)
     }
 
-    protected override fun onStopListenerAWhile() {
+    override fun onStopListenerAWhile() {
         EventBus.getDefault().unregister(this)
     }
 

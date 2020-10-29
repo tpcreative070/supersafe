@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.activity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBar

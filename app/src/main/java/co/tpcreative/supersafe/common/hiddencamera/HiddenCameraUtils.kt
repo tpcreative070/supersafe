@@ -95,9 +95,9 @@ object HiddenCameraUtils {
         //Decide the image format
         val compressFormat: Bitmap.CompressFormat
         compressFormat = when (imageFormat) {
-            CameraImageFormat.Companion.FORMAT_JPEG -> Bitmap.CompressFormat.JPEG
-            CameraImageFormat.Companion.FORMAT_WEBP -> Bitmap.CompressFormat.WEBP
-            CameraImageFormat.Companion.FORMAT_PNG -> Bitmap.CompressFormat.PNG
+            CameraImageFormat.FORMAT_JPEG -> Bitmap.CompressFormat.JPEG
+            CameraImageFormat.FORMAT_WEBP -> Bitmap.CompressFormat.WEBP
+            CameraImageFormat.FORMAT_PNG -> Bitmap.CompressFormat.PNG
             else -> Bitmap.CompressFormat.PNG
         }
         try {
