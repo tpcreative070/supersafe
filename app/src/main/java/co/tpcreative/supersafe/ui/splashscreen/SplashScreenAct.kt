@@ -63,7 +63,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                     if (isRunning) {
                         if ("" != value) {
                             PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
-                            Navigator.onMoveToMainTab(this@SplashScreenAct)
+                            Navigator.onMoveToMainTab(this@SplashScreenAct,false)
                         } else {
                             SuperSafeApplication.getInstance().deleteFolder()
                             SuperSafeApplication.getInstance().initFolder()

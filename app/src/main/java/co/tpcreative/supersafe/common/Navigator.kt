@@ -74,10 +74,12 @@ object Navigator {
     val INTENT_EXTRA_LIMIT: String? = "limit"
     const val DEFAULT_LIMIT = 20
     var limit = 0
-    fun onMoveToMainTab(context: Context?) {
+    fun onMoveToMainTab(context: Context?,isClear : Boolean) {
         val intent = Intent(context, MainTabAct::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (isClear){
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         context?.startActivity(intent)
     }
 

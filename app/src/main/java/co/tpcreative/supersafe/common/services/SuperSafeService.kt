@@ -741,14 +741,14 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         if (mType == EnumFormatType.IMAGE) {
             if (Utils.getSaverSpace()) {
                 itemModel.isSaver = true
-                Utils.checkSaverToDelete(itemModel.originalPath, isOriginalGlobalId)
+                Utils.checkSaverToDelete(itemModel.getOriginal(), isOriginalGlobalId)
             }
         }
     }
 
     /*Check imported data after sync data*/
     fun checkImportedDataBeforeSyncData(itemModel: ItemModel) {
-        val categoryModel: MainCategoryModel? = SQLHelper.getCategoriesLocalId(itemModel?.categories_local_id)
+        val categoryModel: MainCategoryModel? = SQLHelper.getCategoriesLocalId(itemModel.categories_local_id)
         Utils.Log(TAG, "checkImportedDataBeforeSyncData " + Gson().toJson(categoryModel))
         if (categoryModel != null) {
             if (!Utils.isNotEmptyOrNull(itemModel.categories_id)) {
@@ -1028,7 +1028,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             listener?.onError("Error upload", EnumStatus.REQUEST_NEXT_DOWNLOAD)
             return
         }
-        items.originalPath = Utils.getOriginalPath(items.originalName, items.items_id)
+        items.setOriginal(Utils.getOriginalPath(items.originalName, items.items_id))
         request.path_folder_output = Utils.createDestinationDownloadItem(items.items_id)
         downloadService?.onProgressingDownload(object : DownloadService.DownLoadServiceListener {
             override fun onDownLoadCompleted(file_name: File?, request: DownloadFileRequest?) {
@@ -1141,10 +1141,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         var file: File? = null
         if (items.isOriginalGlobalId) {
             contentEvent.fileType = EnumFileType.ORIGINAL.ordinal
-            file = File(items.originalPath)
+            file = File(items.getOriginal())
         } else {
             contentEvent.fileType = EnumFileType.THUMBNAIL.ordinal
-            file = File(items.thumbnailPath)
+            file = File(items.getThumbnail())
         }
         if (!storage!!.isFileExist(file.absolutePath)) {
             SQLHelper.deleteItem(items)
@@ -1210,7 +1210,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         val access_token = user.access_token
         Utils.Log(TAG, "access_token : $access_token")
         view?.onSuccessful(access_token)
-        SuperSafeApplication?.serverDriveApi?.onGetDriveAbout(access_token)
+        SuperSafeApplication.serverDriveApi?.onGetDriveAbout(access_token)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe({ m: Disposable? -> view?.onStartLoading(EnumStatus.GET_DRIVE_ABOUT) })

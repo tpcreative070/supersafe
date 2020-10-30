@@ -54,8 +54,8 @@ class ItemEntityModel {
         global_thumbnail_id = items.global_thumbnail_id
         categories_id = items.categories_id
         categories_local_id = items.categories_local_id
-        originalPath = items.originalPath
-        thumbnailPath = items.thumbnailPath
+        originalPath = items.getOriginal()
+        thumbnailPath = items.getThumbnail()
         mimeType = items.mimeType
         fileExtension = items.fileExtension
         statusAction = items.statusAction

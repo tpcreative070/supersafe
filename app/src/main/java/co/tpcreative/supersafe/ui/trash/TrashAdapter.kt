@@ -62,7 +62,7 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
                 imgSelect?.visibility = View.INVISIBLE
             }
             try {
-                val path: String? = data.thumbnailPath
+                val path: String? = data.getThumbnail()
                 storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {

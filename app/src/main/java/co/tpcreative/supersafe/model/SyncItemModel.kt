@@ -51,8 +51,8 @@ class SyncItemModel(itemModel: ItemModel, isOriginalGlobalId: Boolean) : Seriali
         categories_local_id = itemModel.categories_local_id
         categories_id = itemModel.categories_id
         formatType = itemModel.formatType
-        thumbnailPath = itemModel.thumbnailPath
-        originalPath = itemModel.originalPath
+        thumbnailPath = itemModel.getThumbnail()
+        originalPath = itemModel.getOriginal()
         mimeType = itemModel.mimeType
         fileExtension = itemModel.fileExtension
         statusAction = itemModel.statusAction

@@ -145,7 +145,8 @@ class SignUpAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: User?) {
         when (status) {
             EnumStatus.SIGN_UP -> {
-                Navigator.onMoveToMainTab(this)
+                Navigator.onMoveToMainTab(this,false)
+                finish()
             }
         }
     }

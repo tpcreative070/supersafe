@@ -74,9 +74,9 @@ class MoveGalleryAdapter(inflater: LayoutInflater, private val mContext: Context
                     }
                     else -> {
                         try {
-                            if (storage?.isFileExist("" + items.thumbnailPath)!!) {
+                            if (storage?.isFileExist("" + items.getThumbnail())!!) {
                                 Glide.with(mContext!!)
-                                        .load(storage.readFile(items.thumbnailPath))
+                                        .load(storage.readFile(items.getThumbnail()))
                                         .apply(options!!)
                                         .into(imgAlbum!!)
                             } else {

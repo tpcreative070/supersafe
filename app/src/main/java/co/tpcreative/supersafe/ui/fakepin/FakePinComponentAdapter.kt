@@ -69,9 +69,9 @@ class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, item
                     }
                     else -> {
                         try {
-                            if (storage?.isFileExist("" + items.thumbnailPath)!!) {
+                            if (storage?.isFileExist("" + items.getThumbnail())!!) {
                                 Glide.with(context!!)
-                                        .load(storage.readFile(items.thumbnailPath))
+                                        .load(storage.readFile(items.getThumbnail()))
                                         .apply(options!!)
                                         .into(imgAlbum!!)
                                 imgIcon?.visibility =View.INVISIBLE

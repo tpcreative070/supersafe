@@ -137,7 +137,7 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
     override fun onSuccessful(message: String?, status: EnumStatus?) {
         when (status) {
             EnumStatus.PLAY -> {
-                mEncryptedFile = File(presenter?.mItems?.originalPath)
+                mEncryptedFile = File(presenter?.mItems?.getOriginal())
                 Utils.Log(TAG, mEncryptedFile!!.getAbsolutePath())
                 if (mCipher == null) {
                     Utils.Log(TAG, " mcipher is null")

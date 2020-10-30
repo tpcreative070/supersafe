@@ -57,8 +57,8 @@ class SyncItemsRequest : Serializable {
         originalName = items.originalName
         thumbnailName = items.thumbnailName
         formatType = items.formatType
-        thumbnailPath = items.thumbnailPath
-        originalPath = items.originalPath
+        thumbnailPath = items.getThumbnail()
+        originalPath = items.getOriginal()
         fileExtension = items.fileExtension
         statusAction = items.statusAction
         degrees = items.degrees

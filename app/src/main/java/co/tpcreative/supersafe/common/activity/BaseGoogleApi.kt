@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator

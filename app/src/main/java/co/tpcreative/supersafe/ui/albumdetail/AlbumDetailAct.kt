@@ -525,7 +525,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                                 items.isSaver = isSaver
                                 SQLHelper.updatedItem(items)
                                 if (isSaver) {
-                                    storage?.deleteFile(items.originalPath)
+                                    storage?.deleteFile(items.getOriginal())
                                 }
                             }
                         }

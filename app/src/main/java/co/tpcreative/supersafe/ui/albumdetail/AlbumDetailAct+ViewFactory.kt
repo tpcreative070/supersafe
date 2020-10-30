@@ -72,10 +72,10 @@ fun AlbumDetailAct.initUI(){
                 }
             }
             else -> {
-                if (storage?.isFileExist(items.thumbnailPath)!!) {
+                if (storage?.isFileExist(items.getThumbnail())!!) {
                     backdrop?.rotation = items.degrees.toFloat()
                     Glide.with(this)
-                            .load(storage?.readFile(items.thumbnailPath))
+                            .load(storage?.readFile(items.getThumbnail()))
                             .apply(options!!)
                             .into(backdrop!!)
                 } else {
@@ -235,7 +235,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                     val formatType = EnumFormatType.values()[index.formatType]
                                     when (formatType) {
                                         EnumFormatType.AUDIO -> {
-                                            val input = File(index.originalPath)
+                                            val input = File(index.getOriginal())
                                             var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
                                                 output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
@@ -249,7 +249,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                             }
                                         }
                                         EnumFormatType.FILES -> {
-                                            val input = File(index.originalPath)
+                                            val input = File(index.getOriginal())
                                             var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
                                                 output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
@@ -263,7 +263,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                             }
                                         }
                                         EnumFormatType.VIDEO -> {
-                                            val input = File(index.originalPath)
+                                            val input = File(index.getOriginal())
                                             var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
                                             if (storage?.isFileExist(output?.getAbsolutePath())!!) {
                                                 output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
@@ -279,9 +279,9 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                         else -> {
                                             var path = ""
                                             path = if (index.mimeType == getString(R.string.key_gif)) {
-                                                index.originalPath!!
+                                                index.getOriginal()!!
                                             } else {
-                                                index.thumbnailPath!!
+                                                index.getThumbnail()!!
                                             }
                                             val input = File(path)
                                             var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
@@ -315,7 +315,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                 val formatType = EnumFormatType.values()[index.formatType]
                                 when (formatType) {
                                     EnumFormatType.AUDIO -> {
-                                        val input = File(index.originalPath)
+                                        val input = File(index.getOriginal())
                                         Utils.Log(TAG, "Name :" + index.originalName)
                                         var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
                                         if (storage?.isFileExist(output?.getAbsolutePath())!!) {
@@ -330,7 +330,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                         }
                                     }
                                     EnumFormatType.FILES -> {
-                                        val input = File(index.originalPath)
+                                        val input = File(index.getOriginal())
                                         Utils.Log(TAG, "Name :" + index.originalName)
                                         var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
                                         if (storage?.isFileExist(output?.getAbsolutePath())!!) {
@@ -345,7 +345,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                         }
                                     }
                                     EnumFormatType.VIDEO -> {
-                                        val input = File(index.originalPath)
+                                        val input = File(index.getOriginal())
                                         var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
                                         if (storage?.isFileExist(output?.getAbsolutePath())!!) {
                                             output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
@@ -359,7 +359,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                         }
                                     }
                                     else -> {
-                                        val input = File(index.originalPath)
+                                        val input = File(index.getOriginal())
                                         var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
                                         if (storage?.isFileExist(output?.absolutePath)!!) {
                                             output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)

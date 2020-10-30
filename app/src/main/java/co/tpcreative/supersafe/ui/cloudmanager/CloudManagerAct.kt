@@ -172,7 +172,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
                     val formatType = EnumFormatType.values()[index.formatType]
                     when (formatType) {
                         EnumFormatType.IMAGE -> {
-                            storage?.deleteFile(index.originalPath)
+                            storage?.deleteFile(index.getOriginal())
                         }
                     }
                 }

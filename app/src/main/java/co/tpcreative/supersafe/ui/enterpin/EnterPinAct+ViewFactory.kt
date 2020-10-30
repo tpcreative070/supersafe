@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.include_calculator.*
 import me.grantland.widget.AutofitHelper
 
 fun EnterPinAct.initUI(){
+    TAG = this::class.java.simpleName
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(false)
     EnterPinAct.presenter = LockScreenPresenter()
@@ -211,7 +212,7 @@ fun EnterPinAct.onRestore() {
             val mUser: User? = SuperSafeApplication.getInstance().readUseSecret()
             if (mUser != null) {
                 Utils.setUserPreShare(mUser)
-                Navigator.onMoveToMainTab(this@onRestore)
+                Navigator.onMoveToMainTab(this@onRestore,true)
                 EnterPinAct.presenter?.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
             }
         }
@@ -502,7 +503,7 @@ fun EnterPinAct.setPin(pin: String?) {
                             Navigator.onMoveToSignUp(this)
                         }
                         else -> {
-                            Navigator.onMoveToMainTab(this)
+                            Navigator.onMoveToMainTab(this,true)
                             EnterPinAct.presenter?.onChangeStatus(EnumStatus.SET, EnumPinAction.DONE)
                         }
                     }
@@ -564,7 +565,7 @@ fun EnterPinAct.setPin(pin: String?) {
                             }
                             else -> {
                                 Utils.writePinToSharedPreferences(pin)
-                                Navigator.onMoveToMainTab(this)
+                                Navigator.onMoveToMainTab(this,true)
                                 EnterPinAct.presenter?.onChangeStatus(EnumStatus.RESET, EnumPinAction.DONE)
                             }
                         }

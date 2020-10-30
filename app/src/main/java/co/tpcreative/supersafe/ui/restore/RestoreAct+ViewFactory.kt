@@ -60,7 +60,8 @@ fun RestoreAct.onRestore() {
                 subscriber?.onComplete()
                 Utils.Log(TAG, "Exporting successful")
                 Utils.setUserPreShare(presenter?.mUser)
-                Navigator.onMoveToMainTab(this@onRestore)
+                Navigator.onMoveToMainTab(this@onRestore,false)
+                finish()
             }
 
             override fun onError() {

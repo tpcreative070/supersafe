@@ -236,12 +236,12 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                 }
             })
             try {
-                val path: String? = mItems.thumbnailPath
+                val path: String? = mItems.getThumbnail()
                 val file = File("" + path)
                 if (file.exists() || file.isFile) {
                     photoView?.setRotation(mItems.degrees.toFloat())
                     if (mItems.mimeType == getString(R.string.key_gif)) {
-                        val mOriginal: String? = mItems.originalPath
+                        val mOriginal: String? = mItems.getOriginal()
                         val mFileOriginal = File("" + mOriginal)
                         if (mFileOriginal.exists() || mFileOriginal.isFile) {
                             Glide.with(context!!)

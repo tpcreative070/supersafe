@@ -74,7 +74,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                 imgSelect?.visibility = View.INVISIBLE
             }
             try {
-                var path: String? = data.geThumbnail()
+                var path: String? = data.getThumbnail()
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam?.visibility = View.VISIBLE

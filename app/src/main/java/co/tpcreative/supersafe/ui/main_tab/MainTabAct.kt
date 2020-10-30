@@ -177,7 +177,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             Navigator.COMPLETED_RECREATE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     SingletonManager.getInstance().setReloadMainTab(true)
-                    Navigator.onMoveToMainTab(this)
+                    Navigator.onMoveToMainTab(this,true)
                     Utils.Log(TAG, "New Activity")
                 } else {
                     Utils.Log(TAG, "Nothing Updated theme")

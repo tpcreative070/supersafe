@@ -168,10 +168,10 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                                 }
                                 else -> {
                                     try {
-                                        if (storage?.isFileExist("" + items.thumbnailPath)!!) {
+                                        if (storage?.isFileExist("" + items.getThumbnail())!!) {
                                             mAlbumCover?.imageViewCover?.setRotation(items.degrees.toFloat())
                                             Glide.with(context!!)
-                                                    .load(storage!!.readFile(items.thumbnailPath))
+                                                    .load(storage!!.readFile(items.getThumbnail()))
                                                     .apply(options)
                                                     .into(mAlbumCover?.imageViewCover!!)
                                             mAlbumCover?.imgViewSuperSafe?.setVisibility(View.INVISIBLE)

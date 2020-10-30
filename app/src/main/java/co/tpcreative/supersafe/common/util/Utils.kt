@@ -1,10 +1,8 @@
 package co.tpcreative.supersafe.common.util
 import android.Manifest
 import android.app.Activity
-import android.app.KeyguardManager
 import android.content.ContentValues
 import android.content.Context
-import android.content.Context.KEYGUARD_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
@@ -1184,6 +1182,11 @@ object Utils  {
             return false
         }
 
+    fun isConnectedToGoogleDrive(): Boolean {
+        val mAuthor: User? = getUserInfo()
+        return mAuthor?.driveConnected ?: false
+    }
+
     fun onBasicAlertNotify(context: Activity, title: String? = "Warning", message: String) {
         Alerter.create(context)
                 .setTitle(title!!)
@@ -1229,11 +1232,11 @@ object Utils  {
     }
 
     fun  getPositionTheme() : Int{
-        return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme),0)
+        return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), 0)
     }
 
-    fun setPositionTheme(positionTheme : Int){
-        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme),positionTheme)
+    fun setPositionTheme(positionTheme: Int){
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), positionTheme)
     }
 
 }

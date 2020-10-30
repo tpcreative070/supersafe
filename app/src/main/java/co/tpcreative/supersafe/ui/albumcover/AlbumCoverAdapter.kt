@@ -85,10 +85,10 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
                     }
                     else -> {
                         try {
-                            if (storage?.isFileExist("" + items?.thumbnailPath)!!) {
+                            if (storage?.isFileExist("" + items?.getThumbnail())!!) {
                                 items?.degrees?.toFloat()?.let { imgAlbum?.setRotation(it) }
                                 Glide.with(context!!)
-                                        .load(storage.readFile(items?.thumbnailPath))
+                                        .load(storage.readFile(items?.getThumbnail()))
                                         .apply(options!!)
                                         .into(imgAlbum!!)
                                 imgIcon?.visibility = View.INVISIBLE

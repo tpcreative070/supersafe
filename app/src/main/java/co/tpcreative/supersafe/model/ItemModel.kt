@@ -15,8 +15,9 @@ class ItemModel : Serializable {
     var categories_local_id: String? = null
     var categories_id: String? = null
     var formatType = 0
-    var thumbnailPath: String? = null
-    var originalPath: String? = null
+    /*Migration folder- Android 11*/
+    private var thumbnailPath: String? = null
+    private var originalPath: String? = null
     var mimeType: String? = null
     var fileExtension: String? = null
     var statusAction = 0
@@ -330,12 +331,26 @@ class ItemModel : Serializable {
     }
 
     /*Get dynamic path of thumbnail*/
-    fun geThumbnail() : String{
+    fun getThumbnail() : String{
+        if ((SuperSafeApplication.getInstance().getStorage()?.isFileExist(thumbnailPath)!!)){
+            return this.thumbnailPath!!
+        }
         return SuperSafeApplication.getInstance().getSupersafePrivate()+ "/"+ items_id +"/"+thumbnailName
+    }
+
+    fun setThumbnail(path : String?){
+        this.thumbnailPath = path
     }
 
     /*Get dynamic path of original*/
     fun getOriginal() : String{
+        if ((SuperSafeApplication.getInstance().getStorage()?.isFileExist(originalPath)!!)){
+            return this.originalPath!!
+        }
         return SuperSafeApplication.getInstance().getSupersafePrivate()+ "/"+ items_id +"/"+originalName
+    }
+
+    fun setOriginal(path : String?){
+        this.originalPath = path
     }
 }

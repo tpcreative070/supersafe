@@ -35,7 +35,7 @@ fun CameraAct.iniUI(){
     btnAutoFocus.setOnClickListener {
         if (camera != null) {
             if (camera?.getGrid() == Grid.OFF) {
-                btnAutoFocus?.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN)
+                btnAutoFocus?.setColorFilter(ContextCompat.getColor(this,R.color.white), PorterDuff.Mode.SRC_IN)
                 camera?.grid = Grid.DRAW_3X3
             } else {
                 btnAutoFocus?.setColorFilter(ContextCompat.getColor(this,themeApp?.getAccentColor()!!), PorterDuff.Mode.SRC_IN)

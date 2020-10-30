@@ -115,6 +115,15 @@ class ServiceManager : BaseServiceView<Any?> {
             return
         }
         Utils.Log(TAG, "onPreparingSyncData...???")
+        if (Utils.getAccessToken()==null){
+            Utils.Log(TAG, "Need to sign in with Google drive first")
+            return
+        }
+        if (!Utils.isConnectedToGoogleDrive()){
+            Utils.Log(TAG, "Need to connect to Google drive")
+            RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
+            return
+        }
         if (!Utils.isAllowSyncData()) {
             Utils.Log(TAG, "onPreparingSyncData is unauthorized $isDownloadData")
             Utils.onWriteLog(EnumStatus.AUTHOR_SYNC, EnumStatus.AUTHOR_SYNC, "onPreparingSyncData is unauthorized")
@@ -186,14 +195,16 @@ class ServiceManager : BaseServiceView<Any?> {
             /*Stop multiple request*/isHandleLogic = true
             myService?.onGetListSync(next, object : BaseListener<ItemModel> {
                 override fun onShowListObjects(list: MutableList<ItemModel>) {
-                   list?.let {
-                       mDownloadList.addAll(it)
-                   }
+                    list?.let {
+                        mDownloadList.addAll(it)
+                    }
                 }
+
                 override fun onShowObjects(`object`: ItemModel) {}
                 override fun onError(message: String?, status: EnumStatus) {
                     isGetItemList = false
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     if (status == EnumStatus.LOAD_MORE) {
                         isGetItemList = true
@@ -240,6 +251,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus) {
                     isSyncCategory = false
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     isSyncCategory = false
                     if (Utils.deletedIndexOfCategoryHashMap(categoryModel, mMapSyncCategory)) {
@@ -288,6 +300,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus) {
                     isUpdateCategoryData = false
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateCategoryData = false
                     if (Utils.deletedIndexOfCategoryHashMap(itemModel, mMapUpdateCategory)) {
@@ -341,6 +354,7 @@ class ServiceManager : BaseServiceView<Any?> {
             override fun onError(message: String?, status: EnumStatus) {
                 isDeleteCategoryData = false
             }
+
             override fun onSuccessful(message: String?, status: EnumStatus) {
                 if (Utils.deletedIndexOfCategoryHashMap(mainCategoryModel, mMapDeleteCategory)) {
                     /*Delete local db and folder name*/
@@ -504,6 +518,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         mStart += 20
                     }
                 }
+
                 override fun onFinish() {}
                 override fun onResponseData(response: DriveResponse) {
                     response.id?.let {
@@ -600,6 +615,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapUpdateItem)) {
@@ -660,7 +676,9 @@ class ServiceManager : BaseServiceView<Any?> {
         myService?.onDeleteCloudItems(itemModel, object : BaseListener<EmptyModel> {
             override fun onShowListObjects(list: MutableList<EmptyModel>) {}
             override fun onShowObjects(`object`: EmptyModel) {}
-            override fun onError(message: String?, status: EnumStatus) {}
+            override fun onError(message: String?, status: EnumStatus) {
+                isDeleteItemData = false
+            }
             override fun onSuccessful(message: String?, status: EnumStatus) {
                 /*Request delete item from system*/
                 myService?.onDeleteOwnSystem(itemModel, object : BaseListener<EmptyModel> {
@@ -669,6 +687,7 @@ class ServiceManager : BaseServiceView<Any?> {
                     override fun onError(message: String?, status: EnumStatus) {
                         isDeleteItemData = false
                     }
+
                     override fun onSuccessful(message: String?, status: EnumStatus) {
                         if (Utils.deletedIndexOfHashMap(itemModel, mMapDeleteItem)) {
                             /*Delete local db and folder name*/
@@ -941,28 +960,28 @@ class ServiceManager : BaseServiceView<Any?> {
                     val mResponse: ResponseRXJava? = response as ResponseRXJava?
                     try {
                         if (mResponse?.isWorking!!) {
-                            mResponse.items?.let {items ->
+                            mResponse.items?.let { items ->
                                 var mb: Long
                                 when (val enumFormatType = EnumFormatType.values()[items.formatType]) {
                                     EnumFormatType.AUDIO -> {
-                                        if (storage?.isFileExist(items.originalPath)!!) {
-                                            mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
+                                        if (storage?.isFileExist(items.getOriginal())!!) {
+                                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
                                             items.size = "" + mb
                                             SQLHelper.insertedItem(items)
                                         }
                                     }
                                     EnumFormatType.FILES -> {
-                                        if (storage?.isFileExist(items.originalPath)!!) {
-                                            mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
+                                        if (storage?.isFileExist(items.getOriginal())!!) {
+                                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
                                             items.size = "" + mb
                                             SQLHelper.insertedItem(items)
                                         }
                                     }
                                     else -> {
-                                        if (storage?.isFileExist(items.originalPath)!! && storage.isFileExist(items.thumbnailPath)!!) {
-                                            mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
-                                            if (storage.isFileExist(items.thumbnailPath)) {
-                                                mb += +storage.getSize(File(items.thumbnailPath), SizeUnit.B).toLong()
+                                        if (storage?.isFileExist(items.getOriginal())!! && storage.isFileExist(items.getThumbnail())) {
+                                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
+                                            if (storage.isFileExist(items.getThumbnail())) {
+                                                mb += +storage.getSize(File(items.getThumbnail()), SizeUnit.B).toLong()
                                             }
                                             items.size = "" + mb
                                             SQLHelper.insertedItem(items)
@@ -1184,7 +1203,7 @@ class ServiceManager : BaseServiceView<Any?> {
         subscriptions = Observable.create<Any?> { subscriber: ObservableEmitter<Any?>? ->
             val mMainCategories: MainCategoryModel? = mainCategories
             val mCategoriesId: String = mMainCategories?.categories_id as String
-            val mCategoriesLocalId: String = mMainCategories?.categories_local_id as String
+            val mCategoriesLocalId: String = mMainCategories.categories_local_id as String
             val isFakePin: Boolean = mMainCategories.isFakePin
             try {
                 val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
@@ -1230,12 +1249,14 @@ class ServiceManager : BaseServiceView<Any?> {
                             subscriber?.onComplete()
                         }
                     }
+
                     override fun onFailed() {
                         val response = ResponseRXJava()
                         response.isWorking = false
                         subscriber?.onNext(response)
                         subscriber?.onComplete()
                     }
+
                     override fun onSuccessful(position: Int) {}
                 })
             } catch (e: Exception) {
@@ -1258,10 +1279,10 @@ class ServiceManager : BaseServiceView<Any?> {
                         if (mResponse?.isWorking!!) {
                             val mItem: ItemModel = mResponse.items as ItemModel
                             var mb: Long
-                            if (storage?.isFileExist(mItem.originalPath)!! && storage?.isFileExist(mItem.thumbnailPath)) {
-                                mb = +storage.getSize(File(mItem.originalPath), SizeUnit.B).toLong()
-                                if (storage.isFileExist(mItem.thumbnailPath)) {
-                                    mb += +storage.getSize(File(mItem.thumbnailPath), SizeUnit.B).toLong()
+                            if (storage?.isFileExist(mItem.getOriginal())!! && storage.isFileExist(mItem.getThumbnail())) {
+                                mb = +storage.getSize(File(mItem.getOriginal()), SizeUnit.B).toLong()
+                                if (storage.isFileExist(mItem.getThumbnail())) {
+                                    mb += +storage.getSize(File(mItem.getThumbnail()), SizeUnit.B).toLong()
                                 }
                                 mItem.size = "" + mb
                                 SQLHelper.insertedItem(mItem)
@@ -1418,13 +1439,13 @@ class ServiceManager : BaseServiceView<Any?> {
                 onPreparingSyncData()
                 val mUser: User? = Utils.getUserInfo()
                 mUser?.let {
-                    if (it.isWaitingSendMail){
+                    if (it.isWaitingSendMail) {
                         getInstance()?.onSendEmail()
                     }
                 }
             }
             EnumStatus.UPDATE_USER_TOKEN -> {
-               onPreparingSyncData()
+                onPreparingSyncData()
             }
         }
     }

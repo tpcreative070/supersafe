@@ -80,7 +80,7 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
                 alpha?.alpha = 0.0f
             }
             try {
-                val path: String? = data.thumbnailPath
+                val path: String? = data.getThumbnail()
                 val formatTypeFile = EnumFormatType.values()[data.formatType]
                 tvTitle?.text = data.title
                 val value: String? = data.size?.toLong()?.let { ConvertUtils.byte2FitMemorySize(it) }
