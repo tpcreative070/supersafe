@@ -69,6 +69,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
             if (data.isChecked) {
                 view_alpha?.alpha = 0.5f
                 imgSelect?.visibility = View.VISIBLE
+                Utils.Log(TAG,"VISIBLE")
             } else {
                 view_alpha?.alpha = 0.0f
                 imgSelect?.visibility = View.INVISIBLE

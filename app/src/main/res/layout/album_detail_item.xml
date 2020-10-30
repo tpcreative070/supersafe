@@ -18,8 +18,9 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:src="@drawable/image_background_audio_video" />
-            <View
+            <co.tpcreative.supersafe.common.views.SquaredView
                 android:id="@+id/view_alpha"
+                android:layout_centerInParent="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorButton"/>
@@ -49,8 +50,6 @@
                 android:layout_width="@dimen/image_size_video_cam"
                 android:layout_height="@dimen/image_size_video_cam"/>
             <RelativeLayout
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
@@ -58,7 +57,8 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_centerInParent="true"
                     android:id="@+id/imgCheck"
-                    android:visibility="invisible"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
                     app:srcCompat="@drawable/baseline_check_circle_white_48"
                     android:layout_width="@dimen/image_size_video_cam"
                     android:layout_height="@dimen/image_size_video_cam"/>

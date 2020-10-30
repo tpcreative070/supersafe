@@ -18,7 +18,8 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:src="@drawable/image_background_audio_video" />
-            <View
+            <co.tpcreative.supersafe.common.views.SquaredView
+                android:layout_centerInParent="true"
                 android:id="@+id/view_alpha"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
