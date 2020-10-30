@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.signin.SignInAct">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -29,7 +28,6 @@
             app:expandedTitleMarginEnd="64dp">
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
     <RelativeLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:background="@color/colorBackground"
@@ -39,34 +37,30 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_marginTop="150dp"
-            android:layout_marginLeft="@dimen/margin_left"
-            android:layout_marginRight="@dimen/margin_right"
+            android:layout_marginStart="@dimen/margin_left"
+            android:layout_marginEnd="@dimen/margin_right"
             android:layout_marginBottom="20dp"
             android:orientation="vertical"
             android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_marginLeft="@dimen/margin_left"
-                android:layout_marginRight="@dimen/margin_right"
+                android:layout_marginStart="@dimen/margin_left"
+                android:layout_marginEnd="@dimen/margin_right"
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:text="@string/login"
                 android:textSize="@dimen/text_size_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtEmail"
                     android:textSize="@dimen/text_size_normal"
@@ -83,7 +77,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -105,7 +98,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_high"/>
             </RelativeLayout>
-
         </LinearLayout>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

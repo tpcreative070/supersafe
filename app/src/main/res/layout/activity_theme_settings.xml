@@ -29,25 +29,21 @@
             app:expandedTitleMarginEnd="64dp">
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
     <LinearLayout
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <include
             android:id="@+id/header"
             layout="@layout/layout_premium_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
         <LinearLayout
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_below="@+id/header"
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

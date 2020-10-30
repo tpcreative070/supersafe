@@ -62,16 +62,16 @@
                         android:id="@+id/imgEdit"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerInParent="true"
                         android:src="@drawable/baseline_create_white_48" />
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginRight="20dp"
-                        android:layout_toRightOf="@+id/imgEdit"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginEnd="20dp"
+                        android:layout_toEndOf="@+id/imgEdit"
                         android:singleLine="true"
                         android:textSize="@dimen/text_size_normal" />
                 </RelativeLayout>
@@ -100,7 +100,6 @@
                     android:textColor="?attr/colorPrimary"
                     android:textSize="@dimen/medium_17"
                     android:layout_marginTop="30dp"
-                    android:layout_below="@+id/btnSendVerifyCode"
                     android:text="@string/verify_code_to_sync_files_to_cloud"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -123,8 +122,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="1sp"
                         android:layout_centerInParent="true"
-                        android:layout_marginRight="20dp"
-                        android:layout_toLeftOf="@+id/tvOr"
+                        android:layout_marginEnd="20dp"
+                        android:layout_toStartOf="@+id/tvOr"
                         android:background="@color/green_500" />
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvOr"
@@ -137,8 +136,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="1sp"
                         android:layout_centerInParent="true"
-                        android:layout_marginLeft="20dp"
-                        android:layout_toRightOf="@+id/tvOr"
+                        android:layout_marginStart="20dp"
+                        android:layout_toEndOf="@+id/tvOr"
                         android:background="@color/green_500" />
                 </RelativeLayout>
                 <RelativeLayout
@@ -153,7 +152,7 @@
                         android:id="@+id/imgGoogle"
                         android:layout_width="@dimen/button_high"
                         android:layout_height="@dimen/button_high"
-                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
                         android:layout_centerInParent="true"
                         android:layout_margin="1dp"
                         android:background="@drawable/bg_button_rounded_none_color"
@@ -162,7 +161,7 @@
                         android:clickable="false"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_high"
-                        android:layout_toRightOf="@+id/imgGoogle"
+                        android:layout_toEndOf="@+id/imgGoogle"
                         android:background="@null"
                         android:text="@string/login_with_google"
                         android:textColor="@color/white" />
@@ -206,7 +205,7 @@
                         android:id="@+id/btnCancel"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_high"
-                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_button_rounded"
                         android:text="@string/cancel"
@@ -216,7 +215,7 @@
                         android:id="@+id/btnSave"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/button_high"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_weight="1"
                         android:background="@drawable/bg_button_disable_rounded"
                         android:text="@string/save"

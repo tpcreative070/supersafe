@@ -27,7 +27,7 @@
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
-        </com.google.android.material.appbar.CollapsingToolbarLayout>>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -52,13 +52,13 @@
                 android:id="@+id/tvStatus"
                 android:text="@string/disabled"
                 android:layout_centerInParent="true"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/btnSwitch"
                 android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </RelativeLayout>

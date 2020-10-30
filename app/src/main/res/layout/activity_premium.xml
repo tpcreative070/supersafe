@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/material_gray_300"
     tools:context=".ui.premium.PremiumAct">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -85,7 +84,6 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
                         <LinearLayout
                             android:id="@+id/llMonths"
                             android:layout_marginRight="5dp"
@@ -213,8 +211,6 @@
                         android:textSize="@dimen/text_size_preference_item_summary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@android:id/title"
-                        android:layout_alignStart="@android:id/title"
                         android:textColor="?attr/preference_summary"/>
                 </LinearLayout>
             </LinearLayout>

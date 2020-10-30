@@ -45,7 +45,7 @@
                     android:id="@+id/tv_Photos"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|left|bottom"
+                    android:layout_gravity="center|start|bottom"
                     android:layout_weight="1"
                     android:text="@string/photos_default"/>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -53,7 +53,7 @@
                     android:id="@+id/tv_Videos"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|left|bottom"
+                    android:layout_gravity="center|start|bottom"
                     android:layout_weight="1"
                     android:text="@string/videos_default"/>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -61,7 +61,7 @@
                     android:id="@+id/tv_Audios"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|left|bottom"
+                    android:layout_gravity="center|start|bottom"
                     android:layout_weight="1"
                     android:text="@string/audios_default"/>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -69,7 +69,7 @@
                     android:id="@+id/tv_Others"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|left|bottom"
+                    android:layout_gravity="center|start|bottom"
                     android:layout_weight="1"
                     android:text="@string/others_default"/>
             </LinearLayout>
@@ -79,7 +79,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-        </com.google.android.material.appbar.CollapsingToolbarLayout>>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <RelativeLayout
         android:layout_width="match_parent"

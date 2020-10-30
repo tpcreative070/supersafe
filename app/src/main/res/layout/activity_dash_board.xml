@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.DashBoardAct">
-
     <RelativeLayout
         android:background="@color/colorBackground"
         app:layout_constraintTop_toTopOf="parent"
@@ -14,14 +13,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <RelativeLayout
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:layout_above="@+id/llFooter"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_marginBottom="50dp"
                 android:layout_centerInParent="true"
@@ -50,7 +47,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </RelativeLayout>
-
         <LinearLayout
             android:id="@+id/llFooter"
             android:orientation="vertical"

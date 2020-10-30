@@ -39,7 +39,7 @@
                                 android:layout_height="@dimen/image_size_custom"
                                 android:layout_alignParentTop="true"
                                 android:layout_centerInParent="true"
-                                android:layout_gravity="left|center"
+                                android:layout_gravity="start|center"
                                 android:src="@drawable/ic_premium_icon"
                                 android:tint="?attr/colorAccent" />
                             <androidx.appcompat.widget.AppCompatTextView
@@ -48,7 +48,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/imgPro"
                                 android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginStart="10dp"
                                 android:layout_marginTop="10dp"
                                 android:gravity="center"
                                 android:textColor="@color/material_gray_700"
@@ -84,7 +84,7 @@
                             android:id="@+id/llAccount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
                             android:orientation="vertical">
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:textColor="?attr/colorAccent"
@@ -97,7 +97,7 @@
                                 android:id="@+id/tvStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginStart="10dp"
                                 android:text="@string/view_user_info"
                                 android:textSize="@dimen/text_size_large" />
                         </LinearLayout>
@@ -120,7 +120,6 @@
                             android:id="@+id/llEnableCloud"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/llAccount"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="@dimen/icon_size_30"
@@ -134,13 +133,13 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginStart="10dp"
                                 android:orientation="vertical">
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:textColor="?attr/colorAccent"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="left|center"
+                                    android:layout_gravity="start|center"
                                     android:text="@string/cloud"
                                     android:textSize="@dimen/text_size_large" />
                                 <androidx.appcompat.widget.AppCompatTextView
@@ -148,7 +147,7 @@
                                     android:id="@+id/tvEnableCloud"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginStart="10dp"
                                     android:text="@string/enable_cloud_sync"
                                     android:textSize="@dimen/text_size_normal" />
                             </LinearLayout>
@@ -157,7 +156,6 @@
                             android:id="@+id/llAboutLocal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/llEnableCloud"
                             android:layout_marginTop="10dp"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
@@ -172,7 +170,7 @@
                                 android:layout_marginBottom="3dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginStart="10dp"
                                 android:orientation="vertical">
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:textColor="?attr/colorAccent"
@@ -183,7 +181,7 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginStart="10dp"
                                     android:orientation="vertical">
                                     <androidx.appcompat.widget.AppCompatTextView
                                         android:layout_marginTop="3dp"
@@ -221,7 +219,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/llEnableCloud"
                             android:layout_marginTop="10dp"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
@@ -236,7 +233,7 @@
                                 android:layout_marginBottom="3dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginStart="10dp"
                                 android:orientation="vertical">
                                 <androidx.appcompat.widget.AppCompatTextView
                                     android:textColor="?attr/colorAccent"
@@ -247,7 +244,7 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginStart="10dp"
                                     android:orientation="vertical">
                                     <androidx.appcompat.widget.AppCompatTextView
                                         android:id="@+id/tvAvailableSpaces"
@@ -287,7 +284,7 @@
                             android:textColor="?attr/colorAccent"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
                             android:gravity="center"
                             android:text="@string/settings"
                             android:textSize="@dimen/text_size_large" />

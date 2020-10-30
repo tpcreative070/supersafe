@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.signup.SignUpAct">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
@@ -39,16 +38,14 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_marginTop="50dp"
-            android:layout_marginLeft="@dimen/margin_left"
-            android:layout_marginRight="@dimen/margin_right"
+            android:layout_marginStart="@dimen/margin_left"
+            android:layout_marginEnd="@dimen/margin_right"
             android:layout_marginBottom="20dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:textSize="@dimen/text_size_title"
                 android:textColor="@color/colorTextDark"
@@ -56,7 +53,6 @@
                 android:text="@string/title_forget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
             <LinearLayout
                 android:visibility="gone"
                 android:layout_marginTop="20dp"
@@ -64,7 +60,6 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtName"
                     android:textSize="@dimen/text_size_normal"
@@ -81,14 +76,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
             <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/edtEmail"
                     android:textSize="@dimen/text_size_normal"
@@ -105,7 +98,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -118,7 +110,6 @@
                     android:background="@color/white"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"/>
-
                 <androidx.appcompat.widget.AppCompatButton
                     android:layout_marginBottom="20dp"
                     android:id="@+id/btnFinish"
