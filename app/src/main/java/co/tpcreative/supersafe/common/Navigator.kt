@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import co.tpcreative.supersafe.R
+
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.ui.aboutsupersafe.AboutSuperSafeActivity
 import co.tpcreative.supersafe.ui.accountmanager.AccountManagerAct
@@ -286,7 +287,7 @@ object Navigator {
 
     fun onMoveSecretDoorSetUp(context: Activity) {
         val intent = Intent(context, SecretDoorSetUpAct::class.java)
-        context.startActivityForResult(intent, Navigator.SECRET_DOOR_SUET_UP)
+        context.startActivityForResult(intent, SECRET_DOOR_SUET_UP)
     }
 
     fun onMoveHelpSupport(context: Context) {
@@ -337,6 +338,6 @@ object Navigator {
         val bundle = Bundle()
         bundle.putSerializable(MainCategoryModel::class.java.getSimpleName(), categories)
         intent.putExtras(bundle)
-        context.startActivityForResult(intent, Navigator.ALBUM_COVER)
+        context.startActivityForResult(intent, ALBUM_COVER)
     }
 }

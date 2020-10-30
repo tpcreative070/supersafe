@@ -13,14 +13,10 @@ import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 
 abstract class BaseActivityNone : AppCompatActivity() {
-    protected var actionBar: ActionBar? = null
-    var onStartCount = 0
     protected open var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = getSupportActionBar()
-        onStartCount = 1
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -70,7 +66,7 @@ abstract class BaseActivityNone : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true

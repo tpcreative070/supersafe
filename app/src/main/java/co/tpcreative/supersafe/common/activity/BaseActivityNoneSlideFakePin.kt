@@ -21,13 +21,11 @@ import com.snatik.storage.Storage
 
 
 abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
-    var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onStartCount = 2
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -149,17 +147,6 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-//        if (SingletonManager.getInstance().isAnimation()) {
-//            if (onStartCount > 1) {
-//                this.overridePendingTransition(R.animator.anim_slide_in_right,
-//                        R.animator.anim_slide_out_right)
-//            } else if (onStartCount == 1) {
-//                onStartCount++
-//            }
-//        } else {
-//            Bungee.zoom(this)
-//            SingletonManager.getInstance().setAnimation(true)
-//        }
     }
 
     protected abstract fun onStopListenerAWhile()

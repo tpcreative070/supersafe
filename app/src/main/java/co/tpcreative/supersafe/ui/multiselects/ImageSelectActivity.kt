@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.util.Utils
@@ -35,7 +34,7 @@ class ImageSelectActivity : HelperActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_image_select)
         setView(findViewById(R.id.layout_image_select))
-        setSupportActionBar(toolbar as Toolbar)
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         val intent: Intent? = intent
         if (intent == null) {

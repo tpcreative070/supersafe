@@ -16,21 +16,11 @@ import co.tpcreative.supersafe.model.EnumPinAction
 import com.snatik.storage.Storage
 
 abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
-    protected var actionBar: ActionBar? = null
-    var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = supportActionBar
-        onStartCount = 1
-//        if (savedInstanceState == null) {
-//            this.overridePendingTransition(R.animator.anim_slide_in_left,
-//                    R.animator.anim_slide_out_left)
-//        } else {
-//            onStartCount = 2
-//        }
         storage = Storage(this)
     }
 
@@ -87,8 +77,7 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
         mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
             override fun onHomePressed() {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (val action = EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         Utils.onHomePressed()
                         onStopListenerAWhile()
@@ -148,17 +137,6 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-//        if (SingletonManager.getInstance().isAnimation()) {
-//            if (onStartCount > 1) {
-//                this.overridePendingTransition(R.animator.anim_slide_in_right,
-//                        R.animator.anim_slide_out_right)
-//            } else if (onStartCount == 1) {
-//                onStartCount++
-//            }
-//        } else {
-//            Bungee.zoom(this)
-//            SingletonManager.getInstance().setAnimation(true)
-//        }
     }
 
     protected abstract fun onStopListenerAWhile()

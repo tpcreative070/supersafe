@@ -25,8 +25,6 @@ import com.snatik.storage.Storage
 
 
 abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {
-    protected var actionBar: ActionBar? = null
-    var onStartCount = 0
     private var mHomeWatcher: HomeWatcher? = null
     var storage: Storage? = null
     private var fragment: MoveGalleryFragment? = null
@@ -43,14 +41,6 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = getSupportActionBar()
-        onStartCount = 1
-//        if (savedInstanceState == null) {
-//            this.overridePendingTransition(R.animator.anim_slide_in_left,
-//                    R.animator.anim_slide_out_left)
-//        } else {
-//            onStartCount = 2
-//        }
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -115,8 +105,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         mHomeWatcher?.setOnHomePressedListener(object : HomeWatcher.OnHomePressedListener {
             override fun onHomePressed() {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (val action = EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         Utils.onHomePressed()
                         onStopListenerAWhile()
@@ -176,18 +165,6 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-//        if (SingletonManager.Companion.getInstance().isAnimation()) {
-//            if (onStartCount > 1) {
-//                this.overridePendingTransition(R.animator.anim_slide_in_right,
-//                        R.animator.anim_slide_out_right)
-//            } else if (onStartCount == 1) {
-//                onStartCount++
-//            }
-//        } else {
-//            Bungee.zoom(this)
-//            SingletonManager.getInstance().setAnimation(true)
-//            Utils.Log(TAG, "onStartBaseGalleryActivity")
-//        }
     }
 
     protected abstract fun onStopListenerAWhile()

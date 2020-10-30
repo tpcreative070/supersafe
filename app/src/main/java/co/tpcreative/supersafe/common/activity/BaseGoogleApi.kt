@@ -45,33 +45,14 @@ import java.io.IOException
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mSignInAccount: GoogleSignInAccount? = null
     private var mGoogleSignInClient: GoogleSignInClient? = null
-    protected var actionBar: ActionBar? = null
     private var mHomeWatcher: HomeWatcher? = null
-    private var onStartCount = 0
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = supportActionBar
-        onStartCount = 1
-//        if (savedInstanceState == null) {
-//            if (SingletonManager.getInstance().isReloadMainTab()) {
-//                Bungee.fade(this)
-//            } else {
-//                this.overridePendingTransition(R.animator.anim_slide_in_left,
-//                        R.animator.anim_slide_out_left)
-//            }
-//        } else {
-//            onStartCount = 2
-//        }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null)!!)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
-    }
-
-    protected fun onStartOverridePendingTransition() {
-        this.overridePendingTransition(R.animator.anim_slide_in_left,
-                R.animator.anim_slide_out_left)
     }
 
     override fun getTheme(): Resources.Theme? {
@@ -88,7 +69,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         when (val action = EnumPinAction.values()[value]) {
             EnumPinAction.SPLASH_SCREEN -> {
                 PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SCREEN_LOCK.ordinal)
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 Navigator.onMoveToVerifyPin(this, EnumPinAction.NONE)
                 Utils.Log(TAG, "Lock screen")
@@ -131,10 +112,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onResume() {
@@ -222,17 +199,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             }
         }
         Utils.Log(TAG, "onStart..........")
-//        if (SingletonManager.getInstance().isAnimation()) {
-//            if (onStartCount > 1) {
-//                this.overridePendingTransition(R.animator.anim_slide_in_right,
-//                        R.animator.anim_slide_out_right)
-//            } else if (onStartCount == 1) {
-//                onStartCount++
-//            }
-//        } else {
-//            Bungee.zoom(this)
-//            SingletonManager.getInstance().setAnimation(true)
-//        }
     }
 
     protected fun signIn(email: String?) {

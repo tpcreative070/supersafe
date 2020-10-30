@@ -21,19 +21,11 @@ import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 
 abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
-    protected var actionBar: ActionBar? = null
     protected var storage: Storage? = null
-    var onStartCount = 0
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = supportActionBar
         storage = Storage(this)
-//        if (savedInstanceState == null) {
-//            Bungee.fade(this)
-//        } else {
-//            onStartCount = 2
-//        }
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
@@ -109,16 +101,6 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
 
     override fun onStart() {
         super.onStart()
-//        if (SingletonManager.getInstance().isAnimation()) {
-//            if (onStartCount > 1) {
-//                Bungee.fade(this)
-//            } else if (onStartCount == 1) {
-//                onStartCount++
-//            }
-//        } else {
-//            Bungee.zoom(this)
-//            SingletonManager.getInstance().setAnimation(true)
-//        }
     }
 
     companion object {

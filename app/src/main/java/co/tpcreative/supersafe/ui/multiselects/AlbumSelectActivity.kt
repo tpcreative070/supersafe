@@ -20,6 +20,8 @@ import co.tpcreative.supersafe.model.AlbumMultiItems
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter
 import kotlinx.android.synthetic.main.activity_album_select.*
+import kotlinx.android.synthetic.main.activity_album_select.toolbar
+import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 import java.util.*
 
@@ -40,15 +42,11 @@ class AlbumSelectActivity : HelperActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_select)
         setView(findViewById(R.id.layout_album_select))
-        val toolbar = findViewById<View?>(R.id.toolbar) as Toolbar?
         setSupportActionBar(toolbar)
-        actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar?.setDisplayHomeAsUpEnabled(true)
-            actionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
-            actionBar?.setDisplayShowTitleEnabled(true)
-            actionBar?.setTitle(R.string.album_view)
-        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setTitle(R.string.album_view)
         val intent: Intent? = intent
         if (intent == null) {
             finish()
