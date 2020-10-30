@@ -263,7 +263,7 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                     }
                 }
             }
-            val builder: MaterialDialog = MaterialDialog(getActivity()!!)
+            val builder: MaterialDialog = MaterialDialog(activity!!)
                     .title(text = title!!)
                     .message(text = content!!)
                     .cancelable(false)

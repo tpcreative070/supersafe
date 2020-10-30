@@ -47,27 +47,23 @@ class DashBoardAct : BaseActivityNoneSlide() {
             builder.setPadding(40, 40, 40, 0)
             builder.setMargin(60, 0, 60, 0)
             builder.showHeader(true)
-            builder.setPositiveButton(getString(R.string.key_restore), object : DialogInterface.OnClickListener {
-                override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                    Navigator.onMoveRestore(this@DashBoardAct)
-                    isCancel = false
-                }
-            })
+            builder.setPositiveButton(getString(R.string.key_restore)) { dialogInterface, i ->
+                Navigator.onMoveRestore(this@DashBoardAct)
+                isCancel = false
+            }
             builder.setNegativeButton(getString(R.string.key_delete), object : DialogInterface.OnClickListener {
                 override fun onClick(dialogInterface: DialogInterface?, i: Int) {
                     SuperSafeApplication.getInstance().deleteFolder()
                     SuperSafeApplication.getInstance().initFolder()
-                    PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear().apply()
+                    PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().apply()
                     isCancel = false
                 }
-            }).setOnDismissListener(object : DialogInterface.OnDismissListener {
-                        override fun onDismiss(dialogInterface: DialogInterface?) {
-                            Utils.Log(TAG, "Dismiss")
-                            if (isCancel) {
-                                finish()
-                            }
-                        }
-                    })
+            }).setOnDismissListener {
+                Utils.Log(TAG, "Dismiss")
+                if (isCancel) {
+                    finish()
+                }
+            }
             val dialog = builder.show()
             builder.setOnShowListener(object : DialogInterface.OnShowListener {
                 override fun onShow(dialogInterface: DialogInterface?) {
@@ -75,8 +71,8 @@ class DashBoardAct : BaseActivityNoneSlide() {
                     val negative = dialog.findViewById<AppCompatButton?>(android.R.id.button2)
                     val textView: AppCompatTextView? = dialog.findViewById(android.R.id.message)
                     if (positive != null && negative != null && textView != null) {
-                        positive.setTextColor(ContextCompat.getColor(getApplicationContext(), themeApp?.getAccentColor()!!))
-                        negative.setTextColor(ContextCompat.getColor(getApplicationContext(), themeApp.getAccentColor()))
+                        positive.setTextColor(ContextCompat.getColor(applicationContext, themeApp?.getAccentColor()!!))
+                        negative.setTextColor(ContextCompat.getColor(applicationContext, themeApp.getAccentColor()))
                         textView.textSize = (16f)
                         positive.textSize = 14f
                         negative.textSize = 14f

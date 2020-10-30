@@ -2,8 +2,6 @@ package co.tpcreative.supersafe.ui.splashscreen
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
-import android.view.Window
-import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -28,11 +26,10 @@ class SplashScreenAct : BaseActivityNoneSlide() {
     private var isRunning = false
     private val DELAY = 2000
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-        /*Black list*/if (SuperSafeApplication.getInstance().getDeviceId() == "66801ac00252fe84") {
+        /*Black list*/
+        if (SuperSafeApplication.getInstance().getDeviceId() == "66801ac00252fe84") {
             finish()
         }
         try {
@@ -46,11 +43,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         value = SuperSafeApplication.getInstance().readKey()
         grant_access = PrefsController.getBoolean(getString(R.string.key_grant_access), false)
         isRunning = PrefsController.getBoolean(getString(R.string.key_running), false)
-        grant_access = if (SuperSafeApplication.getInstance().isGrantAccess()) {
-            true
-        } else {
-            false
-        }
+        grant_access = SuperSafeApplication.getInstance().isGrantAccess()
         SuperSafeApplication.getInstance().initFolder()
         Utils.Log(TAG, "Key $value")
         val manufacturer: String = Build.MANUFACTURER
