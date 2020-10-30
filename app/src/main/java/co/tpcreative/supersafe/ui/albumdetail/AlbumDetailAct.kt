@@ -453,7 +453,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     private val callback: ActionMode.Callback? = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode?.menuInflater
-            menuInflater?.inflate(R.menu.menu_select, menu)
+            menuInflater.inflate(R.menu.menu_select, menu)
             actionMode = mode
             countSelected = 0
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
@@ -39,11 +40,11 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
-        open fun onLongClickItem(position: Int)
+        fun onClickItem(position: Int)
+        fun onLongClickItem(position: Int)
     }
 
-    inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
+    inner class ItemHolder(view: View) : BaseHolder<ItemModel>(view) {
 
         val imgAlbum = itemView.imgAlbum
 
@@ -65,7 +66,6 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
             mPosition = position
-            Utils.Log(TAG, "Position $position")
             if (data.isChecked) {
                 view_alpha?.alpha = 0.5f
                 imgSelect?.visibility = View.VISIBLE
@@ -74,7 +74,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                 imgSelect?.visibility = View.INVISIBLE
             }
             try {
-                var path: String? = data.getThumbnail()
+                val path: String? = data.getThumbnail()
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam?.visibility = View.VISIBLE

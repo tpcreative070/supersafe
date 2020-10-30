@@ -26,7 +26,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
     }
 
     fun getItem(position: Int): V? {
-        return mDataSource.get(position)
+        return mDataSource[position]
     }
 
     override fun getItemCount(): Int {
@@ -53,7 +53,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
             mDataSource = ArrayList()
         }
         mDataSource.add(item)
-        notifyItemInserted(getItemCount())
+        notifyItemInserted(itemCount)
     }
 
     fun removeAtPosition(position: Int) {
@@ -65,7 +65,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
 
     fun removeAt(position: Int) {
         try {
-            if (mDataSource.size!! > position) {
+            if (mDataSource.size > position) {
                 notifyItemRemoved(position)
                 notifyItemRangeChanged(position, mDataSource.size)
             } else {
@@ -95,7 +95,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
     }
 
     fun addAtFirstAndRemoveEnd(item: V) {
-        if (mDataSource.isEmpty()!!) {
+        if (mDataSource.isEmpty()) {
             mDataSource = ArrayList()
         }
         mDataSource.add(0, item)

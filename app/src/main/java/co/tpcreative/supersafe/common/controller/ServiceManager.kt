@@ -724,11 +724,9 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onCancel() {
                     ls.onCancel()
                 }
-
                 override fun onError(message: String?, status: EnumStatus?) {
                     ls.onError(message, status)
                 }
-
                 override fun onSuccessful(message: String?, status: EnumStatus?) {
                     ls.onSuccessful(message, status)
                 }
