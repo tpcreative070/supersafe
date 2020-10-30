@@ -19,11 +19,13 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.RootAPI
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
 import co.tpcreative.supersafe.common.network.Dependencies
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.EnumThemeModel
 import co.tpcreative.supersafe.model.User
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -117,7 +119,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA)
         requiredScopesString.add(DriveScopes.DRIVE_FILE)
         Utils.onCheckNewVersion()
-        /*SP-100*/
+        ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
     }
 
     fun getSecretKey(): String? {
@@ -440,7 +442,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         val hashMap = HashMap<String, String>()
         hashMap["Content-Type"] = "application/json"
         if (authorization != null) {
-            hashMap.set("Authorization",onAuthorToken())
+            hashMap.set("Authorization", onAuthorToken())
         }
         return hashMap
     }

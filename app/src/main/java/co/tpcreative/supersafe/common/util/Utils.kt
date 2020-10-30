@@ -1227,6 +1227,15 @@ object Utils  {
             false
         }
     }
+
+    fun  getPositionTheme() : Int{
+        return PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme),0)
+    }
+
+    fun setPositionTheme(positionTheme : Int){
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme),positionTheme)
+    }
+
 }
 
 interface UtilsListener {

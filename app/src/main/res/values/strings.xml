@@ -423,7 +423,7 @@
     <string name="key_rotate">rotate</string>
     <string name="key_seek_to">seek_to</string>
     <string name="key_lastWindowIndex">lastWindowIndex</string>
-
+    <string name="key_position_theme">key_position_theme</string>
     /*Google Drive api*/
     <string name="key_parents">parents</string>
     <string name="key_appDataFolder">appDataFolder</string>
@@ -679,6 +679,16 @@
         <item>Virus Scanner</item>
         <item>Calculator</item>
     </string-array>
+
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MyCustomTextAppearance</item>
+    </style>
+
+    <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
 
 
 
