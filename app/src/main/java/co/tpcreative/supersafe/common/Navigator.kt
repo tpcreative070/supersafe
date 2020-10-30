@@ -125,7 +125,7 @@ object Navigator {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        activity.startActivityForResult(intent, Navigator.VERIFY_PIN)
+        activity.startActivityForResult(intent, VERIFY_PIN)
     }
 
     fun onMoveToChangePin(context: Context, action: EnumPinAction) {
