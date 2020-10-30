@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.text.InputType
@@ -25,6 +26,7 @@ import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.utilimport.NetworkUtil
+import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
@@ -87,6 +89,7 @@ fun MainTabAct.initSpeedDial() {
             .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                     theme))
             .setLabel(getString(R.string.camera))
+            .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
             .setLabelColor(Color.WHITE)
             .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
                     theme))
@@ -96,7 +99,8 @@ fun MainTabAct.initSpeedDial() {
             .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                     theme))
             .setLabel(R.string.photo)
-            .setLabelColor(ContextCompat.getColor(getActivity()!!,R.color.white))
+            .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
+            .setLabelColor(ContextCompat.getColor(getActivity()!!, R.color.white))
             .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                     theme))
             .create())
@@ -104,10 +108,12 @@ fun MainTabAct.initSpeedDial() {
             .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                     theme))
             .setLabel(getString(R.string.album))
-            .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
+            .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
+            .setLabelColor(ContextCompat.getColor(applicationContext, R.color.white))
             .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
                     theme))
             .create())
+    speedDial.mainFab.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
     speedDial?.show()
 
     //Set main action clicklistener.
@@ -115,6 +121,7 @@ fun MainTabAct.initSpeedDial() {
         override fun onMainActionSelected(): Boolean {
             return false // True to keep the Speed Dial open
         }
+
         override fun onToggleChanged(isOpen: Boolean) {
             Utils.Log(TAG, "Speed dial toggle state changed. Open = $isOpen")
         }
@@ -147,7 +154,7 @@ fun MainTabAct.onShowDialog() {
             .title(text = getString(R.string.create_album))
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
-            .input(hint = null, hintRes = null,inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
+            .input(hint = null, hintRes = null, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
                 Utils.Log(TAG, "Value")
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)
@@ -189,6 +196,7 @@ fun MainTabAct.onAddPermissionCamera() {
                         Utils.Log(TAG, "request permission is failed")
                     }
                 }
+
                 override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
                     /* ... */
                     token?.continuePermissionRequest()
@@ -240,7 +248,7 @@ fun MainTabAct.onAskingRateApp() {
             .customView(view = view, scrollable = true)
             .cancelable(true)
             .positiveButton(text = getString(R.string.i_love_it))
-            .negativeButton(text =  getString(R.string.report_problem))
+            .negativeButton(text = getString(R.string.report_problem))
             .neutralButton(text = getString(R.string.no_thanks))
             .neutralButton {
                 PrefsController.putBoolean(getString(R.string.we_are_a_team), true)
@@ -335,4 +343,29 @@ fun MainTabAct.onEnableSyncData() {
             Navigator.onVerifyAccount(this)
         }
     }
+}
+
+fun MainTabAct.onAnimationIcon(status: EnumStatus?) {
+    Utils.Log(TAG, "value : " + status?.name)
+    if (mMenuItem == null) {
+        Utils.Log(TAG, "Menu is nulll")
+        return
+    }
+    if (previousStatus == status && status == EnumStatus.DOWNLOAD) {
+        Utils.Log(TAG, "Action here 1")
+        return
+    }
+    if (previousStatus == status && status == EnumStatus.UPLOAD) {
+        Utils.Log(TAG, "Action here 2")
+        return
+    }
+    val item = mMenuItem
+    if (animation != null) {
+        animation?.stop()
+    }
+    Utils.Log(TAG, "Calling AnimationsContainer........................")
+    Utils.onWriteLog("Calling AnimationsContainer", EnumStatus.CREATE)
+    previousStatus = status
+    animation = AnimationsContainer.getInstance()?.createSplashAnim(item, status)
+    animation?.start()
 }

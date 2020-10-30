@@ -226,7 +226,7 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                     Utils.Log(TAG, "Log album cover is null.........")
                 }
             }
-            if (SingletonManager.Companion.getInstance().isVisitFakePin()) {
+            if (SingletonManager.getInstance().isVisitFakePin()) {
                 mLockAlbum?.isVisible = false
                 mAlbumCover?.isVisible = false
             }
@@ -293,7 +293,7 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                                     val response: Boolean = SQLHelper.onChangeCategories(presenter?.mMainCategories)
                                     if (response) {
                                         Toast.makeText(context, "Changed album successful", Toast.LENGTH_SHORT).show()
-                                        mName?.setSummary(presenter?.mMainCategories?.categories_name)
+                                        mName?.summary = presenter?.mMainCategories?.categories_name
                                         if (!presenter?.mMainCategories?.isFakePin!!) {
                                             ServiceManager.getInstance()?.onPreparingSyncCategoryData()
                                         }
@@ -311,17 +311,17 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                                     if (isPin == input.toString()) {
                                         presenter?.mMainCategories?.pin = ""
                                         SQLHelper.updateCategory(presenter?.mMainCategories!!)
-                                        mLockAlbum?.setSummary(getString(R.string.unlocked))
+                                        mLockAlbum?.summary = getString(R.string.unlocked)
                                         SingletonPrivateFragment.getInstance()?.onUpdateView()
                                         dialog.dismiss()
                                     } else {
-                                        Utils.showInfoSnackbar(getView()!!, R.string.wrong_password, true)
+                                        Utils.showInfoSnackbar(view!!, R.string.wrong_password, true)
                                         dialog.getInputField().setText("")
                                     }
                                 } else {
                                     presenter?.mMainCategories?.pin = input.toString()
                                     presenter?.mMainCategories?.let { SQLHelper.updateCategory(it) }
-                                    mLockAlbum?.setSummary(getString(R.string.locked))
+                                    mLockAlbum?.summary = getString(R.string.locked)
                                     SingletonPrivateFragment.getInstance()?.onUpdateView()
                                     dialog.dismiss()
                                 }
@@ -339,7 +339,7 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
         when (status) {
             EnumStatus.RELOAD -> {
                 if (presenter?.mMainCategories != null) {
-                    setTitle(presenter?.mMainCategories?.categories_name)
+                    title = presenter?.mMainCategories?.categories_name
                 }
             }
         }

@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.ui.fakepin
 import android.Manifest
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.view.LayoutInflater
@@ -18,6 +19,8 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.MainCategoryModel
 import co.tpcreative.supersafe.model.ThemeApp
+import co.tpcreative.supersafe.ui.albumdetail.initSpeedDial
+import co.tpcreative.supersafe.ui.main_tab.initSpeedDial
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.karumi.dexter.Dexter
@@ -28,6 +31,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.activity_fake_pin_component.*
+import kotlinx.android.synthetic.main.activity_fake_pin_component.speedDial
+import kotlinx.android.synthetic.main.activity_fake_pin_component.toolbar
+import kotlinx.android.synthetic.main.activity_main_tab.*
 
 fun FakePinComponentAct.initUI(){
     setSupportActionBar(toolbar)
@@ -54,6 +60,7 @@ fun FakePinComponentAct.initSpeedDial() {
             .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                     theme))
             .setLabel(getString(R.string.camera))
+            .setFabImageTintColor(ContextCompat.getColor(this,R.color.white))
             .setLabelColor(Color.WHITE)
             .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
                     theme))
@@ -63,6 +70,7 @@ fun FakePinComponentAct.initSpeedDial() {
             .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                     theme))
             .setLabel(R.string.photo)
+            .setFabImageTintColor(ContextCompat.getColor(this,R.color.white))
             .setLabelColor(ContextCompat.getColor(this,R.color.white))
             .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
                     theme))
@@ -70,6 +78,7 @@ fun FakePinComponentAct.initSpeedDial() {
     speedDial?.addActionItem(SpeedDialActionItem.Builder(R.id.fab_album, R.drawable.baseline_add_to_photos_white_36)
             .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                     theme))
+            .setFabImageTintColor(ContextCompat.getColor(this,R.color.white))
             .setLabel(getString(R.string.album))
             .setLabelColor(ContextCompat.getColor(this,R.color.white))
             .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
@@ -90,7 +99,7 @@ fun FakePinComponentAct.initSpeedDial() {
     //Set option fabs clicklisteners.
     speedDial?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
         override fun onActionSelected(actionItem: SpeedDialActionItem?): Boolean {
-            when (actionItem?.getId()) {
+            when (actionItem?.id) {
                 R.id.fab_album -> {
                     onShowDialog()
                     return false // false will close it without animation
@@ -107,6 +116,7 @@ fun FakePinComponentAct.initSpeedDial() {
             return true // To keep the Speed Dial open
         }
     })
+    speedDial.mainFab.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_IN)
 }
 
 fun FakePinComponentAct.onShowDialog() {

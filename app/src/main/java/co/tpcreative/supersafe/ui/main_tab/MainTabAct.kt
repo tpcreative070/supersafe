@@ -32,9 +32,9 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     var adapter: MainViewPagerAdapter? = null
     var presenter: MainTabPresenter? = null
     var animation: AnimationsContainer.FramesSequenceAnimation? = null
-    private var menuItem: MenuItem? = null
-    private var previousStatus: EnumStatus? = null
-    private var mCountToRate = 0
+    var mMenuItem: MenuItem? = null
+    var previousStatus: EnumStatus? = null
+    var mCountToRate = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_tab)
@@ -176,7 +176,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         when (requestCode) {
             Navigator.COMPLETED_RECREATE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    SingletonManager.Companion.getInstance().setReloadMainTab(true)
+                    SingletonManager.getInstance().setReloadMainTab(true)
                     Navigator.onMoveToMainTab(this)
                     Utils.Log(TAG, "New Activity")
                 } else {
@@ -251,12 +251,8 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             return false
         }
         toolbar?.inflateMenu(R.menu.main_tab)
-        menuItem = toolbar?.getMenu()?.getItem(0)
+        mMenuItem = toolbar?.menu?.getItem(0)
         return true
-    }
-
-    private fun getMenuItem(): MenuItem? {
-        return menuItem
     }
 
     override fun onPause() {
@@ -270,7 +266,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
     }
 
     override fun onBackPressed() {
-        if (speedDial?.isOpen()!!) {
+        if (speedDial?.isOpen!!) {
             speedDial?.close()
         } else {
             PremiumManager.getInstance().onStop()
@@ -303,31 +299,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                 }
             }
         }
-    }
-
-    fun onAnimationIcon(status: EnumStatus?) {
-        Utils.Log(TAG, "value : " + status?.name)
-        if (getMenuItem() == null) {
-            Utils.Log(TAG, "Menu is nulll")
-            return
-        }
-        if (previousStatus == status && status == EnumStatus.DOWNLOAD) {
-            Utils.Log(TAG, "Action here 1")
-            return
-        }
-        if (previousStatus == status && status == EnumStatus.UPLOAD) {
-            Utils.Log(TAG, "Action here 2")
-            return
-        }
-        val item = getMenuItem()
-        if (animation != null) {
-            animation?.stop()
-        }
-        Utils.Log(TAG, "Calling AnimationsContainer........................")
-        Utils.onWriteLog("Calling AnimationsContainer", EnumStatus.CREATE)
-        previousStatus = status
-        animation = AnimationsContainer.getInstance()?.createSplashAnim(item, status)
-        animation?.start()
     }
 
     /*MainTab View*/
@@ -379,7 +350,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                         super.onTargetClick(view) // This call is optional
                         speedDial?.open()
                         view?.dismiss(true)
-                        viewFloatingButton?.setVisibility(View.GONE)
+                        viewFloatingButton?.visibility = View.GONE
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
                     }
 
@@ -387,7 +358,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                         super.onOuterCircleClick(view)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
                         view?.dismiss(true)
-                        viewFloatingButton?.setVisibility(View.GONE)
+                        viewFloatingButton?.visibility = View.GONE
                         Utils.Log(TAG, "onOuterCircleClick")
                     }
 
@@ -395,7 +366,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                         super.onTargetDismissed(view, userInitiated)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
                         view?.dismiss(true)
-                        viewFloatingButton?.setVisibility(View.GONE)
+                        viewFloatingButton?.visibility = View.GONE
                         Utils.Log(TAG, "onTargetDismissed")
                     }
 
@@ -403,7 +374,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                         super.onTargetCancel(view)
                         PrefsController.putBoolean(getString(R.string.key_is_first_files), true)
                         view?.dismiss(true)
-                        viewFloatingButton?.setVisibility(View.GONE)
+                        viewFloatingButton?.visibility = View.GONE
                         Utils.Log(TAG, "onTargetCancel")
                     }
                 })
