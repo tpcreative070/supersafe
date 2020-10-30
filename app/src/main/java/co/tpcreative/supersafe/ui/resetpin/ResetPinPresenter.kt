@@ -57,7 +57,7 @@ class ResetPinPresenter : Presenter<BaseView<EmptyModel>>() {
                             mUser.verified = true
                             Utils.setUserPreShare(mUser)
                         }
-                        view.onSuccessful(onResponse.message, EnumStatus.VERIFY)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.VERIFY)
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
@@ -101,14 +101,14 @@ class ResetPinPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.OTHER) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.REQUEST_CODE)
+                        view.onError(onResponse.responseMessage, EnumStatus.REQUEST_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
                         mUser?.code = mData?.requestCode?.code
                         this.mUser = mUser
                         Utils.setUserPreShare(mUser)
-                        view.onSuccessful(onResponse.message, EnumStatus.REQUEST_CODE)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.REQUEST_CODE)
                         Utils.Log(TAG, Gson().toJson(mUser))
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))

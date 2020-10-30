@@ -14,7 +14,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import com.snatik.storage.Storage
-import spencerstudios.com.bungeelib.Bungee
 
 abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     protected var actionBar: ActionBar? = null
@@ -24,14 +23,14 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = getSupportActionBar()
+        actionBar = supportActionBar
         onStartCount = 1
-        if (savedInstanceState == null) {
-            this.overridePendingTransition(R.animator.anim_slide_in_left,
-                    R.animator.anim_slide_out_left)
-        } else {
-            onStartCount = 2
-        }
+//        if (savedInstanceState == null) {
+//            this.overridePendingTransition(R.animator.anim_slide_in_left,
+//                    R.animator.anim_slide_out_left)
+//        } else {
+//            onStartCount = 2
+//        }
         storage = Storage(this)
     }
 
@@ -149,17 +148,17 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-        if (SingletonManager.Companion.getInstance().isAnimation()) {
-            if (onStartCount > 1) {
-                this.overridePendingTransition(R.animator.anim_slide_in_right,
-                        R.animator.anim_slide_out_right)
-            } else if (onStartCount == 1) {
-                onStartCount++
-            }
-        } else {
-            Bungee.zoom(this)
-            SingletonManager.Companion.getInstance().setAnimation(true)
-        }
+//        if (SingletonManager.getInstance().isAnimation()) {
+//            if (onStartCount > 1) {
+//                this.overridePendingTransition(R.animator.anim_slide_in_right,
+//                        R.animator.anim_slide_out_right)
+//            } else if (onStartCount == 1) {
+//                onStartCount++
+//            }
+//        } else {
+//            Bungee.zoom(this)
+//            SingletonManager.getInstance().setAnimation(true)
+//        }
     }
 
     protected abstract fun onStopListenerAWhile()

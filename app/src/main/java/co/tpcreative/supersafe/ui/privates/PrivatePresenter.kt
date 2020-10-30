@@ -24,16 +24,16 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
     fun onDeleteAlbum(position: Int) {
         try {
             val main: MainCategoryModel? = mList?.get(position)
-            if (main != null) {
-                val mListItems: MutableList<ItemModel>? = SQLHelper.getListItems(main.categories_local_id, false)
-                if (mListItems != null) {
-                    for (index in mListItems) {
+            main?.let {
+                val mListItems: MutableList<ItemModel>? = SQLHelper.getListItems(it.categories_local_id, false)
+                mListItems?.let {item ->
+                    for (index in item) {
                         index.isDeleteLocal = true
                         SQLHelper.updatedItem(index)
                     }
+                    it.isDelete = true
+                    SQLHelper.updateCategory(it)
                 }
-                main.isDelete = true
-                SQLHelper.updateCategory(main)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -44,22 +44,25 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
     }
 
     fun onEmptyTrash() {
+        Utils.Log(TAG,"empty data")
         try {
             val mList: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
-            for (i in mList?.indices!!) {
-                val formatTypeFile = EnumFormatType.values()[mList[i].formatType]
-                if (formatTypeFile == EnumFormatType.AUDIO && mList[i].global_original_id == null) {
-                    SQLHelper.deleteItem(mList[i])
-                } else if (formatTypeFile == EnumFormatType.FILES && mList[i].global_original_id == null) {
-                    SQLHelper.deleteItem(mList[i])
-                } else if ((mList[i].global_original_id == null) and (mList[i].global_thumbnail_id == null)) {
-                    SQLHelper.deleteItem(mList[i])
-                } else {
-                    mList[i].deleteAction = EnumDelete.DELETE_WAITING.ordinal
-                    SQLHelper.updatedItem(mList[i])
-                    Utils.Log(TAG, "ServiceManager waiting for delete")
+            mList?.let {
+                for (index in it) {
+                    val formatTypeFile = EnumFormatType.values()[index.formatType]
+                    if (formatTypeFile == EnumFormatType.AUDIO && index.global_original_id == null) {
+                        SQLHelper.deleteItem(index)
+                    } else if (formatTypeFile == EnumFormatType.FILES && index.global_original_id == null) {
+                        SQLHelper.deleteItem(index)
+                    } else if ((index.global_original_id == null) and (index.global_thumbnail_id == null)) {
+                        SQLHelper.deleteItem(index)
+                    } else {
+                        index.deleteAction = EnumDelete.DELETE_WAITING.ordinal
+                        SQLHelper.updatedItem(index)
+                        Utils.Log(TAG, "ServiceManager waiting for delete")
+                    }
+                    storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id)
                 }
-                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList[i].items_id)
             }
         } catch (e: Exception) {
             e.printStackTrace()

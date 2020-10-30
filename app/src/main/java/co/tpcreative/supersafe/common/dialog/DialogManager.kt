@@ -13,6 +13,7 @@ class DialogManager {
                 ls?.dismiss()
             }
             positiveButton(R.string.yes){
+                ls?.onClickButton()
             }
         }
     }

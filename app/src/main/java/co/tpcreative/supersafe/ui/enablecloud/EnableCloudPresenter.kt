@@ -47,7 +47,7 @@ class EnableCloudPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.CREATE)
+                        view.onError(onResponse.responseMessage, EnumStatus.CREATE)
                     } else {
                         view.onSuccessful(mUser?.cloud_id, EnumStatus.CREATE)
                     }

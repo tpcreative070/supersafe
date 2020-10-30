@@ -58,7 +58,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                             mUser.verified = true
                             val mData: DataResponse? = onResponse.data
                             if (mData == null) {
-                                view?.onError(onResponse.message, EnumStatus.VERIFY_CODE)
+                                view?.onError(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                                 return@subscribe
                             }
                             if (mData.premium != null) {
@@ -67,7 +67,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                             SuperSafeApplication.getInstance().writeUserSecret(mUser)
                             Utils.setUserPreShare(mUser)
                         }
-                        view?.onSuccessful(onResponse.message, EnumStatus.VERIFY_CODE)
+                        view?.onSuccessful(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, Consumer { throwable: Throwable? ->
@@ -164,7 +164,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.RESEND_CODE)
+                        view.onError(onResponse.responseMessage, EnumStatus.RESEND_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
@@ -261,7 +261,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.SIGN_IN) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view?.onError(onResponse.message, EnumStatus.SIGN_IN)
+                        view?.onError(onResponse.responseMessage, EnumStatus.SIGN_IN)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         mUser = mData?.user

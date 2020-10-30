@@ -52,7 +52,7 @@ class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
                     if (onResponse.error) {
                         view.onError(getString(R.string.the_code_not_signed_up), EnumStatus.VERIFY_CODE)
                     } else {
-                        view.onSuccessful(onResponse.message, EnumStatus.VERIFY)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.VERIFY)
                         val mUser: User? = Utils.getUserInfo()
                         if (mUser != null) {
                             mUser.verified = true
@@ -236,7 +236,7 @@ class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe(Consumer<Disposable> { waiting: Disposable -> view.onStartLoading(EnumStatus.REQUEST_CODE) })
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.REQUEST_CODE)
+                        view.onError(onResponse.responseMessage, EnumStatus.REQUEST_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
@@ -246,7 +246,7 @@ class UnlockAllAlbumPresenter : Presenter<BaseView<EmptyModel>>() {
                         if (emailToken != null) {
                             onSendMail(emailToken)
                         }
-                        view.onSuccessful(onResponse.message, EnumStatus.REQUEST_CODE)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.REQUEST_CODE)
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->

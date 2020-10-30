@@ -50,7 +50,7 @@ class SignInPresenter : Presenter<BaseView<User>>() {
                         val mData: DataResponse? = onResponse.data
                         Utils.setUserPreShare(mData?.user)
                         ServiceManager.getInstance()?.onInitConfigurationFile()
-                        view.onSuccessful(onResponse.message, EnumStatus.SIGN_IN, mData?.user)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.SIGN_IN, mData?.user)
                     }
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {

@@ -174,7 +174,7 @@ dependencies {
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
 
     /*bungeelibrary*/
-    implementation project (':bungeelibrary')
+    //implementation project (':bungeelibrary')
 
     /*dialogsuccessprogresslibrary*/
     implementation project(':dialogsuccessprogresslibrary')

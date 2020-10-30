@@ -22,7 +22,7 @@ import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.ui.move_gallery.MoveGalleryFragment
 import co.tpcreative.supersafe.ui.move_gallery.openAlbum
 import com.snatik.storage.Storage
-import spencerstudios.com.bungeelib.Bungee
+
 
 abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {
     protected var actionBar: ActionBar? = null
@@ -45,12 +45,12 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         super.onCreate(savedInstanceState)
         actionBar = getSupportActionBar()
         onStartCount = 1
-        if (savedInstanceState == null) {
-            this.overridePendingTransition(R.animator.anim_slide_in_left,
-                    R.animator.anim_slide_out_left)
-        } else {
-            onStartCount = 2
-        }
+//        if (savedInstanceState == null) {
+//            this.overridePendingTransition(R.animator.anim_slide_in_left,
+//                    R.animator.anim_slide_out_left)
+//        } else {
+//            onStartCount = 2
+//        }
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -176,18 +176,18 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-        if (SingletonManager.Companion.getInstance().isAnimation()) {
-            if (onStartCount > 1) {
-                this.overridePendingTransition(R.animator.anim_slide_in_right,
-                        R.animator.anim_slide_out_right)
-            } else if (onStartCount == 1) {
-                onStartCount++
-            }
-        } else {
-            Bungee.zoom(this)
-            SingletonManager.getInstance().setAnimation(true)
-            Utils.Log(TAG, "onStartBaseGalleryActivity")
-        }
+//        if (SingletonManager.Companion.getInstance().isAnimation()) {
+//            if (onStartCount > 1) {
+//                this.overridePendingTransition(R.animator.anim_slide_in_right,
+//                        R.animator.anim_slide_out_right)
+//            } else if (onStartCount == 1) {
+//                onStartCount++
+//            }
+//        } else {
+//            Bungee.zoom(this)
+//            SingletonManager.getInstance().setAnimation(true)
+//            Utils.Log(TAG, "onStartBaseGalleryActivity")
+//        }
     }
 
     protected abstract fun onStopListenerAWhile()

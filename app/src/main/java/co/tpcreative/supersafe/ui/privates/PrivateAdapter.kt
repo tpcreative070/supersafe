@@ -78,18 +78,18 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
                         else -> {
                             try {
                                 if (storage?.isFileExist("" + items.thumbnailPath)!!) {
-                                    imgAlbum?.setRotation(items.degrees.toFloat())
+                                    imgAlbum?.rotation =items.degrees.toFloat()
                                     Glide.with(context!!)
                                             .load(storage.readFile(items.thumbnailPath))
                                             .apply(options)
                                             .into(imgAlbum!!)
-                                    imgIcon?.setVisibility(View.INVISIBLE)
+                                    imgIcon?.visibility = View.INVISIBLE
                                 } else {
                                     imgAlbum?.setImageResource(0)
                                     val myColor = Color.parseColor(data.image)
                                     imgAlbum?.setBackgroundColor(myColor)
                                     imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, data.icon))
-                                    imgIcon?.setVisibility(View.VISIBLE)
+                                    imgIcon?.visibility = View.VISIBLE
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -165,7 +165,7 @@ class PrivateAdapter(inflater: LayoutInflater, private val context: Context?, it
 
     internal inner class MyMenuItemClickListener(var position: Int) : PopupMenu.OnMenuItemClickListener {
         override fun onMenuItemClick(menuItem: MenuItem?): Boolean {
-            when (menuItem?.getItemId()) {
+            when (menuItem?.itemId) {
                 R.id.action_settings -> {
                     itemSelectedListener?.onSetting(position)
                     return true

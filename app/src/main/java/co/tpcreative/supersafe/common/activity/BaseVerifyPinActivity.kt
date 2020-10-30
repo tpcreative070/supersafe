@@ -14,13 +14,11 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
-import spencerstudios.com.bungeelib.Bungee
 
 abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     protected var actionBar: ActionBar? = null
@@ -29,13 +27,13 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
     var TAG : String = this::class.java.simpleName
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar = getSupportActionBar()
+        actionBar = supportActionBar
         storage = Storage(this)
-        if (savedInstanceState == null) {
-            Bungee.fade(this)
-        } else {
-            onStartCount = 2
-        }
+//        if (savedInstanceState == null) {
+//            Bungee.fade(this)
+//        } else {
+//            onStartCount = 2
+//        }
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         }
@@ -111,16 +109,16 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
 
     override fun onStart() {
         super.onStart()
-        if (SingletonManager.getInstance().isAnimation()) {
-            if (onStartCount > 1) {
-                Bungee.fade(this)
-            } else if (onStartCount == 1) {
-                onStartCount++
-            }
-        } else {
-            Bungee.zoom(this)
-            SingletonManager.getInstance().setAnimation(true)
-        }
+//        if (SingletonManager.getInstance().isAnimation()) {
+//            if (onStartCount > 1) {
+//                Bungee.fade(this)
+//            } else if (onStartCount == 1) {
+//                onStartCount++
+//            }
+//        } else {
+//            Bungee.zoom(this)
+//            SingletonManager.getInstance().setAnimation(true)
+//        }
     }
 
     companion object {

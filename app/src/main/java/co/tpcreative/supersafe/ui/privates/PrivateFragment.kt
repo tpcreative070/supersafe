@@ -103,7 +103,6 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
             override fun onClickButton() {
                 presenter?.onDeleteAlbum(position)
             }
-
             override fun dismiss() {}
         })
     }
@@ -114,7 +113,6 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
                 override fun onClickButton() {
                     presenter?.onEmptyTrash()
                 }
-
                 override fun dismiss() {}
             })
         } catch (e: Exception) {

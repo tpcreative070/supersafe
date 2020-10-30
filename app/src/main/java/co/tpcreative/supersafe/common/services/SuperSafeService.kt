@@ -139,15 +139,15 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.USER_INFO)
+                        view.onError(onResponse.responseMessage, EnumStatus.USER_INFO)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         if (mData == null) {
-                            view.onError(onResponse.message, EnumStatus.USER_INFO)
+                            view.onError(onResponse.responseMessage, EnumStatus.USER_INFO)
                         }
                         if (mData?.premium != null && mData.email_token != null) {
-                            mUser?.premium = mData.premium
-                            mUser?.email_token = mData.email_token
+                            mUser.premium = mData.premium
+                            mUser.email_token = mData.email_token
                             Utils.setUserPreShare(mUser)
                             view.onSuccessful("Successful", EnumStatus.USER_INFO)
                         }
@@ -206,7 +206,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                 mAuthor?.session_token = mAuthorGlobal?.session_token
                                 mUser?.author = mAuthor
                                 Utils.setUserPreShare(mUser)
-                                view?.onSuccessful(onResponse.message, EnumStatus.UPDATE_USER_TOKEN)
+                                view?.onSuccessful(onResponse.responseMessage, EnumStatus.UPDATE_USER_TOKEN)
                                 Utils.onWriteLog(Gson().toJson(mUser), EnumStatus.UPDATE_USER_TOKEN)
                                 onDeleteOldAccessToken(mUserRequest)
                             }
@@ -301,7 +301,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body response sign in: " + Gson().toJson(onResponse))
                     if (onResponse.error) {
-                        view?.onError(onResponse.message, EnumStatus.SIGN_IN)
+                        view?.onError(onResponse.responseMessage, EnumStatus.SIGN_IN)
                     } else {
                         val user: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
@@ -472,7 +472,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     if (onResponse?.error!!) {
                         Utils.Log(TAG, "onError 1")
                         Utils.Log(TAG, "onCategoriesSync " + Gson().toJson(onResponse))
-                        view.onSuccessful(onResponse?.message!!, EnumStatus.CATEGORIES_SYNC)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.CATEGORIES_SYNC)
                     } else {
                         if (onResponse != null) {
                             val mData: DataResponse? = onResponse.data
@@ -483,7 +483,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     mainCategories?.isChange = false
                                     mainCategories?.isDelete = false
                                     SQLHelper.updateCategory(mainCategories)
-                                    view.onSuccessful(onResponse.message + " - " + mData?.category?.categories_id + " - ", EnumStatus.CATEGORIES_SYNC)
+                                    view.onSuccessful(onResponse.responseMessage + " - " + mData?.category?.categories_id + " - ", EnumStatus.CATEGORIES_SYNC)
                                 } else {
                                     view.onSuccessful("Not found categories_hex_name - " + mData?.category?.categories_id, EnumStatus.CATEGORIES_SYNC)
                                 }
@@ -541,10 +541,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                     if (onResponse.error!!) {
                         Utils.Log(TAG, "onError 1")
-                        view.onError(onResponse.message!!, EnumStatus.DELETE_CATEGORIES)
+                        view.onError(onResponse.responseMessage, EnumStatus.DELETE_CATEGORIES)
                     } else {
                         Utils.Log(TAG, "onDeleteCategoriesSync response" + Gson().toJson(onResponse))
-                        view.onSuccessful(onResponse.message!!, EnumStatus.DELETE_CATEGORIES)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.DELETE_CATEGORIES)
                     }
                 }, Consumer subscribe@{ throwable: Throwable? ->
                     if (view == null) {
@@ -609,7 +609,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         mItem.isUpdate = true
                         view.onSuccessful(EnumStatus.UPDATED_ITEM_SUCCESSFULLY.name, EnumStatus.UPDATED_ITEM_SUCCESSFULLY)
                         SQLHelper.updatedItem(mItem)
-                        view.onError("Queries add items is failed :" + onResponse.message, EnumStatus.UPDATE)
+                        view.onError("Queries add items is failed :" + onResponse.responseMessage, EnumStatus.UPDATE)
                     } else {
                         mItem.isUpdate = false
                         SQLHelper.updatedItem(mItem)
@@ -700,12 +700,12 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError:" + Gson().toJson(onResponse))
-                        view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS)
+                        view.onSuccessful("Status Items :" + onResponse.responseMessage, EnumStatus.ADD_ITEMS)
                     } else {
                         /*Check saver space*/
                         checkSaverSpace(entityModel, items.isOriginalGlobalId)
                         SQLHelper.updatedItem(entityModel)
-                        view.onSuccessful("Status Items :" + onResponse.message, EnumStatus.ADD_ITEMS)
+                        view.onSuccessful("Status Items :" + onResponse.responseMessage, EnumStatus.ADD_ITEMS)
                     }
                     Utils.Log(TAG, "Adding item Response " + Gson().toJson(onResponse))
                 }, Consumer subscribe@{ throwable: Throwable ->
@@ -773,24 +773,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view?.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
-        SuperSafeApplication.serverDriveApi?.onDeleteCloudItem(access_token, items.global_id)
+        val mAccessToken = user.access_token
+        Utils.Log(TAG, "access_token : $mAccessToken")
+        SuperSafeApplication.serverDriveApi?.onDeleteCloudItem(mAccessToken, items.global_id)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe(Consumer { onResponse: Response<DriveAbout> ->
-                    Utils.Log(TAG, "Deleted cloud response code " + onResponse.code())
+                    Utils.Log(TAG, "Deleted cloud response code " + onResponse.code() +"-action-"+items.deleteAction)
                     if (onResponse.code() == 204) {
-                        val delete = EnumDelete.values()[items.deleteAction]
-                        if (delete == EnumDelete.DELETE_DONE) {
-                            view?.onSuccessful("Deleted successfully", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
-                        }
-                        view?.onSuccessful("Deleted Successful : code " + onResponse.code() + " - ", EnumStatus.DELETE_SYNC_CLOUD_DATA)
+                        view?.onSuccessful("Deleted successfully", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
                     } else if (onResponse.code() == 404) {
-                        val delete = EnumDelete.values()[items.deleteAction]
-                        if (delete == EnumDelete.DELETE_DONE) {
-                            view?.onSuccessful("Deleted successfully", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
-                        }
+                        view?.onSuccessful("Deleted successfully", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
                         val value = onResponse.errorBody()?.string()
                         val driveAbout: DriveAbout = Gson().fromJson(value, DriveAbout::class.java)
                         view?.onError("Not found file :" + Gson().toJson(driveAbout.error) + " - ", EnumStatus.DELETE_SYNC_CLOUD_DATA)
@@ -839,11 +832,11 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view?.onError("No Drive connected", EnumStatus.REQUEST_ACCESS_TOKEN)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
+        val mAccessToken = user.access_token
+        Utils.Log(TAG, "access_token : $mAccessToken")
         val mItem = SyncItemsRequest(user.email, user.cloud_id, items.items_id)
         Utils.Log(TAG, "onDeleteOwnSystem " + Gson().toJson(mItem))
-        SuperSafeApplication?.serverAPI?.onDeleteOwnItems(mItem)
+        SuperSafeApplication.serverAPI?.onDeleteOwnItems(mItem)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe(Consumer<RootResponse> subscribe@{ onResponse: RootResponse ->
@@ -853,9 +846,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (onResponse.error) {
-                        view.onError(onResponse.message!!, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
+                        view.onError(onResponse.responseMessage!!, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
                     } else {
-                        view.onSuccessful(onResponse.message!!, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
+                        view.onSuccessful(onResponse.responseMessage!!, EnumStatus.DELETED_ITEM_SUCCESSFULLY)
                     }
                 }, Consumer subscribe@{ throwable: Throwable ->
                     if (view == null) {
@@ -868,7 +861,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         try {
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             val value: String? = bodys?.string()
                             if (value != null) {
@@ -919,7 +912,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                     if (onResponse.error) {
                         Utils.Log(TAG, "onError 1")
-                        view.onError(onResponse.message!!, EnumStatus.GET_LIST_FILE)
+                        view.onError(onResponse.responseMessage!!, EnumStatus.GET_LIST_FILE)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         val listCategories: MutableList<MainCategoryModel>? = mData?.categoriesList
@@ -1389,11 +1382,12 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     } else if (code == 202) {
                         Utils.Log(TAG, "code $code")
                         view.onSuccessful("successful", EnumStatus.SEND_EMAIL)
-                        val mUser: User? = Utils.getUserInfo()
-                        mUser?.isWaitingSendMail = false
-                        Utils.setUserPreShare(mUser)
-                        ServiceManager.Companion.getInstance()?.onDismissServices()
-                        Utils.Log(TAG, "Body : Send email Successful")
+                        Utils.getUserInfo()?.let{
+                            it.isWaitingSendMail = false
+                            Utils.setUserPreShare(it)
+                            ServiceManager.getInstance()?.onDismissServices()
+                            Utils.Log(TAG, "Body : Send email Successful")
+                        }
                     } else {
                         Utils.Log(TAG, "code $code")
                         Utils.Log(TAG, "Nothing to do")
@@ -1425,7 +1419,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({ onResponse: EmailToken ->
+                ?.subscribe({ onResponse: EmailToken? ->
                     if (onResponse != null) {
                         val token = mUser?.email_token
                         token?.access_token = onResponse.token_type + " " + onResponse.access_token
@@ -1499,11 +1493,8 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
      */
     inner class LocalBinder : Binder() {
         fun getService(): SuperSafeService? {
-            // Return this instance of SignalRService so clients can call public methods
             return this@SuperSafeService
         }
-
-        fun setIntent(intent: Intent?) {}
     }
 
     fun <T> isCheckNull(view: T?, status: EnumStatus): Boolean {

@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppThemeLaunch" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeLaunch"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorButton</item>
@@ -22,7 +22,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.Share" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.Share"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorButton</item>
@@ -46,7 +46,7 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorButton</item>
@@ -67,7 +67,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.PINK" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.PINK" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorPink</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorPink</item>
@@ -89,7 +89,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.PURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.PURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorPurple</item>
@@ -111,7 +111,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.DEEPPURPLE" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.DEEPPURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorDeepPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
@@ -133,7 +133,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.CYAN" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorCyan</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
@@ -155,7 +155,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.TEAL" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorTeal</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorTeal</item>
@@ -178,7 +178,7 @@
     </style>
 
 
-    <style name="AppTheme.LIGHTGREEN" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.LIGHTGREEN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLightGreen</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLightGreen</item>
@@ -200,7 +200,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.LIME" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.LIME" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLime</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
@@ -222,8 +222,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-
-    <style name="AppTheme.AMBER" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorAmber</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorAmber</item>
@@ -245,7 +244,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.BROWN" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.BROWN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBrown</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
@@ -267,7 +266,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.GRAY" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorGray</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorGray</item>
@@ -289,7 +288,7 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="AppTheme.BLUEGRAY" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme.BLUEGRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBlueGray</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBlueGray</item>

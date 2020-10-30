@@ -18,7 +18,7 @@ import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
-import spencerstudios.com.bungeelib.Bungee
+//import spencerstudios.com.bungeelib.Bungee
 
 abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     var onStartCount = 0
@@ -28,11 +28,11 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         onStartCount = 1
-        if (savedInstanceState == null) {
-            Bungee.fade(this)
-        } else {
-            onStartCount = 2
-        }
+//        if (savedInstanceState == null) {
+//            Bungee.fade(this)
+//        } else {
+//            onStartCount = 2
+//        }
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -127,7 +127,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
@@ -138,16 +138,16 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
 
     override fun onStart() {
         super.onStart()
-        if (SingletonManager.Companion.getInstance().isAnimation()) {
-            if (onStartCount > 1) {
-                Bungee.fade(this)
-            } else if (onStartCount == 1) {
-                onStartCount++
-            }
-        } else {
-            Bungee.zoom(this)
-            SingletonManager.getInstance().setAnimation(true)
-        }
+//        if (SingletonManager.getInstance().isAnimation()) {
+//            if (onStartCount > 1) {
+//                Bungee.fade(this)
+//            } else if (onStartCount == 1) {
+//                onStartCount++
+//            }
+//        } else {
+//            Bungee.zoom(this)
+//            SingletonManager.getInstance().setAnimation(true)
+//        }
     }
 
     protected abstract fun onStopListenerAWhile()

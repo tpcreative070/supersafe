@@ -39,7 +39,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.drive.DriveScopes
 import com.google.gson.Gson
-import spencerstudios.com.bungeelib.Bungee
+
 import java.io.IOException
 
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
@@ -53,16 +53,16 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         super.onCreate(savedInstanceState)
         actionBar = supportActionBar
         onStartCount = 1
-        if (savedInstanceState == null) {
-            if (SingletonManager.getInstance().isReloadMainTab()) {
-                Bungee.fade(this)
-            } else {
-                this.overridePendingTransition(R.animator.anim_slide_in_left,
-                        R.animator.anim_slide_out_left)
-            }
-        } else {
-            onStartCount = 2
-        }
+//        if (savedInstanceState == null) {
+//            if (SingletonManager.getInstance().isReloadMainTab()) {
+//                Bungee.fade(this)
+//            } else {
+//                this.overridePendingTransition(R.animator.anim_slide_in_left,
+//                        R.animator.anim_slide_out_left)
+//            }
+//        } else {
+//            onStartCount = 2
+//        }
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null)!!)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -222,17 +222,17 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             }
         }
         Utils.Log(TAG, "onStart..........")
-        if (SingletonManager.getInstance().isAnimation()) {
-            if (onStartCount > 1) {
-                this.overridePendingTransition(R.animator.anim_slide_in_right,
-                        R.animator.anim_slide_out_right)
-            } else if (onStartCount == 1) {
-                onStartCount++
-            }
-        } else {
-            Bungee.zoom(this)
-            SingletonManager.getInstance().setAnimation(true)
-        }
+//        if (SingletonManager.getInstance().isAnimation()) {
+//            if (onStartCount > 1) {
+//                this.overridePendingTransition(R.animator.anim_slide_in_right,
+//                        R.animator.anim_slide_out_right)
+//            } else if (onStartCount == 1) {
+//                onStartCount++
+//            }
+//        } else {
+//            Bungee.zoom(this)
+//            SingletonManager.getInstance().setAnimation(true)
+//        }
     }
 
     protected fun signIn(email: String?) {

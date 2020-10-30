@@ -18,7 +18,7 @@ import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
-import spencerstudios.com.bungeelib.Bungee
+
 
 abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     var onStartCount = 0
@@ -149,17 +149,17 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
                 Utils.Log(TAG, "Nothing to do on start " + action.name)
             }
         }
-        if (SingletonManager.getInstance().isAnimation()) {
-            if (onStartCount > 1) {
-                this.overridePendingTransition(R.animator.anim_slide_in_right,
-                        R.animator.anim_slide_out_right)
-            } else if (onStartCount == 1) {
-                onStartCount++
-            }
-        } else {
-            Bungee.zoom(this)
-            SingletonManager.getInstance().setAnimation(true)
-        }
+//        if (SingletonManager.getInstance().isAnimation()) {
+//            if (onStartCount > 1) {
+//                this.overridePendingTransition(R.animator.anim_slide_in_right,
+//                        R.animator.anim_slide_out_right)
+//            } else if (onStartCount == 1) {
+//                onStartCount++
+//            }
+//        } else {
+//            Bungee.zoom(this)
+//            SingletonManager.getInstance().setAnimation(true)
+//        }
     }
 
     protected abstract fun onStopListenerAWhile()

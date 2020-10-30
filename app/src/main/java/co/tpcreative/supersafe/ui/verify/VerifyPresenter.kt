@@ -60,13 +60,13 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
                     if (onResponse.error) {
                         view.onError(getString(R.string.the_code_not_signed_up), EnumStatus.VERIFY_CODE)
                     } else {
-                        view.onSuccessful(onResponse.message, EnumStatus.VERIFY_CODE)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                         val mUser: User? = Utils.getUserInfo()
                         if (mUser != null) {
                             mUser.verified = true
                             val mData: DataResponse? = onResponse.data
                             if (mData == null) {
-                                view.onError(onResponse.message, EnumStatus.VERIFY_CODE)
+                                view.onError(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                                 return@subscribe
                             }
                             if (mData.premium != null) {
@@ -114,7 +114,7 @@ class VerifyPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.RESEND_CODE)
+                        view.onError(onResponse.responseMessage, EnumStatus.RESEND_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data

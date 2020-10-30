@@ -56,7 +56,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        SuperSafeApplication?.serverAPI?.onCheckUserId(UserRequest())
+        SuperSafeApplication.serverAPI?.onCheckUserId(UserRequest())
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.USER_ID_EXISTING) }
@@ -122,7 +122,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.SIGN_IN) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.SIGN_IN)
+                        view.onError(onResponse.responseMessage, EnumStatus.SIGN_IN)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         mUser = mData?.user
@@ -177,7 +177,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                             mUser?.verified = true
                             val mData: DataResponse? = onResponse.data
                             if (mData == null) {
-                                view.onError(onResponse.message, EnumStatus.VERIFY_CODE)
+                                view.onError(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                                 return@subscribe
                             }
                             if (mData.premium != null) {
@@ -188,7 +188,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                             Utils.setUserPreShare(mUser)
                             mUser = Utils.getUserInfo()
                         }
-                        view.onSuccessful(onResponse.message, EnumStatus.VERIFY_CODE)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                     }
                     Utils.Log(TAG, "Body verify code : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable ->
@@ -230,7 +230,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.subscribe({ onResponse: RootResponse ->
                     view.onStopLoading(EnumStatus.CHANGE_EMAIL)
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.CHANGE_EMAIL)
+                        view.onError(onResponse.responseMessage, EnumStatus.CHANGE_EMAIL)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         if (mData?.author != null) {
@@ -244,7 +244,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                                 Utils.Log(TAG, "User is null")
                             }
                             mUser = Utils.getUserInfo()
-                            view.onSuccessful(onResponse.message, EnumStatus.CHANGE_EMAIL)
+                            view.onSuccessful(onResponse.responseMessage, EnumStatus.CHANGE_EMAIL)
                         }
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
@@ -285,7 +285,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.RESEND_CODE)
+                        view.onError(onResponse.responseMessage, EnumStatus.RESEND_CODE)
                         view.onStopLoading(EnumStatus.RESEND_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
@@ -379,7 +379,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({ onResponse: EmailToken ->
+                ?.subscribe({ onResponse: EmailToken? ->
                     if (onResponse != null) {
                         val token: EmailToken? = mUser?.email_token
                         token?.access_token = onResponse.token_type + " " + onResponse.access_token
@@ -466,7 +466,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body ???: " + Gson().toJson(onResponse))
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.CREATE)
+                        view.onError(onResponse.responseMessage, EnumStatus.CREATE)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         val mCloud: UserCloudResponse? = mData?.userCloud
@@ -474,7 +474,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         mUser?.verified = true
                         mUser?.cloud_id = mCloud?.cloud_id
                         Utils.setUserPreShare(mUser)
-                        view.onSuccessful(onResponse.message, EnumStatus.CREATE)
+                        view.onSuccessful(onResponse.responseMessage, EnumStatus.CREATE)
                     }
                     Utils.Log(TAG, "User info " + Gson().toJson(mUser))
                 }, { throwable: Throwable ->
@@ -515,7 +515,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                     if (onResponse.error) {
-                        view.onError(onResponse.message, EnumStatus.CLOUD_ID_EXISTING)
+                        view.onError(onResponse.responseMessage, EnumStatus.CLOUD_ID_EXISTING)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         val mCloudData: UserCloudResponse? = mData?.userCloud

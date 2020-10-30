@@ -30,11 +30,9 @@ import com.snatik.storage.helpers.SizeUnit
 import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
@@ -193,13 +191,15 @@ class ServiceManager : BaseServiceView<Any?> {
                    }
                 }
                 override fun onShowObjects(`object`: ItemModel) {}
-                override fun onError(message: String, status: EnumStatus) {
+                override fun onError(message: String?, status: EnumStatus) {
                     isGetItemList = false
                 }
-                override fun onSuccessful(message: String, status: EnumStatus) {
+                override fun onSuccessful(message: String?, status: EnumStatus) {
                     if (status == EnumStatus.LOAD_MORE) {
                         isGetItemList = true
-                        onGetItemList(message)
+                        message?.let {
+                            onGetItemList(it)
+                        }
                         Utils.Log(TAG, "Continue load more $message")
                     } else if (status == EnumStatus.SYNC_READY) {
                         /*Start sync*/
@@ -237,10 +237,10 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.onCategoriesSync(categoryModel, object : BaseListener<EmptyModel> {
                 override fun onShowListObjects(list: MutableList<EmptyModel>) {}
                 override fun onShowObjects(`object`: EmptyModel) {}
-                override fun onError(message: String, status: EnumStatus) {
+                override fun onError(message: String?, status: EnumStatus) {
                     isSyncCategory = false
                 }
-                override fun onSuccessful(message: String, status: EnumStatus) {
+                override fun onSuccessful(message: String?, status: EnumStatus) {
                     isSyncCategory = false
                     if (Utils.deletedIndexOfCategoryHashMap(categoryModel, mMapSyncCategory)) {
                         /*Delete local db and folder name*/
@@ -285,10 +285,10 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.onCategoriesSync(itemModel, object : BaseListener<EmptyModel> {
                 override fun onShowListObjects(list: MutableList<EmptyModel>) {}
                 override fun onShowObjects(`object`: EmptyModel) {}
-                override fun onError(message: String, status: EnumStatus) {
+                override fun onError(message: String?, status: EnumStatus) {
                     isUpdateCategoryData = false
                 }
-                override fun onSuccessful(message: String, status: EnumStatus) {
+                override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateCategoryData = false
                     if (Utils.deletedIndexOfCategoryHashMap(itemModel, mMapUpdateCategory)) {
                         /*Delete local db and folder name*/
@@ -338,10 +338,10 @@ class ServiceManager : BaseServiceView<Any?> {
         myService?.onDeleteCategoriesSync(mainCategoryModel, object : BaseListener<EmptyModel> {
             override fun onShowListObjects(list: MutableList<EmptyModel>) {}
             override fun onShowObjects(`object`: EmptyModel) {}
-            override fun onError(message: String, status: EnumStatus) {
+            override fun onError(message: String?, status: EnumStatus) {
                 isDeleteCategoryData = false
             }
-            override fun onSuccessful(message: String, status: EnumStatus) {
+            override fun onSuccessful(message: String?, status: EnumStatus) {
                 if (Utils.deletedIndexOfCategoryHashMap(mainCategoryModel, mMapDeleteCategory)) {
                     /*Delete local db and folder name*/
                     SQLHelper.deleteCategory(mainCategoryModel)
@@ -597,10 +597,10 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.onUpdateItems(itemModel, object : BaseListener<EmptyModel> {
                 override fun onShowListObjects(list: MutableList<EmptyModel>) {}
                 override fun onShowObjects(`object`: EmptyModel) {}
-                override fun onError(message: String, status: EnumStatus) {
+                override fun onError(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                 }
-                override fun onSuccessful(message: String, status: EnumStatus) {
+                override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapUpdateItem)) {
                         /*Delete local db and folder name*/
@@ -656,19 +656,20 @@ class ServiceManager : BaseServiceView<Any?> {
             return
         }
         isDeleteItemData = true
-        /*Request delete item from cloud*/myService?.onDeleteCloudItems(itemModel, object : BaseListener<EmptyModel> {
+        /*Request delete item from cloud*/
+        myService?.onDeleteCloudItems(itemModel, object : BaseListener<EmptyModel> {
             override fun onShowListObjects(list: MutableList<EmptyModel>) {}
             override fun onShowObjects(`object`: EmptyModel) {}
-            override fun onError(message: String, status: EnumStatus) {}
-            override fun onSuccessful(message: String, status: EnumStatus) {
+            override fun onError(message: String?, status: EnumStatus) {}
+            override fun onSuccessful(message: String?, status: EnumStatus) {
                 /*Request delete item from system*/
                 myService?.onDeleteOwnSystem(itemModel, object : BaseListener<EmptyModel> {
                     override fun onShowListObjects(list: MutableList<EmptyModel>) {}
                     override fun onShowObjects(`object`: EmptyModel) {}
-                    override fun onError(message: String, status: EnumStatus) {
+                    override fun onError(message: String?, status: EnumStatus) {
                         isDeleteItemData = false
                     }
-                    override fun onSuccessful(message: String, status: EnumStatus) {
+                    override fun onSuccessful(message: String?, status: EnumStatus) {
                         if (Utils.deletedIndexOfHashMap(itemModel, mMapDeleteItem)) {
                             /*Delete local db and folder name*/
                             Utils.onDeleteItemFolder(itemModel.items_id)
@@ -743,8 +744,8 @@ class ServiceManager : BaseServiceView<Any?> {
             val mPath: String = importFiles.path!!
             val mMimeType = mMimeTypeFile.mimeType
             val mMainCategories: MainCategoryModel = importFiles.mainCategories!!
-            val categories_id: String = mMainCategories.categories_id!!
-            val categories_local_id: String = mMainCategories.categories_local_id!!
+            val mCategoriesId: String = mMainCategories.categories_id!!
+            val mCategoriesLocalId: String = mMainCategories.categories_local_id!!
             val isFakePin: Boolean = mMainCategories.isFakePin
             val uuId: String = importFiles.unique_id!!
             var thumbnail: Bitmap? = null
@@ -758,7 +759,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         storage?.createDirectory(pathContent)
                         val thumbnailPath = pathContent + "thumbnail_" + currentTime
                         val originalPath = pathContent + currentTime
-                        val itemsPhoto = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, Utils.getSaverSpace(), false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                        val itemsPhoto = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, Utils.getSaverSpace(), false, false, 0, false, false, false, EnumStatus.UPLOAD)
                         val file: File = Compressor(SuperSafeApplication.getInstance())
                                 .setMaxWidth(1032)
                                 .setMaxHeight(774)
@@ -824,7 +825,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         storage?.createDirectory(pathContent)
                         val thumbnailPath = pathContent + "thumbnail_" + currentTime
                         val originalPath = pathContent + currentTime
-                        val itemsVideo = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.VIDEO, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                        val itemsVideo = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.VIDEO, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                         Utils.Log(TAG, "Call thumbnail")
                         val createdThumbnail: Boolean = storage?.createFile(thumbnailPath, thumbnail)!!
                         mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
@@ -864,7 +865,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         val pathContent = "$rootPath$uuId/"
                         storage?.createDirectory(pathContent)
                         val originalPath = pathContent + currentTime
-                        val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                        val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                         mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
                         val createdOriginal = mStorage?.createLargeFile(File(originalPath), File(mPath), mCiphers)
                         val response = ResponseRXJava()
@@ -901,7 +902,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         val pathContent = "$rootPath$uuId/"
                         storage?.createDirectory(pathContent)
                         val originalPath = pathContent + currentTime
-                        val itemsFile = ItemModel(mMimeTypeFile.extension, originalPath, "null", categories_id, categories_local_id, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                        val itemsFile = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                         mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
                         val createdOriginal = mStorage?.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
                         val response = ResponseRXJava()
@@ -940,37 +941,37 @@ class ServiceManager : BaseServiceView<Any?> {
                     val mResponse: ResponseRXJava? = response as ResponseRXJava?
                     try {
                         if (mResponse?.isWorking!!) {
-                            val items: ItemModel = mResponse.items!!
-                            var mb: Long
-                            val enumFormatType = EnumFormatType.values()[items.formatType]
-                            when (enumFormatType) {
-                                EnumFormatType.AUDIO -> {
-                                    if (storage?.isFileExist(items.originalPath)!!) {
-                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
-                                        items.size = "" + mb
-                                        SQLHelper.insertedItem(items)
-                                    }
-                                }
-                                EnumFormatType.FILES -> {
-                                    if (storage?.isFileExist(items.originalPath)!!) {
-                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
-                                        items.size = "" + mb
-                                        SQLHelper.insertedItem(items)
-                                    }
-                                }
-                                else -> {
-                                    if (storage?.isFileExist(items.originalPath)!! && storage.isFileExist(items.thumbnailPath)!!) {
-                                        mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
-                                        if (storage.isFileExist(items.thumbnailPath)) {
-                                            mb += +storage.getSize(File(items.thumbnailPath), SizeUnit.B).toLong()
+                            mResponse.items?.let {items ->
+                                var mb: Long
+                                when (val enumFormatType = EnumFormatType.values()[items.formatType]) {
+                                    EnumFormatType.AUDIO -> {
+                                        if (storage?.isFileExist(items.originalPath)!!) {
+                                            mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
+                                            items.size = "" + mb
+                                            SQLHelper.insertedItem(items)
                                         }
-                                        items.size = "" + mb
-                                        SQLHelper.insertedItem(items)
-                                        if (!mResponse.categories?.isCustom_Cover!!) {
-                                            if (enumFormatType == EnumFormatType.IMAGE) {
-                                                val main: MainCategoryModel = mResponse.categories as MainCategoryModel
-                                                main.items_id = items.items_id
-                                                SQLHelper.updateCategory(main)
+                                    }
+                                    EnumFormatType.FILES -> {
+                                        if (storage?.isFileExist(items.originalPath)!!) {
+                                            mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
+                                            items.size = "" + mb
+                                            SQLHelper.insertedItem(items)
+                                        }
+                                    }
+                                    else -> {
+                                        if (storage?.isFileExist(items.originalPath)!! && storage.isFileExist(items.thumbnailPath)!!) {
+                                            mb = +storage.getSize(File(items.originalPath), SizeUnit.B).toLong()
+                                            if (storage.isFileExist(items.thumbnailPath)) {
+                                                mb += +storage.getSize(File(items.thumbnailPath), SizeUnit.B).toLong()
+                                            }
+                                            items.size = "" + mb
+                                            SQLHelper.insertedItem(items)
+                                            if (!mResponse.categories?.isCustom_Cover!!) {
+                                                if (enumFormatType == EnumFormatType.IMAGE) {
+                                                    val main: MainCategoryModel = mResponse.categories as MainCategoryModel
+                                                    main.items_id = items.items_id
+                                                    SQLHelper.updateCategory(main)
+                                                }
                                             }
                                         }
                                     }
@@ -984,7 +985,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         e.printStackTrace()
                     } finally {
                         if (mResponse?.isWorking!!) {
-                            val items: ItemModel = mResponse?.items as ItemModel
+                            val items: ItemModel = mResponse.items as ItemModel
                             GalleryCameraMediaManager.getInstance()?.setProgressing(false)
                             Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                             if (items.isFakePin) {
@@ -993,7 +994,6 @@ class ServiceManager : BaseServiceView<Any?> {
                                 SingletonPrivateFragment.getInstance()?.onUpdateView()
                             }
                             Utils.Log(TAG, "Original path :" + mResponse.originalPath)
-                            val storage = Storage(SuperSafeApplication.Companion.getInstance())
                             if (!getRequestShareIntent()) {
                                 Utils.onDeleteFile(mResponse.originalPath)
                             }
@@ -1181,10 +1181,10 @@ class ServiceManager : BaseServiceView<Any?> {
 
     /*--------------Camera action-----------------*/
     fun onSaveDataOnCamera(mData: ByteArray?, mainCategories: MainCategoryModel?) {
-        subscriptions = Observable.create<Any?>(ObservableOnSubscribe<Any?> { subscriber: ObservableEmitter<Any?>? ->
+        subscriptions = Observable.create<Any?> { subscriber: ObservableEmitter<Any?>? ->
             val mMainCategories: MainCategoryModel? = mainCategories
-            val categories_id: String = mMainCategories?.categories_id as String
-            val categories_local_id: String = mMainCategories?.categories_local_id as String
+            val mCategoriesId: String = mMainCategories?.categories_id as String
+            val mCategoriesLocalId: String = mMainCategories?.categories_local_id as String
             val isFakePin: Boolean = mMainCategories.isFakePin
             try {
                 val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
@@ -1195,7 +1195,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 val thumbnailPath = pathContent + "thumbnail_" + currentTime
                 val originalPath = pathContent + currentTime
                 val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
-                val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, categories_id, categories_local_id, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                 storage?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance(), mData, object : OnStorageListener {
                     override fun onSuccessful() {}
                     override fun onSuccessful(path: String?) {
@@ -1230,14 +1230,12 @@ class ServiceManager : BaseServiceView<Any?> {
                             subscriber?.onComplete()
                         }
                     }
-
                     override fun onFailed() {
                         val response = ResponseRXJava()
                         response.isWorking = false
                         subscriber?.onNext(response)
                         subscriber?.onComplete()
                     }
-
                     override fun onSuccessful(position: Int) {}
                 })
             } catch (e: Exception) {
@@ -1250,7 +1248,7 @@ class ServiceManager : BaseServiceView<Any?> {
             } finally {
                 Utils.Log(TAG, "Finally")
             }
-        })
+        }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
@@ -1261,8 +1259,8 @@ class ServiceManager : BaseServiceView<Any?> {
                             val mItem: ItemModel = mResponse.items as ItemModel
                             var mb: Long
                             if (storage?.isFileExist(mItem.originalPath)!! && storage?.isFileExist(mItem.thumbnailPath)) {
-                                mb = +storage?.getSize(File(mItem.originalPath), SizeUnit.B).toLong()
-                                if (storage?.isFileExist(mItem.thumbnailPath)) {
+                                mb = +storage.getSize(File(mItem.originalPath), SizeUnit.B).toLong()
+                                if (storage.isFileExist(mItem.thumbnailPath)) {
                                     mb += +storage.getSize(File(mItem.thumbnailPath), SizeUnit.B).toLong()
                                 }
                                 mItem.size = "" + mb
@@ -1296,7 +1294,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
     fun onExportingFiles() {
         Utils.Log(TAG, "Export amount files :" + mListExport.size)
-        subscriptions = Observable.create<Any?>({ subscriber: ObservableEmitter<Any?>? ->
+        subscriptions = Observable.create<Any?> {
             setExporting(true)
             var isWorking = false
             var exportFiles: ExportFiles? = null
@@ -1368,7 +1366,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 mListExport.clear()
                 onPreparingSyncData()
             }
-        })
+        }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
@@ -1392,8 +1390,7 @@ class ServiceManager : BaseServiceView<Any?> {
         when (status) {
             EnumStatus.SCREEN_OFF -> {
                 val value: Int = PrefsController.getInt(getString(R.string.key_screen_status), EnumPinAction.NONE.ordinal)
-                val action = EnumPinAction.values()[value]
-                when (action) {
+                when (EnumPinAction.values()[value]) {
                     EnumPinAction.NONE -> {
                         val key: String = SuperSafeApplication.getInstance().readKey() as String
                         if ("" != key) {
@@ -1478,9 +1475,9 @@ class ServiceManager : BaseServiceView<Any?> {
                             onDownLoadDataToExportFiles(mDownloadItem)
                             isDownloadToExportFiles = true
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
-                            Utils.Log(ServiceManager.Companion.TAG, "Next download item..............." + Gson().toJson(mDownloadItem))
+                            Utils.Log(TAG, "Next download item..............." + Gson().toJson(mDownloadItem))
                         } else {
-                            Utils.Log(ServiceManager.Companion.TAG, "Download completely...............")
+                            Utils.Log(TAG, "Download completely...............")
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DOWNLOAD_COMPLETED, "Total downloading " + mMapDownloadToExportFiles.size)
                             isDownloadToExportFiles = false
@@ -1490,7 +1487,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
 
                 override fun onError(message: String?, status: EnumStatus?) {
-                    Utils.Log(ServiceManager.Companion.TAG, "onDownLoadData ==> onError:$message")
+                    Utils.Log(TAG, "onDownLoadData ==> onError:$message")
                     Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.ERROR, "onDownLoadData ==> onError $message")
                     isDownloadToExportFiles = false
                     if (status == EnumStatus.NO_SPACE_LEFT) {
@@ -1567,11 +1564,6 @@ class ServiceManager : BaseServiceView<Any?> {
         fun onCancel()
     }
 
-    interface ServiceManagerGalleySyncDataListener {
-        fun onCompleted(importFiles: ImportFilesModel?)
-        fun onFailed(importFiles: ImportFilesModel?)
-    }
-
     /*Upload Service*/
     interface UploadServiceListener {
         fun onProgressUpdate(percentage: Int)
@@ -1589,8 +1581,8 @@ class ServiceManager : BaseServiceView<Any?> {
     interface BaseListener<T> {
         fun onShowListObjects(list: MutableList<T>)
         fun onShowObjects(`object`: T)
-        fun onError(message: String, status: EnumStatus)
-        fun onSuccessful(message: String, status: EnumStatus)
+        fun onError(message: String?, status: EnumStatus)
+        fun onSuccessful(message: String?, status: EnumStatus)
     }
 
     interface ServiceManagerInsertItem {
