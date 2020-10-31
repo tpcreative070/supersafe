@@ -9,7 +9,6 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
