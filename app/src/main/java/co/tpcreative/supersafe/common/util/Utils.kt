@@ -63,6 +63,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.reflect.KClass
 
 /**
  * Created by pc on 07/16/2017.
@@ -980,7 +981,56 @@ object Utils  {
             return false
         }
 
-        /*Check saver space*/
+    /*Convert list to hash-map*/
+    fun convertItemListToMap(list: List<ItemModel>): Map<String, ItemModel>? {
+        val mMap: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
+        for (index in list) {
+            mMap[index.items_id!!] = index
+        }
+        return mMap
+    }
+
+    /*Check request delete item from global*/
+    fun checkItemDeleteSyncedLocal(mSyncedList: List<ItemModel>): List<ItemModel> {
+        val mListResult: MutableList<ItemModel> = ArrayList<ItemModel>()
+        val mListLocal: List<ItemModel>? = SQLHelper.getListItemId(true,false)
+        /*Convert list to hash-map*/
+        val mMap: Map<String?, ItemModel>? = mSyncedList.associateBy({it.items_id}, {it})
+        Utils.Log(TAG,"checking item ${mListLocal?.size}")
+        mListLocal?.let {
+            for (index in it) {
+                val mValue: ItemModel? = mMap?.get(index.items_id)
+                Utils.Log(TAG,"checking item delete...")
+                if (mValue == null) {
+                    mListResult.add(index)
+                }
+            }
+        }
+        return mListResult
+    }
+
+    /*Check request delete category from global*/
+    fun checkCategoryDeleteSyncedLocal(mSyncedList: List<MainCategoryModel>): List<MainCategoryModel> {
+        val mListResult: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
+        val mListLocal: List<MainCategoryModel>? = SQLHelper.getListCategories(false)
+        /*Convert list to hash-map*/
+        val mMap: Map<String?, MainCategoryModel>? = mSyncedList.associateBy({it.categories_id}, {it})
+        mListLocal?.let {
+            for (index in it) {
+                val mValue: MainCategoryModel? = mMap?.get(index.categories_id)
+                val mObject = SQLHelper.getItemsList(index.categories_id)
+                Log(TAG,Gson().toJson(mValue))
+                Log(TAG,Gson().toJson(mObject))
+                if (mValue == null && mObject?.size == 0) {
+                    mListResult.add(index)
+                }
+            }
+        }
+        Utils.Log(TAG,"checking category ${mListResult?.size}")
+        return mListResult
+    }
+
+    /*Check saver space*/
         fun getSaverSpace(): Boolean {
             return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
         }
@@ -1239,6 +1289,9 @@ object Utils  {
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), positionTheme)
     }
 
+    fun deleteFolderOfItemId(items_id : String){
+        SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + items_id)
+    }
 }
 
 interface UtilsListener {

@@ -95,7 +95,7 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         storage = Storage(this)
 
         //supersafe = getExternalFilesDir(null)?.absolutePath + "/SuperSafe_DoNot_Delete/"
-        supersafe = storage.externalStorageDirectory + "/SuperSafe_DoNot_Delete/"
+        supersafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
         key = ".encrypt_key"
         fake_key = ".encrypt_fake_key"
         userSecret = ".userSecret"

@@ -507,6 +507,24 @@ object SQLHelper {
         return null
     }
 
+    fun getItemsList(categories_id : String?): MutableList<ItemModel>? {
+        if (categories_id == null) {
+            return null
+        }
+        try {
+            val mList: MutableList<ItemEntityModel>? = getInstance()?.getListItems(categories_id)
+            val mData: MutableList<ItemModel> = ArrayList<ItemModel>()
+            if (mList != null) {
+                for (index in mList) {
+                    mData.add(ItemModel(index))
+                }
+                return mData
+            }
+        } catch (e: Exception) {
+        }
+        return null
+    }
+
     fun getItemId(item_id: String?): ItemModel? {
         try {
             val mResult: ItemEntityModel? = getInstance()?.getItemId(item_id)

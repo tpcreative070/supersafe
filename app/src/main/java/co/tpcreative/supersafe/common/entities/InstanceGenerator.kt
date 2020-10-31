@@ -134,6 +134,23 @@ abstract class InstanceGenerator : RoomDatabase() {
         return null
     }
 
+    fun getListItems(categories_id: String?): MutableList<ItemEntityModel>? {
+        try {
+            val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadRequestItemsList(categories_id,)
+            val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
+            if (mList != null) {
+                for (index in mList) {
+                    mData.add(ItemEntityModel(index))
+                }
+                return mData
+            }
+        } catch (e: Exception) {
+            Utils.Log(TAG, e.message +"")
+        }
+        return null
+    }
+
+
     fun getListAllItems(isFakePin: Boolean): MutableList<ItemEntityModel>? {
         try {
             val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadAll(isFakePin)

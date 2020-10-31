@@ -42,6 +42,9 @@ interface ItemsDao {
     @Query("Select * FROM items WHERE isSyncCloud = :isSyncCloud AND isDeleteLocal = :isDeleteLocal AND statusAction =:statusAction AND isFakePin =:isFakePin")
     fun loadRequestUploadData(isSyncCloud: Boolean, isDeleteLocal: Boolean, statusAction: Int, isFakePin: Boolean): MutableList<ItemEntity>?
 
+    @Query("Select * FROM items WHERE categories_id = :categories_id")
+    fun loadRequestItemsList(categories_id: String?): MutableList<ItemEntity>?
+
     @Query("Select * FROM items WHERE isDeleteLocal = :isDeleteLocal AND deleteAction = :deleteAction AND isFakePin =:isFakePin")
     fun loadDeleteLocalDataItems(isDeleteLocal: Boolean, deleteAction: Int, isFakePin: Boolean): MutableList<ItemEntity>?
 

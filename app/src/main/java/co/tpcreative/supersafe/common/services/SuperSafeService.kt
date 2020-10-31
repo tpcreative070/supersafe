@@ -47,6 +47,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeReceiver.ConnectivityReceiverListener {
     private val mBinder: IBinder? = LocalBinder() // Binder given to clients
@@ -60,7 +61,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         downloadService = DownloadService()
         storage = Storage(this)
         onInitReceiver()
-        SuperSafeApplication.Companion.getInstance().setConnectivityListener(this)
+        SuperSafeApplication.getInstance().setConnectivityListener(this)
     }
 
     fun getStorage(): Storage? {
@@ -717,13 +718,18 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         val code = (throwable as HttpException?)?.response()?.code()
                         try {
+                            val messageResponse = bodys?.string()
+                            val mResponse = Gson().fromJson(messageResponse, BaseResponse::class.java)
                             if (code == 401) {
                                 Utils.Log(TAG, "code $code")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            Utils.Log(TAG, "Adding item Response error" + bodys?.string())
-                            view.onError("" + bodys?.string(), EnumStatus.ADD_ITEMS)
+                            /*Not found category*/
+                            if (mResponse.responseCode == 1009) {
+
+                            }
+                            Utils.Log(TAG, "Adding item Response error=> $messageResponse")
+                            view.onError("" + messageResponse, EnumStatus.ADD_ITEMS)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("" + e.message, EnumStatus.ADD_ITEMS)
@@ -880,9 +886,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 })?.let { subscriptions?.add(it) }
     }
 
-    fun onGetListSync(nextPage: String, view: ServiceManager.BaseListener<ItemModel>?) {
+    fun onGetListSync(nextPage: String, view: ServiceManager.BaseListener<SyncDataModel>?) {
         Utils.Log(TAG, "onGetListSync")
-        if (isCheckNull<ServiceManager.BaseListener<ItemModel>?>(view, EnumStatus.GET_LIST_FILE)) {
+        if (isCheckNull<ServiceManager.BaseListener<SyncDataModel>?>(view, EnumStatus.GET_LIST_FILE)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -957,6 +963,11 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     }
                                 }
                             }
+                            if (nextPage == "0"){
+                                view.onShowObjects(SyncDataModel(ArrayList(),listCategories))
+                            }else{
+                                view.onShowObjects(SyncDataModel(null,listCategories))
+                            }
                             view.onSuccessful("", EnumStatus.SYNC_READY)
                         } else {
                             val mList: MutableList<ItemModel> = ArrayList()
@@ -965,7 +976,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     mList.add(ItemModel(index, EnumStatus.DOWNLOAD))
                                 }
                             }
-                            view.onShowListObjects(mList)
+                            view.onShowObjects(SyncDataModel(mList,null))
                             view.onSuccessful(mData.nextPage!!, EnumStatus.LOAD_MORE)
                         }
                     }

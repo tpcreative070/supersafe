@@ -193,18 +193,21 @@ class ServiceManager : BaseServiceView<Any?> {
         if (myService != null) {
             isGetItemList = true
             /*Stop multiple request*/isHandleLogic = true
-            myService?.onGetListSync(next, object : BaseListener<ItemModel> {
-                override fun onShowListObjects(list: MutableList<ItemModel>) {
-                    list?.let {
+            myService?.onGetListSync(next, object : BaseListener<SyncDataModel> {
+                override fun onShowListObjects(list: MutableList<SyncDataModel>) {
+                }
+                override fun onShowObjects(`object`: SyncDataModel) {
+                    `object`.list?.let {
                         mDownloadList.addAll(it)
+                        onItemDeleteSyncedLocal(it)
+                    }
+                    `object`.categoryList?.let {
+                        onCategoryDeleteSyncedLocal(it)
                     }
                 }
-
-                override fun onShowObjects(`object`: ItemModel) {}
                 override fun onError(message: String?, status: EnumStatus) {
                     isGetItemList = false
                 }
-
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     if (status == EnumStatus.LOAD_MORE) {
                         isGetItemList = true
@@ -382,7 +385,7 @@ class ServiceManager : BaseServiceView<Any?> {
         Utils.Log(TAG, "onPreparingDownloadData ==> Local original list " + Gson().toJson(mListLocal))
         if (mListLocal != null) {
             Utils.Log(TAG, "onPreparingDownloadData ==> Local list " + Gson().toJson(mListLocal))
-            if (globalList != null && mListLocal != null) {
+            if (globalList != null) {
                 val mergeList: MutableList<ItemModel>? = Utils.clearListFromDuplicate(globalList, mListLocal)
                 Utils.Log(TAG, "onPreparingDownloadData ==> clear duplicated data " + Gson().toJson(mergeList))
                 if (mergeList != null) {
@@ -558,6 +561,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus?) {
                     isUploadData = false
                     Utils.onPushEventBus(EnumStatus.DONE)
+                    Utils.Log(TAG, ""+message)
                     Utils.onWriteLog(EnumStatus.UPLOAD, EnumStatus.ERROR, "onUploadLoadData ==> onError $message")
                     if (status == EnumStatus.NO_SPACE_LEFT_CLOUD) {
                         Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT_CLOUD)
@@ -679,6 +683,7 @@ class ServiceManager : BaseServiceView<Any?> {
             override fun onError(message: String?, status: EnumStatus) {
                 isDeleteItemData = false
             }
+
             override fun onSuccessful(message: String?, status: EnumStatus) {
                 /*Request delete item from system*/
                 myService?.onDeleteOwnSystem(itemModel, object : BaseListener<EmptyModel> {
@@ -726,6 +731,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
                 override fun onError(message: String?, status: EnumStatus?) {
                     ls.onError(message, status)
+                    Utils.Log(TAG, ""+message)
                 }
                 override fun onSuccessful(message: String?, status: EnumStatus?) {
                     ls.onSuccessful(message, status)
@@ -1534,6 +1540,32 @@ class ServiceManager : BaseServiceView<Any?> {
                     }
                 }
             })
+        }
+    }
+
+    /*Request category delete synced local*/
+    fun onCategoryDeleteSyncedLocal(mList : List<MainCategoryModel>){
+        val mResultList = Utils.checkCategoryDeleteSyncedLocal(mList)
+        mResultList.let {
+            for (index in it){
+                SQLHelper.deleteCategory(index)
+            }
+            Utils.Log(TAG,Gson().toJson(mList))
+            Utils.Log(TAG,"Total need to delete categories synced local.... " + it.size)
+        }
+    }
+
+    /*Request item delete synced local*/
+    fun onItemDeleteSyncedLocal(mList : List<ItemModel>){
+        val mResultList = Utils.checkItemDeleteSyncedLocal(mList)
+        mResultList.let {
+            for (index in it){
+                SQLHelper.deleteItem(index)
+                index.items_id?.let { it1 ->
+                    Utils.deleteFolderOfItemId(it1)
+                }
+            }
+            Utils.Log(TAG,"Total need to delete items synced local.... " + it.size)
         }
     }
 
