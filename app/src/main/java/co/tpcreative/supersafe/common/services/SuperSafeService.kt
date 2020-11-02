@@ -8,7 +8,6 @@ import android.os.IBinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
-import co.tpcreative.supersafe.common.api.requester.SyncDataService
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
@@ -37,8 +36,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -346,13 +343,13 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            val value: String? = bodys?.string()
-                            val driveAbout: DriveAbout? = Gson().fromJson(value, DriveAbout::class.java)
-                            if (driveAbout != null) {
-                                if (driveAbout.error != null) {
-                                    view.onError(EnumStatus.GET_DRIVE_ABOUT.name + "-" + Gson().toJson(driveAbout.error), EnumStatus.REQUEST_ACCESS_TOKEN)
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(DriveAbout::class.java)
+                            if (mObject != null) {
+                                if (mObject.error != null) {
+                                    view.onError(EnumStatus.GET_DRIVE_ABOUT.name + "-" + Gson().toJson(mObject.error), EnumStatus.REQUEST_ACCESS_TOKEN)
                                 }
                             } else {
                                 view.onError(EnumStatus.GET_DRIVE_ABOUT.name + " - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN)
@@ -388,7 +385,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         SuperSafeApplication.serverDriveApi?.onGetListFileInAppFolder(mAccessToken, SuperSafeApplication.Companion.getInstance().getString(R.string.key_appDataFolder))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ ddd: Disposable? -> view?.onStartLoading(EnumStatus.GET_LIST_FILES_IN_APP) })
+                ?.doOnSubscribe { ddd: Disposable? -> view?.onStartLoading(EnumStatus.GET_LIST_FILES_IN_APP) }
                 ?.subscribe({ onResponse: DriveAbout ->
                     Utils.Log(TAG, "Response data from items " + Gson().toJson(onResponse))
                     view?.onStopLoading(EnumStatus.GET_LIST_FILES_IN_APP)

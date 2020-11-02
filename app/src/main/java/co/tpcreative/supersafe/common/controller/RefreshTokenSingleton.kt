@@ -48,7 +48,7 @@ class RefreshTokenSingleton private constructor() {
         }
     }
 
-    fun onRefreshAccessToken(accounts: Account?) {
+    private fun onRefreshAccessToken(accounts: Account?) {
         Utils.Log(TAG,"onRefreshAccessToken")
         compositeDisposable = CompositeDisposable()
         compositeDisposable!!.add(Observable.fromCallable(Callable {
