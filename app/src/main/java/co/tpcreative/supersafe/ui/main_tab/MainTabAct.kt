@@ -271,7 +271,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         } else {
             PremiumManager.getInstance().onStop()
             Utils.onDeleteTemporaryFile()
-            Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), SuperSafeApplication.getInstance().getSupersafeBackup(), object : ServiceManager.ServiceManagerSyncDataListener {
+            Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), SuperSafeApplication.getInstance().getSuperSafeBackup(), object : ServiceManager.ServiceManagerSyncDataListener {
                 override fun onCompleted() {
                     Utils.Log(TAG, "Exporting successful")
                 }

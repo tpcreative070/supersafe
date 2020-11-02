@@ -206,7 +206,7 @@ fun EnterPinAct.initUI(){
 
 
 fun EnterPinAct.onRestore() {
-    Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeBackup(), SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
+    Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeBackup(), SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
         override fun onCompleted() {
             Utils.Log(TAG, "Exporting successful")
             val mUser: User? = SuperSafeApplication.getInstance().readUseSecret()

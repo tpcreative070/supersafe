@@ -54,7 +54,7 @@ fun RestoreAct.initUI(){
 
 fun RestoreAct.onRestore() {
     subscriptions = Observable.create<Any?> { subscriber: ObservableEmitter<Any?>? ->
-        Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSupersafeBackup(), SuperSafeApplication.getInstance().getSupersafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
+        Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeBackup(), SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
             override fun onCompleted() {
                 subscriber?.onNext(true)
                 subscriber?.onComplete()

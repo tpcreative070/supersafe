@@ -100,7 +100,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                             }
                         }
                         EnumStatus.EXPORT -> {
-                            runOnUiThread(Runnable { Toast.makeText(this@AlbumDetailAct, "Exported at " + SuperSafeApplication.getInstance().getSupersafePicture(), Toast.LENGTH_LONG).show() })
+                            runOnUiThread(Runnable { Toast.makeText(this@AlbumDetailAct, "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture(), Toast.LENGTH_LONG).show() })
                         }
                     }
                 } catch (e: Exception) {
@@ -150,7 +150,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         if (isReload) {
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
-        storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafeShare())
+        storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
     }
 
     override fun onStop() {
@@ -566,7 +566,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     SQLHelper.updatedItem(mList[i])
                     Utils.Log(TAG, "ServiceManager waiting for delete")
                 }
-                storage?.deleteDirectory(SuperSafeApplication.Companion.getInstance().getSupersafePrivate() + mList[i].items_id)
+                storage?.deleteDirectory(SuperSafeApplication.Companion.getInstance().getSuperSafePrivate() + mList[i].items_id)
                 onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER, i)
             }
             i++

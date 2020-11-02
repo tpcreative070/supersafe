@@ -72,7 +72,7 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                     SQLHelper.updatedItem(mList?.get(i)!!)
                     Utils.Log(TAG, "ServiceManager waiting for delete")
                 }
-                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList?.get(i)?.items_id)
+                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + mList?.get(i)?.items_id)
             } else {
                 val items: ItemModel? = mList?.get(i)
                 items?.isDeleteLocal = false

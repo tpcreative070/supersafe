@@ -63,7 +63,6 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.reflect.KClass
 
 /**
  * Created by pc on 07/16/2017.
@@ -488,9 +487,9 @@ object Utils  {
                 return
             }
             if (status == null) {
-                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Content--- :" + message, true)
+                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSuperSafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Content--- :" + message, true)
             } else {
-                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSupersafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Status---- :" + status.name + " ----Content--- :" + message, true)
+                mCreateAndSaveFileOverride("log.txt", SuperSafeApplication.getInstance().getSuperSafeLog(), "----Time----" + getCurrentDateTimeFormat() + " ----Status---- :" + status.name + " ----Content--- :" + message, true)
             }
         }
 
@@ -1039,9 +1038,9 @@ object Utils  {
 
         /*Delete folder*/
         fun onDeleteItemFolder(item_id: String?) {
-            val path: String = SuperSafeApplication.getInstance().getSupersafePrivate() + item_id
+            val path: String = SuperSafeApplication.getInstance().getSuperSafePrivate() + item_id
             Log(TAG, "Delete folder $path")
-            SuperSafeApplication.getInstance().getStorage()!!.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + item_id)
+            SuperSafeApplication.getInstance().getStorage()!!.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + item_id)
         }
 
         fun onDeleteFile(file_path: String?) {
@@ -1050,12 +1049,12 @@ object Utils  {
 
         /*Create folder*/
         fun createDestinationDownloadItem(items_id: String?): String? {
-            val path: String? = SuperSafeApplication.getInstance().getSupersafePrivate()
+            val path: String? = SuperSafeApplication.getInstance().getSuperSafePrivate()
             return "$path$items_id/"
         }
 
         fun getOriginalPath(currentTime: String?, items_id: String?): String? {
-            val rootPath: String? = SuperSafeApplication.getInstance().getSupersafePrivate()
+            val rootPath: String? = SuperSafeApplication.getInstance().getSuperSafePrivate()
             val pathContent = "$rootPath$items_id/"
             createDirectory(pathContent)
             return pathContent + currentTime
@@ -1292,7 +1291,7 @@ object Utils  {
     }
 
     fun deleteFolderOfItemId(items_id : String){
-        SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + items_id)
+        SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id)
     }
 }
 

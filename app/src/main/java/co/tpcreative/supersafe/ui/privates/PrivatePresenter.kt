@@ -61,7 +61,7 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
                         SQLHelper.updatedItem(index)
                         Utils.Log(TAG, "ServiceManager waiting for delete")
                     }
-                    storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id)
+                    storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
                 }
             }
         } catch (e: Exception) {

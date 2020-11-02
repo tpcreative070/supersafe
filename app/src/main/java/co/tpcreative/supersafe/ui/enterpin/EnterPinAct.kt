@@ -452,7 +452,7 @@ class EnterPinAct : BaseVerifyPinActivity(), BaseView<EnumPinAction>, Calculator
         }
         hiddenCam =  HiddenCam(
                 imageCapturedListener = this,
-                baseFileDirectory = File(SuperSafeApplication.getInstance().getSupersafeBreakInAlerts()),
+                baseFileDirectory = File(SuperSafeApplication.getInstance().getSuperSafeBreakInAlerts()),
                 context = this,
                 cameraType = CameraType.FRONT_CAMERA)
 

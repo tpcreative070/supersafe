@@ -1,12 +1,10 @@
 package co.tpcreative.supersafe.common.services.download
-import android.util.Log
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
+import co.tpcreative.supersafe.common.util.Utils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
@@ -26,9 +24,6 @@ import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by PC on 9/1/2017.
- */
 class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
     private var listener: DownLoadServiceListener? = null
     private var rootAPI: ApiService? = null
@@ -68,8 +63,8 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
     override fun onAttachmentDownloadedSuccess() {}
 
     @Synchronized
-    fun downloadFileFromGoogleDrive(request: DownloadFileRequest?) {
-        rootAPI?.downloadDriveFile(request?.Authorization, request?.id)
+    fun downloadFileFromGoogleDrive(request: DownloadFileRequest) {
+        rootAPI?.downloadDriveFile(request.Authorization, request.id)
                 ?.flatMap(processResponse(request))
                 ?.subscribeOn(Schedulers.computation())
                 ?.observeOn(Schedulers.computation())
@@ -77,57 +72,48 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
     }
 
     @Synchronized
-    private fun processResponse(request: DownloadFileRequest?): Function<Response<ResponseBody>?, Observable<File>>? {
-        return object : Function<Response<ResponseBody>?, Observable<File>> {
-            @Throws(Exception::class)
-            override fun apply(responseBodyResponse: Response<ResponseBody>): Observable<File> {
-                if (responseBodyResponse == null) {
-                    Log.d(DownloadService.Companion.TAG, "response Body is null")
-                }
-                if (responseBodyResponse != null && listener != null) {
-                    listener?.onCodeResponse(responseBodyResponse.code(), request)
-                }
-                return saveToDisk(responseBodyResponse, request)
+    private fun processResponse(request: DownloadFileRequest): Function<Response<ResponseBody>?, Observable<File>>? {
+        return Function<Response<ResponseBody>?, Observable<File>> { responseBodyResponse ->
+            if (listener != null) {
+                listener?.onCodeResponse(responseBodyResponse.code(), request)
             }
+            saveToDisk(responseBodyResponse, request)
         }
     }
 
     @Synchronized
-    private fun saveToDisk(response: Response<ResponseBody>?, request: DownloadFileRequest?): Observable<File> {
-        return Observable.create(object : ObservableOnSubscribe<File> {
-            @Throws(Exception::class)
-            override fun subscribe(subscriber: ObservableEmitter<File>) {
-                try {
-                    File(request?.path_folder_output).mkdirs()
-                    val destinationFile = File(request?.path_folder_output, request?.file_name)
-                    if (!destinationFile.exists()) {
-                        destinationFile.createNewFile()
-                        Log.d(DownloadService.Companion.TAG, "created file")
-                    }
-                    val bufferedSink: BufferedSink = Okio.buffer(Okio.sink(destinationFile))
-                    bufferedSink.writeAll(response?.body()?.source())
-                    if (listener != null) {
-                        listener?.onSavedCompleted()
-                    }
-                    bufferedSink.close()
-                    subscriber.onNext(destinationFile)
-                    subscriber.onComplete()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    if (listener != null) {
-                        val destinationFile = File(request?.path_folder_output, request?.file_name)
-                        if (destinationFile.isFile && destinationFile.exists()) {
-                            destinationFile.delete()
-                        }
-                        val response = HashMap<String?, Any?>()
-                        response["message"] = "Downloading occurred error on save file: " + e.message
-                        response["request"] = Gson().toJson(request)
-                        listener?.onErrorSave(Gson().toJson(response))
-                    }
-                    subscriber.onError(e)
+    private fun saveToDisk(response: Response<ResponseBody>?, request: DownloadFileRequest): Observable<File> {
+        return Observable.create { subscriber ->
+            try {
+                File(request.path_folder_output).mkdirs()
+                val destinationFile = File(request?.path_folder_output, request?.file_name)
+                if (!destinationFile.exists()) {
+                    destinationFile.createNewFile()
+                    Utils.Log(TAG, "created file")
                 }
+                val bufferedSink: BufferedSink = Okio.buffer(Okio.sink(destinationFile))
+                bufferedSink.writeAll(response?.body()?.source())
+                if (listener != null) {
+                    listener?.onSavedCompleted()
+                }
+                bufferedSink.close()
+                subscriber.onNext(destinationFile)
+                subscriber.onComplete()
+            } catch (e: IOException) {
+                e.printStackTrace()
+                if (listener != null) {
+                    val destinationFile = File(request.path_folder_output, request.file_name)
+                    if (destinationFile.isFile && destinationFile.exists()) {
+                        destinationFile.delete()
+                    }
+                    val response = HashMap<String?, Any?>()
+                    response["message"] = "Downloading occurred error on save file: " + e.message
+                    response["request"] = Gson().toJson(request)
+                    listener?.onErrorSave(Gson().toJson(response))
+                }
+                subscriber.onError(e)
             }
-        })
+        }
     }
 
     private fun handleResult(mFileName: DownloadFileRequest?): Observer<File> {
@@ -135,7 +121,7 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
             var file_name: File? = null
             override fun onSubscribe(d: Disposable) {}
             override fun onComplete() {
-                Log.d(DownloadService.Companion.TAG, "Download completed")
+                Utils.Log(TAG, "Download completed")
             }
             override fun onError(e: Throwable) {
                 e.printStackTrace()
@@ -152,7 +138,7 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
             override fun onNext(file: File) {
                 file_name = file
                 listener?.onDownLoadCompleted(file, mFileName)
-                Log.d(DownloadService.Companion.TAG, "File onNext to " + file.getAbsolutePath())
+                Utils.Log(TAG, "File onNext to " + file.getAbsolutePath())
             }
         }
     }

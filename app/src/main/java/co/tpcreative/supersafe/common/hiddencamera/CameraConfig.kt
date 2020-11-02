@@ -202,7 +202,7 @@ class CameraConfig {
          * This will create new file into the cache directory of the application.
          */
         private fun getDefaultStorageFile(): File {
-            return File(SuperSafeApplication.getInstance().getSupersafeBreakInAlerts()
+            return File(SuperSafeApplication.getInstance().getSuperSafeBreakInAlerts()
                     + File.separator
                     + "IMG_" + System.currentTimeMillis() //IMG_214515184113123.png
                     + if (mImageFormat == CameraImageFormat.FORMAT_JPEG) ".jpeg" else ".png")

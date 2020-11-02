@@ -38,14 +38,14 @@ import java.io.File
 import java.util.*
 
 class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks {
-    private lateinit var supersafe: String
-    private lateinit var supersafePrivate: String
-    private lateinit var supersafeBackup: String
-    private lateinit var supersafeBreakInAlerts: String
-    private lateinit var supersafeLog: String
-    private lateinit var supersafeShare: String
-    private lateinit var supersafePicture: String
-    private lateinit var supersafeDataBaseFolder: String
+    private lateinit var superSafe: String
+    private lateinit var superSafePrivate: String
+    private lateinit var superSafeBackup: String
+    private lateinit var superSafeBreakInAlerts: String
+    private lateinit var superSafeLog: String
+    private lateinit var superSafeShare: String
+    private lateinit var superSafePicture: String
+    private lateinit var superSafeDataBaseFolder: String
     private var key: String? = null
     private var fake_key: String? = null
     private var userSecret: String? = null
@@ -90,19 +90,19 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         storage = Storage(this)
 
         //supersafe = getExternalFilesDir(null)?.absolutePath + "/SuperSafe_DoNot_Delete/"
-        supersafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+        superSafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
         key = ".encrypt_key"
         fake_key = ".encrypt_fake_key"
         userSecret = ".userSecret"
-        supersafePrivate = supersafe + "private/"
-        supersafeBackup = supersafe + "backup/"
-        supersafeLog = supersafe + "log/"
-        supersafeBreakInAlerts = supersafe + "break_in_alerts/"
-        supersafeShare = supersafe + "share/"
-        supersafeDataBaseFolder = "/data/data/" + getInstance().packageName + "/databases/"
-        supersafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/"
+        superSafePrivate = superSafe + "private/"
+        superSafeBackup = superSafe + "backup/"
+        superSafeLog = superSafe + "log/"
+        superSafeBreakInAlerts = superSafe + "break_in_alerts/"
+        superSafeShare = superSafe + "share/"
+        superSafeDataBaseFolder = "/data/data/" + getInstance().packageName + "/databases/"
+        superSafePicture = storage.getExternalStorageDirectory(Environment.DIRECTORY_PICTURES) + "/SuperSafeExport/"
         registerActivityLifecycleCallbacks(this)
-        Utils.Log(TAG, supersafe)
+        Utils.Log(TAG, superSafe)
         options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(Scope(DriveScopes.DRIVE_FILE))
@@ -117,7 +117,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
     }
 
-    fun getSecretKey(): String? {
+    private fun getSecretKey(): String? {
         val user: User? = Utils.getUserInfo()
         if (user != null) {
             if (user._id != null) {
@@ -133,11 +133,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun getGoogleSignInOptions(account: Account?): GoogleSignInOptions? {
-        if (options != null) {
-            if (account != null) {
-                options.setAccountName(account.name)
-            }
-            return options.build()
+        if (account != null) {
+            options.setAccountName(account.name)
         }
         return options.build()
     }
@@ -207,56 +204,56 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
     override fun onActivityDestroyed(activity: Activity) {}
     fun getSuperSafe(): String? {
-        return supersafe
+        return superSafe
     }
 
-    fun getSupersafePrivate(): String {
-        return supersafePrivate
+    fun getSuperSafePrivate(): String {
+        return superSafePrivate
     }
 
-    fun getSupersafeBackup(): String {
-        return supersafeBackup
+    fun getSuperSafeBackup(): String {
+        return superSafeBackup
     }
 
-    fun getSupersafeLog(): String {
-        return supersafeLog
+    fun getSuperSafeLog(): String {
+        return superSafeLog
     }
 
     fun getFileLogs(): String {
-        return "$supersafe/log.txt"
+        return "$superSafe/log.txt"
     }
 
-    fun getSupersafeBreakInAlerts(): String {
-        return supersafeBreakInAlerts
+    fun getSuperSafeBreakInAlerts(): String {
+        return superSafeBreakInAlerts
     }
 
-    fun getSupersafeShare(): String {
-        return supersafeShare
+    fun getSuperSafeShare(): String {
+        return superSafeShare
     }
 
-    fun getSupersafePicture(): String {
-        return supersafePicture
+    fun getSuperSafePicture(): String {
+        return superSafePicture
     }
 
-    fun getSupersafeDataBaseFolder(): String {
-        return supersafeDataBaseFolder
+    fun getSuperSafeDataBaseFolder(): String {
+        return superSafeDataBaseFolder
     }
 
     fun initFolder() {
-        if (storage.isDirectoryExists(supersafe) and storage.isDirectoryExists(supersafePrivate) and storage.isDirectoryExists(supersafeBackup) and storage.isDirectoryExists(supersafeLog) and storage.isDirectoryExists(supersafeBreakInAlerts)) {
+        if (storage.isDirectoryExists(superSafe) and storage.isDirectoryExists(superSafePrivate) and storage.isDirectoryExists(superSafeBackup) and storage.isDirectoryExists(superSafeLog) and storage.isDirectoryExists(superSafeBreakInAlerts)) {
             Utils.Log(TAG, "SuperSafe is existing")
         } else {
-            storage.createDirectory(supersafe)
-            storage.createDirectory(supersafePrivate)
-            storage.createDirectory(supersafeBackup)
-            storage.createDirectory(supersafeLog)
-            storage.createDirectory(supersafeBreakInAlerts)
+            storage.createDirectory(superSafe)
+            storage.createDirectory(superSafePrivate)
+            storage.createDirectory(superSafeBackup)
+            storage.createDirectory(superSafeLog)
+            storage.createDirectory(superSafeBreakInAlerts)
             Utils.Log(TAG, "SuperSafe was created")
         }
     }
 
     fun deleteFolder() {
-        storage.deleteDirectory(supersafe)
+        storage.deleteDirectory(superSafe)
     }
 
     fun writeKey(value: String?) {
@@ -264,8 +261,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             Utils.Log(TAG, "Please grant access permission")
             return
         }
-        storage?.setEncryptConfiguration(configurationPin)
-        storage?.createFile(getSuperSafe() + key, value)
+        storage.setEncryptConfiguration(configurationPin)
+        storage.createFile(getSuperSafe() + key, value)
         Utils.Log(TAG, "Created key :$value")
     }
 
@@ -359,14 +356,14 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
     }
 
-    fun isPermissionRead(): Boolean {
+    private fun isPermissionRead(): Boolean {
         val permission: Int = PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
         return if (permission == PermissionChecker.PERMISSION_GRANTED) {
             true
         } else false
     }
 
-    fun isPermissionWrite(): Boolean {
+    private fun isPermissionWrite(): Boolean {
         val permission: Int = PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         return if (permission == PermissionChecker.PERMISSION_GRANTED) {
             true
@@ -374,9 +371,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isGrantAccess(): Boolean {
-        return if (isPermissionWrite() && isPermissionRead()) {
-            true
-        } else false
+        return isPermissionWrite() && isPermissionRead()
     }
 
     fun getOrientation(): Int {
@@ -391,7 +386,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return storage
     }
 
-    fun getUrl(): String? {
+    private fun getUrl(): String? {
         url = if (!BuildConfig.DEBUG || isLive) {
             SecurityUtil.url_live
         } else {
@@ -405,7 +400,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun getDeviceId(): String? {
-        return Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID)
+        return Settings.Secure.getString(applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
     fun getManufacturer(): String? {
@@ -442,13 +437,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun getDefaultStorageFile(mImageFormat: Int): File? {
-        return File(getInstance().getSupersafeBreakInAlerts()
+        return File(getInstance().getSuperSafeBreakInAlerts()
                 + File.separator
                 + "IMG_" + System.currentTimeMillis() //IMG_214515184113123.png
                 + if (mImageFormat == CameraImageFormat.Companion.FORMAT_JPEG) ".jpeg" else ".png")
     }
 
-    fun getKeyHomePressed(): MutableMap<String?, String?>? {
+    private fun getKeyHomePressed(): MutableMap<String?, String?>? {
         try {
             val value: String? = PrefsController.getString(getString(R.string.key_home_pressed), null)
             if (value != null) {

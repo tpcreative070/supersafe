@@ -19,7 +19,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_photos_slideshow.*
 import kotlinx.android.synthetic.main.footer_items.*
-import org.greenrobot.eventbus.EventBus
 import java.io.File
 import java.util.ArrayList
 
@@ -101,9 +100,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                             when (formatType) {
                                 EnumFormatType.AUDIO -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         if (output != null) {
@@ -115,9 +114,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 }
                                 EnumFormatType.FILES -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -127,9 +126,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 }
                                 EnumFormatType.VIDEO -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -145,9 +144,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                         index.getOriginal()
                                     }).toString()
                                     val input = File(path)
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + index.fileExtension)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafeShare() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -170,9 +169,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                             when (formatType) {
                                 EnumFormatType.AUDIO -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -182,9 +181,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 }
                                 EnumFormatType.FILES -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -194,9 +193,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 }
                                 EnumFormatType.VIDEO -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -206,9 +205,9 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 }
                                 else -> {
                                     val input = File(index.getOriginal())
-                                    var output: File? = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.title)
+                                    var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
                                     if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                        output = File(SuperSafeApplication.getInstance().getSupersafePicture() + index.originalName + "(1)" + index.fileExtension)
+                                        output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
                                         presenter?.mListShare?.add(output!!)
@@ -294,7 +293,7 @@ fun PhotoSlideShowAct.onCheckDelete() {
         SQLHelper.updatedItem(mList[position])
         Utils.Log(TAG, "ServiceManager waiting for delete")
     }
-    storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + mList[position].items_id)
+    storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + mList[position].items_id)
     presenter?.onDelete(position)
     isReload = true
     Utils.Log(TAG, "Action 4")

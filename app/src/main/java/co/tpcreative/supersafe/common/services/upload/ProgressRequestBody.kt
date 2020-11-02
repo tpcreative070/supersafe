@@ -10,9 +10,7 @@ import java.io.IOException
 
 class ProgressRequestBody(private val mFile: File?, private val mListener: UploadCallbacks?) : RequestBody() {
     private val TAG = ProgressRequestBody::class.java.simpleName
-    private val mPath: String? = null
     private var type: String? = null
-
     interface UploadCallbacks {
         fun onProgressUpdate(percentage: Int)
         fun onError()

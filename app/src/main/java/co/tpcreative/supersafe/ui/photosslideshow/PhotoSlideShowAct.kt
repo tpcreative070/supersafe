@@ -14,7 +14,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
-import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
@@ -110,7 +109,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                             }
                         }
                         EnumStatus.EXPORT -> {
-                            runOnUiThread(Runnable { Toast.makeText(this@PhotoSlideShowAct, "Exported at " + SuperSafeApplication.Companion.getInstance().getSupersafePicture(), Toast.LENGTH_LONG).show() })
+                            runOnUiThread(Runnable { Toast.makeText(this@PhotoSlideShowAct, "Exported at " + SuperSafeApplication.Companion.getInstance().getSuperSafePicture(), Toast.LENGTH_LONG).show() })
                         }
                     }
                 } catch (e: Exception) {
@@ -308,7 +307,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                     try {
                         if (presenter?.mList != null) {
                             if (presenter?.mList?.size!! > 0) {
-                                storage?.createDirectory(SuperSafeApplication.getInstance().getSupersafeShare())
+                                storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
                                 presenter?.status = EnumStatus.SHARE
                                 onShowDialog(EnumStatus.SHARE, position)
                             } else {
@@ -342,7 +341,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                     try {
                         if (presenter?.mList != null) {
                             if (presenter?.mList?.size!! > 0) {
-                                storage?.createDirectory(SuperSafeApplication.getInstance().getSupersafePicture())
+                                storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
                                 presenter?.status = EnumStatus.EXPORT
                                 if (presenter?.mList?.get(position)?.isSaver!!) {
                                     onEnableSyncData(position)

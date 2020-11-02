@@ -35,7 +35,7 @@ class FakePinComponentPresenter : Presenter<BaseView<EmptyModel>>() {
                 if (mListItems != null) {
                     for (index in mListItems) {
                         SQLHelper.deleteItem(index)
-                        storage?.deleteDirectory(SuperSafeApplication.getInstance().getSupersafePrivate() + index.items_id)
+                        storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
                     }
                 }
                 SQLHelper.deleteCategory(main)

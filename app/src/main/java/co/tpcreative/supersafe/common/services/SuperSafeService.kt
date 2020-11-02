@@ -31,7 +31,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.utilimport.NetworkUtil
 import co.tpcreative.supersafe.model.*
 import com.google.gson.Gson
-import com.snatik.storage.Storage
 import com.snatik.storage.security.SecurityUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

@@ -335,7 +335,7 @@ class ItemModel : Serializable {
         if ((SuperSafeApplication.getInstance().getStorage()?.isFileExist(thumbnailPath)!!)){
             return this.thumbnailPath!!
         }
-        return SuperSafeApplication.getInstance().getSupersafePrivate()+ "/"+ items_id +"/"+thumbnailName
+        return SuperSafeApplication.getInstance().getSuperSafePrivate()+ "/"+ items_id +"/"+thumbnailName
     }
 
     fun setThumbnail(path : String?){
@@ -347,7 +347,7 @@ class ItemModel : Serializable {
         if ((SuperSafeApplication.getInstance().getStorage()?.isFileExist(originalPath)!!)){
             return this.originalPath!!
         }
-        return SuperSafeApplication.getInstance().getSupersafePrivate()+ "/"+ items_id +"/"+originalName
+        return SuperSafeApplication.getInstance().getSuperSafePrivate()+ "/"+ items_id +"/"+originalName
     }
 
     fun setOriginal(path : String?){

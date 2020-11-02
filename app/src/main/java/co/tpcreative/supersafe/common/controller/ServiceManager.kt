@@ -776,7 +776,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 EnumFormatType.IMAGE -> {
                     Utils.Log(TAG, "Start RXJava Image Progressing")
                     try {
-                        val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
+                        val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
                         val currentTime: String = Utils.getCurrentDateTime() as String
                         val pathContent = "$rootPath$uuId/"
                         storage?.createDirectory(pathContent)
@@ -842,7 +842,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                     R.drawable.ic_default_video)
                             Utils.Log(TAG, "Cannot write to $e")
                         }
-                        val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
+                        val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
                         val currentTime: String = Utils.getCurrentDateTime() as String
                         val pathContent = "$rootPath$uuId/"
                         storage?.createDirectory(pathContent)
@@ -883,7 +883,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 EnumFormatType.AUDIO -> {
                     Utils.Log(TAG, "Start RXJava Audio Progressing")
                     try {
-                        val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
+                        val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
                         val currentTime: String = Utils.getCurrentDateTime() as String
                         val pathContent = "$rootPath$uuId/"
                         storage?.createDirectory(pathContent)
@@ -920,7 +920,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 EnumFormatType.FILES -> {
                     Utils.Log(TAG, "Start RXJava Files Progressing")
                     try {
-                        val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
+                        val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
                         val currentTime: String = Utils.getCurrentDateTime() as String
                         val pathContent = "$rootPath$uuId/"
                         storage?.createDirectory(pathContent)
@@ -1210,7 +1210,7 @@ class ServiceManager : BaseServiceView<Any?> {
             val mCategoriesLocalId: String = mMainCategories.categories_local_id as String
             val isFakePin: Boolean = mMainCategories.isFakePin
             try {
-                val rootPath: String = SuperSafeApplication.getInstance().getSupersafePrivate()
+                val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
                 val currentTime: String = Utils.getCurrentDateTime() as String
                 val uuId: String = Utils.getUUId() as String
                 val pathContent = "$rootPath$uuId/"

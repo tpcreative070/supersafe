@@ -11,8 +11,8 @@ import okio.ForwardingSource;
  * Created by PC on 9/1/2017.
  */
 class ProgressResponseBody(responseBody: ResponseBody?, progressListener: ProgressResponseBodyListener?) : ResponseBody() {
-    private val responseBody: ResponseBody?
-    private val progressListener: ProgressResponseBodyListener?
+    private val responseBody: ResponseBody? = responseBody
+    private val progressListener: ProgressResponseBodyListener? = progressListener
     private var bufferedSource: BufferedSource? = null
     override fun contentType(): MediaType? {
         return responseBody?.contentType()
@@ -98,8 +98,4 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
         val TAG = ProgressResponseBody::class.java.simpleName
     }
 
-    init {
-        this.responseBody = responseBody
-        this.progressListener = progressListener
-    }
 }
