@@ -16,7 +16,7 @@ import co.tpcreative.supersafe.model.MainCategoryEntityModel
 import com.google.gson.Gson
 import java.util.*
 
-@Database(entities = [ItemEntity::class, MainCategoryEntity::class, BreakInAlertsEntity::class], version = 5, exportSchema = false)
+@Database(entities = [ItemEntity::class, MainCategoryEntity::class, BreakInAlertsEntity::class], version = 6, exportSchema = false)
 abstract class InstanceGenerator : RoomDatabase() {
     @Ignore
     abstract fun itemsDao(): ItemsDao?
@@ -421,9 +421,9 @@ abstract class InstanceGenerator : RoomDatabase() {
         return null
     }
 
-    fun getLoadListItemUpdate(isUpdate: Boolean, isSyncCloud: Boolean, isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<ItemEntityModel>? {
+    fun getLoadListItemUpdate(isUpdate: Boolean, isSyncCloud: Boolean, isSyncOwnServer: Boolean, isFakePin: Boolean,isRequestChecking : Boolean): MutableList<ItemEntityModel>? {
         try {
-            val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadListItemUpdate(isUpdate, isSyncCloud, isSyncOwnServer, isFakePin)
+            val mList: MutableList<ItemEntity>? = instance?.itemsDao()?.loadListItemUpdate(isUpdate, isSyncCloud, isSyncOwnServer, isFakePin,isRequestChecking)
             val mData: MutableList<ItemEntityModel> = ArrayList<ItemEntityModel>()
             if (mList != null) {
                 for (index in mList) {
@@ -492,7 +492,7 @@ abstract class InstanceGenerator : RoomDatabase() {
 
     fun onUpdate(cTalkManager: MainCategoryEntityModel) {
         try {
-            Utils.Log(TAG, "Updated :" + cTalkManager?.categories_id)
+            Utils.Log(TAG, "Updated :" + cTalkManager.categories_id)
             instance?.mainCategoriesDao()?.update(MainCategoryEntity(cTalkManager))
         } catch (e: Exception) {
             Utils.Log(TAG, e.message +"")
@@ -808,7 +808,7 @@ abstract class InstanceGenerator : RoomDatabase() {
             if (instance == null) {
                 instance = Room.databaseBuilder(SuperSafeApplication.getInstance(),
                         InstanceGenerator::class.java, SuperSafeApplication.getInstance().getString(R.string.key_database))
-                        .addMigrations(SuperSafeApplication.getInstance().MIGRATION_4_5)
+                        .addMigrations(SuperSafeApplication.getInstance().MIGRATION_4_5,SuperSafeApplication.getInstance().MIGRATION_5_6)
                         .allowMainThreadQueries()
                         .build()
             }

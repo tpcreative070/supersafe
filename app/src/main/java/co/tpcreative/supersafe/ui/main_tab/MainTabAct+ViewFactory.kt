@@ -30,6 +30,7 @@ import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -154,7 +155,7 @@ fun MainTabAct.onShowDialog() {
             .title(text = getString(R.string.create_album))
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
-            .input(hint = null, hintRes = null, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
+            .input(hint = null, hintRes = R.string.enter_name, inputType = InputType.TYPE_CLASS_TEXT) { dialog, input ->
                 Utils.Log(TAG, "Value")
                 val value = input.toString()
                 val base64Code: String = Utils.getHexCode(value)

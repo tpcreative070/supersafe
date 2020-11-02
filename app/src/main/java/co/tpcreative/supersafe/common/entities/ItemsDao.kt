@@ -96,6 +96,6 @@ interface ItemsDao {
     @Query("Select * FROM items WHERE formatType =:formatType ORDER BY originalName DESC LIMIT 2")
     fun loadAllSaved(formatType: Int): MutableList<ItemEntity>?
 
-    @Query("Select * FROM items WHERE isUpdate =:isUpdate AND  isSyncCloud = :isSyncCloud AND isSyncOwnServer =:isSyncOwnServer AND isFakePin =:isFakePin")
-    fun loadListItemUpdate(isUpdate: Boolean, isSyncCloud: Boolean, isSyncOwnServer: Boolean, isFakePin: Boolean): MutableList<ItemEntity>?
+    @Query("Select * FROM items WHERE (isUpdate =:isUpdate AND  isSyncCloud = :isSyncCloud AND isSyncOwnServer =:isSyncOwnServer AND isFakePin =:isFakePin) OR (isRequestChecking=:isRequestChecking AND isSyncCloud =:isSyncCloud)")
+    fun loadListItemUpdate(isUpdate: Boolean, isSyncCloud: Boolean, isSyncOwnServer: Boolean, isFakePin: Boolean,isRequestChecking : Boolean): MutableList<ItemEntity>?
 }

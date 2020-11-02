@@ -45,6 +45,7 @@ class ItemEntity : Serializable {
     var isWaitingForExporting = false
     var custom_items = 0
     var isUpdate: Boolean
+    var isRequestChecking : Boolean
 
     //public String createDatetime;
     // public String updatedDateTime;
@@ -91,6 +92,7 @@ class ItemEntity : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
+        isRequestChecking = items.isRequestChecking
     }
 
     constructor(items: ItemEntityModel) {
@@ -126,6 +128,7 @@ class ItemEntity : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
+        isRequestChecking = items.isRequestChecking
     }
 
     constructor(isSyncCloud: Boolean, isSyncOwnServer: Boolean, originalSync: Boolean, thumbnailSync: Boolean, degrees: Int, fileType: Int, formatType: Int, title: String?, originalName: String?, thumbnailName: String?, items_id: String?, originalPath: String?, thumbnailPath: String?, global_original_id: String?, global_thumbnail_id: String?, categories_id: String?, categories_local_id: String?, mimeType: String?, fileExtension: String?, enumStatus: EnumStatus, size: String?, statusProgress: Int, isDeleteLocal: Boolean, isDeleteGlobal: Boolean, deleteAction: Int, isFakePin: Boolean, isSaver: Boolean, isExport: Boolean, isWaitingForExporting: Boolean, custom_items: Int, isUpdate: Boolean) {
@@ -160,6 +163,7 @@ class ItemEntity : Serializable {
         this.isWaitingForExporting = isWaitingForExporting
         this.custom_items = custom_items
         this.isUpdate = isUpdate
+        this.isRequestChecking = false
     }
 
     constructor() {
@@ -168,6 +172,7 @@ class ItemEntity : Serializable {
         isSyncOwnServer = false
         isOriginalGlobalId = false
         isUpdate = false
+        isRequestChecking = false
     }
 
     constructor(fileExtension: String?,
@@ -232,9 +237,9 @@ class ItemEntity : Serializable {
         this.isSyncCloud = isSyncCloud
         this.isSyncOwnServer = isSyncOwnServer
         this.isUpdate = isUpdate
+        this.isRequestChecking = false
         this.statusAction = statusAction.ordinal
     }
-
 
     @Ignore
     fun getUUId(): String? {

@@ -201,10 +201,16 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onShowObjects(`object`: SyncDataModel) {
                     `object`.list?.let {
                         mDownloadList.addAll(it)
-                        onItemDeleteSyncedLocal(it)
+                        /*Checking to preparing delete data*/
+                        if (`object`.isDone){
+                            onItemDeleteSyncedLocal(mDownloadList)
+                        }
                     }
                     `object`.categoryList?.let {
-                        onCategoryDeleteSyncedLocal(it)
+                        /*Checking to preparing delete data*/
+                        if (`object`.isDone){
+                            onCategoryDeleteSyncedLocal(it)
+                        }
                     }
                 }
                 override fun onError(message: String?, status: EnumStatus) {
@@ -621,7 +627,6 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                 }
-
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapUpdateItem)) {

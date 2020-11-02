@@ -35,6 +35,7 @@ class ItemEntityModel {
     var isWaitingForExporting = false
     var custom_items = 0
     var isUpdate: Boolean
+    var isRequestChecking: Boolean
 
     /*Push data to local db*/
     constructor(items: ItemModel) {
@@ -70,6 +71,7 @@ class ItemEntityModel {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
+        isRequestChecking = items.isRequestChecking
     }
 
     constructor(items: ItemEntity) {
@@ -105,6 +107,7 @@ class ItemEntityModel {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
+        isRequestChecking = items.isRequestChecking
     }
 
     constructor() {
@@ -112,5 +115,6 @@ class ItemEntityModel {
         isSyncCloud = false
         isSyncOwnServer = false
         isUpdate = false
+        isRequestChecking = false
     }
 }

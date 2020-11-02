@@ -135,10 +135,31 @@ object SQLHelper {
     /*Get request update item*/
     fun getRequestUpdateItemList(): MutableList<ItemModel>? {
         val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
-        val mResult: MutableList<ItemEntityModel>? = getInstance()?.getLoadListItemUpdate(true, true, true, false)
+        val mResult: MutableList<ItemEntityModel>? = getInstance()?.getLoadListItemUpdate(true, true, true, false,false)
         if (mResult != null) {
             for (index in mResult) {
-                mList.add(ItemModel(index))
+                when(EnumFormatType.values()[index.formatType]){
+                    EnumFormatType.IMAGE -> {
+                        if (Utils.isNotEmptyOrNull(index.global_original_id)  && Utils.isNotEmptyOrNull(index.global_thumbnail_id)){
+                            mList.add(ItemModel(index))
+                        }
+                    }
+                    EnumFormatType.VIDEO -> {
+                        if (Utils.isNotEmptyOrNull(index.global_original_id)  && Utils.isNotEmptyOrNull(index.global_thumbnail_id)){
+                            mList.add(ItemModel(index))
+                        }
+                    }
+                    EnumFormatType.FILES -> {
+                        if (Utils.isNotEmptyOrNull(index.global_original_id)){
+                            mList.add(ItemModel(index))
+                        }
+                    }
+                    EnumFormatType.AUDIO -> {
+                        if (Utils.isNotEmptyOrNull(index.global_original_id)){
+                            mList.add(ItemModel(index))
+                        }
+                    }
+                }
             }
             return mList
         }

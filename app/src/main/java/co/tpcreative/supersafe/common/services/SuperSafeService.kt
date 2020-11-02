@@ -354,6 +354,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                             } else {
                                 view.onError(EnumStatus.GET_DRIVE_ABOUT.name + " - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN)
                             }
+                            Utils.Log(TAG,mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                             Utils.Log(TAG, "Exception....")
@@ -593,6 +594,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         view.onError("Queries add items is failed :" + onResponse.responseMessage, EnumStatus.UPDATE)
                     } else {
                         mItem.isUpdate = false
+                        mItem.isRequestChecking = true
                         SQLHelper.updatedItem(mItem)
                         view.onSuccessful(EnumStatus.UPDATED_ITEM_SUCCESSFULLY.name, EnumStatus.UPDATED_ITEM_SUCCESSFULLY)
                     }
@@ -940,9 +942,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                 }
                             }
                             if (nextPage == "0"){
-                                view.onShowObjects(SyncDataModel(ArrayList(),listCategories))
+                                view.onShowObjects(SyncDataModel(ArrayList(),listCategories,true))
                             }else{
-                                view.onShowObjects(SyncDataModel(null,listCategories))
+                                view.onShowObjects(SyncDataModel(null,listCategories,true))
                             }
                             view.onSuccessful("", EnumStatus.SYNC_READY)
                         } else {
@@ -952,7 +954,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     mList.add(ItemModel(index, EnumStatus.DOWNLOAD))
                                 }
                             }
-                            view.onShowObjects(SyncDataModel(mList,null))
+                            view.onShowObjects(SyncDataModel(mList,null,false))
                             view.onSuccessful(mData.nextPage!!, EnumStatus.LOAD_MORE)
                         }
                     }

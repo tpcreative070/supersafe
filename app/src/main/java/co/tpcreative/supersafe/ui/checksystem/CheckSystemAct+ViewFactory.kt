@@ -70,14 +70,12 @@ fun CheckSystemAct.onVerifyInputCode(email: String?) {
             onBackPressed()
         }
         val editText = dialog.getInputField()
-        editText.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
-                view?.setFocusable(true)
-                view?.setFocusableInTouchMode(true)
-                return false
-            }
-        })
-        editText.setFocusable(false)
+        editText.setOnTouchListener { view, motionEvent ->
+            view?.isFocusable = true
+            view?.isFocusableInTouchMode = true
+            false
+        }
+        editText.isFocusable = false
     } catch (e: Exception) {
         e.printStackTrace()
     }

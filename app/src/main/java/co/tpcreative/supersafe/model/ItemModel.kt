@@ -38,6 +38,7 @@ class ItemModel : Serializable {
     var isWaitingForExporting = false
     var custom_items = 0
     var isUpdate: Boolean
+    var isRequestChecking : Boolean
 
     /*Added more custom fields*/
     var isChecked = false
@@ -85,6 +86,7 @@ class ItemModel : Serializable {
         custom_items = items.custom_items
         isUpdate = items.isUpdate
         unique_id = Utils.getUUId()
+        isRequestChecking = items.isRequestChecking
     }
 
     /*Get data list from local db*/
@@ -122,6 +124,7 @@ class ItemModel : Serializable {
         custom_items = items.custom_items
         isUpdate = items.isUpdate
         unique_id = Utils.getUUId()
+        isRequestChecking = items.isRequestChecking
     }
 
     /*Added item to list from fetch data*/
@@ -159,6 +162,7 @@ class ItemModel : Serializable {
         custom_items = items.custom_items
         isUpdate = items.isUpdate
         unique_id = Utils.getUUId()
+        isRequestChecking = items.isRequestChecking
         val formatTypeFile = EnumFormatType.values()[formatType]
         when (formatTypeFile) {
             EnumFormatType.AUDIO -> {
@@ -208,6 +212,7 @@ class ItemModel : Serializable {
         this.isWaitingForExporting = isWaitingForExporting
         this.custom_items = custom_items
         this.isUpdate = isUpdate
+        this.isRequestChecking  = false
     }
 
     fun isChecked() : Boolean? {
@@ -220,6 +225,7 @@ class ItemModel : Serializable {
         isSyncOwnServer = false
         isOriginalGlobalId = false
         isUpdate = false
+        isRequestChecking = false
     }
 
     constructor(fileExtension: String?,
@@ -284,6 +290,7 @@ class ItemModel : Serializable {
         this.isSyncCloud = isSyncCloud
         this.isSyncOwnServer = isSyncOwnServer
         this.isUpdate = isUpdate
+        this.isRequestChecking = false
         this.statusAction = statusAction.ordinal
     }
 
@@ -321,6 +328,7 @@ class ItemModel : Serializable {
         isWaitingForExporting = items.isWaitingForExporting
         custom_items = items.custom_items
         isUpdate = items.isUpdate
+        isRequestChecking = items.isRequestChecking
         /*Added more condition fields*/unique_id = Utils.getUUId()
         global_id = if (isOriginalGlobalId) {
             items.global_original_id
