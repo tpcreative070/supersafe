@@ -1,9 +1,7 @@
 package co.tpcreative.supersafe.common.services
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.network.BaseDependencies
-import co.tpcreative.supersafe.common.network.Dependencies
 import okhttp3.HttpUrl
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit

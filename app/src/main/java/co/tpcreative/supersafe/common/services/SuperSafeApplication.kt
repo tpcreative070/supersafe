@@ -21,7 +21,6 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
-import co.tpcreative.supersafe.common.network.Dependencies
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumThemeModel
@@ -38,7 +37,7 @@ import com.snatik.storage.security.SecurityUtil
 import java.io.File
 import java.util.*
 
-class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesListener<Any>, Application.ActivityLifecycleCallbacks {
+class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks {
     private lateinit var supersafe: String
     private lateinit var supersafePrivate: String
     private lateinit var supersafeBackup: String
@@ -54,7 +53,6 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     private var configurationFile: EncryptConfiguration? = null
     private var configurationPin: EncryptConfiguration? = null
     private var Orientation = 0
-    private var authorization: String? = null
     private lateinit var options: GoogleSignInOptions.Builder
     private lateinit var requiredScopes: MutableSet<Scope>
     private lateinit var requiredScopesString: MutableList<String>
@@ -67,10 +65,6 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
-        /*Init own service api*/dependencies = Dependencies.getInstance(this, getUrl()!!)
-        dependencies?.dependenciesListener(this)
-        dependencies?.init()
-
         /*Init Drive api*/serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
         /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
         /*Init apis for Coroutine*/
@@ -410,11 +404,6 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         return getDatabasePath(getString(R.string.key_database)).getAbsolutePath()
     }
 
-    /*Retrofit and RXJava*/
-    override fun onObject(): Class<Any> {
-        return ApiService.javaClass
-    }
-
     fun getDeviceId(): String? {
         return Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID)
     }
@@ -491,7 +480,6 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         private var started = 0
         private var stopped = 0
         private var url: String? = null
-        protected var dependencies: Dependencies<*>? = null
         var serverAPI: ApiService? = null
         var serverDriveApi: ApiService? = null
         var serviceGraphMicrosoft: ApiService? = null

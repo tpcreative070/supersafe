@@ -5,13 +5,9 @@ import com.google.gson.Gson
 import java.io.Serializable
 
 open class BaseResponse : Serializable {
-    var message: String? = null
     var responseMessage: String? = null
     var responseCode : Int? = 0
     var error = false
     var purchase: PurchaseData? = null
     var version: Version? = null
-    fun toFormResponse(): String? {
-        return Gson().toJson(this)
-    }
 }
