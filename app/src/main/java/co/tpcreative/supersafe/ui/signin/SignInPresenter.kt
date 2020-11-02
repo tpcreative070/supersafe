@@ -1,8 +1,10 @@
 package co.tpcreative.supersafe.ui.signin
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.request.SignInRequest
@@ -54,11 +56,11 @@ class SignInPresenter : Presenter<BaseView<User>>() {
                     }
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -131,7 +133,7 @@ class SignInPresenter : Presenter<BaseView<User>>() {
         hash[getString(R.string.key_grant_type)] = request.grant_type
         hash[getString(R.string.key_refresh_token)] = request.refresh_token
         Utils.Log(TAG, "Refresh token : " + Gson().toJson(hash))
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(ApiService.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken? ->

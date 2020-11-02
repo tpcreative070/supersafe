@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.network
 import android.content.Context
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -44,27 +44,14 @@ class Dependencies<T> private constructor() : BaseDependencies() {
         }
     }
 
-    private fun provideRestApi(okHttpClient: OkHttpClient): RootAPI {
+    private fun provideRestApi(okHttpClient: OkHttpClient): ApiService {
         val gson: Gson = GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC).create()
         retrofitInstance = Retrofit.Builder()
                 .baseUrl(URL)
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        return retrofitInstance!!.build().create(RootAPI::class.java)
-    }
-
-    override fun getHeaders(): HashMap<String?, String?>? {
-        val hashMap = HashMap<String?, String?>()
-        var oauthToken: String? = null
-        if (dependenciesListener != null) {
-            hashMap.putAll(dependenciesListener!!.onCustomHeader())
-            oauthToken = dependenciesListener!!.onAuthorToken()
-        }
-        if (oauthToken != null) {
-            hashMap["Authorization"] = oauthToken
-        }
-        return hashMap
+        return retrofitInstance!!.build().create(ApiService::class.java)
     }
 
     override fun getTimeOut(): Int {
@@ -73,12 +60,10 @@ class Dependencies<T> private constructor() : BaseDependencies() {
 
     interface DependenciesListener<T>{
         fun onObject(): Class<T>
-        fun onAuthorToken(): String
-        fun onCustomHeader(): HashMap<String, String>
     }
 
     companion object {
-        var serverAPI: RootAPI? = null
+        var serverAPI: ApiService? = null
         var sInstance: Dependencies<Any>?= null
         fun getInstance(context: Context, url: String): Dependencies<*> {
             if (sInstance == null) {

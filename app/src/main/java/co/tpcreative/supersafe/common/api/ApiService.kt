@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.api
 import co.tpcreative.supersafe.common.api.response.BaseResponse
+import co.tpcreative.supersafe.common.network.Result
 import co.tpcreative.supersafe.common.request.*
 import co.tpcreative.supersafe.common.requestimport.*
 import co.tpcreative.supersafe.common.response.DriveResponse
@@ -14,7 +15,7 @@ import retrofit2.Response
 import retrofit2.http.*
 
 
-interface RootAPI {
+interface ApiService {
     @POST(TRACKING)
     fun onTracking(@Body request: TrackingRequest): Observable<RootResponse>?
 
@@ -59,6 +60,9 @@ interface RootAPI {
 
     @POST(GET_LIST_FILES_SYNC)
     fun onListFilesSync(@Body request: SyncItemsRequest): Observable<RootResponse>?
+
+    @POST(GET_LIST_FILES_SYNC)
+    suspend fun <T : Any>onListFilesSyncT(@Body request: SyncItemsRequest): Result<T>?
 
     @POST(SYNC_DATA)
     fun onSyncData(@Body request: SyncItemsRequest): Observable<RootResponse>?

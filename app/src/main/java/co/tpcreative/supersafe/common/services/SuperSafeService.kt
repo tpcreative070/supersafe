@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.services
-import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -7,10 +6,12 @@ import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.presenter.BaseView
@@ -51,7 +52,6 @@ import kotlin.collections.ArrayList
 
 class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeReceiver.ConnectivityReceiverListener {
     private val mBinder: IBinder? = LocalBinder() // Binder given to clients
-    private var storage: Storage? = null
     private var androidReceiver: SuperSafeReceiver? = null
     private var downloadService: DownloadService? = null
     private var isCallRefreshToken = false
@@ -59,13 +59,8 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         super.onCreate()
         Utils.Log(TAG, "onCreate")
         downloadService = DownloadService()
-        storage = Storage(this)
         onInitReceiver()
         SuperSafeApplication.getInstance().setConnectivityListener(this)
-    }
-
-    fun getStorage(): Storage? {
-        return storage
     }
 
     private fun onInitReceiver() {
@@ -101,16 +96,13 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     }
 
     override fun onActionScreenOff() {
-        val view: BaseServiceView<*>? = view()
-        if (view != null) {
-            view.onSuccessful("Screen Off", EnumStatus.SCREEN_OFF)
-        }
+        view()?.onSuccessful("Screen Off", EnumStatus.SCREEN_OFF)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // If we get killed, after returning from here, restart
         Utils.Log(TAG, "onStartCommand")
-        return Service.START_STICKY
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -125,47 +117,43 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onGetUserInfo() {
         Utils.Log(TAG, "onGetUserInfo 1")
-        val view: BaseServiceView<*> = view() ?: return
-        if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
+        if(isCheckNull(view(),EnumFunc.GET_USER_INFO)){
             return
         }
-        Utils.Log(TAG, "onGetUserInfo 2")
-        if (subscriptions == null) {
-            return
-        }
-        val mUser: User = Utils.getUserInfo() ?: return
-        val mAuthor = mUser.author ?: return
+        val view = view()
+        val mUser = Utils.getUserInfo()
         SuperSafeApplication.serverAPI?.onUserInfo(UserRequest())
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view.onError(onResponse.responseMessage, EnumStatus.USER_INFO)
+                        view?.onError(onResponse.responseMessage, EnumStatus.USER_INFO)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         if (mData == null) {
-                            view.onError(onResponse.responseMessage, EnumStatus.USER_INFO)
+                            view?.onError(onResponse.responseMessage, EnumStatus.USER_INFO)
                         }
                         if (mData?.premium != null && mData.email_token != null) {
-                            mUser.premium = mData.premium
-                            mUser.email_token = mData.email_token
+                            mUser?.premium = mData.premium
+                            mUser?.email_token = mData.email_token
                             Utils.setUserPreShare(mUser)
-                            view.onSuccessful("Successful", EnumStatus.USER_INFO)
+                            view?.onSuccessful("Successful", EnumStatus.USER_INFO)
                         }
                     }
                     Utils.Log(TAG, "onGetUserInfo 3")
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = Gson().fromJson(mMessage,BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error " + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            Utils.Log(TAG, "error " +mObject.responseMessage)
+                            Utils.Log(TAG, Gson().toJson(mObject))
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -177,10 +165,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onUpdateUserToken() {
         val view: BaseServiceView<*>? = view()
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.UPDATE_USER_TOKEN)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.UPDATE_USER_TOKEN)) {
             return
         }
-        val user: User = Utils.getUserInfo() ?: return
+        val user: User? = Utils.getUserInfo()
         if (isCallRefreshToken) {
             Utils.Log(TAG, "Refresh token is progressing")
             return
@@ -189,7 +177,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         val mUserRequest = UserRequest()
         Utils.onWriteLog(Gson().toJson(user), EnumStatus.REFRESH_EMAIL_TOKEN)
         Utils.Log(TAG, "Body request " + Gson().toJson(mUserRequest))
-        SuperSafeApplication?.serverAPI?.onUpdateToken(mUserRequest)
+        SuperSafeApplication.serverAPI?.onUpdateToken(mUserRequest)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: RootResponse ->
@@ -199,9 +187,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     } else {
                         val mUser: User? = Utils.getUserInfo()
                         val mData: DataResponse? = onResponse.data
-                        if (mData?.user != null) {
-                            if (mData.user?.author != null) {
-                                val mAuthorGlobal: Authorization? = mData?.user?.author
+                        mData?.let {
+                            if (it.user?.author != null) {
+                                val mAuthorGlobal: Authorization? = it.user?.author
                                 val mAuthor = mUser?.author
                                 mAuthor?.refresh_token = mAuthorGlobal?.refresh_token
                                 mAuthor?.session_token = mAuthorGlobal?.session_token
@@ -216,19 +204,20 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     Utils.Log(TAG, "Body Update token: " + Gson().toJson(onResponse))
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 403 || code == 400 || code == 401) {
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 403 || mCode == 400 || mCode == 401) {
                                 val mUserResponse: User? = Utils.getUserInfo()
                                 if (mUserResponse != null) {
                                     onSignIn(user)
                                 }
                             }
-                            val errorMessage: String? = bodys?.string()
-                            Utils.Log(TAG, "error update access token $errorMessage")
-                            view?.onError(errorMessage, EnumStatus.UPDATE_USER_TOKEN)
-                            Utils.onWriteLog(errorMessage, EnumStatus.UPDATE_USER_TOKEN)
+                            Utils.Log(TAG, "error update access token $mMessage")
+                            view?.onError(mMessage, EnumStatus.UPDATE_USER_TOKEN)
+                            Utils.onWriteLog(mObject?.toJson(), EnumStatus.UPDATE_USER_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -239,9 +228,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 })?.let { subscriptions?.add(it) }
     }
 
-    fun onDeleteOldAccessToken(request: UserRequest) {
+    private fun onDeleteOldAccessToken(request: UserRequest) {
         val view: BaseServiceView<*>? = view()
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.UPDATE_USER_TOKEN)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.UPDATE_USER_TOKEN)) {
             isCallRefreshToken = false
             return
         }
@@ -259,23 +248,24 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     if (onResponse.error) {
                         view?.onError(onResponse.responseMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
                     } else {
-                        ServiceManager.Companion.getInstance()?.onPreparingSyncData()
+                        ServiceManager.getInstance()?.onPreparingSyncData()
                     }
                     isCallRefreshToken = false
-                    Utils.Log(TAG, "Body delele old access token: " + Gson().toJson(onResponse))
+                    Utils.Log(TAG, "Body delete old access token: " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 403 || code == 400 || code == 401) {
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 403 || mCode == 400 || mCode == 401) {
                                 val user: User? = Utils.getUserInfo()
                                 user?.let { onSignIn(it) }
                             }
-                            val errorMessage: String? = bodys?.string()
-                            Utils.Log(TAG, "error old delete access token $errorMessage")
-                            view?.onError(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
-                            Utils.onWriteLog(errorMessage, EnumStatus.DELETE_OLD_ACCESS_TOKEN)
+                            Utils.Log(TAG, "error old delete access token ${mObject?.toJson()}")
+                            view?.onError(mObject?.toJson(), EnumStatus.DELETE_OLD_ACCESS_TOKEN)
+                            Utils.onWriteLog(mObject?.toJson(), EnumStatus.DELETE_OLD_ACCESS_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -289,13 +279,13 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     fun onSignIn(request: User?) {
         Utils.Log(TAG, "onSignIn request")
         val view: BaseServiceView<*>? = view()
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.SIGN_IN)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.SIGN_IN)) {
             return
         }
         val mRequest = SignInRequest()
         mRequest.user_id = request?.email
         mRequest.password = SecurityUtil.key_password_default_encrypted
-        mRequest.device_id = SuperSafeApplication.Companion.getInstance().getDeviceId()
+        mRequest.device_id = SuperSafeApplication.getInstance().getDeviceId()
         SuperSafeApplication.serverAPI?.onSignIn(mRequest)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
@@ -314,11 +304,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            val mMessage = mBody?.string()
+                            Utils.Log(TAG, "error$mMessage")
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -330,22 +319,18 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun getDriveAbout() {
         val view: BaseServiceView<*> = view()!!
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.GET_DRIVE_ABOUT)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.GET_DRIVE_ABOUT)) {
             return
         }
         val user: User? = Utils.getUserInfo()
-        if (user == null) {
-            view.onError("User is null", EnumStatus.GET_DRIVE_ABOUT)
-            return
-        }
-        if (user.access_token == null) {
+        if (user?.access_token == null) {
             view.onError("access token is null", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
-        view.onSuccessful(access_token, EnumStatus.GET_DRIVE_ABOUT)
-        SuperSafeApplication?.serverDriveApi?.onGetDriveAbout(access_token)
+        val mAccessToken = user.access_token
+        Utils.Log(TAG, "access_token : $mAccessToken")
+        view.onSuccessful(mAccessToken, EnumStatus.GET_DRIVE_ABOUT)
+        SuperSafeApplication.serverDriveApi?.onGetDriveAbout(mAccessToken)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: DriveAbout ->
@@ -384,7 +369,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onGetListFileInApp(view: BaseView<Int>?) {
         Utils.Log(TAG, "onGetListFolderInApp")
-        if (isCheckNull<BaseView<Int>?>(view, EnumStatus.GET_LIST_FILES_IN_APP)) {
+        if (isCheckNull<BaseView<Int>?>(view, EnumFunc.GET_LIST_FILES_IN_APP)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -396,9 +381,9 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view?.onError("No Drive connected", EnumStatus.GET_LIST_FILES_IN_APP)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
-        SuperSafeApplication.serverDriveApi?.onGetListFileInAppFolder(access_token, SuperSafeApplication.Companion.getInstance().getString(R.string.key_appDataFolder))
+        val mAccessToken = user.access_token
+        Utils.Log(TAG, "access_token : $mAccessToken")
+        SuperSafeApplication.serverDriveApi?.onGetListFileInAppFolder(mAccessToken, SuperSafeApplication.Companion.getInstance().getString(R.string.key_appDataFolder))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe({ ddd: Disposable? -> view?.onStartLoading(EnumStatus.GET_LIST_FILES_IN_APP) })
@@ -419,18 +404,18 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@Consumer
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(DriveAbout::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val value: String? = bodys?.string()
-                            val driveAbout: DriveAbout? = Gson().fromJson(value, DriveAbout::class.java)
-                            if (driveAbout != null) {
-                                if (driveAbout.error != null) {
-                                    view.onError(EnumStatus.GET_LIST_FILES_IN_APP.name + "-" + Gson().toJson(driveAbout.error), EnumStatus.REQUEST_ACCESS_TOKEN)
+                            if (mObject != null) {
+                                if (mObject.error != null) {
+                                    view.onError(EnumStatus.GET_LIST_FILES_IN_APP.name + "-" + Gson().toJson(mObject.error), EnumStatus.REQUEST_ACCESS_TOKEN)
                                 }
                             } else {
                                 view.onError(EnumStatus.GET_LIST_FILES_IN_APP.name + " - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN)
@@ -450,7 +435,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     /*Network request*/
     fun onCategoriesSync(mainCategories: MainCategoryModel, view: ServiceManager.BaseListener<*>) {
         Utils.Log(TAG, "onCategoriesSync " + Gson().toJson(mainCategories))
-        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumStatus.CATEGORIES_SYNC)) {
+        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumFunc.CATEGORIES_SYNC)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -462,11 +447,11 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view.onError("no access_token", EnumStatus.CATEGORIES_SYNC)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
+        val mAccessToken = user.access_token
+        Utils.Log(TAG, "access_token : $mAccessToken")
         val mCategories = CategoriesRequest(user.email, user.cloud_id, SuperSafeApplication.getInstance().getDeviceId(), mainCategories)
         Utils.Log(TAG, "onCategoriesSync " + Gson().toJson(mCategories))
-        SuperSafeApplication?.serverAPI?.onCategoriesSync(mCategories)
+        SuperSafeApplication.serverAPI?.onCategoriesSync(mCategories)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: RootResponse? ->
@@ -475,38 +460,36 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         Utils.Log(TAG, "onCategoriesSync " + Gson().toJson(onResponse))
                         view.onSuccessful(onResponse.responseMessage, EnumStatus.CATEGORIES_SYNC)
                     } else {
-                        if (onResponse != null) {
-                            val mData: DataResponse? = onResponse.data
-                            if (mData?.category != null) {
-                                if (mainCategories?.categories_hex_name == mData?.category?.categories_hex_name) {
-                                    mainCategories?.categories_id = mData?.category?.categories_id
-                                    mainCategories?.isSyncOwnServer = true
-                                    mainCategories?.isChange = false
-                                    mainCategories?.isDelete = false
-                                    SQLHelper.updateCategory(mainCategories)
-                                    view.onSuccessful(onResponse.responseMessage + " - " + mData?.category?.categories_id + " - ", EnumStatus.CATEGORIES_SYNC)
-                                } else {
-                                    view.onSuccessful("Not found categories_hex_name - " + mData?.category?.categories_id, EnumStatus.CATEGORIES_SYNC)
-                                }
+                        val mData: DataResponse? = onResponse.data
+                        if (mData?.category != null) {
+                            if (mainCategories.categories_hex_name == mData.category?.categories_hex_name) {
+                                mainCategories.categories_id = mData.category?.categories_id
+                                mainCategories.isSyncOwnServer = true
+                                mainCategories.isChange = false
+                                mainCategories.isDelete = false
+                                SQLHelper.updateCategory(mainCategories)
+                                view.onSuccessful(onResponse.responseMessage + " - " + mData.category?.categories_id + " - ", EnumStatus.CATEGORIES_SYNC)
+                            } else {
+                                view.onSuccessful("Not found categories_hex_name - " + mData.category?.categories_id, EnumStatus.CATEGORIES_SYNC)
                             }
                         }
                     }
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
-                            view.onError("" + msg, EnumStatus.CATEGORIES_SYNC)
+                            Utils.Log(TAG,""+mObject?.toJson())
+                            view.onError("" +mObject?.toJson(), EnumStatus.CATEGORIES_SYNC)
                         } catch (e: IOException) {
                             e.printStackTrace()
-                            view.onError("" + e.message, EnumStatus.CATEGORIES_SYNC)
+                            view.onError(""+e.message, EnumStatus.CATEGORIES_SYNC)
                         }
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable?.message)
@@ -517,7 +500,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onDeleteCategoriesSync(mainCategories: MainCategoryModel, view: ServiceManager.BaseListener<*>?) {
         Utils.Log(TAG, "onDeleteCategoriesSync")
-        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumStatus.DELETE_CATEGORIES)) {
+        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumFunc.DELETE_CATEGORIES)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -529,7 +512,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view?.onError("no access_token", EnumStatus.DELETE_CATEGORIES)
             return
         }
-        val mCategories = CategoriesRequest(user.email, user.cloud_id, SuperSafeApplication.Companion.getInstance().getDeviceId(), mainCategories.categories_id)
+        val mCategories = CategoriesRequest(user.email, user.cloud_id, SuperSafeApplication.getInstance().getDeviceId(), mainCategories.categories_id)
         Utils.Log(TAG, "onDeleteCategoriesSync " + Gson().toJson(mCategories))
         SuperSafeApplication.serverAPI?.onDeleteCategories(mCategories)
                 ?.subscribeOn(Schedulers.io())
@@ -540,7 +523,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         view?.onError("View is null", EnumStatus.DELETE_CATEGORIES)
                         return@subscribe
                     }
-                    if (onResponse.error!!) {
+                    if (onResponse.error) {
                         Utils.Log(TAG, "onError 1")
                         view.onError(onResponse.responseMessage, EnumStatus.DELETE_CATEGORIES)
                     } else {
@@ -554,17 +537,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
-                            view.onError("" + msg, EnumStatus.DELETE_CATEGORIES)
+                            Utils.Log(TAG, "${mObject?.toJson()}")
+                            view.onError("${mObject?.toJson()}", EnumStatus.DELETE_CATEGORIES)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("" + e.message, EnumStatus.DELETE_CATEGORIES)
@@ -578,7 +561,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onUpdateItems(mItem: ItemModel, view: ServiceManager.BaseListener<*>?) {
         Utils.Log(TAG, "onUpdateItems")
-        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumStatus.UPDATE)) {
+        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumFunc.UPDATE)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -595,8 +578,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             Utils.Log(TAG, " Updated => Warning categories id is null")
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
         SuperSafeApplication.serverAPI?.onSyncData(SyncItemsRequest(user.email, user.cloud_id, SuperSafeApplication.getInstance().getDeviceId(), mItem))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
@@ -623,16 +604,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            Utils.Log(TAG, "Adding item Response error" + bodys?.string())
-                            view.onError("" + bodys?.string(), EnumStatus.UPDATE)
+                            Utils.Log(TAG, "Error updated items ${mObject?.toJson()}")
+                            view.onError(""+mObject?.toJson(), EnumStatus.UPDATE)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("" + e.message, EnumStatus.UPDATE)
@@ -647,7 +629,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     /*Date for Categories*/
     fun onAddItems(items: ItemModel, drive_id: String, view: ServiceManager.ServiceManagerInsertItem?) {
         Utils.Log(TAG, "onAddItems")
-        if (isCheckNull<ServiceManager.ServiceManagerInsertItem?>(view, EnumStatus.ADD_ITEMS)) {
+        if (isCheckNull<ServiceManager.ServiceManagerInsertItem?>(view, EnumFunc.ADD_ITEMS)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -715,21 +697,20 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            val messageResponse = bodys?.string()
-                            val mResponse = Gson().fromJson(messageResponse, BaseResponse::class.java)
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                            val mMessage = mBody?.string()
+                            val mObject = Gson().fromJson(mMessage, BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             /*Not found category*/
-                            if (mResponse.responseCode == 1009) {
-
+                            if (mObject.responseCode == 1009) {
                             }
-                            Utils.Log(TAG, "Adding item Response error=> $messageResponse")
-                            view.onError("" + messageResponse, EnumStatus.ADD_ITEMS)
+                            Utils.Log(TAG, "Adding item Response error=> ${mObject.toJson()}")
+                            view.onError(mObject.toJson(), EnumStatus.ADD_ITEMS)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("" + e.message, EnumStatus.ADD_ITEMS)
@@ -767,7 +748,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     /*Get List Categories*/
     fun onDeleteCloudItems(items: ItemModel, view: ServiceManager.BaseListener<*>?) {
         Utils.Log(TAG, "onDeleteCloudItems")
-        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumStatus.DELETE_SYNC_CLOUD_DATA)) {
+        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumFunc.DELETE_SYNC_CLOUD_DATA)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -802,13 +783,13 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            val value: String? = bodys?.string()
-                            val driveAbout: DriveAbout? = Gson().fromJson(value, DriveAbout::class.java)
-                            if (driveAbout != null) {
-                                if (driveAbout.error != null) {
-                                    view.onError(Gson().toJson(driveAbout.error), EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(DriveAbout::class.java)
+                            if (mObject != null) {
+                                if (mObject.error != null) {
+                                    view.onError(Gson().toJson(mObject.error), EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
                                 }
                             } else {
                                 view.onError("Error null 1 ", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
@@ -826,7 +807,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onDeleteOwnSystem(items: ItemModel, view: ServiceManager.BaseListener<*>?) {
         Utils.Log(TAG, "onDeleteOwnSystem")
-        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumStatus.DELETE_SYNC_OWN_DATA)) {
+        if (isCheckNull<ServiceManager.BaseListener<*>?>(view, EnumFunc.DELETE_SYNC_OWN_DATA)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -862,19 +843,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val value: String? = bodys?.string()
-                            if (value != null) {
-                                view.onError("Error $value", EnumStatus.DELETE_SYNC_OWN_DATA)
-                            } else {
-                                view.onError("Error null ", EnumStatus.DELETE_SYNC_OWN_DATA)
-                            }
+                            view.onError("Error ${mObject?.toJson()}", EnumStatus.DELETE_SYNC_OWN_DATA)
+
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("Exception " + e.message, EnumStatus.DELETE_SYNC_OWN_DATA)
@@ -888,7 +867,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onGetListSync(nextPage: String, view: ServiceManager.BaseListener<SyncDataModel>?) {
         Utils.Log(TAG, "onGetListSync")
-        if (isCheckNull<ServiceManager.BaseListener<SyncDataModel>?>(view, EnumStatus.GET_LIST_FILE)) {
+        if (isCheckNull<ServiceManager.BaseListener<SyncDataModel>?>(view, EnumFunc.GET_LIST_FILE)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -904,8 +883,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view?.onError("no driveConnected", EnumStatus.REQUEST_ACCESS_TOKEN)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
         SuperSafeApplication.serverAPI?.onListFilesSync(SyncItemsRequest(user.email, user.cloud_id, SuperSafeApplication.getInstance().getDeviceId(), true, nextPage))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
@@ -987,17 +964,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
-                            view.onError("" + msg, EnumStatus.GET_LIST_FILE)
+                            Utils.Log(TAG, "Get sync list ${mObject?.toJson()}")
+                            view.onError("Get sync list ${mObject?.toJson()}", EnumStatus.GET_LIST_FILE)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("" + e.message, EnumStatus.GET_LIST_FILE)
@@ -1011,10 +988,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onDownloadFile(items: ItemModel, isDownloadToExport: Boolean, listener: ServiceManager.DownloadServiceListener?) {
         Utils.Log(TAG, "onDownloadFile !!!!")
-        val mUser: User? = Utils.getUserInfo()
-        if (mUser==null){
-            return
-        }
+        val mUser: User = Utils.getUserInfo() ?: return
         if (!mUser.driveConnected) {
             listener?.onError("No Drive api connected", EnumStatus.DOWNLOAD)
             return
@@ -1097,9 +1071,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
             override fun onDownLoadError(error: String?) {
                 Utils.Log(TAG, "onDownLoadError $error")
-                if (listener != null) {
-                    listener.onError("Error download ", EnumStatus.REQUEST_NEXT_DOWNLOAD)
-                }
+                listener?.onError("Error download ", EnumStatus.REQUEST_NEXT_DOWNLOAD)
             }
 
             override fun onProgressingDownloading(percent: Int) {
@@ -1118,9 +1090,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
             override fun onErrorSave(name: String?) {
                 Utils.Log(TAG, "onErrorSave")
-                if (listener != null) {
-                    listener.onError("Error download save ", EnumStatus.DOWNLOAD)
-                }
+                listener?.onError("Error download save ", EnumStatus.DOWNLOAD)
             }
 
             override fun onCodeResponse(code: Int, request: DownloadFileRequest?) {
@@ -1157,7 +1127,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             contentEvent.fileType = EnumFileType.THUMBNAIL.ordinal
             file = File(items.getThumbnail())
         }
-        if (!storage!!.isFileExist(file.absolutePath)) {
+        if (!SuperSafeApplication.getInstance().getStorage()!!.isFileExist(file.absolutePath)) {
             SQLHelper.deleteItem(items)
             listener?.onError("This path is not found", EnumStatus.UPLOAD)
             return
@@ -1182,7 +1152,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 Utils.Log(TAG, "onError")
                 listener?.onError("Error upload", EnumStatus.REQUEST_NEXT_UPLOAD)
             }
-
             override fun onFinish() {
                 listener?.onFinish()
                 Utils.Log(TAG, "onFinish")
@@ -1196,7 +1165,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 Utils.Log(TAG, "response successful :" + Gson().toJson(response?.body()))
                 response?.body()?.let { listener?.onResponseData(it) }
             }
-
             override fun onFailure(call: Call<DriveResponse?>?, t: Throwable?) {
                 Utils.Log(TAG, "response failed :" + t?.message)
                 listener?.onError("Error upload" + t?.message, EnumStatus.REQUEST_NEXT_UPLOAD)
@@ -1206,7 +1174,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun getDriveAbout(view: BaseView<*>?) {
         Utils.Log(TAG, "getDriveAbout")
-        if (isCheckNull<BaseView<*>?>(view, EnumStatus.GET_DRIVE_ABOUT)) {
+        if (isCheckNull<BaseView<*>?>(view, EnumFunc.GET_DRIVE_ABOUT)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -1218,13 +1186,13 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             view?.onError("Access token is null", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
-        val access_token = user.access_token
-        Utils.Log(TAG, "access_token : $access_token")
-        view?.onSuccessful(access_token)
-        SuperSafeApplication.serverDriveApi?.onGetDriveAbout(access_token)
+        val mAccessToken = user.access_token
+        Utils.Log(TAG, "access_token : $mAccessToken")
+        view?.onSuccessful(mAccessToken)
+        SuperSafeApplication.serverDriveApi?.onGetDriveAbout(mAccessToken)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ m: Disposable? -> view?.onStartLoading(EnumStatus.GET_DRIVE_ABOUT) })
+                ?.doOnSubscribe { view?.onStartLoading(EnumStatus.GET_DRIVE_ABOUT) }
                 ?.subscribe(Consumer subscribe@{ onResponse: DriveAbout ->
                     if (view == null) {
                         view?.onError("View is disable", EnumStatus.GET_DRIVE_ABOUT)
@@ -1252,21 +1220,18 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         return@subscribe
                     }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            if (view == null) {
-                                return@subscribe
-                            }
-                            val value: String? = bodys?.string()
-                            val driveAbout: DriveAbout? = Gson().fromJson(value, DriveAbout::class.java)
-                            if (driveAbout != null) {
-                                if (driveAbout.error != null) {
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(DriveAbout::class.java)
+                            if (mObject != null) {
+                                if (mObject.error != null) {
                                     val mUser: User? = Utils.getUserInfo()
                                     if (mUser != null) {
                                         user.driveConnected = false
                                         Utils.setUserPreShare(user)
                                     }
-                                    view.onError(EnumStatus.GET_DRIVE_ABOUT.name + "-" + Gson().toJson(driveAbout.error), EnumStatus.REQUEST_ACCESS_TOKEN)
+                                    view.onError(EnumStatus.GET_DRIVE_ABOUT.name + "-" + mObject.toJson(), EnumStatus.REQUEST_ACCESS_TOKEN)
                                 }
                             } else {
                                 val mUser: User? = Utils.getUserInfo()
@@ -1301,7 +1266,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     fun onCheckVersion() {
         Utils.Log(TAG, "onCheckVersion")
         val view: BaseServiceView<*> = view()!!
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.CHECK_VERSION)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.CHECK_VERSION)) {
             return
         }
         SuperSafeApplication.serverAPI?.onCheckVersion()
@@ -1316,11 +1281,11 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            Utils.Log(TAG, "${mObject?.toJson()}")
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -1333,7 +1298,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     fun onSyncAuthorDevice() {
         Utils.Log(TAG, "onSyncAuthorDevice")
         val view: BaseServiceView<*> = view()!!
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.AUTHOR_SYNC)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.AUTHOR_SYNC)) {
             return
         }
         val user: User? = Utils.getUserInfo()
@@ -1350,16 +1315,16 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "Author error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            Utils.Log(TAG, "Sync author ${mObject?.toJson()}")
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -1373,7 +1338,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     fun onSendMail(request: EmailToken) {
         Utils.Log(TAG, "onSendMail.....")
         val view: BaseServiceView<*> = view()!!
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.SEND_EMAIL)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.SEND_EMAIL)) {
             return
         }
         val mUser: User = Utils.getUserInfo() ?: return
@@ -1408,7 +1373,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     e.printStackTrace()
                 }
             }
-
             override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
                 Utils.Log(TAG, "response failed :" + t.message)
             }
@@ -1418,7 +1382,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     fun onRefreshEmailToken(request: EmailToken) {
         Utils.Log(TAG, "onRefreshEmailToken.....")
         val view: BaseServiceView<*> = view()!!
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.REFRESH)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.REFRESH)) {
             return
         }
         val mUser: User? = Utils.getUserInfo()
@@ -1427,7 +1391,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         hash[getString(R.string.key_redirect_uri)] = request.redirect_uri
         hash[getString(R.string.key_grant_type)] = request.grant_type
         hash[getString(R.string.key_refresh_token)] = request.refresh_token
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(ApiService.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken? ->
@@ -1443,15 +1407,15 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     Utils.Log(TAG, "Body refresh : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            view.onError(msg, EnumStatus.SEND_EMAIL)
+                            Utils.Log(TAG, "Refresh mail error $mMessage")
+                            view.onError("Refresh mail error $mMessage", EnumStatus.SEND_EMAIL)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -1461,10 +1425,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 })?.let { subscriptions?.add(it) }
     }
 
-    fun onAddEmailToken() {
+    private fun onAddEmailToken() {
         Utils.Log(TAG, "onSignIn.....")
         val view: BaseServiceView<*> = view()!!
-        if (isCheckNull<BaseServiceView<*>?>(view, EnumStatus.ADD_EMAIL_TOKEN)) {
+        if (isCheckNull<BaseServiceView<*>?>(view, EnumFunc.ADD_EMAIL_TOKEN)) {
             return
         }
         val mUser: User? = Utils.getUserInfo()
@@ -1479,16 +1443,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val errorMessage: String? = bodys?.string()
-                            Utils.Log(TAG, "error$errorMessage")
-                            view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN)
+                            Utils.Log(TAG, "Error add mail token ${mObject?.toJson()}")
+                            view.onError("Error add mail token ${mObject?.toJson()}", EnumStatus.ADD_EMAIL_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -1508,7 +1473,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         }
     }
 
-    fun <T> isCheckNull(view: T?, status: EnumStatus): Boolean {
+    private fun <T> isCheckNull(view: T?, status: EnumFunc): Boolean {
         if (subscriptions == null) {
             Utils.Log(TAG, "Subscriptions is null " + status.name)
             return true
@@ -1518,6 +1483,17 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         } else if (view == null) {
             Utils.Log(TAG, "View is null " + status.name)
             return true
+        }
+        when(status){
+            EnumFunc.GET_USER_INFO ->{
+                Utils.Log(TAG,status.name)
+                val mUser: User = Utils.getUserInfo() ?: return true
+                mUser.author ?: return true
+            }
+            EnumFunc.UPDATE_USER_TOKEN -> {
+                Utils.getUserInfo() ?: return true
+            }
+            else -> Utils.Log(TAG,"Nothing")
         }
         return false
     }

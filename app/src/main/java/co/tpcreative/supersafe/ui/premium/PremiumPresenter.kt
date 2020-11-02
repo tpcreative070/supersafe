@@ -1,5 +1,8 @@
 package co.tpcreative.supersafe.ui.premium
+import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
@@ -69,12 +72,8 @@ class PremiumPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onCheckout(mCheckout)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe({ waiting: Disposable -> view.onStartLoading(EnumStatus.CHECKOUT) })
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CHECKOUT) }
                 ?.subscribe(Consumer subscribe@{ onResponse: RootResponse ->
-                    if (view == null) {
-                        Utils.Log(TAG, "View is null")
-                        return@subscribe
-                    }
                     if (onResponse.error) {
                         view.onError("Error", EnumStatus.CHECKOUT)
                     } else {
@@ -82,23 +81,18 @@ class PremiumPresenter : Presenter<BaseView<EmptyModel>>() {
                     }
                     Utils.onWriteLog(Gson().toJson(onResponse), EnumStatus.CHECKOUT)
                 }, Consumer subscribe@{ throwable: Throwable? ->
-                    if (view == null) {
-                        Utils.Log(TAG, "View is null")
-                        return@subscribe
-                    }
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
-                            Utils.onWriteLog("Line 1 $msg", EnumStatus.CHECKOUT)
-                            view.onError("" + msg, EnumStatus.CHECKOUT)
+                            Utils.Log(TAG,mObject?.toJson())
+                            view.onError(mObject?.toJson(), EnumStatus.CHECKOUT)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             Utils.onWriteLog("Line 2" + e.message, EnumStatus.CHECKOUT)

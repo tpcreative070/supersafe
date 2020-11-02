@@ -1,6 +1,9 @@
 package co.tpcreative.supersafe.ui.resetpin
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.request.RequestCodeRequest
@@ -41,9 +44,9 @@ class ResetPinPresenter : Presenter<BaseView<EmptyModel>>() {
         val hash: MutableMap<String?, Any?> = HashMap()
         hash[getString(R.string.key_user_id)] = request?.user_id
         hash[getString(R.string.key_id)] = request?._id
-        hash[getString(R.string.key_device_id)] = SuperSafeApplication.Companion.getInstance().getDeviceId()
+        hash[getString(R.string.key_device_id)] = SuperSafeApplication.getInstance().getDeviceId()
         hash[getString(R.string.key_code)] = request?.code
-        hash[getString(R.string.key_appVersionRelease)] = SuperSafeApplication.Companion.getInstance().getAppVersionRelease()
+        hash[getString(R.string.key_appVersionRelease)] = SuperSafeApplication.getInstance().getAppVersionRelease()
         SuperSafeApplication.serverAPI?.onVerifyCode(request!!)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
@@ -62,16 +65,16 @@ class ResetPinPresenter : Presenter<BaseView<EmptyModel>>() {
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -114,16 +117,16 @@ class ResetPinPresenter : Presenter<BaseView<EmptyModel>>() {
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val errorMessage: String? = bodys?.string()
-                            Utils.Log(TAG, "error$errorMessage")
-                            view.onError(errorMessage, EnumStatus.REQUEST_CODE)
+                            view.onError(mObject?.toJson(), EnumStatus.REQUEST_CODE)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }

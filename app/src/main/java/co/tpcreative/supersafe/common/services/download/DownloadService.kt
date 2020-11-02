@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.services.download
 import android.util.Log
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit
  */
 class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
     private var listener: DownLoadServiceListener? = null
-    private var rootAPI: RootAPI? = null
+    private var rootAPI: ApiService? = null
     private var header: MutableMap<String, String>? = HashMap()
     fun onProgressingDownload(downLoadServiceListener: DownLoadServiceListener?) {
         listener = downLoadServiceListener
@@ -217,7 +217,7 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
 
     init {
         if (rootAPI == null) {
-            rootAPI = RootAPI::class.java?.let { createService<RootAPI>(it, RootAPI.Companion.ROOT_GOOGLE_DRIVE) }
+            rootAPI = ApiService::class.java?.let { createService<ApiService>(it, ApiService.Companion.ROOT_GOOGLE_DRIVE) }
         }
     }
 }

@@ -16,7 +16,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.helper.ThemeHelper
@@ -24,7 +24,6 @@ import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
 import co.tpcreative.supersafe.common.network.Dependencies
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
-import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.EnumThemeModel
 import co.tpcreative.supersafe.model.User
 import com.bumptech.glide.request.target.ImageViewTarget
@@ -71,9 +70,11 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         /*Init own service api*/dependencies = Dependencies.getInstance(this, getUrl()!!)
         dependencies?.dependenciesListener(this)
         dependencies?.init()
-        serverAPI = Dependencies.serverAPI as RootAPI
-        /*Init Drive api*/serverDriveApi = RetrofitHelper().getCityService(getString(R.string.url_google))
-        /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getCityService(getString(R.string.url_graph_microsoft))
+
+        /*Init Drive api*/serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
+        /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
+        /*Init apis for Coroutine*/
+        serverAPI = RetrofitHelper().getTPCreativeService(getUrl())
         ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)
@@ -410,41 +411,8 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
     }
 
     /*Retrofit and RXJava*/
-
-
     override fun onObject(): Class<Any> {
-        return RootAPI.javaClass
-    }
-
-    override fun onAuthorToken(): String {
-        try {
-            var user: User? = Utils.getUserInfo()
-            if (user != null) {
-                authorization = ""
-                user.author?.session_token?.let {
-                    authorization = it
-                }
-                Utils.onWriteLog(authorization, EnumStatus.REQUEST_ACCESS_TOKEN)
-            } else {
-                user = readUseSecret()
-                authorization = ""
-                user?.author?.session_token?.let {
-                    authorization = it
-                }
-            }
-            return authorization!!
-        } catch (e: Exception) {
-        }
-        return SecurityUtil.DEFAULT_TOKEN
-    }
-
-    override fun onCustomHeader(): HashMap<String, String> {
-        val hashMap = HashMap<String, String>()
-        hashMap["Content-Type"] = "application/json"
-        if (authorization != null) {
-            hashMap.set("Authorization", onAuthorToken())
-        }
-        return hashMap
+        return ApiService.javaClass
     }
 
     fun getDeviceId(): String? {
@@ -524,9 +492,9 @@ class SuperSafeApplication : MultiDexApplication(), Dependencies.DependenciesLis
         private var stopped = 0
         private var url: String? = null
         protected var dependencies: Dependencies<*>? = null
-        var serverAPI: RootAPI? = null
-        var serverDriveApi: RootAPI? = null
-        var serviceGraphMicrosoft: RootAPI? = null
+        var serverAPI: ApiService? = null
+        var serverDriveApi: ApiService? = null
+        var serviceGraphMicrosoft: ApiService? = null
         @Volatile private var mInstance: SuperSafeApplication? = null
         fun  getInstance(): SuperSafeApplication {
             return mInstance as SuperSafeApplication

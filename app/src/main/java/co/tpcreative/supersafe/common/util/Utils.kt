@@ -205,9 +205,11 @@ object Utils  {
             return FilenameUtils.getExtension(url).toLowerCase()
         }
 
-        fun Log(TAG: String, message: String) {
+        fun Log(TAG: String, message: String?) {
             if (BuildConfig.DEBUG) {
-                android.util.Log.d(TAG, message)
+                if (message != null) {
+                    android.util.Log.d(TAG, message)
+                }
             }
         }
 

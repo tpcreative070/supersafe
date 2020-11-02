@@ -2,7 +2,7 @@ package co.tpcreative.supersafe.ui.help
 import android.app.Activity
 import android.os.Bundle
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.presenter.BaseView
@@ -111,7 +111,7 @@ class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
         hash[getString(R.string.key_redirect_uri)] = request.redirect_uri
         hash[getString(R.string.key_grant_type)] = request.grant_type
         hash[getString(R.string.key_refresh_token)] = request.refresh_token
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(ApiService.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken ->

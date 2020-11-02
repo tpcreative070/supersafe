@@ -1,5 +1,8 @@
 package co.tpcreative.supersafe.ui.signup
+import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.request.SignUpRequest
@@ -44,10 +47,11 @@ class SignUpPresenter : Presenter<BaseView<User>>() {
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val body: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            val value: String? = body?.string()
-                            Utils.Log(TAG, value+"")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }

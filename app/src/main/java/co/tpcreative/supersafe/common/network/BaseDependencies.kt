@@ -1,5 +1,9 @@
 package co.tpcreative.supersafe.common.network
-
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.User
+import com.snatik.storage.security.SecurityUtil
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import timber.log.Timber
@@ -13,23 +17,48 @@ open class BaseDependencies {
                 .readTimeout(timeout.toLong(), TimeUnit.MINUTES)
                 .writeTimeout(timeout.toLong(), TimeUnit.MINUTES)
                 .connectTimeout(timeout.toLong(), TimeUnit.MINUTES)
-                .addInterceptor(
-                        Interceptor { chain ->
-                            val request = chain.request()
-                            val builder = request.newBuilder()
-                            val headers = getHeaders()
-                            if (headers != null && headers.size > 0) {
-                                for ((key, value) in headers) {
-                                    Timber.d("%s : %s", key, value)
-                                    builder.addHeader(key, value)
-                                }
-                            }
-                            chain.proceed(builder.build())
-                        }).build()
+                .addInterceptor { chain ->
+                    val request = chain.request()
+                    val builder = request.newBuilder()
+                    val headers = getHeaders()
+                    headers?.let {
+                        for ((key, value) in it) {
+                            Timber.d("%s : %s", key, value)
+                            builder.addHeader(key, value)
+                        }
+                    }
+                    chain.proceed(builder.build())
+                }.build()
     }
 
-    protected open fun getHeaders(): HashMap<String?, String?>? {
-        return null
+    private fun getHeaders(): HashMap<String, String>? {
+        val hashMap = HashMap<String, String>()
+        hashMap["Content-Type"] = "application/json"
+        hashMap["Authorization"] = onAuthorToken()
+        return hashMap
+    }
+
+    private fun onAuthorToken(): String {
+        var authorization : String
+        try {
+            var user: User? = Utils.getUserInfo()
+            if (user != null) {
+                authorization = ""
+                user.author?.session_token?.let {
+                    authorization = it
+                }
+                Utils.onWriteLog(authorization, EnumStatus.REQUEST_ACCESS_TOKEN)
+            } else {
+                user = SuperSafeApplication.getInstance().readUseSecret()
+                authorization = ""
+                user?.author?.session_token?.let {
+                    authorization = it
+                }
+            }
+            return authorization
+        } catch (e: Exception) {
+        }
+        return SecurityUtil.DEFAULT_TOKEN
     }
 
     protected open fun getTimeOut(): Int {

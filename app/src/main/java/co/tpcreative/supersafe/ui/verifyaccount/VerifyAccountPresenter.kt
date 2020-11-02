@@ -1,8 +1,10 @@
 package co.tpcreative.supersafe.ui.verifyaccount
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.api.RootAPI
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.request.ChangeUserIdRequest
@@ -70,18 +72,18 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                         view?.onSuccessful(onResponse.responseMessage, EnumStatus.VERIFY_CODE)
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
-                }, Consumer { throwable: Throwable? ->
+                }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -96,7 +98,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
         Utils.Log(TAG, "info")
         val view: BaseView<EmptyModel>? = view() ?: return
         if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
-            view?.onError("No connection", EnumStatus.CHANGE_EMAIL)
+            view.onError("No connection", EnumStatus.CHANGE_EMAIL)
             return
         }
         if (subscriptions == null) {
@@ -105,47 +107,47 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
         SuperSafeApplication.serverAPI?.onUpdateUser(ChangeUserIdRequest(request!!))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
-                ?.doOnSubscribe { view?.onStartLoading(EnumStatus.CHANGE_EMAIL) }
+                ?.doOnSubscribe { view.onStartLoading(EnumStatus.CHANGE_EMAIL) }
                 ?.subscribe({ onResponse: RootResponse? ->
-                    view?.onStopLoading(EnumStatus.CHANGE_EMAIL)
+                    view.onStopLoading(EnumStatus.CHANGE_EMAIL)
                     if (onResponse?.error!!) {
-                        view?.onError(onResponse.responseMessage, EnumStatus.CHANGE_EMAIL)
+                        view.onError(onResponse.responseMessage, EnumStatus.CHANGE_EMAIL)
                     } else {
-                        if (onResponse != null) {
-                            val mData: DataResponse? = onResponse.data
-                            if (mData?.author != null) {
-                                if (mUser != null) {
-                                    mUser?.author = mData?.author
-                                    mUser?.email = request?.new_user_id
-                                    mUser?.other_email = request?.other_email
-                                    mUser?.change = true
-                                    Utils.setUserPreShare(mUser)
-                                } else {
-                                    Utils.Log(TAG, "User is null")
-                                }
-                                mUser = Utils.getUserInfo()
-                                view?.onSuccessful(onResponse.responseMessage, EnumStatus.CHANGE_EMAIL)
+                        val mData: DataResponse? = onResponse.data
+                        if (mData?.author != null) {
+                            if (mUser != null) {
+                                mUser?.author = mData.author
+                                mUser?.email = request.new_user_id
+                                mUser?.other_email = request.other_email
+                                mUser?.change = true
+                                Utils.setUserPreShare(mUser)
+                            } else {
+                                Utils.Log(TAG, "User is null")
                             }
+                            mUser = Utils.getUserInfo()
+                            view.onSuccessful(onResponse.responseMessage, EnumStatus.CHANGE_EMAIL)
                         }
                     }
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
+                            Utils.Log(TAG, "Error change mail ${mObject?.toJson()}")
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
                     } else {
                         Utils.Log(TAG, "Can not call" + throwable?.message)
                     }
-                    view?.onStopLoading(EnumStatus.CHANGE_EMAIL)
+                    view.onStopLoading(EnumStatus.CHANGE_EMAIL)
                 })?.let { subscriptions?.add(it) }
     }
 
@@ -177,11 +179,11 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
                         try {
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -219,22 +221,22 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     }
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
-                            } else if (code == 403) {
+                            } else if (mCode == 403) {
                                 val request = SignInRequest()
                                 request.user_id = email
                                 request.password = SecurityUtil.key_password_default_encrypted
                                 request.device_id = SuperSafeApplication.getInstance().getDeviceId()
                                 onSignIn(request)
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            Utils.Log(TAG, msg)
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -261,7 +263,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.SIGN_IN) }
                 ?.subscribe({ onResponse: RootResponse ->
                     if (onResponse.error) {
-                        view?.onError(onResponse.responseMessage, EnumStatus.SIGN_IN)
+                        view.onError(onResponse.responseMessage, EnumStatus.SIGN_IN)
                     } else {
                         val mData: DataResponse? = onResponse.data
                         mUser = mData?.user
@@ -273,16 +275,17 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            view?.onError(msg, EnumStatus.SIGN_IN)
+                            Utils.Log(TAG, "Error ${mObject?.toJson()}")
+                            view.onError(mObject?.toJson(), EnumStatus.SIGN_IN)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -350,7 +353,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
         hash[getString(R.string.key_redirect_uri)] = request?.redirect_uri
         hash[getString(R.string.key_grant_type)] = request?.grant_type
         hash[getString(R.string.key_refresh_token)] = request?.refresh_token
-        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(RootAPI.REFRESH_TOKEN, hash)
+        SuperSafeApplication.serviceGraphMicrosoft?.onRefreshEmailToken(ApiService.REFRESH_TOKEN, hash)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe({ onResponse: EmailToken? ->
@@ -367,15 +370,15 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     Utils.Log(TAG, "Body refresh : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
-                            view.onError(msg, EnumStatus.SEND_EMAIL)
+                            Utils.Log(TAG, "Error $mMessage")
+                            view.onError(mMessage, EnumStatus.SEND_EMAIL)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }
@@ -385,7 +388,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                 })?.let { subscriptions?.add(it) }
     }
 
-    fun onAddEmailToken() {
+    private fun onAddEmailToken() {
         Utils.Log(TAG, "onSignIn.....")
         val view: BaseView<*> = view() ?: return
         if (NetworkUtil.pingIpAddress(SuperSafeApplication.getInstance())) {
@@ -404,16 +407,17 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                     onSendMail(emailToken)
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 403) {
-                                Utils.Log(TAG, "code $code")
+                            val mMessage = mBody?.string()
+                            val mObject = mMessage?.toObject(BaseResponse::class.java)
+                            if (mCode == 403) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val errorMessage: String? = bodys?.string()
-                            Utils.Log(TAG, "error$errorMessage")
-                            view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN)
+                            Utils.Log(TAG, "Error ${mObject?.toJson()}")
+                            view.onError(mObject?.toJson(), EnumStatus.ADD_EMAIL_TOKEN)
                         } catch (e: IOException) {
                             e.printStackTrace()
                         }

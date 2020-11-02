@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.api.response
-import co.tpcreative.supersafe.common.api.RootAPI
 import co.tpcreative.supersafe.model.Version
 import com.anjlab.android.iab.v3.PurchaseData
 import com.google.gson.Gson
