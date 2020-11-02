@@ -203,7 +203,7 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
 
     init {
         if (rootAPI == null) {
-            rootAPI = ApiService::class.java?.let { createService<ApiService>(it, ApiService.Companion.ROOT_GOOGLE_DRIVE) }
+            rootAPI = ApiService::class.java?.let { createService<ApiService>(it, ApiService.ROOT_GOOGLE_DRIVE) }
         }
     }
 }

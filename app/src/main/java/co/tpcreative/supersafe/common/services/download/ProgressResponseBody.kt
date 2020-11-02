@@ -7,9 +7,6 @@ import okio.Okio
 import okio.Source
 import java.io.IOException
 import okio.ForwardingSource;
-/**
- * Created by PC on 9/1/2017.
- */
 class ProgressResponseBody(responseBody: ResponseBody?, progressListener: ProgressResponseBodyListener?) : ResponseBody() {
     private val responseBody: ResponseBody? = responseBody
     private val progressListener: ProgressResponseBodyListener? = progressListener
@@ -39,10 +36,6 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
             @Throws(IOException::class)
             override fun read(sink: Buffer, byteCount: Long): Long {
                 val bytesRead: Long = super.read(sink, byteCount)
-
-                //Long elapsedTime = System.nanoTime() - startTime;
-                //Long allTimeForDownloading = (elapsedTime * responseBody.contentLength() / bytesRead);
-                //Long remainingTime = allTimeForDownloading - elapsedTime;
                 totalBytesRead += if (bytesRead != -1L) bytesRead else 0
                 val percent = if (bytesRead == -1L) 100f else totalBytesRead.toFloat() / responseBody?.contentLength()!!.toFloat() * 100
                 if (progressListener != null) {
@@ -72,12 +65,6 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
                         progressListener.onAttachmentDownloadedError(ae.message)
                     }
                 }
-
-                //Log.d(TAG,"byte read :" + (totalBytesRead/1024) + "MB");
-                //Log.d(TAG, "contentLength : " + responseBody.contentLength());
-                //Log.d(TAG, "elapsedtime minutes : " + elapsedTime / 1000000000);
-                //Log.d(TAG, "alltimefordownloading minutes : " + allTimeForDownloading / 1000000000);
-                //Log.d(TAG, "remainingtime minutes : " + remainingTime / 1000000000.0);
                 return bytesRead
             }
         }
