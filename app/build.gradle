@@ -133,12 +133,6 @@ dependencies {
     implementation project(':library-circular')
     implementation project(':library-progress')
 
-    /*Apache*/
-    implementation files('libs/httpmime-4.3.6.jar')
-    implementation files('libs/httpcore-4.3.3.jar')
-    implementation files('libs/httpclient-4.3.6.jar')
-    implementation files('libs/systembartint-1.0.3.jar')
-
     /*Android Storage*/
     implementation project(':storage')
 
