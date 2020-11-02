@@ -8,6 +8,7 @@ import android.os.IBinder
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
+import co.tpcreative.supersafe.common.api.requester.SyncDataService
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
@@ -36,6 +37,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

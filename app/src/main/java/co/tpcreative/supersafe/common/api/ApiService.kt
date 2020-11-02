@@ -58,11 +58,14 @@ interface ApiService {
     @POST(USER_INFO)
     fun onUserInfo(@Body request: UserRequest): Observable<RootResponse>?
 
+    @POST(USER_INFO)
+    fun onUserInfoT(@Body request: UserRequest): Call<RootResponse>?
+
     @POST(GET_LIST_FILES_SYNC)
     fun onListFilesSync(@Body request: SyncItemsRequest): Observable<RootResponse>?
 
     @POST(GET_LIST_FILES_SYNC)
-    suspend fun <T : Any>onListFilesSyncT(@Body request: SyncItemsRequest): Result<T>?
+    fun onListFilesSyncT(@Body request: SyncItemsRequest): Call<RootResponse>?
 
     @POST(SYNC_DATA)
     fun onSyncData(@Body request: SyncItemsRequest): Observable<RootResponse>?
