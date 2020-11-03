@@ -95,8 +95,10 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         when (event) {
             EnumStatus.MIGRATION_DONE -> {
                 SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
                 Navigator.onMoveToMainTab(this,false)
                 storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
+                finish()
             }
         }
     }
