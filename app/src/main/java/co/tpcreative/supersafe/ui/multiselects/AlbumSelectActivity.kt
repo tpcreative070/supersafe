@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.multiselects
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.database.ContentObserver
@@ -10,9 +9,7 @@ import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.ProgressBar
-import androidx.appcompat.widget.Toolbar
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.util.Utils
@@ -21,7 +18,6 @@ import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter
 import kotlinx.android.synthetic.main.activity_album_select.*
 import kotlinx.android.synthetic.main.activity_album_select.toolbar
-import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 import java.util.*
 
@@ -128,23 +124,22 @@ class AlbumSelectActivity : HelperActivity() {
         if (adapter != null) {
             adapter?.releaseResources()
         }
-        grid_view_album_select?.setOnItemClickListener(null)
+        grid_view_album_select?.onItemClickListener = null
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig!!)
+        super.onConfigurationChanged(newConfig)
         orientationBasedUI(newConfig.orientation)
     }
 
     private fun orientationBasedUI(orientation: Int) {
-        val windowManager: WindowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val metrics = DisplayMetrics()
-        windowManager.getDefaultDisplay().getMetrics(metrics)
+        applicationContext.display?.getRealMetrics(metrics)
         if (adapter != null) {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 2 else metrics.widthPixels / 4
             adapter?.setLayoutParams(size)
         }
-        grid_view_album_select?.setNumColumns(if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4)
+        grid_view_album_select?.numColumns = (if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4)
     }
 
     override fun onBackPressed() {

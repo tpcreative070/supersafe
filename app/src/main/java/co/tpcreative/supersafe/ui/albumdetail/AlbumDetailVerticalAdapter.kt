@@ -34,29 +34,11 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp!!.getAccentColor())
     override fun getItemCount(): Int {
-        if (mDataSource == null) {
-            return 0
-        }
-        return if (mDataSource.size == 0) {
-            // Return 1 here to show nothing
-            1
-        } else mDataSource.size + 1
-        // Add another extra view to show the footer view
-        // So there are two extra views need to be populated
-    }
-
-    // Now define getItemViewType of your own.
-    override fun getItemViewType(position: Int): Int {
-        return if (position == mDataSource.size) {
-            // This is where we'll add footer.
-            FOOTER_VIEW
-        } else super.getItemViewType(position)
+        return mDataSource.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder<ItemModel> {
-        return if (viewType == FOOTER_VIEW) {
-            FooterViewHolder(inflater!!.inflate(R.layout.album_detail_item_footer, parent, false))
-        } else ItemHolder(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
+       return ItemHolder(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
     }
 
     interface ItemSelectedListener {

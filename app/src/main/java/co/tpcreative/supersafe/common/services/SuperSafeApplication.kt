@@ -357,17 +357,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     private fun isPermissionRead(): Boolean {
-        val permission: Int = PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-        return if (permission == PermissionChecker.PERMISSION_GRANTED) {
-            true
-        } else false
+        val permission: Int = PermissionChecker.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+        return permission == PermissionChecker.PERMISSION_GRANTED
     }
 
     private fun isPermissionWrite(): Boolean {
-        val permission: Int = PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        return if (permission == PermissionChecker.PERMISSION_GRANTED) {
-            true
-        } else false
+        val permission: Int = PermissionChecker.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return permission == PermissionChecker.PERMISSION_GRANTED
     }
 
     fun isGrantAccess(): Boolean {
@@ -396,7 +392,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun getPathDatabase(): String? {
-        return getDatabasePath(getString(R.string.key_database)).getAbsolutePath()
+        return getDatabasePath(getString(R.string.key_database)).absolutePath
     }
 
     fun getDeviceId(): String? {

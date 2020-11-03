@@ -30,8 +30,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.DexterError
-import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_album_detail.*
 import kotlinx.android.synthetic.main.activity_album_detail.toolbar
@@ -65,7 +63,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
 
     fun onInit() {
         presenter?.getData(this)
-        initRecycleView(getLayoutInflater())
+        initRecycleView(layoutInflater)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -102,6 +100,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                         EnumStatus.EXPORT -> {
                             runOnUiThread(Runnable { Toast.makeText(this@AlbumDetailAct, "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture(), Toast.LENGTH_LONG).show() })
                         }
+                        else -> Utils.Log(TAG,"Nothing")
                     }
                 } catch (e: Exception) {
                     Utils.Log(TAG, e.message +"")
@@ -117,7 +116,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     while (i < presenter?.mList?.size!!) {
                         val items: ItemModel? = presenter?.mList?.get(i)
                         if (items?.isChecked!!) {
-                            items?.isSaver = false
+                            items.isSaver = false
                         }
                         i++
                     }
@@ -130,6 +129,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                         ?.setConfirmText("OK")
                         ?.changeAlertType(SweetAlertDialog.ERROR_TYPE)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -188,6 +188,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 return true
             }
             R.id.action_select_items -> {
+                appbar.setExpanded(false)
                 if (actionMode == null) {
                     actionMode = toolbar?.startActionMode(callback)
                 }
@@ -225,7 +226,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         }
         if (actionMode != null) {
             toggleSelection(position)
-            actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
+            actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
         } else {
             try {
                 when (EnumFormatType.values()[presenter?.mList?.get(position)?.formatType!!]) {
@@ -244,6 +245,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
 
     override fun onLongClickItem(position: Int) {
         Utils.Log(TAG, "On long clicked item")
+        appbar.setExpanded(false)
         if (position >= presenter?.mList?.size!!) {
             return
         }
@@ -283,22 +285,17 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                             Utils.Log(TAG, "Permission is denied")
                         }
                         // check for permanent denial of any permission
-                        if (report.isAnyPermissionPermanentlyDenied()) {
+                        if (report.isAnyPermissionPermanentlyDenied) {
                             /*Miss add permission in manifest*/
                             Utils.Log(TAG, "request permission is failed")
                         }
                     }
-
                     override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
                         /* ... */
                         token?.continuePermissionRequest()
                     }
                 })
-                .withErrorListener(object : PermissionRequestErrorListener {
-                    override fun onError(error: DexterError) {
-                        Utils.Log(TAG, "error ask permission")
-                    }
-                }).onSameThread().check()
+                .withErrorListener { Utils.Log(TAG, "error ask permission") }.onSameThread().check()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -429,6 +426,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 }
                 isReload = true
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -440,6 +438,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER, `object`)
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -456,9 +455,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             menuInflater.inflate(R.menu.menu_select, menu)
             actionMode = mode
             countSelected = 0
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = ContextCompat.getColor(getContext()!!, R.color.material_orange_900)
-            }
+            window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.material_orange_900)
             return true
         }
 
@@ -481,11 +478,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 deselectAll()
             }
             actionMode = null
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-                if (themeApp != null) {
-                    window.statusBarColor = ContextCompat.getColor(getContext()!!, themeApp.getPrimaryDarkColor())
-                }
+            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+            if (themeApp != null) {
+                window.statusBarColor = ContextCompat.getColor(applicationContext, themeApp.getPrimaryDarkColor())
             }
         }
     }
@@ -548,7 +543,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         }
     }
 
-    fun onCheckDelete() {
+    private fun onCheckDelete() {
         val mList: MutableList<ItemModel>? = presenter?.mList
         var i = 0
         val l = mList?.size
@@ -640,7 +635,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         return presenter?.mList
     }
 
-    fun onUpdateAdapter(status: EnumStatus?, position: Int) {
+    private fun onUpdateAdapter(status: EnumStatus?, position: Int) {
         val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
         when (status) {
             EnumStatus.UPDATE_ENTIRE_ADAPTER -> {

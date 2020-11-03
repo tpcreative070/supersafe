@@ -16,7 +16,6 @@ import co.tpcreative.supersafe.model.EnumStatus
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import co.tpcreative.supersafe.model.ThemeApp;
 import kotlinx.android.synthetic.main.activity_trash.*
 
 class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelectedListener {
@@ -44,6 +43,7 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -76,7 +76,7 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
             actionMode = toolbar?.startActionMode(callback)
         }
         toggleSelection(position)
-        actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
+        actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
         if (countSelected == 0) {
             actionMode?.finish()
         }
@@ -121,13 +121,10 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
     private val callback: ActionMode.Callback? = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode?.menuInflater
-            menuInflater?.inflate(R.menu.menu_select, menu)
+            menuInflater.inflate(R.menu.menu_select, menu)
             actionMode = mode
             countSelected = 0
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                val window: Window = getWindow()
-                window.statusBarColor = ContextCompat.getColor(getContext()!!, R.color.material_orange_900)
-            }
+            window.statusBarColor = ContextCompat.getColor(getContext()!!, R.color.material_orange_900)
             return true
         }
 
@@ -150,11 +147,9 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
                 deselectAll()
             }
             actionMode = null
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-                if (themeApp != null) {
-                    window.statusBarColor = ContextCompat.getColor(getContext()!!, themeApp.getPrimaryDarkColor())
-                }
+            val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
+            if (themeApp != null) {
+                window.statusBarColor = ContextCompat.getColor(getContext()!!, themeApp.getPrimaryDarkColor())
             }
         }
     }
@@ -184,6 +179,7 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
                 SingletonPrivateFragment.getInstance()?.onUpdateView()
                 ServiceManager.getInstance()?.onPreparingSyncData()
             }
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
