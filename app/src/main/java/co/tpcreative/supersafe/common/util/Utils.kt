@@ -1227,6 +1227,11 @@ object Utils  {
                         if (mUser.cloud_id != null && mUser.cloud_id != "" && !isPauseSync()) {
                             return true
                         }
+                        else{
+                            mUser.driveConnected = false
+                            mUser.access_token = null
+                            setUserPreShare(mUser)
+                        }
                     }
                 }
             }

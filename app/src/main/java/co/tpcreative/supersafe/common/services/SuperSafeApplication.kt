@@ -607,6 +607,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isTestMigration() : Boolean {
-        return false
+        return true
     }
 }
