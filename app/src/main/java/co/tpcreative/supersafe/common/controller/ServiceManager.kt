@@ -201,13 +201,13 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onShowObjects(`object`: SyncDataModel) {
                     `object`.list?.let {
                         mDownloadList.addAll(it)
-                        /*Checking to preparing delete data*/
-                        if (`object`.isDone){
-                            onItemDeleteSyncedLocal(mDownloadList)
-                        }
                     }
+                    /*Checking to preparing delete data*/
+                    if (`object`.isDone){
+                        onItemDeleteSyncedLocal(mDownloadList)
+                    }
+                    /*Checking to preparing delete data*/
                     `object`.categoryList?.let {
-                        /*Checking to preparing delete data*/
                         if (`object`.isDone){
                             onCategoryDeleteSyncedLocal(it)
                         }
