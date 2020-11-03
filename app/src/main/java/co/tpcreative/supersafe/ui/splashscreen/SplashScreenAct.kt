@@ -94,6 +94,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.MIGRATION_DONE -> {
+                SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
                 Navigator.onMoveToMainTab(this,false)
                 storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
             }

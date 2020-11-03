@@ -510,28 +510,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
     }
 
-    fun onMoveFolder(){
-//        val directory = File(superSafeOldPath)
-//        val files = directory.listFiles()
-//        files?.let {
-//            for (index in it) {
-//                if (index.isFile()){
-//                    //storage.move(index.absolutePath,superSafeOldPath+"/"+index.name)
-//                    //storage.createFile(superSafeOldPath+"/${index.name}","")
-//                    //moveTo(index,File("$superSafe${index.name}"))
-//                    Utils.Log(TAG, "input...${index.absolutePath}")
-//                    Utils.Log(TAG, "output $superSafe${index.name}")
-//                }
-//            }
-//        }
-//        File(superSafeOldPath).walkTopDown().forEach {
-//            Utils.Log(TAG,"file name ${Gson().toJson(it)}")
-//            if (it.isDirectory){
-//                storage.createDirectory(it.absolutePath)
-//            }
-//        }
-    }
-
     fun onPreparingMigration(){
         mMapMigrationItem.clear()
         File(getSuperSafeOldPath()!!).walkTopDown().forEach {
@@ -600,20 +578,21 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
         }catch (exception : IOException){
             exception.printStackTrace()
-            callback(false)
             Utils.Log(TAG,"Could not move file...")
+            callback(false)
         }
             ""
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
                     try {
-                        callback(true)
                         compositeDisposable?.dispose()
-                    } catch (e: Exception) {
                         callback(false)
+                    } catch (e: Exception) {
+
                         e.printStackTrace()
                         Utils.Log(TAG, "Migration done")
                         compositeDisposable!!.dispose()
+                        callback(true)
                     }
                 })
     }
@@ -628,6 +607,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun isTestMigration() : Boolean {
-        return false
+        return true
     }
 }
