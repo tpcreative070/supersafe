@@ -71,9 +71,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         isLive = true
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         ImageViewTarget.setTagId(R.id.fab_glide_tag)
-        /*Init Drive api*/serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
-        /*Init GraphMicrosoft*/serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
-        /*Init apis for Coroutine*/
+        serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
+        serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
         serverAPI = RetrofitHelper().getTPCreativeService(getUrl())
         ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
@@ -96,11 +95,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         storage = Storage(this)
 
         /*Migration*/
-        superSafe = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
-        superSafeOldPath = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
-
-//        superSafeOldPath = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
-//        superSafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+        if (isTestMigration()){
+            superSafe = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
+            superSafeOldPath = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+        }else{
+            superSafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+            superSafeOldPath = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+        }
 
         key = ".encrypt_key"
         fake_key = ".encrypt_fake_key"
@@ -624,5 +625,9 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             }
         }
         return  false
+    }
+
+    fun isTestMigration() : Boolean {
+        return false
     }
 }
