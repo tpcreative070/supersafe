@@ -1293,6 +1293,33 @@ object Utils  {
     fun deleteFolderOfItemId(items_id : String){
         SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id)
     }
+
+    /*Delete hash map after migrated item*/
+    fun getArrayOfMigrationIndexHashMap(mMapDelete: MutableMap<String, MigrationModel>?): MigrationModel? {
+        if (mMapDelete != null) {
+            if (mMapDelete.size > 0) {
+                val model: MigrationModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
+                Log(TAG, "Object need to be deleting " + Gson().toJson(model))
+                return model
+            }
+        }
+        return null
+    }
+
+    /*Delete hash map after migrated item*/
+    fun deletedIndexOfMigrationHashMap(uniId: String?, map: MutableMap<String, MigrationModel>?): Boolean {
+        try {
+            if (map != null) {
+                if (map.isNotEmpty()) {
+                    map.remove(uniId)
+                    return true
+                }
+            }
+        } catch (e: Exception) {
+            Log(TAG, "Could not delete hash map==============================>")
+        }
+        return false
+    }
 }
 
 interface UtilsListener {

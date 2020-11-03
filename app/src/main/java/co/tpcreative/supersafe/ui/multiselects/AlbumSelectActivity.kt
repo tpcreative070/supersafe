@@ -60,7 +60,7 @@ class AlbumSelectActivity : HelperActivity() {
         super.onStart()
         handler = object : Handler(Looper.myLooper()!!) {
             override fun handleMessage(msg: Message) {
-                when (msg?.what) {
+                when (msg.what) {
                     Navigator.PERMISSION_GRANTED -> {
                         loadAlbums()
                     }
@@ -73,7 +73,7 @@ class AlbumSelectActivity : HelperActivity() {
                             adapter = CustomAlbumSelectAdapter(applicationContext, albums)
                             grid_view_album_select?.setAdapter(adapter)
                             progressBar?.visibility = View.INVISIBLE
-                            grid_view_album_select?.setVisibility(View.VISIBLE)
+                            grid_view_album_select?.visibility = View.VISIBLE
                             orientationBasedUI(resources.configuration.orientation)
                         } else {
                             adapter?.notifyDataSetChanged()
@@ -242,7 +242,7 @@ class AlbumSelectActivity : HelperActivity() {
     }
 
     private fun stopThread() {
-        if (thread == null || !thread?.isAlive()!!) {
+        if (thread == null || !thread?.isAlive!!) {
             return
         }
         thread?.interrupt()

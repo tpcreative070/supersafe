@@ -7,6 +7,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -57,37 +58,44 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         )
         SQLHelper.getList()
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT)
-        Utils.onObserveData(DELAY.toLong(), object :Listener {
-            override fun onStart() {
-                if (grant_access) {
-                    if (isRunning) {
-                        if ("" != value) {
-                            PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
-                            Navigator.onMoveToMainTab(this@SplashScreenAct,false)
+        if(SuperSafeApplication.getInstance().isRequestMigration()){
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.progressing)
+            SuperSafeApplication.getInstance().onPreparingMigration()
+        }else {
+            Utils.onObserveData(DELAY.toLong(), object : Listener {
+                override fun onStart() {
+                    if (grant_access) {
+                        if (isRunning) {
+                            if ("" != value) {
+                                PrefsController.putInt(getString(R.string.key_screen_status), EnumPinAction.SPLASH_SCREEN.ordinal)
+                                Navigator.onMoveToMainTab(this@SplashScreenAct, false)
+                            } else {
+                                SuperSafeApplication.getInstance().deleteFolder()
+                                SuperSafeApplication.getInstance().initFolder()
+                                SQLHelper.onCleanDatabase()
+                                Utils.setUserPreShare(User())
+                                SQLHelper.getList()
+                                PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), true)
+                                Navigator.onMoveToDashBoard(this@SplashScreenAct)
+                            }
                         } else {
-                            SuperSafeApplication.getInstance().deleteFolder()
-                            SuperSafeApplication.getInstance().initFolder()
-                            SQLHelper.onCleanDatabase()
-                            Utils.setUserPreShare(User())
-                            SQLHelper.getList()
-                            PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), true)
                             Navigator.onMoveToDashBoard(this@SplashScreenAct)
                         }
                     } else {
-                        Navigator.onMoveToDashBoard(this@SplashScreenAct)
+                        Navigator.onMoveGrantAccess(this@SplashScreenAct)
                     }
-                } else {
-                    Navigator.onMoveGrantAccess(this@SplashScreenAct)
+                    finish()
                 }
-                finish()
-            }
-        })
+            })
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
-            EnumStatus.FINISH -> {
+            EnumStatus.MIGRATION_DONE -> {
+                Navigator.onMoveToMainTab(this,false)
+                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
             }
         }
     }

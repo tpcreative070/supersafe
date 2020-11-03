@@ -22,9 +22,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EnumPinAction
-import co.tpcreative.supersafe.model.EnumThemeModel
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.model.*
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
@@ -34,11 +32,17 @@ import com.google.gson.Gson
 import com.snatik.storage.EncryptConfiguration
 import com.snatik.storage.Storage
 import com.snatik.storage.security.SecurityUtil
-import java.io.File
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.io.*
 import java.util.*
+import java.util.concurrent.Callable
 
 class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks {
     private lateinit var superSafe: String
+    private lateinit var superSafeOldPath : String
     private lateinit var superSafePrivate: String
     private lateinit var superSafeBackup: String
     private lateinit var superSafeBreakInAlerts: String
@@ -59,6 +63,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     private var isLive = false
     private var secretKey: String? = null
     private var activity: Activity? = null
+    private var mMapMigrationItem: MutableMap<String, MigrationModel> = HashMap<String, MigrationModel>()
+    private var compositeDisposable: CompositeDisposable? = null
     override fun onCreate() {
         super.onCreate()
         mInstance = this
@@ -89,8 +95,13 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
                 .build()
         storage = Storage(this)
 
-        //supersafe = getExternalFilesDir(null)?.absolutePath + "/SuperSafe_DoNot_Delete/"
-        superSafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+        /*Migration*/
+        superSafe = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
+        superSafeOldPath = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+
+//        superSafeOldPath = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
+//        superSafe = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
+
         key = ".encrypt_key"
         fake_key = ".encrypt_fake_key"
         userSecret = ".userSecret"
@@ -207,6 +218,10 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return superSafe
     }
 
+    fun getSuperSafeOldPath() : String?{
+        return superSafeOldPath
+    }
+
     fun getSuperSafePrivate(): String {
         return superSafePrivate
     }
@@ -240,10 +255,11 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun initFolder() {
-        if (storage.isDirectoryExists(superSafe) and storage.isDirectoryExists(superSafePrivate) and storage.isDirectoryExists(superSafeBackup) and storage.isDirectoryExists(superSafeLog) and storage.isDirectoryExists(superSafeBreakInAlerts)) {
+        if (storage.isDirectoryExists(superSafe) and storage.isDirectoryExists(superSafePrivate) and storage.isDirectoryExists(superSafeBackup) and storage.isDirectoryExists(superSafeLog) and storage.isDirectoryExists(superSafeBreakInAlerts) and storage.isDirectoryExists(superSafeOldPath) ) {
             Utils.Log(TAG, "SuperSafe is existing")
         } else {
             storage.createDirectory(superSafe)
+            storage.createDirectory(superSafeOldPath)
             storage.createDirectory(superSafePrivate)
             storage.createDirectory(superSafeBackup)
             storage.createDirectory(superSafeLog)
@@ -253,6 +269,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun deleteFolder() {
+        Utils.Log(TAG,"Request delete folder")
         storage.deleteDirectory(superSafe)
     }
 
@@ -490,5 +507,122 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE 'items' ADD COLUMN  'isRequestChecking' INTEGER NOT NULL DEFAULT 0")
         }
+    }
+
+    fun onMoveFolder(){
+//        val directory = File(superSafeOldPath)
+//        val files = directory.listFiles()
+//        files?.let {
+//            for (index in it) {
+//                if (index.isFile()){
+//                    //storage.move(index.absolutePath,superSafeOldPath+"/"+index.name)
+//                    //storage.createFile(superSafeOldPath+"/${index.name}","")
+//                    //moveTo(index,File("$superSafe${index.name}"))
+//                    Utils.Log(TAG, "input...${index.absolutePath}")
+//                    Utils.Log(TAG, "output $superSafe${index.name}")
+//                }
+//            }
+//        }
+//        File(superSafeOldPath).walkTopDown().forEach {
+//            Utils.Log(TAG,"file name ${Gson().toJson(it)}")
+//            if (it.isDirectory){
+//                storage.createDirectory(it.absolutePath)
+//            }
+//        }
+    }
+
+    fun onPreparingMigration(){
+        mMapMigrationItem.clear()
+        File(getSuperSafeOldPath()!!).walkTopDown().forEach {
+            val mResult = it.absolutePath.replace(superSafeOldPath,superSafe)
+            if (it.isFile){
+                val mUniqueId = UUID.randomUUID().toString()
+                mMapMigrationItem[mUniqueId] = MigrationModel(mUniqueId,it,File(mResult),false)
+                Utils.Log(TAG,"path of new file : $mResult")
+            }else{
+                storage.createDirectory(mResult)
+            }
+        }
+        if (mMapMigrationItem.isNotEmpty()){
+            val nextItem = Utils.getArrayOfMigrationIndexHashMap(mMapMigrationItem)
+            if (nextItem!=null){
+                onMigrationItem(nextItem)
+                Utils.Log(TAG,"Start migration")
+            }
+        }
+    }
+
+    private fun onMigrationItem(mData : MigrationModel){
+        moveTo(mData.mInput,mData.mOutput) {
+            if (Utils.deletedIndexOfMigrationHashMap(mData.Id, mMapMigrationItem)) {
+                val nextItem = Utils.getArrayOfMigrationIndexHashMap(mMapMigrationItem)
+                if (nextItem!=null){
+                    onMigrationItem(nextItem)
+                    Utils.Log(TAG,"Next item of migration ${nextItem.Id}")
+                }else{
+                    Utils.Log(TAG,"Migration completed")
+                    storage.deleteDirectory(superSafeOldPath)
+                    Utils.onPushEventBus(EnumStatus.MIGRATION_DONE)
+                }
+            }
+        }
+    }
+
+    private fun moveTo(source: File, dest: File, callback : (value : Boolean) -> Unit) {
+        compositeDisposable = CompositeDisposable()
+        compositeDisposable!!.add(Observable.fromCallable(Callable {
+            Utils.Log(TAG,"Staring move file...")
+        try {
+            if (source.isDirectory){
+                source.mkdirs()
+                callback(true)
+                Utils.Log(TAG,"Call here")
+            }
+            val fis = FileInputStream(source)
+            val bufferLength = 1024
+            val buffer = ByteArray(bufferLength)
+            val fos = FileOutputStream(dest)
+            val bos = BufferedOutputStream(fos, bufferLength)
+            var read = 0
+            read = fis.read(buffer, 0, read)
+            while (read != -1) {
+                bos.write(buffer, 0, read)
+                read = fis.read(buffer) // if read value is -1, it escapes loop.
+            }
+            fis.close()
+            bos.flush()
+            bos.close()
+            Utils.Log(TAG,"Finish...")
+        if (!source.delete()) {
+            Utils.Log(TAG, "failed to delete ${source.name}")
+            callback(true)
+        }
+        }catch (exception : IOException){
+            exception.printStackTrace()
+            callback(false)
+            Utils.Log(TAG,"Could not move file...")
+        }
+            ""
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
+                    try {
+                        callback(true)
+                        compositeDisposable?.dispose()
+                    } catch (e: Exception) {
+                        callback(false)
+                        e.printStackTrace()
+                        Utils.Log(TAG, "Migration done")
+                        compositeDisposable!!.dispose()
+                    }
+                })
+    }
+
+    fun isRequestMigration() : Boolean{
+        File(getSuperSafeOldPath()!!).walkTopDown().forEach {
+            if (it.isFile){
+                return true
+            }
+        }
+        return  false
     }
 }

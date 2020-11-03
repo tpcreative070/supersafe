@@ -13,6 +13,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
+import com.snatik.storage.Storage
 import de.mrapp.android.dialog.MaterialDialog
 
 class DashBoardAct : BaseActivityNoneSlide() {
@@ -36,7 +37,7 @@ class DashBoardAct : BaseActivityNoneSlide() {
     override fun onStopListenerAWhile() {}
     override fun onOrientationChange(isFaceDown: Boolean) {}
 
-    fun onShowRestore() {
+    private fun onShowRestore() {
         try {
             val builder = MaterialDialog.Builder(this)
             val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
@@ -65,20 +66,18 @@ class DashBoardAct : BaseActivityNoneSlide() {
                 }
             }
             val dialog = builder.show()
-            builder.setOnShowListener(object : DialogInterface.OnShowListener {
-                override fun onShow(dialogInterface: DialogInterface?) {
-                    val positive = dialog.findViewById<AppCompatButton?>(android.R.id.button1)
-                    val negative = dialog.findViewById<AppCompatButton?>(android.R.id.button2)
-                    val textView: AppCompatTextView? = dialog.findViewById(android.R.id.message)
-                    if (positive != null && negative != null && textView != null) {
-                        positive.setTextColor(ContextCompat.getColor(applicationContext, themeApp?.getAccentColor()!!))
-                        negative.setTextColor(ContextCompat.getColor(applicationContext, themeApp.getAccentColor()))
-                        textView.textSize = (16f)
-                        positive.textSize = 14f
-                        negative.textSize = 14f
-                    }
+            builder.setOnShowListener {
+                val positive = dialog.findViewById<AppCompatButton?>(android.R.id.button1)
+                val negative = dialog.findViewById<AppCompatButton?>(android.R.id.button2)
+                val textView: AppCompatTextView? = dialog.findViewById(android.R.id.message)
+                if (positive != null && negative != null && textView != null) {
+                    positive.setTextColor(ContextCompat.getColor(applicationContext, themeApp.getAccentColor()))
+                    negative.setTextColor(ContextCompat.getColor(applicationContext, themeApp.getAccentColor()))
+                    textView.textSize = (16f)
+                    positive.textSize = 14f
+                    negative.textSize = 14f
                 }
-            })
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
