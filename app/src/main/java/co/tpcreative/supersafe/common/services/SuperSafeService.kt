@@ -1101,7 +1101,16 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         /*Not Found file*/
                         if (code == 404) {
                             Utils.Log(TAG, "isDelete local id error")
-                            SQLHelper.deleteItem(items)
+                            onDeleteOwnSystem(items, object : ServiceManager.BaseListener<EmptyModel>{
+                                override fun onShowListObjects(list: MutableList<EmptyModel>) {
+                                }
+                                override fun onShowObjects(`object`: EmptyModel) {
+                                }
+                                override fun onError(message: String?, status: EnumStatus) {
+                                }
+                                override fun onSuccessful(message: String?, status: EnumStatus) {
+                                }
+                            })
                         }
                     }
                 }
