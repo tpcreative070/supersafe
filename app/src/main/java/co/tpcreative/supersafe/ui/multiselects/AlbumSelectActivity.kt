@@ -17,7 +17,6 @@ import co.tpcreative.supersafe.model.AlbumMultiItems
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomAlbumSelectAdapter
 import kotlinx.android.synthetic.main.activity_album_select.*
-import kotlinx.android.synthetic.main.activity_album_select.toolbar
 import java.io.File
 import java.util.*
 
@@ -134,7 +133,7 @@ class AlbumSelectActivity : HelperActivity() {
 
     private fun orientationBasedUI(orientation: Int) {
         val metrics = DisplayMetrics()
-        applicationContext.display?.getRealMetrics(metrics)
+        this.display?.getRealMetrics(metrics)
         if (adapter != null) {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 2 else metrics.widthPixels / 4
             adapter?.setLayoutParams(size)
