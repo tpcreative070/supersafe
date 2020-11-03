@@ -82,7 +82,7 @@ class ImageSelectActivity : HelperActivity() {
                             hence update action mode title
                              */if (actionMode != null) {
                                 countSelected = msg.arg1
-                                actionMode?.setTitle(countSelected.toString() + " " + getString(R.string.selected))
+                                actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
                             }
                         }
                     }
@@ -331,7 +331,7 @@ class ImageSelectActivity : HelperActivity() {
     }
 
     private fun stopThread() {
-        if (thread == null || !thread?.isAlive()!!) {
+        if (thread == null || !thread?.isAlive!!) {
             return
         }
         thread?.interrupt()

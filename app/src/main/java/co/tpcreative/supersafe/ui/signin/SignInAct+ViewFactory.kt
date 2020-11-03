@@ -28,11 +28,11 @@ fun SignInAct.initUI(){
 }
 
 fun SignInAct.onSignIn() {
-    val email: String = edtEmail?.getText().toString().toLowerCase().trim({ it <= ' ' })
+    val email: String = edtEmail?.text.toString().toLowerCase().trim({ it <= ' ' })
     val request = SignInRequest()
     request.user_id = email
     request.password = SecurityUtil.key_password_default_encrypted
-    request.device_id = SuperSafeApplication.Companion.getInstance().getDeviceId()
+    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
     presenter?.onSignIn(request)
     Utils.hideSoftKeyboard(this)
 }

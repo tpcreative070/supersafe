@@ -43,6 +43,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
             EnumStatus.PREMIUM -> {
                 scrollView?.smoothScrollTo(0, 0)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -93,6 +94,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
             EnumStatus.CHECKOUT -> {
                 Toast.makeText(applicationContext, "Message $message", Toast.LENGTH_SHORT).show()
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

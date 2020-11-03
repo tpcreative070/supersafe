@@ -47,7 +47,7 @@ class MainViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     /**
      * Get the current fragment
      */
-    fun getCurrentFragment(): Fragment? {
+    private fun getCurrentFragment(): Fragment? {
         return currentFragment
     }
 

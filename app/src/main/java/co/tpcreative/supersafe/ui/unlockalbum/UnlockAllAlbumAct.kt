@@ -148,7 +148,7 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
         when (status) {
             EnumStatus.REQUEST_CODE -> {
                 btnSendRequest?.text = getString(R.string.send_verification_code)
-                btnSendRequest?.setEnabled(true)
+                btnSendRequest?.isEnabled = true
                 btnUnlock?.text = getString(R.string.unlock_all_albums)
                 btnUnlock?.isEnabled = true
                 Utils.onBasicAlertNotify(this,message = message!!,title = "Alert")

@@ -42,8 +42,8 @@ class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
     fun onGetDataIntent(activity: Activity?) {
         val view: BaseView<EmptyModel>? = view()
         try {
-            val bundle: Bundle? = activity?.getIntent()?.getExtras()
-            content = bundle?.get(HelpAndSupport::class.java.getSimpleName()) as HelpAndSupport
+            val bundle: Bundle? = activity?.intent?.extras
+            content = bundle?.get(HelpAndSupport::class.java.simpleName) as HelpAndSupport
             view?.onSuccessful("Successful", EnumStatus.RELOAD)
             Utils.Log(TAG, Gson().toJson(content))
         } catch (e: Exception) {
@@ -89,7 +89,6 @@ class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
                     e.printStackTrace()
                 }
             }
-
             override fun onFailure(call: Call<ResponseBody?>?, t: Throwable?) {
                 Utils.Log(TAG, "response failed :" + t?.message)
             }
@@ -127,14 +126,14 @@ class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
                     Utils.Log(TAG, "Body refresh : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable? ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
+                            Utils.Log(TAG, "error" + mBody?.string())
+                            val msg: String = Gson().toJson(mBody?.string())
                             view.onError(msg, EnumStatus.SEND_EMAIL)
                         } catch (e: IOException) {
                             e.printStackTrace()
@@ -166,14 +165,14 @@ class HelpAndSupportPresenter : Presenter<BaseView<EmptyModel>>() {
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBoby: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 403) {
-                                Utils.Log(TAG, "code $code")
+                            if (mCode == 403) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
-                            val errorMessage: String? = bodys?.string()
+                            val errorMessage: String? = mBoby?.string()
                             Utils.Log(TAG, "error$errorMessage")
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN)
                         } catch (e: IOException) {

@@ -69,6 +69,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
         }
         EnumStatus.MOVE -> {
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
     val builder: MaterialDialog = MaterialDialog(this)
             .title(text = getString(R.string.confirm))
@@ -86,6 +87,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                             storage?.deleteFile(items.getOriginal())
                         }
                     }
+                    else -> Utils.Log(TAG,"Nothing")
                 }
             }
             .positiveButton {
@@ -96,12 +98,11 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                         presenter?.mListShare?.clear()
                         val index: ItemModel? = presenter?.mList?.get(position)
                         if (index != null) {
-                            val formatType = EnumFormatType.values()[index.formatType]
-                            when (formatType) {
+                            when (EnumFormatType.values()[index.formatType]) {
                                 EnumFormatType.AUDIO -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -115,7 +116,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 EnumFormatType.FILES -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -127,7 +128,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 EnumFormatType.VIDEO -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -145,7 +146,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                     }).toString()
                                     val input = File(path)
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -165,12 +166,11 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                         presenter?.mListShare?.clear()
                         val index: ItemModel? = presenter?.mList?.get(position)
                         if (index != null) {
-                            val formatType = EnumFormatType.values()[index.formatType]
-                            when (formatType) {
+                            when (EnumFormatType.values()[index.formatType]) {
                                 EnumFormatType.AUDIO -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -182,7 +182,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 EnumFormatType.FILES -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -194,7 +194,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 EnumFormatType.VIDEO -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -206,7 +206,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                                 else -> {
                                     val input = File(index.getOriginal())
                                     var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                    if (storage?.isFileExist(output?.getAbsolutePath())!!) {
+                                    if (storage?.isFileExist(output?.absolutePath)!!) {
                                         output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
                                     }
                                     if (storage?.isFileExist(input.absolutePath)!!) {
@@ -275,6 +275,7 @@ fun PhotoSlideShowAct.deselectAll() {
             presenter?.mList?.get(position)?.let { SQLHelper.updatedItem(it) }
             onCheckDelete()
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
 }
 
@@ -346,7 +347,7 @@ fun PhotoSlideShowAct.onRotateBitmap(items: ItemModel?) {
                     SQLHelper.updatedItem(mItem)
                     runOnUiThread(Runnable {
                         isProgressing = false
-                        view_pager?.getAdapter()?.notifyDataSetChanged()
+                        view_pager?.adapter?.notifyDataSetChanged()
                     })
                     Utils.Log(TAG, "Thumbnail saved successful")
                 } else {

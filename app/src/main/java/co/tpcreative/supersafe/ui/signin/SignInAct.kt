@@ -36,6 +36,7 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
         when (event) {
             EnumStatus.FINISH -> {
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -60,7 +61,7 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
     override fun onOrientationChange(isFaceDown: Boolean) {}
     override fun onEditorAction(textView: TextView?, actionId: Int, keyEvent: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            if (!SuperSafeReceiver.Companion.isConnected()) {
+            if (!SuperSafeReceiver.isConnected()) {
                 Utils.showDialog(this@SignInAct, getString(R.string.internet))
                 return false
             }
@@ -114,7 +115,7 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
         when (status) {
             EnumStatus.SIGN_IN -> {
                 onStopLoading(EnumStatus.SIGN_IN)
-                edtEmail?.setError(message)
+                edtEmail?.error = message
             }
         }
     }
@@ -129,6 +130,7 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
                 Navigator.onMoveToVerify(this, mUser)
                 onStopLoading(EnumStatus.SIGN_IN)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -141,6 +143,7 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
                     presenter?.onSendMail(emailToken)
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

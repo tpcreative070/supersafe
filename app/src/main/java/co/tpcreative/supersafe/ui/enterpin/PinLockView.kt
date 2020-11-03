@@ -65,7 +65,7 @@ class PinLockView : RecyclerView {
             } else {
                 if (!isShowDeleteButton()) {
                     resetPinLockView()
-                    mPin = mPin + keyValue.toString()
+                    mPin += keyValue.toString()
                     if (isIndicatorDotsAttached()) {
                         mIndicatorDots?.updateDot(mPin?.length!!)
                     }
@@ -92,7 +92,7 @@ class PinLockView : RecyclerView {
             }
             if (mPin?.length == 0) {
                 mAdapter?.setPinLength(mPin?.length!!)
-                mAdapter?.getItemCount()?.minus(1)?.let { mAdapter?.notifyItemChanged(it) }
+                mAdapter?.itemCount?.minus(1)?.let { mAdapter?.notifyItemChanged(it) }
             }
             if (mPinLockListener != null) {
                 if (mPin?.length == 0) {
@@ -112,7 +112,6 @@ class PinLockView : RecyclerView {
     /*Verify on item clicked*/
     private val mOnVerifyClickListener: PinLockAdapter.OnVerifyClickListener = object : PinLockAdapter.OnVerifyClickListener {
         override fun onVerifyClicked() {
-            Log.d(TAG, "onVerify")
             if (mPinLockListener != null) {
                 mPinLockListener?.onComplete(mPin)
             } else {
@@ -134,7 +133,7 @@ class PinLockView : RecyclerView {
     }
 
     private fun init(attributeSet: AttributeSet?, defStyle: Int) {
-        val typedArray: TypedArray = getContext().obtainStyledAttributes(attributeSet, R.styleable.PinLockView)
+        val typedArray: TypedArray = context.obtainStyledAttributes(attributeSet, R.styleable.PinLockView)
         try {
             mPinLength = typedArray.getInt(R.styleable.PinLockView_pinLength, DEFAULT_PIN_LENGTH)
             mHorizontalSpacing = typedArray.getDimension(R.styleable.PinLockView_keypadHorizontalSpacing, ResourceUtils.getDimensionInPx(getContext(), R.dimen.default_horizontal_spacing)).toInt()
@@ -173,11 +172,11 @@ class PinLockView : RecyclerView {
         mAdapter?.setOnVerifyClickListener(mOnVerifyClickListener)
         mAdapter?.setCustomizationOptions(mCustomizationOptionsBundle)
         addItemDecoration(ItemSpaceDecoration(0, mVerticalSpacing, 3, false))
-        setLayoutManager(GridLayoutManager(getContext(), 3))
+        layoutManager = GridLayoutManager(context, 3)
         addItemDecoration(GridSpacingItemDecoration(3, 4, true))
-        setItemAnimator(DefaultItemAnimator())
-        setAdapter(mAdapter)
-        setOverScrollMode(View.OVER_SCROLL_NEVER)
+        itemAnimator = DefaultItemAnimator()
+        adapter = mAdapter
+        overScrollMode = View.OVER_SCROLL_NEVER
     }
 
     /**
@@ -419,7 +418,7 @@ class PinLockView : RecyclerView {
     fun resetPinLockView() {
         clearInternalPin()
         mPin?.length?.let { mAdapter?.setPinLength(it) }
-        mAdapter?.getItemCount()?.minus(1)?.let { mAdapter?.notifyItemChanged(it) }
+        mAdapter?.itemCount?.minus(1)?.let { mAdapter?.notifyItemChanged(it) }
         if (mIndicatorDots != null) {
             mPin?.length?.let { mIndicatorDots?.updateDot(it) }
         }

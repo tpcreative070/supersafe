@@ -23,6 +23,7 @@ class SecretDoorSetUpAct : BaseActivity(), Calculator {
             EnumStatus.FINISH -> {
                 finish()
             }
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 

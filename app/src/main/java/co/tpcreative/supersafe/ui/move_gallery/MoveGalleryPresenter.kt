@@ -70,8 +70,8 @@ class MoveGalleryPresenter : Presenter<MoveGalleryView>() {
             for (i in mList.indices) {
                 val item: ItemModel? = mList[i]
                 if (item?.isChecked!!) {
-                    item?.categories_local_id = gallery?.main?.categories_local_id
-                    item?.categories_id = gallery?.main?.categories_id
+                    item.categories_local_id = gallery?.main?.categories_local_id
+                    item.categories_id = gallery?.main?.categories_id
                     if (item.isSyncCloud && item.isSyncOwnServer) {
                         item.isUpdate = true
                     }

@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.ui.sharefilest
+package co.tpcreative.supersafe.ui.sharefiles
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
@@ -10,9 +10,6 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNone
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.sharefiles.initUI
-import co.tpcreative.supersafe.ui.sharefiles.onShowUI
-import co.tpcreative.supersafe.ui.sharefiles.onStopProgressing
 import com.snatik.storage.Storage
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -68,6 +65,7 @@ class ShareFilesAct : BaseActivityNone() {
                     e.printStackTrace()
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 }

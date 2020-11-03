@@ -52,14 +52,12 @@ class DashBoardAct : BaseActivityNoneSlide() {
                 Navigator.onMoveRestore(this@DashBoardAct)
                 isCancel = false
             }
-            builder.setNegativeButton(getString(R.string.key_delete), object : DialogInterface.OnClickListener {
-                override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                    SuperSafeApplication.getInstance().deleteFolder()
-                    SuperSafeApplication.getInstance().initFolder()
-                    PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().apply()
-                    isCancel = false
-                }
-            }).setOnDismissListener {
+            builder.setNegativeButton(getString(R.string.key_delete)) { dialogInterface, i ->
+                SuperSafeApplication.getInstance().deleteFolder()
+                SuperSafeApplication.getInstance().initFolder()
+                PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().clear().apply()
+                isCancel = false
+            }.setOnDismissListener {
                 Utils.Log(TAG, "Dismiss")
                 if (isCancel) {
                     finish()

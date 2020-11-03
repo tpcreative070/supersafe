@@ -115,7 +115,7 @@ fun VerifyAccountAct.onChangedEmail() {
 
 fun VerifyAccountAct.onVerifyCode() {
     val request = VerifyCodeRequest()
-    request.code = edtCode?.getText().toString().trim({ it <= ' ' })
+    request.code = edtCode?.text.toString().trim({ it <= ' ' })
     request.user_id = presenter?.mUser?.email
     request._id = presenter?.mUser?._id
     request.device_id = SuperSafeApplication.getInstance().getDeviceId()

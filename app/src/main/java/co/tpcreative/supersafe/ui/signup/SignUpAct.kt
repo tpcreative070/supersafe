@@ -38,6 +38,7 @@ class SignUpAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
         when (event) {
             EnumStatus.FINISH -> {
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -92,7 +93,7 @@ class SignUpAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
     /*Detecting textWatch*/
     val mTextWatcher: TextWatcher? = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            if (getCurrentFocus() === edtName) {
+            if (currentFocus === edtName) {
                 isName = Utils.isValid(s)
             }
             if (currentFocus === edtEmail) {

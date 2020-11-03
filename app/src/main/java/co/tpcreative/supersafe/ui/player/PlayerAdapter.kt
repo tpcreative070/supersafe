@@ -62,7 +62,7 @@ class PlayerAdapter(inflater: LayoutInflater, private val mContext: Context?, it
 
     init {
         storage = Storage(mContext)
-        storage.setEncryptConfiguration(SuperSafeApplication.Companion.getInstance().getConfigurationFile())
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
         ls = itemSelectedListener
     }
 }

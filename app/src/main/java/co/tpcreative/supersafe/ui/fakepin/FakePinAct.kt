@@ -57,10 +57,10 @@ class FakePinAct : BaseActivity(), CompoundButton.OnCheckedChangeListener {
         PrefsController.putBoolean(getString(R.string.key_fake_pin), b)
         if (b) {
             tvCreatePin?.setTextColor(ContextCompat.getColor(this,mThemeApp?.getPrimaryColor()!!))
-            tvCreatePin?.setEnabled(b)
+            tvCreatePin?.isEnabled = b
         } else {
             tvCreatePin?.setTextColor(ContextCompat.getColor(this,R.color.material_gray_500))
-            tvCreatePin?.setEnabled(b)
+            tvCreatePin?.isEnabled = b
         }
         tvStatus?.text = (if (b) getString(R.string.enabled) else getString(R.string.disabled))
     }

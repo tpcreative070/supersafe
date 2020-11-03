@@ -28,9 +28,9 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
     var presenter: MoveGalleryPresenter? = null
 
     interface OnGalleryAttachedListener {
-        open fun getConfiguration(): Configuration?
-        open fun getListItems(): MutableList<ItemModel>?
-        open fun onMoveAlbumSuccessful()
+        fun getConfiguration(): Configuration?
+        fun getListItems(): MutableList<ItemModel>?
+        fun onMoveAlbumSuccessful()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,10 +95,6 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
         Utils.Log(TAG, "Position :$position")
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onStartLoading(status: EnumStatus) {}
     override fun onStopLoading(status: EnumStatus) {}
     override fun onError(message: String?) {}
@@ -118,6 +114,7 @@ class MoveGalleryFragment : BaseFragment(), MoveGalleryAdapter.ItemSelectedListe
                     mListener?.onMoveAlbumSuccessful()
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

@@ -189,11 +189,7 @@ fun EnterPinAct.initUI(){
     }
 
     imgSwitchTypeUnClock.setOnClickListener {
-        isFingerprint = if (isFingerprint) {
-            false
-        } else {
-            true
-        }
+        isFingerprint = !isFingerprint
         onSetVisitFingerprintView(isFingerprint)
     }
     imgFingerprint.setOnClickListener {
@@ -216,11 +212,9 @@ fun EnterPinAct.onRestore() {
                 EnterPinAct.presenter?.onChangeStatus(EnumStatus.RESTORE, EnumPinAction.DONE)
             }
         }
-
         override fun onError() {
             Utils.Log(TAG, "Exporting error")
         }
-
         override fun onCancel() {}
     })
 }
@@ -515,7 +509,7 @@ fun EnterPinAct.setPin(pin: String?) {
         EnumPinAction.CHANGE -> {
             if (mFirstPin == "") {
                 mFirstPin = pin
-                tvTitle.setText(getString(R.string.pinlock_secondPin))
+                tvTitle.text = getString(R.string.pinlock_secondPin)
                 pinlockView.resetPinLockView()
             } else {
                 if (pin == mFirstPin) {

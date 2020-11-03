@@ -138,8 +138,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
     }
 
     private fun dpToPx(dp: Int): Int {
-        val r: Resources = getResources()
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics))
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), resources.displayMetrics))
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
@@ -156,7 +155,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
         when (status) {
             EnumStatus.RELOAD -> {
                 try {
-                    getActivity()?.runOnUiThread(Runnable {
+                    activity?.runOnUiThread(Runnable {
                         if (adapter != null) {
                             adapter?.setDataSource(presenter?.mList)
                             Utils.onPushEventBus(EnumStatus.PRIVATE_DONE)
@@ -202,7 +201,7 @@ class PrivateFragment : BaseFragment(), BaseView<EmptyModel>, PrivateAdapter.Ite
             val fragment = PrivateFragment()
             val b = Bundle()
             b.putInt("index", index)
-            fragment.setArguments(b)
+            fragment.arguments = b
             return fragment
         }
     }

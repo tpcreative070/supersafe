@@ -3,6 +3,7 @@ import android.app.ProgressDialog
 import android.widget.ImageView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
 import com.afollestad.materialdialogs.checkbox.checkBoxPrompt
@@ -92,19 +93,9 @@ fun EnableCloudAct.onShowWarningAnotherAccount() {
 }
 
 fun EnableCloudAct.onShowProgressDialog() {
-    if (progressDialog != null) {
-        if (progressDialog?.isShowing!!) {
-            return
-        }
-    }
-    progressDialog = ProgressDialog(this)
-    progressDialog?.setMessage(getString(R.string.loading))
-    progressDialog?.setCancelable(false)
-    progressDialog?.show()
+    SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.loading)
 }
 
 fun EnableCloudAct.onStopProgressDialog() {
-    if (progressDialog != null) {
-        progressDialog?.dismiss()
-    }
+   SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
 }

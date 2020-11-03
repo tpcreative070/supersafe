@@ -53,15 +53,14 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<Image>?) : C
             (convertView as FrameLayout?)?.setForeground(ContextCompat.getDrawable(context!!,R.drawable.ic_done_white))
         } else {
             viewHolder.view?.alpha = 0.0f
-            (convertView as FrameLayout?)?.setForeground(null)
+            (convertView as FrameLayout?)?.foreground = null
         }
         val data = arrayList!![position]
         try {
             val extensionFile: String? = Utils.getFileExtension(data.path)
             val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(extensionFile)
             if (mimeTypeFile != null) {
-                val formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType?.ordinal!!]
-                when (formatTypeFile) {
+                when (EnumFormatType.values()[mimeTypeFile.formatType?.ordinal!!]) {
                     EnumFormatType.AUDIO -> {
                         viewHolder.imgAudioVideo?.visibility = View.VISIBLE
                         viewHolder.imgAudioVideo?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))

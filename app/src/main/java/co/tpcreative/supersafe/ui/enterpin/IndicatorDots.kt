@@ -125,7 +125,7 @@ class IndicatorDots @JvmOverloads constructor(context: Context?, attrs: Attribut
     fun setPinLength(pinLength: Int) {
         mPinLength = pinLength
         removeAllViews()
-        initView(getContext())
+        initView(context)
     }
 
     @IndicatorType
@@ -136,7 +136,7 @@ class IndicatorDots @JvmOverloads constructor(context: Context?, attrs: Attribut
     fun setIndicatorType(@IndicatorType type: Int) {
         mIndicatorType = type
         removeAllViews()
-        initView(getContext())
+        initView(context)
     }
 
     fun getActivity(): Activity? {

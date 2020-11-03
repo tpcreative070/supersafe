@@ -81,6 +81,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
                 tvDeviceSaving?.text = ConvertUtils.byte2FitMemorySize(0)
                 isDownload = true
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -129,6 +130,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -159,6 +161,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
                             mList[i].originalSync = false
                             SQLHelper.updatedItem(mList[i])
                         }
+                        else -> Utils.Log(TAG,"Nothing")
                     }
                 }
             }
@@ -174,6 +177,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
                         EnumFormatType.IMAGE -> {
                             storage?.deleteFile(index.getOriginal())
                         }
+                        else -> Utils.Log(TAG,"Nothing")
                     }
                 }
             }

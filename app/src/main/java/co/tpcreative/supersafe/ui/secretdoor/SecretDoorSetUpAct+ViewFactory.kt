@@ -44,10 +44,6 @@ fun SecretDoorSetUpAct.intUI(){
                 onShowDialog()
             }
 
-            override fun onOuterCircleClick(view: TapTargetView?) {
-                super.onOuterCircleClick(view)
-            }
-
             override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
                 Utils.Log("TapTargetViewSample", "You dismissed me :(")
             }

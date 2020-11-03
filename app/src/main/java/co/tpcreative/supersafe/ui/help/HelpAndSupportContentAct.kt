@@ -81,6 +81,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
                 Utils.showGotItSnackbar(currentFocus!!, R.string.send_email_failed)
                 edtSupport?.setText("")
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -106,6 +107,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
                 Utils.showInfoSnackbar(getCurrentFocus()!!, R.string.thank_you, true)
                 edtSupport?.setText("")
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -152,7 +154,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_help_support, menu)
+        menuInflater.inflate(R.menu.menu_help_support, menu)
         menuItem = menu?.findItem(R.id.menu_item_send)
         if (presenter != null) {
             menuItem?.isVisible = presenter?.content?.content == getString(R.string.contact_support_content)
@@ -188,7 +190,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
                             .setCancelable(true)
                             .build()
                 }
-                if (!(dialog?.isShowing())!!) {
+                if (!(dialog?.isShowing)!!) {
                     dialog?.show()
                     Utils.Log(TAG, "Showing dialog...")
                 }

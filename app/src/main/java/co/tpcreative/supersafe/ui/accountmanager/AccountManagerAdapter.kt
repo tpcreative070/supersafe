@@ -37,7 +37,7 @@ class AccountManagerAdapter(inflater: LayoutInflater, private val context: Conte
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
+        fun onClickItem(position: Int)
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<AppLists>(itemView) {

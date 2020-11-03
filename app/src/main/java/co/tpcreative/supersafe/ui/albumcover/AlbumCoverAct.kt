@@ -90,7 +90,7 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.home -> {
+            android.R.id.home -> {
                 if (isReload) {
                     val intent: Intent = getIntent()
                     setResult(Activity.RESULT_OK, intent)

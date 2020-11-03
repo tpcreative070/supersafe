@@ -32,7 +32,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder.getItemViewType() == VIEW_TYPE_NUMBER) {
+        if (holder.itemViewType == VIEW_TYPE_NUMBER) {
             val vh1 = holder as NumberViewHolder?
             if (vh1 != null) {
                 configureNumberButtonHolder(vh1, position)
@@ -46,20 +46,20 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private fun configureNumberButtonHolder(holder: NumberViewHolder?, position: Int) {
         if (holder != null) {
             if (position == 9) {
-                holder.mNumberButton?.setVisibility(View.GONE)
+                holder.mNumberButton?.visibility = View.GONE
             } else {
                 if (position > mKeyValues?.size!! || position == mKeyValues?.size) {
                     return
                 }
-                holder.mNumberButton?.setText(mKeyValues!!.get(position).toString())
-                holder.mNumberButton?.setVisibility(View.VISIBLE)
-                holder.mNumberButton?.setTag(mKeyValues!!.get(position))
+                holder.mNumberButton?.text = mKeyValues!!.get(position).toString()
+                holder.mNumberButton?.visibility = View.VISIBLE
+                holder.mNumberButton?.tag = mKeyValues!!.get(position)
             }
             if (mCustomizationOptionsBundle != null) {
                 mCustomizationOptionsBundle?.getTextColor()?.let { holder.mNumberButton?.setTextColor(it) }
                 if (mCustomizationOptionsBundle?.getButtonBackgroundDrawable() != null) {
-                    holder.mNumberButton?.setBackground(
-                            mCustomizationOptionsBundle!!.getButtonBackgroundDrawable())
+                    holder.mNumberButton?.background =
+                            mCustomizationOptionsBundle!!.getButtonBackgroundDrawable()
                 }
                 mCustomizationOptionsBundle?.getTextSize()?.toFloat()?.let {
                     holder.mNumberButton?.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -68,8 +68,8 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                         mCustomizationOptionsBundle!!.getButtonSize(),
                         mCustomizationOptionsBundle!!.getButtonSize())
-                holder.mNumberButton?.setTextSize(40f)
-                holder.mNumberButton?.setLayoutParams(params)
+                holder.mNumberButton?.textSize = 40f
+                holder.mNumberButton?.layoutParams = params
             }
         }
     }
@@ -77,7 +77,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private fun configureDeleteButtonHolder(holder: VerifyViewHolder?) {
         if (holder != null) {
             if (mCustomizationOptionsBundle?.isShowVerifyButton()!! && mPinLength > 0) {
-                holder.mButtonImage?.setVisibility(View.VISIBLE)
+                holder.mButtonImage?.visibility = View.VISIBLE
                 if (mCustomizationOptionsBundle?.getVerifyButtonDrawable() != null) {
                     holder.mButtonImage?.setImageDrawable(mCustomizationOptionsBundle?.getVerifyButtonDrawable())
                 }
@@ -86,7 +86,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(
                         mCustomizationOptionsBundle?.getVerifyButtonWidthSize()!!,
                         mCustomizationOptionsBundle?.getVerifyButtonHeightSize()!!)
-                holder.mButtonImage?.setLayoutParams(params)
+                holder.mButtonImage?.layoutParams = params
             } else {
                 mCustomizationOptionsBundle?.getVerifyButtonNormalColor()?.let { holder.mButtonImage?.setColorFilter(it, PorterDuff.Mode.SRC_ATOP) }
             }
@@ -180,7 +180,7 @@ class PinLockAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val scaleAnimation = ScaleAnimation(.75f, 1f, .75f, 1f,
                 Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f)
         scaleAnimation.setDuration(BUTTON_ANIMATION_DURATION.toLong())
-        scaleAnimation.setFillAfter(true)
+        scaleAnimation.fillAfter = true
         return scaleAnimation
     }
 

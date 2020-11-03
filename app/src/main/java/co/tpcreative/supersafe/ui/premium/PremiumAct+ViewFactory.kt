@@ -78,8 +78,8 @@ fun PremiumAct.onUpdatedView() {
         llTwo?.visibility = (View.VISIBLE)
     } else {
         val sourceString: String? = Utils.getFontString(R.string.upgrade_premium_to_use_full_features, getString(R.string.premium_uppercase))
-        tvPremiumLeft?.setText(sourceString?.toSpanned())
-        tvTitle?.setText(getString(R.string.choose_your_plans))
+        tvPremiumLeft?.text = sourceString?.toSpanned()
+        tvTitle?.text = getString(R.string.choose_your_plans)
     }
 }
 
@@ -99,33 +99,21 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
         EnumPurchase.SIX_MONTHS -> {
             if (mCheckout != null) {
                 if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    if (data.autoRenewing) {
-                        mCheckout.isPurchasedSixMonths = true
-                    } else {
-                        mCheckout.isPurchasedSixMonths = false
-                    }
+                    mCheckout.isPurchasedSixMonths = data.autoRenewing
                 } else {
                     mCheckout.isPurchasedSixMonths = false
                 }
             } else {
                 mCheckout = CheckoutItems()
                 if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    if (data.autoRenewing) {
-                        mCheckout.isPurchasedSixMonths = true
-                    } else {
-                        mCheckout.isPurchasedSixMonths = false
-                    }
+                    mCheckout.isPurchasedSixMonths = data.autoRenewing
                 } else {
                     mCheckout.isPurchasedSixMonths = false
                 }
             }
             Utils.setCheckoutItems(mCheckout)
             if (Utils.isRealCheckedOut(data.orderId)) {
-                if (data.autoRenewing) {
-                    mCheckout.isPurchasedOneYears = true
-                } else {
-                    mCheckout.isPurchasedOneYears = false
-                }
+                mCheckout.isPurchasedOneYears = data.autoRenewing
             } else {
                 mCheckout.isPurchasedOneYears = false
             }
@@ -134,22 +122,14 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
         EnumPurchase.ONE_YEAR -> {
             if (mCheckout != null) {
                 if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    if (data.autoRenewing) {
-                        mCheckout.isPurchasedOneYears = true
-                    } else {
-                        mCheckout.isPurchasedOneYears = false
-                    }
+                    mCheckout.isPurchasedOneYears = data.autoRenewing
                 } else {
                     mCheckout.isPurchasedOneYears = false
                 }
             } else {
                 mCheckout = CheckoutItems()
                 if (Utils.isRealCheckedOut(data?.orderId!!)) {
-                    if (data.autoRenewing) {
-                        mCheckout.isPurchasedOneYears = true
-                    } else {
-                        mCheckout.isPurchasedOneYears = false
-                    }
+                    mCheckout.isPurchasedOneYears = data.autoRenewing
                 } else {
                     mCheckout.isPurchasedOneYears = false
                 }

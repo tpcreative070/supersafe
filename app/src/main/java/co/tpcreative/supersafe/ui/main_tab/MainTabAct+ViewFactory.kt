@@ -131,7 +131,7 @@ fun MainTabAct.initSpeedDial() {
     //Set option fabs clicklisteners.
     speedDial?.setOnActionSelectedListener(object : SpeedDialView.OnActionSelectedListener {
         override fun onActionSelected(actionItem: SpeedDialActionItem?): Boolean {
-            when (actionItem?.getId()) {
+            when (actionItem?.id) {
                 R.id.fab_album -> {
                     onShowDialog()
                     return false // false will close it without animation
@@ -192,7 +192,7 @@ fun MainTabAct.onAddPermissionCamera() {
                         Utils.Log(TAG, "Permission is denied")
                     }
                     // check for permanent denial of any permission
-                    if (report.isAnyPermissionPermanentlyDenied()) {
+                    if (report.isAnyPermissionPermanentlyDenied) {
                         /*Miss add permission in manifest*/
                         Utils.Log(TAG, "request permission is failed")
                     }

@@ -40,7 +40,7 @@ class EnableCloudPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        SuperSafeApplication?.serverAPI?.onAddUserCloud(cloudRequest)
+        SuperSafeApplication.serverAPI?.onAddUserCloud(cloudRequest)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.CREATE) }
@@ -54,15 +54,15 @@ class EnableCloudPresenter : Presenter<BaseView<EmptyModel>>() {
                     view.onStopLoading(EnumStatus.CREATE)
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
+                            Utils.Log(TAG, "error" + mBody?.string())
+                            val msg: String = Gson().toJson(mBody?.string())
                             Utils.Log(TAG, msg)
                         } catch (e: IOException) {
                             e.printStackTrace()

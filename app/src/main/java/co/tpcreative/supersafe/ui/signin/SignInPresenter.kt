@@ -149,14 +149,14 @@ class SignInPresenter : Presenter<BaseView<User>>() {
                     Utils.Log(TAG, "Body refresh : " + Gson().toJson(onResponse))
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody : ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 401) {
-                                Utils.Log(TAG, "code $code")
+                            if (mCode == 401) {
+                                Utils.Log(TAG, "code $mCode")
                             }
-                            Utils.Log(TAG, "error" + bodys?.string())
-                            val msg: String = Gson().toJson(bodys?.string())
+                            Utils.Log(TAG, "error" + mBody?.string())
+                            val msg: String = Gson().toJson(mBody?.string())
                             view.onError(msg, EnumStatus.SEND_EMAIL)
                         } catch (e: IOException) {
                             e.printStackTrace()
@@ -188,14 +188,14 @@ class SignInPresenter : Presenter<BaseView<User>>() {
                     }
                 }, { throwable: Throwable ->
                     if (throwable is HttpException) {
-                        val bodys: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
-                        val code = (throwable as HttpException?)?.response()?.code()
+                        val mBody: ResponseBody? = (throwable as HttpException?)?.response()?.errorBody()
+                        val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
-                            if (code == 403) {
-                                Utils.Log(TAG, "code $code")
+                            if (mCode == 403) {
+                                Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            val errorMessage: String? = bodys?.string()
+                            val errorMessage: String? = mBody?.string()
                             Utils.Log(TAG, "error$errorMessage")
                             view.onError(errorMessage, EnumStatus.ADD_EMAIL_TOKEN)
                         } catch (e: IOException) {

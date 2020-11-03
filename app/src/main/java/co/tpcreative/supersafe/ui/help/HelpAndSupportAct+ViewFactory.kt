@@ -4,7 +4,6 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.model.HelpAndSupport
-import co.tpcreative.supersafe.ui.help.HelpAndSupportCell
 import com.jaychang.srv.decoration.SectionHeaderProvider
 import com.jaychang.srv.decoration.SimpleSectionHeaderProvider
 import kotlinx.android.synthetic.main.activity_help_and_support_content.toolbar
@@ -21,7 +20,6 @@ fun HelpAndSupportAct.initUI(){
     addRecyclerHeaders()
     bindData()
 }
-
 
 fun HelpAndSupportAct.addRecyclerHeaders() {
     val sh: SectionHeaderProvider<HelpAndSupport> = object : SimpleSectionHeaderProvider<HelpAndSupport>() {
@@ -44,13 +42,13 @@ fun HelpAndSupportAct.addRecyclerHeaders() {
 }
 
 fun HelpAndSupportAct.bindData() {
-    val Galaxys: MutableList<HelpAndSupport>? = presenter?.mList
+    val mData: MutableList<HelpAndSupport>? = presenter?.mList
     //LOOP THROUGH GALAXIES INSTANTIATING THEIR CELLS AND ADDING TO CELLS COLLECTION
     val cells: MutableList<HelpAndSupportCell>? = ArrayList()
     //LOOP THROUGH GALAXIES INSTANTIATING THEIR CELLS AND ADDING TO CELLS COLLECTION
-    if (Galaxys != null) {
-        for (galaxy in Galaxys) {
-            val cell = HelpAndSupportCell(galaxy)
+    if (mData != null) {
+        for (index in mData) {
+            val cell = HelpAndSupportCell(index)
             cell.setListener(this)
             cells?.add(cell)
         }

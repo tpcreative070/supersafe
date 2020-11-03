@@ -29,8 +29,8 @@ class HelpAndSupportCell(item: HelpAndSupport) : SimpleCell<HelpAndSupport, Help
     - Bind data to widgets in our viewholder.
      */
     override fun onBindViewHolder(viewHolder: ViewHolder, i: Int, context: Context, o: Any?) {
-        val data: HelpAndSupport = getItem()
-        viewHolder.tvTitle?.setText(data.title)
+        val data: HelpAndSupport = item
+        viewHolder.tvTitle?.text = data.title
         if (data.nummberName != null) {
             viewHolder.tvPosition?.setText(data.nummberName)
             viewHolder.imgIcon?.visibility = View.GONE
@@ -55,7 +55,7 @@ class HelpAndSupportCell(item: HelpAndSupport) : SimpleCell<HelpAndSupport, Help
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
+        fun onClickItem(position: Int)
     }
 
     companion object {

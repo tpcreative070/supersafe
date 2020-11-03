@@ -275,9 +275,9 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                                         else -> {
                                             var path = ""
                                             path = if (index.mimeType == getString(R.string.key_gif)) {
-                                                index.getOriginal()!!
+                                                index.getOriginal()
                                             } else {
-                                                index.getThumbnail()!!
+                                                index.getThumbnail()
                                             }
                                             val input = File(path)
                                             var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
@@ -380,6 +380,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                     EnumStatus.DELETE -> {
                         presenter?.onDelete()
                     }
+                    else -> Utils.Log(TAG,"Nothing")
                 }
             }
     builder.show()
@@ -482,7 +483,7 @@ fun AlbumDetailAct.onStartProgressing() {
                         .setCancelable(true)
                         .build()
             }
-            if (!dialog!!.isShowing()) {
+            if (!dialog!!.isShowing) {
                 dialog?.show()
                 Utils.Log(TAG, "Showing dialog...")
             }

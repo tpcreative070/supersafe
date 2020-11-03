@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.enablecloud
 import android.accounts.AccountManager
 import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,7 +22,6 @@ import org.greenrobot.eventbus.ThreadMode
 
 class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
     var presenter: EnableCloudPresenter? = null
-    var progressDialog: ProgressDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enable_cloud)
@@ -36,6 +34,7 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -170,6 +169,7 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
             EnumStatus.CREATE -> {
                 onStopProgressDialog()
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -192,6 +192,7 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
                 ServiceManager.getInstance()?.onGetUserInfo()
                 onBackPressed()
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

@@ -47,14 +47,11 @@ class SettingsAct : BaseActivity() {
     }
 
     override fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
-        context.getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(ContextCompat
+        context.supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat
                 .getColor(context!!,colorPrimary)))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window: Window = context.getWindow()
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(context, colorPrimaryDark)
-        }
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(context, colorPrimaryDark)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -63,7 +60,7 @@ class SettingsAct : BaseActivity() {
             EnumStatus.RECREATE -> {
                 val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                 themeApp?.getPrimaryColor()?.let { setStatusBarColored(this, it, themeApp.getPrimaryDarkColor()) }
-                var fragment: Fragment = supportFragmentManager.instantiate(SettingsFragment::class.java.name)
+                val fragment: Fragment = supportFragmentManager.instantiate(SettingsFragment::class.java.name)
                 val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.content_frame, fragment)
                 transaction.commit()
@@ -74,7 +71,6 @@ class SettingsAct : BaseActivity() {
             }
             EnumStatus.CLOSED -> {
                 if (isChangedTheme) {
-                    val intent: Intent = getIntent()
                     setResult(Activity.RESULT_OK, intent)
                 }
             }
@@ -367,7 +363,7 @@ class SettingsAct : BaseActivity() {
                     if (positive != null && negative != null && textView != null) {
                         positive.setTextColor(ContextCompat.getColor(context!!, themeApp?.getAccentColor()!!))
                         negative.setTextColor(ContextCompat.getColor(context!!, themeApp.getAccentColor()!!))
-                        textView.setTextSize(16f)
+                        textView.textSize = 16f
                     }
                 }
             } catch (e: Exception) {

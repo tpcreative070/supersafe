@@ -169,29 +169,19 @@ fun CloudManagerAct.onShowPremium() {
         builder?.setPadding(40, 40, 40, 0)
         builder?.setMargin(60, 0, 60, 0)
         builder?.showHeader(true)
-        builder?.setPositiveButton(getString(R.string.get_premium), object : DialogInterface.OnClickListener {
-            override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                getContext()?.let { Navigator.onMoveToPremium(it) }
-            }
-        })
-        builder?.setNegativeButton(getText(R.string.later), object : DialogInterface.OnClickListener {
-            override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                PrefsController.putBoolean(getString(R.string.key_saving_space), false)
-            }
-        })
+        builder?.setPositiveButton(getString(R.string.get_premium)) { dialogInterface, i -> getContext()?.let { Navigator.onMoveToPremium(it) } }
+        builder?.setNegativeButton(getText(R.string.later)) { dialogInterface, i -> PrefsController.putBoolean(getString(R.string.key_saving_space), false) }
         val dialog = builder?.show()
-        builder?.setOnShowListener(object : DialogInterface.OnShowListener {
-            override fun onShow(dialogInterface: DialogInterface?) {
-                val positive = dialog?.findViewById<AppCompatButton?>(android.R.id.button1)
-                val negative = dialog?.findViewById<AppCompatButton?>(android.R.id.button2)
-                val textView: AppCompatTextView? = dialog?.findViewById<View?>(R.id.message) as AppCompatTextView?
-                if (positive != null && negative != null && textView != null) {
-                    positive.setTextColor(ContextCompat.getColor(getContext()!!,themeApp?.getAccentColor()!!))
-                    negative.setTextColor(ContextCompat.getColor(getContext()!!,themeApp.getAccentColor()!!))
-                    textView.setTextSize(16f)
-                }
+        builder?.setOnShowListener {
+            val positive = dialog?.findViewById<AppCompatButton?>(android.R.id.button1)
+            val negative = dialog?.findViewById<AppCompatButton?>(android.R.id.button2)
+            val textView: AppCompatTextView? = dialog?.findViewById<View?>(android.R.id.message) as AppCompatTextView?
+            if (positive != null && negative != null && textView != null) {
+                positive.setTextColor(ContextCompat.getColor(getContext()!!, themeApp?.getAccentColor()!!))
+                negative.setTextColor(ContextCompat.getColor(getContext()!!, themeApp.getAccentColor()!!))
+                textView.textSize = 16f
             }
-        })
+        }
     } catch (e: Exception) {
         e.printStackTrace()
     }

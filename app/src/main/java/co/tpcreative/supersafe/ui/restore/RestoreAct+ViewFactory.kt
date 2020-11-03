@@ -115,7 +115,7 @@ fun RestoreAct.onStartProgressing() {
                         .setCancelable(true)
                         .build()
             }
-            if (!dialog?.isShowing()!!) {
+            if (!dialog?.isShowing!!) {
                 dialog?.show()
                 Utils.Log(TAG, "Showing dialog...")
             }

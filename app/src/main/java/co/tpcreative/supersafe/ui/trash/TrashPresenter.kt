@@ -88,7 +88,6 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
         }
         view?.onSuccessful("Done", EnumStatus.DONE)
     }
-
     companion object {
         private val TAG = TrashPresenter::class.java.simpleName
     }

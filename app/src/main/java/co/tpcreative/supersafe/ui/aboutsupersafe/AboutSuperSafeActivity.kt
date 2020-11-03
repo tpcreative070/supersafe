@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.aboutsupersafe
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity

@@ -80,11 +80,11 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val value = s.toString().trim { it <= ' ' }
             isNext = if (Utils.isValid(value)) {
-                btnLogin?.setBackground(ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded))
+                btnLogin?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
                 btnLogin?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
                 true
             } else {
-                btnLogin?.setBackground(ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded))
+                btnLogin?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
                 btnLogin?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
                 false
             }

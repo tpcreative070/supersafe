@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.ui.checksystem
 import android.annotation.SuppressLint
 import android.text.InputType
-import android.view.MotionEvent
-import android.view.View
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.extension.toSpanned

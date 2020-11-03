@@ -43,6 +43,7 @@ class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEd
             EnumStatus.WAITING_DONE -> {
                 runOnUiThread(Runnable { edtCode?.setHint(getString(R.string.code)) })
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

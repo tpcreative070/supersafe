@@ -30,7 +30,7 @@ class ThemeSettingsAdapter(inflater: LayoutInflater, private val context: Contex
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
+        fun onClickItem(position: Int)
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ThemeApp>(itemView) {

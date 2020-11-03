@@ -13,7 +13,6 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.ThemeApp
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
@@ -24,7 +23,6 @@ import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.gson.Gson
 import com.snatik.storage.Storage
 import com.snatik.storage.security.SecurityUtil
 import kotlinx.android.synthetic.main.activity_player.*
@@ -39,8 +37,8 @@ fun PlayerAct.initUI(){
     presenter?.bindView(this)
     try {
         val storage = Storage(this)
-        storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-        mCipher = storage?.getCipher(Cipher.DECRYPT_MODE)
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
+        mCipher = storage.getCipher(Cipher.DECRYPT_MODE)
         mSecretKeySpec = SecretKeySpec(storage?.getmConfiguration()?.secretKey, SecurityUtil.AES_ALGORITHM)
         mIvParameterSpec = IvParameterSpec(storage?.getmConfiguration()?.ivParameter)
     } catch (e: Exception) {
@@ -76,7 +74,7 @@ fun PlayerAct.initUI(){
     imgArrowBack.setOnClickListener {
         val isLandscape: Boolean = Utils.isLandscape(this)
         if (isLandscape) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             isPortrait = true
             Utils.Log(TAG, "Request SCREEN_ORIENTATION_PORTRAIT")
         } else {
@@ -88,10 +86,10 @@ fun PlayerAct.initUI(){
 
     imgRotate.setOnClickListener {
         isPortrait = if (isPortrait) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             false
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             true
         }
     }
@@ -132,8 +130,8 @@ fun PlayerAct.playVideo() {
             Utils.Log(TAG, "No value $lastWindowIndex - $seekTo")
         }
         player?.prepare(concatenatedSource, !haveStartPosition, false)
-        player?.setPlayWhenReady(true)
-        player?.setRepeatMode(Player.REPEAT_MODE_ALL)
+        player?.playWhenReady = true
+        player?.repeatMode = Player.REPEAT_MODE_ALL
         player?.addListener(object : Player.EventListener {
             override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
                 Utils.Log(TAG, "1")
@@ -164,13 +162,13 @@ fun PlayerAct.playVideo() {
             }
 
             override fun onPositionDiscontinuity(reason: Int) {
-                val latestWindowIndex: Int? = player?.getCurrentWindowIndex()
+                val latestWindowIndex: Int? = player?.currentWindowIndex
                 if (latestWindowIndex != lastWindowIndex) {
                     if (latestWindowIndex != null) {
                         lastWindowIndex = latestWindowIndex
                     }
                 }
-                tvTitle?.setText(presenter?.mList?.get(lastWindowIndex)?.title)
+                tvTitle?.text = presenter?.mList?.get(lastWindowIndex)?.title
                 onUpdatedUI(lastWindowIndex)
                 Utils.Log(TAG, "position ???????$lastWindowIndex")
             }

@@ -168,6 +168,7 @@ class CheckSystemAct : BaseGoogleApi(), BaseView<EmptyModel> {
                     Toast.makeText(this, "Oauth is null", Toast.LENGTH_SHORT).show()
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -204,6 +205,7 @@ class CheckSystemAct : BaseGoogleApi(), BaseView<EmptyModel> {
             EnumStatus.CLOUD_ID_EXISTING -> {
                 Navigator.onEnableCloud(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

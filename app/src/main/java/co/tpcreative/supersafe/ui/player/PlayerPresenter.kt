@@ -19,7 +19,7 @@ class PlayerPresenter : Presenter<BaseView<EmptyModel>>() {
     var mListSource: MutableList<MediaSource>? = ArrayList<MediaSource>()
     fun onGetIntent(activity: Activity?) {
         val view: BaseView<EmptyModel>? = view()
-        val bundle: Bundle? = activity?.getIntent()?.getExtras()
+        val bundle: Bundle? = activity?.intent?.extras
         try {
             val items : ItemModel? = bundle?.get(activity.getString(R.string.key_items)) as ItemModel
             mainCategories = bundle.get(activity.getString(R.string.key_main_categories)) as MainCategoryModel
@@ -30,7 +30,7 @@ class PlayerPresenter : Presenter<BaseView<EmptyModel>>() {
                     if (list != null) {
                         mList?.clear()
                         for (index in list) {
-                            if (index?.items_id != items.items_id) {
+                            if (index.items_id != items.items_id) {
                                 mList?.add(index)
                             }
                         }

@@ -75,7 +75,7 @@ open class HelperActivity : BaseActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode != Navigator.PERMISSION_REQUEST_CODE || grantResults.size == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
+        if (requestCode != Navigator.PERMISSION_REQUEST_CODE || grantResults.isEmpty() || grantResults[0] == PackageManager.PERMISSION_DENIED) {
             permissionDenied()
         } else {
             permissionGranted()
@@ -99,6 +99,7 @@ open class HelperActivity : BaseActivity() {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

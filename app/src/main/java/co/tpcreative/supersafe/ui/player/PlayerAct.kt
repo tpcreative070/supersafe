@@ -1,44 +1,22 @@
 package co.tpcreative.supersafe.ui.player
 import android.app.Activity
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.encypt.EncryptedFileDataSourceFactory
 import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.extractor.ExtractorsFactory
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.*
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.gson.Gson
-import com.snatik.storage.Storage
-import com.snatik.storage.security.SecurityUtil
 import kotlinx.android.synthetic.main.activity_player.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -76,11 +54,7 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
 
     fun onUpdatedUI(position: Int) {
         for (i in presenter?.mList!!.indices) {
-            if (i == position) {
-                presenter?.mList?.get(i)?.isChecked = true
-            } else {
-                presenter?.mList?.get(i)?.isChecked = false
-            }
+            presenter?.mList?.get(i)?.isChecked = i == position
         }
         adapter?.notifyDataSetChanged()
     }
@@ -154,6 +128,7 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
                         playerView?.setBackgroundColor(ContextCompat.getColor(this,R.color.black))
                         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
+                    else -> Utils.Log(TAG,"Nothing")
                 }
                 tvTitle?.text = presenter?.mItems?.title
                 adapter?.setDataSource(presenter?.mList)
@@ -174,7 +149,7 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
         val seekPosition: Long? = player?.getCurrentPosition()
         outState.putBoolean(getString(R.string.key_rotate), isPortrait)
         PrefsController.putLong(getString(R.string.key_seek_to), seekPosition!!.toLong())
-        PrefsController.putInt(getString(R.string.key_lastWindowIndex), player!!.getCurrentWindowIndex())
+        PrefsController.putInt(getString(R.string.key_lastWindowIndex), player!!.currentWindowIndex)
         Utils.Log(TAG, "Saved------------------------ " + seekPosition + " - " + player?.getCurrentWindowIndex())
     }
 

@@ -64,7 +64,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.USER_ID_EXISTING) }
                 ?.subscribe({ onResponse: RootResponse ->
                     Utils.Log(TAG, "Body : " + Gson().toJson(onResponse))
-                    if (onResponse.error!!) {
+                    if (onResponse.error) {
                         val request = SignInRequest()
                         request.user_id = email
                         request.password = SecurityUtil.key_password_default_encrypted
@@ -281,7 +281,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        SuperSafeApplication?.serverAPI?.onResendCode(RequestCodeRequest(request.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
+        SuperSafeApplication.serverAPI?.onResendCode(RequestCodeRequest(request.user_id, Utils.getAccessToken(), SuperSafeApplication.getInstance().getDeviceId()))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.RESEND_CODE) }
@@ -291,7 +291,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
                         view.onStopLoading(EnumStatus.RESEND_CODE)
                     } else {
                         val mUser: User? = Utils.getUserInfo()
-                        val mData: DataResponse? = onResponse?.data
+                        val mData: DataResponse? = onResponse.data
                         mUser?.code = mData?.requestCode?.code
                         Utils.setUserPreShare(mUser)
                         val emailToken: EmailToken? = mUser?.let { EmailToken.getInstance()?.convertObject(it, EnumStatus.SIGN_IN) }
@@ -461,7 +461,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        SuperSafeApplication?.serverAPI?.onAddUserCloud(cloudRequest)
+        SuperSafeApplication.serverAPI?.onAddUserCloud(cloudRequest)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.CREATE) }
@@ -510,7 +510,7 @@ class CheckSystemPresenter : Presenter<BaseView<EmptyModel>>() {
         if (subscriptions == null) {
             return
         }
-        SuperSafeApplication?.serverAPI?.onCheckUserCloud(UserCloudRequest(mUser?.email, SuperSafeApplication.getInstance().getDeviceId()))
+        SuperSafeApplication.serverAPI?.onCheckUserCloud(UserCloudRequest(mUser?.email, SuperSafeApplication.getInstance().getDeviceId()))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { view.onStartLoading(EnumStatus.CLOUD_ID_EXISTING) }

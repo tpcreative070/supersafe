@@ -165,7 +165,6 @@ fun FakePinComponentAct.onAddPermissionCamera() {
                         Utils.Log(TAG, "request permission is failed")
                     }
                 }
-
                 override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
                     /* ... */
                     token?.continuePermissionRequest()

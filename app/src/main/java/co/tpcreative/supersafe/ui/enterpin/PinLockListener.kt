@@ -12,12 +12,12 @@ interface PinLockListener {
      *
      * @param pin the complete pin
      */
-    open fun onComplete(pin: String?)
+    fun onComplete(pin: String?)
 
     /**
      * Triggers when the pin is empty after manual deletion
      */
-    open fun onEmpty()
+    fun onEmpty()
 
     /**
      * Triggers on a key press on the [PinLockView]
@@ -25,5 +25,5 @@ interface PinLockListener {
      * @param pinLength       the current pin length
      * @param intermediatePin the intermediate pin
      */
-    open fun onPinChange(pinLength: Int, intermediatePin: String?)
+    fun onPinChange(pinLength: Int, intermediatePin: String?)
 }

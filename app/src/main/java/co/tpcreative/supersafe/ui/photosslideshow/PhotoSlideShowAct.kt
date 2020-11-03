@@ -71,7 +71,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photos_slideshow)
         initUI()
@@ -153,7 +153,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             subscriptions?.dispose()
         }
         try {
-            storage?.deleteFile(Utils.getPackagePath(getApplicationContext()).getAbsolutePath())
+            storage?.deleteFile(Utils.getPackagePath(applicationContext).absolutePath)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -214,22 +214,20 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
         }
         override fun instantiateItem(container: ViewGroup, position: Int): View {
             //PhotoView photoView = new PhotoView(container.getContext());
-            val inflater: LayoutInflater = getLayoutInflater()
+            val inflater: LayoutInflater = layoutInflater
             val myView: View = inflater.inflate(R.layout.content_view, null)
             photoView = myView.findViewById(R.id.imgPhoto)
             val imgPlayer = myView.findViewById<ImageView?>(R.id.imgPlayer)
             val mItems: ItemModel? = presenter?.mList?.get(position)
             val enumTypeFile = EnumFormatType.values()[mItems!!.formatType]
-            photoView?.setOnPhotoTapListener(object : OnPhotoTapListener {
-                override fun onPhotoTap(view: ImageView?, x: Float, y: Float) {
-                    Utils.Log(TAG, "on Clicked")
-                    onStopSlider()
-                    isHide = !isHide
-                    onHideView()
-                }
-            })
+            photoView?.setOnPhotoTapListener { view, x, y ->
+                Utils.Log(TAG, "on Clicked")
+                onStopSlider()
+                isHide = !isHide
+                onHideView()
+            }
             imgPlayer.setOnClickListener(View.OnClickListener {
-                val items: ItemModel? = view_pager?.getCurrentItem()?.let { it1 -> presenter?.mList?.get(it1) }
+                val items: ItemModel? = view_pager?.currentItem?.let { it1 -> presenter?.mList?.get(it1) }
                 if (items != null) {
                     Navigator.onPlayer(this@PhotoSlideShowAct, items, presenter?.mainCategories!!)
                 }
@@ -238,7 +236,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                 val path: String? = mItems.getThumbnail()
                 val file = File("" + path)
                 if (file.exists() || file.isFile) {
-                    photoView?.setRotation(mItems.degrees.toFloat())
+                    photoView?.rotation = mItems.degrees.toFloat()
                     if (mItems.mimeType == getString(R.string.key_gif)) {
                         val mOriginal: String? = mItems.getOriginal()
                         val mFileOriginal = File("" + mOriginal)
@@ -273,7 +271,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                     imgPlayer.visibility = View.INVISIBLE
                 }
             }
-            container?.addView(myView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            container.addView(myView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             photoView?.tag = "myview$position"
             return myView
         }

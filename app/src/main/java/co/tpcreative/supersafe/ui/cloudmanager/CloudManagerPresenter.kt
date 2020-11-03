@@ -29,6 +29,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
                     EnumFormatType.IMAGE -> {
                         sizeSaverFiles += index.size?.toLong()!!
                     }
+                    else -> Utils.Log(TAG,"Nothing")
                 }
             }
         }
@@ -41,8 +42,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(true, true, false)
         if (mList != null) {
             for (i in mList.indices) {
-                val formatType = EnumFormatType.values()[mList[i]?.formatType]
-                when (formatType) {
+                when (EnumFormatType.values()[mList[i].formatType]) {
                     EnumFormatType.IMAGE -> {
                         when (enumStatus) {
                             EnumStatus.GET_LIST_FILE -> {
@@ -53,8 +53,10 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
                                 mList[i].isSaver = false
                                 SQLHelper.updatedItem(mList[i])
                             }
+                            else -> Utils.Log(TAG,"Nothing")
                         }
                     }
+                    else -> Utils.Log(TAG,"Nothing")
                 }
             }
         }
@@ -73,6 +75,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
                         //storage.deleteFile(mList.get(i).originalPath);
                         Utils.Log(TAG, "Continue updating...")
                     }
+                    else -> Utils.Log(TAG,"Nothing")
                 }
             }
         } else {
@@ -85,11 +88,11 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         Utils.Log(TAG, "onGetDriveAbout" + "--" + EnumStatus.GET_DRIVE_ABOUT.name)
         val view: BaseView<Long>? = view()
         if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
-            view?.onError("No internet connection", EnumStatus.GET_DRIVE_ABOUT)
+            view.onError("No internet connection", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
         if (ServiceManager.getInstance()?.getMyService() == null) {
-            view?.onError("Service is null", EnumStatus.GET_DRIVE_ABOUT)
+            view.onError("Service is null", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
         ServiceManager.getInstance()?.getMyService()?.getDriveAbout(object : BaseView<Long> {
@@ -126,7 +129,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         Utils.Log(TAG, "onGetList" + "--" + EnumStatus.GET_LIST_FILES_IN_APP.name)
         val view: BaseView<Long>? = view()
         if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
-            view?.onError("No internet connection", EnumStatus.GET_LIST_FILES_IN_APP)
+            view.onError("No internet connection", EnumStatus.GET_LIST_FILES_IN_APP)
             return
         }
         if (ServiceManager.getInstance()?.getMyService() == null) {
