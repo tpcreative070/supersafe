@@ -28,7 +28,7 @@ class AlbumDetailPresenter : Presenter<BaseView<Int>>() {
         val view: BaseView<Int>? = view()
         mList?.clear()
         try {
-            val bundle: Bundle? = activity?.getIntent()?.getExtras()
+            val bundle: Bundle? = activity?.intent?.extras
             mainCategories = bundle?.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories)) as MainCategoryModel
             if (mainCategories != null) {
                 val data: MutableList<ItemModel>? = SQLHelper.getListItems(mainCategories?.categories_local_id, false, false, mainCategories!!.isFakePin)
@@ -45,14 +45,13 @@ class AlbumDetailPresenter : Presenter<BaseView<Int>>() {
         }
     }
 
-    fun onCalculate() {
+    private fun onCalculate() {
         photos = 0
         videos = 0
         audios = 0
         others = 0
         for (index in mList!!) {
-            val enumTypeFile = EnumFormatType.values()[index.formatType]
-            when (enumTypeFile) {
+            when (EnumFormatType.values()[index.formatType]) {
                 EnumFormatType.IMAGE -> {
                     photos += 1
                 }
@@ -91,7 +90,7 @@ class AlbumDetailPresenter : Presenter<BaseView<Int>>() {
     fun onDelete() {
         val view: BaseView<Int>? = view()
         for (i in mList?.indices!!) {
-            if (mList!!.get(i).isChecked()!!) {
+            if (mList!![i].isChecked()!!) {
                 Utils.Log(TAG, "Delete position at $i")
                 mList?.get(i)?.isDeleteLocal = true
                 mList?.get(i)?.let { SQLHelper.updatedItem(it) }

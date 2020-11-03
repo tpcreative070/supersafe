@@ -273,6 +273,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isSyncCategory = true
                             Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC, EnumStatus.DONE, Gson().toJson(categoryModel))
                             Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
+                            Utils.Log(TAG,"Category inserting left ${mMapSyncCategory.size}")
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC, EnumStatus.DONE, Gson().toJson(categoryModel))
@@ -322,6 +323,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isUpdateCategoryData = true
                             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
+                            Utils.Log(TAG,"Category deleting left ${mMapUpdateCategory.size}")
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -375,6 +377,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         isDeleteCategoryData = true
                         Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(mainCategoryModel))
                         onDeleteCategoryData(mDeleteItem)
+                        Utils.Log(TAG,"Category deleting left ${mMapDeleteCategory.size}")
                     } else {
                         isDeleteCategoryData = false
                         Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(mainCategoryModel))
@@ -443,6 +446,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isDownloadData = true
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.Log(TAG, "Next download item..............." + Gson().toJson(mDownloadItem))
+                            Utils.Log(TAG,"Item downloading left ${mMapDownload.size}")
                         } else {
                             Utils.Log(TAG, "Download completely...............")
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -549,6 +553,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                     if (mUploadItem != null) {
                                         onUploadData(mUploadItem)
                                         Utils.Log(TAG, "Next upload item..............." + Gson().toJson(mUploadItem))
+                                        Utils.Log(TAG,"Item uploading left ${mMapUpload.size}")
                                         isUploadData = true
                                     } else {
                                         isUploadData = false
@@ -637,6 +642,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isUpdateItemData = true
                             Utils.onWriteLog(EnumStatus.UPDATE, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
+                            Utils.Log(TAG,"Item updating left ${mMapUpdateItem.size}")
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.UPDATE, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -710,6 +716,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                 isDeleteItemData = true
                                 Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(itemModel))
                                 onDeleteData(mDeleteItem)
+                                Utils.Log(TAG,"Item deleting left ${mMapDeleteItem.size}")
                             } else {
                                 isDeleteItemData = false
                                 Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(itemModel))

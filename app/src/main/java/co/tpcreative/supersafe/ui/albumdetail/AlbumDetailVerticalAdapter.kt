@@ -109,10 +109,6 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
         }
     }
 
-    companion object {
-        private const val FOOTER_VIEW = 1
-    }
-
     init {
         storage = Storage(context)
         this.itemSelectedListener = itemSelectedListener

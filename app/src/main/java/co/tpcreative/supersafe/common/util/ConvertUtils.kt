@@ -38,7 +38,7 @@ class ConvertUtils private constructor() {
          * @return bits
          */
         fun bytes2Bits(bytes: ByteArray?): String? {
-            if (bytes == null || bytes.size == 0) return ""
+            if (bytes == null || bytes.isEmpty()) return ""
             val sb = StringBuilder()
             for (aByte in bytes) {
                 for (j in 7 downTo 0) {
@@ -104,7 +104,7 @@ class ConvertUtils private constructor() {
          * @return bytes
          */
         fun chars2Bytes(chars: CharArray?): ByteArray? {
-            if (chars == null || chars.size <= 0) return null
+            if (chars == null || chars.isEmpty()) return null
             val len = chars.size
             val bytes = ByteArray(len)
             for (i in 0 until len) {
@@ -130,7 +130,7 @@ class ConvertUtils private constructor() {
             var j = 0
             while (i < len) {
                 ret[j++] = hexDigits?.get(bytes[i].toInt() shr 4 and 0x0f)!!
-                ret[j++] = hexDigits.get(bytes[i].toInt() and 0x0f)
+                ret[j++] = hexDigits[bytes[i].toInt() and 0x0f]
                 i++
             }
             return String(ret)
@@ -150,7 +150,7 @@ class ConvertUtils private constructor() {
             var len = hexString.length
             if (len % 2 != 0) {
                 hexString = "0$hexString"
-                len = len + 1
+                len += 1
             }
             val hexBytes = hexString.toUpperCase(Locale.ROOT).toCharArray()
             val ret = ByteArray(len shr 1)
@@ -163,9 +163,9 @@ class ConvertUtils private constructor() {
         }
 
         private fun hex2Int(hexChar: Char): Int {
-            return if (hexChar >= '0' && hexChar <= '9') {
+            return if (hexChar in '0'..'9') {
                 hexChar - '0'
-            } else if (hexChar >= 'A' && hexChar <= 'F') {
+            } else if (hexChar in 'A'..'F') {
                 hexChar - 'A' + 10
             } else {
                 throw IllegalArgumentException()
@@ -347,7 +347,7 @@ class ConvertUtils private constructor() {
          * @return input stream
          */
         fun bytes2InputStream(bytes: ByteArray?): InputStream? {
-            return if (bytes == null || bytes.size <= 0) null else ByteArrayInputStream(bytes)
+            return if (bytes == null || bytes.isEmpty()) null else ByteArrayInputStream(bytes)
         }
 
         /**
@@ -367,7 +367,7 @@ class ConvertUtils private constructor() {
          * @return output stream
          */
         fun bytes2OutputStream(bytes: ByteArray?): OutputStream? {
-            if (bytes == null || bytes.size <= 0) return null
+            if (bytes == null || bytes.isEmpty()) return null
             var os: ByteArrayOutputStream? = null
             return try {
                 os = ByteArrayOutputStream()
@@ -472,7 +472,7 @@ class ConvertUtils private constructor() {
          * @return bitmap
          */
         fun bytes2Bitmap(bytes: ByteArray?): Bitmap? {
-            return if (bytes == null || bytes.size == 0) null else BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            return if (bytes == null || bytes.isEmpty()) null else BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
         }
 
         /**
@@ -485,16 +485,15 @@ class ConvertUtils private constructor() {
             if (drawable is BitmapDrawable) {
                 val bitmapDrawable: BitmapDrawable? = drawable as BitmapDrawable?
                 if (bitmapDrawable?.getBitmap() != null) {
-                    return bitmapDrawable?.getBitmap()
+                    return bitmapDrawable.bitmap
                 }
             }
-            val bitmap: Bitmap
-            bitmap = if (drawable?.getIntrinsicWidth()!! <= 0 || drawable?.getIntrinsicHeight() <= 0) {
+            val bitmap: Bitmap = if (drawable?.intrinsicWidth!! <= 0 || drawable?.intrinsicHeight <= 0) {
                 Bitmap.createBitmap(1, 1,
                         if (drawable.getOpacity() != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565)
             } else {
-                Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                        drawable.getIntrinsicHeight(),
+                Bitmap.createBitmap(drawable.intrinsicWidth,
+                        drawable.intrinsicHeight,
                         if (drawable.getOpacity() != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565)
             }
             val canvas = Canvas(bitmap)
@@ -510,7 +509,7 @@ class ConvertUtils private constructor() {
          * @return drawable
          */
         fun bitmap2Drawable(bitmap: Bitmap?): Drawable? {
-            return if (bitmap == null) null else BitmapDrawable(SuperSafeApplication.getInstance().getResources(), bitmap)
+            return if (bitmap == null) null else BitmapDrawable(SuperSafeApplication.getInstance().resources, bitmap)
         }
 
         /**
@@ -562,7 +561,7 @@ class ConvertUtils private constructor() {
          * @return value of px
          */
         fun dp2px(dpValue: Float): Int {
-            val scale: Float = SuperSafeApplication.Companion.getInstance().getResources().getDisplayMetrics().density
+            val scale: Float = SuperSafeApplication.getInstance().resources.displayMetrics.density
             return (dpValue * scale + 0.5f).toInt()
         }
 
@@ -573,7 +572,7 @@ class ConvertUtils private constructor() {
          * @return value of dp
          */
         fun px2dp(pxValue: Float): Int {
-            val scale: Float = SuperSafeApplication.getInstance().getResources().getDisplayMetrics().density
+            val scale: Float = SuperSafeApplication.getInstance().resources.displayMetrics.density
             return (pxValue / scale + 0.5f).toInt()
         }
 
@@ -584,7 +583,7 @@ class ConvertUtils private constructor() {
          * @return value of px
          */
         fun sp2px(spValue: Float): Int {
-            val fontScale: Float = SuperSafeApplication.getInstance().getResources().getDisplayMetrics().scaledDensity
+            val fontScale: Float = SuperSafeApplication.getInstance().resources.displayMetrics.scaledDensity
             return (spValue * fontScale + 0.5f).toInt()
         }
 
@@ -595,7 +594,7 @@ class ConvertUtils private constructor() {
          * @return value of sp
          */
         fun px2sp(pxValue: Float): Int {
-            val fontScale: Float = SuperSafeApplication.getInstance().getResources().getDisplayMetrics().scaledDensity
+            val fontScale: Float = SuperSafeApplication.getInstance().resources.displayMetrics.scaledDensity
             return (pxValue / fontScale + 0.5f).toInt()
         }
 

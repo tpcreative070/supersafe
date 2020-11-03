@@ -35,7 +35,10 @@ object SQLHelper {
         val deleteAlbum: MutableList<MainCategoryEntityModel>? = getInstance()?.geCategoryList(true, false)
         if (deleteAlbum != null) {
             for (index in deleteAlbum) {
-                mList.add(MainCategoryModel(index))
+                val mItem = getListItems(index.categories_local_id,false)
+                if (mItem==null || mItem.size==0){
+                    mList.add(MainCategoryModel(index))
+                }
             }
             return mList
         }

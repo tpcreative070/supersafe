@@ -1,19 +1,14 @@
 package com.snatik.storage;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.StatFs;
 import android.util.Log;
-
 import com.snatik.storage.helpers.ImmutablePair;
 import com.snatik.storage.helpers.OnStorageListener;
 import com.snatik.storage.helpers.SizeUnit;
 import com.snatik.storage.security.SecurityUtil;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -23,14 +18,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
@@ -693,7 +686,6 @@ public class Storage {
         return false;
     }
 
-
     protected byte[] readFile(final FileInputStream stream) {
         class Reader extends Thread {
             byte[] array = null;
@@ -721,7 +713,6 @@ public class Storage {
                         // very bad
                     }
                 } while (size > 0);
-
                 try {
                     stream.close();
                 } catch (Exception e) {
@@ -735,9 +726,7 @@ public class Storage {
                     System.arraycopy(chunk.element1, 0, array, offset, chunk.element2);
                     offset += chunk.element2;
                 }
-            }
-
-            ;
+            };
         };
 
         reader.start();
