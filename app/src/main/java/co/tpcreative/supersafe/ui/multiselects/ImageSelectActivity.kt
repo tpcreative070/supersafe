@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.ui.multiselects
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.database.ContentObserver
@@ -131,7 +130,7 @@ class ImageSelectActivity : HelperActivity() {
         if (adapter != null) {
             adapter?.releaseResources()
         }
-        grid_view_image_select?.setOnItemClickListener(null)
+        grid_view_image_select?.onItemClickListener = null
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -140,9 +139,8 @@ class ImageSelectActivity : HelperActivity() {
     }
 
     private fun orientationBasedUI(orientation: Int) {
-        val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val metrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metrics)
+        this.display?.getRealMetrics(metrics)
         if (adapter != null) {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 3 else metrics.widthPixels / 5
             adapter?.setLayoutParams(size)
@@ -164,14 +162,11 @@ class ImageSelectActivity : HelperActivity() {
 
     private val callback: ActionMode.Callback? = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            val menuInflater = mode?.getMenuInflater()
+            val menuInflater = mode?.menuInflater
             menuInflater?.inflate(R.menu.menu_contextual_action_bar, menu)
             actionMode = mode
             countSelected = 0
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val window = window
-                window.statusBarColor = androidx.core.content.ContextCompat.getColor(applicationContext, R.color.material_orange_900)
-            }
+            window.statusBarColor = androidx.core.content.ContextCompat.getColor(applicationContext, R.color.material_orange_900)
             return true
         }
 
@@ -193,11 +188,8 @@ class ImageSelectActivity : HelperActivity() {
                 deselectAll()
             }
             actionMode = null
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
-                val window = window
-                window.statusBarColor = androidx.core.content.ContextCompat.getColor(applicationContext, themeApp?.getPrimaryDarkColor()!!)
-            }
+            val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
+            window.statusBarColor = androidx.core.content.ContextCompat.getColor(applicationContext, themeApp?.getPrimaryDarkColor()!!)
         }
     }
 
