@@ -22,7 +22,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
-    var mCurrentFlash = 0
+    var mCurrentFlash = 1
     var isReload = false
 
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
@@ -39,7 +39,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
             R.id.btnFlash -> if (camera != null) {
                 mCurrentFlash = (mCurrentFlash + 1) % FLASH_OPTIONS?.size!!
                 FLASH_ICONS?.get(mCurrentFlash)?.let { btnFlash?.setImageResource(it) }
-                camera?.flash = FLASH_OPTIONS.get(mCurrentFlash)
+                camera?.flash = FLASH_OPTIONS[mCurrentFlash]
             }
             R.id.btnSwitch -> if (camera != null) {
                 val facing: Facing = camera?.facing!!
@@ -68,6 +68,7 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -79,12 +80,6 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
         if (camera != null) {
             camera?.open()
         }
-        //        if (mCameraView.getAutoFocus()){
-//            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(themeApp.getAccentColor()), android.graphics.PorterDuff.Mode.SRC_IN);
-//        }
-//        else{
-//            btnAutoFocus.setColorFilter(SuperSafeApplication.getInstance().getResources().getColor(R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
-//        }
         GalleryCameraMediaManager.getInstance()?.setProgressing(false)
         onRegisterHomeWatcher()
     }
@@ -130,12 +125,17 @@ class CameraAct : BaseActivity(), ActivityCompat.OnRequestPermissionsResultCallb
                 return
             }
             isReload = true
+            result.toBitmap {
+                it?.let {mBitmap ->
+                    onReviewPicture(mBitmap)
+                }
+            }
             ServiceManager.getInstance()?.onSaveDataOnCamera(mData, mainCategories)
             Utils.Log(TAG, "take picture")
         }
     }
     companion object {
-        private val FLASH_OPTIONS: Array<Flash>? = arrayOf<Flash>(
+        private val FLASH_OPTIONS: Array<Flash>? = arrayOf(
                 Flash.AUTO,
                 Flash.OFF,
                 Flash.ON)

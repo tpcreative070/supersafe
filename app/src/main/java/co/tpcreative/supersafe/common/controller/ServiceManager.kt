@@ -7,8 +7,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ThumbnailUtils
+import android.os.Build
+import android.os.CancellationSignal
 import android.os.IBinder
 import android.provider.MediaStore
+import android.util.Size
 import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -33,8 +36,6 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
@@ -203,19 +204,21 @@ class ServiceManager : BaseServiceView<Any?> {
                         mDownloadList.addAll(it)
                     }
                     /*Checking to preparing delete data*/
-                    if (`object`.isDone){
+                    if (`object`.isDone) {
                         onItemDeleteSyncedLocal(mDownloadList)
                     }
                     /*Checking to preparing delete data*/
                     `object`.categoryList?.let {
-                        if (`object`.isDone){
+                        if (`object`.isDone) {
                             onCategoryDeleteSyncedLocal(it)
                         }
                     }
                 }
+
                 override fun onError(message: String?, status: EnumStatus) {
                     isGetItemList = false
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     if (status == EnumStatus.LOAD_MORE) {
                         isGetItemList = true
@@ -273,7 +276,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isSyncCategory = true
                             Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC, EnumStatus.DONE, Gson().toJson(categoryModel))
                             Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
-                            Utils.Log(TAG,"Category inserting left ${mMapSyncCategory.size}")
+                            Utils.Log(TAG, "Category inserting left ${mMapSyncCategory.size}")
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC, EnumStatus.DONE, Gson().toJson(categoryModel))
@@ -323,7 +326,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isUpdateCategoryData = true
                             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
-                            Utils.Log(TAG,"Category deleting left ${mMapUpdateCategory.size}")
+                            Utils.Log(TAG, "Category deleting left ${mMapUpdateCategory.size}")
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -377,7 +380,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         isDeleteCategoryData = true
                         Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(mainCategoryModel))
                         onDeleteCategoryData(mDeleteItem)
-                        Utils.Log(TAG,"Category deleting left ${mMapDeleteCategory.size}")
+                        Utils.Log(TAG, "Category deleting left ${mMapDeleteCategory.size}")
                     } else {
                         isDeleteCategoryData = false
                         Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(mainCategoryModel))
@@ -446,7 +449,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isDownloadData = true
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.Log(TAG, "Next download item..............." + Gson().toJson(mDownloadItem))
-                            Utils.Log(TAG,"Item downloading left ${mMapDownload.size}")
+                            Utils.Log(TAG, "Item downloading left ${mMapDownload.size}")
                         } else {
                             Utils.Log(TAG, "Download completely...............")
                             Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -553,7 +556,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                     if (mUploadItem != null) {
                                         onUploadData(mUploadItem)
                                         Utils.Log(TAG, "Next upload item..............." + Gson().toJson(mUploadItem))
-                                        Utils.Log(TAG,"Item uploading left ${mMapUpload.size}")
+                                        Utils.Log(TAG, "Item uploading left ${mMapUpload.size}")
                                         isUploadData = true
                                     } else {
                                         isUploadData = false
@@ -574,7 +577,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus?) {
                     isUploadData = false
                     Utils.onPushEventBus(EnumStatus.DONE)
-                    Utils.Log(TAG, ""+message)
+                    Utils.Log(TAG, "" + message)
                     Utils.onWriteLog(EnumStatus.UPLOAD, EnumStatus.ERROR, "onUploadLoadData ==> onError $message")
                     if (status == EnumStatus.NO_SPACE_LEFT_CLOUD) {
                         Utils.onPushEventBus(EnumStatus.NO_SPACE_LEFT_CLOUD)
@@ -632,6 +635,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapUpdateItem)) {
@@ -642,7 +646,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             isUpdateItemData = true
                             Utils.onWriteLog(EnumStatus.UPDATE, EnumStatus.DONE, Gson().toJson(itemModel))
                             Utils.Log(TAG, "Next update item..............." + Gson().toJson(mUpdatedItem))
-                            Utils.Log(TAG,"Item updating left ${mMapUpdateItem.size}")
+                            Utils.Log(TAG, "Item updating left ${mMapUpdateItem.size}")
                         } else {
                             Utils.Log(TAG, "Update completely...............")
                             Utils.onWriteLog(EnumStatus.UPDATE, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -716,7 +720,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                 isDeleteItemData = true
                                 Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(itemModel))
                                 onDeleteData(mDeleteItem)
-                                Utils.Log(TAG,"Item deleting left ${mMapDeleteItem.size}")
+                                Utils.Log(TAG, "Item deleting left ${mMapDeleteItem.size}")
                             } else {
                                 isDeleteItemData = false
                                 Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.DONE, Gson().toJson(itemModel))
@@ -743,10 +747,12 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onCancel() {
                     ls.onCancel()
                 }
+
                 override fun onError(message: String?, status: EnumStatus?) {
                     ls.onError(message, status)
-                    Utils.Log(TAG, ""+message)
+                    Utils.Log(TAG, "" + message)
                 }
+
                 override fun onSuccessful(message: String?, status: EnumStatus?) {
                     ls.onSuccessful(message, status)
                 }
@@ -837,8 +843,14 @@ class ServiceManager : BaseServiceView<Any?> {
                     Utils.Log(TAG, "Start RXJava Video Progressing")
                     try {
                         try {
-                            thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                val mSize = Size(600, 600)
+                                val ca = CancellationSignal()
+                                thumbnail = ThumbnailUtils.createVideoThumbnail(File(mPath), mSize, ca)
+                            }else{
+                                thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
                                     MediaStore.Video.Thumbnails.MINI_KIND)
+                            }
                             val exifInterface = ExifInterface(mPath)
                             val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
                             Utils.Log("EXIF", "Exif: $orientation")
@@ -850,9 +862,9 @@ class ServiceManager : BaseServiceView<Any?> {
                             } else if (orientation == 8) {
                                 matrix.postRotate(270f)
                             }
-                            thumbnail = Bitmap.createBitmap(thumbnail!!, 0, 0, thumbnail?.getWidth(), thumbnail.getHeight(), matrix, true) // rotating bitmap
+                            thumbnail = Bitmap.createBitmap(thumbnail!!, 0, 0, thumbnail.width, thumbnail.height, matrix, true) // rotating bitmap
                         } catch (e: Exception) {
-                            thumbnail = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().getResources(),
+                            thumbnail = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources,
                                     R.drawable.ic_default_video)
                             Utils.Log(TAG, "Cannot write to $e")
                         }
@@ -1099,7 +1111,7 @@ class ServiceManager : BaseServiceView<Any?> {
             val intent: Intent = AccountManager.newChooseAccountIntent(account1, null, arrayOf<String?>(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE), null, null, null, null)
             intent.putExtra("overrideTheme", 1)
             //  intent.putExtra("selectedAccount",account);
-            context?.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT)
+            context.startActivityForResult(intent, Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT)
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
         }
@@ -1165,7 +1177,7 @@ class ServiceManager : BaseServiceView<Any?> {
     fun onSendEmail() {
         if (myService != null) {
             val mUser: User? = Utils.getUserInfo()
-            val emailToken: EmailToken? = mUser?.let { EmailToken.Companion.getInstance()?.convertObject(it, EnumStatus.RESET) }
+            val emailToken: EmailToken? = mUser?.let { EmailToken.getInstance()?.convertObject(it, EnumStatus.RESET) }
             if (emailToken != null) {
                 myService?.onSendMail(emailToken)
             }
@@ -1274,7 +1286,6 @@ class ServiceManager : BaseServiceView<Any?> {
                         subscriber?.onNext(response)
                         subscriber?.onComplete()
                     }
-
                     override fun onSuccessful(position: Int) {}
                 })
             } catch (e: Exception) {
@@ -1324,7 +1335,6 @@ class ServiceManager : BaseServiceView<Any?> {
                                 SingletonFakePinComponent.getInstance().onUpdateView()
                             } else {
                                 SingletonPrivateFragment.getInstance()?.onUpdateView()
-                                getInstance()?.onPreparingSyncData()
                             }
                         }
                     }
@@ -1385,7 +1395,7 @@ class ServiceManager : BaseServiceView<Any?> {
                             override fun onSuccessful(position: Int) {
                                 try {
                                     Utils.Log(TAG, "Exporting file...............................Successful $position")
-                                    mListExport.get(position).isExport = true
+                                    mListExport[position].isExport = true
                                     onExportingFiles()
                                 } catch (e: Exception) {
                                     e.printStackTrace()
@@ -1558,19 +1568,19 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     /*Request category delete synced local*/
-    fun onCategoryDeleteSyncedLocal(mList : List<MainCategoryModel>){
+    fun onCategoryDeleteSyncedLocal(mList: List<MainCategoryModel>){
         val mResultList = Utils.checkCategoryDeleteSyncedLocal(mList)
         mResultList.let {
             for (index in it){
                 SQLHelper.deleteCategory(index)
             }
-            Utils.Log(TAG,Gson().toJson(mList))
-            Utils.Log(TAG,"Total need to delete categories synced local.... " + it.size)
+            Utils.Log(TAG, Gson().toJson(mList))
+            Utils.Log(TAG, "Total need to delete categories synced local.... " + it.size)
         }
     }
 
     /*Request item delete synced local*/
-    fun onItemDeleteSyncedLocal(mList : List<ItemModel>){
+    fun onItemDeleteSyncedLocal(mList: List<ItemModel>){
         val mResultList = Utils.checkItemDeleteSyncedLocal(mList)
         mResultList.let {
             for (index in it){
@@ -1579,7 +1589,7 @@ class ServiceManager : BaseServiceView<Any?> {
                     Utils.deleteFolderOfItemId(it1)
                 }
             }
-            Utils.Log(TAG,"Total need to delete items synced local.... " + it.size)
+            Utils.Log(TAG, "Total need to delete items synced local.... " + it.size)
         }
     }
 

@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.camera
+import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
@@ -9,6 +10,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.MainCategoryModel
+import com.bumptech.glide.Glide
 import com.otaliastudios.cameraview.controls.Grid
 import kotlinx.android.synthetic.main.activity_camera.*
 
@@ -25,7 +27,7 @@ fun CameraAct.iniUI(){
     val actionBar: ActionBar? = supportActionBar
     actionBar?.setDisplayShowTitleEnabled(false)
     try {
-        val bundle: Bundle? = getIntent().getExtras()
+        val bundle: Bundle? = intent.extras
         mainCategories = bundle?.get(getString(R.string.key_main_categories)) as MainCategoryModel
     } catch (e: Exception) {
         Utils.onWriteLog("" + e.message, EnumStatus.WRITE_FILE)
@@ -34,7 +36,7 @@ fun CameraAct.iniUI(){
 
     btnAutoFocus.setOnClickListener {
         if (camera != null) {
-            if (camera?.getGrid() == Grid.OFF) {
+            if (camera?.grid == Grid.OFF) {
                 btnAutoFocus?.setColorFilter(ContextCompat.getColor(this,R.color.white), PorterDuff.Mode.SRC_IN)
                 camera?.grid = Grid.DRAW_3X3
             } else {
@@ -43,4 +45,13 @@ fun CameraAct.iniUI(){
             }
         }
     }
+}
+
+fun CameraAct.onReviewPicture(data : Bitmap){
+    Glide
+            .with(SuperSafeApplication.getInstance())
+            .load(data)
+            .centerCrop()
+            .override(70,70)
+            .into(imgReview);
 }

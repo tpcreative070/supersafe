@@ -8,7 +8,11 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.google.gson.Gson
 import com.snatik.storage.Storage
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.*
+import java.util.concurrent.Callable
 
 class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
     var mList: MutableList<ItemModel>?
@@ -58,6 +62,7 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
 
     fun onDeleteAll(isEmpty: Boolean) {
         val view: BaseView<EmptyModel>? = view()
+        subscriptions?.add(Observable.fromCallable(Callable {
         for (i in mList?.indices!!) {
             if (isEmpty) {
                 val formatTypeFile = EnumFormatType.values()[mList?.get(i)?.formatType!!]
@@ -86,7 +91,11 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                 }
             }
         }
-        view?.onSuccessful("Done", EnumStatus.DONE)
+            ""
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
+                    view?.onSuccessful("Done", EnumStatus.DONE)
+                })
     }
     companion object {
         private val TAG = TrashPresenter::class.java.simpleName
