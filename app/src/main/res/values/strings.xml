@@ -466,6 +466,7 @@
     <string name="key_lock_screen">Lock screen</string>
     <string name="key_private_cloud">Private Cloud</string>
     <string name="key_theme">Themes</string>
+    <string name="key_light_mode">Light mode</string>
     <string name="key_break_in_alert">Break-In alerts</string>
     <string name="key_fake_pin">Fake PIN</string>
     <string name="key_secret_door">Secret Door</string>
@@ -530,8 +531,11 @@
     <string name="i_love_it">I love it</string>
     <string name="report_problem">Report problem</string>
     <string name="no_thanks">No, thanks</string>
-
-
+    <string name="change_mode">Change mode</string>
+    <string-array name="themeEntryArray">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
     <!--Help and Support -->
     <string name="faq">FAQ</string>
     <string name="Support">Support</string>

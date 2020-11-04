@@ -11,7 +11,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Point
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Environment
+import android.os.StatFs
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.DisplayMetrics
@@ -864,14 +866,14 @@ object Utils  {
     /*Check request delete item from global*/
     fun checkItemDeleteSyncedLocal(mSyncedList: List<ItemModel>): List<ItemModel> {
         val mListResult: MutableList<ItemModel> = ArrayList<ItemModel>()
-        val mListLocal: List<ItemModel>? = SQLHelper.getListItemId(true,false)
+        val mListLocal: List<ItemModel>? = SQLHelper.getListItemId(true, false)
         /*Convert list to hash-map*/
-        val mMap: Map<String?, ItemModel>? = mSyncedList.associateBy({it.items_id}, {it})
-        Log(TAG,"checking item ${mListLocal?.size}")
+        val mMap: Map<String?, ItemModel>? = mSyncedList.associateBy({ it.items_id }, { it })
+        Log(TAG, "checking item ${mListLocal?.size}")
         mListLocal?.let {
             for (index in it) {
                 val mValue: ItemModel? = mMap?.get(index.items_id)
-                Log(TAG,"checking item delete...")
+                Log(TAG, "checking item delete...")
                 if (mValue == null) {
                     mListResult.add(index)
                 }
@@ -885,19 +887,19 @@ object Utils  {
         val mListResult: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
         val mListLocal: List<MainCategoryModel>? = SQLHelper.getListCategories(false)
         /*Convert list to hash-map*/
-        val mMap: Map<String?, MainCategoryModel>? = mSyncedList.associateBy({it.categories_id}, {it})
+        val mMap: Map<String?, MainCategoryModel>? = mSyncedList.associateBy({ it.categories_id }, { it })
         mListLocal?.let {
             for (index in it) {
                 val mValue: MainCategoryModel? = mMap?.get(index.categories_id)
                 val mObject = SQLHelper.getItemsList(index.categories_id)
-                Log(TAG,Gson().toJson(mValue))
-                Log(TAG,Gson().toJson(mObject))
+                Log(TAG, Gson().toJson(mValue))
+                Log(TAG, Gson().toJson(mObject))
                 if (mValue == null && mObject?.size == 0) {
                     mListResult.add(index)
                 }
             }
         }
-        Log(TAG,"checking category ${mListResult?.size}")
+        Log(TAG, "checking category ${mListResult?.size}")
         return mListResult
     }
 
@@ -1113,7 +1115,8 @@ object Utils  {
         val theme = ThemeApp.getInstance()?.getThemeInfo()
         Alerter.create(context)
                 .setTitle(title!!)
-                .setBackgroundColorInt(ContextCompat.getColor(context, theme?.getAccentColor() ?: R.color.colorAccent))
+                .setBackgroundColorInt(ContextCompat.getColor(context, theme?.getAccentColor()
+                        ?: R.color.colorAccent))
                 .setText(message)
                 .show()
     }
@@ -1121,7 +1124,8 @@ object Utils  {
     fun onAlertNotify(context: Activity, title: String, message: String, listener: UtilsListener? = null){
         val theme = ThemeApp.getInstance()?.getThemeInfo()
         Alerter.create(context)
-                .setBackgroundColorInt(ContextCompat.getColor(context, theme?.getAccentColor() ?: R.color.colorAccent))
+                .setBackgroundColorInt(ContextCompat.getColor(context, theme?.getAccentColor()
+                        ?: R.color.colorAccent))
                 .setTitle(title)
                 .setText(message)
                 .setDuration(10000)
@@ -1160,7 +1164,13 @@ object Utils  {
         PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), positionTheme)
     }
 
-    fun deleteFolderOfItemId(items_id : String){
+    fun getCurrentTheme(): Int {
+        return if (getPositionTheme() == 0) {
+            R.style.LightDialogTheme
+        } else R.style.DarkDialogTheme
+    }
+
+    fun deleteFolderOfItemId(items_id: String){
         SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id)
     }
 

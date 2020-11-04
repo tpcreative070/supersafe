@@ -32,6 +32,12 @@
             android:key="@string/key_theme"
             android:title="@string/key_theme"/>
 
+        <Preference
+            android:layout="@layout/custom_preferences_item"
+            android:icon="@drawable/baseline_settings_brightness_white_24"
+            android:key="@string/key_light_mode"
+            android:title="@string/key_light_mode"/>
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory android:title="@string/key_advanced"
@@ -83,7 +89,7 @@
             android:title="@string/key_privacy_policy">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="@string/tvPrimacyPolicy"></intent>
+                android:data="@string/tvPrimacyPolicy"/>
         </Preference>
 
         <Preference

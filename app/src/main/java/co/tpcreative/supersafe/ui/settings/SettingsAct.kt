@@ -5,10 +5,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -23,11 +21,9 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.extension.instantiate
+import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EnumPinAction
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.model.*
 import de.mrapp.android.dialog.MaterialDialog
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -48,7 +44,7 @@ class SettingsAct : BaseActivity() {
 
     override fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
         context.supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat
-                .getColor(context!!,colorPrimary)))
+                .getColor(context!!, colorPrimary)))
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = ContextCompat.getColor(context, colorPrimaryDark)
@@ -129,7 +125,6 @@ class SettingsAct : BaseActivity() {
 
     override fun onBackPressed() {
         if (isChangedTheme) {
-            val intent: Intent = getIntent()
             setResult(Activity.RESULT_OK, intent)
         }
         super.onBackPressed()
@@ -146,6 +141,7 @@ class SettingsAct : BaseActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
+        var mPosition = Utils.getPositionTheme()
         private var mAccount: Preference? = null
         private var mLockScreen: Preference? = null
         private var mTheme: Preference? = null
@@ -159,6 +155,7 @@ class SettingsAct : BaseActivity() {
         private var mUpgrade: Preference? = null
         private var mVersion: Preference? = null
         private var mRateApp: Preference? = null
+        private var mLightMode : Preference? = null
 
         /**
          * Creates and returns a listener, which allows to adapt the app's theme, when the value of the
@@ -235,6 +232,15 @@ class SettingsAct : BaseActivity() {
                     } else if (preference.key == getString(R.string.key_rate)) {
                         onRateApp()
                     }
+                    else if (preference.key == getString(R.string.key_light_mode)){
+                        if (!Utils.isPremium()) {
+                            onShowPremium()
+                            return@OnPreferenceClickListener true
+                        }
+                        askDeviceMode {
+                            ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
+                        }
+                    }
                 }
                 true
             }
@@ -265,6 +271,11 @@ class SettingsAct : BaseActivity() {
             /*Secret door*/mSecretDoor = findPreference(getString(R.string.key_secret_door))
             mSecretDoor?.onPreferenceClickListener = createActionPreferenceClickListener()
             mSecretDoor?.onPreferenceChangeListener = createChangeListener()
+
+            /*Light mode*/
+            mLightMode = findPreference(getString(R.string.key_light_mode))
+            mLightMode?.onPreferenceClickListener = createActionPreferenceClickListener()
+            mLightMode?.onPreferenceChangeListener = createChangeListener()
 
             /*Private Cloud*/mPrivateCloud = findPreference(getString(R.string.key_private_cloud))
             mPrivateCloud?.onPreferenceClickListener = createActionPreferenceClickListener()
@@ -302,7 +313,7 @@ class SettingsAct : BaseActivity() {
             addPreferencesFromResource(R.xml.pref_general)
         }
 
-        fun onRateApp() {
+        private fun onRateApp() {
             val uri = Uri.parse("market://details?id=" + getString(R.string.supersafe_live))
             val goToMarket = Intent(Intent.ACTION_VIEW, uri)
             // To count with Play market backstack, After pressing back button,
@@ -318,7 +329,7 @@ class SettingsAct : BaseActivity() {
             }
         }
 
-        fun onShowPremium() {
+        private fun onShowPremium() {
             try {
                 val builder = MaterialDialog.Builder(getContext()!!)
                 val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
@@ -349,6 +360,22 @@ class SettingsAct : BaseActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+
+        private fun askDeviceMode(onCompleted: (done: Boolean) -> Unit) {
+            val dialogBuilder = MaterialDialog.Builder(context!!, Utils.getCurrentTheme())
+            dialogBuilder.setTitle(R.string.change_mode)
+            dialogBuilder.setPadding(40, 40, 40, 0)
+            dialogBuilder.setMargin(60, 0, 60, 0)
+            dialogBuilder.setSingleChoiceItems(R.array.themeEntryArray, Utils.getPositionTheme(), DialogInterface.OnClickListener { dialogInterface, m ->
+                this.mPosition = m
+            })
+            dialogBuilder.setPositiveButton(R.string.yes) { _, i ->
+                Utils.setPositionTheme(EnumThemeModel.byPosition(mPosition).ordinal)
+                onCompleted(true)
+            }
+            val dialog = dialogBuilder.create()
+            dialog.show()
         }
     }
 
