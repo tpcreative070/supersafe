@@ -20,7 +20,6 @@ import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.helper.ThemeHelper
-import co.tpcreative.supersafe.common.hiddencamera.config.CameraImageFormat
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.bumptech.glide.request.target.ImageViewTarget
@@ -56,7 +55,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     private lateinit var storage: Storage
     private var configurationFile: EncryptConfiguration? = null
     private var configurationPin: EncryptConfiguration? = null
-    private var Orientation = 0
     private lateinit var options: GoogleSignInOptions.Builder
     private lateinit var requiredScopes: MutableSet<Scope>
     private lateinit var requiredScopesString: MutableList<String>
@@ -119,9 +117,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestScopes(Scope(DriveScopes.DRIVE_FILE))
                 .requestScopes(Scope(DriveScopes.DRIVE_APPDATA))
-        requiredScopes = HashSet(2)
-        requiredScopes.add(Scope(DriveScopes.DRIVE_FILE))
-        requiredScopes.add(Scope(DriveScopes.DRIVE_APPDATA))
         requiredScopesString = ArrayList()
         requiredScopesString.add(DriveScopes.DRIVE_APPDATA)
         requiredScopesString.add(DriveScopes.DRIVE_FILE)
@@ -163,10 +158,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return requiredScopesString
     }
 
-    fun getRequiredScopes(): MutableSet<Scope>? {
-        return requiredScopes
-    }
-
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
@@ -203,14 +194,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     override fun onActivityStopped(activity: Activity) {
         ++stopped
         Utils.Log(TAG, "application is visible: " + (started > stopped))
-    }
-
-    fun isApplicationVisible(): Boolean {
-        return started > stopped
-    }
-
-    fun isApplicationInForeground(): Boolean {
-        return resumed > paused
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {}
@@ -363,17 +346,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return ""
     }
 
-    fun onDeleteKey() {
-        if (!isPermissionRead()) {
-            Utils.Log(TAG, "Please grant access permission")
-            return
-        }
-        val isFile = storage.isFileExist(getSuperSafe() + key)
-        if (isFile) {
-            storage.deleteFile(getSuperSafe() + key)
-        }
-    }
-
     private fun isPermissionRead(): Boolean {
         val permission: Int = PermissionChecker.checkSelfPermission(applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
         return permission == PermissionChecker.PERMISSION_GRANTED
@@ -388,14 +360,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return isPermissionWrite() && isPermissionRead()
     }
 
-    fun getOrientation(): Int {
-        return Orientation
-    }
-
-    fun setOrientation(mOrientation: Int) {
-        Orientation = mOrientation
-    }
-
     fun getStorage(): Storage? {
         return storage
     }
@@ -407,10 +371,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             SecurityUtil.url_developer
         }
         return url
-    }
-
-    fun getPathDatabase(): String? {
-        return getDatabasePath(getString(R.string.key_database)).absolutePath
     }
 
     fun getDeviceId(): String? {
@@ -439,47 +399,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
 
     fun getAppVersionRelease(): String? {
         return BuildConfig.VERSION_NAME
-    }
-
-    fun getPackagePath(context: Context?): File? {
-        return File(context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                ".temporary.jpg")
-    }
-
-    fun getPackageFolderPath(context: Context?): File? {
-        return File(context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.getAbsolutePath())
-    }
-
-    fun getDefaultStorageFile(mImageFormat: Int): File? {
-        return File(getInstance().getSuperSafeBreakInAlerts()
-                + File.separator
-                + "IMG_" + System.currentTimeMillis() //IMG_214515184113123.png
-                + if (mImageFormat == CameraImageFormat.Companion.FORMAT_JPEG) ".jpeg" else ".png")
-    }
-
-    private fun getKeyHomePressed(): MutableMap<String?, String?>? {
-        try {
-            val value: String? = PrefsController.getString(getString(R.string.key_home_pressed), null)
-            if (value != null) {
-                var map: MutableMap<String?, String?> = HashMap()
-                map = Gson().fromJson(value, map.javaClass)
-                return map
-            }
-            return HashMap()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return HashMap()
-    }
-
-    fun writeKeyHomePressed(value: String?) {
-        try {
-            val map = getKeyHomePressed()
-            map?.set(value, value)
-            PrefsController.putString(getString(R.string.key_home_pressed), Gson().toJson(map))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     companion object {
