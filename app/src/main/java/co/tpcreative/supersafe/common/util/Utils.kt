@@ -499,11 +499,7 @@ object Utils  {
             activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics)
             val width: Int = displaymetrics.widthPixels
             val height: Int = displaymetrics.heightPixels
-            landscape = if (width < height) {
-                false
-            } else {
-                true
-            }
+            landscape = width >= height
             return landscape
         }
 
@@ -550,8 +546,7 @@ object Utils  {
         }
 
         fun onCheckNewVersion() {
-            val current_code_version: Int = PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version), 0)
-            if (current_code_version == BuildConfig.VERSION_CODE) {
+            if (PrefsController.getInt(SuperSafeApplication.getInstance().getString(R.string.current_code_version), 0) == BuildConfig.VERSION_CODE) {
                 Log(TAG, "Already install this version")
                 return
             } else {
@@ -1065,7 +1060,7 @@ object Utils  {
         }
 
         fun isPremium(): Boolean {
-        if (BuildConfig.DEBUG){
+        if (SuperSafeApplication.getInstance().isDebugPremium()){
             return true
         }
             val mCheckout: CheckoutItems? = getCheckoutItems()
