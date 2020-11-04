@@ -58,7 +58,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         )
         SQLHelper.getList()
         Utils.onWriteLog(Utils.DeviceInfo(), EnumStatus.DEVICE_ABOUT)
-        if(SuperSafeApplication.getInstance().isRequestMigration() && SuperSafeApplication.getInstance().isTestMigration()){
+        if(SuperSafeApplication.getInstance().isRequestMigration() && SuperSafeApplication.getInstance().isLiveMigration()){
             SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.progressing)
             SuperSafeApplication.getInstance().onPreparingMigration()
         }else {

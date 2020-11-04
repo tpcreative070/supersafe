@@ -295,7 +295,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
             EnumStatus.SEND_EMAIL -> {
                 onShowView(btnSendVerifyCode!!)
                 SingletonManagerProcessing.getInstance()?.onStopProgressing(this@VerifyAccountAct)
-                Utils.showGotItSnackbar(tvEmail!!, R.string.we_sent_access_code_to_your_email)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.we_sent_access_code_to_your_email))
             }
             EnumStatus.VERIFY_CODE -> {
                 edtCode?.setText("")

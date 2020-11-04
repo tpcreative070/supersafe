@@ -95,7 +95,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         storage = Storage(this)
 
         /*Migration*/
-        if (isTestMigration()){
+        if (isLiveMigration()){
             superSafe = getExternalFilesDir(null)?.absolutePath + "/.SuperSafe_DoNot_Delete/"
             superSafeOldPath = storage.externalStorageDirectory + "/.SuperSafe_DoNot_Delete/"
         }else{
@@ -606,7 +606,11 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return  false
     }
 
-    fun isTestMigration() : Boolean {
+    fun isLiveMigration() : Boolean {
         return true
+    }
+
+    fun isDebugPremium() : Boolean {
+        return  false
     }
 }

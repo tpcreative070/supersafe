@@ -127,14 +127,7 @@ fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
             }
             if (response == null) {
                 onStopProgressing()
-                Utils.showGotItSnackbar(imgChecked!!, R.string.error_occurred, object : ServiceManager.ServiceManagerSyncDataListener {
-                    override fun onCompleted() {
-                        finish()
-                    }
-
-                    override fun onError() {}
-                    override fun onCancel() {}
-                })
+                finish()
             } else {
                 val mFile = File(response)
                 if (mFile.exists()) {
@@ -264,13 +257,7 @@ fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
                     }
                 } else {
                     onStopProgressing()
-                    Utils.showGotItSnackbar(imgChecked!!, R.string.error_occurred, object : ServiceManager.ServiceManagerSyncDataListener {
-                        override fun onCompleted() {
-                            finish()
-                        }
-                        override fun onError() {}
-                        override fun onCancel() {}
-                    })
+                    finish()
                 }
             }
             ServiceManager.getInstance()?.setListImport(mListImport)

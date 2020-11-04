@@ -22,10 +22,8 @@ import android.view.View
 import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -41,12 +39,9 @@ import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
-import com.anjlab.android.iab.v3.PurchaseData
-import com.google.android.material.snackbar.Snackbar
 import com.google.api.client.util.Base64
 import com.google.common.base.Charsets
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.snatik.storage.Storage
 import com.snatik.storage.helpers.OnStorageListener
 import com.snatik.storage.helpers.SizeUnit
@@ -68,25 +63,6 @@ import java.util.concurrent.TimeUnit
  * Created by pc on 07/16/2017.
  */
 object Utils  {
-    fun onChangeCategories(mainCategories: MainCategoryModel): Boolean {
-        try {
-            val hex_name = mainCategories.categories_name?.let { getHexCode(it) }
-            val mIsFakePin: Boolean = mainCategories.isFakePin
-            val response: MainCategoryModel? = SQLHelper.getCategoriesItemId(hex_name, mIsFakePin)
-            if (response == null) {
-                mainCategories.categories_hex_name = hex_name
-                mainCategories.isChange = true
-                mainCategories.isSyncOwnServer = false
-                SQLHelper.updateCategory(mainCategories)
-                return true
-            }
-            Log(TAG, "value changed :" + Gson().toJson(response))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
-    }
-
     val GOOGLE_CONSOLE_KEY: String = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+6HXAFTNx3LbODafbpgsLqkdyMqMEvIYt55lqTjLIh0PkoAX7oSAD0fY7BXW0Czuys13hNNdyzmDjQe76xmUWTNfXM1vp0JQtStl7tRqNaFuaRje59HKRLpRTW1MGmgKw/19/18EalWTjbGOW7C2qZ5eGIOvGfQvvlraAso9lCTeEwze3bmGTc7B8MOfDqZHETdavSVgVjGJx/K10pzAauZFGvZ+ryZtU0u+9ZSyGx1CgHysmtfcZFKqZLbtOxUQHpBMeJf2M1LReqbR1kvJiAeLYqdOMWzmmNcsEoG6g/e+F9ZgjZjoQzqhWsrTE2IQZAaiwU4EezdqqruNXx6uwIDAQAB"
 
         // utility function
@@ -96,10 +72,6 @@ object Utils  {
         const val START_TIMER: Long = 5000
         private val storage: Storage = Storage(SuperSafeApplication.getInstance())
         private val TAG = Utils::class.java.simpleName
-        private fun bytesToHexString(bytes: ByteArray): String {
-            return bytes.joinToString("") { "%02x".format(it) }
-        }
-
         fun isValidEmail(target: CharSequence?): Boolean {
             return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
         }
@@ -176,14 +148,6 @@ object Utils  {
             val r: Resources = SuperSafeApplication.getInstance().getResources()
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     dp.toFloat(), r.displayMetrics).toInt()
-        }
-
-        fun showKeyboard(view: View?) {
-            // Check if no view has focus:
-            if (view != null) {
-                val inputManager = SuperSafeApplication.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-            }
         }
 
         fun getPackagePath(context: Context): File {
@@ -286,89 +250,11 @@ object Utils  {
             }
         }
 
-        fun showToast(context: Context, @StringRes text: Int, isLong: Boolean) {
-            showToast(context, context.getString(text), isLong)
-        }
-
-        fun showToast(context: Context, text: String?, isLong: Boolean) {
-            Toast.makeText(context, text, if (isLong) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
-        }
-
-        fun showInfoSnackbar(view: View, @StringRes text: Int, isLong: Boolean) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                run {
-                    multilineSnackbar(
-                            Snackbar.make(
-                                    view, text,
-                                    if (isLong) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT))
-                }
-            }, 100)
-        }
-
-        fun showGotItSnackbar(view: View, @StringRes text: Int) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                kotlin.run {
-                    multilineSnackbar(
-                            Snackbar.make(
-                                    view, text, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.got_it, View.OnClickListener { })
-                    )
-                }
-            }, 200)
-        }
-
-        fun showGotItSnackbar(view: View, text: String) {
-            onObserveData(START_TIMER, object : Listener {
-                override fun onStart() {
-                    multilineSnackbar(
-                            Snackbar.make(
-                                    view, text, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.got_it, View.OnClickListener { })
-                    ).show()
-                }
-            })
-        }
-
-        fun showGotItSnackbar(view: View, @StringRes text: Int, ls: ServiceManager.ServiceManagerSyncDataListener) {
-            onObserveData(START_TIMER, object : Listener {
-                override fun onStart() {
-                    multilineSnackbar(
-                            Snackbar.make(
-                                    view, text, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction(R.string.got_it, View.OnClickListener { ls.onCompleted() })
-                    ).show()
-                }
-            })
-        }
-
-        private fun multilineSnackbar(snackbar: Snackbar): Snackbar {
-            val textView: AppCompatTextView = snackbar.view.findViewById(R.id.snackbar_text)
-            textView.setMaxLines(5)
-            return snackbar
-        }
-
-        fun slideToRight(view: View) {
-            val animate = TranslateAnimation(0F, view.width.toFloat(), 0F, 0F)
-            animate.setDuration(500)
-            animate.setFillAfter(true)
-            view.startAnimation(animate)
-            view.setVisibility(View.GONE)
-        }
-
-        // To animate view slide out from right to left
-        fun slideToLeft(view: View) {
-            val animate = TranslateAnimation(0F, (-view.width).toFloat(), 0F, 0F)
-            animate.setDuration(500)
-            animate.setFillAfter(true)
-            view.startAnimation(animate)
-            view.setVisibility(View.GONE)
-        }
-
         // To animate view slide out from top to bottom
         fun slideToBottomHeader(view: View) {
             val animate = TranslateAnimation(0F, 0F, (-view.height).toFloat(), 0F)
-            animate.setDuration(500)
-            animate.setFillAfter(true)
+            animate.duration = 500
+            animate.fillAfter = true
             view.startAnimation(animate)
         }
 
@@ -376,16 +262,16 @@ object Utils  {
         fun slideToTopHeader(view: View) {
             Log(TAG, " " + view.height)
             val animate = TranslateAnimation(0F, 0F, 0F, (-view.height).toFloat())
-            animate.setDuration(500)
-            animate.setFillAfter(true)
+            animate.duration = 500
+            animate.fillAfter = true
             view.startAnimation(animate)
         }
 
         // To animate view slide out from top to bottom
         fun slideToBottomFooter(view: View) {
             val animate = TranslateAnimation(0F, 0F, 0F, view.height.toFloat())
-            animate.setDuration(500)
-            animate.setFillAfter(true)
+            animate.duration = 500
+            animate.fillAfter = true
             view.startAnimation(animate)
         }
 
@@ -393,8 +279,8 @@ object Utils  {
         fun slideToTopFooter(view: View) {
             Log(TAG, " " + view.getHeight())
             val animate = TranslateAnimation(0F, 0F, view.width.toFloat(), 0F)
-            animate.setDuration(500)
-            animate.setFillAfter(true)
+            animate.duration = 500
+            animate.fillAfter = true
             view.startAnimation(animate)
         }
 
@@ -591,11 +477,6 @@ object Utils  {
             return false
         }
 
-        fun objectToHashMap(items: PurchaseData?): MutableMap<String?, Any?>? {
-            val type = object : TypeToken<MutableMap<String?, Any?>?>() {}.type
-            return Gson().fromJson(Gson().toJson(items), type)
-        }
-
         fun onDeleteTemporaryFile() {
             try {
                 val rootDataDir: File? = SuperSafeApplication.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -632,7 +513,7 @@ object Utils  {
         fun getAvailableSpaceInBytes(): Long {
             var availableSpace = -1L
             val stat = StatFs(Environment.getExternalStorageDirectory().path)
-            availableSpace = stat.getAvailableBlocks().toLong()!! * stat.getBlockSize().toLong()!!
+            availableSpace = stat.availableBlocksLong * stat.blockSizeLong
             return availableSpace
         }
 
@@ -661,15 +542,11 @@ object Utils  {
         }
 
         fun isExistingFakePin(pin: String?, currentPin: String?): Boolean {
-            return if (pin == currentPin) {
-                true
-            } else false
+            return pin == currentPin
         }
 
         fun isExistingRealPin(pin: String?, currentPin: String?): Boolean {
-            return if (pin == currentPin) {
-                true
-            } else false
+            return pin == currentPin
         }
 
         fun onCheckNewVersion() {
@@ -847,7 +724,7 @@ object Utils  {
         /*Get the first of item data*/
         fun getArrayOfIndexHashMap(mMapDelete: MutableMap<String, ItemModel>?): ItemModel? {
             if (mMapDelete != null) {
-                if (mMapDelete.size > 0) {
+                if (mMapDelete.isNotEmpty()) {
                     val model: ItemModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
                     Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                     return model
@@ -858,12 +735,10 @@ object Utils  {
 
         /*Get the first of category data*/
         fun getArrayOfIndexCategoryHashMap(mMapDelete: MutableMap<String, MainCategoryModel>): MainCategoryModel? {
-            if (mMapDelete != null) {
-                if (mMapDelete.size > 0) {
-                    val model: MainCategoryModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
-                    Log(TAG, "Object need to be deleting " + Gson().toJson(model))
-                    return model
-                }
+            if (mMapDelete.size > 0) {
+                val model: MainCategoryModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
+                Log(TAG, "Object need to be deleting " + Gson().toJson(model))
+                return model
             }
             return null
         }
@@ -872,7 +747,7 @@ object Utils  {
         fun deletedIndexOfCategoryHashMap(itemModel: MainCategoryModel?, map: MutableMap<String, MainCategoryModel>?): Boolean {
             try {
                 if (map != null) {
-                    if (map.size > 0) {
+                    if (map.isNotEmpty()) {
                         itemModel?.unique_id?.let {
                             map.remove(it)
                         }
@@ -929,7 +804,7 @@ object Utils  {
         fun deletedIndexOfHashMap(itemModel: ItemModel?, map: MutableMap<String, ItemModel>?): Boolean {
             try {
                 if (map != null) {
-                    if (map.size > 0) {
+                    if (map.isNotEmpty()) {
                         itemModel?.unique_id?.let {
                             map.remove(it)
                         }
@@ -956,7 +831,7 @@ object Utils  {
         /*Get the first of data for import*/
         fun getArrayOfIndexHashMapImport(mMapDelete: MutableMap<String, ImportFilesModel>?): ImportFilesModel? {
             if (mMapDelete != null) {
-                if (mMapDelete.size > 0) {
+                if (mMapDelete.isNotEmpty()) {
                     val model: ImportFilesModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
                     Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                     return model
@@ -969,7 +844,7 @@ object Utils  {
         fun deletedIndexOfHashMapImport(itemModel: ImportFilesModel?, map: MutableMap<String, ImportFilesModel>?): Boolean {
             try {
                 if (map != null) {
-                    if (map.size > 0) {
+                    if (map.isNotEmpty()) {
                         itemModel?.unique_id?.let {
                             map.remove(it)
                         }
@@ -997,11 +872,11 @@ object Utils  {
         val mListLocal: List<ItemModel>? = SQLHelper.getListItemId(true,false)
         /*Convert list to hash-map*/
         val mMap: Map<String?, ItemModel>? = mSyncedList.associateBy({it.items_id}, {it})
-        Utils.Log(TAG,"checking item ${mListLocal?.size}")
+        Log(TAG,"checking item ${mListLocal?.size}")
         mListLocal?.let {
             for (index in it) {
                 val mValue: ItemModel? = mMap?.get(index.items_id)
-                Utils.Log(TAG,"checking item delete...")
+                Log(TAG,"checking item delete...")
                 if (mValue == null) {
                     mListResult.add(index)
                 }
@@ -1027,7 +902,7 @@ object Utils  {
                 }
             }
         }
-        Utils.Log(TAG,"checking category ${mListResult?.size}")
+        Log(TAG,"checking category ${mListResult?.size}")
         return mListResult
     }
 
@@ -1064,16 +939,14 @@ object Utils  {
         fun createDirectory(path: String?): Boolean {
             val directory = File(path)
             if (directory.exists()) {
-                Utils.Log(TAG, "Directory '$path' already exists")
+                Log(TAG, "Directory '$path' already exists")
                 return false
             }
             return directory.mkdirs()
         }
 
         fun isNotEmptyOrNull(value: String?): Boolean {
-            return if (value == null || value == "" || value == "null") {
-                false
-            } else true
+            return !(value == null || value == "" || value == "null")
         }
 
         fun getCheckedList(mList: MutableList<ItemModel>): MutableList<ItemModel> {
@@ -1153,10 +1026,10 @@ object Utils  {
             bm.compress(Bitmap.CompressFormat.JPEG, 90, out)
             out.flush()
             out.close()
-            Utils.Log(TAG, "Created file successfully")
+            Log(TAG, "Created file successfully")
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
-            Utils.Log(TAG, "Could not create file")
+            Log(TAG, "Could not create file")
         }
     }
 
@@ -1173,9 +1046,7 @@ object Utils  {
         }
 
         fun isRealCheckedOut(orderId: String): Boolean {
-            return if (orderId.contains("GPA")) {
-                true
-            } else false
+            return orderId.contains("GPA")
         }
 
         fun setCheckoutItems(checkoutItems: CheckoutItems?) {
@@ -1219,7 +1090,7 @@ object Utils  {
             return true
         }
 
-        fun isAllowRequestDriveApis(): Boolean {
+    private fun isAllowRequestDriveApis(): Boolean {
             val mUser = getUserInfo()
             if (mUser != null) {
                 if (mUser.driveConnected) {
@@ -1235,8 +1106,8 @@ object Utils  {
                     }
                 }
             }
-            return false
-        }
+        return false
+    }
 
     fun isConnectedToGoogleDrive(): Boolean {
         val mAuthor: User? = getUserInfo()
@@ -1301,7 +1172,7 @@ object Utils  {
     /*Delete hash map after migrated item*/
     fun getArrayOfMigrationIndexHashMap(mMapDelete: MutableMap<String, MigrationModel>?): MigrationModel? {
         if (mMapDelete != null) {
-            if (mMapDelete.size > 0) {
+            if (mMapDelete.isNotEmpty()) {
                 val model: MigrationModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
                 Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                 return model

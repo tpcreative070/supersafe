@@ -124,10 +124,10 @@ class ResetPinAct : BaseVerifyPinActivity(), BaseView<EmptyModel>, TextView.OnEd
             EnumStatus.REQUEST_CODE -> {
                 btnSendRequest?.setText(getString(R.string.send_verification_code))
                 btnSendRequest?.isEnabled = true
-                Utils.showGotItSnackbar(tvStep1!!, R.string.request_code_occurred_error)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.request_code_occurred_error))
             }
             EnumStatus.VERIFY -> {
-                Utils.showGotItSnackbar(tvStep1!!, R.string.verify_occurred_error)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.verify_occurred_error))
             }
         }
     }

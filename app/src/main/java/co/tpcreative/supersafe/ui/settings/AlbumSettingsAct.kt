@@ -315,7 +315,9 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                                         SingletonPrivateFragment.getInstance()?.onUpdateView()
                                         dialog.dismiss()
                                     } else {
-                                        Utils.showInfoSnackbar(view!!, R.string.wrong_password, true)
+                                        activity?.let {
+                                            Utils.onBasicAlertNotify(it,getString(R.string.key_alert),getString(R.string.wrong_password))
+                                        }
                                         dialog.getInputField().setText("")
                                     }
                                 } else {

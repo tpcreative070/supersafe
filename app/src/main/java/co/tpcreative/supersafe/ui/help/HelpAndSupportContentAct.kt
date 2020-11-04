@@ -78,7 +78,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
         when (status) {
             EnumStatus.SEND_EMAIL -> {
                 onStopProgressing()
-                Utils.showGotItSnackbar(currentFocus!!, R.string.send_email_failed)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.send_email_failed))
                 edtSupport?.setText("")
             }
             else -> Utils.Log(TAG,"Nothing")
@@ -104,7 +104,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
             }
             EnumStatus.SEND_EMAIL -> {
                 onStopProgressing()
-                Utils.showInfoSnackbar(getCurrentFocus()!!, R.string.thank_you, true)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.thank_you))
                 edtSupport?.setText("")
             }
             else -> Utils.Log(TAG,"Nothing")
