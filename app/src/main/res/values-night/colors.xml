@@ -21,9 +21,57 @@
     <color name="material_gray_200">@color/material_gray_700</color>
     <color name="material_gray_600">@color/material_gray_500</color>
     <color name="material_gray_800">@color/material_gray_600</color>
+    <color name="private_item">#DAD0D0</color>
+    <color name="me_item">#BAB5B5</color>
+    <color name="material_gray_100">#3A3939</color>
+    <color name="menu_icon">#FFF</color>
 
-<!--    <color name="colorPrimary">#055C5C</color>-->
-<!--    <color name="colorPrimaryDark">#042E2E</color>-->
-<!--    <color name="colorAccent">#986809</color>-->
+    <color name="colorPrimary">#271261</color>
+    <color name="colorPrimaryDark">#160542</color>
+    <color name="colorAccent">#105580</color>
+
+    <color name="primaryColorPink">#C55279</color>
+    <color name="primaryLightColorPink">#C191A2</color>
+    <color name="primaryDarkColorPink">#B8325F</color>
+
+    <color name="primaryColorPurple">#7C208C</color>
+    <color name="primaryLightColorPurple">#9861A1</color>
+    <color name="primaryDarkColorPurple">#4E1467</color>
+
+    <color name="primaryColorDeepPurple">#502E8E</color>
+    <color name="primaryLightColorDeepPurple">#765DA3</color>
+    <color name="primaryDarkColorDeepPurple">#331D6A</color>
+
+    <color name="primaryColorCyan">#017B8A</color>
+    <color name="primaryLightColorCyan">#4099A8</color>
+    <color name="primaryDarkColorCyan">#013740</color>
+
+    <color name="primaryColorTeal">#014E45</color>
+    <color name="primaryLightColorTeal">#2F6E63</color>
+    <color name="primaryDarkColorTeal">#00251F</color>
+
+    <color name="primaryColorLightGreen">#699337</color>
+    <color name="primaryLightColorLightGreen">#83976C</color>
+    <color name="primaryDarkColorLightGreen">#39571F</color>
+
+    <color name="primaryColorLime">#899329</color>
+    <color name="primaryLightColorLime">#7F8166</color>
+    <color name="primaryDarkColorLime">#535514</color>
+
+    <color name="primaryColorAmber">#B88C06</color>
+    <color name="primaryLightColorAmber">#AFA178</color>
+    <color name="primaryDarkColorAmber">#C67E03</color>
+
+    <color name="primaryColorBrown">#533A31</color>
+    <color name="primaryLightColorBrown">#8F8783</color>
+    <color name="primaryDarkColorBrown">#2B1D19</color>
+
+    <color name="primaryColorGray">#686767</color>
+    <color name="primaryLightColorGray">#979595</color>
+    <color name="primaryDarkColorGray">#2C2C2C</color>
+
+    <color name="primaryColorBlueGray">#364750</color>
+    <color name="primaryLightColorBlueGray">#91979A</color>
+    <color name="primaryDarkColorBlueGray">#1C2529</color>
 
 </resources>

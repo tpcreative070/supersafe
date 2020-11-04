@@ -3,8 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <androidx.cardview.widget.CardView
+        android:layout_margin="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        app:cardCornerRadius="4dp"
+        android:layout_height="wrap_content">
+
         <RelativeLayout
-            android:background="@drawable/bg_rl_rounded_none_color"
             android:id="@+id/rlHome"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -28,7 +37,7 @@
                     android:layout_height="@dimen/finger_icon"/>
             </RelativeLayout>
             <RelativeLayout
-                android:background="@color/white"
+                android:background="@color/private_item"
                 android:id="@+id/llHeader"
                 android:layout_below="@+id/rlSlider"
                 android:layout_centerInParent="true"
@@ -60,4 +69,5 @@
                     app:srcCompat="@drawable/ic_more_vert_black_100dp"/>
             </RelativeLayout>
         </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.services
+
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -116,7 +117,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onGetUserInfo() {
         Utils.Log(TAG, "onGetUserInfo 1")
-        if(isCheckNull(view(),EnumFunc.GET_USER_INFO)){
+        if (isCheckNull(view(), EnumFunc.GET_USER_INFO)) {
             return
         }
         val view = view()
@@ -146,12 +147,12 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         val mCode = (throwable as HttpException?)?.response()?.code()
                         try {
                             val mMessage = mBody?.string()
-                            val mObject = Gson().fromJson(mMessage,BaseResponse::class.java)
+                            val mObject = Gson().fromJson(mMessage, BaseResponse::class.java)
                             if (mCode == 401) {
                                 Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG, "error " +mObject.responseMessage)
+                            Utils.Log(TAG, "error " + mObject.responseMessage)
                             Utils.Log(TAG, Gson().toJson(mObject))
                         } catch (e: IOException) {
                             e.printStackTrace()
@@ -354,7 +355,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                             } else {
                                 view.onError(EnumStatus.GET_DRIVE_ABOUT.name + " - Error null ", EnumStatus.REQUEST_ACCESS_TOKEN)
                             }
-                            Utils.Log(TAG,mObject?.toJson())
+                            Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
                             e.printStackTrace()
                             Utils.Log(TAG, "Exception....")
@@ -485,11 +486,11 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                 Utils.Log(TAG, "code $mCode")
                                 ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
-                            Utils.Log(TAG,""+mObject?.toJson())
-                            view.onError("" +mObject?.toJson(), EnumStatus.CATEGORIES_SYNC)
+                            Utils.Log(TAG, "" + mObject?.toJson())
+                            view.onError("" + mObject?.toJson(), EnumStatus.CATEGORIES_SYNC)
                         } catch (e: IOException) {
                             e.printStackTrace()
-                            view.onError(""+e.message, EnumStatus.CATEGORIES_SYNC)
+                            view.onError("" + e.message, EnumStatus.CATEGORIES_SYNC)
                         }
                     } else {
                         Utils.Log(TAG, "Can not call " + throwable?.message)
@@ -615,7 +616,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                 ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "Error updated items ${mObject?.toJson()}")
-                            view.onError(""+mObject?.toJson(), EnumStatus.UPDATE)
+                            view.onError("" + mObject?.toJson(), EnumStatus.UPDATE)
                         } catch (e: IOException) {
                             e.printStackTrace()
                             view.onError("" + e.message, EnumStatus.UPDATE)
@@ -645,7 +646,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         items.isSyncOwnServer = true
         Utils.Log(TAG, "system access token : " + Utils.getAccessToken())
         val entityModel: ItemModel? = SQLHelper.getItemById(items.items_id)
-        if (entityModel==null){
+        if (entityModel == null) {
             view?.onError("no user", EnumStatus.ADD_ITEMS)
             return
         }
@@ -767,7 +768,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribe(Consumer { onResponse: Response<DriveAbout> ->
-                    Utils.Log(TAG, "Deleted cloud response code " + onResponse.code() +"-action-"+items.deleteAction)
+                    Utils.Log(TAG, "Deleted cloud response code " + onResponse.code() + "-action-" + items.deleteAction)
                     if (onResponse.code() == 204) {
                         view?.onSuccessful("Deleted successfully", EnumStatus.DELETED_CLOUD_ITEM_SUCCESSFULLY)
                     } else if (onResponse.code() == 404) {
@@ -941,10 +942,10 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     }
                                 }
                             }
-                            if (nextPage == "0"){
-                                view.onShowObjects(SyncDataModel(ArrayList(),listCategories,true))
-                            }else{
-                                view.onShowObjects(SyncDataModel(null,listCategories,true))
+                            if (nextPage == "0") {
+                                view.onShowObjects(SyncDataModel(ArrayList(), listCategories, true))
+                            } else {
+                                view.onShowObjects(SyncDataModel(null, listCategories, true))
                             }
                             view.onSuccessful("", EnumStatus.SYNC_READY)
                         } else {
@@ -954,7 +955,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                                     mList.add(ItemModel(index, EnumStatus.DOWNLOAD))
                                 }
                             }
-                            view.onShowObjects(SyncDataModel(mList,null,false))
+                            view.onShowObjects(SyncDataModel(mList, null, false))
                             view.onSuccessful(mData.nextPage!!, EnumStatus.LOAD_MORE)
                         }
                     }
@@ -998,7 +999,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             listener?.onError("No Access token", EnumStatus.DOWNLOAD)
         }
         val request = DownloadFileRequest()
-        var id : String? = ""
+        var id: String? = ""
         if (items.isOriginalGlobalId) {
             id = items.global_id
             request.file_name = items.originalName
@@ -1101,13 +1102,16 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                         /*Not Found file*/
                         if (code == 404) {
                             Utils.Log(TAG, "isDelete local id error")
-                            onDeleteOwnSystem(items, object : ServiceManager.BaseListener<EmptyModel>{
+                            onDeleteOwnSystem(items, object : ServiceManager.BaseListener<EmptyModel> {
                                 override fun onShowListObjects(list: MutableList<EmptyModel>) {
                                 }
+
                                 override fun onShowObjects(`object`: EmptyModel) {
                                 }
+
                                 override fun onError(message: String?, status: EnumStatus) {
                                 }
+
                                 override fun onSuccessful(message: String?, status: EnumStatus) {
                                 }
                             })
@@ -1158,10 +1162,12 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 Utils.Log(TAG, "Progressing uploaded $percentage%")
                 listener?.onProgressUpdate(percentage)
             }
+
             override fun onError() {
                 Utils.Log(TAG, "onError")
                 listener?.onError("Error upload", EnumStatus.REQUEST_NEXT_UPLOAD)
             }
+
             override fun onFinish() {
                 listener?.onFinish()
                 Utils.Log(TAG, "onFinish")
@@ -1175,6 +1181,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 Utils.Log(TAG, "response successful :" + Gson().toJson(response?.body()))
                 response?.body()?.let { listener?.onResponseData(it) }
             }
+
             override fun onFailure(call: Call<DriveResponse?>?, t: Throwable?) {
                 Utils.Log(TAG, "response failed :" + t?.message)
                 listener?.onError("Error upload" + t?.message, EnumStatus.REQUEST_NEXT_UPLOAD)
@@ -1368,7 +1375,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     } else if (code == 202) {
                         Utils.Log(TAG, "code $code")
                         view.onSuccessful("successful", EnumStatus.SEND_EMAIL)
-                        Utils.getUserInfo()?.let{
+                        Utils.getUserInfo()?.let {
                             it.isWaitingSendMail = false
                             Utils.setUserPreShare(it)
                             ServiceManager.getInstance()?.onDismissServices()
@@ -1383,6 +1390,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     e.printStackTrace()
                 }
             }
+
             override fun onFailure(call: Call<ResponseBody?>?, t: Throwable) {
                 Utils.Log(TAG, "response failed :" + t.message)
             }
@@ -1494,16 +1502,16 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
             Utils.Log(TAG, "View is null " + status.name)
             return true
         }
-        when(status){
-            EnumFunc.GET_USER_INFO ->{
-                Utils.Log(TAG,status.name)
+        when (status) {
+            EnumFunc.GET_USER_INFO -> {
+                Utils.Log(TAG, status.name)
                 val mUser: User = Utils.getUserInfo() ?: return true
                 mUser.author ?: return true
             }
             EnumFunc.UPDATE_USER_TOKEN -> {
                 Utils.getUserInfo() ?: return true
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
         return false
     }

@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.controller
+
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
@@ -118,11 +119,11 @@ class ServiceManager : BaseServiceView<Any?> {
             return
         }
         Utils.Log(TAG, "onPreparingSyncData...???")
-        if (Utils.getAccessToken()==null){
+        if (Utils.getAccessToken() == null) {
             Utils.Log(TAG, "Need to sign in with Google drive first")
             return
         }
-        if (!Utils.isConnectedToGoogleDrive()){
+        if (!Utils.isConnectedToGoogleDrive()) {
             Utils.Log(TAG, "Need to connect to Google drive")
             RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
             return
@@ -199,6 +200,7 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.onGetListSync(next, object : BaseListener<SyncDataModel> {
                 override fun onShowListObjects(list: MutableList<SyncDataModel>) {
                 }
+
                 override fun onShowObjects(`object`: SyncDataModel) {
                     `object`.list?.let {
                         mDownloadList.addAll(it)
@@ -847,9 +849,9 @@ class ServiceManager : BaseServiceView<Any?> {
                                 val mSize = Size(600, 600)
                                 val ca = CancellationSignal()
                                 thumbnail = ThumbnailUtils.createVideoThumbnail(File(mPath), mSize, ca)
-                            }else{
+                            } else {
                                 thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
-                                    MediaStore.Video.Thumbnails.MINI_KIND)
+                                        MediaStore.Video.Thumbnails.MINI_KIND)
                             }
                             val exifInterface = ExifInterface(mPath)
                             val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
@@ -1286,6 +1288,7 @@ class ServiceManager : BaseServiceView<Any?> {
                         subscriber?.onNext(response)
                         subscriber?.onComplete()
                     }
+
                     override fun onSuccessful(position: Int) {}
                 })
             } catch (e: Exception) {
@@ -1568,10 +1571,10 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     /*Request category delete synced local*/
-    fun onCategoryDeleteSyncedLocal(mList: List<MainCategoryModel>){
+    fun onCategoryDeleteSyncedLocal(mList: List<MainCategoryModel>) {
         val mResultList = Utils.checkCategoryDeleteSyncedLocal(mList)
         mResultList.let {
-            for (index in it){
+            for (index in it) {
                 SQLHelper.deleteCategory(index)
             }
             Utils.Log(TAG, Gson().toJson(mList))
@@ -1580,10 +1583,10 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     /*Request item delete synced local*/
-    fun onItemDeleteSyncedLocal(mList: List<ItemModel>){
+    fun onItemDeleteSyncedLocal(mList: List<ItemModel>) {
         val mResultList = Utils.checkItemDeleteSyncedLocal(mList)
         mResultList.let {
-            for (index in it){
+            for (index in it) {
                 SQLHelper.deleteItem(index)
                 index.items_id?.let { it1 ->
                     Utils.deleteFolderOfItemId(it1)

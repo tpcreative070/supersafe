@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#371989</color>
     <color name="colorPrimaryDark">#2d0b89</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#0091EA</color>
     <color name="background_audio_video">#1DE9B6</color>
 
     <color name="text_numberpressed">#fff</color>
@@ -48,6 +48,9 @@
     <color name="blue">#1E88E5</color>
     <color name="blue_dark">#01579B</color>
     <color name="white">#FFF</color>
+    <color name="menu_icon">#FFF</color>
+    <color name="private_item">#FFF</color>
+    <color name="me_item">#FFF</color>
     <color name="colorDark">#000000</color>
     <color name="colorBlue">#1DE9B6</color>
     <color name="colorBlueDark">#76FF03</color>

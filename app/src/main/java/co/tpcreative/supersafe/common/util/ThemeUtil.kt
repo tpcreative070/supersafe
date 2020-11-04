@@ -63,7 +63,7 @@ object ThemeUtil {
 
     fun getThemeList(): ArrayList<ThemeApp> {
         val themeAppArrayList: ArrayList<ThemeApp> = ArrayList<ThemeApp>()
-        themeAppArrayList.add(ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA"))
+        themeAppArrayList.add(ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent, "#0091EA"))
         themeAppArrayList.add(ThemeApp(1, R.color.primaryColorPink, R.color.primaryDarkColorPink, R.color.secondaryColorPink, "#448AFF"))
         themeAppArrayList.add(ThemeApp(2, R.color.primaryColorPurple, R.color.primaryDarkColorPurple, R.color.secondaryDarkColorPurple, "#b4c320"))
         themeAppArrayList.add(ThemeApp(3, R.color.primaryColorDeepPurple, R.color.primaryDarkColorDeepPurple, R.color.primaryColorPurple, "#9C27B0"))
