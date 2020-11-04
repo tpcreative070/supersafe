@@ -22,6 +22,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.controller.RefreshTokenSingleton
 import co.tpcreative.supersafe.model.*
 import com.google.android.gms.auth.GoogleAuthException
 import com.google.android.gms.auth.GoogleAuthUtil
@@ -301,7 +302,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                                     Utils.Log(TAG, "onError " + message + " - " + status?.name)
                                     when (status) {
                                         EnumStatus.REQUEST_ACCESS_TOKEN -> {
-                                            revokeAccess()
+                                            RefreshTokenSingleton.getInstance().onStart(this::class.java)
                                         }
                                         else -> Utils.Log(TAG,"Nothing")
                                     }
@@ -379,6 +380,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             if (mUser != null) {
                 mUser.driveConnected = false
                 Utils.setUserPreShare(mUser)
+                PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), false)
             }
             onDriveSignOut()
         }
@@ -409,7 +411,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     protected fun onCheckRequestSignOut() {
         val isRequest: Boolean = PrefsController.getBoolean(getString(R.string.key_request_sign_out_google_drive), false)
         if (isRequest) {
-            revokeAccess()
+            signOut()
         }
     }
 

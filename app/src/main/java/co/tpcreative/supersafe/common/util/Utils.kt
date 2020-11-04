@@ -223,7 +223,7 @@ object Utils  {
         }
 
         fun getHexCode(value: String): String {
-            return Base64.encodeBase64String(value.toUpperCase(Locale.ROOT).toByteArray(Charsets.UTF_8))
+            return String(Base64.encodeBase64(value.toUpperCase(Locale.ROOT).toByteArray(Charsets.UTF_8)));
         }
 
         fun onExportAndImportFile(input: String, output: String, ls: ServiceManager.ServiceManagerSyncDataListener) {
@@ -277,7 +277,7 @@ object Utils  {
 
         // To animate view slide out from bottom to top
         fun slideToTopFooter(view: View) {
-            Log(TAG, " " + view.getHeight())
+            Log(TAG, " " + view.height)
             val animate = TranslateAnimation(0F, 0F, view.width.toFloat(), 0F)
             animate.duration = 500
             animate.fillAfter = true
@@ -285,7 +285,7 @@ object Utils  {
         }
 
         fun stringToHex(content: String): String? {
-            return Base64.encodeBase64String(content.toByteArray(Charsets.UTF_8))
+            return String(Base64.encodeBase64(content.toByteArray(Charsets.UTF_8)))
         }
 
         fun hexToString(hex: String): String? {
@@ -1060,9 +1060,9 @@ object Utils  {
         }
 
         fun isPremium(): Boolean {
-        if (SuperSafeApplication.getInstance().isDebugPremium()){
-            return true
-        }
+            if (SuperSafeApplication.getInstance().isDebugPremium()){
+                return true
+            }
             val mCheckout: CheckoutItems? = getCheckoutItems()
             if (mCheckout != null) {
                 if (mCheckout.isPurchasedLifeTime || mCheckout.isPurchasedOneYears || mCheckout.isPurchasedSixMonths) {

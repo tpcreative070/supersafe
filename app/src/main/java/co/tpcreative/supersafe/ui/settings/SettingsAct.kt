@@ -180,40 +180,24 @@ class SettingsAct : BaseActivity() {
                         Navigator.onMoveToChangePin(getContext()!!, EnumPinAction.NONE)
                         Utils.Log(TAG, "Action here")
                     } else if (preference.key == getString(R.string.key_theme)) {
-                        if (BuildConfig.DEBUG) {
-                            Navigator.onMoveThemeSettings(activity!!)
-                            return@OnPreferenceClickListener true
-                        }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
                         Navigator.onMoveThemeSettings(activity!!)
                     } else if (preference.key == getString(R.string.key_break_in_alert)) {
-                        if (BuildConfig.DEBUG) {
-                            Navigator.onMoveBreakInAlerts(context!!)
-                            return@OnPreferenceClickListener true
-                        }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
                         Navigator.onMoveBreakInAlerts(context!!)
                     } else if (preference.key == getString(R.string.key_fake_pin)) {
-                        if (BuildConfig.DEBUG) {
-                            Navigator.onMoveFakePin(context!!)
-                            return@OnPreferenceClickListener true
-                        }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
                         }
                         Navigator.onMoveFakePin(context!!)
                     } else if (preference.key == getString(R.string.key_secret_door)) {
-                        if (BuildConfig.DEBUG) {
-                            Navigator.onMoveSecretDoor(context!!)
-                            return@OnPreferenceClickListener true
-                        }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
@@ -237,10 +221,6 @@ class SettingsAct : BaseActivity() {
                             }
                         }
                     } else if (preference.key == getString(R.string.key_album_lock)) {
-                        if (BuildConfig.DEBUG) {
-                            Navigator.onMoveUnlockAllAlbums(context!!)
-                            return@OnPreferenceClickListener true
-                        }
                         if (!Utils.isPremium()) {
                             onShowPremium()
                             return@OnPreferenceClickListener true
