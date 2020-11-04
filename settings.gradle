@@ -12,7 +12,6 @@ include ':app',
         'taptargetviewlibrary',
         'vusikviewlibrary',
         'simplerecyclerviewlibrary',
-        'dialogsuccessprogresslibrary',
         'library-circleprogress',
         'material-edit-text',
         'library-hidden-camera'

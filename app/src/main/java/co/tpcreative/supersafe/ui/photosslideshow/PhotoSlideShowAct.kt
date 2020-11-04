@@ -10,11 +10,11 @@ import android.view.*
 import android.widget.*
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import cn.pedant.SweetAlert.SweetAlertDialog
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseView
@@ -26,7 +26,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.github.chrisbanes.photoview.OnPhotoTapListener
 import com.github.chrisbanes.photoview.PhotoView
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_photos_slideshow.*
@@ -53,7 +52,6 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
     var isProgressing = false
     var position = 0
     private var photoView: PhotoView? = null
-    var mDialogProgress: SweetAlertDialog? = null
     var handler: Handler? = null
     val delay = 2000 //milliseconds
     private var page = 0
@@ -109,7 +107,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                             }
                         }
                         EnumStatus.EXPORT -> {
-                            runOnUiThread(Runnable { Toast.makeText(this@PhotoSlideShowAct, "Exported at " + SuperSafeApplication.Companion.getInstance().getSuperSafePicture(), Toast.LENGTH_LONG).show() })
+                            Utils.onBasicAlertNotify(this,getString(R.string.key_alert),"Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
                         }
                     }
                 } catch (e: Exception) {
@@ -117,19 +115,12 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                 }
             }
             EnumStatus.DOWNLOAD_COMPLETED -> {
-                mDialogProgress?.setTitleText("Success!")
-                        ?.setConfirmText("OK")
-                        ?.changeAlertType(SweetAlertDialog.SUCCESS_TYPE)
-                mDialogProgress?.setConfirmClickListener { sweetAlertDialog ->
-                    sweetAlertDialog?.dismiss()
-                    onShowDialog(EnumStatus.EXPORT, position)
-                }
+                SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+                onShowDialog(EnumStatus.EXPORT, position)
                 Utils.Log(TAG, " already sync")
             }
             EnumStatus.DOWNLOAD_FAILED -> {
-                mDialogProgress?.setTitleText("No connection, Try again")
-                        ?.setConfirmText("OK")
-                        ?.changeAlertType(SweetAlertDialog.ERROR_TYPE)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.no_internet_connection))
             }
         }
     }
@@ -290,7 +281,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
     }
 
     override fun onClick(view: View?) {
-        position = view_pager?.getCurrentItem()!!
+        position = view_pager?.currentItem!!
         when (view?.id) {
             R.id.imgArrowBack -> {
                 if (!isHide){

@@ -292,11 +292,12 @@
     <string name="set_custom_covers">Set custom cover</string>
     <string name="enabled">Enabled</string>
     <string name="fake_pin">Create a second PIN or pattern that opens to a decoy SuperSafe</string>
-    <string name="secret_door">Disguise SuperSafe as a different app. Simply press and hold on the Supersafe logo to bring up the lock screen.</string>
+    <string name="secret_door">Disguise SuperSafe as a different app. Simply press and hold on the SuperSafe logo to bring up the lock screen.</string>
     <string name="recent_alerts">Recent alerts</string>
     <string name="create_fake_pin">Create Fake PIN</string>
     <string name="change_fake_pin">Change Fake PIN</string>
     <string name="time_ago_prefix"></string>
+    <string name="key_alert">Alert</string>
     <string name="time_ago_suffix">ago</string>
     <string name="time_ago_seconds">less than a minute</string>
     <string name="time_ago_minute">about a minute</string>

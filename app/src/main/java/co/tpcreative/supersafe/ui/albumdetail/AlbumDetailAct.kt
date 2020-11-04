@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import cn.pedant.SweetAlert.SweetAlertDialog
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
 import co.tpcreative.supersafe.common.controller.ServiceManager
@@ -22,6 +21,7 @@ import org.greenrobot.eventbus.Subscribe
 import java.util.*
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -45,7 +45,6 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     var countSelected = 0
     var isSelectAll = false
     var dialog: AlertDialog? = null
-    var mDialogProgress: SweetAlertDialog? = null
     var mMenuItem: MenuItem? = null
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
@@ -98,7 +97,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                             }
                         }
                         EnumStatus.EXPORT -> {
-                            runOnUiThread(Runnable { Toast.makeText(this@AlbumDetailAct, "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture(), Toast.LENGTH_LONG).show() })
+                            Utils.onBasicAlertNotify(this,getString(R.string.key_alert),"Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
                         }
                         else -> Utils.Log(TAG,"Nothing")
                     }
@@ -107,27 +106,20 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 }
             }
             EnumStatus.DOWNLOAD_COMPLETED -> {
-                mDialogProgress?.setTitleText("Success!")
-                        ?.setConfirmText("OK")
-                        ?.changeAlertType(SweetAlertDialog.SUCCESS_TYPE)
-                mDialogProgress?.setConfirmClickListener { sweetAlertDialog ->
-                    sweetAlertDialog?.dismiss()
-                    var i = 0
-                    while (i < presenter?.mList?.size!!) {
-                        val items: ItemModel? = presenter?.mList?.get(i)
-                        if (items?.isChecked!!) {
-                            items.isSaver = false
-                        }
-                        i++
+                SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+                var i = 0
+                while (i < presenter?.mList?.size!!) {
+                    val items: ItemModel? = presenter?.mList?.get(i)
+                    if (items?.isChecked!!) {
+                        items.isSaver = false
                     }
-                    onExport()
+                    i++
                 }
+                onExport()
                 Utils.Log(TAG, "already sync ")
             }
             EnumStatus.DOWNLOAD_FAILED -> {
-                mDialogProgress?.setTitleText("No connection, Try again")
-                        ?.setConfirmText("OK")
-                        ?.changeAlertType(SweetAlertDialog.ERROR_TYPE)
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.no_internet_connection))
             }
             else -> Utils.Log(TAG,"Nothing")
         }
@@ -523,6 +515,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                                     storage?.deleteFile(items.getOriginal())
                                 }
                             }
+                            else -> Utils.Log(TAG,"Nothing")
                         }
                         onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER, i)
                     }
@@ -693,7 +686,6 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             }
         }
     }
-
     companion object {
     }
 }

@@ -10,11 +10,11 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import cn.pedant.SweetAlert.SweetAlertDialog
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ConvertUtils
@@ -387,10 +387,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
 }
 
 fun AlbumDetailAct.onDialogDownloadFile() {
-    mDialogProgress = SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-            .setTitleText(getString(R.string.downloading))
-    mDialogProgress?.show()
-    mDialogProgress?.setCancelable(false)
+    SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.downloading)
 }
 
 /*Download file*/
@@ -473,21 +470,7 @@ fun AlbumDetailAct.initSpeedDial(addActionItems: Boolean) {
 
 fun AlbumDetailAct.onStartProgressing() {
     try {
-        runOnUiThread(Runnable {
-            if (dialog == null) {
-                val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-                dialog = SpotsDialog.Builder()
-                        .setContext(this)
-                        .setDotColor(themeApp?.getAccentColor()!!)
-                        .setMessage(getString(R.string.exporting))
-                        .setCancelable(true)
-                        .build()
-            }
-            if (!dialog!!.isShowing) {
-                dialog?.show()
-                Utils.Log(TAG, "Showing dialog...")
-            }
-        })
+       SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.exporting)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -495,14 +478,10 @@ fun AlbumDetailAct.onStartProgressing() {
 
 fun AlbumDetailAct.onStopProgressing() {
     try {
-        runOnUiThread(Runnable {
-            if (dialog != null) {
-                dialog?.dismiss()
-                if (actionMode != null) {
-                    actionMode?.finish()
-                }
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+        if (actionMode != null) {
+            actionMode?.finish()
+        }
     } catch (e: Exception) {
         Utils.Log(TAG, e.message+"")
     }

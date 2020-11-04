@@ -170,9 +170,6 @@ dependencies {
     /*bungeelibrary*/
     //implementation project (':bungeelibrary')
 
-    /*dialogsuccessprogresslibrary*/
-    implementation project(':dialogsuccessprogresslibrary')
-
     /*Circle progress*/
     implementation project(':library-circleprogress')
 

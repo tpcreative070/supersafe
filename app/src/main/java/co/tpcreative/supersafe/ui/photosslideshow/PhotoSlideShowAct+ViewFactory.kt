@@ -1,11 +1,11 @@
 package co.tpcreative.supersafe.ui.photosslideshow
 import android.os.Handler
 import android.os.Looper
-import cn.pedant.SweetAlert.SweetAlertDialog
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -311,10 +311,7 @@ fun PhotoSlideShowAct.onHideView() {
 }
 
 fun PhotoSlideShowAct.onDialogDownloadFile() {
-    mDialogProgress = SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-            .setTitleText(getString(R.string.downloading))
-    mDialogProgress?.show()
-    mDialogProgress?.setCancelable(false)
+    SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.downloading)
 }
 
 fun PhotoSlideShowAct.onRotateBitmap(items: ItemModel?) {

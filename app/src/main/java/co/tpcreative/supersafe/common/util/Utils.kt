@@ -1244,25 +1244,24 @@ object Utils  {
     }
 
     fun onBasicAlertNotify(context: Activity, title: String? = "Warning", message: String) {
+        val theme = ThemeApp.getInstance()?.getThemeInfo()
         Alerter.create(context)
                 .setTitle(title!!)
-                .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
+                .setBackgroundColorInt(ContextCompat.getColor(context, theme?.getAccentColor() ?: R.color.colorAccent))
                 .setText(message)
                 .show()
     }
 
-    fun onAlertNotify(context: Activity, title: String, message: String, listener: UtilsListener){
+    fun onAlertNotify(context: Activity, title: String, message: String, listener: UtilsListener? = null){
+        val theme = ThemeApp.getInstance()?.getThemeInfo()
         Alerter.create(context)
-                .setBackgroundColorInt(ContextCompat.getColor(context, R.color.colorAccent))
+                .setBackgroundColorInt(ContextCompat.getColor(context, theme?.getAccentColor() ?: R.color.colorAccent))
                 .setTitle(title)
                 .setText(message)
                 .setDuration(10000)
                 .addButton("Yes", R.style.AlertButton, View.OnClickListener {
-                    listener.onPositive()
+                    listener?.onPositive()
                 })
-//                .addButton("No", R.style.AlertButton, View.OnClickListener {
-//                    listener.onNegative()
-//                })
                 .show()
     }
 
