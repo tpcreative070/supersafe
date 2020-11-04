@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.model
-
 import co.tpcreative.supersafe.common.entities.ItemEntity
 
 class ItemEntityModel {

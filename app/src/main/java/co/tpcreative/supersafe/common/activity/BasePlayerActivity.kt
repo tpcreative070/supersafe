@@ -33,10 +33,6 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
         }
     }
 
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
-    }
-
     override fun onStop() {
         super.onStop()
         Utils.Log(TAG, "onStop....")
@@ -52,7 +48,7 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
 
     override fun onPause() {
         super.onPause()
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.remove(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
         if (mHomeWatcher != null) {
             Utils.Log(TAG, "Stop home watcher....")
@@ -62,7 +58,7 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
 
     override fun onResume() {
         Utils.Log(TAG, "onResume....")
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.addListener(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
     }
 
@@ -94,10 +90,6 @@ abstract class BasePlayerActivity : AppCompatActivity(), SensorFaceUpDownChangeN
             }
         })
         mHomeWatcher?.startWatch()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 
     override fun onLowMemory() {

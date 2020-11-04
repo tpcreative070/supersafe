@@ -27,7 +27,6 @@ import com.bumptech.glide.Glide
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.snatik.storage.Storage
-import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_album_detail.*
 import kotlinx.android.synthetic.main.activity_album_detail.collapsing_toolbar
 import kotlinx.android.synthetic.main.activity_album_detail.recyclerView
@@ -298,7 +297,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                             i++
                         }
                         onStartProgressing()
-                        ServiceManager.getInstance()?.setmListExport(mListExporting)
+                        ServiceManager.getInstance()?.setListExport(mListExporting)
                         ServiceManager.getInstance()?.onExportingFiles()
                     }
                     EnumStatus.EXPORT -> {
@@ -374,7 +373,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                             i++
                         }
                         onStartProgressing()
-                        ServiceManager.getInstance()?.setmListExport(mListExporting)
+                        ServiceManager.getInstance()?.setListExport(mListExporting)
                         ServiceManager.getInstance()?.onExportingFiles()
                     }
                     EnumStatus.DELETE -> {

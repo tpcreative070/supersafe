@@ -45,9 +45,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
         // if we made it this far, we're open
         mOpened = true
         // notify
-        if (mTransferListener != null) {
-            mTransferListener.onTransferStart(this, dataSpec)
-        }
+        mTransferListener?.onTransferStart(this, dataSpec)
         // report
         return mBytesRemaining
     }
@@ -109,9 +107,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
             mBytesRemaining -= bytesRead.toLong()
         }
         // notify
-        if (mTransferListener != null) {
-            mTransferListener.onBytesTransferred(this, bytesRead)
-        }
+        mTransferListener?.onBytesTransferred(this, bytesRead)
         // report
         return bytesRead
     }
@@ -137,9 +133,7 @@ class EncryptedFileDataSource(cipher: Cipher?, secretKeySpec: SecretKeySpec?, iv
             mInputStream = null
             if (mOpened) {
                 mOpened = false
-                if (mTransferListener != null) {
-                    mTransferListener.onTransferEnd(this)
-                }
+                mTransferListener?.onTransferEnd(this)
             }
         }
     }

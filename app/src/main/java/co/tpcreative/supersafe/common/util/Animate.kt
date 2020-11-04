@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.util
-
 import android.annotation.TargetApi
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build

@@ -43,21 +43,17 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
         super.onCreate(savedInstanceState)
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
     override fun getTheme(): Resources.Theme? {
         val theme: Resources.Theme = super.getTheme()
-        val result: ThemeApp? = ThemeApp.Companion.getInstance()?.getThemeInfo()
+        val result: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (result != null) {
             theme.applyStyle(ThemeUtil.getSlideThemeId(result.getId()), true)
         }
         return theme
-    }
-
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
     }
 
     protected fun onFaceDown(isFaceDown: Boolean) {
@@ -80,7 +76,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
 
     override fun onPause() {
         super.onPause()
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.remove(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
         Utils.Log(TAG, "onPause")
         if (mHomeWatcher != null) {
             Utils.Log(TAG, "Stop home watcher....")
@@ -90,7 +86,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
 
     override fun onResume() {
         Utils.Log(TAG, "Action here........onResume")
-        SensorFaceUpDownChangeNotifier.Companion.getInstance()?.addListener(this)
+        SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
     }
 
@@ -122,10 +118,6 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
             }
         })
         mHomeWatcher?.startWatch()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 
     override fun onLowMemory() {

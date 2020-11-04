@@ -1198,6 +1198,10 @@ object Utils {
         }
         return false
     }
+
+    fun isCameraAvailable(context: Context): Boolean {
+        return context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+    }
 }
 
 interface UtilsListener {

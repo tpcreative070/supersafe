@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.request
-
 import co.tpcreative.supersafe.model.Authorization
 
 class SignUpRequest : Authorization() {

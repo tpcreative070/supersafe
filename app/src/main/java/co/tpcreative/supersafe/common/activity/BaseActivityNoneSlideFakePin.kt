@@ -28,7 +28,7 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
         super.onCreate(savedInstanceState)
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
@@ -48,10 +48,6 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
                 Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }
         }
-    }
-
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
     }
 
     override fun onStop() {
@@ -110,17 +106,13 @@ abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpD
         mHomeWatcher?.startWatch()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     override fun onLowMemory() {
         super.onLowMemory()
         System.gc()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true

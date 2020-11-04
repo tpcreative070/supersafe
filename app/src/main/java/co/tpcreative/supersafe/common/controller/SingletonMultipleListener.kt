@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.controller
 import android.content.Context
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.EnumStatus
 import java.lang.ref.WeakReference
 import java.util.*
@@ -43,7 +42,7 @@ class SingletonMultipleListener private constructor() {
     }
 
     interface Listener {
-        open fun onNotifier(status: EnumStatus?)
+        fun onNotifier(status: EnumStatus?)
     }
 
     companion object {
@@ -52,9 +51,5 @@ class SingletonMultipleListener private constructor() {
             if (mInstance == null) mInstance = SingletonMultipleListener()
             return mInstance
         }
-    }
-
-    init {
-        val applicationContext: Context = SuperSafeApplication.getInstance().getApplicationContext()
     }
 }

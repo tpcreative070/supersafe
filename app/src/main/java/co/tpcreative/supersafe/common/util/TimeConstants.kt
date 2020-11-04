@@ -1,15 +1,5 @@
 package co.tpcreative.supersafe.common.util
-
 import androidx.annotation.IntDef
-
-/**
- * <pre>
- * author: Blankj
- * blog  : http://blankj.com
- * time  : 2017/03/13
- * desc  : constants of time
-</pre> *
- */
 object TimeConstants {
     const val MSEC = 1
     const val SEC = 1000

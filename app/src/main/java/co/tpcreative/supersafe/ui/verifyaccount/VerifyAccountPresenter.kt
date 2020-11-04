@@ -12,7 +12,7 @@ import co.tpcreative.supersafe.common.request.RequestCodeRequest
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest
 import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
-import co.tpcreative.supersafe.common.requestimport.UserRequest
+import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication

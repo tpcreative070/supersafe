@@ -20,7 +20,6 @@ class SingletonScreenLock {
                 val secondsRemaining = millisUntilFinished / 1000
                 getInstance()?.onAttemptTimer("" + secondsRemaining)
             }
-
             override fun onFinish() {
                 Utils.Log(TAG, "Finish :")
                 mCountDownTimer = null

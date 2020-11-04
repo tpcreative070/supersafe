@@ -158,7 +158,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                             }
                         }
                         onStartProgressing()
-                        ServiceManager.getInstance()?.setmListExport(mListExporting)
+                        ServiceManager.getInstance()?.setListExport(mListExporting)
                         ServiceManager.getInstance()?.onExportingFiles()
                     }
                     EnumStatus.EXPORT -> {
@@ -218,7 +218,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
                             }
                         }
                         onStartProgressing()
-                        ServiceManager.getInstance()?.setmListExport(mListExporting)
+                        ServiceManager.getInstance()?.setListExport(mListExporting)
                         ServiceManager.getInstance()?.onExportingFiles()
                     }
                     EnumStatus.DELETE -> {

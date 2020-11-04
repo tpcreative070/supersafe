@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.services
-
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -22,7 +21,7 @@ import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.request.TrackingRequest
 import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
-import co.tpcreative.supersafe.common.requestimport.UserRequest
+import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.response.RootResponse

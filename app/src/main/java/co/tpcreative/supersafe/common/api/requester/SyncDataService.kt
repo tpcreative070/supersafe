@@ -3,10 +3,9 @@ import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.network.Result
 import co.tpcreative.supersafe.common.network.awaitResult
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
-import co.tpcreative.supersafe.common.requestimport.UserRequest
+import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.util.Utils
-import retrofit2.awaitResponse
 
 class SyncDataService(private val apiService: ApiService) {
     suspend fun onListFilesSync(request:SyncItemsRequest, onComplete: (result:RootResponse) -> Unit?, onException: (error:Throwable?) -> Unit){
@@ -29,7 +28,7 @@ class SyncDataService(private val apiService: ApiService) {
         }
     }
 
-    suspend fun onUserInfo(request:UserRequest, onComplete: (result:RootResponse) -> Unit?, onException: (error:Throwable?) -> Unit){
+    suspend fun onUserInfo(request: UserRequest, onComplete: (result:RootResponse) -> Unit?, onException: (error:Throwable?) -> Unit){
         val mResponse = apiService.onUserInfoT(request)?.awaitResult()
         try{
             mResponse?.let {

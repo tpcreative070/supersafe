@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.hiddencamera.HiddenCameraUtils
 import co.tpcreative.supersafe.model.EnumStatus
 import kotlinx.android.synthetic.main.activity_break_in_alerts.*
 import org.greenrobot.eventbus.ThreadMode
@@ -89,7 +88,7 @@ class BreakInAlertsAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.On
         } else {
             recyclerView?.visibility = View.INVISIBLE
         }
-        if (HiddenCameraUtils.isFrontCameraAvailable(this)) {
+        if (Utils.isCameraAvailable(this)) {
             onAddPermissionCamera(b)
         } else {
             showMessage(getString(R.string.error_not_having_camera))

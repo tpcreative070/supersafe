@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.api
 import co.tpcreative.supersafe.common.api.response.BaseResponse
-import co.tpcreative.supersafe.common.network.Result
 import co.tpcreative.supersafe.common.request.*
 import co.tpcreative.supersafe.common.requestimport.*
 import co.tpcreative.supersafe.common.response.DriveResponse

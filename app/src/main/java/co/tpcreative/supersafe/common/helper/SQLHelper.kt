@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.helper
-
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
@@ -87,7 +86,7 @@ object SQLHelper {
         val mResult: MutableList<ItemEntityModel>? = getInstance()?.getRequestUploadData(false)
         if (mResult != null) {
             for (index in mResult) {
-                if (!Utils.isNotEmptyOrNull(index?.categories_id)) {
+                if (!Utils.isNotEmptyOrNull(index.categories_id)) {
                     val categoryModel: MainCategoryModel? = getCategoriesLocalId(index.categories_local_id)
                     if (categoryModel != null) {
                         mList.add(ItemModel(index, categoryModel.categories_id))
@@ -243,7 +242,7 @@ object SQLHelper {
         } else null
     }
 
-    fun getListCategories(isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
+    private fun getListCategories(isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
         try {
             val mList: MutableList<MainCategoryEntityModel>? = getInstance()?.getListCategories(false, false)
             val mData: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
@@ -330,7 +329,7 @@ object SQLHelper {
         return mList
     }
 
-    fun getListCategories(categories_local_id: String?, isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
+    private fun getListCategories(categories_local_id: String?, isDelete: Boolean, isFakePin: Boolean): MutableList<MainCategoryModel>? {
         try {
             val mList: MutableList<MainCategoryEntityModel>? = getInstance()?.getListCategories(categories_local_id, isDelete, isFakePin)
             val mData: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
@@ -380,7 +379,7 @@ object SQLHelper {
             "#E040FB",
             "#9E9E9E")
 
-    fun getMainCategoriesDefault(): MutableMap<String?, MainCategoryModel> {
+    private fun getMainCategoriesDefault(): MutableMap<String?, MainCategoryModel> {
         val map: MutableMap<String?, MainCategoryModel> = HashMap<String?, MainCategoryModel>()
         map[Utils.getHexCode("1234")] = MainCategoryModel("null", Utils.getHexCode("1234"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_main_album)), SuperSafeApplication.getInstance().getString(R.string.key_main_album), ListColor?.get(0), ListIcon?.get(0), 0, false, false, false, false, "", Utils.getUUId(), null, false)
         map[Utils.getHexCode("1235")] = MainCategoryModel("null", Utils.getHexCode("1235"), Utils.getHexCode(SuperSafeApplication.getInstance().getString(R.string.key_photos)), SuperSafeApplication.getInstance().getString(R.string.key_photos), ListColor?.get(1), ListIcon?.get(1), 1, false, false, false, false, "", Utils.getUUId(), null, false)

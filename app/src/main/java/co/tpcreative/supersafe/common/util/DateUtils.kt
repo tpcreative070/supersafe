@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.util
 import androidx.annotation.IntRange
-import co.tpcreative.supersafe.common.util.DateUtils
 import java.text.SimpleDateFormat
 import java.util.*
 

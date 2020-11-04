@@ -16,7 +16,7 @@ class SingletonPrivateFragment {
     }
 
     interface SingletonPrivateFragmentListener {
-        open fun onUpdateView()
+        fun onUpdateView()
     }
 
     companion object {

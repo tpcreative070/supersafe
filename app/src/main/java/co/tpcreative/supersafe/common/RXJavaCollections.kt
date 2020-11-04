@@ -4,7 +4,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 
 class RXJavaCollections {

@@ -5,10 +5,6 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import java.io.Serializable
 import java.util.*
-
-/**
- * Created by Pankaj on 03-11-2017.
- */
 class ThemeApp : Serializable {
     private var id = 0
     private var primaryColor = 0

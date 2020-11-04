@@ -4,9 +4,6 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.annotation.LayoutRes
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import co.infinum.goldfinger.Goldfinger
 import co.infinum.goldfinger.Goldfinger.PromptParams
@@ -27,7 +24,7 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
         super.onCreate(savedInstanceState)
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
@@ -49,21 +46,9 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
         }
     }
 
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onPause() {
         super.onPause()
         SensorFaceUpDownChangeNotifier.getInstance()?.remove(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     override fun onResume() {
@@ -81,26 +66,18 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
         System.gc()
     }
 
-    protected fun showMessage(message: String?) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-
     protected fun setDisplayHomeAsUpEnabled(check: Boolean) {
         actionBar?.setDisplayHomeAsUpEnabled(check)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     companion object {

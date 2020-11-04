@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.common.entities
 import androidx.room.*
-import co.tpcreative.supersafe.common.entities.BreakInAlertsEntity
 
 @Dao
 interface BreakInAlertsDao {

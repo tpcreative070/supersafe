@@ -25,7 +25,6 @@ class AccountManagerAdapter(inflater: LayoutInflater, private val context: Conte
             .error(R.drawable.baseline_music_note_white_48)
             .priority(Priority.HIGH)
     private val itemSelectedListener: ItemSelectedListener?
-    private var encrypter: Encrypter? = null
     private val storage: Storage?
     private val TAG = AccountManagerAdapter::class.java.simpleName
     override fun getItemCount(): Int {
@@ -74,10 +73,5 @@ class AccountManagerAdapter(inflater: LayoutInflater, private val context: Conte
     init {
         storage = Storage(context)
         this.itemSelectedListener = itemSelectedListener
-        try {
-            encrypter = Encrypter()
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        }
     }
 }

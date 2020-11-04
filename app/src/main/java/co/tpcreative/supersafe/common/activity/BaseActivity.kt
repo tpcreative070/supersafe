@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.LayoutRes
@@ -32,19 +31,15 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
         super.onCreate(savedInstanceState)
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
     protected open fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
         context.supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat
                 .getColor(context,colorPrimary)))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val window: Window = context.getWindow()
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = ContextCompat.getColor(context, colorPrimaryDark)
-        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(context, colorPrimaryDark)
     }
 
     override fun getTheme(): Resources.Theme? {

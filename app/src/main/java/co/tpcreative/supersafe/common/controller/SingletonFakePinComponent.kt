@@ -16,7 +16,7 @@ class SingletonFakePinComponent {
     }
 
     interface SingletonPrivateFragmentListener {
-        open fun onUpdateView()
+        fun onUpdateView()
     }
 
     companion object {

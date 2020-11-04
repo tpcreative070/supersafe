@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.common.controller
-
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
@@ -17,7 +16,6 @@ import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
-import co.tpcreative.supersafe.common.controllerimport.PremiumManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.response.DriveResponse
@@ -637,7 +635,6 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onError(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                 }
-
                 override fun onSuccessful(message: String?, status: EnumStatus) {
                     isUpdateItemData = false
                     if (Utils.deletedIndexOfHashMap(itemModel, mMapUpdateItem)) {
@@ -702,7 +699,6 @@ class ServiceManager : BaseServiceView<Any?> {
             override fun onError(message: String?, status: EnumStatus) {
                 isDeleteItemData = false
             }
-
             override fun onSuccessful(message: String?, status: EnumStatus) {
                 /*Request delete item from system*/
                 myService?.onDeleteOwnSystem(itemModel, object : BaseListener<EmptyModel> {
@@ -711,7 +707,6 @@ class ServiceManager : BaseServiceView<Any?> {
                     override fun onError(message: String?, status: EnumStatus) {
                         isDeleteItemData = false
                     }
-
                     override fun onSuccessful(message: String?, status: EnumStatus) {
                         if (Utils.deletedIndexOfHashMap(itemModel, mMapDeleteItem)) {
                             /*Delete local db and folder name*/
@@ -749,12 +744,10 @@ class ServiceManager : BaseServiceView<Any?> {
                 override fun onCancel() {
                     ls.onCancel()
                 }
-
                 override fun onError(message: String?, status: EnumStatus?) {
                     ls.onError(message, status)
                     Utils.Log(TAG, "" + message)
                 }
-
                 override fun onSuccessful(message: String?, status: EnumStatus?) {
                     ls.onSuccessful(message, status)
                 }
@@ -1092,14 +1085,14 @@ class ServiceManager : BaseServiceView<Any?> {
         return mProgress
     }
 
-    fun setmListExport(mListExport: MutableList<ExportFiles>) {
+    fun setListExport(mListExport: MutableList<ExportFiles>) {
         if (!isExportData) {
             this.mListExport.clear()
             this.mListExport.addAll(mListExport)
         }
     }
 
-    fun setExporting(exporting: Boolean) {
+    private fun setExporting(exporting: Boolean) {
         isExportData = exporting
     }
 
@@ -1168,7 +1161,7 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    fun onStopService() {
+    private fun onStopService() {
         if (myService != null) {
             myConnection?.let { mContext?.unbindService(it) }
             myService = null
@@ -1478,6 +1471,7 @@ class ServiceManager : BaseServiceView<Any?> {
             EnumStatus.UPDATE_USER_TOKEN -> {
                 onPreparingSyncData()
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

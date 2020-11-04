@@ -24,7 +24,7 @@ class SingletonManagerProcessing {
                                 .build()
                     }
                 }
-                if (!dialog!!.isShowing()) {
+                if (!dialog!!.isShowing) {
                     dialog?.show()
                     Utils.Log(TAG, "Showing dialog...")
                 }

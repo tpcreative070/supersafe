@@ -56,7 +56,6 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     private var configurationFile: EncryptConfiguration? = null
     private var configurationPin: EncryptConfiguration? = null
     private lateinit var options: GoogleSignInOptions.Builder
-    private lateinit var requiredScopes: MutableSet<Scope>
     private lateinit var requiredScopesString: MutableList<String>
     private var isLive = false
     private var secretKey: String? = null

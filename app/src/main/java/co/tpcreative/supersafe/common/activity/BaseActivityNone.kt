@@ -19,7 +19,7 @@ abstract class BaseActivityNone : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
@@ -30,10 +30,6 @@ abstract class BaseActivityNone : AppCompatActivity() {
             theme.applyStyle(R.style.AppTheme_Share, true)
         }
         return theme
-    }
-
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
     }
 
     override fun onPause() {
@@ -54,10 +50,6 @@ abstract class BaseActivityNone : AppCompatActivity() {
     override fun onResume() {
         Utils.Log(TAG, "onResume....")
         super.onResume()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 
     override fun onLowMemory() {

@@ -13,6 +13,7 @@ object ThemeHelper {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                 Utils.Log(ThemeHelper::class.java, "Call dark")
             }
+            else -> Utils.Log("TAG","Nothing")
         }
     }
 }

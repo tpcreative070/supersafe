@@ -1,5 +1,4 @@
 package co.tpcreative.supersafe.model
-import co.tpcreative.supersafe.model.ItemModel
 import java.io.Serializable
 
 class SyncItemModel(itemModel: ItemModel, isOriginalGlobalId: Boolean) : Serializable {

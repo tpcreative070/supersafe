@@ -28,7 +28,7 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         super.onCreate(savedInstanceState)
         storage = Storage(this)
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
@@ -48,10 +48,6 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
                 Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }
         }
-    }
-
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
     }
 
     override fun onStop() {
@@ -110,10 +106,6 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
         mHomeWatcher?.startWatch()
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     override fun onLowMemory() {
         super.onLowMemory()
         System.gc()
@@ -127,10 +119,6 @@ abstract class BaseActivityNoneSlide : AppCompatActivity(), SensorFaceUpDownChan
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     protected abstract fun onStopListenerAWhile()

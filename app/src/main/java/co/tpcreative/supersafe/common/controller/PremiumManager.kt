@@ -1,4 +1,4 @@
-package co.tpcreative.supersafe.common.controllerimport
+package co.tpcreative.supersafe.common.controller
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -78,11 +78,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 } else {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
-                        if (data.autoRenewing) {
-                            mCheckout.isPurchasedSixMonths = true
-                        } else {
-                            mCheckout.isPurchasedSixMonths = false
-                        }
+                        mCheckout.isPurchasedSixMonths = data.autoRenewing
                     } else {
                         mCheckout.isPurchasedSixMonths = false
                     }
@@ -97,11 +93,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 } else {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
-                        if (data.autoRenewing) {
-                            mCheckout.isPurchasedOneYears = true
-                        } else {
-                            mCheckout.isPurchasedOneYears = false
-                        }
+                        mCheckout.isPurchasedOneYears = data.autoRenewing
                     } else {
                         mCheckout.isPurchasedOneYears = false
                     }
@@ -111,22 +103,14 @@ class PremiumManager : BillingProcessor.IBillingHandler {
             EnumPurchase.ONE_YEAR -> {
                 if (mCheckout != null) {
                     if (Utils.isRealCheckedOut(data.orderId)) {
-                        if (data.autoRenewing) {
-                            mCheckout.isPurchasedOneYears = true
-                        } else {
-                            mCheckout.isPurchasedOneYears = false
-                        }
+                        mCheckout.isPurchasedOneYears = data.autoRenewing
                     } else {
                         mCheckout.isPurchasedOneYears = false
                     }
                 } else {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
-                        if (data.autoRenewing) {
-                            mCheckout.isPurchasedOneYears = true
-                        } else {
-                            mCheckout.isPurchasedOneYears = false
-                        }
+                        mCheckout.isPurchasedOneYears = data.autoRenewing
                     } else {
                         mCheckout.isPurchasedOneYears = false
                     }

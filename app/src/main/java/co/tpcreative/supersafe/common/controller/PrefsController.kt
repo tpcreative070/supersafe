@@ -290,7 +290,7 @@ object PrefsController {
     fun remove(key: String?) {
         val prefs: SharedPreferences? = getPreferences()
         val editor: SharedPreferences.Editor = prefs!!.edit()
-        if (prefs!!.contains(key + LENGTH)) {
+        if (prefs.contains(key + LENGTH)) {
             // Workaround for pre-HC's lack of StringSets
             val stringSetLength: Int = prefs.getInt(key + LENGTH, -1)
             if (stringSetLength >= 0) {

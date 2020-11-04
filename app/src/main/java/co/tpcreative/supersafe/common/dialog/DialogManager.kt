@@ -2,7 +2,6 @@ package co.tpcreative.supersafe.common.dialog
 import android.content.Context
 import co.tpcreative.supersafe.R
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.checkbox.checkBoxPrompt
 
 class DialogManager {
     fun onStartDialog(context: Context, title: Int, content: Int, ls: DialogListener?) {

@@ -33,7 +33,6 @@ class HomeWatcher(private val mContext: Context?) {
 
     internal inner class InnerReceiver : BroadcastReceiver() {
         val SYSTEM_DIALOG_REASON_KEY: String? = "reason"
-        val SYSTEM_DIALOG_REASON_GLOBAL_ACTIONS: String? = "globalactions"
         val SYSTEM_DIALOG_REASON_RECENT_APPS: String? = "recentapps"
         val SYSTEM_DIALOG_REASON_HOME_KEY: String? = "homekey"
         override fun onReceive(context: Context?, intent: Intent?) {

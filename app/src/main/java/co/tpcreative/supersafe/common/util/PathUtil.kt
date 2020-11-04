@@ -10,7 +10,6 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.text.TextUtils
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.util.Utils
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileOutputStream
@@ -59,11 +58,11 @@ object PathUtil {
                 selectionArgs = arrayOf(split[1])
             }
         }
-        if ("content".equals(uri.getScheme(), ignoreCase = true)) {
+        if ("content".equals(uri.scheme, ignoreCase = true)) {
             val projection = arrayOf<String?>(MediaStore.Images.Media.DATA)
             var cursor: Cursor? = null
             try {
-                cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null)
+                cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, null)
                 val column_index = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 cursor?.let {
                     if (it.moveToFirst()) {
@@ -130,7 +129,7 @@ object PathUtil {
         return try {
             /*    /external/video/media/3586    */
             val proj = arrayOf<String?>(MediaStore.Images.Media.DATA)
-            cursor = contentUri?.let { context?.getContentResolver()?.query(it, proj, null, null, null) }
+            cursor = contentUri?.let { context?.contentResolver?.query(it, proj, null, null, null) }
             val column_index = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             cursor?.moveToFirst()
             column_index?.let {
@@ -173,7 +172,7 @@ object PathUtil {
 
     fun copy(context: Context?, srcUri: Uri, dstFile: File) {
         try {
-            val inputStream = context?.getContentResolver()?.openInputStream(srcUri) ?: return
+            val inputStream = context?.contentResolver?.openInputStream(srcUri) ?: return
             val outputStream: OutputStream = FileOutputStream(dstFile)
             IOUtils.copy(inputStream, outputStream)
             inputStream.close()
