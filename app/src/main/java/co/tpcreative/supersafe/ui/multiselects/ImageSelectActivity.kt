@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.multiselects
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.database.ContentObserver
@@ -12,15 +13,16 @@ import android.widget.Toast
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.Image
+import co.tpcreative.supersafe.model.ImageModel
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.ui.multiselects.adapter.CustomImageSelectAdapter
 import kotlinx.android.synthetic.main.activity_image_select.*
+import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.*
 
 class ImageSelectActivity : HelperActivity() {
-    private var images: ArrayList<Image>? = null
+    private var images: ArrayList<ImageModel>? = null
     private var album: String? = null
     private var adapter: CustomImageSelectAdapter? = null
     private var actionMode: ActionMode? = null
@@ -71,7 +73,7 @@ class ImageSelectActivity : HelperActivity() {
                         due to the activity being restarted or content being changed.
                          */if (adapter == null) {
                             adapter = CustomImageSelectAdapter(applicationContext, images)
-                            grid_view_image_select?.setAdapter(adapter)
+                            grid_view_image_select?.adapter = adapter
                             progress_bar_image_select?.visibility = View.INVISIBLE
                             grid_view_image_select?.visibility = View.VISIBLE
                             orientationBasedUI(resources.configuration.orientation)
@@ -138,9 +140,15 @@ class ImageSelectActivity : HelperActivity() {
         orientationBasedUI(newConfig.orientation)
     }
 
+
     private fun orientationBasedUI(orientation: Int) {
         val metrics = DisplayMetrics()
-        this.display?.getRealMetrics(metrics)
+        if (Build.VERSION_CODES.R>Build.VERSION.SDK_INT){
+            val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            windowManager.defaultDisplay.getMetrics(metrics)
+        }else{
+            this.display?.getRealMetrics(metrics)
+        }
         if (adapter != null) {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 3 else metrics.widthPixels / 5
             adapter?.setLayoutParams(size)
@@ -221,8 +229,8 @@ class ImageSelectActivity : HelperActivity() {
         adapter?.notifyDataSetChanged()
     }
 
-    private fun getSelected(): ArrayList<Image?>? {
-        val selectedImages = ArrayList<Image?>()
+    private fun getSelected(): ArrayList<ImageModel?>? {
+        val selectedImages = ArrayList<ImageModel?>()
         var i = 0
         val l = images?.size
         while (i < l!!) {
@@ -245,6 +253,7 @@ class ImageSelectActivity : HelperActivity() {
         startThread(ImageLoaderRunnable())
     }
 
+    /*Loading image*/
     private inner class ImageLoaderRunnable : Runnable {
         override fun run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
@@ -258,7 +267,7 @@ class ImageSelectActivity : HelperActivity() {
             var file: File?
             val selectedImages = HashSet<Long?>()
             if (images != null) {
-                var image: Image?
+                var image: ImageModel?
                 var i = 0
                 val l = images?.size
                 while (i < l!!) {
@@ -286,7 +295,7 @@ class ImageSelectActivity : HelperActivity() {
             FETCH_COMPLETED message, countSelected is assigned value of tempCountSelected.
              */
             var tempCountSelected = 0
-            val temp = ArrayList<Image>(cursor.count)
+            val temp = ArrayList<ImageModel>(cursor.count)
             if (cursor.moveToLast()) {
                 do {
                     if (Thread.interrupted()) {
@@ -305,8 +314,11 @@ class ImageSelectActivity : HelperActivity() {
                             val extensionFile: String? = Utils.getFileExtension(file.absolutePath)
                             val mimeTypeFile: MimeTypeFile? = Utils.mediaTypeSupport().get(extensionFile)
                             if (mimeTypeFile != null) {
-                                temp.add(Image(id, name, path, isSelected))
-                                //EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
+                                val mCount = FileUtils.readFileToByteArray(file)
+                                if (mCount.isNotEmpty()){
+                                    temp.add(ImageModel(id, name, path, isSelected))
+                                    //EnumFormatType formatTypeFile = EnumFormatType.values()[mimeTypeFile.formatType.ordinal()];
+                                }
                             }
                         } else {
                             Utils.Log(TAG, "value " + file.absolutePath)

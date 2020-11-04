@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.multiselects
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.database.ContentObserver
@@ -9,6 +10,7 @@ import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -133,7 +135,12 @@ class AlbumSelectActivity : HelperActivity() {
 
     private fun orientationBasedUI(orientation: Int) {
         val metrics = DisplayMetrics()
-        this.display?.getRealMetrics(metrics)
+        if (Build.VERSION_CODES.R>Build.VERSION.SDK_INT){
+            val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            windowManager.defaultDisplay.getMetrics(metrics)
+        }else{
+            this.display?.getRealMetrics(metrics)
+        }
         if (adapter != null) {
             val size: Int = if (orientation == Configuration.ORIENTATION_PORTRAIT) metrics.widthPixels / 2 else metrics.widthPixels / 4
             adapter?.setLayoutParams(size)

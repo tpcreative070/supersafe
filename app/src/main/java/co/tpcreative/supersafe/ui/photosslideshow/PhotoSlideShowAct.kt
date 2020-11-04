@@ -57,7 +57,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
     private var page = 0
     var runnable: Runnable = object : Runnable {
         override fun run() {
-            if (adapter?.getCount() == page) {
+            if (adapter?.count == page) {
                 page = 0
             } else {
                 page++
@@ -122,6 +122,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             EnumStatus.DOWNLOAD_FAILED -> {
                 Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.no_internet_connection))
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

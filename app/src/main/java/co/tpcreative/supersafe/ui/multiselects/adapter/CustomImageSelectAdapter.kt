@@ -11,7 +11,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumFormatType
-import co.tpcreative.supersafe.model.Image
+import co.tpcreative.supersafe.model.ImageModel
 import co.tpcreative.supersafe.model.MimeTypeFile
 import co.tpcreative.supersafe.model.ThemeApp
 import com.bumptech.glide.Glide
@@ -20,7 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.grid_view_item_image_select.view.*
 import java.util.*
 
-class CustomImageSelectAdapter(context: Context?, images: ArrayList<Image>?) : CustomGenericAdapter<Image>(context, images) {
+class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?) : CustomGenericAdapter<ImageModel>(context, images) {
     private val mContext: Context? = null
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
@@ -93,6 +93,7 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<Image>?) : C
                         Glide.with(context!!)
                                 .load(data.path)
                                 .apply(options!!).into(viewHolder.imageView!!)
+                        Utils.Log(TAG,"File select path  ${data.path}")
                     }
                 }
             } else {

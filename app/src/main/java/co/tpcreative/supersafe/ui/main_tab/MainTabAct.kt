@@ -201,7 +201,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             }
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    val images: ArrayList<Image>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
+                    val images: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
                     val mListImportFiles: MutableList<ImportFilesModel> = ArrayList<ImportFilesModel>()
                     var i = 0
                     val l = images?.size

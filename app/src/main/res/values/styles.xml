@@ -332,21 +332,17 @@
 
 
     <!--White color added font-->
-
     <style name="brandonRegularTextView" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/brandon_reg</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
 
-
     <!--White color non font-->
-
     <style name="RegularTextView" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_normal</item>
     </style>
-
 
     <!--Floating button -->
     <style name="AppTheme.Purple" parent="AppTheme">
@@ -355,7 +351,6 @@
         <item name="colorAccent">@color/material_purple_a700</item>
         <item name="colorControlHighlight">@color/material_purple_200</item>
     </style>
-
 
     <!-- Custom style for photo slide show -->
     <style name="SimpleButtonStyle" parent="AppTheme">
@@ -373,16 +368,6 @@
     </style>
 
 
-    <!--Multiple select items -->
-    <style name="MultipleImageSelectTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:textColor">@color/multiple_image_select_toolbarPrimaryText</item>
-        <item name="colorAccent">@color/multiple_image_select_accent</item>
-        <item name="actionModeStyle">@style/CustomActionModeStyle</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
     <style name="CustomActionModeStyle" parent="Base.Widget.AppCompat.ActionMode">
         <item name="background">@color/material_orange_700</item>
         <item name="actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
@@ -394,7 +379,6 @@
         <item name="actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
         <item name="android:actionMenuTextColor">@color/multiple_image_select_toolbarPrimaryText</item>
     </style>
-
 
     <!--Animation transfer activities -->
     <style name="WindowAnimationTransition">
@@ -408,7 +392,6 @@
         <item name="DialogSpotColor">?attr/colorAccent</item>
         <item name="DialogSpotCount">4</item>
     </style>
-
 
     <!-- Custom button for calculator -->
     <style name="MyButton" parent="Widget.AppCompat.Button">

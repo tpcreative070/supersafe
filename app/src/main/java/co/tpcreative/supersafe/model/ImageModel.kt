@@ -4,6 +4,6 @@ import kotlinx.android.parcel.Parcelize
 
 
 @Parcelize
-class Image(var id: Long,var  name: String?,var path: String?,var isSelected: Boolean) : Parcelable {
+class ImageModel(var id: Long, var  name: String?, var path: String?, var isSelected: Boolean) : Parcelable {
 
 }

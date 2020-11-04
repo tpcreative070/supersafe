@@ -53,7 +53,7 @@ open class HelperActivity : BaseActivity() {
     }
 
     private fun showAppPermissionSettings() {
-        val snackbar: Snackbar = Snackbar.make(
+        Snackbar.make(
                 mView!!,
                 getString(R.string.permission_force),
                 Snackbar.LENGTH_INDEFINITE)
@@ -63,14 +63,12 @@ open class HelperActivity : BaseActivity() {
                             this@HelperActivity.getPackageName(),
                             null)
                     val intent = Intent()
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                    intent.setData(uri)
+                    intent.data = uri
                     startActivityForResult(intent, Navigator.PERMISSION_REQUEST_CODE)
                 })
 
-        /*((TextView) snackbar.getView()
-                .findViewById(android.support.design.R.id.snackbar_text)).setMaxLines(maxLines);*/snackbar.show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
