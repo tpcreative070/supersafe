@@ -14,6 +14,7 @@
     <color name="button_notpressed">#2136FFD9</color>
     <color name="dot_emptyborder">#87898C</color>
     <color name="transparent">#00000000</color>
+    <color name="material_gray_theme">#EEEEEE</color>
 
     <color name="blue_grey_500">#607D8B</color>
     <color name="blue_grey_600">#546E7A</color>
@@ -32,7 +33,7 @@
     <color name="colorTransparentNew">#80000000</color>
     <color name="text_grey">#77000000</color>
     <color name="dark_grey_pressed_mask">#11000000</color>
-
+    <color name="colorPremiumText">#7ED321</color>
 
     <color name="colorPrimaryV1">#3F51B5</color>
     <color name="colorPrimaryDarkV1">#303F9F</color>
@@ -48,6 +49,7 @@
     <color name="blue">#1E88E5</color>
     <color name="blue_dark">#01579B</color>
     <color name="white">#FFF</color>
+    <color name="account_manager">#FFF</color>
     <color name="menu_icon">#FFF</color>
     <color name="private_item">#FFF</color>
     <color name="me_item">#FFF</color>

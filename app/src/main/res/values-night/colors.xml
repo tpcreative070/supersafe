@@ -21,10 +21,13 @@
     <color name="material_gray_200">@color/material_gray_700</color>
     <color name="material_gray_600">@color/material_gray_500</color>
     <color name="material_gray_800">@color/material_gray_600</color>
-    <color name="private_item">#DAD0D0</color>
+    <color name="material_gray_theme">@color/material_gray_900</color>
+    <color name="private_item">#BAB5B5</color>
     <color name="me_item">#BAB5B5</color>
     <color name="material_gray_100">#3A3939</color>
     <color name="menu_icon">#FFF</color>
+    <color name="account_manager">#BAB5B5</color>
+    <color name="colorPremiumText">#4F8316</color>
 
     <color name="colorPrimary">#271261</color>
     <color name="colorPrimaryDark">#160542</color>

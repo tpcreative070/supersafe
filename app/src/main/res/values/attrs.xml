@@ -29,6 +29,8 @@
     <attr name="preference_title" format="reference"/>
     <attr name="preference_summary" format="reference"/>
     <attr name="preference_icon" format="reference"/>
+    <attr name="colorPremiumText" format="reference" />
+    <attr name="colorPremiumIcon" format="reference" />
 
 
     <declare-styleable name="CircleProgressBar">

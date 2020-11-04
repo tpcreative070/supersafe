@@ -23,7 +23,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/me_item">
+                    android:background="@drawable/bg_item_lists_rounded">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -31,8 +31,7 @@
                         <RelativeLayout
                             android:id="@+id/llPremium"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/me_item">
+                            android:layout_height="wrap_content">
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/imgPro"
                                 android:layout_width="@dimen/image_size_custom"
@@ -51,21 +50,19 @@
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="10dp"
                                 android:gravity="center"
-                                android:textColor="@color/material_gray_700"
+                                android:textColor="?attr/colorPremiumText"
                                 android:textSize="@dimen/medium"
                                 android:textStyle="bold" />
                         </RelativeLayout>
                     </LinearLayout>
                 </RelativeLayout>
 
-
                 <!--User info -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/me_item">
-
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bg_item_lists_rounded">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -107,8 +104,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/me_item">
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bg_item_lists_rounded">
                     <LinearLayout
                         android:id="@+id/llCloudLocal"
                         android:layout_width="match_parent"
@@ -219,7 +216,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="1dp"
                             android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="@dimen/icon_size_30"
@@ -262,8 +259,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/me_item">
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/bg_item_lists_rounded">
 
                     <LinearLayout
                         android:id="@+id/llSettings"

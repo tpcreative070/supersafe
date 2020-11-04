@@ -67,8 +67,6 @@ fun MeFragment.onUpdatedView() {
     val isPremium: Boolean = Utils.isPremium()
     if (isPremium) {
         tvPremiumLeft?.text = getString(R.string.you_are_in_premium_features)
-        val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        tvPremiumLeft?.setTextColor(ContextCompat.getColor(activity!!,themeApp?.getPrimaryColor()!!))
         if (presenter?.mUser?.driveConnected!!) {
             tvEnableCloud?.text = getString(R.string.no_limited_cloud_sync_storage)
         } else {

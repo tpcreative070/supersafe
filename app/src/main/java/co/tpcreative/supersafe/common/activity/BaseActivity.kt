@@ -6,8 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.WindowManager
-import android.widget.Toast
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
@@ -58,10 +56,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
                 Navigator.onMoveToFaceDown(SuperSafeApplication.getInstance())
             }
         }
-    }
-
-    override fun setContentView(@LayoutRes layoutResID: Int) {
-        super.setContentView(layoutResID)
     }
 
     override fun onPause() {
@@ -124,10 +118,6 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
     override fun onLowMemory() {
         super.onLowMemory()
         System.gc()
-    }
-
-    protected fun showMessage(message: String?) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     protected fun setDisplayHomeAsUpEnabled(check: Boolean) {

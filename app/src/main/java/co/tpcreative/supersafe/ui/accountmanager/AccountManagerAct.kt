@@ -36,7 +36,7 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
         if (mUser != null) {
             tvEmail?.text = mUser.email
             if (mUser.verified) {
-                tvStatusAccount?.setTextColor(ContextCompat.getColor(this,R.color.ColorBlueV1))
+                tvStatusAccount?.setTextColor(ContextCompat.getColor(this,R.color.colorPremiumText))
                 tvStatusAccount?.text = getString(R.string.verified)
             } else {
                 tvStatusAccount?.setTextColor(ContextCompat.getColor(this,R.color.red))
@@ -45,7 +45,7 @@ class AccountManagerAct : BaseGoogleApi(), BaseView<EmptyModel>, AccountManagerA
         }
         val isPremium: Boolean = Utils.isPremium()
         if (isPremium) {
-            tvLicenseStatus?.setTextColor(ContextCompat.getColor(this,R.color.ColorBlueV1))
+            tvLicenseStatus?.setTextColor(ContextCompat.getColor(this,R.color.colorPremiumText))
             tvLicenseStatus?.text = getString(R.string.premium)
             rlPremium?.visibility = View.VISIBLE
             rlPremiumComplimentary?.visibility = View.GONE

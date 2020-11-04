@@ -7,8 +7,8 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowDisablePreview">true</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -20,6 +20,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.Share"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -28,8 +32,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -43,6 +47,10 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <!-- Base application theme. -->
@@ -52,8 +60,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -65,6 +73,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.PINK" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -74,8 +86,8 @@
         <item name="colorAccent">@color/secondaryColorPink</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -87,6 +99,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.PURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -96,8 +112,8 @@
         <item name="colorAccent">@color/secondaryDarkColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -109,6 +125,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.DEEPPURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -118,8 +138,8 @@
         <item name="colorAccent">@color/primaryColorPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -131,6 +151,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -140,8 +164,8 @@
         <item name="colorAccent">@color/primaryColorBrown</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -153,6 +177,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -162,8 +190,8 @@
         <item name="colorAccent">@color/secondaryDarkColorTeal</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -175,6 +203,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
 
@@ -185,8 +217,8 @@
         <item name="colorAccent">@color/secondaryColorLightGreen</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -198,6 +230,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.LIME" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -207,8 +243,8 @@
         <item name="colorAccent">@color/primaryColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -220,6 +256,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -229,8 +269,8 @@
         <item name="colorAccent">@color/secondaryColorAmber</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -242,6 +282,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.BROWN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -251,8 +295,8 @@
         <item name="colorAccent">@color/md_teal_500</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -264,6 +308,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -273,8 +321,8 @@
         <item name="colorAccent">@color/secondaryColorGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -286,6 +334,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <style name="AppTheme.BLUEGRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -295,8 +347,8 @@
         <item name="colorAccent">@color/secondaryDarkColorBlueGray</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:textColorPrimary">@color/colorButton</item>
-        <item name="android:textColorSecondary">@color/colorButton</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/material_gray_600</item>
         <item name="preference_icon">@color/material_gray_600</item>
         <item name="preference_title">@color/material_gray_800</item>
         <item name="preference_summary">@color/material_gray_600</item>
@@ -308,6 +360,10 @@
         <!--Action mode -->
         <item name="actionModeStyle">@style/CustomActionModeStyle</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="colorPremiumText">@color/colorPremiumText</item>
     </style>
 
     <!-- End Custom theme -->
@@ -419,5 +475,21 @@
         <!--
         <item name="android:fontFamily">@font/brandon_regs</item>
         !-->
+    </style>
+
+    <style name="ToolbarStyle" parent="@style/Widget.AppCompat.Toolbar">
+        <!-- Makes the toolbar text whatever color you want for both light/dark-->
+        <item name="titleTextColor">@color/white</item>
+        <item name="android:background">?attr/colorPrimary</item>
+    </style>
+
+    <style name="ToolbarStyle.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <!-- For toolbar menu -->
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="Toolbar.Button.Navigation.Tinted" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <!-- For the hamburger menu, back button, etc -->
+        <item name="tint">@color/white</item>
     </style>
 </resources>

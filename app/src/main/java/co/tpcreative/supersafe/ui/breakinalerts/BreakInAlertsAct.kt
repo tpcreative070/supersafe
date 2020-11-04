@@ -91,7 +91,7 @@ class BreakInAlertsAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.On
         if (Utils.isCameraAvailable(this)) {
             onAddPermissionCamera(b)
         } else {
-            showMessage(getString(R.string.error_not_having_camera))
+            Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.error_not_having_camera))
         }
         tvStatus?.text = (if (b) getString(R.string.enabled) else getString(R.string.disabled))
     }
