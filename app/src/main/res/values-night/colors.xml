@@ -33,12 +33,12 @@
 
     <color name="colorPrimary">#271261</color>
     <color name="colorPrimaryDark">#160542</color>
-    <color name="colorAccent">#105580</color>
+    <color name="colorAccent">#2089CA</color>
 
     <color name="primaryColorPink">#C55279</color>
     <color name="primaryLightColorPink">#C191A2</color>
     <color name="primaryDarkColorPink">#B8325F</color>
-    <color name="secondaryColorPink">#3468BF</color>
+    <color name="secondaryColorPink">#316154</color>
 
     <color name="primaryColorPurple">#7C208C</color>
     <color name="primaryLightColorPurple">#9861A1</color>
