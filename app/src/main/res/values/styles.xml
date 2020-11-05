@@ -156,7 +156,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorDeepPurple</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
-        <item name="colorAccent">@color/primaryColorPurple</item>
+        <item name="colorAccent">@color/secondaryColorDeepPurple</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/white</item>
@@ -179,14 +179,14 @@
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
         <item name="dialogColorPrimary">@color/primaryColorDeepPurple</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
-        <item name="dialogColorAccent">@color/primaryColorPurple</item>
+        <item name="dialogColorAccent">@color/secondaryColorDeepPurple</item>
     </style>
 
     <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorCyan</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorCyan</item>
-        <item name="colorAccent">@color/primaryColorBrown</item>
+        <item name="colorAccent">@color/secondaryColorCyan</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/white</item>
@@ -209,7 +209,7 @@
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
         <item name="dialogColorPrimary">@color/primaryColorCyan</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorCyan</item>
-        <item name="dialogColorAccent">@color/primaryColorBrown</item>
+        <item name="dialogColorAccent">@color/secondaryColorCyan</item>
     </style>
 
     <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -277,7 +277,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorLime</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorLime</item>
-        <item name="colorAccent">@color/primaryColorBlueGray</item>
+        <item name="colorAccent">@color/secondaryColorLime</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/white</item>
@@ -300,7 +300,7 @@
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
         <item name="dialogColorPrimary">@color/primaryColorLime</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorLime</item>
-        <item name="dialogColorAccent">@color/primaryColorBlueGray</item>
+        <item name="dialogColorAccent">@color/secondaryColorLime</item>
     </style>
 
     <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -337,7 +337,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColorBrown</item>
         <item name="colorPrimaryDark">@color/primaryDarkColorBrown</item>
-        <item name="colorAccent">@color/md_teal_500</item>
+        <item name="colorAccent">@color/secondaryColorBrown</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@color/white</item>
@@ -360,7 +360,7 @@
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
         <item name="dialogColorPrimary">@color/primaryColorBrown</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorBrown</item>
-        <item name="dialogColorAccent">@color/md_teal_500</item>
+        <item name="dialogColorAccent">@color/secondaryColorBrown</item>
     </style>
 
     <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">

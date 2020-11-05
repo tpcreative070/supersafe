@@ -109,7 +109,7 @@ object Utils {
                 storage.deleteFile(root.absolutePath)
             }
             if (!root.exists()) {
-                val parentFolder = File(path_folder_name ?:"")
+                val parentFolder = File(path_folder_name ?: "")
                 if (!parentFolder.exists()) {
                     parentFolder.mkdirs()
                 }
@@ -205,11 +205,11 @@ object Utils {
     }
 
     fun getCurrentDate(value: String?): String? {
-        val sdf = SimpleDateFormat("yyyyMMdd_HHmmss",Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         try {
-            val mDate = sdf.parse(value ?:"")
+            val mDate = sdf.parse(value ?: "")
             val dateFormat = SimpleDateFormat("EE dd MMM, yyyy", Locale.getDefault())
-            return dateFormat.format(mDate ?:"")
+            return dateFormat.format(mDate ?: "")
         } catch (e: ParseException) {
             e.printStackTrace()
         }
@@ -462,12 +462,14 @@ object Utils {
 
     fun getFontString(content: Int, value: String): String? {
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        return SuperSafeApplication.getInstance().getString(content, "<font color='" + themeApp?.getAccentColorHex() + "'>" + "<b>" + value + "</b>" + "</font>")
+        val mAccessColor = String.format("#%06x", themeApp?.getAccentColor()?.let { ContextCompat.getColor(SuperSafeApplication.getInstance(), it) }?.and(0xffffff))
+        return SuperSafeApplication.getInstance().getString(content, "<font color='$mAccessColor'><b>$value</b></font>")
     }
 
     fun getFontString(content: Int, value: String?, fontSize: Int): String? {
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        return SuperSafeApplication.getInstance().getString(content, "<font size='" + fontSize + "' color='" + themeApp?.getAccentColorHex() + "'>" + "<b>" + value + "</b>" + "</font>")
+        val mAccessColor = String.format("#%06x", themeApp?.getAccentColor()?.let { ContextCompat.getColor(SuperSafeApplication.getInstance(), it) }?.and(0xffffff))
+        return SuperSafeApplication.getInstance().getString(content, "<font size='$fontSize' color='$mAccessColor'><b>$value</b></font>")
     }
 
     fun appInstalledOrNot(uri: String): Boolean {
@@ -806,7 +808,7 @@ object Utils {
     /*Delete hash map after delete Google drive and Server system*/
     fun deletedIndexOfHashMap(itemModel: ItemModel?, map: MutableMap<String, ItemModel>?): Boolean {
         try {
-            map?.let {mMapResult ->
+            map?.let { mMapResult ->
                 if (mMapResult.isNotEmpty()) {
                     itemModel?.unique_id?.let {
                         mMapResult.remove(it)
@@ -833,7 +835,7 @@ object Utils {
 
     /*Get the first of data for import*/
     fun getArrayOfIndexHashMapImport(mMapDelete: MutableMap<String, ImportFilesModel>?): ImportFilesModel? {
-        mMapDelete?.let {mMapResult ->
+        mMapDelete?.let { mMapResult ->
             if (mMapResult.isNotEmpty()) {
                 val model: ImportFilesModel? = mMapResult[mMapResult.keys.toTypedArray()[0]]
                 Log(TAG, "Object need to be deleting " + Gson().toJson(model))
@@ -940,7 +942,7 @@ object Utils {
 
     /*Create folder*/
     private fun createDirectory(path: String?): Boolean {
-        val directory = File(path ?:"")
+        val directory = File(path ?: "")
         if (directory.exists()) {
             Log(TAG, "Directory '$path' already exists")
             return false
@@ -1072,7 +1074,7 @@ object Utils {
             return true
         }
         val mCheckout: CheckoutItems? = getCheckoutItems()
-        mCheckout?.let {mCheckoutResult ->
+        mCheckout?.let { mCheckoutResult ->
             if (mCheckoutResult.isPurchasedLifeTime || mCheckoutResult.isPurchasedOneYears || mCheckoutResult.isPurchasedSixMonths) {
                 if (!mCheckoutResult.isPurchasedLifeTime){
                     putAlreadyAskedExpiration(true)
@@ -1087,7 +1089,7 @@ object Utils {
         val mUser = getUserInfo() ?: return false
         val syncData: SyncData? = mUser.syncData
         if (!isPremium()) {
-            syncData?.let {mSyncDataResult ->
+            syncData?.let { mSyncDataResult ->
                 if (mSyncDataResult.left == 0) {
                     return false
                 }
@@ -1098,7 +1100,7 @@ object Utils {
 
     private fun isAllowRequestDriveApis(): Boolean {
         val mUser = getUserInfo()
-        mUser?.let {mUserResult ->
+        mUser?.let { mUserResult ->
             if (mUserResult.driveConnected) {
                 if (mUserResult.access_token != null && mUserResult.access_token != "") {
                     if (mUserResult.cloud_id != null && mUserResult.cloud_id != "" && !isPauseSync()) {
@@ -1220,13 +1222,13 @@ object Utils {
             for (i in mResultList.indices) {
                 when (EnumFormatType.values()[mResultList[i].formatType]) {
                     EnumFormatType.IMAGE -> {
-                        if (mResultList[i].isSyncCloud && mResultList[i].originalSync){
+                        if (mResultList[i].isSyncCloud && mResultList[i].originalSync) {
                             mResultList[i].isSyncCloud = false
                             mResultList[i].originalSync = false
                             SQLHelper.updatedItem(mResultList[i])
                         }
                     }
-                    else -> Log(TAG,"Nothing")
+                    else -> Log(TAG, "Nothing")
                 }
             }
         }
@@ -1244,7 +1246,7 @@ object Utils {
         ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
     }
 
-    fun putAlreadyAskedExpiration(status : Boolean){
+    fun putAlreadyAskedExpiration(status: Boolean){
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), status)
     }
     fun isAlreadyAskedExpiration() : Boolean{

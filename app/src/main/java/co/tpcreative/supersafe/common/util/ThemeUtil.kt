@@ -63,18 +63,18 @@ object ThemeUtil {
 
     fun getThemeList(): ArrayList<ThemeApp> {
         val themeAppArrayList: ArrayList<ThemeApp> = ArrayList<ThemeApp>()
-        themeAppArrayList.add(ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent, "#0091EA"))
-        themeAppArrayList.add(ThemeApp(1, R.color.primaryColorPink, R.color.primaryDarkColorPink, R.color.secondaryColorPink, "#448AFF"))
-        themeAppArrayList.add(ThemeApp(2, R.color.primaryColorPurple, R.color.primaryDarkColorPurple, R.color.secondaryDarkColorPurple, "#b4c320"))
-        themeAppArrayList.add(ThemeApp(3, R.color.primaryColorDeepPurple, R.color.primaryDarkColorDeepPurple, R.color.primaryColorPurple, "#9C27B0"))
-        themeAppArrayList.add(ThemeApp(4, R.color.primaryColorCyan, R.color.primaryDarkColorCyan, R.color.primaryColorBrown, "#795548"))
-        themeAppArrayList.add(ThemeApp(5, R.color.primaryColorTeal, R.color.primaryDarkColorTeal, R.color.secondaryDarkColorTeal, "#caa052"))
-        themeAppArrayList.add(ThemeApp(6, R.color.primaryColorLightGreen, R.color.primaryDarkColorLightGreen, R.color.secondaryColorLightGreen, "#448AFF"))
-        themeAppArrayList.add(ThemeApp(7, R.color.primaryColorLime, R.color.primaryDarkColorLime, R.color.primaryColorBlueGray, "#607D8B"))
-        themeAppArrayList.add(ThemeApp(8, R.color.primaryColorAmber, R.color.primaryDarkColorAmber, R.color.secondaryColorAmber, "#03A9F4"))
-        themeAppArrayList.add(ThemeApp(9, R.color.primaryColorBrown, R.color.primaryDarkColorBrown, R.color.md_teal_500, "#009688"))
-        themeAppArrayList.add(ThemeApp(10, R.color.primaryColorGray, R.color.primaryDarkColorGray, R.color.secondaryColorGray, "#536DFE"))
-        themeAppArrayList.add(ThemeApp(11, R.color.primaryColorBlueGray, R.color.primaryDarkColorBlueGray, R.color.secondaryDarkColorBlueGray, "#a6b320"))
+        themeAppArrayList.add(ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorAccent))
+        themeAppArrayList.add(ThemeApp(1, R.color.primaryColorPink, R.color.primaryDarkColorPink, R.color.secondaryColorPink))
+        themeAppArrayList.add(ThemeApp(2, R.color.primaryColorPurple, R.color.primaryDarkColorPurple, R.color.secondaryDarkColorPurple))
+        themeAppArrayList.add(ThemeApp(3, R.color.primaryColorDeepPurple, R.color.primaryDarkColorDeepPurple, R.color.secondaryColorDeepPurple))
+        themeAppArrayList.add(ThemeApp(4, R.color.primaryColorCyan, R.color.primaryDarkColorCyan, R.color.secondaryColorCyan))
+        themeAppArrayList.add(ThemeApp(5, R.color.primaryColorTeal, R.color.primaryDarkColorTeal, R.color.secondaryDarkColorTeal))
+        themeAppArrayList.add(ThemeApp(6, R.color.primaryColorLightGreen, R.color.primaryDarkColorLightGreen, R.color.secondaryColorLightGreen))
+        themeAppArrayList.add(ThemeApp(7, R.color.primaryColorLime, R.color.primaryDarkColorLime, R.color.secondaryColorLime))
+        themeAppArrayList.add(ThemeApp(8, R.color.primaryColorAmber, R.color.primaryDarkColorAmber, R.color.secondaryColorAmber))
+        themeAppArrayList.add(ThemeApp(9, R.color.primaryColorBrown, R.color.primaryDarkColorBrown, R.color.secondaryColorBrown))
+        themeAppArrayList.add(ThemeApp(10, R.color.primaryColorGray, R.color.primaryDarkColorGray, R.color.secondaryColorGray))
+        themeAppArrayList.add(ThemeApp(11, R.color.primaryColorBlueGray, R.color.primaryDarkColorBlueGray, R.color.secondaryDarkColorBlueGray))
         return themeAppArrayList
     }
 }

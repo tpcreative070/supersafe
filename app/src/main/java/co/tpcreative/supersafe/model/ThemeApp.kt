@@ -10,7 +10,6 @@ class ThemeApp : Serializable {
     private var primaryColor = 0
     private var primaryDarkColor = 0
     private var accentColor = 0
-    private var accentColorHex: String? = null
     var isCheck = false
 
     constructor() {}
@@ -21,13 +20,12 @@ class ThemeApp : Serializable {
         isCheck = false
     }
 
-    constructor(id: Int, primaryColor: Int, primaryDarkColor: Int, accentColor: Int, accentColorHex: String?) {
+    constructor(id: Int, primaryColor: Int, primaryDarkColor: Int, accentColor: Int) {
         this.id = id
         this.primaryColor = primaryColor
         this.primaryDarkColor = primaryDarkColor
         this.accentColor = accentColor
         isCheck = false
-        this.accentColorHex = accentColorHex
     }
 
     fun getId(): Int {
@@ -46,9 +44,6 @@ class ThemeApp : Serializable {
         this.primaryColor = primaryColor
     }
 
-    fun getAccentColorHex(): String? {
-        return accentColorHex
-    }
 
     fun getPrimaryDarkColor(): Int {
         return primaryDarkColor
@@ -79,7 +74,7 @@ class ThemeApp : Serializable {
             PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
             e.printStackTrace()
         }
-        return ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton, "#0091EA")
+        return ThemeApp(0, R.color.colorPrimary, R.color.colorPrimaryDark, R.color.colorButton)
     }
 
     fun getList(): MutableList<ThemeApp>? {

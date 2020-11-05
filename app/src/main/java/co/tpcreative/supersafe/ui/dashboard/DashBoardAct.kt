@@ -63,19 +63,7 @@ class DashBoardAct : BaseActivityNoneSlide() {
                     finish()
                 }
             }
-            val dialog = builder.show()
-            builder.setOnShowListener {
-                val positive = dialog.findViewById<AppCompatButton?>(android.R.id.button1)
-                val negative = dialog.findViewById<AppCompatButton?>(android.R.id.button2)
-                val textView: AppCompatTextView? = dialog.findViewById(android.R.id.message)
-                if (positive != null && negative != null && textView != null) {
-                    positive.setTextColor(ContextCompat.getColor(applicationContext, themeApp.getAccentColor()))
-                    negative.setTextColor(ContextCompat.getColor(applicationContext, themeApp.getAccentColor()))
-                    textView.textSize = (16f)
-                    positive.textSize = 14f
-                    negative.textSize = 14f
-                }
-            }
+           builder.show()
         } catch (e: Exception) {
             e.printStackTrace()
         }

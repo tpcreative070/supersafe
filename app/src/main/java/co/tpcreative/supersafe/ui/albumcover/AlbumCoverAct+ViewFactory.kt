@@ -65,19 +65,7 @@ fun AlbumCoverAct.onShowPremium() {
         builder?.showHeader(true)
         builder?.setPositiveButton(getString(R.string.get_premium)) { dialogInterface, i -> getContext()?.let { Navigator.onMoveToPremium(it) } }
         builder?.setNegativeButton(getText(R.string.later)) { dialogInterface, i -> }
-        val dialog = builder?.show()
-        builder?.setOnShowListener {
-            val positive = dialog?.findViewById<AppCompatButton?>(android.R.id.button1)
-            val negative = dialog?.findViewById<AppCompatButton?>(android.R.id.button2)
-            val textView: AppCompatTextView? = dialog?.findViewById<AppCompatTextView?>(android.R.id.message)
-            if (positive != null && negative != null && textView != null) {
-                positive.setTextColor(ContextCompat.getColor(getContext()!!, themeApp!!.getAccentColor()))
-                negative.setTextColor(ContextCompat.getColor(getContext()!!, themeApp.getAccentColor()))
-                textView.setTextSize(16f)
-                positive.textSize = 14f
-                negative.textSize = 14f
-            }
-        }
+        builder?.show()
     } catch (e: Exception) {
         e.printStackTrace()
     }
