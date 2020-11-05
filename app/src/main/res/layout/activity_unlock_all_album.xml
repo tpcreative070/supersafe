@@ -144,7 +144,7 @@
                         android:enabled="false"
                         android:padding="10dp"
                         android:text="@string/unlock_all_albums"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/colorDisableText" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

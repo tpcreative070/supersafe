@@ -73,12 +73,12 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             val value = s.toString().trim { it <= ' ' }
             isNext = if (Utils.isValid(value)) {
-                btnUnlock?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
+                btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
                 btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
                 btnUnlock?.isEnabled = true
                 true
             } else {
-                btnUnlock?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
+                btnUnlock?.setBackgroundResource(R.drawable.bg_button_disable_rounded)
                 btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
                 btnUnlock?.isEnabled = false
                 false

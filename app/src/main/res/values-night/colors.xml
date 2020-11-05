@@ -61,10 +61,10 @@
     <color name="primaryDarkColorTeal">#00251F</color>
     <color name="secondaryDarkColorTeal">#9F7D3E</color>
 
-    <color name="primaryColorLightGreen">#699337</color>
-    <color name="primaryLightColorLightGreen">#83976C</color>
+    <color name="primaryColorLightGreen">#51712A</color>
+    <color name="primaryLightColorLightGreen">#687854</color>
     <color name="primaryDarkColorLightGreen">#39571F</color>
-    <color name="secondaryColorLightGreen">#3871D1</color>
+    <color name="secondaryColorLightGreen">#3361AE</color>
 
     <color name="primaryColorLime">#899329</color>
     <color name="primaryLightColorLime">#7F8166</color>
