@@ -22,6 +22,7 @@
     <color name="material_gray_600">@color/material_gray_500</color>
     <color name="material_gray_800">@color/material_gray_600</color>
     <color name="material_gray_theme">@color/material_gray_900</color>
+    <color name="material_orange_900">#9A4313</color>
     <color name="private_item">#BAB5B5</color>
     <color name="me_item">#BAB5B5</color>
     <color name="material_gray_100">#3A3939</color>
