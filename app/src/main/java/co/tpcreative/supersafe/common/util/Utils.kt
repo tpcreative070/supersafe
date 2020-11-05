@@ -1053,7 +1053,7 @@ object Utils {
     }
 
     fun setCheckoutItems(checkoutItems: CheckoutItems?) {
-        PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_checkout_items), Gson().toJson(checkoutItems))
+        PrefsController.putString(SuperSafeApplication.getInstance().getString(R.string.key_checkout_items), Gson().toJson(checkoutItems))
     }
 
     fun getCheckoutItems(): CheckoutItems? {
@@ -1074,6 +1074,9 @@ object Utils {
         val mCheckout: CheckoutItems? = getCheckoutItems()
         mCheckout?.let {mCheckoutResult ->
             if (mCheckoutResult.isPurchasedLifeTime || mCheckoutResult.isPurchasedOneYears || mCheckoutResult.isPurchasedSixMonths) {
+                if (!mCheckoutResult.isPurchasedLifeTime){
+                    putAlreadyAskedExpiration(true)
+                }
                 return true
             }
         }
@@ -1217,9 +1220,11 @@ object Utils {
             for (i in mResultList.indices) {
                 when (EnumFormatType.values()[mResultList[i].formatType]) {
                     EnumFormatType.IMAGE -> {
-                        mResultList[i].isSyncCloud = false
-                        mResultList[i].originalSync = false
-                        SQLHelper.updatedItem(mResultList[i])
+                        if (mResultList[i].isSyncCloud && mResultList[i].originalSync){
+                            mResultList[i].isSyncCloud = false
+                            mResultList[i].originalSync = false
+                            SQLHelper.updatedItem(mResultList[i])
+                        }
                     }
                     else -> Log(TAG,"Nothing")
                 }

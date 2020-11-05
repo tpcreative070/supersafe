@@ -24,6 +24,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.Share"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -51,6 +52,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <!-- Base application theme. -->
@@ -77,6 +79,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.PINK" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -103,6 +106,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.PURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -129,6 +133,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.DEEPPURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -155,6 +160,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -181,6 +187,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -207,6 +214,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
 
@@ -234,6 +242,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.LIME" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -260,6 +269,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -286,6 +296,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.BROWN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -312,6 +323,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -338,6 +350,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <style name="AppTheme.BLUEGRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -364,6 +377,7 @@
         <item name="actionOverflowButtonStyle">@style/ToolbarStyle.Overflow</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
+        <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
     </style>
 
     <!-- End Custom theme -->

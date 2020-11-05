@@ -18,7 +18,7 @@
         android:layout_height="@dimen/icon_size_50"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:textColor="@color/colorAccent"
+        android:textColor="?attr/colorAccent"
         android:id="@+id/tvFormula"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

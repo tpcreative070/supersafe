@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.activity_unlock_all_album.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
 
 fun UnlockAllAlbumAct.initUI(){
+    TAG = this::class.java.simpleName
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     presenter = UnlockAllAlbumPresenter()
@@ -38,7 +39,6 @@ fun UnlockAllAlbumAct.initUI(){
             onVerifyCode()
         }
     }
-
     btnSendRequest.setOnClickListener {
         btnSendRequest?.isEnabled = false
         btnSendRequest?.setText("")

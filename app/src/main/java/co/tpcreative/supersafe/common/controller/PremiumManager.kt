@@ -26,7 +26,9 @@ class PremiumManager : BillingProcessor.IBillingHandler {
 
     /*New version*/
     override fun onProductPurchased(productId: String, details: TransactionDetails?) {}
-    override fun onPurchaseHistoryRestored() {}
+    override fun onPurchaseHistoryRestored() {
+        Utils.Log(TAG,"Restored..........")
+    }
     override fun onBillingError(errorCode: Int, error: Throwable?) {}
     override fun onBillingInitialized() {
         /*Checking life time in-app*/
@@ -47,6 +49,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 onCheckout(PurchaseData(), EnumPurchase.NONE)
             }
         }
+        bp?.loadOwnedPurchasesFromGoogle()
     }
 
     private fun onCheckout(data: PurchaseData, purchase: EnumPurchase) {
@@ -67,6 +70,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 if (mCheckout != null) {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedSixMonths = data.autoRenewing
+                        Utils.Log(TAG,"Checking...6")
                         if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
@@ -84,12 +88,14 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                         mCheckout.isPurchasedSixMonths = false
                     }
                 }
+                Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
                 Utils.setCheckoutItems(mCheckout)
             }
             EnumPurchase.ONE_YEAR -> {
                 if (mCheckout != null) {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedOneYears = data.autoRenewing
+                        Utils.Log(TAG,"Checking...1y")
                         if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
@@ -107,6 +113,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                         mCheckout.isPurchasedOneYears = false
                     }
                 }
+                Utils.Log(TAG,"Preparing save ${Gson().toJson(mCheckout)}")
                 Utils.setCheckoutItems(mCheckout)
             }
             else -> Utils.setCheckoutItems(CheckoutItems())

@@ -112,6 +112,7 @@
 
     /*Material Design*/
     <dimen name="detail_backdrop_height">200dp</dimen>
+    <dimen name="detail_activity_cloud_height">250dp</dimen>
     <dimen name="card_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="list_item_avatar_size">40dp</dimen>

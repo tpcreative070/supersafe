@@ -18,7 +18,7 @@
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgIcon"
-                android:tint="?attr/colorAccent"
+                android:tint="?attr/colorPremiumIcon"
                 android:src="@drawable/ic_premium_icon"
                 android:layout_width="@dimen/image_size"
                 android:layout_height="@dimen/image_size" />

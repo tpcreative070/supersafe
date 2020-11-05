@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_margin="10dp"
-            android:background="@color/sd_overlay_new_color"
+            android:background="?attr/colorPrimary"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
