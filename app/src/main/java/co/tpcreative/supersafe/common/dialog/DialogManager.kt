@@ -5,7 +5,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 
 class DialogManager {
     fun onStartDialog(context: Context, title: Int, content: Int, ls: DialogListener?) {
-        val builder = MaterialDialog(context).show {
+        MaterialDialog(context).show {
             title (title)
             message(content)
             negativeButton(R.string.cancel){

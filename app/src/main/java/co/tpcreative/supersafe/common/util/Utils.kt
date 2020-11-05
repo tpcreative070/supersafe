@@ -19,7 +19,6 @@ import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Patterns
 import android.util.TypedValue
-import android.view.Display
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
@@ -37,6 +36,7 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.*
@@ -70,11 +70,10 @@ object Utils {
     var FORMAT_TIME: String? = "yyyy-MM-dd HH:mm:ss"
     var FORMAT_TIME_FILE_NAME: String? = "yyyyMMdd_HHmmss"
     const val COUNT_RATE = 9
-    const val START_TIMER: Long = 5000
     private val storage: Storage = Storage(SuperSafeApplication.getInstance())
     private val TAG = Utils::class.java.simpleName
     fun isValidEmail(target: CharSequence?): Boolean {
-        return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
+        return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target ?: "").matches()
     }
 
     fun isValid(target: CharSequence?): Boolean {
@@ -100,7 +99,7 @@ object Utils {
         builder.show()
     }
 
-    fun mCreateAndSaveFileOverride(fileName: String?, path_folder_name: String?, responseJson: String?, append: Boolean): Boolean {
+    private fun mCreateAndSaveFileOverride(fileName: String?, path_folder_name: String?, responseJson: String?, append: Boolean): Boolean {
         Log(TAG, "path $path_folder_name")
         val newLine = System.getProperty("line.separator")
         return try {
@@ -110,7 +109,7 @@ object Utils {
                 storage.deleteFile(root.absolutePath)
             }
             if (!root.exists()) {
-                val parentFolder = File(path_folder_name)
+                val parentFolder = File(path_folder_name ?:"")
                 if (!parentFolder.exists()) {
                     parentFolder.mkdirs()
                 }
@@ -130,7 +129,7 @@ object Utils {
     }
 
     fun hideSoftKeyboard(context: Activity) {
-        val view: View? = context.getCurrentFocus()
+        val view: View? = context.currentFocus
         if (view != null) {
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
@@ -166,7 +165,7 @@ object Utils {
     }
 
     fun getFileExtension(url: String?): String? {
-        return FilenameUtils.getExtension(url).toLowerCase()
+        return FilenameUtils.getExtension(url).toLowerCase(Locale.ROOT)
     }
 
     fun Log(TAG: String, message: String?) {
@@ -206,18 +205,18 @@ object Utils {
     }
 
     fun getCurrentDate(value: String?): String? {
-        val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
+        val sdf = SimpleDateFormat("yyyyMMdd_HHmmss",Locale.getDefault())
         try {
-            val mDate = sdf.parse(value)
+            val mDate = sdf.parse(value ?:"")
             val dateFormat = SimpleDateFormat("EE dd MMM, yyyy", Locale.getDefault())
-            return dateFormat.format(mDate)
+            return dateFormat.format(mDate ?:"")
         } catch (e: ParseException) {
             e.printStackTrace()
         }
         return ""
     }
 
-    fun getCurrentDateTimeFormat(): String? {
+    private fun getCurrentDateTimeFormat(): String? {
         val date = Date()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(date)
@@ -352,7 +351,7 @@ object Utils {
         return hashMap
     }
 
-    fun DeviceInfo(): String? {
+    fun deviceInfo(): String? {
         try {
             val manufacturer: String = Build.MANUFACTURER
             val model: String = Build.MODEL
@@ -413,7 +412,7 @@ object Utils {
         appendLog("Version " + BuildConfig.VERSION_NAME + " ; created date time :" + getCurrentDateTime(FORMAT_TIME).toString() + " ; Action :" + action.name.toString() + " ; Status: " + status.name.toString() + " ; message log: " + value)
     }
 
-    fun onCheck() {
+    private fun onCheck() {
         val file = File(SuperSafeApplication.getInstance().getFileLogs())
         if (file.exists()) {
             val mSize = SuperSafeApplication.getInstance().getStorage()?.getSize(file, SizeUnit.MB)!!.toLong()
@@ -434,27 +433,30 @@ object Utils {
             }
         }
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-        intent.setType("*/*")
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.type = "*/*"
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
         context.startActivityForResult(Intent.createChooser(intent, context.getString(R.string.share)), Navigator.SHARE)
     }
 
-    private fun getScreenSize(activity: Context): Point {
-        val display: Display? = (activity as Activity?)?.getWindowManager()?.getDefaultDisplay()
-        val size = Point()
-        if (display != null) {
-            display.getSize(size)
+    private fun getScreenSize(activity: Activity): Point {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val size = Point()
+            activity.display?.getRealSize(size)
+            size
+        }else{
+            val size = Point()
+            activity.windowManager?.defaultDisplay?.getSize(size)
+            size
         }
-        return size
     }
 
-    fun getScreenWidth(activity: Context): Int {
+    fun getScreenWidth(activity: Activity): Int {
         return getScreenSize(activity).x
     }
 
-    fun getScreenHeight(activity: Context): Int {
+    fun getScreenHeight(activity: Activity): Int {
         return getScreenSize(activity).y
     }
 
@@ -469,7 +471,7 @@ object Utils {
     }
 
     fun appInstalledOrNot(uri: String): Boolean {
-        val pm: PackageManager = SuperSafeApplication.getInstance().getPackageManager()
+        val pm: PackageManager = SuperSafeApplication.getInstance().packageManager
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES)
             return true
@@ -496,10 +498,15 @@ object Utils {
 
     fun isLandscape(activity: AppCompatActivity): Boolean {
         val landscape: Boolean
-        val displaymetrics = DisplayMetrics()
-        activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics)
-        val width: Int = displaymetrics.widthPixels
-        val height: Int = displaymetrics.heightPixels
+        val displayMetrics = DisplayMetrics()
+        /*Support for android 11*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            activity.display?.getRealMetrics(displayMetrics)
+        }else{
+            activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+        val width: Int = displayMetrics.widthPixels
+        val height: Int = displayMetrics.heightPixels
         landscape = width >= height
         return landscape
     }
@@ -623,7 +630,7 @@ object Utils {
         return isAllowRequestDriveApis()
     }
 
-    fun isPauseSync(): Boolean {
+    private fun isPauseSync(): Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
     }
 
@@ -731,7 +738,7 @@ object Utils {
 
     /*Get the first of category data*/
     fun getArrayOfIndexCategoryHashMap(mMapDelete: MutableMap<String, MainCategoryModel>): MainCategoryModel? {
-        if (mMapDelete.size > 0) {
+        if (mMapDelete.isNotEmpty()) {
             val model: MainCategoryModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
             Log(TAG, "Object need to be deleting " + Gson().toJson(model))
             return model
@@ -799,10 +806,10 @@ object Utils {
     /*Delete hash map after delete Google drive and Server system*/
     fun deletedIndexOfHashMap(itemModel: ItemModel?, map: MutableMap<String, ItemModel>?): Boolean {
         try {
-            if (map != null) {
-                if (map.isNotEmpty()) {
+            map?.let {mMapResult ->
+                if (mMapResult.isNotEmpty()) {
                     itemModel?.unique_id?.let {
-                        map.remove(it)
+                        mMapResult.remove(it)
                     }
                     return true
                 }
@@ -826,9 +833,9 @@ object Utils {
 
     /*Get the first of data for import*/
     fun getArrayOfIndexHashMapImport(mMapDelete: MutableMap<String, ImportFilesModel>?): ImportFilesModel? {
-        if (mMapDelete != null) {
-            if (mMapDelete.isNotEmpty()) {
-                val model: ImportFilesModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
+        mMapDelete?.let {mMapResult ->
+            if (mMapResult.isNotEmpty()) {
+                val model: ImportFilesModel? = mMapResult[mMapResult.keys.toTypedArray()[0]]
                 Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                 return model
             }
@@ -839,10 +846,10 @@ object Utils {
     /*Delete hash map after delete Google drive and Server system for import*/
     fun deletedIndexOfHashMapImport(itemModel: ImportFilesModel?, map: MutableMap<String, ImportFilesModel>?): Boolean {
         try {
-            if (map != null) {
-                if (map.isNotEmpty()) {
+            map?.let { mMapResult ->
+                if (mMapResult.isNotEmpty()) {
                     itemModel?.unique_id?.let {
-                        map.remove(it)
+                        mMapResult.remove(it)
                     }
                     return true
                 }
@@ -932,8 +939,8 @@ object Utils {
     }
 
     /*Create folder*/
-    fun createDirectory(path: String?): Boolean {
-        val directory = File(path)
+    private fun createDirectory(path: String?): Boolean {
+        val directory = File(path ?:"")
         if (directory.exists()) {
             Log(TAG, "Directory '$path' already exists")
             return false
@@ -1065,8 +1072,8 @@ object Utils {
             return true
         }
         val mCheckout: CheckoutItems? = getCheckoutItems()
-        if (mCheckout != null) {
-            if (mCheckout.isPurchasedLifeTime || mCheckout.isPurchasedOneYears || mCheckout.isPurchasedSixMonths) {
+        mCheckout?.let {mCheckoutResult ->
+            if (mCheckoutResult.isPurchasedLifeTime || mCheckoutResult.isPurchasedOneYears || mCheckoutResult.isPurchasedSixMonths) {
                 return true
             }
         }
@@ -1077,8 +1084,8 @@ object Utils {
         val mUser = getUserInfo() ?: return false
         val syncData: SyncData? = mUser.syncData
         if (!isPremium()) {
-            if (syncData != null) {
-                if (syncData.left == 0) {
+            syncData?.let {mSyncDataResult ->
+                if (mSyncDataResult.left == 0) {
                     return false
                 }
             }
@@ -1088,14 +1095,14 @@ object Utils {
 
     private fun isAllowRequestDriveApis(): Boolean {
         val mUser = getUserInfo()
-        if (mUser != null) {
-            if (mUser.driveConnected) {
-                if (mUser.access_token != null && mUser.access_token != "") {
-                    if (mUser.cloud_id != null && mUser.cloud_id != "" && !isPauseSync()) {
+        mUser?.let {mUserResult ->
+            if (mUserResult.driveConnected) {
+                if (mUserResult.access_token != null && mUserResult.access_token != "") {
+                    if (mUserResult.cloud_id != null && mUserResult.cloud_id != "" && !isPauseSync()) {
                         return true
                     } else {
-                        mUser.driveConnected = false
-                        mUser.access_token = null
+                        mUserResult.driveConnected = false
+                        mUserResult.access_token = null
                         setUserPreShare(mUser)
                     }
                 }
@@ -1201,6 +1208,42 @@ object Utils {
 
     fun isCameraAvailable(context: Context): Boolean {
         return context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+    }
+
+    /*Stopping saver space*/
+    fun stoppingSaverSpace(){
+        val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(isSyncCloud = true, isSaver = false, isFakePin = false)
+        mList?.let { mResultList ->
+            for (i in mResultList.indices) {
+                when (EnumFormatType.values()[mResultList[i].formatType]) {
+                    EnumFormatType.IMAGE -> {
+                        mResultList[i].isSyncCloud = false
+                        mResultList[i].originalSync = false
+                        SQLHelper.updatedItem(mResultList[i])
+                    }
+                    else -> Log(TAG,"Nothing")
+                }
+            }
+        }
+    }
+
+    /*Stopping premium features*/
+    fun stoppingPremiumFeatures(){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_fake_pin), false)
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_break_in_alert), false)
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_secret_door), false)
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_theme_object), 0)
+        PrefsController.putInt(SuperSafeApplication.getInstance().getString(R.string.key_position_theme), 0)
+        ThemeHelper.applyTheme(EnumThemeModel.byPosition(Utils.getPositionTheme()))
+    }
+
+    fun putAlreadyAskedExpiration(status : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), status)
+    }
+    fun isAlreadyAskedExpiration() : Boolean{
+       return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), false)
     }
 }
 

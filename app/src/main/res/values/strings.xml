@@ -298,6 +298,8 @@
     <string name="change_fake_pin">Change Fake PIN</string>
     <string name="time_ago_prefix"></string>
     <string name="key_alert">Alert</string>
+    <string name="warning_expired_subscription">The first of all. Thank you for using our services and purchased items. Currently your packages was expired. Please subscription to continue using our premium features.</string>
+    <string name="key_already_asked_expiration">is_already_asked_expiration</string>
     <string name="time_ago_suffix">ago</string>
     <string name="time_ago_seconds">less than a minute</string>
     <string name="time_ago_minute">about a minute</string>

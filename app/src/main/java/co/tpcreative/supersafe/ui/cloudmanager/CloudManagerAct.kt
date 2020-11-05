@@ -151,20 +151,8 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
         if (isDownload) {
-            val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(true, false, false)
-            if (mList != null && mList.size > 0) {
-                for (i in mList.indices) {
-                    val formatType = EnumFormatType.values()[mList[i].formatType]
-                    when (formatType) {
-                        EnumFormatType.IMAGE -> {
-                            mList[i].isSyncCloud = false
-                            mList[i].originalSync = false
-                            SQLHelper.updatedItem(mList[i])
-                        }
-                        else -> Utils.Log(TAG,"Nothing")
-                    }
-                }
-            }
+            /*Stopping saver saver*/
+            Utils.stoppingSaverSpace()
             ServiceManager.getInstance()?.onPreparingSyncData()
             Utils.Log(TAG, "Re-Download file")
         }
@@ -172,8 +160,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
             val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(true, true, false)
             if (mList != null) {
                 for (index in mList) {
-                    val formatType = EnumFormatType.values()[index.formatType]
-                    when (formatType) {
+                    when (EnumFormatType.values()[index.formatType]) {
                         EnumFormatType.IMAGE -> {
                             storage?.deleteFile(index.getOriginal())
                         }

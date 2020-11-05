@@ -12,6 +12,8 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.controller.PremiumManager
+import co.tpcreative.supersafe.common.dialog.DialogListener
+import co.tpcreative.supersafe.common.dialog.DialogManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -55,6 +57,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             EnumStatus.UNLOCK -> {
                 rlOverLay?.visibility = View.INVISIBLE
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                PremiumManager.getInstance().onStartInAppPurchase()
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
@@ -109,6 +112,19 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             EnumStatus.NO_SPACE_LEFT_CLOUD -> {
                 onAlert(getString(R.string.key_no_space_left_space_cloud))
             }
+            EnumStatus.EXPIRED_SUBSCRIPTIONS ->{
+                DialogManager.getInstance()?.onStartDialog(this,R.string.key_alert,R.string.warning_expired_subscription, object : DialogListener{
+                    override fun onClickButton() {
+                        Navigator.onMoveToPremium(this@MainTabAct)
+                    }
+                    override fun dismiss() {
+                        Utils.stoppingSaverSpace()
+                        Utils.stoppingPremiumFeatures()
+                        Utils.putAlreadyAskedExpiration(true)
+                    }
+                })
+            }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

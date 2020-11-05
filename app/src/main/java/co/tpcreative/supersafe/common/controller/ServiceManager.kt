@@ -87,7 +87,6 @@ class ServiceManager : BaseServiceView<Any?> {
             getInstance()?.onSyncAuthorDevice()
             getInstance()?.onGetDriveAbout()
             Utils.onScanFile(SuperSafeApplication.getInstance(), "scan.log")
-            PremiumManager.getInstance().onStartInAppPurchase()
         }
 
         //binder comes from server to communicate with method's of
@@ -1452,7 +1451,6 @@ class ServiceManager : BaseServiceView<Any?> {
             EnumStatus.CONNECTED -> {
                 Utils.onPushEventBus(EnumStatus.CONNECTED)
                 onGetUserInfo()
-                PremiumManager.getInstance().onStartInAppPurchase()
             }
             EnumStatus.DISCONNECTED -> {
                 onDefaultValue()
