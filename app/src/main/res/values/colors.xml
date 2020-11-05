@@ -421,7 +421,7 @@
     <color name="primaryColorGray">#9E9E9E</color>
     <color name="primaryLightColorGray">#F5F5F5</color>
     <color name="primaryDarkColorGray">#616161</color>
-    <color name="secondaryColorGray">#536DFE</color>
+    <color name="secondaryColorGray">#cf9c02</color>
     <color name="secondaryLightColorGray">#94a5ff</color>
     <color name="secondaryDarkColorGray">#2c44c9</color>
     <color name="primaryTextColorGray">#ffffff</color>
