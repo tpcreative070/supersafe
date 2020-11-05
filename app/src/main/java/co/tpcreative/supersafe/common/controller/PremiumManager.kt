@@ -31,24 +31,18 @@ class PremiumManager : BillingProcessor.IBillingHandler {
     override fun onBillingInitialized() {
         /*Checking life time in-app*/
         bp?.let {bpResult ->
-            if (bpResult.isPurchased(SuperSafeApplication.getInstance().getString(R.string.life_time))) {
-                val details: TransactionDetails? = bpResult.getPurchaseTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.life_time))
-                if (details != null) {
-                    val mPurchaseData: PurchaseData = details.purchaseInfo.purchaseData
-                    onCheckout(mPurchaseData, EnumPurchase.LIFETIME)
-                }
-            } else if (bpResult.isSubscribed(SuperSafeApplication.getInstance().getString(R.string.six_months))) {
-                val details: TransactionDetails? = bpResult.getSubscriptionTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.six_months))
-                if (details != null) {
-                    val mPurchaseData: PurchaseData = details.purchaseInfo.purchaseData
-                    onCheckout(mPurchaseData, EnumPurchase.SIX_MONTHS)
-                }
-            } else if (bpResult.isSubscribed(SuperSafeApplication.getInstance().getString(R.string.one_years))) {
-                val details: TransactionDetails? = bpResult.getSubscriptionTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.one_years))
-                if (details != null) {
-                    val mPurchaseData: PurchaseData = details.purchaseInfo.purchaseData
-                    onCheckout(mPurchaseData, EnumPurchase.ONE_YEAR)
-                }
+            val detailTimeLife: TransactionDetails? = bpResult.getPurchaseTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.life_time))
+            val detailSixMonths: TransactionDetails? = bpResult.getSubscriptionTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.six_months))
+            val detailsOneYear: TransactionDetails? = bpResult.getSubscriptionTransactionDetails(SuperSafeApplication.getInstance().getString(R.string.one_years))
+            if (detailTimeLife != null) {
+                val mPurchaseData: PurchaseData = detailTimeLife.purchaseInfo.purchaseData
+                onCheckout(mPurchaseData, EnumPurchase.LIFETIME)
+            }else if (detailSixMonths!=null) {
+                val mPurchaseData: PurchaseData = detailSixMonths.purchaseInfo.purchaseData
+                onCheckout(mPurchaseData, EnumPurchase.SIX_MONTHS)
+            } else if (detailsOneYear!=null) {
+                val mPurchaseData: PurchaseData = detailsOneYear.purchaseInfo.purchaseData
+                onCheckout(mPurchaseData, EnumPurchase.ONE_YEAR)
             } else {
                 onCheckout(PurchaseData(), EnumPurchase.NONE)
             }
@@ -73,7 +67,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 if (mCheckout != null) {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedSixMonths = data.autoRenewing
-                        if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()){
+                        if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -83,7 +77,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedSixMonths = data.autoRenewing
-                        if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()){
+                        if (!mCheckout.isPurchasedSixMonths && !Utils.isAlreadyAskedExpiration()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -96,7 +90,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                 if (mCheckout != null) {
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedOneYears = data.autoRenewing
-                        if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()){
+                        if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {
@@ -106,7 +100,7 @@ class PremiumManager : BillingProcessor.IBillingHandler {
                     mCheckout = CheckoutItems()
                     if (Utils.isRealCheckedOut(data.orderId)) {
                         mCheckout.isPurchasedOneYears = data.autoRenewing
-                        if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()){
+                        if (!mCheckout.isPurchasedOneYears && !Utils.isAlreadyAskedExpiration()) {
                             Utils.onPushEventBus(EnumStatus.EXPIRED_SUBSCRIPTIONS)
                         }
                     } else {

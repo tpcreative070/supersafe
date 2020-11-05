@@ -11,6 +11,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.CheckoutItems
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumPurchase
 import co.tpcreative.supersafe.model.EnumStatus
@@ -43,7 +44,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
             EnumStatus.PREMIUM -> {
                 scrollView?.smoothScrollTo(0, 0)
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
@@ -94,7 +95,7 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
             EnumStatus.CHECKOUT -> {
                 Toast.makeText(applicationContext, "Message $message", Toast.LENGTH_SHORT).show()
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
@@ -135,7 +136,14 @@ class PremiumAct : BaseActivity(), BaseView<EmptyModel>, BillingProcessor.IBilli
             if (mInfo != null) {
                 val mData: PurchaseData? = mInfo.purchaseData
                 if (mData != null) {
-                    onCheckout(mData, EnumPurchase.fromString(mData.productId))
+                    presenter?.onAddCheckout(mData)
+                    if (Utils.isRealCheckedOut(mData.orderId)) {
+                        onCheckout(mData, EnumPurchase.fromString(mData.productId))
+                    }
+                    else{
+                        Utils.setCheckoutItems(CheckoutItems())
+                        askWarningFakeCheckout()
+                    }
                 }
             }
         }

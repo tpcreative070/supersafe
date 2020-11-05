@@ -542,7 +542,7 @@
     <string name="faq">FAQ</string>
     <string name="Support">Support</string>
     <string name="more_about_private_cloud">More detail Private Cloud(Google Drive)</string>
-
+    <string name="warning_fake_checkout">Sorry for inconvenience. It seems FAKE order. Please contact to us via care@tpcreative.co</string>
     <string name="i_have_a_new_phone">I have a new phone</string>
     <string name="i_have_a_new_phone_content">file:///android_asset/new_phone.html</string>
 

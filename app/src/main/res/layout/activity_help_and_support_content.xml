@@ -32,7 +32,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
@@ -51,7 +51,7 @@
                     android:id="@+id/webview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                </im.delight.android.webview.AdvancedWebView>>
+                </im.delight.android.webview.AdvancedWebView>
                 <LinearLayout
                     android:id="@+id/llEmail"
                     android:orientation="horizontal"
@@ -68,7 +68,7 @@
                         android:paddingStart="20dp"
                         android:layout_gravity="start|center"
                         android:textSize="@dimen/text_size_normal"
-                        android:textColor="?attr/colorPrimaryDark"
+                        android:textColor="?attr/colorAccent"
                         android:id="@+id/tvEmail"
                         android:gravity="start"
                         android:layout_width="match_parent"
@@ -88,6 +88,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

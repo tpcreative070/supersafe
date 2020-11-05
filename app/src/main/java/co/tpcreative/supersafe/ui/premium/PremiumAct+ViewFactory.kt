@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.premium
+import android.content.DialogInterface
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
@@ -10,6 +11,7 @@ import co.tpcreative.supersafe.model.CheckoutItems
 import co.tpcreative.supersafe.model.EnumPurchase
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.PurchaseData
+import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_premium.*
 
 fun PremiumAct.initUI(){
@@ -138,8 +140,22 @@ fun PremiumAct.onCheckout(data: PurchaseData?, purchase: EnumPurchase?) {
         }
         else -> Utils.setCheckoutItems(CheckoutItems())
     }
-    presenter?.onAddCheckout(data)
 }
+
+fun PremiumAct.askWarningFakeCheckout() {
+    val dialogBuilder = MaterialDialog.Builder(this, Utils.getCurrentTheme())
+    dialogBuilder.setTitle(R.string.key_alert)
+    dialogBuilder.setPadding(40, 40, 40, 0)
+    dialogBuilder.setMargin(60, 0, 60, 0)
+    dialogBuilder.setMessage(getString(R.string.warning_fake_checkout))
+    dialogBuilder.setPositiveButton(R.string.got_it) { p0, p1 ->
+        finish()
+        Utils.Log(TAG,"call finish here")
+    }
+    val dialog = dialogBuilder.create()
+    dialog.show()
+}
+
 
 fun PremiumAct.onStartInAppPurchase() {
     bp = BillingProcessor(this, Utils.GOOGLE_CONSOLE_KEY, this)
