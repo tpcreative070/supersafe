@@ -25,6 +25,10 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/colorPrimary</item>
+        <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="dialogColorAccent">@color/colorAccent</item>
+
     </style>
 
     <style name="AppTheme.Share"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -53,6 +57,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/colorPrimary</item>
+        <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="dialogColorAccent">@color/colorAccent</item>
     </style>
 
     <!-- Base application theme. -->
@@ -80,6 +87,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/colorPrimary</item>
+        <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="dialogColorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.PINK" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -107,6 +117,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorPink</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorPink</item>
+        <item name="dialogColorAccent">@color/secondaryColorPink</item>
     </style>
 
     <style name="AppTheme.PURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -134,6 +147,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorPurple</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorPurple</item>
+        <item name="dialogColorAccent">@color/secondaryDarkColorPurple</item>
     </style>
 
     <style name="AppTheme.DEEPPURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -161,6 +177,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorDeepPurple</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
+        <item name="dialogColorAccent">@color/primaryColorPurple</item>
     </style>
 
     <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -188,6 +207,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorCyan</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorCyan</item>
+        <item name="dialogColorAccent">@color/primaryColorBrown</item>
     </style>
 
     <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -215,6 +237,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorTeal</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorTeal</item>
+        <item name="dialogColorAccent">@color/secondaryDarkColorTeal</item>
     </style>
 
 
@@ -243,6 +268,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorLightGreen</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorLightGreen</item>
+        <item name="dialogColorAccent">@color/secondaryColorLightGreen</item>
     </style>
 
     <style name="AppTheme.LIME" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -270,6 +298,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorLime</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorLime</item>
+        <item name="dialogColorAccent">@color/primaryColorBlueGray</item>
     </style>
 
     <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -297,6 +328,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorAmber</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorAmber</item>
+        <item name="dialogColorAccent">@color/secondaryColorAmber</item>
     </style>
 
     <style name="AppTheme.BROWN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -324,6 +358,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorBrown</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorBrown</item>
+        <item name="dialogColorAccent">@color/md_teal_500</item>
     </style>
 
     <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -351,6 +388,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorGray</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorGray</item>
+        <item name="dialogColorAccent">@color/secondaryColorGray</item>
     </style>
 
     <style name="AppTheme.BLUEGRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -378,6 +418,9 @@
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="colorPremiumText">@color/colorPremiumText</item>
         <item name="colorPremiumIcon">@color/colorPremiumIcon</item>
+        <item name="dialogColorPrimary">@color/primaryColorBlueGray</item>
+        <item name="dialogColorPrimaryDark">@color/primaryDarkColorBlueGray</item>
+        <item name="dialogColorAccent">@color/secondaryDarkColorBlueGray</item>
     </style>
 
     <!-- End Custom theme -->
@@ -474,18 +517,18 @@
 
     <!--Change theme -->
     <style name="LightDialogTheme" parent="@style/MaterialDialog.Light">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
+        <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
+        <item name="colorAccent">?attr/dialogColorAccent</item>
         <!--
         <item name="android:fontFamily">@font/brandon_regs</item>
         !-->
     </style>
 
     <style name="DarkDialogTheme" parent="@style/MaterialDialog">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
+        <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
+        <item name="colorAccent">?attr/dialogColorAccent</item>
         <!--
         <item name="android:fontFamily">@font/brandon_regs</item>
         !-->

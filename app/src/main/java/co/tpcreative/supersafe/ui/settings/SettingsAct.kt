@@ -331,7 +331,7 @@ class SettingsAct : BaseActivity() {
 
         private fun onShowPremium() {
             try {
-                val builder = MaterialDialog.Builder(getContext()!!)
+                val builder = MaterialDialog.Builder(context!!,Utils.getCurrentTheme())
                 val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
                 builder.setHeaderBackground(themeApp?.getAccentColor()!!)
                 builder.setTitle(getString(R.string.this_is_premium_feature))
@@ -352,7 +352,7 @@ class SettingsAct : BaseActivity() {
                     val negative = dialog.findViewById<Button?>(android.R.id.button2)
                     val textView: AppCompatTextView? = dialog.findViewById(android.R.id.message)
                     if (positive != null && negative != null && textView != null) {
-                        positive.setTextColor(ContextCompat.getColor(context!!, themeApp?.getAccentColor()!!))
+                        positive.setTextColor(ContextCompat.getColor(context!!, themeApp.getAccentColor()!!))
                         negative.setTextColor(ContextCompat.getColor(context!!, themeApp.getAccentColor()!!))
                         textView.textSize = 16f
                     }

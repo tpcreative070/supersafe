@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.ThemeApp
 import de.mrapp.android.dialog.MaterialDialog
@@ -53,7 +54,7 @@ fun AlbumCoverAct.initRecycleViewCustom(layoutInflater: LayoutInflater) {
 
 fun AlbumCoverAct.onShowPremium() {
     try {
-        val builder = getContext()?.let { MaterialDialog.Builder(it) }
+        val builder = getContext()?.let { MaterialDialog.Builder(it,Utils.getCurrentTheme()) }
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         builder?.setHeaderBackground(themeApp?.getAccentColor()!!)
         builder?.setTitle(getString(R.string.this_is_premium_feature))

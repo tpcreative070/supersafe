@@ -69,7 +69,6 @@ class ThemeSettingsAct : BaseActivity(), BaseView<EmptyModel>, ThemeSettingsAdap
         presenter?.mThemeApp = presenter?.mList?.get(position)
         setStatusBarColored(this, presenter?.mThemeApp?.getPrimaryColor()!!, presenter?.mThemeApp?.getPrimaryDarkColor()!!)
         tvTitle?.setTextColor(ContextCompat.getColor(this,presenter?.mThemeApp?.getAccentColor()!!))
-        imgIcon?.setColorFilter(presenter?.mThemeApp?.getAccentColor()!!, PorterDuff.Mode.SRC_ATOP)
         PrefsController.putInt(getString(R.string.key_theme_object), position)
         adapter?.notifyItemChanged(position)
     }

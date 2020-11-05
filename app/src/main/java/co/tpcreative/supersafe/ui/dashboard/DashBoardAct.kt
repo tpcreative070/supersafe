@@ -39,7 +39,7 @@ class DashBoardAct : BaseActivityNoneSlide() {
 
     private fun onShowRestore() {
         try {
-            val builder = MaterialDialog.Builder(this)
+            val builder = MaterialDialog.Builder(this,Utils.getCurrentTheme())
             val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
             builder.setHeaderBackground(themeApp?.getAccentColor()!!)
             builder.setTitle(getString(R.string.key_restore))
