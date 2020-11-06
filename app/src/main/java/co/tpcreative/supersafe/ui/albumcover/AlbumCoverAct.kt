@@ -146,14 +146,19 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
             }
             EnumStatus.GET_LIST_FILE -> {
                 Utils.Log(TAG, "load data")
-                onLoading()
-                SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)
+                CoroutineScope(Dispatchers.Main).launch {
+                      val mResult = async {
+                          onLoading()
+                      }
+                      mResult.await()
+                      SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)
+                }
             }
             else -> Utils.Log(TAG, "Nothing")
         }
     }
 
-    private fun onLoading()  = CoroutineScope(Dispatchers.Main).launch{
+    suspend fun onLoading()  = withContext(Dispatchers.Main){
         Utils.Log(TAG,"Loading....2")
         adapterDefault?.setDataSource(presenter?.mListMainCategories)
         adapterCustom?.setDataSource(presenter?.mList)

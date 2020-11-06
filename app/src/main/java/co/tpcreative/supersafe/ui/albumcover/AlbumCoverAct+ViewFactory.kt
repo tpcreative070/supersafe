@@ -12,6 +12,10 @@ import co.tpcreative.supersafe.model.ThemeApp
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_album_cover.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 
 fun AlbumCoverAct.initUI(){
@@ -28,8 +32,14 @@ fun AlbumCoverAct.initUI(){
     rlSwitch.setOnClickListener {
         btnSwitch?.isChecked = !btnSwitch?.isChecked!!
     }
-    SingletonManagerProcessing.getInstance()?.onStartProgressing(this@initUI,R.string.loading)
-    presenter!!.getData()
+    CoroutineScope(Dispatchers.Main).launch {
+        SingletonManagerProcessing.getInstance()?.onStartProgressing(this@initUI,R.string.loading)
+        val mResult  = async {
+            presenter!!.getData()
+        }
+        mResult.await()
+        Utils.Log(TAG,"Fished...")
+    }
 }
 
 fun AlbumCoverAct.initRecycleViewDefault(layoutInflater: LayoutInflater) {
