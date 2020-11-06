@@ -137,7 +137,6 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
             } else {
                 mLockAlbum?.summary = getString(R.string.locked)
             }
-
             /*Album cover*/mAlbumCover = findPreference(getString(R.string.key_album_cover)) as MyPreferenceAlbumSettings?
             mAlbumCover?.onPreferenceClickListener = createActionPreferenceClickListener()
             mAlbumCover?.onPreferenceChangeListener = createChangeListener()
@@ -145,7 +144,7 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                 if (mAlbumCover?.imageViewCover != null) {
                     val main: MainCategoryModel? = presenter?.mMainCategories
                     if (main?.pin == "") {
-                        val items: ItemModel? = SQLHelper.getItemId(main?.items_id)
+                        val items: ItemModel? = SQLHelper.getItemId(main.items_id)
                         if (items != null) {
                             when (EnumFormatType.values()[items.formatType]) {
                                 EnumFormatType.AUDIO -> {
@@ -168,26 +167,31 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                                 }
                                 else -> {
                                     try {
-                                        if (storage?.isFileExist("" + items.getThumbnail())!!) {
-                                            mAlbumCover?.imageViewCover?.setRotation(items.degrees.toFloat())
+                                        if (storage?.isFileExist(items.getThumbnail())!!) {
+                                            mAlbumCover?.imageViewCover?.rotation = items.degrees.toFloat()
                                             Glide.with(context!!)
                                                     .load(storage!!.readFile(items.getThumbnail()))
                                                     .apply(options)
                                                     .into(mAlbumCover?.imageViewCover!!)
-                                            mAlbumCover?.imgViewSuperSafe?.setVisibility(View.INVISIBLE)
+                                            mAlbumCover?.imageViewCover?.visibility = View.VISIBLE
+                                            mAlbumCover?.imgViewSuperSafe?.visibility = View.INVISIBLE
+                                            Utils.Log(TAG,"Call here...........1")
                                         } else {
                                             mAlbumCover?.imageViewCover?.setImageResource(0)
                                             val myColor = Color.parseColor(main.image)
                                             mAlbumCover?.imageViewCover?.setBackgroundColor(myColor)
-                                            mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(getContext(), main.icon))
+                                            mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(context, main.icon))
                                             mAlbumCover?.imgViewSuperSafe?.visibility = (View.VISIBLE)
+                                            Utils.Log(TAG,"Call here...........2")
                                         }
+                                        Utils.Log(TAG,"Call here...........")
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
                                 }
                             }
                         } else {
+                            Utils.Log(TAG,"Call here...........???")
                             mAlbumCover?.imageViewCover?.setImageResource(0)
                             val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(main.mainCategories_Local_Id)
                             if (mainCategories != null) {

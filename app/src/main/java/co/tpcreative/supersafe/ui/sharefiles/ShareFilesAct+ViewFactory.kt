@@ -8,11 +8,13 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.PathUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.ui.restore.onStartProgressing
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -274,21 +276,7 @@ fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
 
 fun ShareFilesAct.onStartProgressing() {
     try {
-        runOnUiThread(Runnable {
-            if (dialog == null) {
-                val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-                dialog = SpotsDialog.Builder()
-                        .setContext(this)
-                        .setDotColor(themeApp?.getAccentColor()!!)
-                        .setMessage(getString(R.string.importing))
-                        .setCancelable(true)
-                        .build()
-            }
-            if (!dialog?.isShowing!!) {
-                dialog?.show()
-                Utils.Log(TAG, "Showing dialog...")
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.importing)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -297,11 +285,7 @@ fun ShareFilesAct.onStartProgressing() {
 fun ShareFilesAct.onStopProgressing() {
     Utils.Log(TAG, "onStopProgressing")
     try {
-        runOnUiThread(Runnable {
-            if (dialog != null) {
-                dialog?.dismiss()
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
     } catch (e: Exception) {
         Utils.Log(TAG, e.message+"")
     }

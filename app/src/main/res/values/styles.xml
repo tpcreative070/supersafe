@@ -29,6 +29,12 @@
         <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="dialogColorAccent">@color/colorAccent</item>
 
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.Share"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -60,6 +66,13 @@
         <item name="dialogColorPrimary">@color/colorPrimary</item>
         <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="dialogColorAccent">@color/colorAccent</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <!-- Base application theme. -->
@@ -90,6 +103,13 @@
         <item name="dialogColorPrimary">@color/colorPrimary</item>
         <item name="dialogColorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="dialogColorAccent">@color/colorAccent</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.PINK" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -120,6 +140,13 @@
         <item name="dialogColorPrimary">@color/primaryColorPink</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorPink</item>
         <item name="dialogColorAccent">@color/secondaryColorPink</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.PURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -150,6 +177,13 @@
         <item name="dialogColorPrimary">@color/primaryColorPurple</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorPurple</item>
         <item name="dialogColorAccent">@color/secondaryDarkColorPurple</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.DEEPPURPLE" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -180,6 +214,13 @@
         <item name="dialogColorPrimary">@color/primaryColorDeepPurple</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorDeepPurple</item>
         <item name="dialogColorAccent">@color/secondaryColorDeepPurple</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.CYAN"  parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -210,6 +251,13 @@
         <item name="dialogColorPrimary">@color/primaryColorCyan</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorCyan</item>
         <item name="dialogColorAccent">@color/secondaryColorCyan</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.TEAL" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -240,6 +288,13 @@
         <item name="dialogColorPrimary">@color/primaryColorTeal</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorTeal</item>
         <item name="dialogColorAccent">@color/secondaryDarkColorTeal</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
 
@@ -271,6 +326,13 @@
         <item name="dialogColorPrimary">@color/primaryColorLightGreen</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorLightGreen</item>
         <item name="dialogColorAccent">@color/secondaryColorLightGreen</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.LIME" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -301,6 +363,13 @@
         <item name="dialogColorPrimary">@color/primaryColorLime</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorLime</item>
         <item name="dialogColorAccent">@color/secondaryColorLime</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.AMBER" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -331,6 +400,13 @@
         <item name="dialogColorPrimary">@color/primaryColorAmber</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorAmber</item>
         <item name="dialogColorAccent">@color/secondaryColorAmber</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.BROWN" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -361,6 +437,13 @@
         <item name="dialogColorPrimary">@color/primaryColorBrown</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorBrown</item>
         <item name="dialogColorAccent">@color/secondaryColorBrown</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.GRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -391,6 +474,13 @@
         <item name="dialogColorPrimary">@color/primaryColorGray</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorGray</item>
         <item name="dialogColorAccent">@color/secondaryColorGray</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <style name="AppTheme.BLUEGRAY" parent="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
@@ -421,6 +511,13 @@
         <item name="dialogColorPrimary">@color/primaryColorBlueGray</item>
         <item name="dialogColorPrimaryDark">@color/primaryDarkColorBlueGray</item>
         <item name="dialogColorAccent">@color/secondaryDarkColorBlueGray</item>
+
+        <item name="dialogMaterialTitle">@color/dialogMaterialTitle</item>
+        <item name="dialogMaterialContent">@color/dialogMaterialContent</item>
+        <item name="dialogMaterialButton">?attr/colorAccent</item>
+        <item name="md_color_title">@color/dialogMaterialTitle</item>
+        <item name="md_color_content">@color/dialogMaterialContent</item>
+        <item name="md_color_button_text">?attr/dialogMaterialButton</item>
     </style>
 
     <!-- End Custom theme -->

@@ -4,10 +4,12 @@ import android.view.View
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
+import co.tpcreative.supersafe.ui.photosslideshow.onStartProgressing
 import dmax.dialog.SpotsDialog
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
@@ -93,11 +95,7 @@ fun RestoreAct.shake() {
 fun RestoreAct.onStopProgressing() {
     Utils.Log(TAG, "onStopProgressing")
     try {
-        runOnUiThread(Runnable {
-            if (dialog != null) {
-                dialog?.dismiss()
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
     } catch (e: Exception) {
         Utils.Log(TAG, e.message+"")
     }
@@ -105,21 +103,7 @@ fun RestoreAct.onStopProgressing() {
 
 fun RestoreAct.onStartProgressing() {
     try {
-        runOnUiThread(Runnable {
-            if (dialog == null) {
-                val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-                dialog = SpotsDialog.Builder()
-                        .setContext(this)
-                        .setDotColor(themeApp?.getAccentColor()!!)
-                        .setMessage(getString(R.string.progressing))
-                        .setCancelable(true)
-                        .build()
-            }
-            if (!dialog?.isShowing!!) {
-                dialog?.show()
-                Utils.Log(TAG, "Showing dialog...")
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.progressing)
     } catch (e: Exception) {
         e.printStackTrace()
     }

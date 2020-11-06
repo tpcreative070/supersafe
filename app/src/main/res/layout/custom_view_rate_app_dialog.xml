@@ -15,14 +15,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <androidx.appcompat.widget.AppCompatTextView
-            android:textColor="@color/material_gray_700"
+            android:textColor="?attr/dialogMaterialContent"
             android:textSize="@dimen/small"
             android:id="@+id/tvHappy"
             android:text="@string/happy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <androidx.appcompat.widget.AppCompatTextView
-            android:textColor="@color/material_gray_700"
+            android:textColor="?attr/dialogMaterialContent"
             android:textSize="@dimen/small"
             android:id="@+id/tvUnhappy"
             android:text="@string/unhappy"
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <androidx.appcompat.widget.AppCompatTextView
-            android:textColor="@color/material_gray_700"
+            android:textColor="?attr/dialogMaterialContent"
             android:textSize="@dimen/small"
             android:text="@string/thank_you_feedback"
             android:layout_marginTop="10dp"

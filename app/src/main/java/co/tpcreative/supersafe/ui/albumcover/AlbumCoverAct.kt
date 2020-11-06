@@ -9,12 +9,14 @@ import android.widget.CompoundButton
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
 import kotlinx.android.synthetic.main.activity_album_cover.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -65,10 +67,13 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
     override fun onClickItem(position: Int) {
         Utils.Log(TAG, "position...$position")
         try {
-            presenter?.mMainCategories?.items_id = presenter?.mList?.get(position)?.items_id
+            val mIndex =  presenter?.mList?.get(position)
+            presenter?.mMainCategories?.items_id = mIndex?.items_id
             presenter?.mMainCategories?.mainCategories_Local_Id = ""
             presenter?.mMainCategories?.let { SQLHelper.updateCategory(it) }
-            presenter?.getData()
+            presenter?.getFetchCustomData(position) {
+                onUpdatedCustomData(position,false)
+            }
             isReload = true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -81,7 +86,9 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
             presenter?.mMainCategories?.items_id = ""
             presenter?.mMainCategories?.mainCategories_Local_Id = presenter?.mListMainCategories?.get(position)?.mainCategories_Local_Id
             presenter?.mMainCategories?.let { SQLHelper.updateCategory(it) }
-            presenter?.getData()
+            presenter?.getFetchDefaultData(position) {
+                onUpdatedDefaultData(position,false)
+            }
             isReload = true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -92,7 +99,6 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
         when (item.itemId) {
             android.R.id.home -> {
                 if (isReload) {
-                    val intent: Intent = getIntent()
                     setResult(Activity.RESULT_OK, intent)
                     Utils.Log(TAG, "onBackPressed")
                 }
@@ -141,10 +147,15 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
             }
             EnumStatus.GET_LIST_FILE -> {
                 Utils.Log(TAG, "load data")
-                adapterDefault?.setDataSource(presenter?.mListMainCategories)
-                adapterCustom?.setDataSource(presenter?.mList)
+                onLoading()
             }
         }
+    }
+
+    private fun onLoading()  = CoroutineScope(Dispatchers.Main).launch {
+        adapterDefault?.setDataSource(presenter?.mListMainCategories)
+        adapterCustom?.setDataSource(presenter?.mList)
+        SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)
     }
 
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
@@ -159,7 +170,6 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
 
     override fun onBackPressed() {
         if (isReload) {
-            val intent: Intent = getIntent()
             setResult(Activity.RESULT_OK, intent)
             Utils.Log(TAG, "onBackPressed")
         }

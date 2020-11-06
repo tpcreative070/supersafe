@@ -34,6 +34,9 @@
     <attr name="dialogColorPrimary" format="reference"/>
     <attr name="dialogColorPrimaryDark" format="reference"/>
     <attr name="dialogColorAccent" format="reference"/>
+    <attr name="dialogMaterialTitle" format="reference"/>
+    <attr name="dialogMaterialContent" format="reference"/>
+    <attr name="dialogMaterialButton" format="reference"/>
 
     <declare-styleable name="CircleProgressBar">
         <attr name="progressColor" format="color"/>

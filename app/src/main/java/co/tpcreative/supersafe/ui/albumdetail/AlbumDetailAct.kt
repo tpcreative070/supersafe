@@ -684,6 +684,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     }
                 }
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
     companion object {

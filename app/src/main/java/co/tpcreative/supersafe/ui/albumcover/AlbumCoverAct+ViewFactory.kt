@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.ThemeApp
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_album_cover.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
+import kotlinx.coroutines.*
 
 fun AlbumCoverAct.initUI(){
     TAG = this::class.java.simpleName
@@ -29,8 +31,11 @@ fun AlbumCoverAct.initUI(){
     rlSwitch.setOnClickListener {
         btnSwitch?.isChecked = !btnSwitch?.isChecked!!
     }
+
+    SingletonManagerProcessing.getInstance()?.onStartProgressing(this@initUI,R.string.loading)
     presenter?.getData()
 }
+
 
 fun AlbumCoverAct.initRecycleViewDefault(layoutInflater: LayoutInflater) {
     adapterDefault = AlbumCoverDefaultAdapter(layoutInflater,applicationContext, this)
@@ -68,5 +73,66 @@ fun AlbumCoverAct.onShowPremium() {
         builder?.show()
     } catch (e: Exception) {
         e.printStackTrace()
+    }
+}
+
+fun AlbumCoverAct.onUpdatedCustomData(position : Int? = null,isRequestPrevious : Boolean){
+    if (!isRequestPrevious){
+        position?.let {mResultPosition ->
+            if (adapterCustom?.getDataSource()!!.size > mResultPosition) {
+                adapterCustom?.notifyItemChanged(mResultPosition)
+                presenter?.defaultPreviousPosition?.let {
+                    presenter?.mListMainCategories?.get(it)?.isChecked = !(presenter?.mListMainCategories?.get(it)?.isChecked!!)
+                    onUpdatedDefaultData(it,true)
+                }
+            }
+        }
+    }
+    presenter?.previousPosition?.let {mResultPosition ->
+        if (adapterCustom!!.getDataSource()!!.size > mResultPosition){
+            adapterCustom?.notifyItemChanged(mResultPosition)
+            if (isRequestPrevious){
+                presenter!!.previousPosition = null
+            }else{
+                presenter!!.previousPosition = position
+            }
+            presenter?.defaultPreviousPosition?.let {
+                presenter?.mListMainCategories?.get(it)?.isChecked = !(presenter?.mListMainCategories?.get(it)?.isChecked!!)
+                onUpdatedDefaultData(it,true)
+            }
+        }
+    } ?: run {
+        presenter?.previousPosition = position
+    }
+}
+
+fun AlbumCoverAct.onUpdatedDefaultData(position : Int? = null, isRequestPrevious : Boolean) {
+    if (!isRequestPrevious){
+        position?.let {mResultPosition ->
+            if (adapterDefault?.getDataSource()!!.size > mResultPosition) {
+                adapterDefault?.notifyItemChanged(mResultPosition)
+                presenter?.previousPosition?.let {
+                    presenter?.mList?.get(it)?.isChecked = !(presenter?.mList?.get(it)?.isChecked!!)
+                    onUpdatedCustomData(it,true)
+                }
+            }
+        }
+    }
+    presenter?.defaultPreviousPosition?.let { mResultPosition ->
+        if (adapterDefault!!.getDataSource()!!.size > mResultPosition){
+            adapterDefault?.notifyItemChanged(mResultPosition)
+            if (isRequestPrevious){
+                presenter!!.defaultPreviousPosition = null
+            }else{
+                presenter!!.defaultPreviousPosition = position
+            }
+            presenter?.previousPosition?.let {
+                presenter?.mList?.get(it)?.isChecked = !(presenter?.mList?.get(it)?.isChecked!!)
+                onUpdatedCustomData(it,true)
+                presenter?.previousPosition = null
+            }
+        }
+    } ?: run {
+        this.presenter?.defaultPreviousPosition = position
     }
 }

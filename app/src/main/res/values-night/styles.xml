@@ -1,7 +1,7 @@
 <resources>
     <!--Change theme -->
     <style name="LightDialogTheme" parent="@style/MaterialDialog.Light">
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
         <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
         <item name="colorAccent">?attr/dialogColorAccent</item>
         <!--
@@ -10,7 +10,7 @@
     </style>
 
     <style name="DarkDialogTheme" parent="@style/MaterialDialog">
-        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimary">?attr/dialogColorPrimary</item>
         <item name="colorPrimaryDark">?attr/dialogColorPrimaryDark</item>
         <item name="colorAccent">?attr/dialogColorAccent</item>
         <!--

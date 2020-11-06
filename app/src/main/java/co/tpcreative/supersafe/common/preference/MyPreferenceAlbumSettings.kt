@@ -14,7 +14,7 @@ class MyPreferenceAlbumSettings @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : Preference(context, attrs, defStyleAttr) {
     init {
-        widgetLayoutResource = R.layout.custom_preferences_item
+        widgetLayoutResource = R.layout.custom_preferences_item_album_settings
     }
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
@@ -24,7 +24,7 @@ class MyPreferenceAlbumSettings @JvmOverloads constructor(
             imageViewCover = this.imgCover
             imgViewSuperSafe = this.imgIcon
             imageViewCover?.visibility = View.INVISIBLE
-            imageViewCover?.visibility = View.INVISIBLE
+            imgViewSuperSafe?.visibility = View.INVISIBLE
             onUpdatedView?.invoke()
         }
     }

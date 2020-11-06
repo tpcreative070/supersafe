@@ -42,7 +42,7 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
+        fun onClickItem(position: Int)
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {

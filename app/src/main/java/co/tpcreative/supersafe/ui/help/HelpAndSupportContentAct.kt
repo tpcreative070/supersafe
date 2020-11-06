@@ -13,6 +13,7 @@ import android.widget.TextView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
@@ -182,19 +183,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
 
     private fun onStartProgressing() {
         try {
-            runOnUiThread(Runnable {
-                if (dialog == null) {
-                    dialog = SpotsDialog.Builder()
-                            .setContext(this@HelpAndSupportContentAct)
-                            .setMessage(getString(R.string.Sending))
-                            .setCancelable(true)
-                            .build()
-                }
-                if (!(dialog?.isShowing)!!) {
-                    dialog?.show()
-                    Utils.Log(TAG, "Showing dialog...")
-                }
-            })
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this@HelpAndSupportContentAct,R.string.Sending)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -202,11 +191,7 @@ class HelpAndSupportContentAct : BaseActivity(), BaseView<EmptyModel>, TextView.
 
     private fun onStopProgressing() {
         try {
-            runOnUiThread(Runnable {
-                if (dialog != null) {
-                    dialog?.dismiss()
-                }
-            })
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
         } catch (e: Exception) {
             Utils.Log(TAG, e.message+"")
         }

@@ -233,19 +233,7 @@ fun PhotoSlideShowAct.onShowDialog(status: EnumStatus?, position: Int) {
 /*Gallery interface*/
 fun PhotoSlideShowAct.onStartProgressing() {
     try {
-        runOnUiThread(Runnable {
-            if (dialog == null) {
-                dialog = SpotsDialog.Builder()
-                        .setContext(this)
-                        .setMessage(getString(R.string.exporting))
-                        .setCancelable(true)
-                        .build()
-            }
-            if (!dialog?.isShowing!!) {
-                dialog?.show()
-                Utils.Log(TAG, "Showing dialog...")
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.exporting)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -253,13 +241,7 @@ fun PhotoSlideShowAct.onStartProgressing() {
 
 fun PhotoSlideShowAct.onStopProgressing() {
     try {
-        runOnUiThread(Runnable {
-            if (dialog != null) {
-                dialog?.dismiss()
-                deselectAll()
-                Utils.Log(TAG, "Action 1")
-            }
-        })
+        SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
     } catch (e: Exception) {
         Utils.Log(TAG, e.message+"")
     }

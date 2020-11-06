@@ -2,7 +2,6 @@ package dmax.dialog;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
+import androidx.appcompat.app.AlertDialog;
 
 /**
  * Created by Maxim Dybarsky | maxim.dybarskyy@gmail.com

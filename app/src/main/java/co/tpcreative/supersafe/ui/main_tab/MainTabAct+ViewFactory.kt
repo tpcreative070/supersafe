@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.main_tab
 import android.Manifest
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -13,7 +12,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.viewpager.widget.ViewPager
@@ -30,7 +28,6 @@ import co.tpcreative.supersafe.common.views.AnimationsContainer
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.input.getInputField
 import com.afollestad.materialdialogs.input.input
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -240,10 +237,7 @@ fun MainTabAct.onShowSuggestion() {
 
 
 fun MainTabAct.onAskingRateApp() {
-    val inflater: LayoutInflater = getContext()?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    val view: View = inflater.inflate(R.layout.custom_view_rate_app_dialog, null)
-    val happy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvHappy)
-    val unhappy: AppCompatTextView? = view.findViewById<AppCompatTextView?>(R.id.tvUnhappy)
+    val view: View = LayoutInflater.from(this).inflate(R.layout.custom_view_rate_app_dialog,null)
     val builder: MaterialDialog = MaterialDialog(this)
             .title(text = getString(R.string.how_are_we_doing))
             .customView(view = view, scrollable = true)
