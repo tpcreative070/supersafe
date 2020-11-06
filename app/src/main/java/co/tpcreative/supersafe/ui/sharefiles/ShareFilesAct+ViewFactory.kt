@@ -14,14 +14,12 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.PathUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.restore.onStartProgressing
 import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_share_files.*
 import java.io.File
 import java.util.ArrayList

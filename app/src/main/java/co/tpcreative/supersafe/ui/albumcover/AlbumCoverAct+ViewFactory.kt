@@ -1,21 +1,22 @@
 package co.tpcreative.supersafe.ui.albumcover
 import android.view.LayoutInflater
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.controller.SingletonManagerProgressingListener
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.model.ThemeApp
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_album_cover.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 fun AlbumCoverAct.initUI(){
     TAG = this::class.java.simpleName
@@ -31,11 +32,9 @@ fun AlbumCoverAct.initUI(){
     rlSwitch.setOnClickListener {
         btnSwitch?.isChecked = !btnSwitch?.isChecked!!
     }
-
     SingletonManagerProcessing.getInstance()?.onStartProgressing(this@initUI,R.string.loading)
-    presenter?.getData()
+    presenter!!.getData()
 }
-
 
 fun AlbumCoverAct.initRecycleViewDefault(layoutInflater: LayoutInflater) {
     adapterDefault = AlbumCoverDefaultAdapter(layoutInflater,applicationContext, this)

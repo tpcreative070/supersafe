@@ -8,9 +8,6 @@ import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.listener.Listener
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.ThemeApp
-import co.tpcreative.supersafe.ui.photosslideshow.onStartProgressing
-import dmax.dialog.SpotsDialog
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers

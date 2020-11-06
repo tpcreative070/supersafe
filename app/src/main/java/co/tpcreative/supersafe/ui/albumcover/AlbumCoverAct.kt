@@ -149,10 +149,12 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
                 Utils.Log(TAG, "load data")
                 onLoading()
             }
+            else -> Utils.Log(TAG, "Nothing")
+
         }
     }
 
-    private fun onLoading()  = CoroutineScope(Dispatchers.Main).launch {
+    private fun onLoading()  = CoroutineScope(Dispatchers.Main).launch{
         adapterDefault?.setDataSource(presenter?.mListMainCategories)
         adapterCustom?.setDataSource(presenter?.mList)
         SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)

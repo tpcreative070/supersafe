@@ -3,12 +3,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.MenuItem
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import java.lang.ref.SoftReference
 
@@ -17,7 +17,7 @@ class AnimationsContainer private constructor() {
     private var mHandler: Handler? = null
     private var runnable: Runnable? = null
     interface OnAnimationStoppedListener {
-        open fun AnimationStopped()
+        fun onAnimationStopped()
     }
 
     // animation progress dialog frames
@@ -52,6 +52,7 @@ class AnimationsContainer private constructor() {
             EnumStatus.SYNC_ERROR -> {
                 return FramesSequenceAnimation(imageView, R.drawable.ic_sync_error)
             }
+            else -> Utils.Log("","Nothing")
         }
         return FramesSequenceAnimation()
     }
@@ -90,22 +91,19 @@ class AnimationsContainer private constructor() {
                 mIsRunning = false
                 mDelayMillis = 2000 / fps
                 imageView?.setIcon(mFrames!!.get(0))
-
                 // use in place bitmap to save GC work (when animation images are the same size & type)
-                if (Build.VERSION.SDK_INT >= 11) {
-                    val bmp: Bitmap = (imageView?.getIcon() as BitmapDrawable).getBitmap()
-                    val width = 40
-                    val height = 40
-                    val config: Bitmap.Config = bmp.getConfig()
-                    mBitmap = Bitmap.createBitmap(width, height, config)
-                    mBitmapOptions = BitmapFactory.Options()
-                    val mBitmapOptions: BitmapFactory.Options = BitmapFactory.Options()
-                    mBitmapOptions.inBitmap = mBitmap
-                    mBitmapOptions.inJustDecodeBounds = false
-                    mBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565
-                    mBitmapOptions.inDither = true
-                    mBitmapOptions.inSampleSize = 1
-                }
+                val bmp: Bitmap = (imageView?.getIcon() as BitmapDrawable).getBitmap()
+                val width = 40
+                val height = 40
+                val config: Bitmap.Config = bmp.getConfig()
+                mBitmap = Bitmap.createBitmap(width, height, config)
+                mBitmapOptions = BitmapFactory.Options()
+                val mBitmapOptions: BitmapFactory.Options = BitmapFactory.Options()
+                mBitmapOptions.inBitmap = mBitmap
+                mBitmapOptions.inJustDecodeBounds = false
+                mBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565
+                mBitmapOptions.inDither = true
+                mBitmapOptions.inSampleSize = 1
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -132,7 +130,7 @@ class AnimationsContainer private constructor() {
                     val imageView = mSoftReferenceImageView?.get()
                     if (!mShouldRun || imageView == null) {
                         mIsRunning = false
-                        mOnAnimationStoppedListener?.AnimationStopped()
+                        mOnAnimationStoppedListener?.onAnimationStopped()
                         return
                     }
                     mIsRunning = true

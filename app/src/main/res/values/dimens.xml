@@ -160,5 +160,9 @@
     <dimen name="large">22sp</dimen>
     <dimen name="floating_action_button_size_large_80">80dp</dimen>
 
-
+    <dimen name="spot_size">7dp</dimen>
+    <dimen name="title_margin">10dp</dimen>
+    <dimen name="title_padding">6dp</dimen>
+    <dimen name="progress_margin">24dp</dimen>
+    <dimen name="progress_width">250dp</dimen>
 </resources>

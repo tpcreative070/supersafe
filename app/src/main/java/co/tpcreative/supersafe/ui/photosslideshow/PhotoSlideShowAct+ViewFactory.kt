@@ -12,7 +12,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.snatik.storage.Storage
-import dmax.dialog.SpotsDialog
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers

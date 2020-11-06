@@ -15,6 +15,8 @@
     <color name="dot_emptyborder">#87898C</color>
     <color name="transparent">#00000000</color>
     <color name="material_gray_theme">#EEEEEE</color>
+    <color name="spots_dialog_color">@android:color/holo_blue_dark</color>
+
 
     <color name="blue_grey_500">#607D8B</color>
     <color name="blue_grey_600">#546E7A</color>

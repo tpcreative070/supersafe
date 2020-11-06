@@ -22,7 +22,6 @@ import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
-import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_help_and_support_content.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

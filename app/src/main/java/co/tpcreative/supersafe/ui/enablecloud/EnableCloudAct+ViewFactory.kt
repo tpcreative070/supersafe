@@ -1,12 +1,10 @@
 package co.tpcreative.supersafe.ui.enablecloud
-import android.app.ProgressDialog
 import android.widget.ImageView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
-import com.afollestad.materialdialogs.checkbox.checkBoxPrompt
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import kotlinx.android.synthetic.main.activity_enable_cloud.*
 

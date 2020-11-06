@@ -54,7 +54,7 @@ class AlbumCoverPresenter : Presenter<BaseView<EmptyModel>>() {
         onDone(position)
     }
 
-    fun getData() =  CoroutineScope(Dispatchers.IO).launch{
+    fun getData(){
         val view: BaseView<EmptyModel>? = view()
         mList?.clear()
         val data: MutableList<ItemModel>? = SQLHelper.getListItems(mMainCategories?.categories_local_id, EnumFormatType.IMAGE.ordinal, false, mMainCategories!!.isFakePin)
