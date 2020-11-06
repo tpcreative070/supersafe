@@ -1,5 +1,4 @@
 include ':app',
-        'multipleimageselect',
         'materialstyledialoglibrary',
         'library-common',
         'library-circular',
