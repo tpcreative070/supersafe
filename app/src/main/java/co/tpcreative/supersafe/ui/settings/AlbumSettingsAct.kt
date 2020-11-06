@@ -197,6 +197,7 @@ class AlbumSettingsAct : BaseActivity(), BaseView<EmptyModel> {
                             if (mainCategories != null) {
                                 mAlbumCover?.imgViewSuperSafe?.setImageDrawable(SQLHelper.getDrawable(context, mainCategories.icon))
                                 mAlbumCover?.imgViewSuperSafe?.visibility = View.VISIBLE
+                                mAlbumCover?.imageViewCover?.visibility = View.VISIBLE
                                 try {
                                     val myColor = Color.parseColor(mainCategories.image)
                                     mAlbumCover?.imageViewCover?.setBackgroundColor(myColor)
