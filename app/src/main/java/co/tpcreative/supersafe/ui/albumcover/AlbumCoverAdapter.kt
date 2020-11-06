@@ -55,8 +55,8 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
         var items: ItemModel? = null
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
+            Utils.Log(TAG,"Loading....")
             mPosition = position
-            Utils.Log(TAG, "load data")
             items = data
             if (data.isChecked) {
                 view_alpha?.alpha = 0.5f
@@ -92,14 +92,12 @@ class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?,
                                         .apply(options!!)
                                         .into(imgAlbum!!)
                                 imgIcon?.visibility = View.INVISIBLE
-                                Utils.Log(TAG, "load data 2")
                             } else {
                                 imgAlbum?.setImageResource(0)
                                 val myColor = Color.parseColor(categories?.image)
                                 imgAlbum?.setBackgroundColor(myColor)
                                 imgIcon?.setImageDrawable(SQLHelper.getDrawable(context, categories?.icon))
                                 imgIcon?.visibility = View.VISIBLE
-                                Utils.Log(TAG, "load data 3")
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()

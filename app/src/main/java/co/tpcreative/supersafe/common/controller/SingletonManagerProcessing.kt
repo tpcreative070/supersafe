@@ -53,6 +53,7 @@ class SingletonManagerProcessing {
     companion object {
         private val TAG = SingletonManagerProcessing::class.java.simpleName
         private var instance: SingletonManagerProcessing? = null
+        val core = CoroutineScope(Dispatchers.Main)
         fun getInstance(): SingletonManagerProcessing? {
             if (instance == null) {
                 instance = SingletonManagerProcessing()
