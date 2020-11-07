@@ -24,9 +24,9 @@ import kotlinx.android.synthetic.main.album_cover_item.view.*
 class AlbumCoverAdapter(inflater: LayoutInflater, private val context: Context?, mainCategories: MainCategoryModel?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
-            .override(400, 400)
-            .placeholder(R.drawable.baseline_music_note_white_48)
-            .error(R.drawable.baseline_music_note_white_48)
+            .override(200, 200)
+            .placeholder(R.color.material_gray_100)
+            .error(R.color.red_200)
             .priority(Priority.HIGH)
     private val itemSelectedListener: ItemSelectedListener?
     private val storage: Storage?
