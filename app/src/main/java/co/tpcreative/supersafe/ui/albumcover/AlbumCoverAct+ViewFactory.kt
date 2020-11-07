@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.albumcover
 import android.view.LayoutInflater
+import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,8 +33,9 @@ fun AlbumCoverAct.initUI(){
     rlSwitch.setOnClickListener {
         btnSwitch?.isChecked = !btnSwitch?.isChecked!!
     }
-    CoroutineScope(Dispatchers.Main).launch {
-        SingletonManagerProcessing.getInstance()?.onStartProgressing(this@initUI,R.string.loading)
+    mainScope.launch {
+        //SingletonManagerProcessing.getInstance()?.onStartProgressing(this@initUI,R.string.loading)
+        progress_bar.visibility = View.VISIBLE
         val mResult  = async {
             presenter!!.getData()
         }

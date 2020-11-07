@@ -53,6 +53,7 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
         presenter?.unbindView()
+        mainScope.cancel()
     }
 
     override fun onStopListenerAWhile() {
@@ -146,19 +147,21 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
             }
             EnumStatus.GET_LIST_FILE -> {
                 Utils.Log(TAG, "load data")
-                CoroutineScope(Dispatchers.Main).launch {
+                mainScope.launch {
                       val mResult = async {
                           onLoading()
                       }
-                      mResult.await()
-                      SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)
+                    mResult.await()
+                    progress_bar.visibility = View.INVISIBLE
+                    llCoverAlbum.visibility = View.VISIBLE
+                    SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)
                 }
             }
             else -> Utils.Log(TAG, "Nothing")
         }
     }
 
-    suspend fun onLoading()  = withContext(Dispatchers.Main){
+    private suspend fun onLoading()  = withContext(Dispatchers.Main){
         Utils.Log(TAG,"Loading....2")
         adapterDefault?.setDataSource(presenter?.mListMainCategories)
         adapterCustom?.setDataSource(presenter?.mList)

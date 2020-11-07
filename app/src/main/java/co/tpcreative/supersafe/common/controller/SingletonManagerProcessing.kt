@@ -7,10 +7,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.progressing.SpotsDialog
 import co.tpcreative.supersafe.model.ThemeApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class SingletonManagerProcessing {
     private var dialog: AlertDialog? = null
