@@ -11,6 +11,10 @@ import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.MainCategoryModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
 
@@ -24,7 +28,7 @@ class AlbumDetailPresenter : Presenter<BaseView<Int>>() {
     var mListShare: MutableList<File>? = ArrayList()
     var status: EnumStatus? = EnumStatus.OTHER
     protected var mListHashExporting: MutableList<HashMap<Int, ItemModel>>?
-    fun getData(activity: Activity?) {
+    suspend fun getData(activity: Activity?) = withContext(Dispatchers.Main) {
         val view: BaseView<Int>? = view()
         mList?.clear()
         try {
@@ -87,7 +91,7 @@ class AlbumDetailPresenter : Presenter<BaseView<Int>>() {
         }
     }
 
-    fun onDelete() {
+    fun onDelete() = CoroutineScope(Dispatchers.Main).launch{
         val view: BaseView<Int>? = view()
         for (i in mList?.indices!!) {
             if (mList!![i].isChecked()!!) {

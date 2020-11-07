@@ -174,7 +174,7 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
                 if (actionMode != null) {
                     actionMode?.finish()
                 }
-                presenter?.getData(this)
+                onPushDataToList()
                 btnTrash?.text = getString(R.string.key_empty_trash)
                 SingletonPrivateFragment.getInstance()?.onUpdateView()
                 ServiceManager.getInstance()?.onPreparingSyncData()

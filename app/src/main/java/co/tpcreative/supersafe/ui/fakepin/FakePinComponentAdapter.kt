@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.MainCategoryModel
+import co.tpcreative.supersafe.model.ThemeApp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -23,14 +24,15 @@ class FakePinComponentAdapter(inflater: LayoutInflater, context: Activity?, item
     private val context: Activity? = context
     private val storage: Storage?
     private val itemSelectedListener: ItemSelectedListener?
+    var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     private val TAG = FakePinComponentAdapter::class.java.simpleName
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(400, 400)
-            .placeholder(R.color.colorPrimary)
+            .placeholder(themeApp?.getPrimaryColor()!!)
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .error(R.color.colorPrimary)
+            .error(themeApp?.getAccentColor()!!)
             .priority(Priority.HIGH)
 
     override fun getItemCount(): Int {

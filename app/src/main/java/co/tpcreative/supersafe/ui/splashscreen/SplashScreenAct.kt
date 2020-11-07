@@ -17,6 +17,10 @@ import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
 import co.tpcreative.supersafe.model.User
 import kotlinx.android.synthetic.main.activity_splash_screen.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -60,7 +64,14 @@ class SplashScreenAct : BaseActivityNoneSlide() {
         Utils.onWriteLog(Utils.deviceInfo(), EnumStatus.DEVICE_ABOUT)
         if(SuperSafeApplication.getInstance().isRequestMigration() && SuperSafeApplication.getInstance().isLiveMigration()){
             SingletonManagerProcessing.getInstance()?.onStartProgressing(this@SplashScreenAct,R.string.progressing)
-            SuperSafeApplication.getInstance().onPreparingMigration()
+            CoroutineScope(Dispatchers.Main).launch {
+                val mPreparing = async {
+                    SuperSafeApplication.getInstance().onPreparingMigration()
+                }
+                mPreparing.await()
+                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
+                onMessageEvent(EnumStatus.MIGRATION_DONE)
+            }
         }else {
             Utils.onObserveData(DELAY.toLong(), object : Listener {
                 override fun onStart() {
@@ -100,6 +111,7 @@ class SplashScreenAct : BaseActivityNoneSlide() {
                 storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeOldPath())
                 finish()
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

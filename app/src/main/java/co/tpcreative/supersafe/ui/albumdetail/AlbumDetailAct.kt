@@ -34,6 +34,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_album_detail.*
 import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.ThreadMode
 
 class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.ItemSelectedListener, AlbumDetailVerticalAdapter.ItemSelectedListener {
@@ -60,16 +62,11 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         attachFragment(R.id.gallery_root)
     }
 
-    fun onInit() {
-        presenter?.getData(this)
-        initRecycleView(layoutInflater)
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.REFRESH -> {
-                presenter?.getData(this)
+                onCallData()
             }
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
@@ -386,12 +383,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     llBottom?.visibility = View.GONE
                     isReload = true
                 }
-                val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-                if (isVertical) {
-                    verticalAdapter?.setDataSource(presenter?.mList)
-                } else {
-                    adapter?.setDataSource(presenter?.mList)
-                }
+                onPushDataToList()
             }
             EnumStatus.REFRESH -> {
                 val photos: String = kotlin.String.format(getString(R.string.photos_default), "" + presenter?.photos)
@@ -402,14 +394,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 tv_Audios?.text = audios
                 val others: String = kotlin.String.format(getString(R.string.others_default), "" + presenter?.others)
                 tv_Others?.text = others
-                val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-                if (isVertical) {
-                    verticalAdapter?.getDataSource()?.clear()
-                    presenter?.mList?.let { verticalAdapter?.getDataSource()?.addAll(it) }
-                } else {
-                    adapter?.getDataSource()?.clear()
-                    presenter?.mList?.let { adapter?.getDataSource()?.addAll(it) }
-                }
+                onPushDataToList()
             }
             EnumStatus.DELETE -> {
                 SingletonPrivateFragment.getInstance()?.onUpdateView()

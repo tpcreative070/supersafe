@@ -1049,6 +1049,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                     /*Check saver space*/if (!isDownloadToExport) {
                         checkSaverSpace(entityModel, items.isOriginalGlobalId)
                     }
+                    entityModel.isRequestChecking = true
                     SQLHelper.updatedItem(entityModel)
                 } else {
                     if (categoryModel != null) {

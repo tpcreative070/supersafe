@@ -33,6 +33,10 @@ import kotlinx.android.synthetic.main.activity_album_detail.recyclerView
 import kotlinx.android.synthetic.main.activity_album_detail.speedDial
 import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.ArrayList
 
@@ -46,60 +50,6 @@ fun AlbumDetailAct.initUI(){
     onInit()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    collapsing_toolbar.title = presenter?.mainCategories?.categories_name
-    val mList: MutableList<ItemModel>? = presenter?.mainCategories?.isFakePin?.let { SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, it) }
-    val items: ItemModel? = SQLHelper.getItemId(presenter?.mainCategories?.items_id)
-    if (items != null && mList != null && mList.size > 0) {
-        when (EnumFormatType.values()[items.formatType]) {
-            EnumFormatType.AUDIO -> {
-                try {
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            EnumFormatType.FILES -> {
-                try {
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            else -> {
-                if (storage?.isFileExist(items.getThumbnail())!!) {
-                    backdrop?.rotation = items.degrees.toFloat()
-                    Glide.with(this)
-                            .load(storage?.readFile(items.getThumbnail()))
-                            .apply(options!!)
-                            .into(backdrop!!)
-                } else {
-                    backdrop?.setImageResource(0)
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
-                }
-            }
-        }
-    } else {
-        backdrop?.setImageResource(0)
-        val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(presenter?.mainCategories?.mainCategories_Local_Id)
-        if (mainCategories != null) {
-            try {
-                val myColor = Color.parseColor(mainCategories.image)
-                backdrop?.setBackgroundColor(myColor)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            try {
-                val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                backdrop?.setBackgroundColor(myColor)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
     llBottom?.visibility = View.GONE
     /*Root Fragment*/
     imgShare.setOnClickListener {
@@ -165,36 +115,7 @@ fun AlbumDetailAct.onExport(){
     }
 }
 
-fun AlbumDetailAct.initRecycleView(layoutInflater: LayoutInflater) {
-    try {
-        val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-        if (isVertical) {
-            recyclerView?.recycledViewPool?.clear()
-            verticalAdapter = AlbumDetailVerticalAdapter(getLayoutInflater(), this, this)
-            val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(applicationContext)
-            recyclerView?.layoutManager = mLayoutManager
-            while (recyclerView?.itemDecorationCount!! > 0) {
-                recyclerView?.removeItemDecorationAt(0)
-            }
-            recyclerView?.addItemDecoration(DividerItemDecoration(this, 0))
-            recyclerView?.adapter = verticalAdapter
-            verticalAdapter?.setDataSource(presenter?.mList)
-        } else {
-            recyclerView?.recycledViewPool?.clear()
-            adapter = AlbumDetailAdapter(layoutInflater, applicationContext, this)
-            val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(applicationContext, 3)
-            recyclerView?.layoutManager = mLayoutManager
-            while (recyclerView?.itemDecorationCount!! > 0) {
-                recyclerView?.removeItemDecorationAt(0)
-            }
-            recyclerView?.addItemDecoration(GridSpacingItemDecoration(3, 4, true))
-            recyclerView?.adapter = adapter
-            adapter?.setDataSource(presenter?.mList)
-        }
-    } catch (e: Exception) {
-        e.message
-    }
-}
+
 
 fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
     var content: String? = ""
@@ -485,4 +406,145 @@ fun AlbumDetailAct.onStopProgressing() {
         Utils.Log(TAG, e.message+"")
     }
 }
+
+fun AlbumDetailAct.onInit() {
+    llToolbarInfo.visibility = View.INVISIBLE
+    progress_bar.visibility = View.VISIBLE
+    onCallData()
+}
+
+fun AlbumDetailAct.onCallData(){
+    mainScope.launch {
+        val mInitRecyclerView = async {
+            initRecycleView(layoutInflater)
+        }
+        val mResultData = async {
+            presenter?.getData(this@onCallData)
+        }
+        val mRecyclerViewLoading = async {
+            onLoading()
+        }
+        val mBannerLoading = async {
+            onBannerLoading()
+        }
+        mInitRecyclerView.await()
+        mResultData.await()
+        mRecyclerViewLoading.await()
+        mBannerLoading.await()
+        progress_bar.visibility = View.INVISIBLE
+        llToolbarInfo.visibility = View.VISIBLE
+        Utils.Log(TAG,"Loading data")
+    }
+}
+
+suspend fun AlbumDetailAct.initRecycleView(layoutInflater: LayoutInflater) = withContext(Dispatchers.Main) {
+    try {
+        val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
+        if (isVertical) {
+            recyclerView?.recycledViewPool?.clear()
+            verticalAdapter = AlbumDetailVerticalAdapter(getLayoutInflater(), this@initRecycleView, this@initRecycleView)
+            val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(applicationContext)
+            recyclerView?.layoutManager = mLayoutManager
+            while (recyclerView?.itemDecorationCount!! > 0) {
+                recyclerView?.removeItemDecorationAt(0)
+            }
+            recyclerView?.addItemDecoration(DividerItemDecoration(this@initRecycleView, 0))
+            recyclerView?.adapter = verticalAdapter
+            verticalAdapter?.setDataSource(presenter?.mList)
+        } else {
+            recyclerView?.recycledViewPool?.clear()
+            adapter = AlbumDetailAdapter(layoutInflater, applicationContext, this@initRecycleView)
+            val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(applicationContext, 3)
+            recyclerView?.layoutManager = mLayoutManager
+            while (recyclerView?.itemDecorationCount!! > 0) {
+                recyclerView?.removeItemDecorationAt(0)
+            }
+            recyclerView?.addItemDecoration(GridSpacingItemDecoration(3, 4, true))
+            recyclerView?.adapter = adapter
+            adapter?.setDataSource(presenter?.mList)
+        }
+    } catch (e: Exception) {
+        e.message
+    }
+}
+
+suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
+    collapsing_toolbar.title = presenter?.mainCategories?.categories_name
+    val mList: MutableList<ItemModel>? = presenter?.mainCategories?.isFakePin?.let { SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, it) }
+    val items: ItemModel? = SQLHelper.getItemId(presenter?.mainCategories?.items_id)
+    if (items != null && mList != null && mList.size > 0) {
+        when (EnumFormatType.values()[items.formatType]) {
+            EnumFormatType.AUDIO -> {
+                try {
+                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
+                    backdrop?.setBackgroundColor(myColor)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            EnumFormatType.FILES -> {
+                try {
+                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
+                    backdrop?.setBackgroundColor(myColor)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            else -> {
+                if (storage?.isFileExist(items.getThumbnail())!!) {
+                    backdrop?.rotation = items.degrees.toFloat()
+                    Glide.with(this@onBannerLoading.applicationContext)
+                            .load(storage?.readFile(items.getThumbnail()))
+                            .apply(options!!)
+                            .into(backdrop!!)
+                } else {
+                    backdrop?.setImageResource(0)
+                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
+                    backdrop?.setBackgroundColor(myColor)
+                }
+            }
+        }
+    } else {
+        backdrop?.setImageResource(0)
+        val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(presenter?.mainCategories?.mainCategories_Local_Id)
+        if (mainCategories != null) {
+            try {
+                val myColor = Color.parseColor(mainCategories.image)
+                backdrop?.setBackgroundColor(myColor)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            try {
+                val myColor = Color.parseColor(presenter?.mainCategories?.image)
+                backdrop?.setBackgroundColor(myColor)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+}
+
+suspend fun AlbumDetailAct.onLoading() = withContext(Dispatchers.Main){
+    val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
+    if (isVertical) {
+        verticalAdapter?.getDataSource()?.clear()
+        presenter?.mList?.let { verticalAdapter?.getDataSource()?.addAll(it) }
+    } else {
+        adapter?.getDataSource()?.clear()
+        presenter?.mList?.let { adapter?.getDataSource()?.addAll(it) }
+    }
+}
+
+fun AlbumDetailAct.onPushDataToList(){
+    mainScope.launch {
+        val mResult = async {
+            onLoading()
+        }
+        mResult.await()
+        Utils.Log(TAG,"Completed")
+    }
+}
+
+
 

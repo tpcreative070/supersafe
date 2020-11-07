@@ -11,6 +11,10 @@ import com.snatik.storage.Storage
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -21,7 +25,7 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
     var photos = 0
     var audios = 0
     var others = 0
-    fun getData(activity: Activity?) {
+    suspend fun getData(activity: Activity?)  = withContext(Dispatchers.Main){
         val view: BaseView<EmptyModel>? = view()
         mList?.clear()
         try {
@@ -60,9 +64,8 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
         }
     }
 
-    fun onDeleteAll(isEmpty: Boolean) {
+    fun onDeleteAll(isEmpty: Boolean) = CoroutineScope(Dispatchers.Main).launch {
         val view: BaseView<EmptyModel>? = view()
-        subscriptions?.add(Observable.fromCallable(Callable {
         for (i in mList?.indices!!) {
             if (isEmpty) {
                 val formatTypeFile = EnumFormatType.values()[mList?.get(i)?.formatType!!]
@@ -91,11 +94,7 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                 }
             }
         }
-            ""
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
-                    view?.onSuccessful("Done", EnumStatus.DONE)
-                })
+        view?.onSuccessful("Done", EnumStatus.DONE)
     }
     companion object {
         private val TAG = TrashPresenter::class.java.simpleName

@@ -161,13 +161,6 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
         }
     }
 
-    private suspend fun onLoading()  = withContext(Dispatchers.Main){
-        Utils.Log(TAG,"Loading....2")
-        adapterDefault?.setDataSource(presenter?.mListMainCategories)
-        adapterCustom?.setDataSource(presenter?.mList)
-        Utils.Log(TAG,"Loading....3")
-    }
-
     override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
     override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     override fun getContext(): Context? {

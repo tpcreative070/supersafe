@@ -17,13 +17,10 @@ import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.album_detail_item.view.*
 import tpcreative.co.qrscanner.common.extension.setColorFilter
 
-
 class TrashAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions = RequestOptions()
             .centerCrop()
-            .override(400, 400)
-            .placeholder(R.drawable.baseline_music_note_white_48)
-            .error(R.drawable.baseline_music_note_white_48)
+            .override(200, 200)
             .priority(Priority.HIGH)
     private val itemSelectedListener: ItemSelectedListener?
     private val storage: Storage?
@@ -39,7 +36,7 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
     }
 
     interface ItemSelectedListener {
-        open fun onClickItem(position: Int)
+        fun onClickItem(position: Int)
     }
 
     inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
@@ -63,7 +60,6 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
             }
             try {
                 val path: String? = data.getThumbnail()
-                storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam?.visibility = View.VISIBLE
@@ -90,7 +86,7 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
                         if (storage?.isFileExist(path)!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage?.readFile(path))
+                                    .load(storage.readFile(path))
                                     .apply(options).into(imgAlbum!!)
                         }
                     }
@@ -100,7 +96,7 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
                         if (storage?.isFileExist(path)!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage?.readFile(path))
+                                    .load(storage.readFile(path))
                                     .apply(options).into(imgAlbum!!)
                         }
                     }
@@ -132,6 +128,7 @@ class TrashAdapter(inflater: LayoutInflater, private val context: Context?, item
 
     init {
         storage = Storage(context)
+        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
         this.itemSelectedListener = itemSelectedListener
     }
 }

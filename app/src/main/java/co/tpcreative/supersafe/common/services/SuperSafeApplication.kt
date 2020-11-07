@@ -35,6 +35,10 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
 import java.util.concurrent.Callable
@@ -429,7 +433,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         }
     }
 
-    fun onPreparingMigration() {
+    suspend fun onPreparingMigration() = withContext(Dispatchers.IO) {
         mMapMigrationItem.clear()
         File(getSuperSafeOldPath()!!).walkTopDown().forEach {
             val mResult = it.absolutePath.replace(superSafeOldPath, superSafe)
@@ -442,78 +446,42 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             }
         }
         if (mMapMigrationItem.isNotEmpty()) {
-            val nextItem = Utils.getArrayOfMigrationIndexHashMap(mMapMigrationItem)
-            if (nextItem != null) {
-                onMigrationItem(nextItem)
-                Utils.Log(TAG, "Start migration")
+            for (index in mMapMigrationItem){
+                val mValue = index.value
+                moveTo(mValue.mInput,mValue.mOutput)
+                Utils.Log(TAG,"loop of index ${mValue.Id}")
             }
         }
     }
 
-    private fun onMigrationItem(mData: MigrationModel) {
-        moveTo(mData.mInput, mData.mOutput) {
-            if (Utils.deletedIndexOfMigrationHashMap(mData.Id, mMapMigrationItem)) {
-                val nextItem = Utils.getArrayOfMigrationIndexHashMap(mMapMigrationItem)
-                if (nextItem != null) {
-                    onMigrationItem(nextItem)
-                    Utils.Log(TAG, "Next item of migration ${nextItem.Id}")
-                } else {
-                    Utils.Log(TAG, "Migration completed")
-                    storage.deleteDirectory(superSafeOldPath)
-                    Utils.onPushEventBus(EnumStatus.MIGRATION_DONE)
-                }
+    private suspend fun moveTo(source: File, dest: File) = withContext(Dispatchers.IO){
+        try {
+            if (source.isDirectory) {
+                source.mkdirs()
+                Utils.Log(TAG, "Call here")
             }
+            val fis = FileInputStream(source)
+            val bufferLength = 1024
+            val buffer = ByteArray(bufferLength)
+            val fos = FileOutputStream(dest)
+            val bos = BufferedOutputStream(fos, bufferLength)
+            var read = 0
+            read = fis.read(buffer, 0, read)
+            while (read != -1) {
+                bos.write(buffer, 0, read)
+                read = fis.read(buffer) // if read value is -1, it escapes loop.
+            }
+            fis.close()
+            bos.flush()
+            bos.close()
+            Utils.Log(TAG, "Finish...")
+            if (!source.delete()) {
+                Utils.Log(TAG, "failed to delete ${source.name}")
+            }
+        } catch (exception: IOException) {
+            exception.printStackTrace()
+            Utils.Log(TAG, "Could not move file...")
         }
-    }
-
-    private fun moveTo(source: File, dest: File, callback: (value: Boolean) -> Unit) {
-        compositeDisposable = CompositeDisposable()
-        compositeDisposable!!.add(Observable.fromCallable(Callable {
-            Utils.Log(TAG, "Staring move file...")
-            try {
-                if (source.isDirectory) {
-                    source.mkdirs()
-                    callback(true)
-                    Utils.Log(TAG, "Call here")
-                }
-                val fis = FileInputStream(source)
-                val bufferLength = 1024
-                val buffer = ByteArray(bufferLength)
-                val fos = FileOutputStream(dest)
-                val bos = BufferedOutputStream(fos, bufferLength)
-                var read = 0
-                read = fis.read(buffer, 0, read)
-                while (read != -1) {
-                    bos.write(buffer, 0, read)
-                    read = fis.read(buffer) // if read value is -1, it escapes loop.
-                }
-                fis.close()
-                bos.flush()
-                bos.close()
-                Utils.Log(TAG, "Finish...")
-                if (!source.delete()) {
-                    Utils.Log(TAG, "failed to delete ${source.name}")
-                    callback(true)
-                }
-            } catch (exception: IOException) {
-                exception.printStackTrace()
-                Utils.Log(TAG, "Could not move file...")
-                callback(false)
-            }
-            ""
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
-                    try {
-                        compositeDisposable?.dispose()
-                        callback(false)
-                    } catch (e: Exception) {
-
-                        e.printStackTrace()
-                        Utils.Log(TAG, "Migration done")
-                        compositeDisposable!!.dispose()
-                        callback(true)
-                    }
-                })
     }
 
     fun isRequestMigration(): Boolean {

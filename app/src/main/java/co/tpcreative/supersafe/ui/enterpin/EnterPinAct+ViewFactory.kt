@@ -18,6 +18,10 @@ import co.tpcreative.supersafe.model.User
 import kotlinx.android.synthetic.main.activity_enterpin.*
 import kotlinx.android.synthetic.main.footer_layout.*
 import kotlinx.android.synthetic.main.include_calculator.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.grantland.widget.AutofitHelper
 
 fun EnterPinAct.initUI(){
@@ -219,7 +223,7 @@ fun EnterPinAct.onRestore() {
     })
 }
 
-fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean) {
+fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean)  = CoroutineScope(Dispatchers.Main).launch{
     when (EnterPinAct.mPinAction) {
         EnumPinAction.VERIFY -> {
             if (SingletonManager.getInstance().isVisitFakePin()) {
@@ -264,6 +268,7 @@ fun EnterPinAct.checkPin(pin: String?, isCompleted: Boolean) {
                 }
             }
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
 }
 

@@ -13,10 +13,7 @@ import co.tpcreative.supersafe.model.ThemeApp
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_album_cover.*
 import kotlinx.android.synthetic.main.layout_premium_header.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 fun AlbumCoverAct.initUI(){
@@ -142,4 +139,11 @@ fun AlbumCoverAct.onUpdatedDefaultData(position : Int? = null, isRequestPrevious
     } ?: run {
         this.presenter?.defaultPreviousPosition = position
     }
+}
+
+suspend fun AlbumCoverAct.onLoading()   = withContext(Dispatchers.Main){
+    Utils.Log(TAG,"Loading....2")
+    adapterDefault?.setDataSource(presenter?.mListMainCategories)
+    adapterCustom?.setDataSource(presenter?.mList)
+    Utils.Log(TAG,"Loading....3")
 }
