@@ -34,6 +34,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_album_detail.*
 import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.ThreadMode
@@ -613,7 +615,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         return presenter?.mList
     }
 
-    private fun onUpdateAdapter(status: EnumStatus?, position: Int) {
+    private fun onUpdateAdapter(status: EnumStatus?, position: Int)  = CoroutineScope(Dispatchers.Main).launch{
         val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
         when (status) {
             EnumStatus.UPDATE_ENTIRE_ADAPTER -> {

@@ -31,17 +31,11 @@ import com.google.gson.Gson
 import com.snatik.storage.EncryptConfiguration
 import com.snatik.storage.Storage
 import com.snatik.storage.security.SecurityUtil
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.util.*
-import java.util.concurrent.Callable
 
 class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycleCallbacks {
     private lateinit var superSafe: String
