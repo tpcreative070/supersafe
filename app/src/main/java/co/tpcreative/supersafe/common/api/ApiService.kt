@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.api
 import co.tpcreative.supersafe.common.api.response.BaseResponse
-import co.tpcreative.supersafe.common.network.Resource
+import co.tpcreative.supersafe.common.network.Result
 import co.tpcreative.supersafe.common.request.*
 import co.tpcreative.supersafe.common.requestimport.*
 import co.tpcreative.supersafe.common.response.DriveResponse
@@ -11,6 +11,7 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -67,8 +68,9 @@ interface ApiService {
     @POST(GET_LIST_FILES_SYNC)
     suspend fun onListFilesSyncT(@Body request: SyncItemsRequest): Call<RootResponse>?
 
+
     @POST(GET_LIST_FILES_SYNC)
-    suspend fun onListFilesSyncCor(@Body request: SyncItemsRequest): Call<RootResponse>?
+    suspend fun onListFilesSyncCor(@Body request: SyncItemsRequest): Response<RootResponse?>
 
     @POST(SYNC_DATA)
     fun onSyncData(@Body request: SyncItemsRequest): Observable<RootResponse>?

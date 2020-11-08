@@ -21,6 +21,9 @@ import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
+import co.tpcreative.supersafe.common.api.requester.SyncDataService
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.google.android.gms.auth.GoogleAuthUtil
@@ -35,6 +38,7 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
@@ -76,6 +80,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private var mMapImporting: MutableMap<String, ImportFilesModel> = HashMap<String, ImportFilesModel>()
     private val mDownloadList: MutableList<ItemModel> = ArrayList<ItemModel>()
     private var mStart = 20
+    private val syncDataService  = SyncDataService()
     var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             Utils.Log(TAG, "connected")
@@ -188,6 +193,38 @@ class ServiceManager : BaseServiceView<Any?> {
         mDownloadList.clear()
         Utils.Log(TAG, "onPreparingSyncData...onGetItemList")
         onGetItemList("0")
+    }
+
+    fun waitingForResult() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val mResult = async {
+                getItemList()
+            }
+            mResult.await()
+        }
+    }
+
+    private suspend fun getItemList() = withContext(Dispatchers.IO){
+        var mNextSpace : String? = "0"
+        do {
+            val mResult = syncDataService.onGetListData(SyncItemsRequest(nextPage = mNextSpace))
+            when(mResult.status){
+                Status.LOADING ->{
+                    Utils.Log(TAG,"Loading...")
+                }
+                Status.SUCCESS -> {
+                    Utils.Log(TAG,"Response code ${mResult.code}")
+                    Utils.Log(TAG,"Call success ${Gson().toJson(mResult.data)}")
+                    mNextSpace = mResult.data?.data?.nextPage
+                }
+                Status.ERROR -> {
+                    Utils.Log(TAG,"Response code ${mResult.code}")
+                    Utils.Log(TAG,"Error occurred ${mResult.message}")
+                    mNextSpace = null
+                }
+            }
+        }while (mNextSpace != null)
+        Utils.Log(TAG,"Completed fetch api...")
     }
 
     private fun onGetItemList(next: String) {

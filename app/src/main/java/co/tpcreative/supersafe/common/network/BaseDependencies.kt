@@ -4,7 +4,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.snatik.storage.security.SecurityUtil
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import timber.log.Timber
 import java.util.*
@@ -34,7 +33,7 @@ open class BaseDependencies {
     private fun getHeaders(): HashMap<String, String>? {
         val hashMap = HashMap<String, String>()
         hashMap["Content-Type"] = "application/json"
-        hashMap["Authorization"] = onAuthorToken()
+        //hashMap["Authorization"] = onAuthorToken()
         return hashMap
     }
 

@@ -171,7 +171,8 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
                 return true
             }
             R.id.action_sync -> {
-                onEnableSyncData()
+                //onEnableSyncData()
+                ServiceManager.getInstance()?.waitingForResult()
                 return true
             }
             R.id.settings -> {

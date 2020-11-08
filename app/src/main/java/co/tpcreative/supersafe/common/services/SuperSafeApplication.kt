@@ -17,6 +17,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
+import co.tpcreative.supersafe.common.api.RetrofitBuilder
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.helper.ThemeHelper
@@ -69,6 +70,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
         serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
         serverAPI = RetrofitHelper().getTPCreativeService(getUrl())
+        serverApiCor = RetrofitBuilder.apiService
         ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)
@@ -361,7 +363,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         return storage
     }
 
-    private fun getUrl(): String? {
+    fun getUrl(): String? {
         url = if (!BuildConfig.DEBUG || isLive) {
             SecurityUtil.url_live
         } else {
@@ -406,6 +408,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         private var stopped = 0
         private var url: String? = null
         var serverAPI: ApiService? = null
+        var serverApiCor : ApiService? = null
         var serverDriveApi: ApiService? = null
         var serviceGraphMicrosoft: ApiService? = null
         @Volatile

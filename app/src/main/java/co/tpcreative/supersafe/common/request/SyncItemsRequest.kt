@@ -1,8 +1,10 @@
 package co.tpcreative.supersafe.common.request
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.DriveEvent
 import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
 import java.io.Serializable
 
@@ -84,6 +86,16 @@ class SyncItemsRequest : Serializable {
         this.cloud_id = cloud_id
         this.device_id = device_id
         this.isSyncCloud = isSyncCloud
+        this.nextPage = nextPage
+    }
+
+    /*Get Item List*/
+    constructor(nextPage: String? = "0"){
+        val mUser = Utils.getUserInfo()
+        this.user_id = mUser?.email
+        this.cloud_id = mUser?.cloud_id
+        this.device_id = SuperSafeApplication.getInstance().getDeviceId()
+        this.isSyncCloud = true
         this.nextPage = nextPage
     }
 }
