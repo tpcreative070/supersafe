@@ -24,6 +24,7 @@ import co.tpcreative.supersafe.ui.move_gallery.openAlbum
 import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 
 
 abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.OnGalleryAttachedListener, SensorFaceUpDownChangeNotifier.Listener {
@@ -32,7 +33,6 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     private var fragment: MoveGalleryFragment? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
-    val ioScore = CoroutineScope(Dispatchers.IO)
     protected fun attachFragment(layoutId: Int) {
         fragment = MoveGalleryFragment.newInstance() as MoveGalleryFragment
         val fragmentManager: FragmentManager = supportFragmentManager
@@ -76,6 +76,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
 
     override fun onDestroy() {
         super.onDestroy()
+        mainScope.cancel()
     }
 
     override fun onPause() {

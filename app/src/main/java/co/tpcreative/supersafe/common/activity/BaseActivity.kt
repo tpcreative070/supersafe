@@ -22,13 +22,13 @@ import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 
 abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
-    val ioScore = CoroutineScope(Dispatchers.IO)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         storage = Storage(this)
@@ -80,6 +80,7 @@ abstract class BaseActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifie
     override fun onDestroy() {
         Utils.Log(TAG, "onDestroy....")
         super.onDestroy()
+        mainScope.cancel()
     }
 
     override fun onResume() {

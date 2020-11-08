@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.api
 import co.tpcreative.supersafe.common.api.response.BaseResponse
+import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.request.*
 import co.tpcreative.supersafe.common.requestimport.*
 import co.tpcreative.supersafe.common.response.DriveResponse
@@ -64,7 +65,10 @@ interface ApiService {
     fun onListFilesSync(@Body request: SyncItemsRequest): Observable<RootResponse>?
 
     @POST(GET_LIST_FILES_SYNC)
-    fun onListFilesSyncT(@Body request: SyncItemsRequest): Call<RootResponse>?
+    suspend fun onListFilesSyncT(@Body request: SyncItemsRequest): Call<RootResponse>?
+
+    @POST(GET_LIST_FILES_SYNC)
+    suspend fun onListFilesSyncCor(@Body request: SyncItemsRequest): Call<RootResponse>?
 
     @POST(SYNC_DATA)
     fun onSyncData(@Body request: SyncItemsRequest): Observable<RootResponse>?

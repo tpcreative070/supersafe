@@ -38,6 +38,9 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import java.io.IOException
 import java.util.concurrent.Callable
 
@@ -46,6 +49,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
+    val mainScope = CoroutineScope(Dispatchers.Main)
     private var compositeDisposable: CompositeDisposable? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +121,11 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     override fun onResume() {
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 
     fun onRegisterHomeWatcher() {

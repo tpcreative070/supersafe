@@ -16,10 +16,14 @@ import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
 import com.snatik.storage.Storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 
 abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     protected var storage: Storage? = null
     var TAG : String = this::class.java.simpleName
+    val mainScope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         storage = Storage(this)
@@ -55,6 +59,11 @@ abstract class BaseVerifyPinActivity : AppCompatActivity(), SensorFaceUpDownChan
         SensorFaceUpDownChangeNotifier.getInstance()?.addListener(this)
         Utils.Log(TAG, "Action here........onResume")
         super.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainScope.cancel()
     }
 
     override fun onBackPressed() {
