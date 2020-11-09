@@ -2,6 +2,7 @@ package co.tpcreative.supersafe.common.services.upload
 import android.os.Handler
 import android.os.Looper
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.File
@@ -20,8 +21,8 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
     override fun contentType(): MediaType? {
         // i want to upload only images
         return if (type == null) {
-            MediaType.parse("image/*")
-        } else MediaType.parse(type)
+            "image/*".toMediaTypeOrNull()
+        } else this.type!!.toMediaTypeOrNull()
     }
 
     fun setContentType(type: String?) {
@@ -34,7 +35,7 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
     }
 
     @Throws(IOException::class)
-    override fun writeTo(sink: BufferedSink?) {
+    override fun writeTo(sink: BufferedSink) {
         val fileLength = mFile!!.length()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
         val `in` = FileInputStream(mFile)
@@ -44,7 +45,7 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
             val handler = Handler(Looper.getMainLooper())
             while (`in`.read(buffer).also { read = it } != -1) {
                 uploaded += read.toLong()
-                sink?.write(buffer, 0, read)
+                sink.write(buffer, 0, read)
                 // update progress on UI thread
                 handler.post(ProgressUpdater(uploaded, fileLength))
             }

@@ -3,7 +3,6 @@ import co.tpcreative.supersafe.common.network.BaseDependencies
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitBuilder : BaseDependencies() {
@@ -11,6 +10,7 @@ object RetrofitBuilder : BaseDependencies() {
     private fun createOkHttpClientCustom(): OkHttpClient {
         return provideOkHttpClientDefault()
     }
+
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
                 .baseUrl(BASE_URL)

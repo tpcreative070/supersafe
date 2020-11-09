@@ -1,12 +1,9 @@
 package co.tpcreative.supersafe.common.services.download
 import okhttp3.MediaType
 import okhttp3.ResponseBody
-import okio.Buffer
-import okio.BufferedSource
-import okio.Okio
-import okio.Source
+import okio.*
 import java.io.IOException
-import okio.ForwardingSource;
+
 class ProgressResponseBody(responseBody: ResponseBody?, progressListener: ProgressResponseBodyListener?) : ResponseBody() {
     private val responseBody: ResponseBody? = responseBody
     private val progressListener: ProgressResponseBodyListener? = progressListener
@@ -19,11 +16,11 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
         return responseBody!!.contentLength()
     }
 
-    override fun source(): BufferedSource? {
+    override fun source(): BufferedSource {
         if (bufferedSource == null) {
-            bufferedSource = Okio.buffer(source(responseBody!!.source()))
+            bufferedSource = source(responseBody!!.source())?.let { it.buffer() }
         }
-        return bufferedSource
+        return bufferedSource!!
     }
 
     @Synchronized

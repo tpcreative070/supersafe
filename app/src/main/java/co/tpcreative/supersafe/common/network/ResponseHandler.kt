@@ -1,23 +1,41 @@
 package co.tpcreative.supersafe.common.network
+import co.tpcreative.supersafe.common.api.response.BaseResponse
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.util.Utils
+import okhttp3.ResponseBody
 import retrofit2.HttpException
+import java.io.IOException
 import java.lang.Exception
 import java.net.SocketTimeoutException
 enum class ErrorCodes(val code: Int) {
-    SocketTimeOut(-1)
+    SocketTimeOut(-1),
 }
 open class ResponseHandler {
     companion object{
-        fun <T : Any> handleSuccess(data: T,code : Int): Resource<T> {
-            return Resource.success(data,code)
+        fun <T : Any> handleSuccess(data: T): Resource<T> {
+            return Resource.success(data)
         }
-
-        fun <T : Any> handleException(e: Exception? = null, code : Int? = 0): Resource<T> {
-            Utils.Log("TAG",e?.message)
-            return when (e) {
-                is HttpException -> Resource.error(e.code(),getErrorMessage(e.code()), null)
-                is SocketTimeoutException -> Resource.error(ErrorCodes.SocketTimeOut.code,getErrorMessage(ErrorCodes.SocketTimeOut.code), null)
-                else -> Resource.error(code ?: 0,getErrorMessage(code ?:0), null)
+        fun <T : Any> handleException(e: Exception? = null): Resource<T> {
+            return if (e is HttpException) {
+                val mBody: ResponseBody? = (e as HttpException?)?.response()?.errorBody()
+                val mCode = (e as HttpException?)?.response()?.code()
+                try {
+                    val mMessage = mBody?.string()
+                    val mObject = mMessage?.toObject(BaseResponse::class.java)
+                    Utils.Log("ResponseHandler",mMessage)
+                    mObject?.let {
+                        Resource.error(mCode!!,it.toJson(), null)
+                    } ?:
+                    Resource.error(mCode!!,mMessage ?: "Unknown", null)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Resource.error(mCode!!,e.message!!, null)
+                }
+            } else {
+                val mMessage = getErrorMessage(ErrorCodes.SocketTimeOut.code)
+                Utils.Log("ResponseHandler",mMessage)
+                Resource.error(ErrorCodes.SocketTimeOut.code,mMessage, null)
             }
         }
 

@@ -7,6 +7,7 @@ import retrofit2.Response
 
 class ApiHelper() {
     suspend fun onListFilesSyncCor(data : SyncItemsRequest) =   SuperSafeApplication.serverApiCor?.onListFilesSyncCor(data)
+    suspend fun onListFilesSyncT(data : SyncItemsRequest)  =   SuperSafeApplication.serverApiCor?.onListFilesSyncT(data)
     companion object {
         private var mInstance : ApiHelper? = null
         fun getInstance() : ApiHelper? {

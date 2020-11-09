@@ -29,12 +29,12 @@ class RetrofitHelper : BaseDependencies() {
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
         httpClient.addInterceptor { chain ->
             val original = chain.request()
-            val originalHttpUrl: HttpUrl? = original.url()
+            val originalHttpUrl: HttpUrl? = original.url
             val url: HttpUrl? = originalHttpUrl?.newBuilder()
                     ?.build()
             // Request customization: add request headers
             val requestBuilder: Request.Builder = original.newBuilder()
-                    .url(url)
+                    .url(url!!)
             val request = requestBuilder.build()
             chain.proceed(request)
         }

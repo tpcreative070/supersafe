@@ -37,8 +37,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -1130,7 +1132,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
     fun onUploadFileInAppFolder(items: ItemModel, listener: ServiceManager.UploadServiceListener?) {
         Utils.Log(TAG, "onUploadFileInAppFolder")
         val mUser: User? = Utils.getUserInfo()
-        val contentType = MediaType.parse("application/json; charset=UTF-8")
+        val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()
         val content = HashMap<String?, Any?>()
         val contentEvent = DriveEvent()
         var file: File? = null
@@ -1156,7 +1158,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         val list: MutableList<String?> = ArrayList()
         list.add(getString(R.string.key_appDataFolder))
         content[getString(R.string.key_parents)] = list
-        val metaPart: MultipartBody.Part = MultipartBody.Part.create(RequestBody.create(contentType, Gson().toJson(content)))
+        val metaPart: MultipartBody.Part = MultipartBody.Part.create(Gson().toJson(content).toRequestBody(contentType))
         val fileBody = ProgressRequestBody(file, object : ProgressRequestBody.UploadCallbacks {
             override fun onProgressUpdate(percentage: Int) {
                 Utils.Log(TAG, "Progressing uploaded $percentage%")

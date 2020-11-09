@@ -14,6 +14,8 @@ import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okio.BufferedSink
 import okio.Okio
+import okio.buffer
+import okio.sink
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -86,13 +88,13 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
         return Observable.create { subscriber ->
             try {
                 File(request.path_folder_output).mkdirs()
-                val destinationFile = File(request?.path_folder_output, request?.file_name)
+                val destinationFile = File(request.path_folder_output, request.file_name)
                 if (!destinationFile.exists()) {
                     destinationFile.createNewFile()
                     Utils.Log(TAG, "created file")
                 }
-                val bufferedSink: BufferedSink = Okio.buffer(Okio.sink(destinationFile))
-                bufferedSink.writeAll(response?.body()?.source())
+                val bufferedSink: BufferedSink = destinationFile.sink().buffer()
+                response?.body()?.source()?.let { bufferedSink.writeAll(it) }
                 if (listener != null) {
                     listener?.onSavedCompleted()
                 }
@@ -177,7 +179,7 @@ class DownloadService : ProgressResponseBody.ProgressResponseBodyListener {
                     if (progressListener == null) return@Interceptor chain.proceed(builder.build())
                     val originalResponse = chain.proceed(builder.build())
                     originalResponse.newBuilder()
-                            .body(ProgressResponseBody(originalResponse.body(), progressListener))
+                            .body(ProgressResponseBody(originalResponse.body, progressListener))
                             .build()
                 }).build()
     }

@@ -201,7 +201,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$appRoomVersion"
     /*Duplicate class com.google.common.util.concurrent.ListenableFuture found in modules jetified-guava-20.0 (com.google.guava:guava:20.0) and jetified-listenablefuture-1.0 (com.google.guava:listenablefuture:1.0)*/
     implementation "com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava"
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
 }
 /*Resolved duplicated for Google api client*/
 

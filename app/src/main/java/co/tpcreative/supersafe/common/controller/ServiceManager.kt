@@ -213,13 +213,10 @@ class ServiceManager : BaseServiceView<Any?> {
                     Utils.Log(TAG,"Loading...")
                 }
                 Status.SUCCESS -> {
-                    Utils.Log(TAG,"Response code ${mResult.code}")
                     Utils.Log(TAG,"Call success ${Gson().toJson(mResult.data)}")
                     mNextSpace = mResult.data?.data?.nextPage
                 }
                 Status.ERROR -> {
-                    Utils.Log(TAG,"Response code ${mResult.code}")
-                    Utils.Log(TAG,"Error occurred ${mResult.message}")
                     mNextSpace = null
                 }
             }

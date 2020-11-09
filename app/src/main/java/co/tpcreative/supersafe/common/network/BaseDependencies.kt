@@ -9,6 +9,7 @@ import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 open class BaseDependencies {
     protected fun provideOkHttpClientDefault(): OkHttpClient {
         val timeout = getTimeOut()
@@ -33,7 +34,7 @@ open class BaseDependencies {
     private fun getHeaders(): HashMap<String, String>? {
         val hashMap = HashMap<String, String>()
         hashMap["Content-Type"] = "application/json"
-        //hashMap["Authorization"] = onAuthorToken()
+        hashMap["Authorization"] = onAuthorToken()
         return hashMap
     }
 
