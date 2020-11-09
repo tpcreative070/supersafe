@@ -130,15 +130,15 @@ class SyncDataService(val apiService: ApiService? = null) {
 
     private fun onProgressingUploading(mFile : File?,mContentType : String?) : ProgressRequestBody{
         return ProgressRequestBody(mFile,mContentType, object : ProgressRequestBody.UploadCallbacks {
-                override fun onProgressUpdate(percentage: Int) {
-                    Utils.Log(TAG, "Progressing uploaded $percentage%")
-                }
-                override fun onError() {
-                    Utils.Log(TAG, "onError")
-                }
-                override fun onFinish() {
-                    Utils.Log(TAG, "onFinish")
-                }
+            override fun onProgressUpdate(percentage: Int) {
+                Utils.Log(TAG, "Progressing uploaded $percentage%")
+            }
+            override fun onError() {
+                Utils.Log(TAG, "onError")
+            }
+            override fun onFinish() {
+                Utils.Log(TAG, "onFinish")
+            }
         })
     }
 
