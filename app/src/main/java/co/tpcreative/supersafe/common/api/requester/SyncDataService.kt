@@ -9,6 +9,7 @@ import co.tpcreative.supersafe.common.network.ResponseHandler
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.response.RootResponse
+import co.tpcreative.supersafe.common.services.RetrofitHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody
@@ -17,18 +18,26 @@ import co.tpcreative.supersafe.model.DriveEvent
 import co.tpcreative.supersafe.model.EnumFileType
 import co.tpcreative.supersafe.model.ItemModel
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
+import java.lang.reflect.Modifier
 import java.util.HashMap
+import java.util.concurrent.TimeUnit
 
 class SyncDataService(val apiService: ApiService? = null) {
     val TAG = this::class.java.simpleName
@@ -47,9 +56,9 @@ class SyncDataService(val apiService: ApiService? = null) {
     suspend fun onDownloadFile(item : ItemModel) : Resource<String>{
         return withContext(Dispatchers.IO) {
             try {
-                val mResult = ApiHelper.getInstance()?.downloadDriveFileCor(Utils.getDriveAccessToken(),item.global_id)
-                onProgressingDownloadingFile(mResult!!)
-                onSaveFileToDisk(mResult,onGetContentOfDownload(item)!!)
+                val service = RetrofitHelper().getService(getString(R.string.url_google),listener = mProgressDownloading)
+                val mResult = ApiHelper.getInstance()?.downloadDriveFileCor(Utils.getDriveAccessToken(),item.global_id,service!!)
+                onSaveFileToDisk(mResult!!,onGetContentOfDownload(item)!!)
                 ResponseHandler.handleSuccess("Download successful")
             }
             catch (throwable : Exception){
@@ -69,6 +78,7 @@ class SyncDataService(val apiService: ApiService? = null) {
               val bufferedSink: BufferedSink = destinationFile.sink().buffer()
               response.source().let { bufferedSink.writeAll(it) }
               bufferedSink.close()
+              Utils.Log(TAG,"Saved completely ${response.contentLength()}")
           } catch (e: IOException) {
               val destinationFile = File(request.path_folder_output, request.file_name)
               if (destinationFile.isFile && destinationFile.exists()) {
@@ -96,27 +106,25 @@ class SyncDataService(val apiService: ApiService? = null) {
         }
     }
 
-    private fun onProgressingDownloadingFile(response : ResponseBody) {
-        ProgressResponseBody(response,object :ProgressResponseBody.ProgressResponseBodyListener{
-                override fun onAttachmentDownloadedError(message: String?) {
-                }
-                override fun onAttachmentDownloadUpdate(percent: Int) {
-                    Utils.Log(TAG,"Downloading...$percent%")
-                }
-                override fun onAttachmentElapsedTime(elapsed: Long) {
-                }
-                override fun onAttachmentAllTimeForDownloading(all: Long) {
-                }
-                override fun onAttachmentRemainingTime(all: Long) {
-                }
-                override fun onAttachmentSpeedPerSecond(all: Double) {
-                }
-                override fun onAttachmentTotalDownload(totalByte: Long, totalByteDownloaded: Long) {
-                }
-                override fun onAttachmentDownloadedSuccess() {
-                    Utils.Log(TAG,"Download completed")
-                }
-        })
+    private val mProgressDownloading  = object : ProgressResponseBody.ProgressResponseBodyListener{
+        override fun onAttachmentDownloadedError(message: String?) {
+        }
+        override fun onAttachmentDownloadUpdate(percent: Int) {
+            Utils.Log(TAG,"Downloading...$percent%")
+        }
+        override fun onAttachmentElapsedTime(elapsed: Long) {
+        }
+        override fun onAttachmentAllTimeForDownloading(all: Long) {
+        }
+        override fun onAttachmentRemainingTime(all: Long) {
+        }
+        override fun onAttachmentSpeedPerSecond(all: Double) {
+        }
+        override fun onAttachmentTotalDownload(totalByte: Long, totalByteDownloaded: Long) {
+        }
+        override fun onAttachmentDownloadedSuccess() {
+            Utils.Log(TAG,"Download completed")
+        }
     }
 
     private fun onProgressingUploading(mFile : File,mContentType : String?) : ProgressRequestBody{

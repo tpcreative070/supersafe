@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.common.helper
+import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import okhttp3.MultipartBody
@@ -14,7 +15,7 @@ class ApiHelper() {
                         @Part dataPart: MultipartBody.Part?,
                         @Query("type") type: String?)  =   SuperSafeApplication.serverDriveApi?.uploadFileMultipleInAppFolderCor(authToken,metaPart,dataPart,type)
 
-    suspend fun downloadDriveFileCor(@Header("Authorization") authToken: String?, @Path("id") id: String?) =  SuperSafeApplication.serverDriveApi?.downloadDriveFileCor(authToken,id)
+    suspend fun downloadDriveFileCor(@Header("Authorization") authToken: String?, @Path("id") id: String?, service : ApiService) =  service.downloadDriveFileCor(authToken,id)
     companion object {
         private var mInstance : ApiHelper? = null
         fun getInstance() : ApiHelper? {

@@ -240,7 +240,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     private suspend fun onUploadFile() = withContext(Dispatchers.IO){
-        val mItem = SQLHelper.getItemId(item_id = "094d4a75-3bb6-48a8-85ed-c1fa843b2012")
+        val mItem = SQLHelper.getItemId(item_id = "bb3a22f9-8922-400d-8f72-456f58065ef5")
         mItem?.isOriginalGlobalId = true
         val mResult = mItem?.let { syncDataService.onUploadFile(it) }
         when(mResult?.status){
@@ -257,9 +257,9 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     private suspend fun onDownloadFile() = withContext(Dispatchers.IO) {
-        val mItem = SQLHelper.getItemId(item_id = "094d4a75-3bb6-48a8-85ed-c1fa843b2012")
+        val mItem = SQLHelper.getItemId(item_id = "bb3a22f9-8922-400d-8f72-456f58065ef5")
         mItem?.isOriginalGlobalId = true
-        mItem?.global_id = "1wGHaSeL-yPLyGnrI8CR185xbH1JkuWncRjE6nHdPrVsypUCOAA"
+        mItem?.global_id = "1-Q63TAQqLXiJ3NcqbgO9W3uMEKHRdKA7ivsxeCe8FcD4goWY0Q"
         val mResult = mItem?.let { syncDataService.onDownloadFile(it) }
         when(mResult?.status){
             Status.LOADING ->{
