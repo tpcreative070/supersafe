@@ -40,6 +40,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
+import okhttp3.internal.wait
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
@@ -208,7 +209,7 @@ class ServiceManager : BaseServiceView<Any?> {
 
         /*Upload item*/
         CoroutineScope(Dispatchers.IO).launch {
-            val mResultUpload = async {
+            val mResultUpload = async{
                 onUploadFile()
             }
             val mResultDownload = async {

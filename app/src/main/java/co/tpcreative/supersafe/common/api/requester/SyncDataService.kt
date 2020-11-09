@@ -97,7 +97,7 @@ class SyncDataService(val apiService: ApiService? = null) {
                 val mContent = onGetContent(items = item)
                 val metaPart: MultipartBody.Part = MultipartBody.Part.create(Gson().toJson(mContent).toRequestBody(contentType))
                 val mFilePath = onGetFilePath(item = item)
-                val dataPart: MultipartBody.Part = MultipartBody.Part.create(onProgressingUploading(mFilePath,item.mimeType))
+                val dataPart: MultipartBody.Part = MultipartBody.Part.create(ProgressRequestBody(mFilePath,item.mimeType,mProgressUploading))
                 val mResult  = ApiHelper.getInstance()?.uploadFileMultipleInAppFolderCor(Utils.getDriveAccessToken(), metaPart, dataPart, item.mimeType)
                 ResponseHandler.handleSuccess(mResult!!)
             }catch (exception : Exception){
@@ -128,18 +128,16 @@ class SyncDataService(val apiService: ApiService? = null) {
         }
     }
 
-    private fun onProgressingUploading(mFile : File?,mContentType : String?) : ProgressRequestBody{
-        return ProgressRequestBody(mFile,mContentType, object : ProgressRequestBody.UploadCallbacks {
-            override fun onProgressUpdate(percentage: Int) {
-                Utils.Log(TAG, "Progressing uploaded $percentage%")
-            }
-            override fun onError() {
-                Utils.Log(TAG, "onError")
-            }
-            override fun onFinish() {
-                Utils.Log(TAG, "onFinish")
-            }
-        })
+    private val mProgressUploading = object : ProgressRequestBody.UploadCallbacks {
+        override fun onProgressUpdate(percentage: Int) {
+            Utils.Log(TAG, "Progressing uploaded $percentage%")
+        }
+        override fun onError() {
+            Utils.Log(TAG, "onError")
+        }
+        override fun onFinish() {
+            Utils.Log(TAG, "onFinish")
+        }
     }
 
     private fun onGetContent(items : ItemModel) : HashMap<String?,Any?>?{
