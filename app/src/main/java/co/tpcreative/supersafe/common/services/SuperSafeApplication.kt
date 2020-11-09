@@ -70,7 +70,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         serverDriveApi = RetrofitHelper().getService(getString(R.string.url_google))
         serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
         serverAPI = RetrofitHelper().getTPCreativeService(getUrl())
-        serverApiCor = RetrofitBuilder.apiService
+        serverApiCor = RetrofitBuilder.getService()
         ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)

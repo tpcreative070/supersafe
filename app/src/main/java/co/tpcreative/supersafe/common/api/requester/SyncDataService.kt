@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.common.api.requester
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
+import co.tpcreative.supersafe.common.api.RetrofitBuilder
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.helper.ApiHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
@@ -56,7 +57,7 @@ class SyncDataService(val apiService: ApiService? = null) {
     suspend fun onDownloadFile(item : ItemModel) : Resource<String>{
         return withContext(Dispatchers.IO) {
             try {
-                val service = RetrofitHelper().getService(getString(R.string.url_google),listener = mProgressDownloading)
+                val service = RetrofitBuilder.getService(getString(R.string.url_google),listener = mProgressDownloading)
                 val mResult = ApiHelper.getInstance()?.downloadDriveFileCor(Utils.getDriveAccessToken(),item.global_id,service!!)
                 onSaveFileToDisk(mResult!!,onGetContentOfDownload(item)!!)
                 ResponseHandler.handleSuccess("Download successful")
