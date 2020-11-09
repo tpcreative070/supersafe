@@ -24,7 +24,7 @@ open class ResponseHandler {
                 try {
                     val mMessage = mBody?.string()
                     val mObject = mMessage?.toObject(BaseResponse::class.java)
-                    Utils.Log("ResponseHandler",mMessage)
+                    Utils.Log(TAG,mMessage)
                     getErrorCode(mCode!!)
                     mObject?.let {
                         Resource.error(mCode,it.toJson(), null)
@@ -36,7 +36,7 @@ open class ResponseHandler {
                 }
             } else {
                 val mMessage = getErrorMessage(ErrorCodes.SocketTimeOut.code)
-                Utils.Log("ResponseHandler",mMessage)
+                Utils.Log(TAG,mMessage)
                 Resource.error(ErrorCodes.SocketTimeOut.code,mMessage, null)
             }
         }
