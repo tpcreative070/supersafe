@@ -208,11 +208,15 @@ class ServiceManager : BaseServiceView<Any?> {
 
         /*Upload item*/
         CoroutineScope(Dispatchers.IO).launch {
-            val mResult = async {
+            val mResultUpload = async {
                 onUploadFile()
             }
-            mResult.await()
-            Utils.Log(TAG,"Completed updating...")
+            val mResultDownload = async {
+                onDownloadFile()
+            }
+            mResultUpload.await()
+            mResultDownload.await()
+            Utils.Log(TAG,"Synced completely...")
         }
     }
 
@@ -244,15 +248,30 @@ class ServiceManager : BaseServiceView<Any?> {
                 Utils.Log(TAG,"Loading...")
             }
             Status.SUCCESS -> {
-                Utils.Log(TAG,"Call success ${Gson().toJson(mResult.data)}")
+                Utils.Log(TAG,"Call uploaded ${Gson().toJson(mResult.data)}")
             }
             Status.ERROR -> {
+                Utils.Log(TAG,"Upload error ocurred")
             }
         }
     }
 
     private suspend fun onDownloadFile() = withContext(Dispatchers.IO) {
-
+        val mItem = SQLHelper.getItemId(item_id = "094d4a75-3bb6-48a8-85ed-c1fa843b2012")
+        mItem?.isOriginalGlobalId = true
+        mItem?.global_id = "1wGHaSeL-yPLyGnrI8CR185xbH1JkuWncRjE6nHdPrVsypUCOAA"
+        val mResult = mItem?.let { syncDataService.onDownloadFile(it) }
+        when(mResult?.status){
+            Status.LOADING ->{
+                Utils.Log(TAG,"Loading...")
+            }
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Call downloaded ${mResult.data}")
+            }
+            Status.ERROR -> {
+                Utils.Log(TAG,"Download error ocurred")
+            }
+        }
     }
 
     private fun onGetItemList(next: String) {
@@ -262,7 +281,6 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.onGetListSync(next, object : BaseListener<SyncDataModel> {
                 override fun onShowListObjects(list: MutableList<SyncDataModel>) {
                 }
-
                 override fun onShowObjects(`object`: SyncDataModel) {
                     `object`.list?.let {
                         mDownloadList.addAll(it)

@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.common.api.requester
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.ApiService
+import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.helper.ApiHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
@@ -9,6 +10,7 @@ import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.DriveEvent
@@ -20,7 +22,12 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
+import okio.BufferedSink
+import okio.buffer
+import okio.sink
 import java.io.File
+import java.io.IOException
 import java.util.HashMap
 
 class SyncDataService(val apiService: ApiService? = null) {
@@ -37,14 +44,48 @@ class SyncDataService(val apiService: ApiService? = null) {
         }
     }
 
+    suspend fun onDownloadFile(item : ItemModel) : Resource<String>{
+        return withContext(Dispatchers.IO) {
+            try {
+                val mResult = ApiHelper.getInstance()?.downloadDriveFileCor(Utils.getDriveAccessToken(),item.global_id)
+                onProgressingDownloadingFile(mResult!!)
+                onSaveFileToDisk(mResult,onGetContentOfDownload(item)!!)
+                ResponseHandler.handleSuccess("Download successful")
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    private fun onSaveFileToDisk(response: ResponseBody, request: DownloadFileRequest) {
+          try {
+              File(request.path_folder_output).mkdirs()
+              val destinationFile = File(request.path_folder_output, request.file_name)
+              if (!destinationFile.exists()) {
+                  destinationFile.createNewFile()
+                  Utils.Log(TAG, "created file")
+              }
+              val bufferedSink: BufferedSink = destinationFile.sink().buffer()
+              response.source().let { bufferedSink.writeAll(it) }
+              bufferedSink.close()
+          } catch (e: IOException) {
+              val destinationFile = File(request.path_folder_output, request.file_name)
+              if (destinationFile.isFile && destinationFile.exists()) {
+                  destinationFile.delete()
+              }
+              e.printStackTrace()
+          }
+    }
+
     suspend fun onUploadFile(item : ItemModel) : Resource<DriveResponse>?{
         return withContext(Dispatchers.IO){
             val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()
             val mContent = onGetContent(items = item)
             val metaPart: MultipartBody.Part = MultipartBody.Part.create(Gson().toJson(mContent).toRequestBody(contentType))
             onGetFilePath(item = item)?.let { mFilePath ->
-                val dataPart: MultipartBody.Part = MultipartBody.Part.create(onProgressingUploading(mFilePath,item.mimeType))
                 try {
+                    val dataPart: MultipartBody.Part = MultipartBody.Part.create(onProgressingUploading(mFilePath,item.mimeType))
                     val mResult  = ApiHelper.getInstance()?.uploadFileMultipleInAppFolderCor(Utils.getDriveAccessToken(), metaPart, dataPart, item.mimeType)
                     ResponseHandler.handleSuccess(mResult!!)
                 }catch (exception : Exception){
@@ -55,17 +96,40 @@ class SyncDataService(val apiService: ApiService? = null) {
         }
     }
 
+    private fun onProgressingDownloadingFile(response : ResponseBody) {
+        ProgressResponseBody(response,object :ProgressResponseBody.ProgressResponseBodyListener{
+                override fun onAttachmentDownloadedError(message: String?) {
+                }
+                override fun onAttachmentDownloadUpdate(percent: Int) {
+                    Utils.Log(TAG,"Downloading...$percent%")
+                }
+                override fun onAttachmentElapsedTime(elapsed: Long) {
+                }
+                override fun onAttachmentAllTimeForDownloading(all: Long) {
+                }
+                override fun onAttachmentRemainingTime(all: Long) {
+                }
+                override fun onAttachmentSpeedPerSecond(all: Double) {
+                }
+                override fun onAttachmentTotalDownload(totalByte: Long, totalByteDownloaded: Long) {
+                }
+                override fun onAttachmentDownloadedSuccess() {
+                    Utils.Log(TAG,"Download completed")
+                }
+        })
+    }
+
     private fun onProgressingUploading(mFile : File,mContentType : String?) : ProgressRequestBody{
         return ProgressRequestBody(mFile,mContentType, object : ProgressRequestBody.UploadCallbacks {
-            override fun onProgressUpdate(percentage: Int) {
-                Utils.Log(TAG, "Progressing uploaded $percentage%")
-            }
-            override fun onError() {
-                Utils.Log(TAG, "onError")
-            }
-            override fun onFinish() {
-                Utils.Log(TAG, "onFinish")
-            }
+                override fun onProgressUpdate(percentage: Int) {
+                    Utils.Log(TAG, "Progressing uploaded $percentage%")
+                }
+                override fun onError() {
+                    Utils.Log(TAG, "onError")
+                }
+                override fun onFinish() {
+                    Utils.Log(TAG, "onFinish")
+                }
         })
     }
 
@@ -87,6 +151,26 @@ class SyncDataService(val apiService: ApiService? = null) {
         list.add(getString(R.string.key_appDataFolder))
         mContent[getString(R.string.key_parents)] = list
         return mContent
+    }
+
+    private fun onGetContentOfDownload(item : ItemModel) : DownloadFileRequest? {
+        val request = DownloadFileRequest()
+        var id: String? = ""
+        if (item.isOriginalGlobalId) {
+            id = item.global_id
+            request.file_name = item.originalName
+        } else {
+            id = item.global_id
+            request.file_name = item.thumbnailName
+        }
+        request.items = item
+        request.id = id
+        if (!Utils.isNotEmptyOrNull(id)) {
+            return null
+        }
+        item.setOriginal(Utils.getOriginalPath(item.originalName, item.items_id))
+        request.path_folder_output = Utils.createDestinationDownloadItem(item.items_id)
+        return request
     }
 
     private fun getString(res : Int) : String{

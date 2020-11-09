@@ -18,7 +18,7 @@ class ProgressResponseBody(responseBody: ResponseBody?, progressListener: Progre
 
     override fun source(): BufferedSource {
         if (bufferedSource == null) {
-            bufferedSource = source(responseBody!!.source())?.let { it.buffer() }
+            bufferedSource = source(responseBody!!.source())?.buffer()
         }
         return bufferedSource!!
     }

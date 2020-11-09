@@ -145,6 +145,10 @@ interface ApiService {
     @Streaming
     fun downloadDriveFile(@Header("Authorization") authToken: String?, @Path("id") id: String?): Observable<Response<ResponseBody>>?
 
+    @GET(DOWNLOAD_FILE_FROM_GOOGLE_DRIVE)
+    @Streaming
+    suspend fun downloadDriveFileCor(@Header("Authorization") authToken: String?, @Path("id") id: String?): ResponseBody?
+
     companion object {
         const val ROOT_GOOGLE_DRIVE: String = "https://www.googleapis.com/"
         const val REFRESH_TOKEN: String = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
