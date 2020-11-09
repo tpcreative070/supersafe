@@ -1131,7 +1131,6 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
 
     fun onUploadFileInAppFolder(items: ItemModel, listener: ServiceManager.UploadServiceListener?) {
         Utils.Log(TAG, "onUploadFileInAppFolder")
-        val mUser: User? = Utils.getUserInfo()
         val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()
         val content = HashMap<String?, Any?>()
         val contentEvent = DriveEvent()
@@ -1159,7 +1158,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         list.add(getString(R.string.key_appDataFolder))
         content[getString(R.string.key_parents)] = list
         val metaPart: MultipartBody.Part = MultipartBody.Part.create(Gson().toJson(content).toRequestBody(contentType))
-        val fileBody = ProgressRequestBody(file, object : ProgressRequestBody.UploadCallbacks {
+        val fileBody = ProgressRequestBody(file,items.mimeType, object : ProgressRequestBody.UploadCallbacks {
             override fun onProgressUpdate(percentage: Int) {
                 Utils.Log(TAG, "Progressing uploaded $percentage%")
                 listener?.onProgressUpdate(percentage)
@@ -1175,9 +1174,8 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                 Utils.Log(TAG, "onFinish")
             }
         })
-        fileBody.setContentType(items.mimeType)
         val dataPart: MultipartBody.Part = MultipartBody.Part.create(fileBody)
-        val request: Call<DriveResponse>? = SuperSafeApplication.serverDriveApi?.uploadFileMultipleInAppFolder(mUser?.access_token, metaPart, dataPart, items.mimeType)
+        val request: Call<DriveResponse>? = SuperSafeApplication.serverDriveApi?.uploadFileMultipleInAppFolder(Utils.getDriveAccessToken(), metaPart, dataPart, items.mimeType)
         request?.enqueue(object : Callback<DriveResponse?> {
             override fun onResponse(call: Call<DriveResponse?>?, response: Response<DriveResponse?>?) {
                 Utils.Log(TAG, "response successful :" + Gson().toJson(response?.body()))

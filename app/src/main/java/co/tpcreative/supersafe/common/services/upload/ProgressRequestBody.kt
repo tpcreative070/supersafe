@@ -9,9 +9,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 
-class ProgressRequestBody(private val mFile: File?, private val mListener: UploadCallbacks?) : RequestBody() {
-    private val TAG = ProgressRequestBody::class.java.simpleName
-    private var type: String? = null
+class ProgressRequestBody(private val mFile: File?,private val mContentType : String?, private val mListener: UploadCallbacks?) : RequestBody() {
     interface UploadCallbacks {
         fun onProgressUpdate(percentage: Int)
         fun onError()
@@ -19,14 +17,9 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
     }
 
     override fun contentType(): MediaType? {
-        // i want to upload only images
-        return if (type == null) {
+        return if (mContentType == null) {
             "image/*".toMediaTypeOrNull()
-        } else this.type!!.toMediaTypeOrNull()
-    }
-
-    fun setContentType(type: String?) {
-        this.type = type
+        } else this.mContentType.toMediaTypeOrNull()
     }
 
     @Throws(IOException::class)
@@ -38,19 +31,19 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
     override fun writeTo(sink: BufferedSink) {
         val fileLength = mFile!!.length()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        val `in` = FileInputStream(mFile)
+        val mInPutStream = FileInputStream(mFile)
         var uploaded: Long = 0
         try {
             var read: Int
             val handler = Handler(Looper.getMainLooper())
-            while (`in`.read(buffer).also { read = it } != -1) {
+            while (mInPutStream.read(buffer).also { read = it } != -1) {
                 uploaded += read.toLong()
                 sink.write(buffer, 0, read)
                 // update progress on UI thread
                 handler.post(ProgressUpdater(uploaded, fileLength))
             }
         } finally {
-            `in`.close()
+            mInPutStream.close()
         }
     }
 
@@ -64,9 +57,7 @@ class ProgressRequestBody(private val mFile: File?, private val mListener: Uploa
             }
         }
     }
-
     companion object {
         private const val DEFAULT_BUFFER_SIZE = 2048
     }
-
 }

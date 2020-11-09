@@ -133,6 +133,14 @@ interface ApiService {
             @Part dataPart: MultipartBody.Part?,
             @Query("type") type: String?): Call<DriveResponse>?
 
+    @POST(UPLOAD_FILE_TO_GOOGLE_DRIVE)
+    @Multipart
+    suspend fun uploadFileMultipleInAppFolderCor(
+            @Header("Authorization") authToken: String?,
+            @Part metaPart: MultipartBody.Part?,
+            @Part dataPart: MultipartBody.Part?,
+            @Query("type") type: String?): DriveResponse?
+
     @GET(DOWNLOAD_FILE_FROM_GOOGLE_DRIVE)
     @Streaming
     fun downloadDriveFile(@Header("Authorization") authToken: String?, @Path("id") id: String?): Observable<Response<ResponseBody>>?

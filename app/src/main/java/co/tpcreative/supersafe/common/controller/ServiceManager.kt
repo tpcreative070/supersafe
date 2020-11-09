@@ -22,6 +22,7 @@ import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
 import co.tpcreative.supersafe.common.api.requester.SyncDataService
+import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.util.Utils
@@ -196,11 +197,22 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     fun waitingForResult() {
+        /*Get List*/
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val mResult = async {
+//                getItemList()
+//            }
+//            mResult.await()
+//            Utils.Log(TAG,"Completed fetch api...")
+//        }
+
+        /*Upload item*/
         CoroutineScope(Dispatchers.IO).launch {
             val mResult = async {
-                getItemList()
+                onUploadFile()
             }
             mResult.await()
+            Utils.Log(TAG,"Completed updating...")
         }
     }
 
@@ -221,7 +233,26 @@ class ServiceManager : BaseServiceView<Any?> {
                 }
             }
         }while (mNextSpace != null)
-        Utils.Log(TAG,"Completed fetch api...")
+    }
+
+    private suspend fun onUploadFile() = withContext(Dispatchers.IO){
+        val mItem = SQLHelper.getItemId(item_id = "094d4a75-3bb6-48a8-85ed-c1fa843b2012")
+        mItem?.isOriginalGlobalId = true
+        val mResult = mItem?.let { syncDataService.onUploadFile(it) }
+        when(mResult?.status){
+            Status.LOADING ->{
+                Utils.Log(TAG,"Loading...")
+            }
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Call success ${Gson().toJson(mResult.data)}")
+            }
+            Status.ERROR -> {
+            }
+        }
+    }
+
+    private suspend fun onDownloadFile() = withContext(Dispatchers.IO) {
+
     }
 
     private fun onGetItemList(next: String) {

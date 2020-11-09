@@ -664,6 +664,11 @@ object Utils {
         return SecurityUtil.DEFAULT_TOKEN
     }
 
+    fun getDriveAccessToken() : String? {
+        val mUser = getUserInfo()
+        return mUser?.access_token
+    }
+
     fun onPushEventBus(status: EnumStatus?) {
         EventBus.getDefault().post(status)
     }
