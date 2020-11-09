@@ -28,6 +28,7 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import okhttp3.internal.wait
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
@@ -91,18 +92,17 @@ class SyncDataService(val apiService: ApiService? = null) {
 
     suspend fun onUploadFile(item : ItemModel) : Resource<DriveResponse>?{
         return withContext(Dispatchers.IO){
-            val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()
-            val mContent = onGetContent(items = item)
-            val metaPart: MultipartBody.Part = MultipartBody.Part.create(Gson().toJson(mContent).toRequestBody(contentType))
-            onGetFilePath(item = item)?.let { mFilePath ->
-                try {
-                    val dataPart: MultipartBody.Part = MultipartBody.Part.create(onProgressingUploading(mFilePath,item.mimeType))
-                    val mResult  = ApiHelper.getInstance()?.uploadFileMultipleInAppFolderCor(Utils.getDriveAccessToken(), metaPart, dataPart, item.mimeType)
-                    ResponseHandler.handleSuccess(mResult!!)
-                }catch (exception : Exception){
-                    Utils.Log(TAG,"Running here")
-                    ResponseHandler.handleException(exception)
-                }
+            try {
+                val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()
+                val mContent = onGetContent(items = item)
+                val metaPart: MultipartBody.Part = MultipartBody.Part.create(Gson().toJson(mContent).toRequestBody(contentType))
+                val mFilePath = onGetFilePath(item = item)
+                val dataPart: MultipartBody.Part = MultipartBody.Part.create(onProgressingUploading(mFilePath,item.mimeType))
+                val mResult  = ApiHelper.getInstance()?.uploadFileMultipleInAppFolderCor(Utils.getDriveAccessToken(), metaPart, dataPart, item.mimeType)
+                ResponseHandler.handleSuccess(mResult!!)
+            }catch (exception : Exception){
+                Utils.Log(TAG,"Running here")
+                ResponseHandler.handleException(exception)
             }
         }
     }
@@ -128,7 +128,7 @@ class SyncDataService(val apiService: ApiService? = null) {
         }
     }
 
-    private fun onProgressingUploading(mFile : File,mContentType : String?) : ProgressRequestBody{
+    private fun onProgressingUploading(mFile : File?,mContentType : String?) : ProgressRequestBody{
         return ProgressRequestBody(mFile,mContentType, object : ProgressRequestBody.UploadCallbacks {
                 override fun onProgressUpdate(percentage: Int) {
                     Utils.Log(TAG, "Progressing uploaded $percentage%")
