@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.common.network
 import co.tpcreative.supersafe.common.api.response.BaseResponse
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.util.Utils
@@ -7,12 +8,12 @@ import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.Exception
-import java.net.SocketTimeoutException
 enum class ErrorCodes(val code: Int) {
     SocketTimeOut(-1),
 }
 open class ResponseHandler {
     companion object{
+        val TAG = this::class.java.simpleName
         fun <T : Any> handleSuccess(data: T): Resource<T> {
             return Resource.success(data)
         }
@@ -24,10 +25,11 @@ open class ResponseHandler {
                     val mMessage = mBody?.string()
                     val mObject = mMessage?.toObject(BaseResponse::class.java)
                     Utils.Log("ResponseHandler",mMessage)
+                    getErrorCode(mCode!!)
                     mObject?.let {
-                        Resource.error(mCode!!,it.toJson(), null)
+                        Resource.error(mCode,it.toJson(), null)
                     } ?:
-                    Resource.error(mCode!!,mMessage ?: "Unknown", null)
+                    Resource.error(mCode,mMessage ?: "Unknown", null)
                 } catch (e: IOException) {
                     e.printStackTrace()
                     Resource.error(mCode!!,e.message!!, null)
@@ -49,6 +51,18 @@ open class ResponseHandler {
                 405 -> "Method not allowed"
                 500 -> "Internal server error"
                 else -> "Something went wrong"
+            }
+        }
+
+        private fun getErrorCode(code: Int){
+             when (code) {
+                400 -> Utils.Log(TAG ,"Bad request")
+                401 -> Utils.Log(TAG ,"Unauthorised")
+                403 -> ServiceManager.getInstance()?.onUpdatedUserToken()
+                404 -> Utils.Log(TAG ,"Not found")
+                405 -> Utils.Log(TAG ,"Method not allowed")
+                500 -> Utils.Log(TAG ,"Internal server error")
+                else -> Utils.Log(TAG ,"Something went wrong")
             }
         }
     }
