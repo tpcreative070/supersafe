@@ -16,8 +16,8 @@ class RetrofitHelper : BaseDependencies() {
      * The CityService communicates with the json api of the city provider.
      */
 
-    fun getService(url: String? , listener : ProgressResponseBody.ProgressResponseBodyListener? = null): ApiService? {
-        val retrofit: Retrofit? = createRetrofit(url,listener)
+    fun getService(url: String?): ApiService? {
+        val retrofit: Retrofit? = createRetrofit(url)
         return retrofit?.create(ApiService::class.java)
     }
 
@@ -45,27 +45,7 @@ class RetrofitHelper : BaseDependencies() {
         return httpClient.build()
     }
 
-    private fun getOkHttpDownloadClientBuilder(progressListener: ProgressResponseBody.ProgressResponseBodyListener?): OkHttpClient {
-        return OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.MINUTES)
-                .writeTimeout(10, TimeUnit.MINUTES)
-                .readTimeout(10, TimeUnit.MINUTES).addInterceptor(Interceptor { chain ->
-                    val request = chain.request()
-                    val builder = request.newBuilder()
-                    val var4: MutableIterator<*>? = HashMap<String,Any>().entries.iterator()
-                    while (var4!!.hasNext()) {
-                        val entry: MutableMap.MutableEntry<*, *>? = var4.next() as MutableMap.MutableEntry<*,*>?
-                        if (entry != null) {
-                            builder.addHeader(entry.key as String, entry.value as String)
-                        }
-                    }
-                    if (progressListener == null) return@Interceptor chain.proceed(builder.build())
-                    val originalResponse = chain.proceed(builder.build())
-                    originalResponse.newBuilder()
-                            .body(ProgressResponseBody(originalResponse.body, progressListener))
-                            .build()
-                }).build()
-    }
+
 
     private fun createOkHttpClientCustom(): OkHttpClient? {
         return provideOkHttpClientDefault()
@@ -74,13 +54,12 @@ class RetrofitHelper : BaseDependencies() {
     /**
      * Creates a pre configured Retrofit instance
      */
-    private fun createRetrofit(url: String?,listener: ProgressResponseBody.ProgressResponseBodyListener? = null): Retrofit? {
-        val mClient = if (listener!=null) getOkHttpDownloadClientBuilder(listener) else createOkHttpClient()
+    private fun createRetrofit(url: String?): Retrofit? {
         return Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) // <- add this
-                .client(mClient)
+                .client(createOkHttpClient())
                 .build()
     }
 
