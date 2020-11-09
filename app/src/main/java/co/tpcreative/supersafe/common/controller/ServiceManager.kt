@@ -209,14 +209,8 @@ class ServiceManager : BaseServiceView<Any?> {
 
         /*Upload item*/
         CoroutineScope(Dispatchers.IO).launch {
-            val mResultUpload = async{
-                onUploadFile()
-            }
-            val mResultDownload = async {
-                onDownloadFile()
-            }
-            mResultUpload.await()
-            mResultDownload.await()
+            onUploadFile()
+            onDownloadFile()
             Utils.Log(TAG,"Synced completely...")
         }
     }
