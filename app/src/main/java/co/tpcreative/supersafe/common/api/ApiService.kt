@@ -47,6 +47,9 @@ interface ApiService {
     @POST(REFRESH_USER_TOKEN)
     fun onUpdateToken(@Body request: UserRequest): Observable<RootResponse>?
 
+    @POST(REFRESH_USER_TOKEN)
+    fun onUpdateTokenCor(@Body request: UserRequest): RootResponse?
+
     @POST(DELETE_OLD_ACCESS_TOKEN)
     fun onDeleteOldAccessToken(@Body request: UserRequest): Observable<RootResponse>?
 

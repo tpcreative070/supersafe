@@ -1,6 +1,6 @@
 package co.tpcreative.supersafe.common.api.requester
 import co.tpcreative.supersafe.common.helper.ApiHelper
 
-class UserService (val apiHelper: ApiHelper? = null){
+class ItemService(val apiHelper: ApiHelper? = null) {
 
 }

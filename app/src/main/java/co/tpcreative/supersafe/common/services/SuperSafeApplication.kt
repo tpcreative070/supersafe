@@ -71,6 +71,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         serviceGraphMicrosoft = RetrofitHelper().getService(getString(R.string.url_graph_microsoft))
         serverAPI = RetrofitHelper().getTPCreativeService(getUrl())
         serverApiCor = RetrofitBuilder.getService()
+        serverDriveApiCor = RetrofitBuilder.getService(getString(R.string.url_google))
+        serverMicCor = RetrofitBuilder.getService(getString(R.string.url_graph_microsoft))
         ServiceManager.getInstance()?.setContext(this)
         PrefsController.Builder()
                 .setContext(applicationContext)
@@ -409,6 +411,8 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
         private var url: String? = null
         var serverAPI: ApiService? = null
         var serverApiCor : ApiService? = null
+        var serverDriveApiCor : ApiService? = null
+        var serverMicCor : ApiService? = null
         var serverDriveApi: ApiService? = null
         var serviceGraphMicrosoft: ApiService? = null
         @Volatile

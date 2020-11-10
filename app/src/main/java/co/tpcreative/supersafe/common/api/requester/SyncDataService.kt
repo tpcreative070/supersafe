@@ -41,7 +41,7 @@ import java.lang.reflect.Modifier
 import java.util.HashMap
 import java.util.concurrent.TimeUnit
 
-class SyncDataService(val apiService: ApiService? = null) {
+class SyncDataService(val apiHelper: ApiHelper? = null) {
     val TAG = this::class.java.simpleName
     suspend fun onGetListData(request : SyncItemsRequest) : Resource<RootResponse> {
         return withContext(Dispatchers.IO) {
