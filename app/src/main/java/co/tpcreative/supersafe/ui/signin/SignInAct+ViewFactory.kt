@@ -4,12 +4,14 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.User
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_signin.*
 
@@ -76,11 +78,15 @@ fun SignInAct.onSignIn() {
 //    request.password = SecurityUtil.key_password_default_encrypted
 //    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
 //    presenter?.onSignIn(request)
-
     viewModel.signIn().observe(this, Observer{
         when(it.status){
             Status.SUCCESS -> {
-                Utils.Log(TAG,it.data?.toJson())
+                val mUser: User? = Utils.getUserInfo()
+                Navigator.onMoveToVerify(this, mUser)
+                Utils.Log(TAG,"Success ${it.toJson()}")
+            }
+            Status.ERROR -> {
+                Utils.Log(TAG,"Error ${it.message}")
             }
             else -> Utils.Log(TAG,"Nothing")
         }

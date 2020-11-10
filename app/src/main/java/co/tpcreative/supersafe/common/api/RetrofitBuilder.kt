@@ -2,8 +2,11 @@ package co.tpcreative.supersafe.common.api
 import co.tpcreative.supersafe.common.network.BaseDependencies
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
+import co.tpcreative.supersafe.model.EnumTypeServices
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -36,8 +39,38 @@ object RetrofitBuilder : BaseDependencies() {
                 }).build()
     }
 
-    private fun getRetrofit(url : String? = null,listener: ProgressResponseBody.ProgressResponseBodyListener? = null): Retrofit {
-        val mClient = if (listener!=null) getOkHttpDownloadClientBuilder(listener) else createOkHttpClientCustom()
+    /**
+     * This custom client will append the "username=demo" query after every request.
+     */
+    private fun createOkHttpClientForEmailOutlook(): OkHttpClient {
+        val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
+        httpClient.addInterceptor Interceptor@{ chain ->
+            val original = chain.request()
+            val originalHttpUrl: HttpUrl? = original.url
+            val url: HttpUrl? = originalHttpUrl?.newBuilder()
+                    ?.build()
+            // Request customization: add request headers
+            val requestBuilder: Request.Builder = original.newBuilder()
+                    .url(url!!)
+            val request = requestBuilder.build()
+            chain.proceed(request)
+        }
+        return httpClient.build()
+    }
+
+
+    private fun getRetrofit(url : String? = null,listener: ProgressResponseBody.ProgressResponseBodyListener? = null, typeService : EnumTypeServices): Retrofit {
+        val mClient: OkHttpClient = when(typeService){
+            EnumTypeServices.SYSTEM ->{
+                createOkHttpClientCustom()
+            }
+            EnumTypeServices.GOOGLE_DRIVE ->{
+                getOkHttpDownloadClientBuilder(listener)
+            }
+            EnumTypeServices.EMAIL_OUTLOOK ->{
+                createOkHttpClientForEmailOutlook()
+            }
+        }
         val mURL = url ?: BASE_URL
         return Retrofit.Builder()
                 .baseUrl(mURL)
@@ -46,8 +79,8 @@ object RetrofitBuilder : BaseDependencies() {
                 .build() //Doesn't require the adapter
     }
 
-    fun getService(url : String? = null,listener : ProgressResponseBody.ProgressResponseBodyListener? = null): ApiService? {
-        val retrofit: Retrofit? = getRetrofit(url,listener)
+    fun getService(url : String? = null,listener : ProgressResponseBody.ProgressResponseBodyListener? = null,typeService : EnumTypeServices): ApiService? {
+        val retrofit: Retrofit? = getRetrofit(url,listener,typeService)
         return retrofit?.create(ApiService::class.java)
     }
 }

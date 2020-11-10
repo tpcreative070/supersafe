@@ -31,7 +31,6 @@ class UserService (){
             }
             catch (throwable : Exception){
                 Utils.Log(TAG,request.toJson())
-                throwable.printStackTrace()
                 ResponseHandler.handleException(throwable)
             }
         }

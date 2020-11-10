@@ -11,20 +11,19 @@ import retrofit2.http.*
 class ApiHelper() {
 
     /*This is area for drive*/
-    suspend fun onGetDriveAboutCor(@Header("Authorization") authToken: String?) =  getDriveApi()?.onGetDriveAboutCor(authToken)
-    suspend fun uploadFileMultipleInAppFolderCor(@Header("Authorization") authToken: String?,
-                        @Part metaPart: MultipartBody.Part?,
-                        @Part dataPart: MultipartBody.Part?,
-                        @Query("type") type: String?)  =  getDriveApi()?.uploadFileMultipleInAppFolderCor(authToken,metaPart,dataPart,type)
-    suspend fun downloadDriveFileCor(@Header("Authorization") authToken: String?, @Path("id") id: String?, service : ApiService) =  service.downloadDriveFileCor(authToken,id)
+    suspend fun onGetDriveAboutCor(authToken: String?) =  getDriveApi()?.onGetDriveAboutCor(authToken)
+    suspend fun uploadFileMultipleInAppFolderCor(authToken: String?,
+                        metaPart: MultipartBody.Part?,
+                        dataPart: MultipartBody.Part?,type: String?)  =  getDriveApi()?.uploadFileMultipleInAppFolderCor(authToken,metaPart,dataPart,type)
+    suspend fun downloadDriveFileCor(authToken: String?,id: String?, service : ApiService) =  service.downloadDriveFileCor(authToken,id)
     suspend fun onDeleteCloudItemCor(token: String?, id: String?) = getDriveApi()?.onDeleteCloudItemCor(token,id)
     suspend fun onGetListFileInAppFolderCor(token: String?, space: String?) = getDriveApi()?.onGetListFileInAppFolderCor(token,space)
 
 
     /*This is area for mic*/
     suspend fun onSendMailCor(token: String?,body: EmailToken) = getMicApi()?.onSendMailCor(token,body)
-    suspend fun onRefreshEmailTokenCor(@Url url: String?, @FieldMap request: MutableMap<String?, Any?>) = getMicApi()?.onRefreshEmailTokenCor(url,request)
-    suspend fun onAddEmailTokenCor(request: OutlookMailRequest?) = getMicApi()?.onAddEmailTokenCor(request)
+    suspend fun onRefreshEmailTokenCor(url: String?,request: MutableMap<String?, Any?>) = getMicApi()?.onRefreshEmailTokenCor(url,request)
+    suspend fun onAddEmailTokenCor(request: OutlookMailRequest?) = getApiCor()?.onAddEmailTokenCor(request)
 
 
     /*This is area for item*/

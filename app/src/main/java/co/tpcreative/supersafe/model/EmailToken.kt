@@ -5,7 +5,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import java.io.Serializable
 
 class EmailToken : java.io.Serializable {
-    var message: co.tpcreative.supersafe.model.EmailToken.Message? = null
+    var message: Message? = null
     var code: String? = null
     var saveToSentItems = false
     var client_id: String? = null
@@ -23,10 +23,10 @@ class EmailToken : java.io.Serializable {
         token.client_id = mUser.email_token?.client_id
         token.redirect_uri = mUser.email_token?.redirect_uri
         token.saveToSentItems = false
-        val messages = co.tpcreative.supersafe.model.EmailToken.Message()
+        val messages = Message()
         val subject: String = String.format(SuperSafeApplication.getInstance().getString(R.string.send_code_title), code)
         messages.subject = subject
-        val body = co.tpcreative.supersafe.model.EmailToken.Body()
+        val body = Body()
         body.contentType = "HTML"
         var content: String? = ""
         when (status) {
@@ -84,18 +84,18 @@ class EmailToken : java.io.Serializable {
         return token
     }
 
-    class Message : java.io.Serializable {
+    class Message : Serializable {
         var subject: String? = null
-        var body: co.tpcreative.supersafe.model.EmailToken.Body? = null
+        var body: Body? = null
         var toRecipients: ArrayList<EmailObject?>? = ArrayList() // Getter Methods
     }
 
-    class Body : java.io.Serializable {
+    class Body : Serializable {
         var contentType: String? = null
         var content: String? = null
     }
 
-    class EmailObject : java.io.Serializable {
+    class EmailObject : Serializable {
         var emailAddress: EmailAddress? = null
     }
 

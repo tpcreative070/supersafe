@@ -13,10 +13,7 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.DriveAbout
-import co.tpcreative.supersafe.model.DriveEvent
-import co.tpcreative.supersafe.model.EnumFileType
-import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.model.*
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -73,7 +70,7 @@ class DriveService() {
     suspend fun downloadFile(item : ItemModel) : Resource<String>{
         return withContext(Dispatchers.IO) {
             try {
-                val service = RetrofitBuilder.getService(getString(R.string.url_google),listener = mProgressDownloading)
+                val service = RetrofitBuilder.getService(getString(R.string.url_google),listener = mProgressDownloading,EnumTypeServices.GOOGLE_DRIVE)
                 val mResult = ApiHelper.getInstance()?.downloadDriveFileCor(Utils.getDriveAccessToken(),item.global_id,service!!)
                 onSaveFileToDisk(mResult!!,onGetContentOfDownload(item)!!)
                 ResponseHandler.handleSuccess("Download successful")

@@ -670,6 +670,11 @@ object Utils {
         return mUser?.access_token
     }
 
+    fun getMicAccessToken() : String? {
+        val mUser = getUserInfo()
+        return mUser?.email_token?.access_token
+    }
+
     fun onPushEventBus(status: EnumStatus?) {
         EventBus.getDefault().post(status)
     }
@@ -982,6 +987,16 @@ object Utils {
 
     fun setUserPreShare(user: User?) {
         PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
+    }
+
+    fun setEmailToken(data : EmailToken?){
+        val mUser = getUserInfo()
+        val token: EmailToken? = mUser?.email_token
+        token?.access_token = data?.token_type + " " + data?.access_token
+        token?.refresh_token = data?.refresh_token
+        token?.token_type = data?.token_type
+        mUser?.email_token = token
+        setUserPreShare(mUser)
     }
 
     fun onScanFile(activity: Context, nameLogs: String?) {
