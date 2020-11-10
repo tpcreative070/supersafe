@@ -20,7 +20,7 @@ import co.tpcreative.supersafe.common.request.CategoriesRequest
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.request.TrackingRequest
-import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
+import co.tpcreative.supersafe.common.request.OutlookMailRequest
 import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.DriveResponse
@@ -36,10 +36,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call

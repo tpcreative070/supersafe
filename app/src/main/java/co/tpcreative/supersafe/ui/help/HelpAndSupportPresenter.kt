@@ -7,7 +7,7 @@ import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
-import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
+import co.tpcreative.supersafe.common.request.OutlookMailRequest
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.utilimport.NetworkUtil

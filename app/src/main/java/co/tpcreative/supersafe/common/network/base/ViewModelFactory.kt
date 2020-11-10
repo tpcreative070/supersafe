@@ -1,15 +1,16 @@
 package co.tpcreative.supersafe.common.network.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import co.tpcreative.supersafe.common.api.ApiService
-import co.tpcreative.supersafe.common.api.requester.SyncDataService
+import co.tpcreative.supersafe.common.api.requester.DriveService
+import co.tpcreative.supersafe.common.api.requester.UserService
 import co.tpcreative.supersafe.common.helper.ApiHelper
+import co.tpcreative.supersafe.viewmodel.UserViewModel
 import java.lang.IllegalArgumentException
 
-class ViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory{
+class ViewModelFactory() : ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(SyncDataService::class.java)){
-            return SyncDataService(apiHelper)as T
+         if (modelClass.isAssignableFrom(UserViewModel::class.java)){
+            return UserViewModel(UserService()) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

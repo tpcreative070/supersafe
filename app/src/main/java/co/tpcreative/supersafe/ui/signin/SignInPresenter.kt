@@ -8,7 +8,7 @@ import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.request.SignInRequest
-import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
+import co.tpcreative.supersafe.common.request.OutlookMailRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication

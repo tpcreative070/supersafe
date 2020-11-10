@@ -6,11 +6,14 @@ import co.tpcreative.supersafe.common.helper.ApiHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.ResponseHandler
+import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DriveResponse
+import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.DriveAbout
 import co.tpcreative.supersafe.model.DriveEvent
 import co.tpcreative.supersafe.model.EnumFileType
 import co.tpcreative.supersafe.model.ItemModel
@@ -28,9 +31,46 @@ import java.io.File
 import java.io.IOException
 import java.util.HashMap
 
-class SyncDataService(val apiHelper: ApiHelper? = null) {
+class DriveService() {
     val TAG = this::class.java.simpleName
-    suspend fun onDownloadFile(item : ItemModel) : Resource<String>{
+
+    suspend fun getDriveAbout() : Resource<DriveAbout> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val mResult = ApiHelper.getInstance()?.onGetDriveAboutCor(Utils.getDriveAccessToken())
+                ResponseHandler.handleSuccess(mResult as DriveAbout)
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    suspend fun getListFileInAppFolderCor(space : String) : Resource<String> {
+        return withContext(Dispatchers.IO) {
+            try {
+                ApiHelper.getInstance()?.onGetListFileInAppFolderCor(Utils.getDriveAccessToken(),space)
+                ResponseHandler.handleSuccess("Deleted successfully")
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    suspend fun deleteCloudItemCor(id : String) : Resource<String> {
+        return withContext(Dispatchers.IO) {
+            try {
+                ApiHelper.getInstance()?.onDeleteCloudItemCor(Utils.getDriveAccessToken(),id)
+                ResponseHandler.handleSuccess("Deleted successfully")
+            }
+            catch (throwable : Exception){
+                ResponseHandler.handleException(throwable)
+            }
+        }
+    }
+
+    suspend fun downloadFile(item : ItemModel) : Resource<String>{
         return withContext(Dispatchers.IO) {
             try {
                 val service = RetrofitBuilder.getService(getString(R.string.url_google),listener = mProgressDownloading)
@@ -65,7 +105,7 @@ class SyncDataService(val apiHelper: ApiHelper? = null) {
           }
     }
 
-    suspend fun onUploadFile(item : ItemModel) : Resource<DriveResponse>?{
+    suspend fun uploadFile(item : ItemModel) : Resource<DriveResponse>?{
         return withContext(Dispatchers.IO){
             try {
                 val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()

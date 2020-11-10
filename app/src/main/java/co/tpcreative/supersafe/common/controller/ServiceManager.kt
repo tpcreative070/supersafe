@@ -22,8 +22,7 @@ import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
-import co.tpcreative.supersafe.common.api.requester.SyncDataService
-import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.util.Utils
@@ -41,7 +40,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import okhttp3.internal.wait
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
@@ -83,7 +81,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private var mMapImporting: MutableMap<String, ImportFilesModel> = HashMap<String, ImportFilesModel>()
     private val mDownloadList: MutableList<ItemModel> = ArrayList<ItemModel>()
     private var mStart = 20
-    private val syncDataService  = SyncDataService()
+    private val syncDataService  = DriveService()
     private val itemService = ItemService()
     var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
@@ -220,7 +218,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private suspend fun getItemList() = withContext(Dispatchers.IO){
         var mNextSpace : String? = "0"
         do {
-            val mResult = itemService.onGetListData(SyncItemsRequest(nextPage = mNextSpace))
+            val mResult = itemService.getListData(SyncItemsRequest(nextPage = mNextSpace))
             when(mResult.status){
                 Status.LOADING ->{
                     Utils.Log(TAG,"Loading...")
@@ -239,7 +237,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private suspend fun onUploadFile() = withContext(Dispatchers.IO){
         val mItem = SQLHelper.getItemId(item_id = "bb3a22f9-8922-400d-8f72-456f58065ef5")
         mItem?.isOriginalGlobalId = true
-        val mResult = mItem?.let { syncDataService.onUploadFile(it) }
+        val mResult = mItem?.let { syncDataService.uploadFile(it) }
         when(mResult?.status){
             Status.LOADING ->{
                 Utils.Log(TAG,"Loading...")
@@ -257,7 +255,7 @@ class ServiceManager : BaseServiceView<Any?> {
         val mItem = SQLHelper.getItemId(item_id = "bb3a22f9-8922-400d-8f72-456f58065ef5")
         mItem?.isOriginalGlobalId = true
         mItem?.global_id = "1-Q63TAQqLXiJ3NcqbgO9W3uMEKHRdKA7ivsxeCe8FcD4goWY0Q"
-        val mResult = mItem?.let { syncDataService.onDownloadFile(it) }
+        val mResult = mItem?.let { syncDataService.downloadFile(it) }
         when(mResult?.status){
             Status.LOADING ->{
                 Utils.Log(TAG,"Loading...")

@@ -1,8 +1,6 @@
 package co.tpcreative.supersafe.common.api
 import co.tpcreative.supersafe.common.api.response.BaseResponse
-import co.tpcreative.supersafe.common.network.Result
 import co.tpcreative.supersafe.common.request.*
-import co.tpcreative.supersafe.common.requestimport.*
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.model.DriveAbout
@@ -11,7 +9,6 @@ import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -20,56 +17,86 @@ interface ApiService {
     @POST(TRACKING)
     fun onTracking(@Body request: TrackingRequest): Observable<RootResponse>?
 
+    @POST(TRACKING)
+    suspend fun onTrackingCor(@Body request: TrackingRequest): RootResponse?
+
     @POST(CHECK_VERSION)
     fun onCheckVersion(): Observable<BaseResponse>?
 
     @POST(SIGN_UP)
     fun onSignUP(@Body request: SignUpRequest): Observable<RootResponse>?
 
+    @POST(SIGN_UP)
+    suspend fun onSignUPCor(@Body request: SignUpRequest): RootResponse?
+
     @POST(SIGN_IN)
     fun onSignIn(@Body request: SignInRequest): Observable<RootResponse>?
+
+    @POST(SIGN_IN)
+    suspend fun onSignInCor(@Body request: SignInRequest): RootResponse?
 
     @POST(VERIFY_CODE)
     fun onVerifyCode(@Body request: VerifyCodeRequest): Observable<RootResponse>?
 
+    @POST(VERIFY_CODE)
+    suspend fun onVerifyCodeCor(@Body request: VerifyCodeRequest): RootResponse?
+
     @POST(RESEND_CODE)
     fun onResendCode(@Body request: RequestCodeRequest): Observable<RootResponse>?
+
+    @POST(RESEND_CODE)
+    suspend fun onResendCodeCor(@Body request: RequestCodeRequest): RootResponse?
 
     @POST(CHECK_USER_CLOUD)
     fun onCheckUserCloud(@Body request: UserCloudRequest): Observable<RootResponse>?
 
+    @POST(CHECK_USER_CLOUD)
+    suspend fun onCheckUserCloudCor(@Body request: UserCloudRequest): RootResponse?
+
     @POST(ADD_USER_CLOUD)
     fun onAddUserCloud(@Body request: UserCloudRequest?): Observable<RootResponse>?
 
+    @POST(ADD_USER_CLOUD)
+    suspend fun onAddUserCloudCor(@Body request: UserCloudRequest?): RootResponse?
+
     @POST(UPDATE)
     fun onUpdateUser(@Body request: ChangeUserIdRequest): Observable<RootResponse>?
+
+    @POST(UPDATE)
+    suspend fun onUpdateUserCor(@Body request: ChangeUserIdRequest): RootResponse?
 
     @POST(REFRESH_USER_TOKEN)
     fun onUpdateToken(@Body request: UserRequest): Observable<RootResponse>?
 
     @POST(REFRESH_USER_TOKEN)
-    fun onUpdateTokenCor(@Body request: UserRequest): RootResponse?
+    suspend fun onUpdateTokenCor(@Body request: UserRequest): RootResponse?
 
     @POST(DELETE_OLD_ACCESS_TOKEN)
     fun onDeleteOldAccessToken(@Body request: UserRequest): Observable<RootResponse>?
 
+    @POST(DELETE_OLD_ACCESS_TOKEN)
+    suspend fun onDeleteOldAccessTokenCor(@Body request: UserRequest) : RootResponse?
+
     @POST(CHECKOUT)
     fun onCheckout(@Body request: CheckoutRequest): Observable<RootResponse>?
 
+    @POST(CHECKOUT)
+    suspend fun onCheckoutCor(@Body request: CheckoutRequest): RootResponse?
+
     @POST(CHECK_USER_ID)
     fun onCheckUserId(@Body request: UserRequest): Observable<RootResponse>?
+
+    @POST(CHECK_USER_ID)
+    suspend fun onCheckUserIdCor(@Body request: UserRequest): RootResponse?
 
     @POST(USER_INFO)
     fun onUserInfo(@Body request: UserRequest): Observable<RootResponse>?
 
     @POST(USER_INFO)
-    fun onUserInfoT(@Body request: UserRequest): Call<RootResponse>?
+    suspend fun onUserInfoCor(@Body request: UserRequest): RootResponse?
 
     @POST(GET_LIST_FILES_SYNC)
     fun onListFilesSync(@Body request: SyncItemsRequest): Observable<RootResponse>?
-
-    @POST(GET_LIST_FILES_SYNC)
-    suspend fun onListFilesSyncT(@Body request: SyncItemsRequest): RootResponse?
 
     @POST(GET_LIST_FILES_SYNC)
     suspend fun onListFilesSyncCor(@Body request: SyncItemsRequest) : RootResponse?
@@ -77,11 +104,20 @@ interface ApiService {
     @POST(SYNC_DATA)
     fun onSyncData(@Body request: SyncItemsRequest): Observable<RootResponse>?
 
+    @POST(SYNC_DATA)
+    suspend fun onSyncDataCor(@Body request: SyncItemsRequest): RootResponse?
+
     @POST(DELETE_OWN_ITEMS)
     fun onDeleteOwnItems(@Body request: SyncItemsRequest): Observable<RootResponse>?
 
+    @POST(DELETE_OWN_ITEMS)
+    suspend fun onDeleteOwnItemsCor(@Body request: SyncItemsRequest): RootResponse?
+
     @POST(CATEGORIES_SYNC)
     fun onCategoriesSync(@Body request: CategoriesRequest?): Observable<RootResponse>?
+
+    @POST(CATEGORIES_SYNC)
+    suspend fun onCategoriesSyncCor(@Body request: CategoriesRequest?): RootResponse?
 
     @POST(GET_LIST_CATEGORIES_SYNC)
     fun onListCategoriesSync(@Body request: CategoriesRequest?): Observable<RootResponse>?
@@ -89,20 +125,38 @@ interface ApiService {
     @POST(DELETE_CATEGORIES)
     fun onDeleteCategories(@Body request: CategoriesRequest?): Observable<RootResponse>?
 
+    @POST(DELETE_CATEGORIES)
+    suspend fun onDeleteCategoriesCor(@Body request: CategoriesRequest?): RootResponse?
+
     @Headers("Accept: application/json")
     @GET(GET_DRIVE_ABOUT)
     fun onGetDriveAbout(@Header("Authorization") token: String?): Observable<DriveAbout>?
 
     @Headers("Accept: application/json")
+    @GET(GET_DRIVE_ABOUT)
+    suspend fun onGetDriveAboutCor(@Header("Authorization") token: String?): DriveAbout?
+
+    @Headers("Accept: application/json")
     @POST(SEND_MAIL)
     fun onSendMail(@Header("Authorization") token: String?, @Body body: EmailToken): Call<ResponseBody>?
+
+    @Headers("Accept: application/json")
+    @POST(SEND_MAIL)
+    suspend fun onSendMailCor(@Header("Authorization") token: String?, @Body body: EmailToken): ResponseBody?
 
     @FormUrlEncoded
     @POST
     fun onRefreshEmailToken(@Url url: String?, @FieldMap request: MutableMap<String?, Any?>): Observable<EmailToken>?
 
+    @FormUrlEncoded
+    @POST
+    suspend fun onRefreshEmailTokenCor(@Url url: String?, @FieldMap request: MutableMap<String?, Any?>): EmailToken?
+
     @POST(ADD_EMAIL_TOKEN)
     fun onAddEmailToken(@Body request: OutlookMailRequest?): Observable<BaseResponse>?
+
+    @POST(ADD_EMAIL_TOKEN)
+    suspend fun onAddEmailTokenCor(@Body request: OutlookMailRequest?): BaseResponse?
 
     @Headers("Accept: application/json")
     @POST(CREATE_FOLDER)
@@ -121,12 +175,20 @@ interface ApiService {
     fun onDeleteCloudItem(@Header("Authorization") token: String?, @Path("id") id: String?): Observable<Response<DriveAbout>>?
 
     @Headers("Accept: application/json")
+    @DELETE(DELETE_CLOUD_ITEM)
+    suspend fun onDeleteCloudItemCor(@Header("Authorization") token: String?, @Path("id") id: String?): Response<DriveAbout>?
+
+    @Headers("Accept: application/json")
     @GET(CHECK_IN_APP_FOLDER_EXITING)
     fun onGetListFile(@Header("Authorization") token: String?, @Query("q") title: String?, @Query("spaces") value: String?): Observable<DriveAbout>?
 
     @Headers("Accept: application/json")
     @GET(GET_LIST_FILE_IN_APP_FOLDER)
     fun onGetListFileInAppFolder(@Header("Authorization") token: String?, @Query("spaces") value: String?): Observable<DriveAbout>?
+
+    @Headers("Accept: application/json")
+    @GET(GET_LIST_FILE_IN_APP_FOLDER)
+    suspend fun onGetListFileInAppFolderCor(@Header("Authorization") token: String?, @Query("spaces") value: String?): DriveAbout?
 
     @POST(UPLOAD_FILE_TO_GOOGLE_DRIVE)
     @Multipart

@@ -70,6 +70,7 @@ object Utils {
     var FORMAT_TIME: String? = "yyyy-MM-dd HH:mm:ss"
     var FORMAT_TIME_FILE_NAME: String? = "yyyyMMdd_HHmmss"
     const val COUNT_RATE = 9
+    const val CODE_EXCEPTION = 1111
     private val storage: Storage = Storage(SuperSafeApplication.getInstance())
     private val TAG = Utils::class.java.simpleName
     fun isValidEmail(target: CharSequence?): Boolean {

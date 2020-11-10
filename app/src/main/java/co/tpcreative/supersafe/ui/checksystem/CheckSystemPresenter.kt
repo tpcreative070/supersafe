@@ -10,7 +10,7 @@ import co.tpcreative.supersafe.common.extension.toObject
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.request.*
-import co.tpcreative.supersafe.common.requestimport.OutlookMailRequest
+import co.tpcreative.supersafe.common.request.OutlookMailRequest
 import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
