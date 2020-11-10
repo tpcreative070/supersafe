@@ -2,18 +2,19 @@ package co.tpcreative.supersafe.common.network
 import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
-import co.tpcreative.supersafe.common.extension.toObject
+import co.tpcreative.supersafe.common.extension.toObjectMayBeNull
 import co.tpcreative.supersafe.common.util.Utils
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
+import kotlin.Exception
+
 enum class ErrorCodes(val code: Int) {
     SocketTimeOut(-1),
 }
 open class ResponseHandler {
     companion object{
-        val TAG = this::class.java.simpleName
+        val TAG = ResponseHandler::class.java.simpleName
         fun <T : Any> handleSuccess(data: T): Resource<T> {
             return Resource.success(data)
         }
@@ -23,7 +24,7 @@ open class ResponseHandler {
                 val mCode = (e as HttpException?)?.response()?.code()
                 try {
                     val mMessage = mBody?.string()
-                    val mObject = mMessage?.toObject(BaseResponse::class.java)
+                    val mObject = mMessage?.toObjectMayBeNull(BaseResponse::class.java)
                     Utils.Log(TAG,mMessage)
                     getErrorCode(mCode!!)
                     mObject?.let {
