@@ -16,6 +16,7 @@ import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
+import co.tpcreative.supersafe.common.api.requester.ItemService
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.response.DriveResponse
@@ -83,6 +84,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private val mDownloadList: MutableList<ItemModel> = ArrayList<ItemModel>()
     private var mStart = 20
     private val syncDataService  = SyncDataService()
+    private val itemService = ItemService()
     var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             Utils.Log(TAG, "connected")
@@ -218,7 +220,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private suspend fun getItemList() = withContext(Dispatchers.IO){
         var mNextSpace : String? = "0"
         do {
-            val mResult = syncDataService.onGetListData(SyncItemsRequest(nextPage = mNextSpace))
+            val mResult = itemService.onGetListData(SyncItemsRequest(nextPage = mNextSpace))
             when(mResult.status){
                 Status.LOADING ->{
                     Utils.Log(TAG,"Loading...")

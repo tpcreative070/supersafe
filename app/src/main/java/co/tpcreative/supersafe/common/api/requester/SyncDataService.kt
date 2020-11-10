@@ -1,16 +1,12 @@
 package co.tpcreative.supersafe.common.api.requester
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.api.ApiService
 import co.tpcreative.supersafe.common.api.RetrofitBuilder
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.helper.ApiHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.ResponseHandler
-import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.response.DriveResponse
-import co.tpcreative.supersafe.common.response.RootResponse
-import co.tpcreative.supersafe.common.services.RetrofitHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
 import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody
@@ -19,42 +15,21 @@ import co.tpcreative.supersafe.model.DriveEvent
 import co.tpcreative.supersafe.model.EnumFileType
 import co.tpcreative.supersafe.model.ItemModel
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
-import okhttp3.internal.wait
 import okio.BufferedSink
 import okio.buffer
 import okio.sink
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.IOException
-import java.lang.reflect.Modifier
 import java.util.HashMap
-import java.util.concurrent.TimeUnit
 
 class SyncDataService(val apiHelper: ApiHelper? = null) {
     val TAG = this::class.java.simpleName
-    suspend fun onGetListData(request : SyncItemsRequest) : Resource<RootResponse> {
-        return withContext(Dispatchers.IO) {
-            try {
-                val mResult = ApiHelper.getInstance()?.onListFilesSyncCor(request)
-                ResponseHandler.handleSuccess(mResult as RootResponse)
-            }
-            catch (throwable : Exception){
-                ResponseHandler.handleException(throwable)
-            }
-        }
-    }
-
     suspend fun onDownloadFile(item : ItemModel) : Resource<String>{
         return withContext(Dispatchers.IO) {
             try {
