@@ -30,6 +30,7 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.ItemViewModel
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.common.net.MediaType
@@ -88,6 +89,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private val syncDataService  = DriveService()
     private val itemService = ItemService()
     private val userService = UserViewModel(UserService(), MicService())
+    private val itemViewModel = ItemViewModel(ItemService())
     var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             Utils.Log(TAG, "connected")
@@ -220,8 +222,26 @@ class ServiceManager : BaseServiceView<Any?> {
 //        }
 
         /*Updated user token*/
+//        CoroutineScope(Dispatchers.IO).launch {
+//            onUpdateUserToken()
+//        }
+
+
+        /*Call sync service*/
         CoroutineScope(Dispatchers.IO).launch {
-            onUpdateUserToken()
+            val mResult = async {
+                val mResult = itemViewModel.getItemList()
+                when(mResult.status){
+                    Status.SUCCESS ->{
+                        Utils.Log(TAG,"Success ${mResult.data?.toJson()}")
+                    }
+                    else -> {
+                        Utils.Log(TAG,"Error ${mResult.message}")
+                    }
+                }
+            }
+            mResult.await()
+            Utils.Log(TAG,"Completed fetch api...")
         }
     }
 

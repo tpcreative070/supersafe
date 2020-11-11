@@ -80,6 +80,14 @@ class SyncItemsRequest : Serializable {
         device_id = SuperSafeApplication.getInstance().getDeviceId()
     }
 
+    /*Delete item from system*/
+    constructor(item: ItemModel?) {
+        this.user_id = Utils.getUserId()
+        this.cloud_id = Utils.getUserCloudId()
+        this.items_id = item?.items_id
+        device_id = SuperSafeApplication.getInstance().getDeviceId()
+    }
+
     /*Get items list*/
     constructor(user_id: String?, cloud_id: String?, device_id: String?, isSyncCloud: Boolean, nextPage: String?) {
         this.user_id = user_id

@@ -21,7 +21,6 @@ import co.tpcreative.supersafe.model.Authorization
 import co.tpcreative.supersafe.model.EnumResponseCode
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
-import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

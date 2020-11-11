@@ -102,7 +102,7 @@ class DriveService() {
           }
     }
 
-    suspend fun uploadFile(item : ItemModel) : Resource<DriveResponse>?{
+    suspend fun uploadFile(item : ItemModel) : Resource<DriveResponse>{
         return withContext(Dispatchers.IO){
             try {
                 val contentType = "application/json; charset=UTF-8".toMediaTypeOrNull()

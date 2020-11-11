@@ -628,6 +628,18 @@ object Utils {
         return null
     }
 
+    fun getUserCloudId(): String? {
+        try {
+            val mUser = getUserInfo()
+            if (mUser != null) {
+                return mUser.cloud_id
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
     /*Checking allow sync data*/
     fun isAllowSyncData(): Boolean {
         return isAllowRequestDriveApis()
