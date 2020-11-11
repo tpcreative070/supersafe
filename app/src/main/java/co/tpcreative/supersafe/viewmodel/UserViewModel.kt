@@ -10,16 +10,11 @@ import co.tpcreative.supersafe.common.extension.getString
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
-import co.tpcreative.supersafe.common.request.MicRequest
-import co.tpcreative.supersafe.common.request.OutlookMailRequest
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmailToken
-import co.tpcreative.supersafe.model.EnumResponseCode
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
 import com.snatik.storage.security.SecurityUtil
 import kotlinx.coroutines.Dispatchers
 import java.util.*
@@ -27,7 +22,8 @@ import java.util.*
 enum class EnumValidationKey {
     EDIT_TEXT_EMAIL
 }
-class UserViewModel(private val service: UserService, private val micService: MicService) : ViewModel(){
+class UserViewModel(private val service: UserService, micService: MicService) : ViewModel(){
+    private val emailViewModel = EmailOutlookViewModel(micService)
     val TAG = this::class.java.simpleName
     val errorMessages : MutableLiveData<MutableMap<String,String>> by lazy {
         MutableLiveData<MutableMap<String,String>>()
@@ -58,7 +54,6 @@ class UserViewModel(private val service: UserService, private val micService: Mi
             isLoading.postValue(true)
             val mResultSignIn = service.signIn(getSignInRequest())
             when(mResultSignIn.status){
-                Status.LOADING ->{}
                 Status.SUCCESS ->{
                     if (mResultSignIn.data?.error!!){
                         errorResponseMessage.postValue(getString(R.string.signed_in_failed))
@@ -68,51 +63,16 @@ class UserViewModel(private val service: UserService, private val micService: Mi
                         Utils.Log(TAG,mData?.user?.email_token?.toJson())
                         Utils.setUserPreShare(mData?.user)
                         ServiceManager.getInstance()?.onInitConfigurationFile()
-                        val mMicRequest = getEmailContent()
-                        val mResultSentEmail = micService.sendMail(mMicRequest)
+                        val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
                         when(mResultSentEmail.status){
-                            Status.LOADING ->{}
-                            Status.SUCCESS -> {
+                            Status.SUCCESS ->{
                                 emit(mResultSignIn)
                             }
-                            Status.ERROR ->{
-                                if (EnumResponseCode.INVALID_AUTHENTICATION.code==mResultSentEmail.code){
-                                    val mRequestEmailToken = getRefreshContent(mMicRequest.data)
-                                    val mResultRefreshToken = micService.refreshEmailToken(mRequestEmailToken)
-                                    when(mResultRefreshToken.status){
-                                        Status.LOADING ->{}
-                                        Status.SUCCESS ->{
-                                            Utils.setEmailToken(mResultRefreshToken.data)
-                                            val mResultAddedMailToken = micService.addEmailToken(getAddedEmailToken())
-                                            when(mResultAddedMailToken.status){
-                                                Status.LOADING -> {}
-                                                Status.SUCCESS ->{
-                                                    val mSentEmail = micService.sendMail(getEmailContent())
-                                                    when(mSentEmail.status){
-                                                        Status.LOADING ->{}
-                                                        Status.SUCCESS ->{
-                                                            emit(mResultSignIn)
-                                                        }
-                                                        Status.ERROR ->{
-                                                            emit(Resource.error(mSentEmail.code?:Utils.CODE_EXCEPTION, mSentEmail.message ?:"",null))
-                                                        }
-                                                    }
-                                                }
-                                                Status.ERROR ->{
-                                                    emit(Resource.error(mResultAddedMailToken.code?:Utils.CODE_EXCEPTION, mResultAddedMailToken.message ?:"",null))
-                                                }
-                                            }
-                                        }
-                                        Status.ERROR -> {
-                                            emit(Resource.error(mResultRefreshToken.code?:Utils.CODE_EXCEPTION, mResultRefreshToken.message ?:"",null))
-                                        }
-                                    }
-                                }
-                            }
+                            else -> emit(Resource.error(mResultSentEmail.code?:Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
                         }
                     }
                 }
-                Status.ERROR ->{
+                else  ->{
                     emit(Resource.error(mResultSignIn.code?:Utils.CODE_EXCEPTION, mResultSignIn.message ?:"",null))
                 }
             }
@@ -145,25 +105,5 @@ class UserViewModel(private val service: UserService, private val micService: Mi
         request.password = SecurityUtil.key_password_default_encrypted
         request.device_id = SuperSafeApplication.getInstance().getDeviceId()
         return request
-    }
-
-    private fun getEmailContent() : MicRequest{
-        val mUser: User? = Utils.getUserInfo()
-        val mEmailToken =  mUser?.let { EmailToken.getInstance()?.convertObject(it, EnumStatus.SIGN_IN) }
-        return MicRequest(Utils.getMicAccessToken()!!,mEmailToken!!)
-    }
-
-    private fun getRefreshContent(request:EmailToken?) : MutableMap<String?,Any?>{
-        val hash: MutableMap<String?, Any?> = HashMap()
-        hash[getString(R.string.key_client_id)] = request?.client_id
-        hash[getString(R.string.key_redirect_uri)] = request?.redirect_uri
-        hash[getString(R.string.key_grant_type)] = request?.grant_type
-        hash[getString(R.string.key_refresh_token)] = request?.refresh_token
-        return hash
-    }
-
-    private fun getAddedEmailToken() : OutlookMailRequest {
-        val mUser = Utils.getUserInfo()
-        return OutlookMailRequest(mUser?.email_token?.refresh_token, mUser?.email_token?.access_token)
     }
 }
