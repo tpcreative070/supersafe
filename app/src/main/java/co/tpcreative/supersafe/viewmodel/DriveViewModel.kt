@@ -138,19 +138,26 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
 
     private fun updatedDriveValue(mData : DriveAbout? = null){
         val mUser = Utils.getUserInfo()
-        if (mData?.error != null) {
+        if (mData==null){
             if (mUser != null) {
                 mUser.driveConnected = false
                 Utils.setUserPreShare(mUser)
             }
-        } else {
-            if (mUser != null) {
-                mUser.driveConnected = true
-                Utils.setUserPreShare(mUser)
+        }else{
+            if (mData.error != null) {
+                if (mUser != null) {
+                    mUser.driveConnected = false
+                    Utils.setUserPreShare(mUser)
+                }
+            } else {
+                if (mUser != null) {
+                    mUser.driveConnected = true
+                    Utils.setUserPreShare(mUser)
+                }
             }
         }
     }
-    
+
     private fun calculatorData(mCountItem : Int){
         if (mCountItem == 0) {
             val mUser: User? = Utils.getUserInfo()

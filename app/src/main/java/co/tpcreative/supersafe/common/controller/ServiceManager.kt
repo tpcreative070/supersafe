@@ -206,6 +206,14 @@ class ServiceManager : BaseServiceView<Any?> {
         onGetItemList("0")
     }
 
+    fun onGetAbout() = CoroutineScope(Dispatchers.IO).launch{
+        val mResult = driveViewModel.getDriveAbout()
+        when(mResult.status){
+            Status.SUCCESS -> Utils.Log(TAG,"Fetch drive about compleyed")
+            else -> Utils.Log(TAG,"Fetch drive about issue ${mResult.message}")
+        }
+    }
+
     fun onPreparingSyncDataCor() = CoroutineScope(Dispatchers.IO).launch {
         val mResultItemList = itemViewModel.getItemList()
         when(mResultItemList.status){
