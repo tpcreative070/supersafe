@@ -54,29 +54,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <LinearLayout
-                android:visibility="gone"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/edtName"
-                    android:textSize="@dimen/text_size_normal"
-                    android:hint="@string/name"
-                    android:singleLine="true"
-                    android:inputType="text"
-                    android:imeOptions="actionNext"
-                    style="@style/RegularTextView"
-                    app:met_floatingLabel="highlight"
-                    app:met_baseColor="@color/white"
-                    app:met_primaryColor="@color/colorButton"
-                    app:met_textColorHint="@color/colorButton"
-                    app:met_textColor="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-            <LinearLayout
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical"

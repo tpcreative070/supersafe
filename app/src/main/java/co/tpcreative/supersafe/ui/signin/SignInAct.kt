@@ -1,34 +1,21 @@
 package co.tpcreative.supersafe.ui.signin
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.KeyEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
-import co.tpcreative.supersafe.common.helper.ApiHelper
-import co.tpcreative.supersafe.common.network.base.ViewModelFactory
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmailToken
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
 import co.tpcreative.supersafe.viewmodel.UserViewModel
-import kotlinx.android.synthetic.main.activity_signin.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, BaseView<User> {
+class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener{
     var isNext = false
-    var presenter: SignInPresenter? = null
     lateinit var viewModel: UserViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +43,6 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -82,79 +68,11 @@ class SignInAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener, Base
     /*Detecting textWatch*/
     val mTextWatcher: TextWatcher? = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//            isNext = if (Utils.isValidEmail(s)) {
-//                btnNext?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-//                btnNext?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
-//                true
-//            } else {
-//                btnNext?.background = ContextCompat.getDrawable(this@SignInAct,R.drawable.bg_button_disable_rounded)
-//                btnNext.setTextColor(ContextCompat.getColor(this@SignInAct,R.color.colorDisableText))
-//                false
-//            }
-
             viewModel.email = s.toString()
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: android.text.Editable?) {}
     }
-
-    override fun getContext(): Context? {
-        return this
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onStartLoading(status: EnumStatus) {
-        progressBarCircularIndeterminate?.visibility = View.VISIBLE
-        btnNext?.visibility = View.INVISIBLE
-    }
-
-    override fun onStopLoading(status: EnumStatus) {
-        progressBarCircularIndeterminate?.visibility = View.INVISIBLE
-        btnNext?.visibility = View.VISIBLE
-        Utils.Log(TAG, "Stop")
-    }
-
-    override fun onError(message: String?, status: EnumStatus?) {
-        Utils.Log(TAG, message + " " + status?.name)
-        when (status) {
-            EnumStatus.SIGN_IN -> {
-                onStopLoading(EnumStatus.SIGN_IN)
-                edtEmail?.error = message
-            }
-        }
-    }
-
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        Utils.Log(TAG, message + " " + status?.name)
-        when (status) {
-            EnumStatus.SEND_EMAIL -> {
-                val mUser: User? = Utils.getUserInfo()
-                Navigator.onMoveToVerify(this, mUser)
-                onStopLoading(EnumStatus.SIGN_IN)
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: User?) {
-        when (status) {
-            EnumStatus.SIGN_IN -> {
-                val mUser: User? = Utils.getUserInfo()
-                val emailToken: EmailToken? = mUser?.let { EmailToken.getInstance()?.convertObject(it, EnumStatus.SIGN_IN) }
-                if (emailToken != null) {
-                    presenter?.onSendMail(emailToken)
-                }
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<User>?) {}
 
     companion object {
         private val TAG = SignInAct::class.java.simpleName

@@ -1,40 +1,83 @@
 package co.tpcreative.supersafe.ui.signup
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.request.SignUpRequest
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
+import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
-import com.snatik.storage.security.SecurityUtil
+import co.tpcreative.supersafe.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_sign_up.*
-import java.util.*
 
 fun SignUpAct.initUI(){
     TAG = this::class.java.simpleName
     setSupportActionBar(toolbar)
+    setupViewModel()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    presenter = SignUpPresenter()
-    presenter?.bindView(this)
-    edtName?.addTextChangedListener(mTextWatcher)
     edtEmail?.addTextChangedListener(mTextWatcher)
     edtEmail?.setOnEditorActionListener(this)
-    edtName?.setOnEditorActionListener(this)
-    isName = true
-    edtName?.setText(getString(R.string.free))
+
+    viewModel.errorMessages.observe( this,{
+        Utils.Log(TAG,"log...$it")
+        if (it.isNotEmpty()){
+            btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+            btnFinish.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+            isNext = false
+        }else{
+            btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+            btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.white))
+            isNext = true
+        }
+    })
+
+    viewModel.isLoading.observe(this,{
+        if (it){
+            progressBarCircularIndeterminate?.visibility = View.VISIBLE
+            btnFinish?.visibility = View.INVISIBLE
+        }else{
+            progressBarCircularIndeterminate?.visibility = View.INVISIBLE
+            btnFinish?.visibility = View.VISIBLE
+        }
+    })
+
+    viewModel.errorResponseMessage.observe(this,{
+        if (it.isNotEmpty()){
+            edtEmail.error = it
+        }
+    })
+
     btnFinish.setOnClickListener {
-        if (isName && isEmail) {
+        if (!SuperSafeReceiver.isConnected()) {
+            Utils.showDialog(this, getString(R.string.internet))
+            return@setOnClickListener
+        }
+        if (isNext) {
             onSignUp()
         }
     }
 }
 
+private fun SignUpAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(UserViewModel::class.java)
+}
+
 fun SignUpAct.onSignUp() {
-    val email: String = edtEmail?.text.toString().toLowerCase(Locale.ROOT).trim({ it <= ' ' })
-    val name: String = edtName?.text.toString().trim({ it <= ' ' })
-    val request = SignUpRequest()
-    request.user_id = email
-    request.name = name
-    request.password = SecurityUtil.key_password_default_encrypted
-    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-    presenter?.onSignUp(request)
+    viewModel.signUp().observe(this,{
+        when(it.status){
+            Status.SUCCESS -> {
+                Navigator.onMoveToMainTab(this,true)
+                finish()
+            }
+            Status.ERROR -> {
+                Utils.Log(TAG,"Error ${it.message}")
+            }
+            else -> Utils.Log(TAG,"Nothing")
+        }
+    })
     Utils.hideSoftKeyboard(this)
-    Utils.Log(TAG, "onFished")
 }

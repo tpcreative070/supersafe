@@ -11,6 +11,7 @@ import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SignInRequest
+import co.tpcreative.supersafe.common.request.SignUpRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
@@ -48,6 +49,34 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             field = value
             validationEmail(value)
         }
+
+    fun signUp() = liveData(Dispatchers.IO){
+        try {
+            isLoading.postValue(true)
+            val mResultSignUp = service.signUp(getSignUpRequest())
+            when(mResultSignUp.status){
+                Status.SUCCESS -> {
+                    if (mResultSignUp.data?.error!!){
+                        errorResponseMessage.postValue(mResultSignUp.data.responseMessage)
+                        emit(Resource.error(mResultSignUp.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignUp.data.responseMessage ?:"",null))
+                    }else{
+                        val mData: DataResponse? = mResultSignUp.data.data
+                        Utils.setUserPreShare(mData?.user)
+                        ServiceManager.getInstance()?.onInitConfigurationFile()
+                        emit(mResultSignUp)
+                    }
+                }
+                else -> emit(Resource.error(mResultSignUp.code?:Utils.CODE_EXCEPTION, mResultSignUp.message ?:"",null))
+            }
+
+        }catch (e : Exception){
+            e.printStackTrace()
+            emit(Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null))
+        }
+        finally {
+            isLoading.postValue(false)
+        }
+    }
 
     fun signIn() = liveData(Dispatchers.IO){
         try {
@@ -102,6 +131,15 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         val email: String = email.toLowerCase(Locale.ROOT).trim { it <= ' ' }
         val request = SignInRequest()
         request.user_id = email
+        request.password = SecurityUtil.key_password_default_encrypted
+        request.device_id = SuperSafeApplication.getInstance().getDeviceId()
+        return request
+    }
+
+    private fun getSignUpRequest() : SignUpRequest {
+        val request = SignUpRequest()
+        request.user_id = email
+        request.name = getString(R.string.free)
         request.password = SecurityUtil.key_password_default_encrypted
         request.device_id = SuperSafeApplication.getInstance().getDeviceId()
         return request

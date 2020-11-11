@@ -20,8 +20,6 @@ fun SignInAct.initUI(){
     setSupportActionBar(toolbar)
     setupViewModel()
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    presenter = SignInPresenter()
-    presenter?.bindView(this)
     ServiceManager.getInstance()?.onStartService()
     edtEmail?.setOnEditorActionListener(this)
     edtEmail?.addTextChangedListener(mTextWatcher)
@@ -41,8 +39,8 @@ fun SignInAct.initUI(){
             btnNext.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
             isNext = false
         }else{
-            btnNext?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-            btnNext?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
+            btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+            btnNext?.setTextColor(ContextCompat.getColor(this,R.color.white))
             isNext = true
         }
     })
@@ -72,12 +70,6 @@ private fun SignInAct.setupViewModel() {
 }
 
 fun SignInAct.onSignIn() {
-//    val email: String = edtEmail?.text.toString().toLowerCase(Locale.ROOT).trim { it <= ' ' }
-//    val request = SignInRequest()
-//    request.user_id = email
-//    request.password = SecurityUtil.key_password_default_encrypted
-//    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-//    presenter?.onSignIn(request)
     viewModel.signIn().observe(this, Observer{
         when(it.status){
             Status.SUCCESS -> {
