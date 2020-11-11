@@ -10,7 +10,6 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerPresenter
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
