@@ -23,10 +23,14 @@ import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
 import co.tpcreative.supersafe.common.api.requester.DriveService
+import co.tpcreative.supersafe.common.api.requester.MicService
+import co.tpcreative.supersafe.common.api.requester.UserService
+import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.UserViewModel
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.common.net.MediaType
 import com.google.gson.Gson
@@ -83,6 +87,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private var mStart = 20
     private val syncDataService  = DriveService()
     private val itemService = ItemService()
+    private val userService = UserViewModel(UserService(), MicService())
     var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             Utils.Log(TAG, "connected")
@@ -208,15 +213,21 @@ class ServiceManager : BaseServiceView<Any?> {
 //        }
 
         /*Upload item*/
+//        CoroutineScope(Dispatchers.IO).launch {
+//            onUploadFile()
+//            onDownloadFile()
+//            Utils.Log(TAG,"Synced completely...")
+//        }
+
+        /*Updated user token*/
         CoroutineScope(Dispatchers.IO).launch {
-            onUploadFile()
-            onDownloadFile()
-            Utils.Log(TAG,"Synced completely...")
+            onUpdateUserToken()
         }
     }
 
     private suspend fun getItemList() = withContext(Dispatchers.IO){
         var mNextSpace : String? = "0"
+        val mList = mutableListOf<ItemModel>()
         do {
             val mResult = itemService.getListData(SyncItemsRequest(nextPage = mNextSpace))
             when(mResult.status){
@@ -265,6 +276,18 @@ class ServiceManager : BaseServiceView<Any?> {
             }
             Status.ERROR -> {
                 Utils.Log(TAG,"Download error ocurred")
+            }
+        }
+    }
+
+    private suspend fun onUpdateUserToken() = withContext(Dispatchers.IO){
+        val mResult = userService.updatedUserToken()
+        when(mResult.status){
+            Status.SUCCESS ->{
+                Utils.Log(TAG,"Success ${mResult.data?.toJson()}")
+            }
+            else ->{
+                Utils.Log(TAG,"Error ${mResult.message}")
             }
         }
     }

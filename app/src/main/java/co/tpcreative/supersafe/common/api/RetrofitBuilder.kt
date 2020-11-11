@@ -7,6 +7,7 @@ import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -36,7 +37,7 @@ object RetrofitBuilder : BaseDependencies() {
                     originalResponse.newBuilder()
                             .body(ProgressResponseBody(originalResponse.body, progressListener))
                             .build()
-                }).build()
+                }).addInterceptor(intercepter).build()
     }
 
     /**
@@ -55,9 +56,9 @@ object RetrofitBuilder : BaseDependencies() {
             val request = requestBuilder.build()
             chain.proceed(request)
         }
+        httpClient.addInterceptor(intercepter)
         return httpClient.build()
     }
-
 
     private fun getRetrofit(url : String? = null,listener: ProgressResponseBody.ProgressResponseBodyListener? = null, typeService : EnumTypeServices): Retrofit {
         val mClient: OkHttpClient = when(typeService){

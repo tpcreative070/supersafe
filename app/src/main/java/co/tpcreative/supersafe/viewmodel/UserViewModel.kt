@@ -12,12 +12,19 @@ import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.request.SignUpRequest
+import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
+import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.Authorization
+import co.tpcreative.supersafe.model.EnumResponseCode
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.User
+import com.google.gson.Gson
 import com.snatik.storage.security.SecurityUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 
 enum class EnumValidationKey {
@@ -68,7 +75,6 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                 }
                 else -> emit(Resource.error(mResultSignUp.code?:Utils.CODE_EXCEPTION, mResultSignUp.message ?:"",null))
             }
-
         }catch (e : Exception){
             e.printStackTrace()
             emit(Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null))
@@ -114,6 +120,54 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
+    suspend fun updatedUserToken() : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                val mResult = UserRequest()
+                val mResultUpdated = service.updateToken(mResult)
+                when(mResultUpdated.status){
+                    Status.SUCCESS -> {
+                        val mData = mResultUpdated.data?.data
+                        val mResultDeleteOldToken = service.deleteOldAccessTokenCor(mResult)
+                        when(mResultDeleteOldToken.status){
+                            Status.SUCCESS ->{
+                                setUpdatedTokenValue(mData)
+                                mResultUpdated
+                            }
+                            else ->{
+                                Resource.error(mResultDeleteOldToken.code?:Utils.CODE_EXCEPTION,mResultDeleteOldToken.message ?: "",null)
+                            }
+                        }
+                    }
+                    else ->{
+                        if (isRequestSignIn(mResultUpdated.code ?:Utils.CODE_EXCEPTION)){
+                            val mResultSignIn = service.signIn(getSignInRequest(Utils.getUserId()))
+                            when(mResultSignIn.status){
+                                Status.SUCCESS ->{
+                                    if (mResultSignIn.data?.error!!){
+                                        errorResponseMessage.postValue(getString(R.string.signed_in_failed))
+                                        Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null)
+                                    }else{
+                                        setUpdatedTakenValueAfterSignedIn(mResultSignIn.data.data)
+                                        mResultSignIn
+                                    }
+                                }
+                                else ->{
+                                    Resource.error(mResultSignIn.code?:Utils.CODE_EXCEPTION,mResultSignIn.message ?: "",null)
+                                }
+                            }
+                        }else{
+                            Resource.error(mResultUpdated.code?:Utils.CODE_EXCEPTION,mResultUpdated.message ?: "",null)
+                        }
+                    }
+                }
+            }catch (e : Exception){
+                e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
     private fun validationEmail(mValue : String){
         if (mValue.isEmpty()){
             errorMessages.value?.set(EnumValidationKey.EDIT_TEXT_EMAIL.name, "Request enter email")
@@ -127,8 +181,8 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         Utils.Log(TAG,"Print ${errorMessages.value?.toJson()} $mValue")
     }
 
-    private fun getSignInRequest() : SignInRequest{
-        val email: String = email.toLowerCase(Locale.ROOT).trim { it <= ' ' }
+    private fun getSignInRequest(mEmail : String? =null) : SignInRequest{
+        val email: String = mEmail ?: email.toLowerCase(Locale.ROOT).trim { it <= ' ' }
         val request = SignInRequest()
         request.user_id = email
         request.password = SecurityUtil.key_password_default_encrypted
@@ -143,5 +197,34 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         request.password = SecurityUtil.key_password_default_encrypted
         request.device_id = SuperSafeApplication.getInstance().getDeviceId()
         return request
+    }
+
+    private fun setUpdatedTokenValue(mData : DataResponse?){
+        val mUser: User? = Utils.getUserInfo()
+        mData?.let {
+            if (it.user?.author != null) {
+                val mAuthorGlobal: Authorization? = it.user?.author
+                val mAuthor = mUser?.author
+                mAuthor?.refresh_token = mAuthorGlobal?.refresh_token
+                mAuthor?.session_token = mAuthorGlobal?.session_token
+                mUser?.author = mAuthor
+                Utils.setUserPreShare(mUser)
+            }
+        }
+    }
+
+    private fun setUpdatedTakenValueAfterSignedIn(mData : DataResponse?){
+        val user: User? = Utils.getUserInfo()
+        mData?.user?.let {
+            user?.author = it.author
+            Utils.setUserPreShare(user)
+        }
+    }
+
+    private fun isRequestSignIn(mCode : Int)  : Boolean {
+        if (mCode==EnumResponseCode.INVALID_AUTHENTICATION.code || mCode == EnumResponseCode.BAD_REQUEST.code || mCode == EnumResponseCode.FORBIDDEN.code){
+            return true
+        }
+        return false
     }
 }

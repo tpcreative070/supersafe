@@ -1,2 +1,6 @@
 package co.tpcreative.supersafe.viewmodel
-class ItemViewModel
+import androidx.lifecycle.ViewModel
+
+class ItemViewModel : ViewModel(){
+
+}

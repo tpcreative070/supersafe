@@ -1,16 +1,23 @@
 package co.tpcreative.supersafe.common.network
+import co.tpcreative.supersafe.BuildConfig
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.snatik.storage.security.SecurityUtil
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 open class BaseDependencies {
+    var intercepter = HttpLoggingInterceptor().apply {
+        if (BuildConfig.DEBUG){
+            this.level = HttpLoggingInterceptor.Level.BASIC
+        }
+    }
     protected fun provideOkHttpClientDefault(): OkHttpClient {
         val timeout = getTimeOut()
         return OkHttpClient.Builder()
@@ -28,7 +35,7 @@ open class BaseDependencies {
                         }
                     }
                     chain.proceed(builder.build())
-                }.build()
+                }.addInterceptor(intercepter).build()
     }
 
     private fun getHeaders(): HashMap<String, String>? {
