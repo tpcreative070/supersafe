@@ -1,13 +1,16 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.ViewModel
+import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.api.requester.ItemService
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.ui.cloudmanager.CloudManagerPresenter
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -103,6 +106,78 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
             }catch (e:Exception){
                 e.printStackTrace()
                 Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
+            }
+        }
+    }
+
+    suspend fun getDriveAbout() : Resource<Boolean> {
+        return withContext(Dispatchers.IO){
+            try {
+                val mResultDriveAbout = driveService.getDriveAbout()
+                when(mResultDriveAbout.status){
+                    Status.SUCCESS -> {
+                        updatedDriveValue(mResultDriveAbout.data)
+                        val mResultList = driveService.getListFileInAppFolderCor(SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
+                        when(mResultList.status){
+                            Status.SUCCESS -> mResultList.data?.files?.size?.let { calculatorData(it) }
+                            else -> Utils.Log(TAG,mResultList.message)
+                        }
+                    }
+                    else -> {
+                        Utils.Log(TAG,mResultDriveAbout.message)
+                        updatedDriveValue(null)
+                    }
+                }
+                Resource.success(true)
+            }catch (e : Exception){
+                updatedDriveValue(null)
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
+            }
+        }
+    }
+
+    private fun updatedDriveValue(mData : DriveAbout? = null){
+        val mUser = Utils.getUserInfo()
+        if (mData?.error != null) {
+            if (mUser != null) {
+                mUser.driveConnected = false
+                Utils.setUserPreShare(mUser)
+            }
+        } else {
+            if (mUser != null) {
+                mUser.driveConnected = true
+                Utils.setUserPreShare(mUser)
+            }
+        }
+    }
+    
+    private fun calculatorData(mCountItem : Int){
+        if (mCountItem == 0) {
+            val mUser: User? = Utils.getUserInfo()
+            if (mUser != null) {
+                if (mUser.driveAbout != null) {
+                    mUser.driveAbout?.inAppUsed = 0
+                    Utils.setUserPreShare(mUser)
+                }
+            }
+        } else {
+            val mList: MutableList<ItemModel>? = SQLHelper.getListItemId(isSyncCloud = true, isFakePin = false)
+            var countSize: Long = 0
+            try {
+                if (mList != null) {
+                    for (index in mList) {
+                        countSize += index.size?.toLong()!!
+                    }
+                }
+                val mUser: User? = Utils.getUserInfo()
+                if (mUser != null) {
+                    if (mUser.driveAbout != null) {
+                        mUser.driveAbout?.inAppUsed = countSize
+                        Utils.setUserPreShare(mUser)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

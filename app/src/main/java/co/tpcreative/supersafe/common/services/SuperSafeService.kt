@@ -383,7 +383,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
         }
         val mAccessToken = user.access_token
         Utils.Log(TAG, "access_token : $mAccessToken")
-        SuperSafeApplication.serverDriveApi?.onGetListFileInAppFolder(mAccessToken, SuperSafeApplication.Companion.getInstance().getString(R.string.key_appDataFolder))
+        SuperSafeApplication.serverDriveApi?.onGetListFileInAppFolder(mAccessToken, SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.doOnSubscribe { ddd: Disposable? -> view?.onStartLoading(EnumStatus.GET_LIST_FILES_IN_APP) }

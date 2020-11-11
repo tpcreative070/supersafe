@@ -43,11 +43,11 @@ class DriveService() {
         }
     }
 
-    suspend fun getListFileInAppFolderCor(space : String) : Resource<String> {
+    suspend fun getListFileInAppFolderCor(space : String) : Resource<DriveAbout> {
         return withContext(Dispatchers.IO) {
             try {
-                ApiHelper.getInstance()?.onGetListFileInAppFolderCor(Utils.getDriveAccessToken(),space)
-                ResponseHandler.handleSuccess("Deleted successfully")
+                val mResult = ApiHelper.getInstance()?.onGetListFileInAppFolderCor(Utils.getDriveAccessToken(),space)
+                ResponseHandler.handleSuccess(mResult as DriveAbout)
             }
             catch (throwable : Exception){
                 ResponseHandler.handleException(throwable)
