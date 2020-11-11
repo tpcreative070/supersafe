@@ -4,6 +4,7 @@ import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.api.requester.ItemService
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
@@ -14,40 +15,43 @@ import kotlinx.coroutines.withContext
 class DriveViewModel(private val driveService: DriveService, itemService: ItemService) : ViewModel(){
     private val itemViewModel = ItemViewModel(itemService)
     val TAG = this::class.java.simpleName
-    suspend fun downLoadData(isDownloadToExport : Boolean,globalList : MutableList<ItemModel>) {
-        withContext(Dispatchers.IO){
+    suspend fun downLoadData(isDownloadToExport : Boolean,globalList : MutableList<ItemModel>?) : Resource<Boolean> {
+        return withContext(Dispatchers.IO){
             try {
                 val mListLocal: MutableList<ItemModel>? = SQLHelper.getItemListDownload()
                 Utils.Log(TAG, "onPreparingDownloadData ==> Local original list " + Gson().toJson(mListLocal))
                 if (mListLocal != null) {
                     Utils.Log(TAG, "onPreparingDownloadData ==> Local list " + Gson().toJson(mListLocal))
-                    val mergeList: MutableList<ItemModel>? = Utils.clearListFromDuplicate(globalList, mListLocal)
+                    val mergeList: MutableList<ItemModel>? = Utils.clearListFromDuplicate(globalList!!, mListLocal)
                     for (index in mergeList!!){
-                        val mResult = driveService.downloadFile(index)
-                        when(mResult.status){
+                        val mResultDownloaded = driveService.downloadFile(index)
+                        when(mResultDownloaded.status){
                             Status.SUCCESS -> {
+                                Utils.Log(TAG,mResultDownloaded.data)
                                 updatedDateAfterDownloadedFile(isDownloadToExport,index)
                             }
                             else -> {
-                                if (mResult.code==EnumResponseCode.NOT_FOUND.code){
+                                if (mResultDownloaded.code==EnumResponseCode.NOT_FOUND.code){
                                     val mResultDeleteItem = itemViewModel.deleteItemSystem(index)
                                     when(mResultDeleteItem.status){
-                                        Status.SUCCESS -> Utils.Log(TAG,mResultDeleteItem.data?.responseMessage)
+                                        Status.SUCCESS -> Utils.Log(TAG,mResultDeleteItem.data?.toJson())
                                         else -> Utils.Log(TAG,mResultDeleteItem.message)
                                     }
                                 }
-                                Utils.Log(TAG,"Nothing")
+                                Utils.Log(TAG,mResultDownloaded.message)
                             }
                         }
                     }
                 }
+                Resource.success(true)
             }catch (e: Exception){
                 e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
             }
         }
     }
 
-    suspend fun uploadData() {
+    suspend fun uploadData()  : Resource<Boolean>{
         return withContext(Dispatchers.IO){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
@@ -58,22 +62,24 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                         Status.SUCCESS ->{
                             val mResultInserted = mResultUpload.data?.id?.let { itemViewModel.insertItemToSystem(index, it) }
                             when(mResultInserted?.status){
-                                Status.SUCCESS -> Utils.Log(TAG,"Inserted ${mResultInserted.data?.toJson()}")
-                                else -> Utils.Log(TAG,"Error inserted ${mResultInserted?.message}")
+                                Status.SUCCESS -> Utils.Log(TAG,mResultInserted.data?.responseMessage)
+                                else -> Utils.Log(TAG,mResultInserted?.message)
                             }
                         }
                         else -> {
-                            Utils.Log(TAG,"Error inserted ${mResultUpload.message}")
+                            Utils.Log(TAG,mResultUpload.message)
                         }
                     }
                 }
+                Resource.success(true)
             }catch (e : Exception){
                 e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
             }
         }
     }
 
-    suspend fun deleteItemFromCloud(){
+    suspend fun deleteItemFromCloud() : Resource<Boolean>{
         return withContext(Dispatchers.IO){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getDeleteItemRequest()
@@ -85,70 +91,77 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                         Status.SUCCESS ->{
                             val mResultDeleteSystem = itemViewModel.deleteItemSystem(index)
                             when(mResultDeleteSystem.status){
-                                Status.SUCCESS -> Utils.Log(TAG,"Deleted item from system ${mResultDeleteSystem.data?.data?.toJson()}")
-                                else -> Utils.Log(TAG,"Deleted error item from system ${mResultDeleteSystem.message}")
+                                Status.SUCCESS -> Utils.Log(TAG,mResultDeleteSystem.data?.data?.toJson())
+                                else -> Utils.Log(TAG,mResultDeleteSystem.message)
                             }
                         } else ->{
-                        Utils.Log(TAG,"Delelte cloud error ${mResultDeleteCloud.message}")
+                        Utils.Log(TAG,mResultDeleteCloud.message)
                         }
                     }
                 }
+                Resource.success(true)
             }catch (e:Exception){
                 e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
             }
         }
     }
 
     /*Updated data after downloaded file*/
     private fun updatedDateAfterDownloadedFile(isDownloadToExport : Boolean,items: ItemModel){
-        val entityModel: ItemModel? = SQLHelper.getItemById(items.items_id)
-        val categoryModel: MainCategoryModel? = SQLHelper.getCategoriesId(items.categories_id, false)
-        if (entityModel != null) {
-            if (categoryModel != null) {
-                entityModel.categories_local_id = categoryModel.categories_local_id
-            }
-            entityModel.isSaver = false
-            if (items.isOriginalGlobalId) {
-                entityModel.originalSync = true
-                entityModel.global_original_id = items.global_id
+        try {
+            val entityModel: ItemModel? = SQLHelper.getItemById(items.items_id)
+            val categoryModel: MainCategoryModel? = SQLHelper.getCategoriesId(items.categories_id, false)
+            if (entityModel != null) {
+                if (categoryModel != null) {
+                    entityModel.categories_local_id = categoryModel.categories_local_id
+                }
+                entityModel.isSaver = false
+                if (items.isOriginalGlobalId) {
+                    entityModel.originalSync = true
+                    entityModel.global_original_id = items.global_id
+                } else {
+                    entityModel.thumbnailSync = true
+                    entityModel.global_thumbnail_id = items.global_id
+                }
+                if (entityModel.originalSync && entityModel.thumbnailSync) {
+                    entityModel.isSyncCloud = true
+                    entityModel.isSyncOwnServer = true
+                    entityModel.statusProgress = EnumStatusProgress.DONE.ordinal
+                    Utils.Log(TAG, "Synced already....")
+                }
+                val mFormat = EnumFormatType.values()[entityModel.formatType]
+                if (mFormat == EnumFormatType.AUDIO || mFormat == EnumFormatType.FILES) {
+                    entityModel.statusProgress = EnumStatusProgress.DONE.ordinal
+                }
+                /*Check saver space*/
+                if (!isDownloadToExport) {
+                    checkSaverSpace(entityModel, items.isOriginalGlobalId)
+                }
+                entityModel.isRequestChecking = true
+                SQLHelper.updatedItem(entityModel)
             } else {
-                entityModel.thumbnailSync = true
-                entityModel.global_thumbnail_id = items.global_id
+                if (categoryModel != null) {
+                    items.categories_local_id = categoryModel.categories_local_id
+                }
+                if (items.isOriginalGlobalId) {
+                    items.originalSync = true
+                } else {
+                    items.thumbnailSync = true
+                }
+                val mFormat = EnumFormatType.values()[items.formatType]
+                if (mFormat == EnumFormatType.AUDIO || mFormat == EnumFormatType.FILES) {
+                    items.statusProgress = EnumStatusProgress.DONE.ordinal
+                }
+                /*Check saver space*/
+                if (!isDownloadToExport) {
+                    checkSaverSpace(items, items.isOriginalGlobalId)
+                }
+                SQLHelper.insertedItem(items)
             }
-            if (entityModel.originalSync && entityModel.thumbnailSync) {
-                entityModel.isSyncCloud = true
-                entityModel.isSyncOwnServer = true
-                entityModel.statusProgress = EnumStatusProgress.DONE.ordinal
-                Utils.Log(TAG, "Synced already....")
-            }
-            val mFormat = EnumFormatType.values()[entityModel.formatType]
-            if (mFormat == EnumFormatType.AUDIO || mFormat == EnumFormatType.FILES) {
-                entityModel.statusProgress = EnumStatusProgress.DONE.ordinal
-            }
-            /*Check saver space*/
-            if (!isDownloadToExport) {
-                checkSaverSpace(entityModel, items.isOriginalGlobalId)
-            }
-            entityModel.isRequestChecking = true
-            SQLHelper.updatedItem(entityModel)
-        } else {
-            if (categoryModel != null) {
-                items.categories_local_id = categoryModel.categories_local_id
-            }
-            if (items.isOriginalGlobalId) {
-                items.originalSync = true
-            } else {
-                items.thumbnailSync = true
-            }
-            val mFormat = EnumFormatType.values()[items.formatType]
-            if (mFormat == EnumFormatType.AUDIO || mFormat == EnumFormatType.FILES) {
-                items.statusProgress = EnumStatusProgress.DONE.ordinal
-            }
-            /*Check saver space*/
-            if (!isDownloadToExport) {
-                checkSaverSpace(items, items.isOriginalGlobalId)
-            }
-            SQLHelper.insertedItem(items)
+        }
+        catch (e : Exception){
+            e.printStackTrace()
         }
     }
 

@@ -12,18 +12,15 @@ import com.google.android.gms.common.api.Scope
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.drive.DriveScopes
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.IOException
-import java.util.concurrent.Callable
 
 class RefreshTokenSingleton private constructor() {
     var TAG = this::class.java.simpleName
     private var mSignInAccount: GoogleSignInAccount? = null
     private var mGoogleSignInClient: GoogleSignInClient?
-    private var compositeDisposable: CompositeDisposable? = null
     private fun getGoogleSignInClient(account: Account?): GoogleSignInClient? {
         mGoogleSignInClient = SuperSafeApplication.getInstance().getGoogleSignInOptions(account)?.let { GoogleSignIn.getClient(SuperSafeApplication.getInstance(), it) }
         return mGoogleSignInClient
@@ -48,50 +45,42 @@ class RefreshTokenSingleton private constructor() {
         }
     }
 
-    private fun onRefreshAccessToken(accounts: Account?) {
+    private fun onRefreshAccessToken(accounts: Account?) = CoroutineScope(Dispatchers.IO).launch{
         Utils.Log(TAG,"onRefreshAccessToken")
-        compositeDisposable = CompositeDisposable()
-        compositeDisposable!!.add(Observable.fromCallable(Callable {
-            try {
-                if (accounts == null) {
-                    return@Callable null
-                }
-                val credential = GoogleAccountCredential.usingOAuth2(
-                        SuperSafeApplication.getInstance(), SuperSafeApplication.getInstance().getRequiredScopesString())
-                credential.selectedAccount = accounts
-                try {
-                    val value = credential.token
-                    if (value != null) {
-                        val mAuthor: User? = Utils.getUserInfo()
-                        if (mAuthor != null) {
-                            mAuthor.driveConnected = true
-                            mAuthor.access_token = kotlin.String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
-                            Utils.Log(TAG, "Refresh access token value: " + mAuthor.access_token)
-                            mAuthor.email = credential.selectedAccount.name
-                            Utils.setUserPreShare(mAuthor)
-                            ServiceManager.getInstance()?.onPreparingSyncData()
-                        }
-                    }
-                    return@Callable value
-                } catch (e: GoogleAuthException) {
-                    Utils.Log(TAG, "Error occurred on GoogleAuthException")
-                }
-            } catch (recoverableException: UserRecoverableAuthIOException) {
-                Utils.Log(TAG, "Error occurred on UserRecoverableAuthIOException")
-            } catch (e: IOException) {
-                Utils.Log(TAG, "Error occurred on IOException")
+        try {
+            if (accounts == null) {
+                return@launch
             }
-            null
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
-                    try {
-                        compositeDisposable?.dispose()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        Utils.Log(TAG, "Call onDriveClientReady")
-                        compositeDisposable!!.dispose()
+            val credential = GoogleAccountCredential.usingOAuth2(
+                    SuperSafeApplication.getInstance(), SuperSafeApplication.getInstance().getRequiredScopesString())
+            credential.selectedAccount = accounts
+            try {
+                val value = credential.token
+                if (value != null) {
+                    val mAuthor: User? = Utils.getUserInfo()
+                    if (mAuthor != null) {
+                        mAuthor.driveConnected = true
+                        mAuthor.access_token = kotlin.String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
+                        Utils.Log(TAG, "Refresh access token value: " + mAuthor.access_token)
+                        mAuthor.email = credential.selectedAccount.name
+                        Utils.setUserPreShare(mAuthor)
+                        ServiceManager.getInstance()?.onPreparingSyncData()
                     }
-                })
+                }
+            } catch (e: GoogleAuthException) {
+                Utils.Log(TAG, "Error occurred on GoogleAuthException")
+                e.printStackTrace()
+            }
+        } catch (recoverableException: UserRecoverableAuthIOException) {
+            Utils.Log(TAG, "Error occurred on UserRecoverableAuthIOException")
+            recoverableException.printStackTrace()
+        } catch (e: IOException) {
+            Utils.Log(TAG, "Error occurred on IOException")
+            e.printStackTrace()
+        }
+        catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 
     /**

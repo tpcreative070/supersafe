@@ -16,20 +16,19 @@ import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
-import co.tpcreative.supersafe.common.api.requester.ItemService
+import co.tpcreative.supersafe.common.api.requester.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
-import co.tpcreative.supersafe.common.api.requester.DriveService
-import co.tpcreative.supersafe.common.api.requester.MicService
-import co.tpcreative.supersafe.common.api.requester.UserService
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SyncItemsRequest
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.CategoryViewModel
+import co.tpcreative.supersafe.viewmodel.DriveViewModel
 import co.tpcreative.supersafe.viewmodel.ItemViewModel
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import com.google.android.gms.auth.GoogleAuthUtil
@@ -73,6 +72,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private var isDeleteCategoryData = false
     private var isHandleLogic = false
     private var isRequestShareIntent = false
+    private var isReuestingSyncCor = false
 
     /*Using item_id as key for hash map*/
     private var mMapDeleteItem: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
@@ -90,7 +90,9 @@ class ServiceManager : BaseServiceView<Any?> {
     private val itemService = ItemService()
     private val userService = UserViewModel(UserService(), MicService())
     private val itemViewModel = ItemViewModel(ItemService())
-    var myConnection: ServiceConnection? = object : ServiceConnection {
+    private val categoryViewModel = CategoryViewModel(CategoryService())
+    private val driveViewModel = DriveViewModel(DriveService(), ItemService())
+    private var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             Utils.Log(TAG, "connected")
             myService = (binder as SuperSafeService.LocalBinder?)?.getService()
@@ -202,6 +204,59 @@ class ServiceManager : BaseServiceView<Any?> {
         mDownloadList.clear()
         Utils.Log(TAG, "onPreparingSyncData...onGetItemList")
         onGetItemList("0")
+    }
+
+    fun onPreparingSyncDataCor() = CoroutineScope(Dispatchers.IO).launch {
+        val mResultItemList = itemViewModel.getItemList()
+        when(mResultItemList.status){
+            Status.SUCCESS -> {
+                val mResultSyncCategory = categoryViewModel.syncCategoryData()
+                when(mResultSyncCategory.status){
+                    Status.SUCCESS -> {
+                        val mResultUpdatedCategory = categoryViewModel.updateCategoryData()
+                        when(mResultUpdatedCategory.status){
+                            Status.SUCCESS ->{
+                                val mResultDeletedCategory = categoryViewModel.dateCategoryData()
+                                when(mResultDeletedCategory.status){
+                                    Status.SUCCESS -> {
+                                        val mResultDownloadedFiles = driveViewModel.downLoadData(false,mResultItemList.data)
+                                        when(mResultDownloadedFiles.status){
+                                            Status.SUCCESS -> {
+                                               val mResultUploadedFiles = driveViewModel.uploadData()
+                                                when(mResultUploadedFiles.status){
+                                                    Status.SUCCESS -> {
+                                                        val mResultUpdatedItem = itemViewModel.updateItemToSystem()
+                                                        when(mResultUpdatedItem.status){
+                                                            Status.SUCCESS -> {
+                                                                val mResultDeletedItem = driveViewModel.deleteItemFromCloud()
+                                                                when(mResultDeletedItem.status){
+                                                                    Status.SUCCESS -> {
+                                                                        Utils.Log(TAG,"Sync completed")
+                                                                    }
+                                                                    else -> Utils.Log(TAG,mResultDeletedItem.message)
+                                                                }
+                                                            }
+                                                            else -> Utils.Log(TAG,mResultUpdatedItem.message)
+                                                        }
+                                                    }
+                                                    else -> Utils.Log(TAG,mResultUploadedFiles.message)
+                                                }
+                                            }
+                                            else -> Utils.Log(TAG,mResultDownloadedFiles.message)
+                                        }
+                                    }
+                                    else -> Utils.Log(TAG,mResultDeletedCategory.message)
+                                }
+                            }
+                            else -> Utils.Log(TAG,mResultUpdatedCategory.message)
+                        }
+                    }
+                    else -> Utils.Log(TAG,mResultSyncCategory.message)
+                }
+            }
+            else -> Utils.Log(TAG,mResultItemList.message)
+        }
+        Utils.Log(TAG,"Sync completely done")
     }
 
     fun waitingForResult() {

@@ -76,6 +76,7 @@ class ItemViewModel(private val itemService: ItemService) : ViewModel(){
         return withContext(Dispatchers.IO){
             try {
                 val mItemContent = getItemContentToInsert(item,drive_id)
+                checkImportedDataBeforeSyncData(mItemContent!!)
                 val mRequest = SyncItemsRequest(Utils.getUserId(), Utils.getUserCloudId(), SuperSafeApplication.getInstance().getDeviceId(), mItemContent!!)
                 val mResult = itemService.syncData(mRequest)
                 when(mResult.status){
@@ -96,7 +97,7 @@ class ItemViewModel(private val itemService: ItemService) : ViewModel(){
         }
     }
 
-    suspend fun updateItemToSystem(){
+    suspend fun updateItemToSystem() : Resource<Boolean>{
         return withContext(Dispatchers.IO){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getRequestUpdateItemList()
@@ -107,8 +108,10 @@ class ItemViewModel(private val itemService: ItemService) : ViewModel(){
                         else -> Utils.Log(TAG,"Error updated ${mResultUpdated.message}")
                     }
                 }
+                Resource.success(true)
             }catch (e : Exception){
                 e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
             }
         }
     }

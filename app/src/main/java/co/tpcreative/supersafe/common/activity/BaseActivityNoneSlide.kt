@@ -4,11 +4,9 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil

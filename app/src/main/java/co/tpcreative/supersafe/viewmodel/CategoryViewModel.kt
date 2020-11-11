@@ -1,7 +1,7 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.common.api.requester.CategoryService
-import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -20,7 +20,11 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
             try {
                 val mResult: MutableList<MainCategoryModel>? = SQLHelper.requestSyncCategories(isSyncOwnServer = false, isFakePin = false)
                 for (index in mResult!!){
-                    categoryService.categoriesSync(CategoriesRequest(index))
+                    val mResultSync = categoryService.categoriesSync(CategoriesRequest(index))
+                    when(mResultSync.status){
+                        Status.SUCCESS -> Utils.Log(TAG,mResultSync.data?.toJson())
+                        else -> Utils.Log(TAG,mResultSync.message)
+                    }
                 }
                 Resource.success(true)
             }catch (e : Exception){
@@ -35,7 +39,11 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
             try {
                 val mResult: MutableList<MainCategoryModel>? = SQLHelper.getRequestUpdateCategoryList()
                 for (index in mResult!!){
-                    categoryService.categoriesSync(CategoriesRequest(index))
+                    val mResultUpdated = categoryService.categoriesSync(CategoriesRequest(index))
+                    when(mResultUpdated.status){
+                        Status.SUCCESS -> Utils.Log(TAG,mResultUpdated.data?.toJson())
+                        else -> Utils.Log(TAG,mResultUpdated.message)
+                    }
                 }
                 Resource.success(true)
             }catch (e : Exception){
@@ -50,13 +58,13 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
             try {
                 val listRequestDelete: MutableList<MainCategoryModel>? = SQLHelper.getDeleteCategoryRequest()
                 for (index in listRequestDelete!!){
-                    val mResult = categoryService.deleteCategoriesCor(CategoriesRequest(index))
-                    when(mResult.status){
+                    val mResultDeleted = categoryService.deleteCategoriesCor(CategoriesRequest(index))
+                    when(mResultDeleted.status){
                         Status.SUCCESS ->{
                             SQLHelper.deleteCategory(index)
                         }
                         else ->{
-                            Utils.Log(TAG,"Could not delete")
+                            Utils.Log(TAG,mResultDeleted.message)
                         }
 
                     }

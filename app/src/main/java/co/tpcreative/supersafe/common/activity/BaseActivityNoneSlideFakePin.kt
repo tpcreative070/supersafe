@@ -4,7 +4,6 @@ import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
@@ -21,7 +20,6 @@ import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-
 
 abstract class BaseActivityNoneSlideFakePin : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mHomeWatcher: HomeWatcher? = null

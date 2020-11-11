@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.common.activity
 import android.accounts.Account
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
@@ -16,13 +15,11 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.SingletonManager
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
-import co.tpcreative.supersafe.common.controller.RefreshTokenSingleton
 import co.tpcreative.supersafe.model.*
 import com.google.android.gms.auth.GoogleAuthException
 import com.google.android.gms.auth.GoogleAuthUtil
@@ -34,15 +31,11 @@ import com.google.android.gms.tasks.Task
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.google.api.services.drive.DriveScopes
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.io.IOException
-import java.util.concurrent.Callable
 
 abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifier.Listener {
     private var mSignInAccount: GoogleSignInAccount? = null
@@ -50,7 +43,6 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     private var mHomeWatcher: HomeWatcher? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
-    private var compositeDisposable: CompositeDisposable? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mGoogleSignInClient = GoogleSignIn.getClient(this, SuperSafeApplication.getInstance().getGoogleSignInOptions(null)!!)
@@ -130,7 +122,8 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
 
     fun onRegisterHomeWatcher() {
         Utils.Log(TAG, "Register")
-        /*Home action*/if (mHomeWatcher != null) {
+        /*Home action*/
+        if (mHomeWatcher != null) {
             if (mHomeWatcher?.isRegistered!!) {
                 return
             }
@@ -255,111 +248,45 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
     protected fun getAccessToken() {
         if (mSignInAccount != null) {
             Utils.Log(TAG, "Request token")
-            onRefreshAccessToken(mSignInAccount!!.getAccount())
+            onRefreshAccessToken(mSignInAccount!!.account)
         } else {
             Utils.Log(TAG, "mSignInAccount is null")
         }
     }
 
-    private fun onRefreshAccessToken(accounts: Account?) {
-        Utils.Log(TAG,"onRefreshAccessToken")
-        compositeDisposable = CompositeDisposable()
-        compositeDisposable!!.add(Observable.fromCallable(Callable {
-            try {
-                if (accounts == null) {
-                    return@Callable null
-                }
-                val credential = GoogleAccountCredential.usingOAuth2(
-                        SuperSafeApplication.getInstance(), SuperSafeApplication.getInstance().getRequiredScopesString())
-                credential.selectedAccount = accounts
-                try {
-                    val value = credential.token
-                    if (value != null) {
-                        val mAuthor: User? = Utils.getUserInfo()
-                        if (mAuthor != null) {
-                            mAuthor.driveConnected = true
-                            mAuthor.access_token = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
-                            Utils.Log(TAG, "Refresh access token value=> " + mAuthor.access_token)
-                            mAuthor.email = credential.selectedAccount.name
-                            Utils.setUserPreShare(mAuthor)
-                            ServiceManager.getInstance()?.onPreparingSyncData()
-                        }
-                    }
-                    return@Callable value
-                } catch (e: GoogleAuthException) {
-                    Utils.Log(TAG, "Error occurred on GoogleAuthException")
-                }
-            } catch (recoverableException: UserRecoverableAuthIOException) {
-                Utils.Log(TAG, "Error occurred on UserRecoverableAuthIOException")
-            } catch (e: IOException) {
-                Utils.Log(TAG, "Error occurred on IOException")
+    private fun onRefreshAccessToken(accounts: Account?) = CoroutineScope(Dispatchers.IO).launch{
+        try {
+            if (accounts == null) {
+                return@launch
             }
-            ""
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).subscribe { response: String? ->
-                    Utils.Log(TAG,"response token==> $response")
-                    try {
-                        if (response != null) {
-                            if (ServiceManager.getInstance()?.getMyService() == null) {
-                                Utils.Log(TAG, "SuperSafeService is null")
-                                startServiceNow()
-                                compositeDisposable?.dispose()
-                                return@subscribe
-                            }
-                            ServiceManager.getInstance()?.getMyService()?.getDriveAbout(object : BaseView<EmptyModel?> {
-                                override fun onError(message: String?, status: EnumStatus?) {
-                                    Utils.Log(TAG, "onError " + message + " - " + status?.name)
-                                    when (status) {
-                                        EnumStatus.REQUEST_ACCESS_TOKEN -> {
-                                            RefreshTokenSingleton.getInstance().onStart(this::class.java)
-                                        }
-                                        else -> Utils.Log(TAG,"Nothing")
-                                    }
-                                    if (isSignIn()) {
-                                        Utils.Log(TAG, "Call onDriveClientReady")
-                                        onDriveClientReady()
-                                    }
-                                }
-                                override fun onSuccessful(message: String?) {
-                                    Utils.Log(TAG, "token request $message")
-                                }
-                                override fun onStartLoading(status: EnumStatus) {}
-                                override fun onStopLoading(status: EnumStatus) {}
-                                override fun onError(message: String?) {}
-                                override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-                                override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel?>?) {
-                                }
-                                override fun getContext(): Context? {
-                                    return getContext()
-                                }
-                                override fun getActivity(): Activity? {
-                                    return this@BaseGoogleApi
-                                }
-                                override fun onSuccessful(message: String?, status: EnumStatus?) {
-                                    Utils.Log(TAG, "onSuccessful " + message + " - " + status?.name)
-                                    ServiceManager.getInstance()?.onGetDriveAbout()
-                                    if (isSignIn()) {
-                                        Utils.Log(TAG, "Call onDriveClientReady")
-                                        onDriveClientReady()
-                                    }
-                                }
-                            })
+            val credential = GoogleAccountCredential.usingOAuth2(
+                    SuperSafeApplication.getInstance(), SuperSafeApplication.getInstance().getRequiredScopesString())
+            credential.selectedAccount = accounts
+            try {
+                val value = credential.token
+                if (value != null) {
+                    val mAuthor: User? = Utils.getUserInfo()
+                    if (mAuthor != null) {
+                        mAuthor.driveConnected = true
+                        mAuthor.access_token = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
+                        Utils.Log(TAG, "Refresh access token value=> " + mAuthor.access_token)
+                        mAuthor.email = credential.selectedAccount.name
+                        Utils.setUserPreShare(mAuthor)
+                        ServiceManager.getInstance()?.onPreparingSyncData()
+                        if (isSignIn()) {
+                            Utils.Log(TAG, "Call onDriveClientReady")
+                            onDriveClientReady()
                         }
-                        compositeDisposable?.dispose()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        Utils.Log(TAG, "Call onDriveClientReady")
-                        compositeDisposable?.dispose()
-                        onDriveClientReady()
                     }
-                    try {
-                        compositeDisposable?.dispose()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        Utils.Log(TAG, "Call onDriveClientReady")
-                        compositeDisposable!!.dispose()
-                    }
-                })
+                }
+            } catch (e: GoogleAuthException) {
+                Utils.Log(TAG, "Error occurred on GoogleAuthException")
+            }
+        } catch (recoverableException: UserRecoverableAuthIOException) {
+            Utils.Log(TAG, "Error occurred on UserRecoverableAuthIOException")
+        } catch (e: IOException) {
+            Utils.Log(TAG, "Error occurred on IOException")
+        }
     }
     /**
      * Continues the sign-in process, initializing the Drive clients with the current
