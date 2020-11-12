@@ -246,7 +246,6 @@ class ServiceManager : BaseServiceView<Any?> {
         isRequestingUpdateUserToken = false
     }
 
-
     /*Preparing sync category*/
     fun onPreparingSyncCategoryData() = CoroutineScope(Dispatchers.IO).launch {
         val mResult = categoryViewModel.syncCategoryData()
@@ -286,7 +285,6 @@ class ServiceManager : BaseServiceView<Any?> {
     /*Import data from gallery*/
     private fun onImportData()   = CoroutineScope(Dispatchers.IO).launch {
         try {
-            var response = ResponseRXJava()
             for (importFiles in listImport) {
                 val mMimeTypeFile: MimeTypeFile = importFiles.mimeTypeFile!!
                 val enumTypeFile = mMimeTypeFile.formatType
@@ -314,22 +312,14 @@ class ServiceManager : BaseServiceView<Any?> {
                             val createdThumbnail = storage?.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)
                             val createdOriginal = storage?.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
                             Utils.Log(TAG, "start end")
-                            val response = ResponseRXJava()
-                            response.items = itemsPhoto
-                            response.categories = mMainCategories
-                            response.originalPath = mPath
                             if (createdThumbnail!! && createdOriginal!!) {
-                                response.isWorking = true
+                                handleResponseImport(itemsPhoto,mMainCategories,mPath)
                                 Utils.Log(TAG, "CreatedFile successful")
                             } else {
-                                response.isWorking = false
                                 Utils.Log(TAG, "CreatedFile failed")
                             }
                         } catch (e: Exception) {
                             Utils.Log(TAG, "Cannot write to $e")
-                            Utils.onWriteLog(e.message, EnumStatus.WRITE_FILE)
-                            response = ResponseRXJava()
-                            response.isWorking = false
                         } finally {
                             Utils.Log(TAG, "Finally")
                         }
@@ -346,8 +336,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                     thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
                                             MediaStore.Video.Thumbnails.MINI_KIND)
                                 }
-                                val exifInterface = ExifInterface(mPath)
-                                val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
+                                val orientation = ExifInterface(mPath).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
                                 Utils.Log("EXIF", "Exif: $orientation")
                                 val matrix = Matrix()
                                 if (orientation == 6) {
@@ -375,22 +364,14 @@ class ServiceManager : BaseServiceView<Any?> {
                             mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
                             val createdOriginal = mStorage?.createLargeFile(File(originalPath), File(mPath), mCiphers)
                             Utils.Log(TAG, "Call original")
-                            response = ResponseRXJava()
-                            response.items = itemsVideo
-                            response.categories = mMainCategories
-                            response.originalPath = mPath
                             if (createdThumbnail && createdOriginal!!) {
-                                response.isWorking = true
+                                handleResponseImport(itemsVideo,mMainCategories,mPath)
                                 Utils.Log(TAG, "CreatedFile successful")
                             } else {
-                                response.isWorking = false
                                 Utils.Log(TAG, "CreatedFile failed")
                             }
                         } catch (e: Exception) {
                             Utils.Log(TAG, "Cannot write to $e")
-                            Utils.onWriteLog(e.message, EnumStatus.WRITE_FILE)
-                            response = ResponseRXJava()
-                            response.isWorking = false
                         } finally {
                             Utils.Log(TAG, "Finally")
                         }
@@ -406,22 +387,14 @@ class ServiceManager : BaseServiceView<Any?> {
                             val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                             mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
                             val createdOriginal = mStorage?.createLargeFile(File(originalPath), File(mPath), mCiphers)
-                            response = ResponseRXJava()
-                            response.items = itemsAudio
-                            response.categories = mMainCategories
-                            response.originalPath = mPath
                             if (createdOriginal!!) {
-                                response.isWorking = true
+                                handleResponseImport(itemsAudio,mMainCategories,mPath)
                                 Utils.Log(TAG, "CreatedFile successful")
                             } else {
-                                response.isWorking = false
                                 Utils.Log(TAG, "CreatedFile failed")
                             }
                         } catch (e: Exception) {
                             Utils.Log(TAG, "Cannot write to $e")
-                            Utils.onWriteLog(e.message, EnumStatus.WRITE_FILE)
-                            val response = ResponseRXJava()
-                            response.isWorking = false
                         } finally {
                             Utils.Log(TAG, "Finally")
                         }
@@ -437,29 +410,20 @@ class ServiceManager : BaseServiceView<Any?> {
                             val itemsFile = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
                             mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
                             val createdOriginal = mStorage?.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
-
-                            response.items = itemsFile
-                            response.categories = mMainCategories
-                            response.originalPath = mPath
                             if (createdOriginal!!) {
-                                response.isWorking = true
                                 Utils.Log(TAG, "CreatedFile successful")
+                                handleResponseImport(itemsFile,mMainCategories,mPath)
                             } else {
-                                response.isWorking = false
                                 Utils.Log(TAG, "CreatedFile failed")
                             }
                         } catch (e: Exception) {
                             Utils.Log(TAG, "Cannot write to $e")
-                            Utils.onWriteLog(e.message, EnumStatus.WRITE_FILE)
-                            val response = ResponseRXJava()
-                            response.isWorking = false
                         } finally {
                             Utils.Log(TAG, "Finally")
                         }
                     }
                 }
             }
-            handleResponseImport(response)
             Utils.onPushEventBus(EnumStatus.IMPORTED_COMPLETELY)
             onPreparingSyncData()
             listImport.clear()
@@ -469,54 +433,43 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    private fun handleResponseImport(mData: ResponseRXJava) {
+    private fun handleResponseImport(mData: ItemModel,categories : MainCategoryModel,originalPath : String) {
         try {
-            if (mData.isWorking) {
-                mData.items.let { items ->
-                    var mb: Long
-                    when (val enumFormatType = EnumFormatType.values()[items?.formatType!!]) {
-                        EnumFormatType.AUDIO -> {
-                            if (storage?.isFileExist(items.getOriginal())!!) {
-                                mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
-                                items.size = "" + mb
-                                SQLHelper.insertedItem(items)
-                            }
+            mData.let { items ->
+                var mb: Long
+                when (val enumFormatType = EnumFormatType.values()[items.formatType]) {
+                    EnumFormatType.AUDIO -> {
+                        if (storage?.isFileExist(items.getOriginal())!!) {
+                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
+                            items.size = "" + mb
+                            SQLHelper.insertedItem(items)
                         }
-                        EnumFormatType.FILES -> {
-                            if (storage?.isFileExist(items.getOriginal())!!) {
-                                mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
-                                items.size = "" + mb
-                                SQLHelper.insertedItem(items)
-                            }
+                    }
+                    EnumFormatType.FILES -> {
+                        if (storage?.isFileExist(items.getOriginal())!!) {
+                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
+                            items.size = "" + mb
+                            SQLHelper.insertedItem(items)
                         }
-                        else -> {
-                            if (storage?.isFileExist(items.getOriginal())!! && storage.isFileExist(items.getThumbnail())) {
-                                mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
-                                if (storage.isFileExist(items.getThumbnail())) {
-                                    mb += +storage.getSize(File(items.getThumbnail()), SizeUnit.B).toLong()
-                                }
-                                items.size = "" + mb
-                                SQLHelper.insertedItem(items)
-                                if (!mData.categories?.isCustom_Cover!!) {
-                                    if (enumFormatType == EnumFormatType.IMAGE) {
-                                        val main: MainCategoryModel = mData.categories as MainCategoryModel
-                                        main.items_id = items.items_id
-                                        SQLHelper.updateCategory(main)
-                                    }
+                    }
+                    else -> {
+                        if (storage?.isFileExist(items.getOriginal())!! && storage.isFileExist(items.getThumbnail())) {
+                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
+                            if (storage.isFileExist(items.getThumbnail())) {
+                                mb += +storage.getSize(File(items.getThumbnail()), SizeUnit.B).toLong()
+                            }
+                            items.size = "" + mb
+                            SQLHelper.insertedItem(items)
+                            if (!categories.isCustom_Cover) {
+                                if (enumFormatType == EnumFormatType.IMAGE) {
+                                    val main: MainCategoryModel = categories as MainCategoryModel
+                                    main.items_id = items.items_id
+                                    SQLHelper.updateCategory(main)
                                 }
                             }
                         }
                     }
                 }
-                Utils.Log(TAG, "Write file successful ")
-            } else {
-                Utils.Log(TAG, "Write file Failed ")
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            if (mData.isWorking) {
-                val items: ItemModel = mData.items as ItemModel
                 GalleryCameraMediaManager.getInstance()?.setProgressing(false)
                 Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                 if (items.isFakePin) {
@@ -524,11 +477,14 @@ class ServiceManager : BaseServiceView<Any?> {
                 } else {
                     SingletonPrivateFragment.getInstance()?.onUpdateView()
                 }
-                Utils.Log(TAG, "Original path :" + mData.originalPath)
+                Utils.Log(TAG, "Original path :" + originalPath)
                 if (!getRequestShareIntent()) {
-                    Utils.onDeleteFile(mData.originalPath)
+                    Utils.onDeleteFile(originalPath)
                 }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
         }
     }
 
