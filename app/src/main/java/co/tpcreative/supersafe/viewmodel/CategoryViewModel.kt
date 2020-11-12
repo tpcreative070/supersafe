@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.common.api.requester.CategoryService
-import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
@@ -141,7 +140,6 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
             for (index in it) {
                 SQLHelper.deleteCategory(index)
             }
-            Utils.Log(TAG, Gson().toJson(mList))
             Utils.Log(TAG, "Total need to delete categories synced local.... " + it.size)
         }
     }

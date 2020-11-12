@@ -10,7 +10,6 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,11 +20,8 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
         return withContext(Dispatchers.IO){
             try {
                 val mListLocal: MutableList<ItemModel>? = SQLHelper.getItemListDownload()
-                Utils.Log(TAG, "onPreparingDownloadData ==> Local original list " + Gson().toJson(mListLocal))
                 if (mListLocal != null) {
-                    Utils.Log(TAG, "onPreparingDownloadData ==> Local list " + Gson().toJson(mListLocal))
                     val mergeList: MutableList<ItemModel>? = Utils.clearListFromDuplicate(globalList!!, mListLocal)
-                    Utils.Log(TAG,"global list ${globalList.size}   => Result merge ${mergeList?.size}")
                     for (index in mergeList!!){
                         val mResultDownloaded = driveService.downloadFile(index)
                         when(mResultDownloaded.status){

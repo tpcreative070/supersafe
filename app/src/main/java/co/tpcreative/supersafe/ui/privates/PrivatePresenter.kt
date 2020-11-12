@@ -30,7 +30,6 @@ class PrivatePresenter : Presenter<BaseView<EmptyModel>>() {
         val view: BaseView<EmptyModel>? = view()
         mList = SQLHelper.getList()
         storage = Storage(SuperSafeApplication.getInstance())
-        Utils.Log(TAG,Gson().toJson(mList))
         view?.onSuccessful("Successful", EnumStatus.RELOAD)
     }
 

@@ -100,10 +100,10 @@ class ServiceManager : BaseServiceView<Any?> {
             myService?.bindView(this@ServiceManager)
             storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
             mStorage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-            getInstance()?.onGetUserInfo()
-            getInstance()?.onSyncAuthorDevice()
-            getInstance()?.onGetDriveAbout()
-            //initService()
+//            getInstance()?.onGetUserInfo()
+//            getInstance()?.onSyncAuthorDevice()
+//            getInstance()?.onGetDriveAbout()
+            initService()
             Utils.onScanFile(SuperSafeApplication.getInstance(), "scan.log")
         }
 
@@ -208,12 +208,12 @@ class ServiceManager : BaseServiceView<Any?> {
 //        Utils.Log(TAG, "onPreparingSyncData...onGetItemList")
 //        onGetItemList("0")
 
-//        if (isRequestingSyncCor){
-//            Utils.Log(TAG,"Sync data is loading...")
-//            return
-//        }
-//        Utils.Log(TAG,"Preparing sync data")
-//        onPreparingSyncDataCor()
+        if (isRequestingSyncCor){
+            Utils.Log(TAG,"Sync data is loading...")
+            return
+        }
+        Utils.Log(TAG,"Preparing sync data")
+        onPreparingSyncDataCor()
     }
 
     fun isRequestingUpdatedUserToken() : Boolean{
