@@ -135,6 +135,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                                 mResultUpdated
                             }
                             else ->{
+                                setUpdatedTokenValue(mData)
                                 Resource.error(mResultDeleteOldToken.code?:Utils.CODE_EXCEPTION,mResultDeleteOldToken.message ?: "",null)
                             }
                         }

@@ -19,26 +19,30 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
     suspend fun downLoadData(isDownloadToExport : Boolean,globalList : MutableList<ItemModel>?) : Resource<Boolean> {
         return withContext(Dispatchers.IO){
             try {
-                val mListLocal: MutableList<ItemModel>? = SQLHelper.getItemListDownload()
-                if (mListLocal != null) {
-                    val mergeList: MutableList<ItemModel>? = Utils.clearListFromDuplicate(globalList!!, mListLocal)
-                    for (index in mergeList!!){
-                        val mResultDownloaded = driveService.downloadFile(index)
-                        when(mResultDownloaded.status){
-                            Status.SUCCESS -> {
-                                Utils.Log(TAG,mResultDownloaded.data)
-                                updatedDateAfterDownloadedFile(isDownloadToExport,index)
-                            }
-                            else -> {
-                                if (mResultDownloaded.code==EnumResponseCode.NOT_FOUND.code){
-                                    val mResultDeleteItem = itemViewModel.deleteItemSystem(index)
-                                    when(mResultDeleteItem.status){
-                                        Status.SUCCESS -> Utils.Log(TAG,mResultDeleteItem.data?.toJson())
-                                        else -> Utils.Log(TAG,mResultDeleteItem.message)
-                                    }
+                var mergeList : MutableList<ItemModel>? = null
+                if (isDownloadToExport){
+                    mergeList = Utils.getMergedOriginalThumbnailList(false, globalList!!)
+                }else{
+                    val mListLocal: MutableList<ItemModel>? = SQLHelper.getItemListDownload()
+                    mergeList = Utils.clearListFromDuplicate(globalList!!, mListLocal!!)
+                }
+                Utils.Log(TAG,"Total download ${mergeList?.size}")
+                for (index in mergeList!!){
+                    val mResultDownloaded = driveService.downloadFile(index)
+                    when(mResultDownloaded.status){
+                        Status.SUCCESS -> {
+                            Utils.Log(TAG,mResultDownloaded.data)
+                            updatedDateAfterDownloadedFile(isDownloadToExport,index)
+                        }
+                        else -> {
+                            if (mResultDownloaded.code==EnumResponseCode.NOT_FOUND.code){
+                                val mResultDeleteItem = itemViewModel.deleteItemSystem(index)
+                                when(mResultDeleteItem.status){
+                                    Status.SUCCESS -> Utils.Log(TAG,mResultDeleteItem.data?.toJson())
+                                    else -> Utils.Log(TAG,mResultDeleteItem.message)
                                 }
-                                Utils.Log(TAG,mResultDownloaded.message)
                             }
+                            Utils.Log(TAG,mResultDownloaded.message)
                         }
                     }
                 }

@@ -1702,27 +1702,51 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    fun onPreparingEnableDownloadData(globalList: MutableList<ItemModel>?) {
-        if (isDownloadToExportFiles) {
+
+
+
+
+    fun onPreparingEnableDownloadData(globalList: MutableList<ItemModel>?){
+        if (isRequestingSyncCor){
             return
         }
-        val mergeList: MutableList<ItemModel>? = Utils.getMergedOriginalThumbnailList(false, globalList!!)
-        Utils.Log(TAG, "onPreparingEnableDownloadData ==> clear duplicated data " + Gson().toJson(mergeList))
-        if (mergeList != null) {
-            if (mergeList.size > 0) {
-                mMapDownloadToExportFiles.clear()
-                mMapDownloadToExportFiles = Utils.mergeListToHashMap(mergeList)
-                Utils.Log(TAG, "onPreparingEnableDownloadData ==> clear merged data " + Gson().toJson(mMapDownloadToExportFiles))
-                Utils.Log(TAG, "onPreparingEnableDownloadData ==> merged data " + Gson().toJson(mergeList))
-                val itemModel: ItemModel? = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles)
-                if (itemModel != null) {
-                    Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.PROGRESS, "Total downloading " + mMapDownloadToExportFiles.size)
-                    Utils.Log(TAG, "onPreparingEnableDownloadData to download " + Gson().toJson(itemModel))
-                    Utils.Log(TAG, "onPreparingEnableDownloadData to download total  " + mMapDownloadToExportFiles.size)
-                    onDownLoadDataToExportFiles(itemModel)
-                }
-            }
+        CoroutineScope(Dispatchers.IO).launch {
+            onPreparingEnableDownload(globalList)
         }
+    }
+
+    private suspend fun onPreparingEnableDownload(globalList: MutableList<ItemModel>?) = withContext(Dispatchers.IO){
+        isRequestingSyncCor = true
+        val mResult = driveViewModel.downLoadData(true,globalList)
+        Utils.Log(TAG,"Start download")
+        when(mResult.status){
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Completed download file")
+                Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED)
+            }
+            else ->Utils.Log(TAG,mResult.message)
+        }
+//        if (isDownloadToExportFiles) {
+//            return
+//        }
+//        val mergeList: MutableList<ItemModel>? = Utils.getMergedOriginalThumbnailList(false, globalList!!)
+//        Utils.Log(TAG, "onPreparingEnableDownloadData ==> clear duplicated data " + Gson().toJson(mergeList))
+//        if (mergeList != null) {
+//            if (mergeList.size > 0) {
+//                mMapDownloadToExportFiles.clear()
+//                mMapDownloadToExportFiles = Utils.mergeListToHashMap(mergeList)
+//                Utils.Log(TAG, "onPreparingEnableDownloadData ==> clear merged data " + Gson().toJson(mMapDownloadToExportFiles))
+//                Utils.Log(TAG, "onPreparingEnableDownloadData ==> merged data " + Gson().toJson(mergeList))
+//                val itemModel: ItemModel? = Utils.getArrayOfIndexHashMap(mMapDownloadToExportFiles)
+//                if (itemModel != null) {
+//                    Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.PROGRESS, "Total downloading " + mMapDownloadToExportFiles.size)
+//                    Utils.Log(TAG, "onPreparingEnableDownloadData to download " + Gson().toJson(itemModel))
+//                    Utils.Log(TAG, "onPreparingEnableDownloadData to download total  " + mMapDownloadToExportFiles.size)
+//                    onDownLoadDataToExportFiles(itemModel)
+//                }
+//            }
+//        }
+        isRequestingSyncCor = false
     }
 
     /*Download file from Google drive*/

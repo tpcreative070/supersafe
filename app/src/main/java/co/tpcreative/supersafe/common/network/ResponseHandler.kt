@@ -60,7 +60,7 @@ open class ResponseHandler {
                 400 -> Utils.Log(TAG ,"Bad request")
                 401 -> {
                     Utils.Log(TAG ,"Unauthorised")
-                    if (ServiceManager.getInstance()?.isRequestingUpdatedUserToken()!!){
+                    if (!ServiceManager.getInstance()?.isRequestingUpdatedUserToken()!!){
                         ServiceManager.getInstance()?.updatedUserToken()
                     }
                 }
