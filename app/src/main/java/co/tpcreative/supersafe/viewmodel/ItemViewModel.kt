@@ -31,12 +31,16 @@ class ItemViewModel(private val itemService: ItemService) : ViewModel(){
                        Status.SUCCESS -> {
                            val itemList = mResult.data?.data?.itemsList
                            itemList?.let {
-                               mList.addAll(it)
+                               val mRequestDownloadList: MutableList<ItemModel> = ArrayList()
+                               for (index in it) {
+                                   mRequestDownloadList.add(ItemModel(index, EnumStatus.DOWNLOAD))
+                               }
+                               mList.addAll(mRequestDownloadList)
                            }
                            mNextSpace = mResult.data?.data?.nextPage
                            if (mNextSpace.isNullOrBlank()){
                                Utils.Log(TAG,"Ready to sync...")
-                               checkData(mResult.data?.data)
+                               checkData(mResult.data?.data,mList)
                                Utils.Log(TAG,"Ready to go")
                            }
                        }
@@ -102,9 +106,19 @@ class ItemViewModel(private val itemService: ItemService) : ViewModel(){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getRequestUpdateItemList()
                 for (index in mResult!!){
-                    val mResultUpdated =  itemService.syncData(SyncItemsRequest(index))
+                    val mResultUpdated =  itemService.syncData(SyncItemsRequest(Utils.getUserId(), Utils.getUserCloudId(), Utils.getDeviceId(),index))
                     when(mResultUpdated.status){
-                        Status.SUCCESS -> Utils.Log(TAG,"Updated successful ${mResultUpdated.data?.toJson()}")
+                        Status.SUCCESS -> {
+                            Utils.Log(TAG,"Updated successful ${mResultUpdated.data?.responseMessage}")
+                            if (mResultUpdated.data?.error!!){
+                                index.isUpdate = true
+                                SQLHelper.updatedItem(index)
+                            }else{
+                                index.isUpdate = false
+                                index.isRequestChecking = true
+                                SQLHelper.updatedItem(index)
+                            }
+                        }
                         else -> Utils.Log(TAG,"Error updated ${mResultUpdated.message}")
                     }
                 }
@@ -148,13 +162,13 @@ class ItemViewModel(private val itemService: ItemService) : ViewModel(){
         }
     }
 
-    private fun checkData(mData : DataResponse?){
+    private fun checkData(mData : DataResponse?,mList: MutableList<ItemModel>){
         setUserSyncData(mData?.syncData)
-        mData?.itemsList?.let { onItemDeleteSyncedLocal(it) }
+        onItemDeleteSyncedLocal(mList)
         categoryViewModel.checkAndAddCategory(mData?.categoriesList)
     }
 
-    private fun onItemDeleteSyncedLocal(mList: List<ItemModel>) {
+    private fun onItemDeleteSyncedLocal(mList: MutableList<ItemModel>) {
         val mResultList = Utils.checkItemDeleteSyncedLocal(mList)
         mResultList.let {
             for (index in it) {

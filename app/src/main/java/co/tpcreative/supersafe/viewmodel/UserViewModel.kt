@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.SignInRequest
 import co.tpcreative.supersafe.common.request.SignUpRequest
+import co.tpcreative.supersafe.common.request.TrackingRequest
 import co.tpcreative.supersafe.common.request.UserRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
@@ -167,6 +168,56 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
+    suspend fun getUserInfo() : Resource<Boolean>{
+        return withContext(Dispatchers.IO){
+            try {
+                val mResult = service.userInfo(UserRequest())
+                when (mResult.status) {
+                    Status.SUCCESS -> {
+                        Utils.Log(TAG, mResult.data?.responseMessage)
+                        if (!(mResult.data?.error)!!) {
+                            mResult.data.data?.let { updatedUserInfo(it) }
+                            Resource.success(true)
+                        }else{
+                            Resource.error(mResult.code ?:Utils.CODE_EXCEPTION ,mResult.message ?: "",null)
+                        }
+                    }
+                    else ->{
+                        Utils.Log(TAG, mResult.message)
+                        Resource.error(mResult.code ?:Utils.CODE_EXCEPTION ,mResult.message ?: "",null)
+                    }
+                }
+                Resource.success(false)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun getTracking() : Resource<Boolean>{
+        return withContext(Dispatchers.IO){
+            try {
+                val mResult = service.tracking(TrackingRequest(Utils.getUserId(), SuperSafeApplication.getInstance().getDeviceId()))
+                when (mResult.status) {
+                    Status.SUCCESS -> {
+                        Utils.Log(TAG, mResult.data?.responseMessage)
+                        Resource.success(true)
+                    }
+                    else ->{
+                        Utils.Log(TAG, mResult.message)
+                        Resource.error(mResult.code ?:Utils.CODE_EXCEPTION ,mResult.message ?: "",null)
+                    }
+                }
+                Resource.success(false)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+
     private fun validationEmail(mValue : String){
         if (mValue.isEmpty()){
             errorMessages.value?.set(EnumValidationKey.EDIT_TEXT_EMAIL.name, "Request enter email")
@@ -225,5 +276,14 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             return true
         }
         return false
+    }
+
+    private fun updatedUserInfo(mData : DataResponse){
+        val mUser = Utils.getUserInfo()
+        if (mData.premium != null && mData.email_token != null) {
+            mUser?.premium = mData.premium
+            mUser?.email_token = mData.email_token
+            Utils.setUserPreShare(mUser)
+        }
     }
 }

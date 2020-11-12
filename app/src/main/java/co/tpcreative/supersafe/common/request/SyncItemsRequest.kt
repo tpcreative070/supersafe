@@ -77,7 +77,7 @@ class SyncItemsRequest : Serializable {
         this.user_id = user_id
         this.cloud_id = cloud_id
         this.items_id = items_id
-        device_id = SuperSafeApplication.getInstance().getDeviceId()
+        this.device_id = SuperSafeApplication.getInstance().getDeviceId()
     }
 
     /*Delete item from system*/
@@ -85,7 +85,7 @@ class SyncItemsRequest : Serializable {
         this.user_id = Utils.getUserId()
         this.cloud_id = Utils.getUserCloudId()
         this.items_id = item?.items_id
-        device_id = SuperSafeApplication.getInstance().getDeviceId()
+        this.device_id = SuperSafeApplication.getInstance().getDeviceId()
     }
 
     /*Get items list*/

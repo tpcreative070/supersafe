@@ -14,6 +14,9 @@ import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
 import com.snatik.storage.Storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CloudManagerPresenter : Presenter<BaseView<Long>>() {
     var sizeFile: Long = 0
@@ -95,34 +98,11 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
             view.onError("Service is null", EnumStatus.GET_DRIVE_ABOUT)
             return
         }
-        ServiceManager.getInstance()?.getMyService()?.getDriveAbout(object : BaseView<Long> {
-            override fun onStartLoading(status: EnumStatus) {}
-            override fun onStopLoading(status: EnumStatus) {}
-            override fun onError(message: String?) {
-                Utils.Log(TAG, message+"")
-            }
-            override fun onError(message: String?, status: EnumStatus?) {
-                Utils.Log(TAG, message + "--" + status?.name)
-                view.onError(message, status)
-            }
-            override fun onSuccessful(message: String?) {}
-            override fun onSuccessful(message: String?, status: EnumStatus?) {
-                onGetList()
-                view.onSuccessful(message, status)
-                Utils.Log(TAG, message + "--" + status?.name)
-            }
 
-            override fun onSuccessful(message: String?, status: EnumStatus?, `object`: Long?) {
-                Utils.Log(TAG, message + "--" + status?.name)
-            }
-            override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<Long>?) {}
-            override fun getContext(): Context? {
-                return null
-            }
-            override fun getActivity(): Activity? {
-                return null
-            }
-        })
+        CoroutineScope(Dispatchers.IO).launch {
+            ServiceManager.getInstance()?.getDriveAbout()
+            onGetList()
+        }
     }
 
     private fun onGetList() {

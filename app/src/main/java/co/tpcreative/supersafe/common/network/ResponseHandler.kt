@@ -58,8 +58,13 @@ open class ResponseHandler {
         private fun getErrorCode(code: Int){
              when (code) {
                 400 -> Utils.Log(TAG ,"Bad request")
-                401 -> Utils.Log(TAG ,"Unauthorised")
-                403 -> ServiceManager.getInstance()?.onUpdatedUserToken()
+                401 -> {
+                    Utils.Log(TAG ,"Unauthorised")
+                    if (ServiceManager.getInstance()?.isRequestingUpdatedUserToken()!!){
+                        ServiceManager.getInstance()?.updatedUserToken()
+                    }
+                }
+                403 -> Utils.Log(TAG,"Forbidden")
                 404 -> Utils.Log(TAG ,"Not found")
                 405 -> Utils.Log(TAG ,"Method not allowed")
                 500 -> Utils.Log(TAG ,"Internal server error")

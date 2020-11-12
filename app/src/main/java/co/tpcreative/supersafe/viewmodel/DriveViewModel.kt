@@ -25,6 +25,7 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 if (mListLocal != null) {
                     Utils.Log(TAG, "onPreparingDownloadData ==> Local list " + Gson().toJson(mListLocal))
                     val mergeList: MutableList<ItemModel>? = Utils.clearListFromDuplicate(globalList!!, mListLocal)
+                    Utils.Log(TAG,"global list ${globalList.size}   => Result merge ${mergeList?.size}")
                     for (index in mergeList!!){
                         val mResultDownloaded = driveService.downloadFile(index)
                         when(mResultDownloaded.status){
@@ -93,7 +94,12 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                         Status.SUCCESS ->{
                             val mResultDeleteSystem = itemViewModel.deleteItemSystem(index)
                             when(mResultDeleteSystem.status){
-                                Status.SUCCESS -> Utils.Log(TAG,mResultDeleteSystem.data?.data?.toJson())
+                                Status.SUCCESS -> {
+                                    Utils.Log(TAG,mResultDeleteSystem.data?.responseMessage)
+                                    /*Delete local db and folder name*/
+                                    Utils.onDeleteItemFolder(index.items_id)
+                                    SQLHelper.deleteItem(index)
+                                }
                                 else -> Utils.Log(TAG,mResultDeleteSystem.message)
                             }
                         } else ->{
@@ -253,18 +259,6 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
             if (Utils.getSaverSpace()) {
                 itemModel.isSaver = true
                 Utils.checkSaverToDelete(itemModel.getOriginal(), isOriginalGlobalId)
-            }
-        }
-    }
-
-    /*Check imported data after sync data*/
-    private fun checkImportedDataBeforeSyncData(itemModel: ItemModel) {
-        val categoryModel: MainCategoryModel? = SQLHelper.getCategoriesLocalId(itemModel.categories_local_id)
-        Utils.Log(TAG, "checkImportedDataBeforeSyncData " + Gson().toJson(categoryModel))
-        if (categoryModel != null) {
-            if (!Utils.isNotEmptyOrNull(itemModel.categories_id)) {
-                itemModel.categories_id = categoryModel.categories_id
-                Utils.Log(TAG, "checkImportedDataBeforeSyncData ==> isNotEmptyOrNull")
             }
         }
     }

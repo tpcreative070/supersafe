@@ -72,7 +72,8 @@ class ServiceManager : BaseServiceView<Any?> {
     private var isDeleteCategoryData = false
     private var isHandleLogic = false
     private var isRequestShareIntent = false
-    private var isReuestingSyncCor = false
+    private var isRequestingSyncCor = false
+    private var isRequestingUpdateUserToken = false
 
     /*Using item_id as key for hash map*/
     private var mMapDeleteItem: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
@@ -88,7 +89,7 @@ class ServiceManager : BaseServiceView<Any?> {
     private var mStart = 20
     private val syncDataService  = DriveService()
     private val itemService = ItemService()
-    private val userService = UserViewModel(UserService(), MicService())
+    private val userViewModel = UserViewModel(UserService(), MicService())
     private val itemViewModel = ItemViewModel(ItemService())
     private val categoryViewModel = CategoryViewModel(CategoryService())
     private val driveViewModel = DriveViewModel(DriveService(), ItemService())
@@ -102,6 +103,7 @@ class ServiceManager : BaseServiceView<Any?> {
             getInstance()?.onGetUserInfo()
             getInstance()?.onSyncAuthorDevice()
             getInstance()?.onGetDriveAbout()
+            //initService()
             Utils.onScanFile(SuperSafeApplication.getInstance(), "scan.log")
         }
 
@@ -128,93 +130,128 @@ class ServiceManager : BaseServiceView<Any?> {
 
     /*Preparing sync data*/
     fun onPreparingSyncData() {
-        if (Utils.getUserId() == null) {
-            return
-        }
-        Utils.Log(TAG, "onPreparingSyncData...???")
-        if (Utils.getAccessToken() == null) {
-            Utils.Log(TAG, "Need to sign in with Google drive first")
-            return
-        }
-        if (!Utils.isConnectedToGoogleDrive()) {
-            Utils.Log(TAG, "Need to connect to Google drive")
-            RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
-            return
-        }
-        if (!Utils.isAllowSyncData()) {
-            Utils.Log(TAG, "onPreparingSyncData is unauthorized $isDownloadData")
-            Utils.onWriteLog(EnumStatus.AUTHOR_SYNC, EnumStatus.AUTHOR_SYNC, "onPreparingSyncData is unauthorized")
-            return
-        }
-        if (isGetItemList) {
-            Utils.Log(TAG, "onPreparingSyncData is getting item list. Please wait")
-            Utils.onWriteLog(EnumStatus.GET_LIST_FILE, EnumStatus.ERROR, "onPreparingSyncData is getting item list. Please wait")
-            return
-        }
-        if (isDownloadData) {
-            Utils.Log(TAG, "onPreparingSyncData is downloading. Please wait")
-            Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.ERROR, "onPreparingSyncData is downloading. Please wait")
-            return
-        }
-        if (isUploadData) {
-            Utils.Log(TAG, "onPreparingSyncData is uploading. Please wait")
-            Utils.onWriteLog(EnumStatus.UPLOAD, EnumStatus.ERROR, "onPreparingSyncData is uploading. Please wait")
-            return
-        }
-        if (isDeleteItemData) {
-            Utils.Log(TAG, "onPreparingSyncData is deleting. Please wait")
-            Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.ERROR, "onPreparingSyncData is deleting. Please wait")
-            return
-        }
-        if (isDeleteCategoryData) {
-            Utils.Log(TAG, "onPreparingSyncData is deleting category. Please wait")
-            Utils.onWriteLog(EnumStatus.DELETE_CATEGORIES, EnumStatus.ERROR, "onPreparingSyncData is deleting category. Please wait")
-            return
-        }
-        if (isImportData) {
-            Utils.Log(TAG, "onPreparingSyncData is importing. Please wait")
-            Utils.onWriteLog(EnumStatus.IMPORTING, EnumStatus.ERROR, "onPreparingSyncData is importing. Please wait")
-            return
-        }
-        if (isDownloadToExportFiles) {
-            Utils.Log(TAG, "onPreparingSyncData is downloading files. Please wait")
-            Utils.onWriteLog(EnumStatus.DOWNLOADING, EnumStatus.ERROR, "onPreparingSyncData is downloading to export files. Please wait")
-            return
-        }
-        if (isUpdateItemData) {
-            Utils.Log(TAG, "onPreparingSyncData is updating item. Please wait")
-            Utils.onWriteLog(EnumStatus.UPDATE_ITEM, EnumStatus.ERROR, "onPreparingSyncData is updating item.. Please wait")
-            return
-        }
-        if (isUpdateCategoryData) {
-            Utils.Log(TAG, "onPreparingSyncData is updating category. Please wait")
-            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.ERROR, "onPreparingSyncData is updating category.. Please wait")
-            return
-        }
-        if (isHandleLogic) {
-            Utils.Log(TAG, "onPreparingSyncData is handle logic. Please wait")
-            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.ERROR, "onPreparingSyncData is handle logic. Please wait")
-            return
-        }
-        if (isSyncCategory) {
-            Utils.Log(TAG, "onPreparingSyncData is sync category. Please wait")
-            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC, EnumStatus.ERROR, "onPreparingSyncData is sync category. Please wait")
-            return
-        }
-        mDownloadList.clear()
-        Utils.Log(TAG, "onPreparingSyncData...onGetItemList")
-        onGetItemList("0")
+//        if (Utils.getUserId() == null) {
+//            return
+//        }
+//        Utils.Log(TAG, "onPreparingSyncData...???")
+//        if (Utils.getAccessToken() == null) {
+//            Utils.Log(TAG, "Need to sign in with Google drive first")
+//            return
+//        }
+//        if (!Utils.isConnectedToGoogleDrive()) {
+//            Utils.Log(TAG, "Need to connect to Google drive")
+//            RefreshTokenSingleton.getInstance().onStart(ServiceManager::class.java)
+//            return
+//        }
+//        if (!Utils.isAllowSyncData()) {
+//            Utils.Log(TAG, "onPreparingSyncData is unauthorized $isDownloadData")
+//            Utils.onWriteLog(EnumStatus.AUTHOR_SYNC, EnumStatus.AUTHOR_SYNC, "onPreparingSyncData is unauthorized")
+//            return
+//        }
+//
+//        if (isGetItemList) {
+//            Utils.Log(TAG, "onPreparingSyncData is getting item list. Please wait")
+//            Utils.onWriteLog(EnumStatus.GET_LIST_FILE, EnumStatus.ERROR, "onPreparingSyncData is getting item list. Please wait")
+//            return
+//        }
+//        if (isDownloadData) {
+//            Utils.Log(TAG, "onPreparingSyncData is downloading. Please wait")
+//            Utils.onWriteLog(EnumStatus.DOWNLOAD, EnumStatus.ERROR, "onPreparingSyncData is downloading. Please wait")
+//            return
+//        }
+//        if (isUploadData) {
+//            Utils.Log(TAG, "onPreparingSyncData is uploading. Please wait")
+//            Utils.onWriteLog(EnumStatus.UPLOAD, EnumStatus.ERROR, "onPreparingSyncData is uploading. Please wait")
+//            return
+//        }
+//        if (isDeleteItemData) {
+//            Utils.Log(TAG, "onPreparingSyncData is deleting. Please wait")
+//            Utils.onWriteLog(EnumStatus.DELETE, EnumStatus.ERROR, "onPreparingSyncData is deleting. Please wait")
+//            return
+//        }
+//        if (isDeleteCategoryData) {
+//            Utils.Log(TAG, "onPreparingSyncData is deleting category. Please wait")
+//            Utils.onWriteLog(EnumStatus.DELETE_CATEGORIES, EnumStatus.ERROR, "onPreparingSyncData is deleting category. Please wait")
+//            return
+//        }
+//        if (isImportData) {
+//            Utils.Log(TAG, "onPreparingSyncData is importing. Please wait")
+//            Utils.onWriteLog(EnumStatus.IMPORTING, EnumStatus.ERROR, "onPreparingSyncData is importing. Please wait")
+//            return
+//        }
+//        if (isDownloadToExportFiles) {
+//            Utils.Log(TAG, "onPreparingSyncData is downloading files. Please wait")
+//            Utils.onWriteLog(EnumStatus.DOWNLOADING, EnumStatus.ERROR, "onPreparingSyncData is downloading to export files. Please wait")
+//            return
+//        }
+//        if (isUpdateItemData) {
+//            Utils.Log(TAG, "onPreparingSyncData is updating item. Please wait")
+//            Utils.onWriteLog(EnumStatus.UPDATE_ITEM, EnumStatus.ERROR, "onPreparingSyncData is updating item.. Please wait")
+//            return
+//        }
+//        if (isUpdateCategoryData) {
+//            Utils.Log(TAG, "onPreparingSyncData is updating category. Please wait")
+//            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.ERROR, "onPreparingSyncData is updating category.. Please wait")
+//            return
+//        }
+//        if (isHandleLogic) {
+//            Utils.Log(TAG, "onPreparingSyncData is handle logic. Please wait")
+//            Utils.onWriteLog(EnumStatus.UPDATE_CATEGORY, EnumStatus.ERROR, "onPreparingSyncData is handle logic. Please wait")
+//            return
+//        }
+//        if (isSyncCategory) {
+//            Utils.Log(TAG, "onPreparingSyncData is sync category. Please wait")
+//            Utils.onWriteLog(EnumStatus.CATEGORIES_SYNC, EnumStatus.ERROR, "onPreparingSyncData is sync category. Please wait")
+//            return
+//        }
+//        mDownloadList.clear()
+//        Utils.Log(TAG, "onPreparingSyncData...onGetItemList")
+//        onGetItemList("0")
+
+//        if (isRequestingSyncCor){
+//            Utils.Log(TAG,"Sync data is loading...")
+//            return
+//        }
+//        Utils.Log(TAG,"Preparing sync data")
+//        onPreparingSyncDataCor()
     }
 
-    fun onGetAbout() = CoroutineScope(Dispatchers.IO).launch{
+    fun isRequestingUpdatedUserToken() : Boolean{
+        return isRequestingUpdateUserToken
+    }
+
+    fun initService() = CoroutineScope(Dispatchers.IO).launch {
+        getUserInfo()
+        getTracking()
+        getDriveAbout()
+    }
+
+    private suspend fun getUserInfo() = withContext(Dispatchers.IO){
+        val mResult = userViewModel.getUserInfo()
+        when(mResult.status){
+            Status.SUCCESS -> Utils.Log(TAG,"Fetch user info completed")
+            else -> Utils.Log(TAG,"Fetch user info issue ${mResult.message}")
+        }
+    }
+
+    suspend fun getDriveAbout() = withContext(Dispatchers.IO){
         val mResult = driveViewModel.getDriveAbout()
         when(mResult.status){
-            Status.SUCCESS -> Utils.Log(TAG,"Fetch drive about compleyed")
+            Status.SUCCESS -> Utils.Log(TAG,"Fetch drive about completed")
             else -> Utils.Log(TAG,"Fetch drive about issue ${mResult.message}")
         }
     }
 
+    private suspend fun getTracking() = withContext(Dispatchers.IO){
+        val mResult = userViewModel.getTracking()
+        when(mResult.status){
+            Status.SUCCESS -> Utils.Log(TAG,"Fetch drive tracking completed")
+            else -> Utils.Log(TAG,"Fetch tracking issue ${mResult.message}")
+        }
+    }
+
     fun onPreparingSyncDataCor() = CoroutineScope(Dispatchers.IO).launch {
+        isRequestingSyncCor = true
         val mResultItemList = itemViewModel.getItemList()
         when(mResultItemList.status){
             Status.SUCCESS -> {
@@ -227,9 +264,11 @@ class ServiceManager : BaseServiceView<Any?> {
                                 val mResultDeletedCategory = categoryViewModel.dateCategoryData()
                                 when(mResultDeletedCategory.status){
                                     Status.SUCCESS -> {
+                                        Utils.onPushEventBus(EnumStatus.DOWNLOAD)
                                         val mResultDownloadedFiles = driveViewModel.downLoadData(false,mResultItemList.data)
                                         when(mResultDownloadedFiles.status){
                                             Status.SUCCESS -> {
+                                                Utils.onPushEventBus(EnumStatus.UPLOAD)
                                                val mResultUploadedFiles = driveViewModel.uploadData()
                                                 when(mResultUploadedFiles.status){
                                                     Status.SUCCESS -> {
@@ -240,6 +279,7 @@ class ServiceManager : BaseServiceView<Any?> {
                                                                 when(mResultDeletedItem.status){
                                                                     Status.SUCCESS -> {
                                                                         Utils.Log(TAG,"Sync completed")
+                                                                        Utils.checkRequestUploadItemData()
                                                                     }
                                                                     else -> Utils.Log(TAG,mResultDeletedItem.message)
                                                                 }
@@ -249,9 +289,11 @@ class ServiceManager : BaseServiceView<Any?> {
                                                     }
                                                     else -> Utils.Log(TAG,mResultUploadedFiles.message)
                                                 }
+                                                Utils.onPushEventBus(EnumStatus.DONE)
                                             }
                                             else -> Utils.Log(TAG,mResultDownloadedFiles.message)
                                         }
+                                        Utils.onPushEventBus(EnumStatus.DONE)
                                     }
                                     else -> Utils.Log(TAG,mResultDeletedCategory.message)
                                 }
@@ -265,6 +307,7 @@ class ServiceManager : BaseServiceView<Any?> {
             else -> Utils.Log(TAG,mResultItemList.message)
         }
         Utils.Log(TAG,"Sync completely done")
+        isRequestingSyncCor = false
     }
 
     fun waitingForResult() {
@@ -363,8 +406,9 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    private suspend fun onUpdateUserToken() = withContext(Dispatchers.IO){
-        val mResult = userService.updatedUserToken()
+    fun updatedUserToken() = CoroutineScope(Dispatchers.IO).launch{
+        isRequestingUpdateUserToken = true
+        val mResult = userViewModel.updatedUserToken()
         when(mResult.status){
             Status.SUCCESS ->{
                 Utils.Log(TAG,"Success ${mResult.data?.toJson()}")
@@ -373,6 +417,7 @@ class ServiceManager : BaseServiceView<Any?> {
                 Utils.Log(TAG,"Error ${mResult.message}")
             }
         }
+        isRequestingUpdateUserToken = false
     }
 
     private fun onGetItemList(next: String) {
@@ -1786,10 +1831,12 @@ class ServiceManager : BaseServiceView<Any?> {
         isSyncCategory = false
         isGetItemList = false
         isWaitingSendMail = false
+        isRequestingUpdateUserToken = false
+        isRequestingSyncCor = false
     }
 
     fun onDismissServices() {
-        if (isDownloadData || isUploadData || isDownloadToExportFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData || isWaitingSendMail || isUpdateItemData || isHandleLogic || isSyncCategory || isGetItemList || isUpdateCategoryData) {
+        if (isDownloadData || isUploadData || isDownloadToExportFiles || isExportData || isImportData || isDeleteItemData || isDeleteCategoryData || isWaitingSendMail || isUpdateItemData || isHandleLogic || isSyncCategory || isGetItemList || isUpdateCategoryData || isRequestingUpdateUserToken || isRequestingSyncCor) {
             Utils.Log(TAG, "Progress....................!!!!:")
         } else {
             onDefaultValue()

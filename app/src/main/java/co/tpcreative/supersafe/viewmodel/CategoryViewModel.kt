@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.CategoriesRequest
+import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.MainCategoryModel
 import com.google.gson.Gson
@@ -14,7 +15,6 @@ import kotlinx.coroutines.withContext
 
 class CategoryViewModel(private val categoryService: CategoryService) : ViewModel() {
     val TAG = this::class.java.simpleName
-
     suspend fun syncCategoryData() : Resource<Boolean>{
         return withContext(Dispatchers.IO){
             try {
@@ -22,7 +22,13 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
                 for (index in mResult!!){
                     val mResultSync = categoryService.categoriesSync(CategoriesRequest(index))
                     when(mResultSync.status){
-                        Status.SUCCESS -> Utils.Log(TAG,mResultSync.data?.toJson())
+                        Status.SUCCESS -> {
+                            if (!(mResultSync.data?.error)!!){
+                                updatedDataAfterSyncCategory(index,mResultSync.data.data)
+                            }else{
+                                Utils.Log(TAG,mResultSync.data.responseMessage)
+                            }
+                        }
                         else -> Utils.Log(TAG,mResultSync.message)
                     }
                 }
@@ -41,7 +47,13 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
                 for (index in mResult!!){
                     val mResultUpdated = categoryService.categoriesSync(CategoriesRequest(index))
                     when(mResultUpdated.status){
-                        Status.SUCCESS -> Utils.Log(TAG,mResultUpdated.data?.toJson())
+                        Status.SUCCESS -> {
+                            if (!(mResultUpdated.data?.error)!!){
+                                updatedDataAfterSyncCategory(index,mResultUpdated.data.data)
+                            }else{
+                                Utils.Log(TAG,mResultUpdated.data.responseMessage)
+                            }
+                        }
                         else -> Utils.Log(TAG,mResultUpdated.message)
                     }
                 }
@@ -131,6 +143,20 @@ class CategoryViewModel(private val categoryService: CategoryService) : ViewMode
             }
             Utils.Log(TAG, Gson().toJson(mList))
             Utils.Log(TAG, "Total need to delete categories synced local.... " + it.size)
+        }
+    }
+
+    private fun updatedDataAfterSyncCategory(mainCategories : MainCategoryModel, mData: DataResponse?){
+        if (mData?.category != null) {
+            if (mainCategories.categories_hex_name == mData.category?.categories_hex_name) {
+                mainCategories.categories_id = mData.category?.categories_id
+                mainCategories.isSyncOwnServer = true
+                mainCategories.isChange = false
+                mainCategories.isDelete = false
+                SQLHelper.updateCategory(mainCategories)
+            } else {
+               Utils.Log(TAG,"Not found category...")
+            }
         }
     }
 }

@@ -544,7 +544,7 @@ class SuperSafeService : PresenterService<BaseServiceView<*>?>(), SuperSafeRecei
                             val mObject = mMessage?.toObject(BaseResponse::class.java)
                             if (mCode == 401) {
                                 Utils.Log(TAG, "code $mCode")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "${mObject?.toJson()}")
                             view.onError("${mObject?.toJson()}", EnumStatus.DELETE_CATEGORIES)
