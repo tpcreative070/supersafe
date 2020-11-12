@@ -79,7 +79,7 @@ class MoveGalleryPresenter : Presenter<MoveGalleryView>() {
                     SQLHelper.updatedItem(item)
                 }
             }
-            ServiceManager.getInstance()?.onPreparingUpdateItemData()
+            ServiceManager.getInstance()?.onPreparingSyncData()
             SingletonPrivateFragment.getInstance()?.onUpdateView()
             view.onSuccessful("Successful", EnumStatus.MOVE)
         } else {

@@ -101,85 +101,8 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
 
         CoroutineScope(Dispatchers.IO).launch {
             ServiceManager.getInstance()?.getDriveAbout()
-            onGetList()
+            view.onSuccessful("Success",EnumStatus.GET_LIST_FILES_IN_APP)
         }
-    }
-
-    private fun onGetList() {
-        Utils.Log(TAG, "onGetList" + "--" + EnumStatus.GET_LIST_FILES_IN_APP.name)
-        val view: BaseView<Long>? = view()
-        if (view?.getContext()?.let { NetworkUtil.pingIpAddress(it) }!!) {
-            view.onError("No internet connection", EnumStatus.GET_LIST_FILES_IN_APP)
-            return
-        }
-        if (ServiceManager.getInstance()?.getMyService() == null) {
-            view.onError("Service is null", EnumStatus.GET_LIST_FILES_IN_APP)
-            return
-        }
-        ServiceManager.getInstance()?.getMyService()?.onGetListFileInApp(object : BaseView<Int> {
-            override fun onError(message: String?, status: EnumStatus?) {
-                view.onError(message, status)
-                Utils.Log(TAG, "error")
-            }
-
-            override fun onSuccessful(message: String?) {
-                Utils.Log(TAG, "onSuccessful ??")
-            }
-
-            override fun onSuccessful(message: String?, status: EnumStatus?) {
-                Utils.Log(TAG, "onSuccessful !! " + status?.name)
-            }
-
-            override fun onSuccessful(message: String?, status: EnumStatus?, `object`: Int?) {
-                if (`object` == 0) {
-                    val mUser: User? = Utils.getUserInfo()
-                    if (mUser != null) {
-                        Utils.Log(TAG, "onSuccessful 2")
-                        if (mUser.driveAbout != null) {
-                            Utils.Log(TAG, "onSuccessful 3")
-                            mUser.driveAbout?.inAppUsed = 0
-                            Utils.setUserPreShare(mUser)
-                            view.onSuccessful("Successful", status)
-                        }
-                    }
-                    Utils.Log(TAG, "onSuccessful 4")
-                } else {
-                    val mList: MutableList<ItemModel>? = SQLHelper.getListItemId(true, false)
-                    var countSize: Long = 0
-                    try {
-                        if (mList != null) {
-                            for (index in mList) {
-                                countSize += index.size?.toLong()!!
-                            }
-                        }
-                        val mUser: User? = Utils.getUserInfo()
-                        if (mUser != null) {
-                            if (mUser.driveAbout != null) {
-                                mUser.driveAbout?.inAppUsed = countSize
-                                Utils.setUserPreShare(mUser)
-                                view.onSuccessful("Successful", status)
-                            }
-                        }
-                        Utils.Log(TAG, "onSuccessful 5")
-                    } catch (e: Exception) {
-                        Utils.Log(TAG, "onSuccessful 6")
-                        e.printStackTrace()
-                    }
-                }
-            }
-
-            override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<Int>?) {}
-            override fun onStartLoading(status: EnumStatus) {}
-            override fun onStopLoading(status: EnumStatus) {}
-            override fun onError(message: String?) {}
-            override fun getContext(): Context? {
-                return null
-            }
-
-            override fun getActivity(): Activity? {
-                return null
-            }
-        })
     }
 
     companion object {

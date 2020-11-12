@@ -170,6 +170,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
             }
         }
         if (isRefresh) {
+
             ServiceManager.getInstance()?.onPreparingSyncCategoryData()
         }
         presenter?.unbindView()

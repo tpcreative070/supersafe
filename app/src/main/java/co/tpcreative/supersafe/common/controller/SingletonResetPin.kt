@@ -35,6 +35,8 @@ class SingletonResetPin {
                 Utils.setUserPreShare(mUser)
                 mCountDownTimer = null
                 ServiceManager.getInstance()?.onSendEmail()
+
+
                 ServiceManager.getInstance()?.setIsWaitingSendMail(false)
                 Utils.onPushEventBus(EnumStatus.WAITING_DONE)
             }

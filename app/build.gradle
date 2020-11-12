@@ -148,7 +148,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.8.4'
 
     /*Compress image*/
-    implementation project(':compressorlibrary')
+    //implementation project(':compressorlibrary')
 
     /*Adding detect extension files*/
     implementation 'commons-io:commons-io:2.6'
@@ -208,6 +208,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
     implementation 'android.arch.lifecycle:extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'id.zelory:compressor:3.0.0'
 }
 /*Resolved duplicated for Google api client*/
 

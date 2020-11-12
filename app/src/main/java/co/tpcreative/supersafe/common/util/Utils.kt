@@ -695,16 +695,6 @@ object Utils {
         EventBus.getDefault().post(status)
     }
 
-    /*Improved sync data*/ /*Filter only item already synced*/
-    fun filterOnlyGlobalOriginalId(list1: MutableList<ItemModel>): MutableList<ItemModel>? {
-        val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
-        for (index in list1) {
-            if (index.isSyncCloud) {
-                mList.add(index)
-            }
-        }
-        return mList
-    }
 
     /*Remove duplicated item for download id*/
     fun clearListFromDuplicate(globalList: MutableList<ItemModel>, localList: MutableList<ItemModel>): MutableList<ItemModel>? {
@@ -737,67 +727,6 @@ object Utils {
         return mList
     }
 
-    /*Merge list to hash map for upload, download and delete*/
-    fun mergeListToHashMap(mList: MutableList<ItemModel>): MutableMap<String, ItemModel> {
-        val map: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
-        for (index in mList) {
-            index.unique_id?.let {
-                map[it] = index
-            }
-        }
-        return map
-    }
-
-    /*Get the first of item data*/
-    fun getArrayOfIndexHashMap(mMapDelete: MutableMap<String, ItemModel>?): ItemModel? {
-        if (mMapDelete != null) {
-            if (mMapDelete.isNotEmpty()) {
-                val model: ItemModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
-                Log(TAG, "Object need to be deleting " + Gson().toJson(model))
-                return model
-            }
-        }
-        return null
-    }
-
-    /*Get the first of category data*/
-    fun getArrayOfIndexCategoryHashMap(mMapDelete: MutableMap<String, MainCategoryModel>): MainCategoryModel? {
-        if (mMapDelete.isNotEmpty()) {
-            val model: MainCategoryModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
-            Log(TAG, "Object need to be deleting " + Gson().toJson(model))
-            return model
-        }
-        return null
-    }
-
-    /*Delete hash map after delete Google drive or Server system*/
-    fun deletedIndexOfCategoryHashMap(itemModel: MainCategoryModel?, map: MutableMap<String, MainCategoryModel>?): Boolean {
-        try {
-            if (map != null) {
-                if (map.isNotEmpty()) {
-                    itemModel?.unique_id?.let {
-                        map.remove(it)
-                    }
-                    return true
-                }
-            }
-        } catch (e: Exception) {
-            Log(TAG, "Could not delete hash map==============================>")
-        }
-        return false
-    }
-
-    /*Merge list to hash map for upload, download and delete*/
-    fun mergeListToCategoryHashMap(mList: MutableList<MainCategoryModel>): MutableMap<String, MainCategoryModel> {
-        val map: MutableMap<String, MainCategoryModel> = HashMap<String, MainCategoryModel>()
-        for (index in mList) {
-            index.unique_id?.let {
-                map[it] = index
-            }
-        }
-        return map
-    }
-
     /*Merge list original and thumbnail as list*/
     fun getMergedOriginalThumbnailList(isNotSync: Boolean, mDataList: MutableList<ItemModel>): MutableList<ItemModel> {
         val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
@@ -826,72 +755,6 @@ object Utils {
         }
         return mList
     }
-
-    /*Delete hash map after delete Google drive and Server system*/
-    fun deletedIndexOfHashMap(itemModel: ItemModel?, map: MutableMap<String, ItemModel>?): Boolean {
-        try {
-            map?.let { mMapResult ->
-                if (mMapResult.isNotEmpty()) {
-                    itemModel?.unique_id?.let {
-                        mMapResult.remove(it)
-                    }
-                    return true
-                }
-            }
-        } catch (e: Exception) {
-            Log(TAG, "Could not delete hash map==============================>")
-        }
-        return false
-    }
-
-    /*------------------------Import area-------------------*/ /*Add list to hash map for import*/
-    fun mergeListToHashMapImport(mList: MutableList<ImportFilesModel>): MutableMap<String, ImportFilesModel>? {
-        val map: MutableMap<String, ImportFilesModel> = HashMap<String, ImportFilesModel>()
-        for (index in mList) {
-            index.unique_id?.let {
-                map[it] = index
-            }
-        }
-        return map
-    }
-
-    /*Get the first of data for import*/
-    fun getArrayOfIndexHashMapImport(mMapDelete: MutableMap<String, ImportFilesModel>?): ImportFilesModel? {
-        mMapDelete?.let { mMapResult ->
-            if (mMapResult.isNotEmpty()) {
-                val model: ImportFilesModel? = mMapResult[mMapResult.keys.toTypedArray()[0]]
-                return model
-            }
-        }
-        return null
-    }
-
-    /*Delete hash map after delete Google drive and Server system for import*/
-    fun deletedIndexOfHashMapImport(itemModel: ImportFilesModel?, map: MutableMap<String, ImportFilesModel>?): Boolean {
-        try {
-            map?.let { mMapResult ->
-                if (mMapResult.isNotEmpty()) {
-                    itemModel?.unique_id?.let {
-                        mMapResult.remove(it)
-                    }
-                    return true
-                }
-            }
-        } catch (e: Exception) {
-            Log(TAG, "Could not delete hash map==============================>")
-        }
-        return false
-    }
-
-    /*Convert list to hash-map*/
-    fun convertItemListToMap(list: List<ItemModel>): Map<String, ItemModel>? {
-        val mMap: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
-        for (index in list) {
-            mMap[index.items_id!!] = index
-        }
-        return mMap
-    }
-
     /*Check request delete item from global*/
     fun checkItemDeleteSyncedLocal(mSyncedList: List<ItemModel>): List<ItemModel> {
         val mListResult: MutableList<ItemModel> = ArrayList<ItemModel>()
@@ -921,8 +784,6 @@ object Utils {
             for (index in it) {
                 val mValue: MainCategoryModel? = mMap?.get(index.categories_id)
                 val mObject = SQLHelper.getItemsList(index.categories_id)
-                Log(TAG, Gson().toJson(mValue))
-                Log(TAG, Gson().toJson(mObject))
                 if (mValue == null && mObject?.size == 0) {
                     mListResult.add(index)
                 }
@@ -1176,17 +1037,6 @@ object Utils {
                 .show()
     }
 
-    fun isHardwareAvailable(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val bm = BiometricManager.from(SuperSafeApplication.getInstance())
-            val canAuthenticate = bm.canAuthenticate()
-            !(canAuthenticate == BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE || canAuthenticate == BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE)
-
-        } else {
-            false
-        }
-    }
-
     fun isSensorAvailable(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val bm = BiometricManager.from(SuperSafeApplication.getInstance())
@@ -1213,33 +1063,6 @@ object Utils {
 
     fun deleteFolderOfItemId(items_id: String) {
         SuperSafeApplication.getInstance().getStorage()?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + items_id)
-    }
-
-    /*Delete hash map after migrated item*/
-    fun getArrayOfMigrationIndexHashMap(mMapDelete: MutableMap<String, MigrationModel>?): MigrationModel? {
-        if (mMapDelete != null) {
-            if (mMapDelete.isNotEmpty()) {
-                val model: MigrationModel? = mMapDelete[mMapDelete.keys.toTypedArray()[0]]
-                Log(TAG, "Object need to be deleting " + Gson().toJson(model))
-                return model
-            }
-        }
-        return null
-    }
-
-    /*Delete hash map after migrated item*/
-    fun deletedIndexOfMigrationHashMap(uniId: String?, map: MutableMap<String, MigrationModel>?): Boolean {
-        try {
-            if (map != null) {
-                if (map.isNotEmpty()) {
-                    map.remove(uniId)
-                    return true
-                }
-            }
-        } catch (e: Exception) {
-            Log(TAG, "Could not delete hash map==============================>")
-        }
-        return false
     }
 
     fun isCameraAvailable(context: Context): Boolean {
