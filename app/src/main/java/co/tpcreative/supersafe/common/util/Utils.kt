@@ -708,11 +708,9 @@ object Utils {
 
     /*Remove duplicated item for download id*/
     fun clearListFromDuplicate(globalList: MutableList<ItemModel>, localList: MutableList<ItemModel>): MutableList<ItemModel>? {
-        Log(TAG,"Log here.....")
         val modelMap: MutableMap<String, ItemModel> = HashMap<String, ItemModel>()
         val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
         if (globalList.size == 0) {
-            Log(TAG,"Log here.....")
             return mList
         }
 
@@ -725,21 +723,15 @@ object Utils {
         }
 
         /*Merged global data*/
-        Log(TAG,"size ??? ${globalList.size}")
         val mGlobalList: MutableList<ItemModel> = getMergedOriginalThumbnailList(true, globalList)
-        //Log(TAG, "onPreparingSyncData ==> Index download globalList " + Gson().toJson(globalList))
-        Log(TAG, "onPreparingSyncData ==> Index download map " + Gson().toJson(modelMap))
-        Log(TAG, "onPreparingSyncData ==> Index download list " + Gson().toJson(mGlobalList))
         for (index in mGlobalList) {
             val item: ItemModel? = modelMap[index.global_id]
             if (item != null) {
                 if (index.global_id != item.global_id) {
                     mList.add(index)
-                    Log(TAG, "onPreparingSyncData ==> Index download" + Gson().toJson(index))
                 }
             } else {
                 mList.add(index)
-                Log(TAG, "onPreparingSyncData ==> Index download add " + Gson().toJson(index))
             }
         }
         return mList
@@ -809,10 +801,8 @@ object Utils {
     /*Merge list original and thumbnail as list*/
     fun getMergedOriginalThumbnailList(isNotSync: Boolean, mDataList: MutableList<ItemModel>): MutableList<ItemModel> {
         val mList: MutableList<ItemModel> = ArrayList<ItemModel>()
-        Log(TAG,"Size of => ${mDataList.size}")
         for (index in mDataList) {
             if (isNotSync) {
-                Log(TAG,"Size of ***=> ${mDataList.size}")
                 if (!index.originalSync) {
                     mList.add(ItemModel(index, true))
                 }
@@ -823,7 +813,6 @@ object Utils {
                     }
                 }
             } else {
-                Log(TAG,"Size of... => ${mDataList.size}")
                 if (index.originalSync) {
                     mList.add(ItemModel(index, true))
                 }
@@ -871,7 +860,6 @@ object Utils {
         mMapDelete?.let { mMapResult ->
             if (mMapResult.isNotEmpty()) {
                 val model: ImportFilesModel? = mMapResult[mMapResult.keys.toTypedArray()[0]]
-                Log(TAG, "Object need to be deleting " + Gson().toJson(model))
                 return model
             }
         }
