@@ -81,7 +81,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                             val mObject = mMessage?.toObject(BaseResponse::class.java)
                             if (mCode == 401) {
                                 Utils.Log(TAG, "code $mCode")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, mObject?.toJson())
                         } catch (e: IOException) {
@@ -138,7 +138,7 @@ class VerifyAccountPresenter : Presenter<BaseView<EmptyModel>>() {
                             val mObject = mMessage?.toObject(BaseResponse::class.java)
                             if (mCode == 401) {
                                 Utils.Log(TAG, "code $mCode")
-                                ServiceManager.Companion.getInstance()?.onUpdatedUserToken()
+                                ServiceManager.getInstance()?.onUpdatedUserToken()
                             }
                             Utils.Log(TAG, "Error change mail ${mObject?.toJson()}")
                         } catch (e: IOException) {

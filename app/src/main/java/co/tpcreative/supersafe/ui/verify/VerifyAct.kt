@@ -11,20 +11,25 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivityNoneSlide
+import co.tpcreative.supersafe.common.api.requester.MicService
+import co.tpcreative.supersafe.common.api.requester.UserService
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.viewmodel.UserViewModel
+import co.tpcreative.supersafe.viewmodel.VerifyViewModel
 import kotlinx.android.synthetic.main.activity_verify.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEditorActionListener {
+class VerifyAct : BaseActivityNoneSlide(), TextView.OnEditorActionListener {
+    lateinit var viewModel : VerifyViewModel
     var isNext = false
-    var presenter: VerifyPresenter? = null
+    var isVerify = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify)
@@ -51,7 +56,6 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -67,6 +71,7 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
                 return false
             }
             if (isNext) {
+                isVerify = true
                 onVerifyCode()
                 return true
             }
@@ -78,74 +83,9 @@ class VerifyAct : BaseActivityNoneSlide(), BaseView<EmptyModel>, TextView.OnEdit
     /*Detecting textWatch*/
     val mTextWatcher: TextWatcher? = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val value = s.toString().trim { it <= ' ' }
-            isNext = if (Utils.isValid(value)) {
-                btnLogin?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-                btnLogin?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
-                true
-            } else {
-                btnLogin?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
-                btnLogin?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
-                false
-            }
+            viewModel.code = s.toString()
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: android.text.Editable?) {}
     }
-
-    override fun onStartLoading(status: EnumStatus) {
-        when (status) {
-            EnumStatus.RESEND_CODE -> {
-                progressBarCircularIndeterminateReSend?.visibility = View.VISIBLE
-                btnReSend?.visibility = View.INVISIBLE
-            }
-            EnumStatus.VERIFY_CODE -> {
-                progressBarCircularIndeterminate?.visibility = View.VISIBLE
-                btnLogin?.visibility = View.INVISIBLE
-            }
-        }
-    }
-
-    override fun onStopLoading(status: EnumStatus) {
-        when (status) {
-            EnumStatus.RESEND_CODE -> {
-                progressBarCircularIndeterminateReSend?.visibility = View.INVISIBLE
-                btnReSend.visibility = View.VISIBLE
-            }
-            EnumStatus.VERIFY_CODE -> {
-                progressBarCircularIndeterminate?.visibility = View.INVISIBLE
-                btnLogin?.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    override fun getContext(): Context? {
-        return this
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onError(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.VERIFY_CODE -> {
-                edtCode?.error = message
-            }
-        }
-    }
-
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.VERIFY_CODE -> {
-                Navigator.onMoveSetPin(this, EnumPinAction.NONE)
-                finish()
-            }
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 }

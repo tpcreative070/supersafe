@@ -212,6 +212,27 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
+    suspend fun resendCode(request: RequestCodeRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO){
+            try {
+                service.resendCode(request)
+            }catch (e : Exception){
+                e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun sendEmail(status: EnumStatus) : Resource<String> {
+        return withContext(Dispatchers.IO){
+            try {
+                emailViewModel.sendEmail(status)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
     private fun validationEmail(mValue : String){
         if (mValue.isEmpty()){
             putError(EnumValidationKey.EDIT_TEXT_EMAIL, "Request enter email")

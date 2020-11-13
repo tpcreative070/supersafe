@@ -9,7 +9,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
 import kotlinx.coroutines.Dispatchers
 
-class VerifyAccountViewModel(val userViewModel: UserViewModel)  : BaseViewModel(){
+class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : BaseViewModel(){
     val TAG = VerifyAccountViewModel::class.java.simpleName
 
     override val errorMessages: MutableLiveData<MutableMap<String, String?>?>
