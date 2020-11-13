@@ -8,6 +8,7 @@ import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.RequestCodeRequest
 import co.tpcreative.supersafe.common.request.VerifyCodeRequest
+import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
@@ -56,6 +57,7 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
                     if (mResult.data?.error!!){
                         putErrorResponse(EnumValidationKey.EDIT_CODE,getString(R.string.the_code_not_signed_up))
                     }else{
+                        setPremiumData(mResult.data.data)
                         emit(mResult)
                     }
                 }
@@ -112,5 +114,20 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
         val mUser: User? = Utils.getUserInfo()
         mUser?.code = mCode
         Utils.setUserPreShare(mUser)
+    }
+
+    private fun setPremiumData(mData : DataResponse?){
+        val mUser: User? = Utils.getUserInfo()
+        if (mUser != null) {
+            mUser.verified = true
+            if (mData == null) {
+                return
+            }
+            if (mData.premium != null) {
+                mUser.premium = mData.premium
+            }
+            SuperSafeApplication.getInstance().writeUserSecret(mUser)
+            Utils.setUserPreShare(mUser)
+        }
     }
 }
