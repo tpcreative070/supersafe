@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
@@ -10,19 +9,18 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumValidationKey
 import kotlinx.coroutines.Dispatchers
 
-class VerifyAccountViewModel(val userViewModel: UserViewModel)  : ViewModel(){
+class VerifyAccountViewModel(val userViewModel: UserViewModel)  : BaseViewModel(){
     val TAG = VerifyAccountViewModel::class.java.simpleName
-    val errorMessages : MutableLiveData<MutableMap<String, String>> by lazy {
-        MutableLiveData<MutableMap<String,String>>()
-    }
 
-    val isLoading : MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
+    override val errorMessages: MutableLiveData<MutableMap<String, String?>?>
+        get() = super.errorMessages
 
-    val errorResponseMessage  : MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    override val errorResponseMessage: MutableLiveData<MutableMap<String, String?>?>
+        get() = super.errorResponseMessage
+
+    override val isLoading: MutableLiveData<Boolean>
+        get() = super.isLoading
+
     var code : String = ""
         set(value) {
             field = value
@@ -42,11 +40,6 @@ class VerifyAccountViewModel(val userViewModel: UserViewModel)  : ViewModel(){
         Utils.Log(TAG,"Print ${errorMessages.value?.toJson()} $mValue")
     }
 
-    init {
-        errorMessages.value = mutableMapOf(EnumValidationKey.EDIT_TEXT_EMAIL.name to "")
-        isLoading.value = false
-        errorResponseMessage.value = ""
-    }
     fun verifyCode() = liveData(Dispatchers.IO){
         try {
             isLoading.postValue(true)

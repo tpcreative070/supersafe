@@ -33,10 +33,6 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
     override val isLoading: MutableLiveData<Boolean>
         get() = super.isLoading
 
-    init {
-        isLoading.value = false
-    }
-
     var email : String = ""
         set(value) {
             field = value
