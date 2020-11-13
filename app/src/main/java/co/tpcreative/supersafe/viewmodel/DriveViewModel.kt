@@ -1,6 +1,7 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.api.request.DownloadFileRequest
 import co.tpcreative.supersafe.common.api.requester.DriveService
 import co.tpcreative.supersafe.common.api.requester.ItemService
 import co.tpcreative.supersafe.common.extension.toJson
@@ -8,10 +9,15 @@ import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.services.download.ProgressResponseBody
+import co.tpcreative.supersafe.common.services.upload.ProgressRequestBody
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.util.HashMap
 
 class DriveViewModel(private val driveService: DriveService, itemService: ItemService) : ViewModel(){
     private val itemViewModel = ItemViewModel(itemService)
@@ -19,16 +25,16 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
     suspend fun downLoadData(isDownloadToExport : Boolean,globalList : MutableList<ItemModel>?) : Resource<Boolean> {
         return withContext(Dispatchers.IO){
             try {
-                var mergeList : MutableList<ItemModel>? = null
-                if (isDownloadToExport){
-                    mergeList = Utils.getMergedOriginalThumbnailList(false, globalList!!)
+                val mergeList: MutableList<ItemModel>?
+                mergeList = if (isDownloadToExport){
+                    Utils.getMergedOriginalThumbnailList(false, globalList!!)
                 }else{
                     val mListLocal: MutableList<ItemModel>? = SQLHelper.getItemListDownload()
-                    mergeList = Utils.clearListFromDuplicate(globalList!!, mListLocal!!)
+                    Utils.clearListFromDuplicate(globalList!!, mListLocal!!)
                 }
                 Utils.Log(TAG,"Total download ${mergeList?.size}")
                 for (index in mergeList!!){
-                    val mResultDownloaded = driveService.downloadFile(index)
+                    val mResultDownloaded = driveService.downloadFile(index,onGetContentOfDownload(index)!!,mProgressDownloading)
                     when(mResultDownloaded.status){
                         Status.SUCCESS -> {
                             Utils.Log(TAG,mResultDownloaded.data)
@@ -54,13 +60,13 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
         }
     }
 
-    suspend fun uploadData()  : Resource<Boolean>{
+    suspend fun uploadData() : Resource<Boolean>{
         return withContext(Dispatchers.IO){
             try {
                 val mResult: MutableList<ItemModel>? = SQLHelper.getItemListUpload()
                 val listUpload: MutableList<ItemModel>? = Utils.getMergedOriginalThumbnailList(true, mResult!!)
                 for (index in listUpload!!){
-                    val mResultUpload = driveService.uploadFile(index)
+                    val mResultUpload = driveService.uploadFile(index,onGetContentOfUpload(index),mProgressUploading,onGetFilePath(index))
                     when(mResultUpload.status){
                         Status.SUCCESS ->{
                             val mResultInserted = mResultUpload.data?.id?.let { itemViewModel.insertItemToSystem(index, it) }
@@ -261,5 +267,96 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 Utils.checkSaverToDelete(itemModel.getOriginal(), isOriginalGlobalId)
             }
         }
+    }
+
+    /*Updated this area*/
+    private val mProgressDownloading  = object : ProgressResponseBody.ProgressResponseBodyListener{
+        override fun onAttachmentDownloadedError(message: String?) {
+        }
+        override fun onAttachmentDownloadUpdate(percent: Int) {
+            Utils.Log(TAG,"Downloading...$percent%")
+        }
+        override fun onAttachmentElapsedTime(elapsed: Long) {
+        }
+        override fun onAttachmentAllTimeForDownloading(all: Long) {
+        }
+        override fun onAttachmentRemainingTime(all: Long) {
+        }
+        override fun onAttachmentSpeedPerSecond(all: Double) {
+        }
+        override fun onAttachmentTotalDownload(totalByte: Long, totalByteDownloaded: Long) {
+        }
+        override fun onAttachmentDownloadedSuccess() {
+            Utils.Log(TAG,"Download completed")
+        }
+    }
+
+    private val mProgressUploading = object : ProgressRequestBody.UploadCallbacks {
+        override fun onProgressUpdate(percentage: Int) {
+            Utils.Log(TAG, "Progressing uploaded $percentage%")
+        }
+        override fun onError() {
+            Utils.Log(TAG, "onError")
+        }
+        override fun onFinish() {
+            Utils.Log(TAG, "onFinish")
+        }
+    }
+
+    private fun onGetContentOfUpload(items : ItemModel) : HashMap<String?, Any?>?{
+        val mContent = HashMap<String?, Any?>()
+        val mContentEvent = DriveEvent()
+        if (items.isOriginalGlobalId) {
+            mContentEvent.fileType = EnumFileType.ORIGINAL.ordinal
+        } else {
+            mContentEvent.fileType = EnumFileType.THUMBNAIL.ordinal
+        }
+        if (!Utils.isNotEmptyOrNull(items.categories_id)) {
+            return null
+        }
+        mContentEvent.items_id = items.items_id
+        val hex: String? = DriveEvent.getInstance()?.convertToHex(Gson().toJson(mContentEvent))
+        mContent[getString(R.string.key_name)] = hex
+        val list: MutableList<String?> = ArrayList()
+        list.add(getString(R.string.key_appDataFolder))
+        mContent[getString(R.string.key_parents)] = list
+        return mContent
+    }
+
+    private fun onGetContentOfDownload(item : ItemModel) : DownloadFileRequest? {
+        val request = DownloadFileRequest()
+        var id: String? = ""
+        if (item.isOriginalGlobalId) {
+            id = item.global_id
+            request.file_name = item.originalName
+        } else {
+            id = item.global_id
+            request.file_name = item.thumbnailName
+        }
+        request.items = item
+        request.id = id
+        if (!Utils.isNotEmptyOrNull(id)) {
+            return null
+        }
+        item.setOriginal(Utils.getOriginalPath(item.originalName, item.items_id))
+        request.path_folder_output = Utils.createDestinationDownloadItem(item.items_id)
+        return request
+    }
+
+    private fun getString(res : Int) : String{
+        return SuperSafeApplication.getInstance().applicationContext.getString(res)
+    }
+
+    private fun onGetFilePath(item : ItemModel) : File?{
+        val file: File? = if (item.isOriginalGlobalId) {
+            File(item.getOriginal())
+        } else {
+            File(item.getThumbnail())
+        }
+        if (!SuperSafeApplication.getInstance().getStorage()!!.isFileExist(file?.absolutePath)) {
+            SQLHelper.deleteItem(item)
+            return null
+        }
+        return file
     }
 }

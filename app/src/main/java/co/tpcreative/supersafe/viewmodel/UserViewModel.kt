@@ -233,6 +233,56 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
+    suspend fun updatedUserId(request: ChangeUserIdRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.updateUser(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun checkedUserId() : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.checkUserId(UserRequest())
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun addUserCloud(request: UserCloudRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO){
+            try {
+                service.addUserCloud(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun checkingUserCloud(request: UserCloudRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.checkingUserCloud(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
+    suspend fun checkoutItems(request: CheckoutRequest) : Resource<RootResponse>{
+        return withContext(Dispatchers.IO){
+            try {
+                service.checkout(request)
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
+
     private fun validationEmail(mValue : String){
         if (mValue.isEmpty()){
             putError(EnumValidationKey.EDIT_TEXT_EMAIL, "Request enter email")
