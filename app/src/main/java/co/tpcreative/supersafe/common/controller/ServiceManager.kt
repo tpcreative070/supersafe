@@ -126,9 +126,13 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     fun initService() = CoroutineScope(Dispatchers.IO).launch {
-        val mResultUserInfo = getUserInfo()
-        getTracking()
-        getDriveAbout()
+        if(Utils.getUserId()?.isNotEmpty()==true){
+            getUserInfo()
+            getTracking()
+        }
+        if (Utils.isConnectedToGoogleDrive()){
+            getDriveAbout()
+        }
     }
 
     private suspend fun getUserInfo() = withContext(Dispatchers.IO){
@@ -763,7 +767,9 @@ class ServiceManager : BaseServiceView<Any?> {
             }
             EnumStatus.CONNECTED -> {
                 Utils.onPushEventBus(EnumStatus.CONNECTED)
-                onGetUserInfo()
+                if (!Utils.getUserId().isNullOrEmpty()){
+                    onGetUserInfo()
+                }
             }
             EnumStatus.DISCONNECTED -> {
                 onDefaultValue()

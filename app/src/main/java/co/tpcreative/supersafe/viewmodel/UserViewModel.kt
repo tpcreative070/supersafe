@@ -1,6 +1,5 @@
 package co.tpcreative.supersafe.viewmodel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.api.requester.MicService
@@ -10,45 +9,32 @@ import co.tpcreative.supersafe.common.extension.getString
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
-import co.tpcreative.supersafe.common.request.SignInRequest
-import co.tpcreative.supersafe.common.request.SignUpRequest
-import co.tpcreative.supersafe.common.request.TrackingRequest
-import co.tpcreative.supersafe.common.request.UserRequest
+import co.tpcreative.supersafe.common.request.*
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.RootResponse
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.Authorization
-import co.tpcreative.supersafe.model.EnumResponseCode
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.model.*
 import com.snatik.storage.security.SecurityUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
 
-enum class EnumValidationKey {
-    EDIT_TEXT_EMAIL
-}
-class UserViewModel(private val service: UserService, micService: MicService) : ViewModel(){
+class UserViewModel(private val service: UserService, micService: MicService) : BaseViewModel(){
     private val emailViewModel = EmailOutlookViewModel(micService)
     val TAG = this::class.java.simpleName
-    val errorMessages : MutableLiveData<MutableMap<String,String>> by lazy {
-        MutableLiveData<MutableMap<String,String>>()
-    }
 
-    val isLoading : MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
+    override val errorMessages: MutableLiveData<MutableMap<String, String?>?>
+        get() = super.errorMessages
 
-    val errorResponseMessage  : MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
+    override val errorResponseMessage: MutableLiveData<MutableMap<String, String?>?>
+        get() = super.errorResponseMessage
+
+    override val isLoading: MutableLiveData<Boolean>
+        get() = super.isLoading
 
     init {
-        errorMessages.value = mutableMapOf(EnumValidationKey.EDIT_TEXT_EMAIL.name to "")
         isLoading.value = false
-        errorResponseMessage.value = ""
     }
 
     var email : String = ""
@@ -57,6 +43,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             validationEmail(value)
         }
 
+
     fun signUp() = liveData(Dispatchers.IO){
         try {
             isLoading.postValue(true)
@@ -64,7 +51,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             when(mResultSignUp.status){
                 Status.SUCCESS -> {
                     if (mResultSignUp.data?.error!!){
-                        errorResponseMessage.postValue(mResultSignUp.data.responseMessage)
+                        emailResponseError(mResultSignUp.data.responseMessage!!)
                         emit(Resource.error(mResultSignUp.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignUp.data.responseMessage ?:"",null))
                     }else{
                         val mData: DataResponse? = mResultSignUp.data.data
@@ -91,7 +78,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
             when(mResultSignIn.status){
                 Status.SUCCESS ->{
                     if (mResultSignIn.data?.error!!){
-                        errorResponseMessage.postValue(getString(R.string.signed_in_failed))
+                        emailResponseError(getString(R.string.signed_in_failed))
                         emit(Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null))
                     }else{
                         val mData: DataResponse? = mResultSignIn.data.data
@@ -146,7 +133,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                             when(mResultSignIn.status){
                                 Status.SUCCESS ->{
                                     if (mResultSignIn.data?.error!!){
-                                        errorResponseMessage.postValue(getString(R.string.signed_in_failed))
+                                        emailResponseError(getString(R.string.signed_in_failed))
                                         Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null)
                                     }else{
                                         setUpdatedTakenValueAfterSignedIn(mResultSignIn.data.data)
@@ -218,18 +205,31 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
+    suspend fun verifyCode(request : VerifyCodeRequest) : Resource<RootResponse> {
+        return withContext(Dispatchers.IO){
+            try {
+               service.verifyCode(request)
+            }catch (e : Exception){
+                e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
+            }
+        }
+    }
 
     private fun validationEmail(mValue : String){
         if (mValue.isEmpty()){
-            errorMessages.value?.set(EnumValidationKey.EDIT_TEXT_EMAIL.name, "Request enter email")
+            putError(EnumValidationKey.EDIT_TEXT_EMAIL, "Request enter email")
         }else if (!Utils.isValidEmail(mValue)){
-            errorMessages.value?.set(EnumValidationKey.EDIT_TEXT_EMAIL.name, "Email invalid")
+            putError(EnumValidationKey.EDIT_TEXT_EMAIL, "Email invalid")
         }
         else{
-            errorMessages.value?.remove(EnumValidationKey.EDIT_TEXT_EMAIL.name)
+            putError(EnumValidationKey.EDIT_TEXT_EMAIL)
         }
-        errorMessages.postValue(errorMessages.value)
-        Utils.Log(TAG,"Print ${errorMessages.value?.toJson()} $mValue")
+    }
+
+    private fun emailResponseError(mValue : String){
+        putErrorResponse(EnumValidationKey.EDIT_TEXT_EMAIL,mValue)
+        Utils.Log(TAG,"Print ${errorResponseMessage.value?.toJson()} $mValue")
     }
 
     private fun getSignInRequest(mEmail : String? =null) : SignInRequest{

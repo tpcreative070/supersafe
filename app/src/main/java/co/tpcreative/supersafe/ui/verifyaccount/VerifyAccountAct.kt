@@ -26,7 +26,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-
 class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseView<EmptyModel> {
     var isNext = false
     var presenter: VerifyAccountPresenter? = null
@@ -44,6 +43,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -259,6 +259,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
                 btnSendVerifyCode?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
                 btnSendVerifyCode?.text = ""
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -271,6 +272,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
                 btnSendVerifyCode?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
                 btnSendVerifyCode?.text = getString(R.string.send_verification_code)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -282,6 +284,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
             EnumStatus.VERIFY_CODE -> {
                 edtCode?.error = message
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -301,6 +304,7 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener, BaseVi
                 edtCode?.setText("")
                 onShowDialogEnableSync()
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 

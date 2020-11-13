@@ -8,8 +8,12 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.android.synthetic.main.activity_sign_up.edtEmail
+import kotlinx.android.synthetic.main.activity_sign_up.progressBarCircularIndeterminate
+import kotlinx.android.synthetic.main.activity_sign_up.toolbar
 
 fun SignUpAct.initUI(){
     TAG = this::class.java.simpleName
@@ -18,17 +22,18 @@ fun SignUpAct.initUI(){
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     edtEmail?.addTextChangedListener(mTextWatcher)
     edtEmail?.setOnEditorActionListener(this)
-
-    viewModel.errorMessages.observe( this,{
-        Utils.Log(TAG,"log...$it")
-        if (it.isNotEmpty()){
-            btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
-            btnFinish.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
-            isNext = false
-        }else{
-            btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
-            btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.white))
-            isNext = true
+    viewModel.errorMessages.observe( this,{mResult->
+        mResult?.let {
+            if (it.values.isEmpty()){
+                btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+                btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.white))
+                isNext = true
+            }else{
+                Utils.Log(TAG,"log -> $it")
+                btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+                btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+                isNext = false
+            }
         }
     })
 
@@ -42,9 +47,18 @@ fun SignUpAct.initUI(){
         }
     })
 
-    viewModel.errorResponseMessage.observe(this,{
-        if (it.isNotEmpty()){
-            edtEmail.error = it
+    viewModel.errorResponseMessage.observe(this,{mResult ->
+        mResult?.let {
+            edtEmail.error = it.get(EnumValidationKey.EDIT_TEXT_EMAIL.name)
+            if (it.values.isEmpty()){
+                btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+                btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.white))
+                isNext = true
+            }else{
+                btnFinish?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+                btnFinish?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+                isNext = false
+            }
         }
     })
 

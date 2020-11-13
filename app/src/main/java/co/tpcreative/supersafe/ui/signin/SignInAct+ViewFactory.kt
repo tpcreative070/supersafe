@@ -11,9 +11,13 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.model.User
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_signin.*
+import kotlinx.android.synthetic.main.activity_signin.edtEmail
+import kotlinx.android.synthetic.main.activity_signin.progressBarCircularIndeterminate
+import kotlinx.android.synthetic.main.activity_signin.toolbar
 
 fun SignInAct.initUI(){
     TAG = this::class.java.simpleName
@@ -32,16 +36,19 @@ fun SignInAct.initUI(){
             onSignIn()
         }
     }
-    viewModel.errorMessages.observe( this,{
-        Utils.Log(TAG,"log...$it")
-        if (it.isNotEmpty()){
-            btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
-            btnNext.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
-            isNext = false
-        }else{
-            btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
-            btnNext?.setTextColor(ContextCompat.getColor(this,R.color.white))
-            isNext = true
+
+    viewModel.errorMessages.observe( this,{ mResult->
+        Utils.Log(TAG,"observe...")
+        mResult?.let {
+            if (it.isEmpty()){
+                btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+                btnNext?.setTextColor(ContextCompat.getColor(this,R.color.white))
+                isNext = true
+            }else{
+                btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+                btnNext?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+                isNext = false
+            }
         }
     })
 
@@ -55,9 +62,18 @@ fun SignInAct.initUI(){
         }
     })
 
-    viewModel.errorResponseMessage.observe(this,{
-        if (it.isNotEmpty()){
-            edtEmail.error = it
+    viewModel.errorResponseMessage.observe(this,{mResult ->
+        mResult?.let {
+            edtEmail.error = it.get(EnumValidationKey.EDIT_TEXT_EMAIL.name)
+            if (it.values.isEmpty()){
+                btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
+                btnNext?.setTextColor(ContextCompat.getColor(this,R.color.white))
+                isNext = true
+            }else{
+                btnNext?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_disable_rounded)
+                btnNext?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
+                isNext = false
+            }
         }
     })
 }
