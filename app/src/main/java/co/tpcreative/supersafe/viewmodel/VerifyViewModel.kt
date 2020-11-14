@@ -44,7 +44,6 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
         else{
             putError(EnumValidationKey.EDIT_TEXT_CODE)
         }
-        errorMessages.postValue(errorMessages.value)
         Utils.Log(TAG,"Print ${errorMessages.value?.toJson()} $mValue")
     }
 

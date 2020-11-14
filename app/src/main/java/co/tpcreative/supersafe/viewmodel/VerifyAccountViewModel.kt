@@ -35,15 +35,10 @@ class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : BaseVi
             validationCode(value)
         }
 
-    var email : String = ""
+    var email : String = Utils.getUserId() ?:""
     set(value) {
         field = value
         validationEmail(value)
-    }
-
-    init {
-        val mUser = Utils.getUserInfo()
-        email = mUser?.email ?:""
     }
 
     private fun validationCode(mValue : String){
@@ -57,7 +52,6 @@ class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : BaseVi
         else{
             putError(EnumValidationKey.EDIT_TEXT_CODE)
         }
-        errorMessages.postValue(errorMessages.value)
         Utils.Log(TAG,"Print ${errorMessages.value?.toJson()} $mValue")
     }
 
