@@ -857,7 +857,8 @@ object Utils {
     }
 
     fun setUserPreShare(user: User?) {
-        Log(TAG,"Set user data by code => ${user?.code}")
+        Log(TAG,"User id ====================> ${user?.email}")
+        Log(TAG,"Cloud id ===================> ${user?.cloud_id}")
         PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
     }
 

@@ -265,13 +265,13 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             try {
                 val value = credential.token
                 if (value != null) {
-                    val mAuthor: User? = Utils.getUserInfo()
-                    if (mAuthor != null) {
-                        mAuthor.driveConnected = true
-                        mAuthor.access_token = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
-                        Utils.Log(TAG, "Refresh access token value=> " + mAuthor.access_token)
-                        mAuthor.email = credential.selectedAccount.name
-                        Utils.setUserPreShare(mAuthor)
+                    val mUser: User? = Utils.getUserInfo()
+                    if (mUser != null) {
+                        mUser.driveConnected = true
+                        mUser.access_token = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
+                        mUser.cloud_id = credential.selectedAccount.name
+                        Utils.Log(TAG, "Refresh access token value=> " + mUser.access_token)
+                        Utils.setUserPreShare(mUser)
                         ServiceManager.getInstance()?.onPreparingSyncData()
                         if (isSignIn()) {
                             Utils.Log(TAG, "Call onDriveClientReady")

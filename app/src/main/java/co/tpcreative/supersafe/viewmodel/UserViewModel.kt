@@ -78,7 +78,6 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
                         emit(Resource.error(mResultSignIn.data.responseCode ?: Utils.CODE_EXCEPTION, mResultSignIn.data.responseMessage ?:"",null))
                     }else{
                         val mData: DataResponse? = mResultSignIn.data.data
-                        Utils.Log(TAG,mData?.user?.email_token?.toJson())
                         Utils.setUserPreShare(mData?.user)
                         ServiceManager.getInstance()?.onInitConfigurationFile()
                         val mResultSentEmail = emailViewModel.sendEmail(EnumStatus.SIGN_IN)
