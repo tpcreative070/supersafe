@@ -41,6 +41,11 @@ class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : BaseVi
         validationEmail(value)
     }
 
+    init {
+        val mUser = Utils.getUserInfo()
+        email = mUser?.email ?:""
+    }
+
     private fun validationCode(mValue : String){
         if (mValue.isEmpty()){
             putError(EnumValidationKey.EDIT_TEXT_CODE, "Request enter code")

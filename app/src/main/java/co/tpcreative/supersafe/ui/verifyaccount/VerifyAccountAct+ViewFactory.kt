@@ -30,15 +30,14 @@ fun VerifyAccountAct.initUI(){
     setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    //presenter = VerifyAccountPresenter()
-    //presenter?.bindView(this)
-    imgEdit?.setColorFilter(ContextCompat.getColor(this, R.color.colorBackground), PorterDuff.Mode.SRC_ATOP)
+    val result: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+    imgEdit?.setColorFilter(ContextCompat.getColor(this,result?.getAccentColor()!!), PorterDuff.Mode.SRC_ATOP)
     edtCode?.addTextChangedListener(mTextWatcher)
     edtEmail?.addTextChangedListener(mTextWatcher)
     edtCode?.setOnEditorActionListener(this)
     edtEmail?.setOnEditorActionListener(this)
     tvEmail?.text = Utils.getUserId()
-    val sourceString: String = getString(R.string.verify_title, "<font color='#000000'>" +Utils.getUserId() + "</font>")
+    val sourceString: String = getString(R.string.verify_title, "<font color='#9E9E9E'>" +Utils.getUserId() + "</font>")
     tvTitle?.text = sourceString.toSpanned()
     val theme: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     progressBarCircularIndeterminateSignIn?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
@@ -58,8 +57,6 @@ fun VerifyAccountAct.initUI(){
 
     btnSendVerifyCode.setOnClickListener {
         Utils.Log(TAG, "Send code")
-//        SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.progressing)
-//        presenter?.onCheckUser(presenter?.mUser?.email, presenter?.mUser?.other_email)
         sendCode()
     }
 
@@ -87,11 +84,6 @@ fun VerifyAccountAct.initUI(){
 
     btnReSend.setOnClickListener {
         try {
-//            SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.progressing)
-//            Utils.hideSoftKeyboard(this)
-//            val request = VerifyCodeRequest()
-//            request.user_id = presenter?.mUser?.email
-//            presenter?.onResendCode(request)
             resendCode()
             Utils.Log(TAG, "onResend")
         } catch (e: Exception) {
@@ -105,7 +97,6 @@ fun VerifyAccountAct.initUI(){
             verifyCode()
         }
     }
-
 
     viewModel.isLoading.observe(this,{
         if (it){
@@ -174,34 +165,6 @@ fun VerifyAccountAct.initUI(){
     Utils.Log(TAG,"Code ==> ${mUser?.code}")
 }
 
-
-//fun VerifyAccountAct.onChangedEmail() {
-//    val mNewUserId: String = edtEmail?.text.toString().toLowerCase(Locale.ROOT).trim({ it <= ' ' })
-//    tvEmail?.text = mNewUserId
-//    val sourceString: String = getString(R.string.verify_title, "<font color='#000000'>$mNewUserId</font>")
-//    tvTitle?.text = sourceString.toSpanned()
-//    if (mNewUserId == presenter?.mUser?.email) {
-//        return
-//    }
-//    val request = VerifyCodeRequest()
-//    request.new_user_id = mNewUserId
-//    request.user_id = presenter?.mUser?.email
-//    request._id = presenter?.mUser?._id
-//    presenter?.onChangeEmail(request)
-//    Utils.hideSoftKeyboard(this)
-//    Utils.hideKeyboard(edtEmail)
-//}
-
-//fun VerifyAccountAct.onVerifyCode() {
-//    val request = VerifyCodeRequest()
-//    request.code = edtCode?.text.toString().trim({ it <= ' ' })
-//    request.user_id = presenter?.mUser?.email
-//    request._id = presenter?.mUser?._id
-//    request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-//    presenter?.onVerifyCode(request)
-//    Utils.hideSoftKeyboard(this)
-//}
-
 fun VerifyAccountAct.onShowDialog() {
     val theme: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     MaterialStyledDialog.Builder(this)
@@ -257,7 +220,8 @@ fun VerifyAccountAct.sendCode(){
         when(it.status){
             Status.SUCCESS -> {
                 onShowView(btnSendVerifyCode!!)
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.we_sent_access_code_to_your_email))
+                Utils.Log(TAG,"Current email ${viewModel.email}")
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),String.format(getString(R.string.we_sent_access_code_to_your_email),viewModel.email))
                 Utils.Log(TAG,"Success ${it.toJson()}")
             }
             Status.ERROR -> {
@@ -292,7 +256,8 @@ private fun VerifyAccountAct.resendCode(){
         when(it.status){
             Status.SUCCESS -> {
                 onShowView(btnSendVerifyCode!!)
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.we_sent_access_code_to_your_email))
+                Utils.Log(TAG,"Current email ${viewModel.email}")
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),String.format(getString(R.string.we_sent_access_code_to_your_email),viewModel.email))
                 Utils.Log(TAG,"Success ${it.toJson()}")
             }
             Status.ERROR -> {
@@ -305,7 +270,7 @@ private fun VerifyAccountAct.resendCode(){
 
 fun VerifyAccountAct.changeEmail(){
     tvEmail?.text = viewModel.email
-    var sourceString: String = getString(R.string.verify_title, "<font color='#000000'>${viewModel.email}</font>")
+    var sourceString: String = getString(R.string.verify_title, "<font color='#9E9E9E'>${viewModel.email}</font>")
     tvTitle?.text = sourceString.toSpanned()
     if (viewModel.email == Utils.getUserId()) {
         return
@@ -321,7 +286,7 @@ fun VerifyAccountAct.changeEmail(){
                 Utils.Log(TAG,"Error ${it.message}")
                 viewModel.email = Utils.getUserId() ?: ""
                 tvEmail?.text = viewModel.email
-                sourceString = getString(R.string.verify_title, "<font color='#000000'>${viewModel.email}</font>")
+                sourceString = getString(R.string.verify_title, "<font color='#9E9E9E'>${viewModel.email}</font>")
                 tvTitle?.text = sourceString.toSpanned()
             }
             else -> Utils.Log(TAG,"Nothing")

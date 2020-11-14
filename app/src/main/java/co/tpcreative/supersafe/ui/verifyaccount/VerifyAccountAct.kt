@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.verifyaccount
 import android.accounts.AccountManager
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextWatcher
@@ -10,12 +9,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
-import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
-import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeReceiver
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
@@ -28,7 +24,6 @@ import co.tpcreative.supersafe.model.EnumStepProgressing.*
 
 class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
     var isNext = false
-    //var presenter: VerifyAccountPresenter? = null
     var isBack = true
     var isSync = true
     var progressing = NONE
@@ -62,7 +57,6 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        //presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -101,27 +95,9 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
             val value = s.toString().trim { it <= ' ' }
             if (currentFocus === edtEmail) {
                 viewModel.email = value
-//                isNext = if (Utils.isValidEmail(value)) {
-//                    btnSave?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-//                    btnSave?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
-//                    true
-//                } else {
-//                    btnSave?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
-//                    btnSave?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
-//                    false
-//                }
             } else if (currentFocus === edtCode) {
                 viewModel.code = value
                 Utils.Log(TAG, "code")
-//                isNext = if (Utils.isValid(value)) {
-//                    btnSignIn?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-//                    btnSignIn?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
-//                    true
-//                } else {
-//                    btnSignIn?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
-//                    btnSignIn?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
-//                    false
-//                }
             }
         }
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -186,14 +162,6 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
         }
     }
 
-//    override fun getContext(): Context? {
-//        return applicationContext
-//    }
-//
-//    override fun getActivity(): Activity? {
-//        return this
-//    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -211,65 +179,4 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
             else -> Utils.Log(TAG, "Nothing action")
         }
     }
-
-//    override fun onStartLoading(status: EnumStatus) {
-//        when (status) {
-//            EnumStatus.RESEND_CODE -> {
-//            }
-//            EnumStatus.VERIFY_CODE -> {
-//                progressBarCircularIndeterminateVerifyCode?.visibility = View.VISIBLE
-//                btnSendVerifyCode?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_disable_rounded)
-//                btnSendVerifyCode?.text = ""
-//            }
-//            else -> Utils.Log(TAG,"Nothing")
-//        }
-//    }
-
-//    override fun onStopLoading(status: EnumStatus) {
-//        when (status) {
-//            EnumStatus.RESEND_CODE -> {
-//            }
-//            EnumStatus.VERIFY_CODE -> {
-//                progressBarCircularIndeterminateVerifyCode?.visibility = View.INVISIBLE
-//                btnSendVerifyCode?.background = ContextCompat.getDrawable(getContext()!!,R.drawable.bg_button_rounded)
-//                btnSendVerifyCode?.text = getString(R.string.send_verification_code)
-//            }
-//            else -> Utils.Log(TAG,"Nothing")
-//        }
-//    }
-
-//    override fun onError(message: String?, status: EnumStatus?) {
-//        when (status) {
-//            EnumStatus.CHANGE_EMAIL -> {
-//                edtEmail?.error = message
-//            }
-//            EnumStatus.VERIFY_CODE -> {
-//                edtCode?.error = message
-//            }
-//            else -> Utils.Log(TAG,"Nothing")
-//        }
-//    }
-
-//    override fun onError(message: String?) {}
-//    override fun onSuccessful(message: String?) {}
-//    override fun onSuccessful(message: String?, status: EnumStatus?) {
-//        when (status) {
-//            EnumStatus.CHANGE_EMAIL -> {
-//                onShowView(llAction!!)
-//            }
-//            EnumStatus.SEND_EMAIL -> {
-//                onShowView(btnSendVerifyCode!!)
-//                SingletonManagerProcessing.getInstance()?.onStopProgressing(this@VerifyAccountAct)
-//                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.we_sent_access_code_to_your_email))
-//            }
-//            EnumStatus.VERIFY_CODE -> {
-//                edtCode?.setText("")
-//                onShowDialogEnableSync()
-//            }
-//            else -> Utils.Log(TAG,"Nothing")
-//        }
-//    }
-//
-//    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-//    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 }

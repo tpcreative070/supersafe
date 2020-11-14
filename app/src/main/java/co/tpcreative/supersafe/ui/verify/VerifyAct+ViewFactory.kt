@@ -12,6 +12,7 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumValidationKey
+import co.tpcreative.supersafe.ui.verifyaccount.sendCode
 import co.tpcreative.supersafe.viewmodel.VerifyViewModel
 import kotlinx.android.synthetic.main.activity_verify.*
 import kotlinx.android.synthetic.main.activity_verify.progressBarCircularIndeterminate
@@ -108,6 +109,7 @@ private fun VerifyAct.resendCode(){
     viewModel.resendCode().observe(this, Observer{
         when(it.status){
             Status.SUCCESS -> {
+                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),String.format(getString(R.string.we_sent_access_code_to_your_email),Utils.getUserId()?:""))
                 Utils.Log(TAG,"Success ${it.toJson()}")
             }
             Status.ERROR -> {

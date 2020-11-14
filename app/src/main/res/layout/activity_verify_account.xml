@@ -96,7 +96,6 @@
                         android:textSize="@dimen/text_size_normal" />
                 </RelativeLayout>
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:textColor="?attr/colorPrimary"
                     android:textSize="@dimen/medium_17"
                     android:layout_marginTop="30dp"
                     android:text="@string/verify_code_to_sync_files_to_cloud"
@@ -231,6 +230,7 @@
                 android:layout_margin="50dp"
                 android:orientation="vertical">
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:textStyle="bold"
                     android:id="@+id/tvTitle"
                     android:textColor="?attr/colorAccent"
                     android:layout_width="match_parent"
