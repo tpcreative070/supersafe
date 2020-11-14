@@ -35,14 +35,14 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
 
     private fun validationCode(mValue : String){
         if (mValue.isEmpty()){
-            putError(EnumValidationKey.EDIT_CODE, "Request enter code")
+            putError(EnumValidationKey.EDIT_TEXT_CODE, "Request enter code")
         }else if (!Utils.isValid(mValue)){
-            putError(EnumValidationKey.EDIT_CODE, "Email invalid")
+            putError(EnumValidationKey.EDIT_TEXT_CODE, "Code invalid")
         }else if(mValue.length< 6 || mValue.length>6){
-            putError(EnumValidationKey.EDIT_CODE, "Must be 6 character")
+            putError(EnumValidationKey.EDIT_TEXT_CODE, "Must be 6 character")
         }
         else{
-            putError(EnumValidationKey.EDIT_CODE)
+            putError(EnumValidationKey.EDIT_TEXT_CODE)
         }
         errorMessages.postValue(errorMessages.value)
         Utils.Log(TAG,"Print ${errorMessages.value?.toJson()} $mValue")
@@ -55,7 +55,8 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
             when(mResult.status){
                 Status.SUCCESS -> {
                     if (mResult.data?.error!!){
-                        putErrorResponse(EnumValidationKey.EDIT_CODE,getString(R.string.the_code_not_signed_up))
+                        putErrorResponse(EnumValidationKey.EDIT_TEXT_CODE,getString(R.string.the_code_not_signed_up))
+                        emit(Resource.error(mResult.data.responseCode?: Utils.CODE_EXCEPTION, mResult.data.responseMessage ?:"",null))
                     }else{
                         setPremiumData(mResult.data.data)
                         emit(mResult)
@@ -77,7 +78,9 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
             val mResult = userViewModel.resendCode(getRequestCode())
             when(mResult.status){
                 Status.SUCCESS -> {
-                    if (!mResult.data?.error!!){
+                    if (mResult.data?.error!!){
+                        emit(Resource.error(mResult.data.responseCode?: Utils.CODE_EXCEPTION, mResult.data.responseMessage ?:"",null))
+                    }else{
                         mResult.data.data?.requestCode?.code?.let { setCodeRequest(it) }
                         val mResultSentEmail = userViewModel.sendEmail(EnumStatus.SIGN_IN)
                         when(mResultSentEmail.status){

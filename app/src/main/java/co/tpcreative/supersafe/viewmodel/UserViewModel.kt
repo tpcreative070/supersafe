@@ -233,7 +233,7 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
-    suspend fun updatedUserId(request: ChangeUserIdRequest) : Resource<RootResponse>{
+    suspend fun changedUserId(request: ChangeUserIdRequest) : Resource<RootResponse>{
         return withContext(Dispatchers.IO){
             try {
                 service.updateUser(request)
@@ -243,10 +243,10 @@ class UserViewModel(private val service: UserService, micService: MicService) : 
         }
     }
 
-    suspend fun checkedUserId() : Resource<RootResponse>{
+    suspend fun checkedUserId(request : UserRequest? = UserRequest()) : Resource<RootResponse>{
         return withContext(Dispatchers.IO){
             try {
-                service.checkUserId(UserRequest())
+                service.checkUserId(request!!)
             }catch (e : Exception){
                 Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
             }

@@ -73,7 +73,7 @@ fun VerifyAct.initUI(){
 
     viewModel.errorResponseMessage.observe(this,{mResult ->
         mResult?.let {
-            edtCode.error = it.get(EnumValidationKey.EDIT_CODE.name)
+            edtCode.error = it.get(EnumValidationKey.EDIT_TEXT_CODE.name)
             if (it.values.isEmpty()){
                 btnLogin?.background = ContextCompat.getDrawable(this,R.drawable.bg_button_rounded)
                 btnLogin?.setTextColor(ContextCompat.getColor(this,R.color.white))

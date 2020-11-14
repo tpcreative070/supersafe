@@ -857,6 +857,7 @@ object Utils {
     }
 
     fun setUserPreShare(user: User?) {
+        Log(TAG,"Set user data by code => ${user?.code}")
         PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
     }
 

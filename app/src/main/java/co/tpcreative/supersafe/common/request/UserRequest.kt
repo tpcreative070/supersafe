@@ -22,4 +22,14 @@ class UserRequest : Serializable {
         device_id = SuperSafeApplication.getInstance().getDeviceId()
         session_token = Utils.getAccessToken()
     }
+
+    constructor(newUserId: String) {
+        val mUser: User = Utils.getUserInfo() ?: return
+        val mAuthor: Authorization = mUser.author ?: return
+        user_id = newUserId
+        refresh_token = mAuthor.refresh_token
+        public_key = mAuthor.public_key
+        device_id = SuperSafeApplication.getInstance().getDeviceId()
+        session_token = Utils.getAccessToken()
+    }
 }

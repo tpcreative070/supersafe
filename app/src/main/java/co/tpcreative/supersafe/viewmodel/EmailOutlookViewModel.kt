@@ -55,6 +55,7 @@ class EmailOutlookViewModel(private val micService: MicService) : ViewModel(){
                     }
                 }
             }catch (e : Exception){
+                e.printStackTrace()
                 Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
             }
         }
