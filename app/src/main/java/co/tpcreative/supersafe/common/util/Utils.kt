@@ -777,7 +777,7 @@ object Utils {
     /*Check request delete category from global*/
     fun checkCategoryDeleteSyncedLocal(mSyncedList: List<MainCategoryModel>): List<MainCategoryModel> {
         val mListResult: MutableList<MainCategoryModel> = ArrayList<MainCategoryModel>()
-        val mListLocal: List<MainCategoryModel>? = SQLHelper.getListCategories(false)
+        val mListLocal: List<MainCategoryModel>? = SQLHelper.requestSyncCategories(isSyncOwnServer =true,isFakePin = false)
         /*Convert list to hash-map*/
         val mMap: Map<String?, MainCategoryModel>? = mSyncedList.associateBy({ it.categories_id }, { it })
         mListLocal?.let {
@@ -789,7 +789,7 @@ object Utils {
                 }
             }
         }
-        Log(TAG, "checking category ${mListResult?.size}")
+        Log(TAG, "checking category ${mListResult.size}")
         return mListResult
     }
 
@@ -860,6 +860,21 @@ object Utils {
         Log(TAG,"User id ====================> ${user?.email}")
         Log(TAG,"Cloud id ===================> ${user?.cloud_id}")
         PrefsController.putString(SuperSafeApplication.Companion.getInstance().getString(R.string.key_user), Gson().toJson(user))
+    }
+
+    fun setDriveConnect(isConnected : Boolean? = null,accessToken : String? = null,cloudId : String? = null){
+        val mUser = getUserInfo()
+        isConnected?.let {
+            Utils.Log(TAG,"show drive connected here $it")
+            mUser?.driveConnected = it
+        }
+        if (!accessToken.isNullOrEmpty()){
+            mUser?.access_token = accessToken
+        }
+        if (!cloudId.isNullOrEmpty()){
+            mUser?.cloud_id = cloudId
+        }
+        setUserPreShare(mUser)
     }
 
     fun setEmailToken(data : EmailToken?){

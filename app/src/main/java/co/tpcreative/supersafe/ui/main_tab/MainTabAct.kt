@@ -278,6 +278,7 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
         val user: User? = Utils.getUserInfo()
         if (user != null) {
             if (!user.driveConnected) {
+                Utils.Log(TAG,"drive connect ${user.driveConnected}")
                 onAnimationIcon(EnumStatus.SYNC_ERROR)
             }
         }

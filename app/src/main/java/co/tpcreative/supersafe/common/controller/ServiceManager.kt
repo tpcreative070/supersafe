@@ -21,6 +21,7 @@ import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
 import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
@@ -130,9 +131,6 @@ class ServiceManager : BaseServiceView<Any?> {
             getUserInfo()
             getTracking()
         }
-        if (Utils.isConnectedToGoogleDrive()){
-            getDriveAbout()
-        }
     }
 
     private suspend fun getUserInfo() = withContext(Dispatchers.IO){
@@ -152,13 +150,24 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    suspend fun getDriveAbout() = withContext(Dispatchers.IO){
-        val mResult = driveViewModel.getDriveAbout()
-        when(mResult.status){
-            Status.SUCCESS -> Utils.Log(TAG,"Fetch drive about completed")
-            else -> Utils.Log(TAG,"Fetch drive about issue ${mResult.message}")
+    suspend fun getDriveAbout() : Resource<Boolean> = withContext(Dispatchers.IO){
+        try {
+            val mResult = driveViewModel.getDriveAbout()
+            when(mResult.status){
+                Status.SUCCESS -> {
+                    Utils.Log(TAG,"Fetch drive about completed")
+                    mResult
+                }
+                else ->{
+                    Utils.Log(TAG,"Fetch drive about issue ${mResult.message}")
+                    Resource.error(mResult.code ?: Utils.CODE_EXCEPTION,mResult.message ?: "",null)
+                }
+            }
+        }catch (e : Exception){
+            Resource.error(Utils.CODE_EXCEPTION,e.message ?:"",null)
         }
     }
+
 
     private suspend fun getTracking() = withContext(Dispatchers.IO){
         val mResult = userViewModel.getTracking()

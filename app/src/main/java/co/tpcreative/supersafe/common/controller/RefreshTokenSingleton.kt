@@ -1,8 +1,10 @@
 package co.tpcreative.supersafe.common.controller
 import android.accounts.Account
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
 import com.google.android.gms.auth.GoogleAuthException
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -56,15 +58,26 @@ class RefreshTokenSingleton private constructor() {
             credential.selectedAccount = accounts
             try {
                 val value = credential.token
-                if (value != null) {
-                    val mAuthor: User? = Utils.getUserInfo()
-                    if (mAuthor != null) {
-                        mAuthor.driveConnected = true
-                        mAuthor.access_token = kotlin.String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
-                        Utils.Log(TAG, "Refresh access token value: " + mAuthor.access_token)
-                        mAuthor.email = credential.selectedAccount.name
-                        Utils.setUserPreShare(mAuthor)
-                        ServiceManager.getInstance()?.onPreparingSyncData()
+                val mCloudId  = credential.selectedAccount.name
+                val mAccessToken = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
+                Utils.setDriveConnect(accessToken = mAccessToken)
+                if (Utils.isConnectedToGoogleDrive()){
+                    Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
+                    ServiceManager.getInstance()?.onPreparingSyncData()
+                    Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
+                }else{
+                    val mResultDriveAbout = ServiceManager.getInstance()?.getDriveAbout()
+                    when(mResultDriveAbout?.status){
+                        Status.SUCCESS ->{
+                            Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
+                            Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
+                            ServiceManager.getInstance()?.onPreparingSyncData()
+                            Utils.setDriveConnect(accessToken = mAccessToken)
+                        }
+                        else -> {
+                            Utils.Log(TAG,mResultDriveAbout?.message)
+                            Utils.onPushEventBus(EnumStatus.SYNC_ERROR)
+                        }
                     }
                 }
             } catch (e: GoogleAuthException) {

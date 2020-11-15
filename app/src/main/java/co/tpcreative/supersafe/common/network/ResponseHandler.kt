@@ -3,7 +3,9 @@ import co.tpcreative.supersafe.common.api.response.BaseResponse
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toObjectMayBeNull
+import co.tpcreative.supersafe.common.response.DriveResponse
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.DriveAbout
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.io.IOException
@@ -26,11 +28,16 @@ open class ResponseHandler {
                     val mMessage = mBody?.string()
                     val mObject = mMessage?.toObjectMayBeNull(BaseResponse::class.java)
                     Utils.Log(TAG,mMessage)
-                    getErrorCode(mCode!!)
                     mObject?.let {
+                        getErrorCode(mCode!!)
                         Resource.error(mCode,it.toJson(), null)
-                    } ?:
-                    Resource.error(mCode,mMessage ?: "Unknown", null)
+                    } ?: run{
+                        val mDriveObject = mMessage?.toObjectMayBeNull(DriveAbout::class.java)
+                        mDriveObject?.let {
+                            Utils.setDriveConnect(false)
+                        }
+                        Resource.error(mCode!!,mMessage ?: "Unknown", null)
+                    }
                 } catch (e: IOException) {
                     e.printStackTrace()
                     Resource.error(mCode!!,e.message!!, null)

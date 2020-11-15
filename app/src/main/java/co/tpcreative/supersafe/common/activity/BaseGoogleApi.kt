@@ -20,6 +20,7 @@ import co.tpcreative.supersafe.common.util.ThemeUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.HomeWatcher
 import co.tpcreative.supersafe.common.SensorFaceUpDownChangeNotifier
+import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.model.*
 import com.google.android.gms.auth.GoogleAuthException
 import com.google.android.gms.auth.GoogleAuthUtil
@@ -265,26 +266,46 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
             try {
                 val value = credential.token
                 if (value != null) {
-                    val mUser: User? = Utils.getUserInfo()
-                    if (mUser != null) {
-                        mUser.driveConnected = true
-                        mUser.access_token = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
-                        mUser.cloud_id = credential.selectedAccount.name
-                        Utils.Log(TAG, "Refresh access token value=> " + mUser.access_token)
-                        Utils.setUserPreShare(mUser)
+                    val mCloudId  = credential.selectedAccount.name
+                    val mAccessToken = String.format(SuperSafeApplication.getInstance().getString(R.string.access_token), value)
+                    Utils.setDriveConnect(accessToken = mAccessToken)
+                    if (Utils.isConnectedToGoogleDrive()){
+                        Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
                         ServiceManager.getInstance()?.onPreparingSyncData()
                         if (isSignIn()) {
                             Utils.Log(TAG, "Call onDriveClientReady")
                             onDriveClientReady()
                         }
+                        Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
+                    }else{
+                        val mResultDriveAbout = ServiceManager.getInstance()?.getDriveAbout()
+                        when(mResultDriveAbout?.status){
+                            Status.SUCCESS ->{
+                                Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
+                                Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
+                                ServiceManager.getInstance()?.onPreparingSyncData()
+                                if (isSignIn()) {
+                                    Utils.Log(TAG, "Call onDriveClientReady")
+                                    onDriveClientReady()
+                                }
+                                Utils.setDriveConnect(accessToken = mAccessToken)
+                            }
+                            else -> {
+                                Utils.Log(TAG,mResultDriveAbout?.message)
+                                revokeAccess()
+                            }
+                        }
                     }
                 }
             } catch (e: GoogleAuthException) {
+                e.printStackTrace()
                 Utils.Log(TAG, "Error occurred on GoogleAuthException")
             }
         } catch (recoverableException: UserRecoverableAuthIOException) {
+            recoverableException.printStackTrace()
             Utils.Log(TAG, "Error occurred on UserRecoverableAuthIOException")
         } catch (e: IOException) {
+            e.printStackTrace()
             Utils.Log(TAG, "Error occurred on IOException")
         }
     }
@@ -341,6 +362,7 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
         mGoogleSignInClient?.revokeAccess()?.addOnCompleteListener(this) {
             onDriveRevokeAccess()
             PrefsController.putBoolean(getString(R.string.key_request_sign_out_google_drive), false)
+            Utils.onPushEventBus(EnumStatus.SYNC_ERROR)
         }
     }
 

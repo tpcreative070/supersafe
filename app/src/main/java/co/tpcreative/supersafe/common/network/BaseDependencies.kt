@@ -13,11 +13,12 @@ import java.util.concurrent.TimeUnit
 
 
 open class BaseDependencies {
-    var intercepter = HttpLoggingInterceptor().apply {
+    var mInterceptor = HttpLoggingInterceptor().apply {
         if (BuildConfig.DEBUG){
             this.level = HttpLoggingInterceptor.Level.BASIC
         }
     }
+
     protected fun provideOkHttpClientDefault(): OkHttpClient {
         val timeout = getTimeOut()
         return OkHttpClient.Builder()
@@ -35,7 +36,7 @@ open class BaseDependencies {
                         }
                     }
                     chain.proceed(builder.build())
-                }.addInterceptor(intercepter).build()
+                }.addInterceptor(mInterceptor).build()
     }
 
     private fun getHeaders(): HashMap<String, String>? {
