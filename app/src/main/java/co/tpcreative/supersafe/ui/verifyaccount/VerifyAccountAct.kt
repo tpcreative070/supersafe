@@ -168,14 +168,6 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
             Navigator.ENABLE_CLOUD -> if (resultCode == Activity.RESULT_OK) {
                 finish()
             }
-            Navigator.REQUEST_CODE_EMAIL -> if (resultCode == Activity.RESULT_OK) {
-                val accountName: String? = data?.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
-                Utils.Log(TAG, "accountName : $accountName")
-                val googleOauth = GoogleOauth()
-                googleOauth.email = accountName
-                googleOauth.isEnableSync = isSync
-                Navigator.onCheckSystem(this@VerifyAccountAct, googleOauth)
-            }
             else -> Utils.Log(TAG, "Nothing action")
         }
     }

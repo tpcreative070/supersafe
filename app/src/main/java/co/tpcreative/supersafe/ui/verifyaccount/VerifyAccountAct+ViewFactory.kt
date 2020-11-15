@@ -43,10 +43,6 @@ fun VerifyAccountAct.initUI(){
     progressBarCircularIndeterminateSignIn?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
     progressBarCircularIndeterminateReSend?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
     progressBarCircularIndeterminateVerifyCode?.setBackgroundColor(ContextCompat.getColor(this,theme?.getAccentColor()!!))
-    llGoogle.setOnClickListener {
-        onShowDialog()
-    }
-
     imgEdit.setOnClickListener {
         Utils.Log(TAG, "edit")
         onShowView(it)
@@ -163,28 +159,6 @@ fun VerifyAccountAct.initUI(){
     })
     val mUser = Utils.getUserInfo()
     Utils.Log(TAG,"Code ==> ${mUser?.code}")
-}
-
-fun VerifyAccountAct.onShowDialog() {
-    val theme: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-    MaterialStyledDialog.Builder(this)
-            .setTitle(R.string.signin_with_google)
-            .setDescription(R.string.choose_google_account)
-            .setHeaderDrawable(R.drawable.ic_google_transparent_margin_60)
-            .setHeaderScaleType(ImageView.ScaleType.CENTER_INSIDE)
-            .setHeaderColor(theme?.getPrimaryColor()!!)
-            .setCancelable(true)
-            .setPositiveText(R.string.ok)
-            .setNegativeText(R.string.cancel)
-            .setCheckBox(true, R.string.enable_cloud) { compoundButton, b ->
-                Utils.Log(TAG, "checked :$b")
-                isSync = b
-            }
-            .onPositive {
-                Utils.Log(TAG, "positive")
-                ServiceManager.getInstance()?.onPickUpNewEmail(this)
-            }
-            .show()
 }
 
 fun VerifyAccountAct.onShowDialogEnableSync() {

@@ -994,6 +994,11 @@ object Utils {
         return false
     }
 
+    fun isVerifiedAccount() : Boolean{
+        val mUser = getUserInfo()
+        return mUser?.verified ?: false
+    }
+
     fun isCheckAllowUpload(): Boolean {
         val mUser = getUserInfo() ?: return false
         val syncData: SyncData? = mUser.syncData

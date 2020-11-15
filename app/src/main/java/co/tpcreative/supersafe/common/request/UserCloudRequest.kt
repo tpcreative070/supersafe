@@ -8,9 +8,9 @@ class UserCloudRequest {
     var session_token: String?
 
     /*Check cloud id*/
-    constructor(user_id: String?, cloud_id: String?) {
+    constructor(user_id: String?) {
         this.user_id = user_id
-        this.cloud_id = cloud_id
+        this.cloud_id = null
         session_token = Utils.getAccessToken()
     }
 

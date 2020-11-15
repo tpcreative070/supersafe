@@ -312,19 +312,16 @@ fun AlbumDetailAct.onDialogDownloadFile() {
 
 /*Download file*/
 fun AlbumDetailAct.onEnableSyncData() {
-    val mUser: User? = Utils.getUserInfo()
-    if (mUser != null) {
-        if (mUser.verified) {
-            if (!mUser.driveConnected) {
-                Navigator.onCheckSystem(this, null)
-            } else {
-                onDialogDownloadFile()
-                ServiceManager.getInstance()?.onPreparingEnableDownloadData(presenter?.mList?.let { Utils.getCheckedList(it) })
-                //ServiceManager.getInstance().getObservableDownload();
-            }
+    if (Utils.isVerifiedAccount()) {
+        if (Utils.isConnectedToGoogleDrive()) {
+            onDialogDownloadFile()
+            ServiceManager.getInstance()?.onPreparingEnableDownloadData(presenter?.mList?.let { Utils.getCheckedList(it) })
+
         } else {
-            Navigator.onVerifyAccount(this)
+            Navigator.onCheckSystem(this, null)
         }
+    } else {
+        Navigator.onVerifyAccount(this)
     }
 }
 

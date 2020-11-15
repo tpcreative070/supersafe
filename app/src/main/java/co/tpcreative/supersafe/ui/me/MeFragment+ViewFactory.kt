@@ -45,16 +45,14 @@ fun MeFragment.initUI(){
     }
 
     llEnableCloud.setOnClickListener {
-        if (presenter?.mUser != null) {
-            if (presenter?.mUser?.verified!!) {
-                if (!(presenter?.mUser?.driveConnected)!!) {
-                    Navigator.onCheckSystem(activity!!, null)
-                } else {
-                    Navigator.onManagerCloud(activity!!)
-                }
+        if (Utils.isVerifiedAccount()) {
+            if (Utils.isConnectedToGoogleDrive()) {
+                Navigator.onManagerCloud(activity!!)
             } else {
-                Navigator.onVerifyAccount(activity!!)
+                Navigator.onCheckSystem(activity!!, null)
             }
+        } else {
+            Navigator.onVerifyAccount(activity!!)
         }
     }
 

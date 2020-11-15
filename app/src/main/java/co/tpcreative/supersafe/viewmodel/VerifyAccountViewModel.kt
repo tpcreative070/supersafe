@@ -84,6 +84,7 @@ class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : BaseVi
             }
         }catch (e : Exception){
             e.printStackTrace()
+            Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
         }
         finally {
             isLoading.postValue(false)
@@ -111,6 +112,7 @@ class VerifyAccountViewModel(private val userViewModel: UserViewModel)  : BaseVi
             }
         }catch (e : Exception){
             e.printStackTrace()
+            Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null)
         }
         finally {
             isLoading.postValue(false)

@@ -106,17 +106,14 @@ class SettingsAct : BaseActivity() {
             Navigator.ENABLE_CLOUD -> {
                 Utils.Log(TAG, "onResultResponse :$resultCode")
                 if (resultCode == Activity.RESULT_OK) {
-                    val mUser: User? = Utils.getUserInfo()
-                    if (mUser != null) {
-                        if (mUser.verified) {
-                            if (!mUser.driveConnected) {
-                                Navigator.onCheckSystem(this, null)
-                            } else {
-                                Navigator.onManagerCloud(this)
-                            }
+                    if (Utils.isVerifiedAccount()) {
+                        if (Utils.isConnectedToGoogleDrive()) {
+                            Navigator.onManagerCloud(this)
                         } else {
-                            Navigator.onVerifyAccount(this)
+                            Navigator.onCheckSystem(this, null)
                         }
+                    } else {
+                        Navigator.onVerifyAccount(this)
                     }
                 }
             }
@@ -205,17 +202,14 @@ class SettingsAct : BaseActivity() {
                     } else if (preference.key == getString(R.string.key_about_SuperSafe)) {
                         Navigator.onMoveAboutSuperSafe(context!!)
                     } else if (preference.key == getString(R.string.key_private_cloud)) {
-                        val mUser: User? = Utils.getUserInfo()
-                        if (mUser != null) {
-                            if (mUser.verified) {
-                                if (!mUser.driveConnected) {
-                                    Navigator.onCheckSystem(activity!!, null)
-                                } else {
-                                    Navigator.onManagerCloud(context!!)
-                                }
+                        if (Utils.isVerifiedAccount()) {
+                            if (Utils.isConnectedToGoogleDrive()) {
+                                Navigator.onManagerCloud(context!!)
                             } else {
-                                Navigator.onVerifyAccount(context!!)
+                                Navigator.onCheckSystem(activity!!, null)
                             }
+                        } else {
+                            Navigator.onVerifyAccount(context!!)
                         }
                     } else if (preference.key == getString(R.string.key_album_lock)) {
                         if (!Utils.isPremium()) {

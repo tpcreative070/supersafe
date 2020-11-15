@@ -3,6 +3,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import co.tpcreative.supersafe.common.api.requester.MicService
 import co.tpcreative.supersafe.common.api.requester.UserService
+import co.tpcreative.supersafe.viewmodel.CheckSystemViewModel
 import co.tpcreative.supersafe.viewmodel.UserViewModel
 import co.tpcreative.supersafe.viewmodel.VerifyAccountViewModel
 import co.tpcreative.supersafe.viewmodel.VerifyViewModel
@@ -18,6 +19,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         }
         else if (modelClass.isAssignableFrom(VerifyAccountViewModel::class.java)){
             return VerifyAccountViewModel(UserViewModel(UserService(),MicService())) as T
+        }
+        else if(modelClass.isAssignableFrom(CheckSystemViewModel::class.java)){
+            return CheckSystemViewModel(UserViewModel(UserService(),MicService())) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

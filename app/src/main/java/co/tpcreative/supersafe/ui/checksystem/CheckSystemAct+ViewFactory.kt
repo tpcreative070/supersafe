@@ -1,80 +1,70 @@
 package co.tpcreative.supersafe.ui.checksystem
-import android.annotation.SuppressLint
-import android.text.InputType
+import android.view.View
 import androidx.core.content.ContextCompat
-import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.extension.toSpanned
-import co.tpcreative.supersafe.common.request.VerifyCodeRequest
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import co.tpcreative.supersafe.common.Navigator
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ThemeApp
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.input.getInputField
-import com.afollestad.materialdialogs.input.input
-import com.google.gson.Gson
+import co.tpcreative.supersafe.viewmodel.CheckSystemViewModel
 import kotlinx.android.synthetic.main.activity_check_system.*
+import kotlinx.android.synthetic.main.activity_check_system.toolbar
 
 fun CheckSystemAct.initUI(){
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.hide()
-    presenter = CheckSystemPresenter()
-    presenter?.bindView(this)
-    presenter?.getIntent(this)
-    onStartLoading(EnumStatus.OTHER)
-    if (presenter?.googleOauth != null) {
-        val email: String? = presenter!!.googleOauth?.email
-        if (email == presenter?.mUser?.email) {
-            presenter?.onCheckUser(presenter?.googleOauth?.email, presenter?.googleOauth?.email)
-        } else {
-            this.email = email
-            val request = VerifyCodeRequest()
-            request.new_user_id = this.email
-            request.other_email = email
-            request.user_id = presenter?.mUser?.email
-            request._id = presenter?.mUser?._id
-            presenter?.onChangeEmail(request)
-        }
-    } else {
-        handler?.postDelayed(Runnable { presenter?.onUserCloudChecking() }, 5000)
-    }
+    handler?.postDelayed(Runnable { checkUserCloud() }, 5000)
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-    progressBarCircularIndeterminate?.setBackgroundColor(ContextCompat.getColor(this,themeApp?.getAccentColor()!!))
+
+    viewModel.isLoading.observe(this,{
+        if (it){
+            progressBarCircularIndeterminate?.visibility = View.VISIBLE
+            progressBarCircularIndeterminate?.setBackgroundColor(ContextCompat.getColor(this,themeApp?.getAccentColor()!!))
+        }else{
+            progressBarCircularIndeterminate?.visibility = View.INVISIBLE
+        }
+    })
+    viewModel.isLoading.postValue(true)
 }
 
-@SuppressLint("ClickableViewAccessibility", "CheckResult")
-fun CheckSystemAct.onVerifyInputCode(email: String?) {
-    Utils.Log(TAG, " User..." + Gson().toJson(presenter?.mUser))
-    try {
-        val dialog = MaterialDialog(this)
-        val next = "<font color='#0091EA'>($email)</font>"
-        val value: String = getString(R.string.description_pin_code, next)
-        dialog.title(text = getString(R.string.verify_email))
-        dialog.message(text = value.toSpanned())
-        dialog.input(inputType = InputType.TYPE_CLASS_NUMBER,hint = getString(R.string.pin_code),hintRes = null,allowEmpty = false) { dialog,input ->
-            Utils.Log(TAG, "call input code")
-            val request = VerifyCodeRequest()
-            request.user_id = presenter?.mUser?.email
-            request.code = input.toString().trim { it <= ' ' }
-            request._id = presenter?.mUser?._id
-            request.device_id = SuperSafeApplication.getInstance().getDeviceId()
-            presenter?.onVerifyCode(request)
+private fun CheckSystemAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(CheckSystemViewModel::class.java)
+}
+
+fun CheckSystemAct.checkUserCloud() {
+    viewModel.checkUserCloud().observe(this, Observer{
+        when(it.status){
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Success ${it.toJson()}")
+                Navigator.onEnableCloud(this)
+            }
+            else -> {
+                Utils.Log(TAG,"Nothing")
+                Navigator.onEnableCloud(this)
+            }
         }
-        dialog.positiveButton(text = getString(R.string.ok))
-        dialog.negativeButton(text = getString(R.string.cancel))
-        dialog.negativeButton {
-            onStopLoading(EnumStatus.OTHER)
-            onBackPressed()
+    })
+}
+
+fun CheckSystemAct.addUserCloud() {
+    viewModel.addUserCloud().observe(this, Observer{
+        when(it.status){
+            Status.SUCCESS -> {
+                onBackPressed()
+                Utils.Log(TAG,"Success ${it.toJson()}")
+            }
+            else -> {
+                Utils.Log(TAG,"Nothing")
+                Navigator.onEnableCloud(this)
+            }
         }
-        val editText = dialog.getInputField()
-        editText.setOnTouchListener { view, motionEvent ->
-            view?.isFocusable = true
-            view?.isFocusableInTouchMode = true
-            false
-        }
-        editText.isFocusable = false
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
+    })
 }

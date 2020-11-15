@@ -326,17 +326,14 @@ fun MainTabAct.onSuggestionSyncData() {
 }
 
 fun MainTabAct.onEnableSyncData() {
-    val mUser: User? = Utils.getUserInfo()
-    if (mUser != null) {
-        if (mUser.verified) {
-            if (!mUser.driveConnected) {
-                Navigator.onCheckSystem(this, null)
-            } else {
-                Navigator.onManagerCloud(this)
-            }
+    if (Utils.isVerifiedAccount()) {
+        if (Utils.isConnectedToGoogleDrive()) {
+            Navigator.onManagerCloud(this)
         } else {
-            Navigator.onVerifyAccount(this)
+            Navigator.onCheckSystem(this, null)
         }
+    } else {
+        Navigator.onVerifyAccount(this)
     }
 }
 

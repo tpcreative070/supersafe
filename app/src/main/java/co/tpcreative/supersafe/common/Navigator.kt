@@ -213,7 +213,7 @@ object Navigator {
         val bundle = Bundle()
         bundle.putSerializable(context.getString(R.string.key_google_oauth), googleOauth)
         intent.putExtras(bundle)
-        context.startActivityForResult(intent, Navigator.ENABLE_CLOUD)
+        context.startActivityForResult(intent, ENABLE_CLOUD)
     }
 
     fun onPlayer(context: Context, items: ItemModel, main: MainCategoryModel) {

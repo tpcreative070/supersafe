@@ -338,16 +338,16 @@ fun PhotoSlideShowAct.onRotateBitmap(items: ItemModel?) {
 fun PhotoSlideShowAct.onEnableSyncData(position: Int) {
     val mUser: User? = Utils.getUserInfo()
     if (mUser != null) {
-        if (mUser.verified) {
-            if (!mUser.driveConnected) {
-                Navigator.onCheckSystem(this, null)
-            } else {
+        if (Utils.isVerifiedAccount()) {
+            if (Utils.isConnectedToGoogleDrive()) {
                 onDialogDownloadFile()
                 val list: MutableList<ItemModel> = ArrayList<ItemModel>()
                 val items: ItemModel? = presenter?.mList?.get(position)
                 items?.isChecked = true
                 list.add(items!!)
                 ServiceManager.getInstance()?.onPreparingEnableDownloadData(list)
+            } else {
+                Navigator.onCheckSystem(this, null)
             }
         } else {
             Navigator.onVerifyAccount(this)
