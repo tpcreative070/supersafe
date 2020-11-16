@@ -63,16 +63,15 @@ class RefreshTokenSingleton private constructor() {
                 Utils.setDriveConnect(accessToken = mAccessToken)
                 if (Utils.isConnectedToGoogleDrive()){
                     Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
+                    Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId)
                     ServiceManager.getInstance()?.onPreparingSyncData()
-                    Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
                 }else{
                     val mResultDriveAbout = ServiceManager.getInstance()?.getDriveAbout()
                     when(mResultDriveAbout?.status){
                         Status.SUCCESS ->{
-                            Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
                             Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
+                            Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
                             ServiceManager.getInstance()?.onPreparingSyncData()
-                            Utils.setDriveConnect(accessToken = mAccessToken)
                         }
                         else -> {
                             Utils.Log(TAG,mResultDriveAbout?.message)

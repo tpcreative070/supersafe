@@ -271,24 +271,21 @@ abstract class BaseGoogleApi : AppCompatActivity(), SensorFaceUpDownChangeNotifi
                     Utils.setDriveConnect(accessToken = mAccessToken)
                     if (Utils.isConnectedToGoogleDrive()){
                         Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
-                        ServiceManager.getInstance()?.onPreparingSyncData()
+                        Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId)
                         if (isSignIn()) {
                             Utils.Log(TAG, "Call onDriveClientReady")
                             onDriveClientReady()
                         }
-                        Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
                     }else{
                         val mResultDriveAbout = ServiceManager.getInstance()?.getDriveAbout()
                         when(mResultDriveAbout?.status){
                             Status.SUCCESS ->{
-                                Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
                                 Utils.Log(TAG, "Refresh access token value=> $mAccessToken")
-                                ServiceManager.getInstance()?.onPreparingSyncData()
+                                Utils.setDriveConnect(true,accessToken = mAccessToken,cloudId = mCloudId )
                                 if (isSignIn()) {
                                     Utils.Log(TAG, "Call onDriveClientReady")
                                     onDriveClientReady()
                                 }
-                                Utils.setDriveConnect(accessToken = mAccessToken)
                             }
                             else -> {
                                 Utils.Log(TAG,mResultDriveAbout?.message)

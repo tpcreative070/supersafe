@@ -168,6 +168,24 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
+    suspend fun getInAppList() : Resource<Boolean> = withContext(Dispatchers.IO){
+        try {
+            val mResult = driveViewModel.geInAppList()
+            when(mResult.status){
+                Status.SUCCESS -> {
+                    Utils.Log(TAG,"Fetch drive about completed")
+                    mResult
+                }
+                else ->{
+                    Utils.Log(TAG,"Fetch drive about issue ${mResult.message}")
+                    Resource.error(mResult.code ?: Utils.CODE_EXCEPTION,mResult.message ?: "",null)
+                }
+            }
+        }catch (e : Exception){
+            Resource.error(Utils.CODE_EXCEPTION,e.message ?:"",null)
+        }
+    }
+
 
     private suspend fun getTracking() = withContext(Dispatchers.IO){
         val mResult = userViewModel.getTracking()

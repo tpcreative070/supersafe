@@ -1,24 +1,20 @@
 package co.tpcreative.supersafe.ui.checksystem
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmptyModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import co.tpcreative.supersafe.R
-import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.request.UserCloudRequest
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.viewmodel.CheckSystemViewModel
-import kotlinx.android.synthetic.main.activity_check_system.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.ThreadMode
 
 class CheckSystemAct : BaseGoogleApi(){
@@ -81,7 +77,9 @@ class CheckSystemAct : BaseGoogleApi(){
 
     override fun onDriveClientReady() {
         Utils.Log(TAG, "onDriveClient")
-        addUserCloud()
+        CoroutineScope(Dispatchers.Main).launch {
+            addUserCloud()
+        }
     }
 
     override fun onDriveSuccessful() {}

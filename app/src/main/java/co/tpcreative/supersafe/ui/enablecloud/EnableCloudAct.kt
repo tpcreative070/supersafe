@@ -1,27 +1,25 @@
 package co.tpcreative.supersafe.ui.enablecloud
 import android.accounts.AccountManager
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.request.UserCloudRequest
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.viewmodel.EnableCloudViewModel
 import kotlinx.android.synthetic.main.activity_enable_cloud.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
-    var presenter: EnableCloudPresenter? = null
+class EnableCloudAct : BaseGoogleApi(){
+    lateinit var viewModel : EnableCloudViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enable_cloud)
@@ -50,7 +48,6 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -69,8 +66,9 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
 
     override fun onDriveClientReady() {
         Utils.Log(TAG, "Google drive ready")
-        val request = UserCloudRequest(presenter?.mUser?.email, presenter?.mUser?.cloud_id, SuperSafeApplication.getInstance().getDeviceId())
-        presenter?.onAddUserCloud(request)
+        CoroutineScope(Dispatchers.Main).launch {
+            addUserCloud()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -84,9 +82,7 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
             Navigator.REQUEST_CODE_EMAIL -> if (resultCode == Activity.RESULT_OK) {
                 val accountName: String? = data?.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
                 Utils.Log(TAG, "accountName : $accountName")
-                val cloud_id: String? = presenter?.mUser?.cloud_id
-                if (cloud_id == null) {
-                    presenter?.mUser?.cloud_id = accountName
+                if (Utils.getUserCloudId() == null) {
                     Utils.Log(TAG, "Call Sign out")
                     signOut(object : ServiceManager.ServiceManagerSyncDataListener {
                         override fun onCompleted() {
@@ -98,8 +94,7 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
                         override fun onCancel() {}
                     })
                 } else {
-                    if (accountName == cloud_id) {
-                        presenter?.mUser?.cloud_id = accountName
+                    if (accountName == Utils.getUserCloudId()) {
                         Utils.Log(TAG, "Call Sign out")
                         signOut(object : ServiceManager.ServiceManagerSyncDataListener {
                             override fun onCompleted() {
@@ -113,14 +108,13 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
                             override fun onCancel() {}
                         })
                     } else {
-                        onShowWarning(cloud_id)
+                        onShowWarning(Utils.getUserCloudId())
                     }
                 }
             }
             Navigator.REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT -> if (resultCode == Activity.RESULT_OK) {
                 val accountName: String? = data?.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
                 Utils.Log(TAG, "accountName : $accountName")
-                presenter?.mUser?.cloud_id = accountName
                 Utils.Log(TAG, "Call Sign out")
                 signOut(object : ServiceManager.ServiceManagerSyncDataListener {
                     override fun onCompleted() {
@@ -136,12 +130,6 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
             }
             else -> Utils.Log(TAG, "Nothing action")
         }
-    }
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun getContext(): Context? {
-        return applicationContext
     }
 
     override fun onDriveSuccessful() {
@@ -161,47 +149,10 @@ class EnableCloudAct : BaseGoogleApi(), BaseView<EmptyModel> {
         Utils.Log(TAG, "onDriveRevokeAccess")
     }
 
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {
-        Utils.Log(TAG, "" + message)
-        when (status) {
-            EnumStatus.CREATE -> {
-                onStopProgressDialog()
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
-    }
-
     override fun startServiceNow() {
-        ServiceManager.getInstance()?.onStartService()
         onStopProgressDialog()
     }
 
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.CREATE -> {
-                onStopProgressDialog()
-                val mUser: User? = Utils.getUserInfo()
-                mUser?.cloud_id = message
-                mUser?.driveConnected = true
-                Utils.setUserPreShare(mUser)
-                presenter?.mUser = mUser
-                Utils.Log(TAG, "Finsh enable cloud.........................")
-                ServiceManager.getInstance()?.onPreparingSyncData()
-                ServiceManager.getInstance()?.onGetUserInfo()
-                onBackPressed()
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     override fun isSignIn(): Boolean {
         return true
     }

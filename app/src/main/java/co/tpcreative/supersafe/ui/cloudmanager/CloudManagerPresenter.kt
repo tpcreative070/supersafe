@@ -100,7 +100,7 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            ServiceManager.getInstance()?.getDriveAbout()
+            ServiceManager.getInstance()?.getInAppList()
             view.onSuccessful("Success",EnumStatus.GET_LIST_FILES_IN_APP)
         }
     }

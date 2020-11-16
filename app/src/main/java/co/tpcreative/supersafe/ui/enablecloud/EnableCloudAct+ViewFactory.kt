@@ -1,26 +1,32 @@
 package co.tpcreative.supersafe.ui.enablecloud
 import android.widget.ImageView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.ThemeApp
+import co.tpcreative.supersafe.viewmodel.EnableCloudViewModel
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog
 import kotlinx.android.synthetic.main.activity_enable_cloud.*
+import kotlinx.android.synthetic.main.activity_enable_cloud.toolbar
 
 fun EnableCloudAct.initUI(){
     TAG = this::class.java.simpleName
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     supportActionBar?.hide()
-    presenter = EnableCloudPresenter()
-    presenter?.bindView(this)
-    presenter?.onUserInfo()
     Utils.Log(TAG, "Enable cloud...........")
     btnLinkGoogleDrive.setOnClickListener {
         btnUserAnotherAccount?.isEnabled = false
         btnLinkGoogleDrive?.isEnabled = false
-        val cloud_id: String? = presenter?.mUser?.cloud_id
+        val cloud_id: String? = Utils.getUserCloudId()
         if (cloud_id == null) {
             ServiceManager.getInstance()?.onPickUpNewEmail(this)
         } else {
@@ -34,6 +40,14 @@ fun EnableCloudAct.initUI(){
         btnLinkGoogleDrive?.isEnabled = false
         onShowWarningAnotherAccount()
     }
+
+    viewModel.isLoading.observe(this,{
+        if (it){
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.loading)
+        }else{
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+        }
+    })
 }
 
 fun EnableCloudAct.onShowWarning(cloud_id: String?) {
@@ -76,11 +90,11 @@ fun EnableCloudAct.onShowWarningAnotherAccount() {
             .setCheckBox(checkbox = false, titleRes = R.string.enable_cloud)
             .onPositive {
                 Utils.Log(TAG, "positive")
-                val cloud_id: String? = presenter?.mUser?.cloud_id
-                if (cloud_id == null) {
-                    ServiceManager.getInstance()?.onPickUpNewEmailNoTitle(this@onShowWarningAnotherAccount, presenter?.mUser?.email)
+                val mCloudId: String? = Utils.getUserCloudId()
+                if (mCloudId == null) {
+                    ServiceManager.getInstance()?.onPickUpNewEmailNoTitle(this@onShowWarningAnotherAccount, Utils.getUserId())
                 } else {
-                    ServiceManager.getInstance()?.onPickUpNewEmailNoTitle(this@onShowWarningAnotherAccount, cloud_id)
+                    ServiceManager.getInstance()?.onPickUpNewEmailNoTitle(this@onShowWarningAnotherAccount, mCloudId)
                 }
             }
             .onNegative {
@@ -91,9 +105,32 @@ fun EnableCloudAct.onShowWarningAnotherAccount() {
 }
 
 fun EnableCloudAct.onShowProgressDialog() {
-    SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.loading)
+   viewModel.isLoading.postValue(true)
 }
 
 fun EnableCloudAct.onStopProgressDialog() {
-   SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+    viewModel.isLoading.postValue(false)
+}
+
+private fun EnableCloudAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(EnableCloudViewModel::class.java)
+}
+
+fun EnableCloudAct.addUserCloud() {
+    viewModel.addUserCloud().observe(this, Observer{
+        when(it.status){
+            Status.SUCCESS -> {
+                onBackPressed()
+                ServiceManager.getInstance()?.onPreparingSyncData()
+                Utils.Log(TAG,"Success ${it.data?.toJson()}")
+            }
+            else -> {
+                Utils.Log(TAG,"Nothing")
+                Navigator.onEnableCloud(this)
+            }
+        }
+    })
 }

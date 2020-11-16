@@ -128,22 +128,33 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
                 when(mResultDriveAbout.status){
                     Status.SUCCESS -> {
                         updatedDriveValue(mResultDriveAbout.data)
-                        val mResultList = driveService.getListFileInAppFolderCor(SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
-                        when(mResultList.status){
-                            Status.SUCCESS -> {
-                                mResultList.data?.files?.size?.let { calculatorData(it) }
-                                Resource.success(true)
-                            }
-                            else -> {
-                                Utils.Log(TAG,mResultList.message)
-                                Resource.error(mResultList.code ?: Utils.CODE_EXCEPTION,mResultList.message ?:"",null)
-                            }
-                        }
+                        Resource.success(true)
                     }
                     else -> {
                         Utils.Log(TAG,mResultDriveAbout.message)
                         updatedDriveValue(null)
                         Resource.error(mResultDriveAbout.code ?: Utils.CODE_EXCEPTION,mResultDriveAbout.message ?:"",null)
+                    }
+                }
+            }catch (e : Exception){
+                updatedDriveValue(null)
+                Resource.error(Utils.CODE_EXCEPTION, e.message ?:"",null)
+            }
+        }
+    }
+
+    suspend fun geInAppList() : Resource<Boolean> {
+        return withContext(Dispatchers.IO){
+            try {
+                val mResultList = driveService.getListFileInAppFolderCor(SuperSafeApplication.getInstance().getString(R.string.key_appDataFolder))
+                when(mResultList.status){
+                    Status.SUCCESS -> {
+                        mResultList.data?.files?.size?.let { calculatorData(it) }
+                        Resource.success(true)
+                    }
+                    else -> {
+                        Utils.Log(TAG,mResultList.message)
+                        Resource.error(mResultList.code ?: Utils.CODE_EXCEPTION,mResultList.message ?:"",null)
                     }
                 }
             }catch (e : Exception){
