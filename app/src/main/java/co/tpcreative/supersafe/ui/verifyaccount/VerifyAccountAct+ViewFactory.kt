@@ -53,7 +53,7 @@ fun VerifyAccountAct.initUI(){
 
     btnSendVerifyCode.setOnClickListener {
         Utils.Log(TAG, "Send code")
-        sendCode()
+        resendCode()
     }
 
     btnCancel.setOnClickListener {
@@ -186,24 +186,6 @@ private fun VerifyAccountAct.setupViewModel() {
             this,
             ViewModelFactory()
     ).get(VerifyAccountViewModel::class.java)
-}
-
-fun VerifyAccountAct.sendCode(){
-    progressing = EnumStepProgressing.SEND_CODE
-    viewModel.sendCode().observe(this, Observer{
-        when(it.status){
-            Status.SUCCESS -> {
-                onShowView(btnSendVerifyCode!!)
-                Utils.Log(TAG,"Current email ${viewModel.email}")
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),String.format(getString(R.string.we_sent_access_code_to_your_email),viewModel.email))
-                Utils.Log(TAG,"Success ${it.toJson()}")
-            }
-            Status.ERROR -> {
-                Utils.Log(TAG,"Error ${it}")
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
-    })
 }
 
 fun VerifyAccountAct.verifyCode() {

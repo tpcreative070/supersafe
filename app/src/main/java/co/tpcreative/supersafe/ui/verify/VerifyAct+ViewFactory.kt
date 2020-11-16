@@ -12,7 +12,6 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumPinAction
 import co.tpcreative.supersafe.model.EnumValidationKey
-import co.tpcreative.supersafe.ui.verifyaccount.sendCode
 import co.tpcreative.supersafe.viewmodel.VerifyViewModel
 import kotlinx.android.synthetic.main.activity_verify.*
 import kotlinx.android.synthetic.main.activity_verify.progressBarCircularIndeterminate

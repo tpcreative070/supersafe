@@ -16,8 +16,8 @@ import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.model.User
 import kotlinx.coroutines.Dispatchers
 
-class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(){
-    val TAG = this::class.java.simpleName
+open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(){
+    open val TAG = this::class.java.simpleName
     override val errorResponseMessage: MutableLiveData<MutableMap<String, String?>?>
         get() = super.errorResponseMessage
 
@@ -27,13 +27,13 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
     override val isLoading: MutableLiveData<Boolean>
         get() = super.isLoading
 
-    var code : String = ""
+    open var code : String = ""
         set(value) {
             field = value
             validationCode(value)
         }
 
-    private fun validationCode(mValue : String){
+    open fun validationCode(mValue : String){
         if (mValue.isEmpty()){
             putError(EnumValidationKey.EDIT_TEXT_CODE, "Request enter code")
         }else if (!Utils.isValid(mValue)){
@@ -65,13 +65,14 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
             }
         }catch (e : Exception){
             e.printStackTrace()
+            emit(Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null))
         }
         finally {
             isLoading.postValue(false)
         }
     }
 
-    fun resendCode() = liveData(Dispatchers.IO){
+    fun resendCode(enum : EnumStatus? = EnumStatus.SIGN_IN) = liveData(Dispatchers.IO){
         try {
             isLoading.postValue(true)
             val mResult = userViewModel.resendCode(getRequestCode())
@@ -81,9 +82,9 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
                         emit(Resource.error(mResult.data.responseCode?: Utils.CODE_EXCEPTION, mResult.data.responseMessage ?:"",null))
                     }else{
                         mResult.data.data?.requestCode?.code?.let { setCodeRequest(it) }
-                        val mResultSentEmail = userViewModel.sendEmail(EnumStatus.SIGN_IN)
+                        val mResultSentEmail = userViewModel.sendEmail(enum!!)
                         when(mResultSentEmail.status){
-                            Status.SUCCESS -> emit(mResultSentEmail)
+                            Status.SUCCESS -> emit(Resource.success(mResultSentEmail.data))
                             else -> emit(Resource.error(mResultSentEmail.code?: Utils.CODE_EXCEPTION, mResultSentEmail.message ?:"",null))
                         }
                     }
@@ -92,6 +93,7 @@ class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(
             }
         }catch (e : Exception){
             e.printStackTrace()
+            emit(Resource.error(Utils.CODE_EXCEPTION,e.message ?: "",null))
         }
         finally {
             isLoading.postValue(false)

@@ -84,7 +84,6 @@ class VerifyAccountAct : BaseActivity(), TextView.OnEditorActionListener {
                 }
                 return true
             }
-            return false
         }
         return false
     }

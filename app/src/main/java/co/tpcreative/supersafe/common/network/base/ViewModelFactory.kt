@@ -23,6 +23,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if(modelClass.isAssignableFrom(EnableCloudViewModel::class.java)){
             return EnableCloudViewModel(UserViewModel(UserService(),MicService())) as T
         }
+        else if(modelClass.isAssignableFrom(UnlockAllAlbumViewModel::class.java)){
+            return UnlockAllAlbumViewModel(UserViewModel(UserService(),MicService())) as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

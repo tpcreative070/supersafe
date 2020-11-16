@@ -80,17 +80,14 @@
                         android:padding="10dp"
                         android:text="@string/send_verification_code"
                         android:textColor="@color/white" />
-                    <fr.castorflex.android.circularprogressbar.CircularProgressBar
+                    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                         android:id="@+id/progressbar_circular"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginTop="8dp"
-                        android:indeterminate="true"
-                        android:indeterminateOnly="false"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:elevation="10dp"
+                        android:background="?attr/colorAccent"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
                         android:visibility="invisible" />
                 </RelativeLayout>
                 <androidx.appcompat.widget.AppCompatTextView
@@ -128,13 +125,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp">
-                    <fr.castorflex.android.circularprogressbar.CircularProgressBar
+                    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
                         android:id="@+id/progressbar_circular_unlock_albums"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:indeterminate="true"
-                        android:indeterminateOnly="false"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:elevation="10dp"
+                        android:background="?attr/colorAccent"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
                         android:visibility="invisible" />
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnUnlock"

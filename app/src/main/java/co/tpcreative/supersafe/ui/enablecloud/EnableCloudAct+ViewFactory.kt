@@ -26,11 +26,11 @@ fun EnableCloudAct.initUI(){
     btnLinkGoogleDrive.setOnClickListener {
         btnUserAnotherAccount?.isEnabled = false
         btnLinkGoogleDrive?.isEnabled = false
-        val cloud_id: String? = Utils.getUserCloudId()
-        if (cloud_id == null) {
+        val mCLoudId: String? = Utils.getUserCloudId()
+        if (mCLoudId == null) {
             ServiceManager.getInstance()?.onPickUpNewEmail(this)
         } else {
-            ServiceManager.getInstance()?.onPickUpExistingEmail(this, cloud_id)
+            ServiceManager.getInstance()?.onPickUpExistingEmail(this, mCLoudId)
         }
     }
 

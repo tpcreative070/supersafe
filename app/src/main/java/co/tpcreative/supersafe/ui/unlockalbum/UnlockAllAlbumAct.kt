@@ -6,12 +6,9 @@ import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
-import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseView
@@ -22,7 +19,9 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.util.UtilsListener
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.EnumStepProgressing
 import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.viewmodel.UnlockAllAlbumViewModel
 import kotlinx.android.synthetic.main.activity_unlock_all_album.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -31,6 +30,8 @@ import org.greenrobot.eventbus.ThreadMode
 class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEditorActionListener {
     var presenter: UnlockAllAlbumPresenter? = null
     var isNext = false
+    var progressing = EnumStepProgressing.NONE
+    lateinit var viewModel : UnlockAllAlbumViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_unlock_all_album)
@@ -71,20 +72,8 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
 
     val mTextWatcher: TextWatcher? = object : TextWatcher {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            val value = s.toString().trim { it <= ' ' }
-            isNext = if (Utils.isValid(value)) {
-                btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
-                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
-                btnUnlock?.isEnabled = true
-                true
-            } else {
-                btnUnlock?.setBackgroundResource(R.drawable.bg_button_disable_rounded)
-                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
-                btnUnlock?.isEnabled = false
-                false
-            }
+            viewModel.code = s.toString()
         }
-
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: android.text.Editable?) {}
     }
@@ -110,7 +99,10 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
                 Utils.onBasicAlertNotify(this,message = getString(R.string.internet),title = "Alert")
                 return false
             }
-            return false
+            if (isNext){
+                verifyCode()
+                return true
+            }
         }
         return false
     }
@@ -123,12 +115,12 @@ class UnlockAllAlbumAct : BaseActivity(), BaseView<EmptyModel>, TextView.OnEdito
         when (status) {
             EnumStatus.REQUEST_CODE -> {
                 if (progressbar_circular != null) {
-                    progressbar_circular?.progressiveStop()
+                    //progressbar_circular?.progressiveStop()
                 }
             }
             EnumStatus.UNLOCK_ALBUMS -> {
                 if (progressbar_circular_unlock_albums != null) {
-                    progressbar_circular_unlock_albums?.progressiveStop()
+                    //progressbar_circular_unlock_albums?.progressiveStop()
                 }
             }
         }

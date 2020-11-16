@@ -1,18 +1,28 @@
 package co.tpcreative.supersafe.ui.unlockalbum
 import android.view.View
-import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.extension.toSpanned
-import co.tpcreative.supersafe.common.request.VerifyCodeRequest
+import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.common.util.UtilsListener
+import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.UnlockAllAlbumViewModel
 import fr.castorflex.android.circularprogressbar.CircularProgressDrawable
 import kotlinx.android.synthetic.main.activity_unlock_all_album.*
+import kotlinx.android.synthetic.main.activity_unlock_all_album.edtCode
+import kotlinx.android.synthetic.main.activity_unlock_all_album.toolbar
 import kotlinx.android.synthetic.main.layout_premium_header.*
 
 fun UnlockAllAlbumAct.initUI(){
     TAG = this::class.java.simpleName
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     presenter = UnlockAllAlbumPresenter()
@@ -33,64 +43,184 @@ fun UnlockAllAlbumAct.initUI(){
         Utils.Log(TAG, "Action")
         if (isNext) {
             btnUnlock?.setText("")
-            onStartLoading(EnumStatus.UNLOCK_ALBUMS)
-            Utils.Log(TAG, "onUnlockAlbums")
-            btnUnlock?.isEnabled = false
-            onVerifyCode()
+            verifyCode()
         }
     }
     btnSendRequest.setOnClickListener {
         btnSendRequest?.isEnabled = false
         btnSendRequest?.setText("")
-        onStartLoading(EnumStatus.REQUEST_CODE)
-        val mUser: User? = Utils.getUserInfo()
-        if (mUser != null) {
-            if (mUser.email != null) {
-                val request = VerifyCodeRequest()
-                request.user_id = mUser.email
-                presenter?.onRequestCode(request)
-            } else {
-                Toast.makeText(this, "Email is null", Toast.LENGTH_SHORT).show()
-            }
+        if (Utils.getUserId() != null) {
+            resendCode()
         } else {
-            Toast.makeText(this, "Email is null", Toast.LENGTH_SHORT).show()
+            Utils.onBasicAlertNotify(this,"Alert","Email is null")
         }
     }
+
+    viewModel.isLoading.observe(this,{
+        if (it){
+            when (progressing) {
+                EnumStepProgressing.RESEND_CODE -> {
+                    progressbar_circular?.visibility = View.VISIBLE
+                    btnSendRequest.visibility = View.INVISIBLE
+                }
+                EnumStepProgressing.UNLOCK_ALBUMS -> {
+                    progressbar_circular_unlock_albums?.visibility = View.VISIBLE
+                    btnUnlock.visibility = View.INVISIBLE
+                }
+                else -> Utils.Log(TAG,"Nothing to stop")
+            }
+        }else{
+            when (progressing) {
+                EnumStepProgressing.SEND_CODE-> {
+                    progressbar_circular?.visibility = View.INVISIBLE
+                    btnSendRequest.visibility = View.VISIBLE
+                }
+                EnumStepProgressing.RESEND_CODE -> {
+                    progressbar_circular?.visibility = View.INVISIBLE
+                    btnSendRequest.visibility = View.VISIBLE
+                }
+                EnumStepProgressing.UNLOCK_ALBUMS -> {
+                    progressbar_circular_unlock_albums?.visibility = View.INVISIBLE
+                    btnUnlock.visibility = View.VISIBLE
+                }
+                else -> Utils.Log(TAG,"Nothing to stop")
+            }
+        }
+    })
+
+    viewModel.errorMessages.observe(this,{mResult ->
+        mResult?.let {
+            if (it.values.isEmpty()){
+                btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
+                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
+                btnUnlock?.isEnabled = true
+                isNext = true
+            }else{
+                btnUnlock?.setBackgroundResource(R.drawable.bg_button_disable_rounded)
+                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
+                btnUnlock?.isEnabled = false
+                isNext = false
+            }
+        }
+    })
+
+    viewModel.errorResponseMessage.observe(this,{mResult ->
+        mResult?.let {
+            edtCode.error = it.get(EnumValidationKey.EDIT_TEXT_CODE.name)
+            if (it.values.isEmpty()){
+                btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
+                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
+                btnUnlock?.isEnabled = true
+                isNext = true
+            }else{
+                btnUnlock?.setBackgroundResource(R.drawable.bg_button_disable_rounded)
+                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
+                btnUnlock?.isEnabled = false
+                isNext = false
+            }
+        }
+    })
 }
 
 fun UnlockAllAlbumAct.setProgressValue(status: EnumStatus?) {
-    when (status) {
-        EnumStatus.REQUEST_CODE -> {
-            var circularProgressDrawable: CircularProgressDrawable? = null
-            val b = CircularProgressDrawable.Builder(this)
-                    .colors(resources.getIntArray(R.array.gplus_colors))
-                    .sweepSpeed(2f)
-                    .rotationSpeed(2f)
-                    .strokeWidth(Utils.dpToPx(3).toFloat())
-                    .style(CircularProgressDrawable.STYLE_ROUNDED)
-            progressbar_circular?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
-            // /!\ Terrible hack, do not do this at home!
-            circularProgressDrawable?.setBounds(0,
-                    0,
-                    progressbar_circular?.width!!,
-                    progressbar_circular?.height!!)
-            progressbar_circular?.visibility = View.VISIBLE
+//    when (status) {
+//        EnumStatus.REQUEST_CODE -> {
+//            var circularProgressDrawable: CircularProgressDrawable? = null
+//            val b = CircularProgressDrawable.Builder(this)
+//                    .colors(resources.getIntArray(R.array.gplus_colors))
+//                    .sweepSpeed(2f)
+//                    .rotationSpeed(2f)
+//                    .strokeWidth(Utils.dpToPx(3).toFloat())
+//                    .style(CircularProgressDrawable.STYLE_ROUNDED)
+//            progressbar_circular?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
+//            // /!\ Terrible hack, do not do this at home!
+//            circularProgressDrawable?.setBounds(0,
+//                    0,
+//                    progressbar_circular?.width!!,
+//                    progressbar_circular?.height!!)
+//            progressbar_circular?.visibility = View.VISIBLE
+//        }
+//        EnumStatus.UNLOCK_ALBUMS -> {
+//            var circularProgressDrawable: CircularProgressDrawable? = null
+//            val b = CircularProgressDrawable.Builder(this)
+//                    .colors(resources.getIntArray(R.array.gplus_colors))
+//                    .sweepSpeed(2f)
+//                    .rotationSpeed(2f)
+//                    .strokeWidth(Utils.dpToPx(3).toFloat())
+//                    .style(CircularProgressDrawable.STYLE_ROUNDED)
+//            progressbar_circular_unlock_albums?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
+//            // /!\ Terrible hack, do not do this at home!
+//            circularProgressDrawable?.setBounds(0,
+//                    0,
+//                    progressbar_circular_unlock_albums?.width!!,
+//                    progressbar_circular_unlock_albums?.height!!)
+//            progressbar_circular_unlock_albums?.visibility = View.VISIBLE
+//        }
+//    }
+}
+
+fun UnlockAllAlbumAct.verifyCode() {
+    progressing = EnumStepProgressing.VERIFY_CODE
+    btnUnlock.isEnabled = false
+    viewModel.verifyCode().observe(this, Observer{
+        when(it.status){
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Success ${it.toJson()}")
+                btnUnlock?.text = getString(R.string.unlock_all_albums)
+                onStopLoading(EnumStatus.UNLOCK_ALBUMS)
+                if (presenter?.mListCategories != null) {
+                    var i = 0
+                    while (i < presenter?.mListCategories?.size!!) {
+                        presenter?.mListCategories?.get(i)?.pin = ""
+                        presenter?.mListCategories?.get(i)?.let { SQLHelper.updateCategory(it) }
+                        i++
+                    }
+                }
+                SingletonPrivateFragment.getInstance()?.onUpdateView()
+                Utils.onAlertNotify(this,"Unlocked Album",getString(R.string.unlocked_successful),object  : UtilsListener {
+                    override fun onNegative() {
+                        TODO("Not yet implemented")
+                    }
+                    override fun onPositive() {
+                        finish()
+                    }
+                })
+            }
+            Status.ERROR -> {
+                btnUnlock.isEnabled = true
+                btnUnlock?.text = getString(R.string.unlock_all_albums)
+                Utils.Log(TAG,"Error ${it.message}")
+            }
+            else -> Utils.Log(TAG,"Nothing")
         }
-        EnumStatus.UNLOCK_ALBUMS -> {
-            var circularProgressDrawable: CircularProgressDrawable? = null
-            val b = CircularProgressDrawable.Builder(this)
-                    .colors(resources.getIntArray(R.array.gplus_colors))
-                    .sweepSpeed(2f)
-                    .rotationSpeed(2f)
-                    .strokeWidth(Utils.dpToPx(3).toFloat())
-                    .style(CircularProgressDrawable.STYLE_ROUNDED)
-            progressbar_circular_unlock_albums?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
-            // /!\ Terrible hack, do not do this at home!
-            circularProgressDrawable?.setBounds(0,
-                    0,
-                    progressbar_circular_unlock_albums?.width!!,
-                    progressbar_circular_unlock_albums?.height!!)
-            progressbar_circular_unlock_albums?.visibility = View.VISIBLE
+
+    })
+    Utils.hideSoftKeyboard(this)
+}
+
+private fun UnlockAllAlbumAct.resendCode(){
+    btnSendRequest.isEnabled = false
+    progressing = EnumStepProgressing.RESEND_CODE
+    viewModel.resendCode(EnumStatus.UNLOCK_ALBUMS).observe(this, Observer{
+        when(it.status){
+            Status.SUCCESS -> {
+                btnSendRequest?.text = getString(R.string.send_verification_code)
+                Utils.onBasicAlertNotify(this,message = "Code has been sent to your email. Please check it",title = "Alert")
+                Utils.Log(TAG,"Success ${it.toJson()}")
+            }
+            Status.ERROR -> {
+                btnSendRequest?.text = getString(R.string.send_verification_code)
+            }
+            else -> Utils.Log(TAG,"Nothing")
         }
-    }
+        btnSendRequest.isEnabled = true
+    })
+
+}
+
+private fun UnlockAllAlbumAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(UnlockAllAlbumViewModel::class.java)
 }

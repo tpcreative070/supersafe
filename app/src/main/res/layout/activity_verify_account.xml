@@ -236,7 +236,7 @@
                         android:layout_height="25dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:background="@color/colorButton"
+                        android:background="?attr/colorAccent"
                         android:elevation="10dp"
                         android:visibility="invisible" />
                     <androidx.appcompat.widget.AppCompatButton
@@ -258,7 +258,7 @@
                         android:layout_height="40dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:background="@color/colorButton"
+                        android:background="?attr/colorAccent"
                         android:elevation="10dp"
                         android:visibility="invisible"/>
                     <androidx.appcompat.widget.AppCompatButton
