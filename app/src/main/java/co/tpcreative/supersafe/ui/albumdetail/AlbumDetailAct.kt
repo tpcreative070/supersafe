@@ -26,6 +26,7 @@ import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.AlbumDetailViewModel
 import com.bumptech.glide.request.RequestOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -36,7 +37,6 @@ import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.ThreadMode
 
@@ -50,6 +50,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     var isSelectAll = false
     var dialog: AlertDialog? = null
     var mMenuItem: MenuItem? = null
+    lateinit var viewModel : AlbumDetailViewModel
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(400, 400)
@@ -74,10 +75,8 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 Navigator.onMoveToFaceDown(this)
             }
             EnumStatus.UPDATED_VIEW_DETAIL_ALBUM -> {
-                try {
-                    this.runOnUiThread(Runnable { presenter?.getData(EnumStatus.RELOAD) })
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                CoroutineScope(Dispatchers.Main).launch {
+                    presenter?.getData(EnumStatus.RELOAD)
                 }
             }
             EnumStatus.START_PROGRESS -> {
@@ -120,7 +119,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             EnumStatus.DOWNLOAD_FAILED -> {
                 Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.no_internet_connection))
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG,"Nothing ==> Event bus")
         }
     }
 
@@ -296,7 +295,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             Navigator.CAMERA_ACTION -> {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data")
-                    presenter?.getData(EnumStatus.RELOAD)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        presenter?.getData(EnumStatus.RELOAD)
+                    }
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera")
                 }
@@ -304,7 +305,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             Navigator.PHOTO_SLIDE_SHOW -> {
                 if (resultCode == Activity.RESULT_OK) {
                     Utils.Log(TAG, "reload data")
-                    presenter?.getData(EnumStatus.RELOAD)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        presenter?.getData(EnumStatus.RELOAD)
+                    }
                 } else {
                     Utils.Log(TAG, "Nothing to do on Camera")
                 }
@@ -546,7 +549,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             }
             i++
         }
-        presenter?.getData(EnumStatus.REFRESH)
+        CoroutineScope(Dispatchers.Main).launch {
+            presenter?.getData(EnumStatus.REFRESH)
+        }
     }
 
     fun selectAll() {

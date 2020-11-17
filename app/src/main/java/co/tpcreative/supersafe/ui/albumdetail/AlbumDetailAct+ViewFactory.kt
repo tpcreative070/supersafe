@@ -7,6 +7,8 @@ import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,32 +18,31 @@ import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.AlbumDetailViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.activity_album_detail.*
-import kotlinx.android.synthetic.main.activity_album_detail.collapsing_toolbar
-import kotlinx.android.synthetic.main.activity_album_detail.recyclerView
-import kotlinx.android.synthetic.main.activity_album_detail.speedDial
-import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 fun AlbumDetailAct.initUI(){
     TAG = this::class.java.simpleName
+    setupViewModel()
     storage = Storage(this)
     storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
     initSpeedDial(true)
@@ -84,6 +85,17 @@ fun AlbumDetailAct.initUI(){
             }
         }
     })
+
+    viewModel.isLoading.observe(this, Observer {
+        if (it) {
+            llToolbarInfo.visibility = View.INVISIBLE
+            progress_bar.visibility = View.VISIBLE
+        } else {
+            llToolbarInfo.visibility = View.VISIBLE
+            progress_bar.visibility = View.INVISIBLE
+        }
+    })
+
 }
 
 fun AlbumDetailAct.onExport(){
@@ -134,7 +146,7 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
     }
     val builder: MaterialDialog = MaterialDialog(this)
             .title(text = getString(R.string.confirm))
-            .message (text =content!!)
+            .message(text = content!!)
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
             .negativeButton { presenter?.status = EnumStatus.CANCEL }
@@ -300,14 +312,14 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                     EnumStatus.DELETE -> {
                         presenter?.onDelete()
                     }
-                    else -> Utils.Log(TAG,"Nothing")
+                    else -> Utils.Log(TAG, "Nothing")
                 }
             }
     builder.show()
 }
 
 fun AlbumDetailAct.onDialogDownloadFile() {
-    SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.downloading)
+    SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.downloading)
 }
 
 /*Download file*/
@@ -335,7 +347,7 @@ fun AlbumDetailAct.initSpeedDial(addActionItems: Boolean) {
                 .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                         theme))
                 .setLabel(getString(R.string.camera))
-                .setFabImageTintColor(ContextCompat.getColor(this,R.color.white))
+                .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
                 .setLabelColor(Color.WHITE)
                 .setLabelBackgroundColor(ResourcesCompat.getColor(resources, R.color.inbox_primary,
                         theme))
@@ -345,8 +357,8 @@ fun AlbumDetailAct.initSpeedDial(addActionItems: Boolean) {
                 .setFabBackgroundColor(ResourcesCompat.getColor(resources, mThemeApp?.getPrimaryColor()!!,
                         theme))
                 .setLabel(R.string.photo)
-                .setFabImageTintColor(ContextCompat.getColor(this,R.color.white))
-                .setLabelColor(ContextCompat.getColor(applicationContext,R.color.white))
+                .setFabImageTintColor(ContextCompat.getColor(this, R.color.white))
+                .setLabelColor(ContextCompat.getColor(applicationContext, R.color.white))
                 .setLabelBackgroundColor(ResourcesCompat.getColor(getResources(), R.color.inbox_primary,
                         theme))
                 .create())
@@ -387,7 +399,7 @@ fun AlbumDetailAct.initSpeedDial(addActionItems: Boolean) {
 
 fun AlbumDetailAct.onStartProgressing() {
     try {
-       SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.exporting)
+       SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.exporting)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -400,7 +412,7 @@ fun AlbumDetailAct.onStopProgressing() {
             actionMode?.finish()
         }
     } catch (e: Exception) {
-        Utils.Log(TAG, e.message+"")
+        Utils.Log(TAG, e.message + "")
     }
 }
 
@@ -430,7 +442,7 @@ fun AlbumDetailAct.onCallData(){
         mBannerLoading.await()
         progress_bar.visibility = View.INVISIBLE
         llToolbarInfo.visibility = View.VISIBLE
-        Utils.Log(TAG,"Loading data")
+        Utils.Log(TAG, "Loading data")
     }
 }
 
@@ -539,9 +551,18 @@ fun AlbumDetailAct.onPushDataToList(){
             onLoading()
         }
         mResult.await()
-        Utils.Log(TAG,"Completed")
+        Utils.Log(TAG, "Reload data completed====>")
     }
 }
 
+private fun AlbumDetailAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(AlbumDetailViewModel::class.java)
+}
 
+private fun loadData(){
+
+}
 

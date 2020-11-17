@@ -673,7 +673,6 @@ class ServiceManager : BaseServiceView<Any?> {
                                     }
                                 }
                                 GalleryCameraMediaManager.getInstance()?.setProgressing(false)
-                                Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                                 if (items.isFakePin) {
                                     SingletonFakePinComponent.getInstance().onUpdateView()
                                 } else {

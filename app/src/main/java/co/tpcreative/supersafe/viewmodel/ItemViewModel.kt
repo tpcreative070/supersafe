@@ -17,7 +17,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ItemViewModel(private val itemService: ItemService) : ViewModel(){
+class ItemViewModel(private val itemService: ItemService) : BaseViewModel<ItemModel>(){
     private val categoryViewModel = CategoryViewModel(CategoryService())
     val TAG = this::class.java.simpleName
     suspend fun getItemList() : Resource<MutableList<ItemModel>> {

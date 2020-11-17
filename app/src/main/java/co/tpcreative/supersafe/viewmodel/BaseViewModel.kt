@@ -3,9 +3,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.EnumStepProgressing
 import co.tpcreative.supersafe.model.EnumValidationKey
+import co.tpcreative.supersafe.model.ItemModel
 
-open class BaseViewModel : ViewModel() {
+open class BaseViewModel<T> : ViewModel() {
     open val isLoading : MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
@@ -17,6 +19,25 @@ open class BaseViewModel : ViewModel() {
     open val errorResponseMessage  : MutableLiveData<MutableMap<String,String?>?> by lazy {
         MutableLiveData<MutableMap<String,String?>?>()
     }
+
+    open val videos : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+    open val photos : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+    open val audios : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+    open val others : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
+    open val count : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
+    open val dataList : MutableList<T> = mutableListOf()
 
     open fun putErrorResponse(key: EnumValidationKey,value : String? = null){
         if (errorResponseMessage.value==null){

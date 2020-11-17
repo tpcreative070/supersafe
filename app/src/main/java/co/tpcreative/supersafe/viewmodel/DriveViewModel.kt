@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.HashMap
 
-class DriveViewModel(private val driveService: DriveService, itemService: ItemService) : ViewModel(){
+class DriveViewModel(private val driveService: DriveService, itemService: ItemService) : BaseViewModel<ItemModel>(){
     private val itemViewModel = ItemViewModel(itemService)
     val TAG = this::class.java.simpleName
     suspend fun downLoadData(isDownloadToExport : Boolean,globalList : MutableList<ItemModel>?) : Resource<Boolean> {

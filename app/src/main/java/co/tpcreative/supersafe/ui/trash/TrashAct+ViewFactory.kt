@@ -14,6 +14,8 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
+import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
+import co.tpcreative.supersafe.model.EnumStepProgressing
 import co.tpcreative.supersafe.viewmodel.TrashViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_trash.*
@@ -27,7 +29,7 @@ fun TrashAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     btnTrash.setOnClickListener {
-        if (viewModel.mList?.size!! > 0) {
+        if (dataSource?.size!! > 0) {
             if (countSelected == 0) {
                 onShowDialog(getString(R.string.empty_all_trash), true)
             } else {
@@ -35,6 +37,7 @@ fun TrashAct.initUI(){
             }
         }
     }
+
     btnUpgradeVersion.setOnClickListener {
         Navigator.onMoveToPremium(applicationContext)
     }
@@ -68,12 +71,12 @@ fun TrashAct.initUI(){
         }
     })
     initRecycleView(layoutInflater)
-    getIntentData()
+    getData()
 }
 
 fun TrashAct.initRecycleView(layoutInflater: LayoutInflater){
     adapter = TrashAdapter(layoutInflater, applicationContext, this@initRecycleView)
-    val mLayoutManager: RecyclerView.LayoutManager = GridLayoutManager(applicationContext, 3)
+    val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(applicationContext, 3)
     recyclerView?.layoutManager = mLayoutManager
     recyclerView?.addItemDecoration(GridSpacingItemDecoration(3, 4, true))
     recyclerView?.itemAnimator = DefaultItemAnimator()
@@ -91,8 +94,8 @@ fun TrashAct.onShowDialog(message: String, isEmpty: Boolean) {
 }
 
 fun TrashAct.toggleSelection(position: Int) {
-    viewModel.mList?.get(position)?.isChecked = !(viewModel.mList?.get(position)?.isChecked!!)
-    if (viewModel.mList?.get(position)?.isChecked!!) {
+    dataSource?.get(position)?.isChecked = !(dataSource?.get(position)?.isChecked!!)
+    if (dataSource?.get(position)?.isChecked!!) {
         countSelected++
     } else {
         countSelected--
@@ -103,9 +106,9 @@ fun TrashAct.toggleSelection(position: Int) {
 
 fun TrashAct.deselectAll() {
     var i = 0
-    val l: Int = viewModel.mList?.size!!
+    val l: Int = dataSource?.size!!
     while (i < l) {
-        viewModel.mList?.get(i)?.isChecked = false
+        dataSource?.get(i)?.isChecked = false
         i++
     }
     countSelected = 0
@@ -115,9 +118,9 @@ fun TrashAct.deselectAll() {
 
 fun TrashAct.selectAll() {
     var countSelect = 0
-    for (i in viewModel.mList?.indices!!) {
-        viewModel.mList?.get(i)?.isChecked = isSelectAll
-        if (viewModel.mList?.get(i)?.isChecked!!) {
+    for (i in dataSource?.indices!!) {
+        dataSource?.get(i)?.isChecked = isSelectAll
+        if (dataSource?.get(i)?.isChecked!!) {
             countSelect++
         }
     }
@@ -128,17 +131,19 @@ fun TrashAct.selectAll() {
 
 }
 
-private fun TrashAct.getIntentData(){
+private fun TrashAct.getData(){
     viewModel.isLoading.postValue(true)
-    viewModel.getData().observe(this, Observer {
+    viewModel.getData().observe(this@getData, Observer {
         when(it.status){
             Status.SUCCESS ->{
                 CoroutineScope(Dispatchers.Main).launch {
                     val mResult = async {
+                        Utils.Log(TAG,"Loading...")
                         adapter?.setDataSource(it.data)
                     }
                     mResult.await()
                     viewModel.isLoading.postValue(false)
+                    Utils.Log(TAG,"Loading done")
                 }
             }
             else -> {
@@ -154,7 +159,7 @@ private fun TrashAct.deleteItems(isEmpty: Boolean){
         if (actionMode != null) {
             actionMode?.finish()
         }
-        getIntentData()
+        getData()
         btnTrash?.text = getString(R.string.key_empty_trash)
         SingletonPrivateFragment.getInstance()?.onUpdateView()
         ServiceManager.getInstance()?.onPreparingSyncData()
@@ -167,3 +172,4 @@ private fun TrashAct.setupViewModel() {
             ViewModelFactory()
     ).get(TrashViewModel::class.java)
 }
+

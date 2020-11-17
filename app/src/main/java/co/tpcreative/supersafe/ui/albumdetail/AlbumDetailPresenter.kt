@@ -72,7 +72,7 @@ class AlbumDetailPresenter : Presenter<BaseView<Int>>() {
         }
     }
 
-    fun getData(enumStatus: EnumStatus?) {
+    suspend fun getData(enumStatus: EnumStatus?)  = withContext(Dispatchers.Main) {
         val view: BaseView<Int>? = view()
         mList?.clear()
         try {

@@ -8,9 +8,10 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.UserCloudResponse
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.ItemModel
 import kotlinx.coroutines.Dispatchers
 
-class EnableCloudViewModel(private val userViewModel: UserViewModel) : BaseViewModel(){
+class EnableCloudViewModel(private val userViewModel: UserViewModel) : BaseViewModel<ItemModel>(){
     val TAG = this::class.java.simpleName
     override val errorMessages: MutableLiveData<MutableMap<String, String?>?>
         get() = super.errorMessages

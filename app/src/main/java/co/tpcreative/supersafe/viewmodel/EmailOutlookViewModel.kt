@@ -8,15 +8,12 @@ import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.request.MicRequest
 import co.tpcreative.supersafe.common.request.OutlookMailRequest
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmailToken
-import co.tpcreative.supersafe.model.EnumResponseCode
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.User
+import co.tpcreative.supersafe.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.HashMap
 
-class EmailOutlookViewModel(private val micService: MicService) : ViewModel(){
+class EmailOutlookViewModel(private val micService: MicService) : BaseViewModel<ItemModel>(){
     suspend fun sendEmail(enumStatus : EnumStatus) : Resource<String>{
         return withContext(Dispatchers.IO){
             try {

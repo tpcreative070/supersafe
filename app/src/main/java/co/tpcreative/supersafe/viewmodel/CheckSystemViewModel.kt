@@ -7,9 +7,10 @@ import co.tpcreative.supersafe.common.request.UserCloudRequest
 import co.tpcreative.supersafe.common.response.DataResponse
 import co.tpcreative.supersafe.common.response.UserCloudResponse
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.ItemModel
 import kotlinx.coroutines.Dispatchers
 
-class CheckSystemViewModel(private val userViewModel: UserViewModel) : BaseViewModel() {
+class CheckSystemViewModel(private val userViewModel: UserViewModel) :BaseViewModel<ItemModel>() {
 
     override val errorMessages: MutableLiveData<MutableMap<String, String?>?>
         get() = super.errorMessages

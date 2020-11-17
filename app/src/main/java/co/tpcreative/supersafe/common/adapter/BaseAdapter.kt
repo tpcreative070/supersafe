@@ -3,11 +3,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.common.util.Utils
-import java.util.*
 
 open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : RecyclerView.Adapter<VH>() {
     protected var inflater: LayoutInflater? = inflater
-    protected var mDataSource: MutableList<V> = Collections.emptyList()
+    protected var mDataSource: MutableList<V> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         TODO("Not yet implemented")
@@ -35,9 +34,10 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
 
     fun setDataSource(dataSource: MutableList<V>?) {
         try {
-            this.mDataSource = ArrayList()
             dataSource?.let {
                 this.mDataSource = it
+            } ?: run {
+                this.mDataSource = mutableListOf()
             }
             notifyDataSetChanged()
         } catch (e: IllegalStateException) {
@@ -50,7 +50,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
 
     fun appendItem(item: V) {
         if (mDataSource.isEmpty()) {
-            mDataSource = ArrayList()
+            mDataSource = mutableListOf()
         }
         mDataSource.add(item)
         notifyItemInserted(itemCount)
@@ -88,7 +88,7 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
 
     fun addItemAtFirst(item: V) {
         if (mDataSource.isEmpty()) {
-            mDataSource = ArrayList()
+            mDataSource = mutableListOf()
         }
         mDataSource.add(0, item)
         notifyItemInserted(0)
@@ -96,12 +96,12 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
 
     fun addAtFirstAndRemoveEnd(item: V) {
         if (mDataSource.isEmpty()) {
-            mDataSource = ArrayList()
+            mDataSource = mutableListOf()
         }
         mDataSource.add(0, item)
+        notifyItemInserted(0)
         mDataSource.removeAt(itemCount - 1)
         notifyItemRemoved(itemCount - 1)
-        notifyItemInserted(0)
     }
 
     companion object {

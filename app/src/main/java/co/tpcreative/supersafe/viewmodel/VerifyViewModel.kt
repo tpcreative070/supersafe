@@ -13,10 +13,11 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.EnumValidationKey
+import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.model.User
 import kotlinx.coroutines.Dispatchers
 
-open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel(){
+open class VerifyViewModel(private val userViewModel: UserViewModel) : BaseViewModel<ItemModel>(){
     open val TAG = this::class.java.simpleName
     override val errorResponseMessage: MutableLiveData<MutableMap<String, String?>?>
         get() = super.errorResponseMessage

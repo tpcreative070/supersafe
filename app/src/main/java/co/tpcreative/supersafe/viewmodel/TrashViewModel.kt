@@ -7,43 +7,44 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import kotlinx.coroutines.Dispatchers
-import java.util.ArrayList
 
-class TrashViewModel : BaseViewModel(){
-    var mList: MutableList<ItemModel>?
-    val videos : MutableLiveData<Int> by lazy {
+class TrashViewModel : BaseViewModel<ItemModel>(){
+    override val videos : MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
-    val photos : MutableLiveData<Int> by lazy {
+    override val photos : MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
-    val audios : MutableLiveData<Int> by lazy {
+    override val audios : MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
-    val others : MutableLiveData<Int> by lazy {
+    override val others : MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
 
-    val count : MutableLiveData<Int> by lazy {
+    override val count : MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
 
     override val isLoading: MutableLiveData<Boolean>
         get() = super.isLoading
 
+    override val dataList: MutableList<ItemModel>
+        get() = super.dataList
+
     init {
-        mList = ArrayList<ItemModel>()
+
     }
 
     fun getData() = liveData(Dispatchers.IO){
-        mList?.clear()
         try {
+            dataList.clear()
             val data: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
             if (data != null) {
-                mList = data
+                dataList.addAll(data)
                 onCalculate()
             }
-            emit(Resource.success(mList))
+            emit(Resource.success(data))
         } catch (e: Exception) {
             Utils.onWriteLog("" + e.message, EnumStatus.WRITE_FILE)
             emit(Resource.error(Utils.CODE_EXCEPTION,e.message?:"",null))
@@ -55,7 +56,7 @@ class TrashViewModel : BaseViewModel(){
         var videos = 0
         var audios = 0
         var others = 0
-        for (index in mList!!) {
+        for (index in dataList) {
             when (EnumFormatType.values()[index.formatType]) {
                 EnumFormatType.IMAGE -> {
                     photos += 1
@@ -79,25 +80,25 @@ class TrashViewModel : BaseViewModel(){
 
     fun onDeleteAll(isEmpty: Boolean) = liveData(Dispatchers.IO) {
         isLoading.postValue(true)
-        for (i in mList?.indices!!) {
+        for (i in dataList.indices) {
             if (isEmpty) {
-                val formatTypeFile = EnumFormatType.values()[mList?.get(i)?.formatType!!]
-                if (formatTypeFile == EnumFormatType.AUDIO && mList?.get(i)?.global_original_id == null) {
-                    SQLHelper.deleteItem(mList?.get(i)!!)
-                } else if (formatTypeFile == EnumFormatType.FILES && mList?.get(i)?.global_original_id == null) {
-                    SQLHelper.deleteItem(mList?.get(i)!!)
-                } else if ((mList?.get(i)?.global_original_id == null) and (mList?.get(i)?.global_thumbnail_id == null)) {
-                    SQLHelper.deleteItem(mList?.get(i)!!)
+                val formatTypeFile = EnumFormatType.values()[dataList[i].formatType]
+                if (formatTypeFile == EnumFormatType.AUDIO && dataList[i].global_original_id == null) {
+                    SQLHelper.deleteItem(dataList.get(i))
+                } else if (formatTypeFile == EnumFormatType.FILES && dataList[i].global_original_id == null) {
+                    SQLHelper.deleteItem(dataList.get(i))
+                } else if ((dataList[i].global_original_id == null) and (dataList[i].global_thumbnail_id == null)) {
+                    SQLHelper.deleteItem(dataList[i])
                 } else {
-                    mList?.get(i)?.deleteAction = EnumDelete.DELETE_WAITING.ordinal
-                    SQLHelper.updatedItem(mList?.get(i)!!)
+                    dataList[i].deleteAction = EnumDelete.DELETE_WAITING.ordinal
+                    SQLHelper.updatedItem(dataList.get(i))
                     Utils.Log(TAG, "ServiceManager waiting for delete")
                 }
-                Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + mList?.get(i)?.items_id)
+                Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + dataList[i].items_id)
             } else {
-                val items: ItemModel? = mList?.get(i)
+                val items: ItemModel? = dataList[i]
                 items?.isDeleteLocal = false
-                if (mList?.get(i)?.isChecked!!) {
+                if (dataList[i].isChecked) {
                     val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesLocalId(items?.categories_local_id)
                     if (mainCategories != null) {
                         mainCategories.isDelete = false
@@ -107,7 +108,7 @@ class TrashViewModel : BaseViewModel(){
                 }
             }
         }
-        emit(mList)
+        emit(dataList)
         isLoading.postValue(false)
     }
     companion object {

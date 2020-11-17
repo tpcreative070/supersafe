@@ -7,6 +7,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.viewmodel.TrashViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -136,5 +137,10 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
                 window.statusBarColor = ContextCompat.getColor(applicationContext, themeApp.getPrimaryDarkColor())
             }
         }
+    }
+
+    val dataSource : MutableList<ItemModel>?
+        get() {
+        return adapter?.getDataSource()
     }
 }

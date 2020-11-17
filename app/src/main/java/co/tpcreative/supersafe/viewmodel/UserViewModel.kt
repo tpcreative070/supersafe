@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class UserViewModel(private val service: UserService, micService: MicService) : BaseViewModel(){
+class UserViewModel(private val service: UserService, micService: MicService) : BaseViewModel<ItemModel>(){
     private val emailViewModel = EmailOutlookViewModel(micService)
     val TAG = this::class.java.simpleName
 
