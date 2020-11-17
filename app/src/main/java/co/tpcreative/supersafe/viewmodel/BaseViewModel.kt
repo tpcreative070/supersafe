@@ -37,7 +37,7 @@ open class BaseViewModel<T> : ViewModel() {
         MutableLiveData<Int>()
     }
 
-    open val dataList : MutableList<T> = mutableListOf()
+    protected open val dataList : MutableList<T> = mutableListOf()
 
     open fun putErrorResponse(key: EnumValidationKey,value : String? = null){
         if (errorResponseMessage.value==null){
