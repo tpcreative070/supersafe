@@ -1,32 +1,41 @@
-package co.tpcreative.supersafe.ui.trash
-import android.app.Activity
+package co.tpcreative.supersafe.viewmodel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.presenter.Presenter
+import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.google.gson.Gson
-import com.snatik.storage.Storage
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
-import java.util.concurrent.Callable
+import java.util.ArrayList
 
-class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
+class TrashViewModel : BaseViewModel(){
     var mList: MutableList<ItemModel>?
-    protected var storage: Storage?
-    var videos = 0
-    var photos = 0
-    var audios = 0
-    var others = 0
-    suspend fun getData(activity: Activity?)  = withContext(Dispatchers.Main){
-        val view: BaseView<EmptyModel>? = view()
+    val videos : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+    val photos : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+    val audios : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+    val others : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
+    val count : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
+    override val isLoading: MutableLiveData<Boolean>
+        get() = super.isLoading
+
+    init {
+        mList = ArrayList<ItemModel>()
+    }
+
+    fun getData() = liveData(Dispatchers.IO){
         mList?.clear()
         try {
             val data: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
@@ -34,18 +43,18 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                 mList = data
                 onCalculate()
             }
-            Utils.Log(TAG, Gson().toJson(data))
-            view?.onSuccessful("successful", EnumStatus.RELOAD)
+            emit(Resource.success(mList))
         } catch (e: Exception) {
             Utils.onWriteLog("" + e.message, EnumStatus.WRITE_FILE)
+            emit(Resource.error(Utils.CODE_EXCEPTION,e.message?:"",null))
         }
     }
 
-    fun onCalculate() {
-        photos = 0
-        videos = 0
-        audios = 0
-        others = 0
+    private fun onCalculate() {
+        var photos = 0
+        var videos = 0
+        var audios = 0
+        var others = 0
         for (index in mList!!) {
             when (EnumFormatType.values()[index.formatType]) {
                 EnumFormatType.IMAGE -> {
@@ -62,10 +71,14 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                 }
             }
         }
+        this.photos.postValue(photos)
+        this.videos.postValue(videos)
+        this.audios.postValue(audios)
+        this.others.postValue(others)
     }
 
-    fun onDeleteAll(isEmpty: Boolean) = CoroutineScope(Dispatchers.Main).launch {
-        val view: BaseView<EmptyModel>? = view()
+    fun onDeleteAll(isEmpty: Boolean) = liveData(Dispatchers.IO) {
+        isLoading.postValue(true)
         for (i in mList?.indices!!) {
             if (isEmpty) {
                 val formatTypeFile = EnumFormatType.values()[mList?.get(i)?.formatType!!]
@@ -80,7 +93,7 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                     SQLHelper.updatedItem(mList?.get(i)!!)
                     Utils.Log(TAG, "ServiceManager waiting for delete")
                 }
-                storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafePrivate() + mList?.get(i)?.items_id)
+                Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + mList?.get(i)?.items_id)
             } else {
                 val items: ItemModel? = mList?.get(i)
                 items?.isDeleteLocal = false
@@ -94,14 +107,10 @@ class TrashPresenter : Presenter<BaseView<EmptyModel>>() {
                 }
             }
         }
-        view?.onSuccessful("Done", EnumStatus.DONE)
+        emit(mList)
+        isLoading.postValue(false)
     }
     companion object {
-        private val TAG = TrashPresenter::class.java.simpleName
-    }
-
-    init {
-        mList = ArrayList<ItemModel>()
-        storage = Storage(SuperSafeApplication.getInstance())
+        private val TAG = TrashViewModel::class.java.simpleName
     }
 }

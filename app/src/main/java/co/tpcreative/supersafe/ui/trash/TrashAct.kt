@@ -1,29 +1,24 @@
 package co.tpcreative.supersafe.ui.trash
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
-import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.viewmodel.TrashViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import kotlinx.android.synthetic.main.activity_trash.*
 
-class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelectedListener {
+class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
     var adapter: TrashAdapter? = null
-    var presenter: TrashPresenter? = null
     var actionMode: ActionMode? = null
     var countSelected = 0
     var isSelectAll = false
+    lateinit var viewModel : TrashViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trash)
@@ -60,7 +55,6 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {
@@ -80,16 +74,6 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
         if (countSelected == 0) {
             actionMode?.finish()
         }
-    }
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
-    override fun getActivity(): Activity? {
-        return this
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -124,7 +108,7 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
             menuInflater.inflate(R.menu.menu_select, menu)
             actionMode = mode
             countSelected = 0
-            window.statusBarColor = ContextCompat.getColor(getContext()!!, R.color.material_orange_900)
+            window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.material_orange_900)
             return true
         }
 
@@ -149,40 +133,8 @@ class TrashAct : BaseActivity(), BaseView<EmptyModel>, TrashAdapter.ItemSelected
             actionMode = null
             val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
             if (themeApp != null) {
-                window.statusBarColor = ContextCompat.getColor(getContext()!!, themeApp.getPrimaryDarkColor())
+                window.statusBarColor = ContextCompat.getColor(applicationContext, themeApp.getPrimaryDarkColor())
             }
         }
     }
-
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.RELOAD -> {
-                val photos: String = kotlin.String.format(getString(R.string.photos_default), "" + presenter?.photos)
-                tv_Photos?.text = photos
-                val videos: String = kotlin.String.format(getString(R.string.videos_default), "" + presenter?.videos)
-                tv_Videos?.text = videos
-                val audios: String = kotlin.String.format(getString(R.string.audios_default), "" + presenter?.audios)
-                tv_Audios?.text = audios
-                val others: String = kotlin.String.format(getString(R.string.others_default), "" + presenter?.others)
-                tv_Others?.text = others
-                adapter?.setDataSource(presenter?.mList)
-            }
-            EnumStatus.DONE -> {
-                if (actionMode != null) {
-                    actionMode?.finish()
-                }
-                onPushDataToList()
-                btnTrash?.text = getString(R.string.key_empty_trash)
-                SingletonPrivateFragment.getInstance()?.onUpdateView()
-                ServiceManager.getInstance()?.onPreparingSyncData()
-            }
-            else -> Utils.Log(TAG, "Nothing")
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 }

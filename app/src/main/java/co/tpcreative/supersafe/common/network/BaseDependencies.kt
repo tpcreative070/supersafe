@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 open class BaseDependencies {
     var mInterceptor = HttpLoggingInterceptor().apply {
         if (BuildConfig.DEBUG){
-            this.level = HttpLoggingInterceptor.Level.BODY
+            this.level = HttpLoggingInterceptor.Level.BASIC
         }
     }
 

@@ -14,7 +14,6 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.util.UtilsListener
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.UnlockAllAlbumViewModel
-import fr.castorflex.android.circularprogressbar.CircularProgressDrawable
 import kotlinx.android.synthetic.main.activity_unlock_all_album.*
 import kotlinx.android.synthetic.main.activity_unlock_all_album.edtCode
 import kotlinx.android.synthetic.main.activity_unlock_all_album.toolbar
@@ -25,8 +24,6 @@ fun UnlockAllAlbumAct.initUI(){
     setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    presenter = UnlockAllAlbumPresenter()
-    presenter?.bindView(this)
     val mUser: User? = Utils.getUserInfo()
     if (mUser != null) {
         val email = mUser.email
@@ -92,12 +89,12 @@ fun UnlockAllAlbumAct.initUI(){
         mResult?.let {
             if (it.values.isEmpty()){
                 btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
-                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
+                btnUnlock?.setTextColor(ContextCompat.getColor(this,R.color.white))
                 btnUnlock?.isEnabled = true
                 isNext = true
             }else{
                 btnUnlock?.setBackgroundResource(R.drawable.bg_button_disable_rounded)
-                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
+                btnUnlock?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
                 btnUnlock?.isEnabled = false
                 isNext = false
             }
@@ -109,12 +106,12 @@ fun UnlockAllAlbumAct.initUI(){
             edtCode.error = it.get(EnumValidationKey.EDIT_TEXT_CODE.name)
             if (it.values.isEmpty()){
                 btnUnlock?.setBackgroundResource(R.drawable.bg_button_rounded)
-                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.white))
+                btnUnlock?.setTextColor(ContextCompat.getColor(this,R.color.white))
                 btnUnlock?.isEnabled = true
                 isNext = true
             }else{
                 btnUnlock?.setBackgroundResource(R.drawable.bg_button_disable_rounded)
-                btnUnlock?.setTextColor(ContextCompat.getColor(getContext()!!,R.color.colorDisableText))
+                btnUnlock?.setTextColor(ContextCompat.getColor(this,R.color.colorDisableText))
                 btnUnlock?.isEnabled = false
                 isNext = false
             }
@@ -122,59 +119,20 @@ fun UnlockAllAlbumAct.initUI(){
     })
 }
 
-fun UnlockAllAlbumAct.setProgressValue(status: EnumStatus?) {
-//    when (status) {
-//        EnumStatus.REQUEST_CODE -> {
-//            var circularProgressDrawable: CircularProgressDrawable? = null
-//            val b = CircularProgressDrawable.Builder(this)
-//                    .colors(resources.getIntArray(R.array.gplus_colors))
-//                    .sweepSpeed(2f)
-//                    .rotationSpeed(2f)
-//                    .strokeWidth(Utils.dpToPx(3).toFloat())
-//                    .style(CircularProgressDrawable.STYLE_ROUNDED)
-//            progressbar_circular?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
-//            // /!\ Terrible hack, do not do this at home!
-//            circularProgressDrawable?.setBounds(0,
-//                    0,
-//                    progressbar_circular?.width!!,
-//                    progressbar_circular?.height!!)
-//            progressbar_circular?.visibility = View.VISIBLE
-//        }
-//        EnumStatus.UNLOCK_ALBUMS -> {
-//            var circularProgressDrawable: CircularProgressDrawable? = null
-//            val b = CircularProgressDrawable.Builder(this)
-//                    .colors(resources.getIntArray(R.array.gplus_colors))
-//                    .sweepSpeed(2f)
-//                    .rotationSpeed(2f)
-//                    .strokeWidth(Utils.dpToPx(3).toFloat())
-//                    .style(CircularProgressDrawable.STYLE_ROUNDED)
-//            progressbar_circular_unlock_albums?.indeterminateDrawable = b.build().also { circularProgressDrawable = it }
-//            // /!\ Terrible hack, do not do this at home!
-//            circularProgressDrawable?.setBounds(0,
-//                    0,
-//                    progressbar_circular_unlock_albums?.width!!,
-//                    progressbar_circular_unlock_albums?.height!!)
-//            progressbar_circular_unlock_albums?.visibility = View.VISIBLE
-//        }
-//    }
-}
-
 fun UnlockAllAlbumAct.verifyCode() {
     progressing = EnumStepProgressing.VERIFY_CODE
     btnUnlock.isEnabled = false
-    viewModel.verifyCode().observe(this, Observer{
+    viewModel.verifyCode().observe(this, Observer{ it ->
         when(it.status){
             Status.SUCCESS -> {
                 Utils.Log(TAG,"Success ${it.toJson()}")
                 btnUnlock?.text = getString(R.string.unlock_all_albums)
-                onStopLoading(EnumStatus.UNLOCK_ALBUMS)
-                if (presenter?.mListCategories != null) {
-                    var i = 0
-                    while (i < presenter?.mListCategories?.size!!) {
-                        presenter?.mListCategories?.get(i)?.pin = ""
-                        presenter?.mListCategories?.get(i)?.let { SQLHelper.updateCategory(it) }
-                        i++
-                    }
+                val mList = SQLHelper.getListCategories(false);
+                var i = 0
+                while (i < mList?.size!!) {
+                    mList[i].pin = ""
+                    mList[i].let { SQLHelper.updateCategory(it) }
+                    i++
                 }
                 SingletonPrivateFragment.getInstance()?.onUpdateView()
                 Utils.onAlertNotify(this,"Unlocked Album",getString(R.string.unlocked_successful),object  : UtilsListener {
@@ -193,7 +151,6 @@ fun UnlockAllAlbumAct.verifyCode() {
             }
             else -> Utils.Log(TAG,"Nothing")
         }
-
     })
     Utils.hideSoftKeyboard(this)
 }
@@ -215,7 +172,6 @@ private fun UnlockAllAlbumAct.resendCode(){
         }
         btnSendRequest.isEnabled = true
     })
-
 }
 
 private fun UnlockAllAlbumAct.setupViewModel() {
