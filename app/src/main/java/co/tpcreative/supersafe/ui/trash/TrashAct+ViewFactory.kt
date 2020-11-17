@@ -133,7 +133,7 @@ fun TrashAct.selectAll() {
 
 private fun TrashAct.getData(){
     viewModel.isLoading.postValue(true)
-    viewModel.getData().observe(this@getData, Observer {
+    viewModel.getData().observe(this, Observer {
         when(it.status){
             Status.SUCCESS ->{
                 CoroutineScope(Dispatchers.Main).launch {
