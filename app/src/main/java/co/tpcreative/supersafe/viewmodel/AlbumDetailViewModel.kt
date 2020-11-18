@@ -1,6 +1,15 @@
 package co.tpcreative.supersafe.viewmodel
+import android.app.Activity
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import co.tpcreative.supersafe.model.ItemModel
+import androidx.lifecycle.liveData
+import co.tpcreative.supersafe.R
+import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Resource
+import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.*
+import kotlinx.coroutines.Dispatchers
 
 class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
     override val isLoading: MutableLiveData<Boolean>
@@ -30,8 +39,59 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
     override val isSelectAll: MutableLiveData<Boolean>
         get() = super.isSelectAll
 
-    init {
-
+    fun getData(activity: Activity) = liveData(Dispatchers.Main){
+        try {
+            dataList.clear()
+            val bundle: Bundle? = activity.intent?.extras
+            val mMainCategory = bundle?.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories)) as MainCategoryModel
+            val data: MutableList<ItemModel>? = SQLHelper.getListItems(mMainCategory.categories_local_id, isDeleteLocal = false, isExport = false, mMainCategory.isFakePin)
+            data?.let {
+                dataList.addAll(it)
+                onCalculate()
+            }
+            emit(Resource.success(dataList))
+        } catch (e: Exception) {
+            Utils.onWriteLog("" + e.message, EnumStatus.WRITE_FILE)
+            emit(Resource.error(Utils.CODE_EXCEPTION,e.message?:"",null))
+        }
     }
 
+    fun onCalculate() {
+        var photos = 0
+        var videos = 0
+        var audios = 0
+        var others = 0
+        for (index in dataList) {
+            when (EnumFormatType.values()[index.formatType]) {
+                EnumFormatType.IMAGE -> {
+                    photos += 1
+                }
+                EnumFormatType.VIDEO -> {
+                    videos += 1
+                }
+                EnumFormatType.AUDIO -> {
+                    audios += 1
+                }
+                EnumFormatType.FILES -> {
+                    others += 1
+                }
+            }
+        }
+        this.photos.postValue(photos)
+        this.videos.postValue(videos)
+        this.audios.postValue(audios)
+        this.others.postValue(others)
+    }
+
+    fun onDelete() = liveData(Dispatchers.Main){
+        isLoading.postValue(true)
+        for (i in dataList.indices) {
+            if (dataList[i].isChecked()!!) {
+                dataList.get(i).isDeleteLocal = true
+                dataList.get(i).let { SQLHelper.updatedItem(it) }
+            }
+        }
+        emit(dataList)
+        isLoading.postValue(false)
+    }
 }

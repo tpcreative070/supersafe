@@ -39,9 +39,6 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
     override val isSelectAll: MutableLiveData<Boolean>
         get() = super.isSelectAll
 
-    init {
-    }
-
     fun getData() = liveData(Dispatchers.Main){
         try {
             dataList.clear()
@@ -118,7 +115,7 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
             }
         }
         isRequestSyncData = true
-        emit(dataList)
+        emit(true)
         isLoading.postValue(false)
     }
     companion object {
