@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import com.bumptech.glide.Glide
@@ -17,9 +18,14 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.album_detail_item.view.*
+import kotlinx.android.synthetic.main.album_detail_item.view.imgAlbum
+import kotlinx.android.synthetic.main.album_detail_item.view.rlHome
+import kotlinx.android.synthetic.main.album_detail_item.view.tvTitle
+import kotlinx.android.synthetic.main.album_detail_item.view.view_alpha
+import kotlinx.android.synthetic.main.custom_item_verical.view.*
 import tpcreative.co.qrscanner.common.extension.setColorFilter
 
-class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
+class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(200, 200)
@@ -30,12 +36,34 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
     private val storage: Storage?
     private val TAG = AlbumDetailAdapter::class.java.simpleName
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-    var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp!!.getAccentColor())
+    var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(), themeApp!!.getAccentColor())
+
+    companion object {
+        const val SPAN_COUNT_ONE = 1
+        const val SPAN_COUNT_THREE = 3
+    }
+
+    private val VIEW_TYPE_SMALL = 1
+    private val VIEW_TYPE_BIG = 2
+
     override fun getItemCount(): Int {
         return mDataSource.size
     }
 
+
+    override fun getItemViewType(position: Int): Int {
+        val spanCount = mLayoutManager?.spanCount
+        return if (spanCount == SPAN_COUNT_THREE) {
+           VIEW_TYPE_BIG
+        } else {
+           VIEW_TYPE_SMALL
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder<ItemModel> {
+        if (viewType==VIEW_TYPE_SMALL){
+            return ItemHolderVerical(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
+        }
         return ItemHolder(inflater!!.inflate(R.layout.album_detail_item, parent, false))
     }
 
@@ -69,7 +97,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
             if (data.isChecked) {
                 view_alpha?.alpha = 0.5f
                 imgSelect?.visibility = View.VISIBLE
-                Utils.Log(TAG,"VISIBLE")
+                Utils.Log(TAG, "VISIBLE")
             } else {
                 view_alpha?.alpha = 0.0f
                 imgSelect?.visibility = View.INVISIBLE
@@ -79,7 +107,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                 when (EnumFormatType.values()[data.formatType]) {
                     EnumFormatType.AUDIO -> {
                         imgVideoCam?.visibility = View.VISIBLE
-                        imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_music_note_white_48))
+                        imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.baseline_music_note_white_48))
                         tvTitle?.visibility = View.VISIBLE
                         tvTitle?.text = data.title
                         Glide.with(context!!)
@@ -88,7 +116,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                     }
                     EnumFormatType.VIDEO -> {
                         imgVideoCam?.visibility = View.VISIBLE
-                        imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_videocam_white_36))
+                        imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.baseline_videocam_white_36))
                         tvTitle?.visibility = View.INVISIBLE
                         if (storage?.isFileExist(path)!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
@@ -109,7 +137,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                     }
                     EnumFormatType.FILES -> {
                         imgVideoCam?.visibility = View.VISIBLE
-                        imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_insert_drive_file_white_48))
+                        imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.baseline_insert_drive_file_white_48))
                         tvTitle?.visibility = View.VISIBLE
                         tvTitle?.text = data.title
                         Glide.with(context!!)
@@ -117,7 +145,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                                 .apply(options!!).into(imgAlbum!!)
                     }
                 }
-                progressingBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(context!!,themeApp!!.getAccentColor()), EnumMode.SRC_ATOP)
+                progressingBar?.indeterminateDrawable?.setColorFilter(ContextCompat.getColor(context!!, themeApp!!.getAccentColor()), EnumMode.SRC_ATOP)
                 when (EnumStatusProgress.values()[data.statusProgress]) {
                     EnumStatusProgress.PROGRESSING -> {
                         imgCheck?.visibility = View.INVISIBLE
@@ -125,7 +153,7 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
                     }
                     EnumStatusProgress.DONE -> {
                         if (data.isSaver) {
-                            imgCheck?.setImageDrawable(ContextCompat.getDrawable(context!!,R.drawable.baseline_attach_money_white_48))
+                            imgCheck?.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.baseline_attach_money_white_48))
                             imgCheck?.visibility = View.VISIBLE
                         } else {
                             imgCheck?.visibility = View.VISIBLE
@@ -145,6 +173,69 @@ class AlbumDetailAdapter(inflater: LayoutInflater, private val context: Context?
             }
 
             rlHome.setOnLongClickListener {
+                itemSelectedListener?.onLongClickItem(mPosition)
+                true
+            }
+        }
+    }
+
+    inner class ItemHolderVerical(itemView: View) : BaseHolder<ItemModel>(itemView) {
+        val imgAlbum = itemView.imgAlbumV
+        val tvTitle = itemView.tvTitleV
+        val tvSizeCreatedDate = itemView.tvSizeCreatedDateV
+        var alpha = itemView.view_alphaV
+        var mPosition = 0
+        override fun bind(data: ItemModel, position: Int) {
+            super.bind(data, position)
+            mPosition = position
+            Utils.Log(TAG, "Position $position")
+            if (data.isChecked) {
+                alpha?.alpha = 0.5f
+            } else {
+                alpha?.alpha = 0.0f
+            }
+            try {
+                val path: String? = data.getThumbnail()
+                val formatTypeFile = EnumFormatType.values()[data.formatType]
+                tvTitle?.text = data.title
+                val value: String? = data.size?.toLong()?.let { ConvertUtils.byte2FitMemorySize(it) }
+                tvSizeCreatedDate?.text = value + " created " + Utils.getCurrentDate(data.originalName)
+                when (formatTypeFile) {
+                    EnumFormatType.AUDIO -> {
+                        Glide.with(context!!)
+                                .load(note1)
+                                .apply(options!!).into(imgAlbum!!)
+                    }
+                    EnumFormatType.VIDEO -> {
+                        if (storage?.isFileExist(path)!!) {
+                            imgAlbum?.rotation = data.degrees.toFloat()
+                            Glide.with(context!!)
+                                    .load(storage.readFile(path))
+                                    .apply(options!!).into(imgAlbum!!)
+                        }
+                    }
+                    EnumFormatType.IMAGE -> {
+                        if (storage?.isFileExist(path)!!) {
+                            imgAlbum?.rotation = data.degrees.toFloat()
+                            Glide.with(context!!)
+                                    .load(storage.readFile(path))
+                                    .apply(options!!).into(imgAlbum!!)
+                        }
+                    }
+                    EnumFormatType.FILES -> {
+                        Glide.with(context!!)
+                                .load(note1)
+                                .apply(options!!).into(imgAlbum!!)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            itemView.rlHomeV.setOnClickListener {
+                itemSelectedListener?.onClickItem(mPosition)
+            }
+            itemView.rlHomeV.setOnLongClickListener {
                 itemSelectedListener?.onLongClickItem(mPosition)
                 true
             }

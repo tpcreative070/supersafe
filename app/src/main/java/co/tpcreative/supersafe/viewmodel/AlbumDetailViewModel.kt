@@ -51,7 +51,6 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
             }
             emit(Resource.success(dataList))
         } catch (e: Exception) {
-            Utils.onWriteLog("" + e.message, EnumStatus.WRITE_FILE)
             emit(Resource.error(Utils.CODE_EXCEPTION,e.message?:"",null))
         }
     }
@@ -83,12 +82,12 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
         this.others.postValue(others)
     }
 
-    fun onDelete() = liveData(Dispatchers.Main){
+    fun deleteItems() = liveData(Dispatchers.Main){
         isLoading.postValue(true)
         for (i in dataList.indices) {
             if (dataList[i].isChecked()!!) {
-                dataList.get(i).isDeleteLocal = true
-                dataList.get(i).let { SQLHelper.updatedItem(it) }
+                dataList[i].isDeleteLocal = true
+                dataList[i].let { SQLHelper.updatedItem(it) }
             }
         }
         emit(dataList)

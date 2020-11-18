@@ -3,27 +3,25 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
-import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
+import co.tpcreative.supersafe.common.views.*
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.AlbumDetailViewModel
 import com.afollestad.materialdialogs.MaterialDialog
@@ -32,11 +30,17 @@ import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.activity_album_detail.*
+import kotlinx.android.synthetic.main.activity_album_detail.backdrop
+import kotlinx.android.synthetic.main.activity_album_detail.collapsing_toolbar
+import kotlinx.android.synthetic.main.activity_album_detail.progress_bar
+import kotlinx.android.synthetic.main.activity_album_detail.recyclerView
+import kotlinx.android.synthetic.main.activity_album_detail.toolbar
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Audios
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Others
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Photos
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Videos
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 
@@ -74,7 +78,7 @@ fun AlbumDetailAct.initUI(){
 
     imgMove.setOnClickListener {
         openAlbum()
-        Utils.Log(TAG,"Moving...")
+        Utils.Log(TAG, "Moving...")
     }
 
     recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -96,6 +100,158 @@ fun AlbumDetailAct.initUI(){
             progress_bar.visibility = View.INVISIBLE
         }
     })
+
+    viewModel.photos.observe(this, Observer {
+        tv_Photos.text = kotlin.String.format(getString(R.string.photos_default), "$it")
+    })
+    viewModel.videos.observe(this, Observer {
+        tv_Videos.text = kotlin.String.format(getString(R.string.videos_default), "$it")
+    })
+    viewModel.audios.observe(this, Observer {
+        tv_Audios.text = kotlin.String.format(getString(R.string.audios_default), "$it")
+    })
+    viewModel.others.observe(this, Observer {
+        tv_Others.text = kotlin.String.format(getString(R.string.others_default), "$it")
+    })
+
+    viewModel.isSelectAll.observe(this, Observer {
+        if (it) {
+            selectItems()
+        } else {
+            deselectItems()
+        }
+    })
+
+    viewModel.count.observe(this, Observer {
+        Utils.Log(TAG,"Count $it")
+        if (it == 0) {
+            llBottom?.visibility = View.GONE
+        } else {
+            llBottom?.visibility = View.VISIBLE
+        }
+    })
+    initRecycleView(layoutInflater)
+    getData()
+}
+
+fun AlbumDetailAct.multipleDelete(){
+    var i = 0
+    while (i < dataSource.size) {
+        if (dataSource[i].isChecked) adapter?.removeAt(i) else i++
+    }
+    viewModel.onCalculate()
+    actionMode?.finish()
+}
+
+fun AlbumDetailAct.deselectItems(){
+    var i = 0
+    while (i < dataSource.size) {
+        if (dataSource[i].isChecked){
+            dataSource[i].isChecked = false
+            adapter?.notifyItemChanged(i)
+        }
+        i++
+    }
+    countSelected = 0
+    viewModel.count.postValue(countSelected)
+    actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+}
+
+fun AlbumDetailAct.selectItems(){
+    var i = 0
+    while (i < dataSource.size) {
+        if (!dataSource[i].isChecked){
+            dataSource[i].isChecked = true
+            adapter?.notifyItemChanged(i)
+        }
+        i++
+    }
+    countSelected = i
+    viewModel.count.postValue(countSelected)
+    actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+}
+
+fun AlbumDetailAct.initRecycleView(layoutInflater: LayoutInflater){
+    try {
+        if (Utils.isVertical()) {
+            gridLayoutManager = NpaGridLayoutManager(this, AlbumDetailAdapter.SPAN_COUNT_ONE)
+            adapter = AlbumDetailAdapter(gridLayoutManager, layoutInflater, applicationContext, this@initRecycleView)
+            recyclerView?.layoutManager = gridLayoutManager
+            recyclerView?.addListOfDecoration(this)
+            recyclerView?.adapter = adapter
+        } else {
+            gridLayoutManager = NpaGridLayoutManager(this, AlbumDetailAdapter.SPAN_COUNT_THREE)
+            adapter = AlbumDetailAdapter(gridLayoutManager, layoutInflater, applicationContext, this@initRecycleView)
+            recyclerView?.layoutManager = gridLayoutManager
+            recyclerView?.addGridOfDecoration(3,4)
+            recyclerView?.adapter = adapter
+        }
+    } catch (e: Exception) {
+       e.printStackTrace()
+    }
+}
+
+
+private fun AlbumDetailAct.getData(){
+    viewModel.isLoading.postValue(true)
+    viewModel.getData(this).observe(this, Observer {
+        when (it.status) {
+            Status.SUCCESS -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val mResult = async {
+                        Utils.Log(TAG, "Loading...")
+                        adapter?.setDataSource(it.data)
+                    }
+                    mResult.await()
+                    viewModel.isLoading.postValue(false)
+                    Utils.Log(TAG, "Loading done")
+                }
+            }
+            else -> {
+                Utils.Log(TAG, "Nothing")
+                viewModel.isLoading.postValue(false)
+            }
+        }
+    })
+}
+
+private fun AlbumDetailAct.deleteItems(){
+    viewModel.deleteItems().observe(this, Observer {
+        multipleDelete()
+    })
+}
+
+fun AlbumDetailAct.switchLayout() {
+    recyclerView.clearDecorations()
+    if (gridLayoutManager?.spanCount == AlbumDetailAdapter.SPAN_COUNT_ONE) {
+        gridLayoutManager?.spanCount = AlbumDetailAdapter.SPAN_COUNT_THREE
+        recyclerView.addGridOfDecoration(3,4)
+        Utils.setIsVertical(false)
+    } else {
+        gridLayoutManager?.spanCount = AlbumDetailAdapter.SPAN_COUNT_ONE
+        recyclerView.addListOfDecoration(this)
+        Utils.setIsVertical(true)
+    }
+    adapter?.notifyItemRangeChanged(0, adapter?.itemCount!!)
+}
+
+fun AlbumDetailAct.switchIcon() {
+    if (gridLayoutManager?.spanCount == AlbumDetailAdapter.SPAN_COUNT_THREE) {
+        mMenuItem?.icon = ContextCompat.getDrawable(this, R.drawable.baseline_view_comfy_white_48)
+    } else {
+        mMenuItem?.icon = ContextCompat.getDrawable(this, R.drawable.baseline_format_list_bulleted_white_48)
+    }
+}
+
+fun AlbumDetailAct.toggleSelections(position: Int) {
+    dataSource[position].isChecked = !(dataSource[position].isChecked)
+    if (dataSource[position].isChecked) {
+        countSelected++
+    } else {
+        countSelected--
+    }
+    viewModel.count.postValue(countSelected)
+    adapter?.notifyItemChanged(position)
 }
 
 fun AlbumDetailAct.onExport(){
@@ -417,9 +573,9 @@ fun AlbumDetailAct.onStopProgressing() {
 }
 
 fun AlbumDetailAct.onInit() {
-    llToolbarInfo.visibility = View.INVISIBLE
-    progress_bar.visibility = View.VISIBLE
-    onCallData()
+//    llToolbarInfo.visibility = View.INVISIBLE
+//    progress_bar.visibility = View.VISIBLE
+//    onCallData()
 }
 
 fun AlbumDetailAct.onCallData(){
@@ -447,36 +603,6 @@ fun AlbumDetailAct.onCallData(){
     }
 }
 
-suspend fun AlbumDetailAct.initRecycleView(layoutInflater: LayoutInflater) = withContext(Dispatchers.Main) {
-    try {
-        val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-        if (isVertical) {
-            recyclerView?.recycledViewPool?.clear()
-            verticalAdapter = AlbumDetailVerticalAdapter(getLayoutInflater(), this@initRecycleView, this@initRecycleView)
-            val mLayoutManager: RecyclerView.LayoutManager = LinearLayoutManager(applicationContext)
-            recyclerView?.layoutManager = mLayoutManager
-            while (recyclerView?.itemDecorationCount!! > 0) {
-                recyclerView?.removeItemDecorationAt(0)
-            }
-            recyclerView?.addItemDecoration(DividerItemDecoration(this@initRecycleView, 0))
-            recyclerView?.adapter = verticalAdapter
-            verticalAdapter?.setDataSource(presenter?.mList)
-        } else {
-            recyclerView?.recycledViewPool?.clear()
-            adapter = AlbumDetailAdapter(layoutInflater, applicationContext, this@initRecycleView)
-            val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(applicationContext, 3)
-            recyclerView?.layoutManager = mLayoutManager
-            while (recyclerView?.itemDecorationCount!! > 0) {
-                recyclerView?.removeItemDecorationAt(0)
-            }
-            recyclerView?.addItemDecoration(GridSpacingItemDecoration(3, 4, true))
-            recyclerView?.adapter = adapter
-            adapter?.setDataSource(presenter?.mList)
-        }
-    } catch (e: Exception) {
-        e.message
-    }
-}
 
 suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
     collapsing_toolbar.title = presenter?.mainCategories?.categories_name
@@ -536,8 +662,7 @@ suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
 }
 
 suspend fun AlbumDetailAct.onLoading() = withContext(Dispatchers.Main){
-    val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-    if (isVertical) {
+    if (Utils.isVertical()) {
         verticalAdapter?.getDataSource()?.clear()
         presenter?.mList?.let { verticalAdapter?.getDataSource()?.addAll(it) }
     } else {

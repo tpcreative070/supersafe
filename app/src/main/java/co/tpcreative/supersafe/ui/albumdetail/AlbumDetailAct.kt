@@ -5,40 +5,52 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
-import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.util.Configuration
-import co.tpcreative.supersafe.common.util.Utils
-import com.bumptech.glide.Priority
-import com.karumi.dexter.listener.PermissionRequest
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import java.util.*
-import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.Configuration
+import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
+import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.AlbumDetailViewModel
+import com.bumptech.glide.Priority
 import com.bumptech.glide.request.RequestOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_album_detail.*
+import kotlinx.android.synthetic.main.activity_album_detail.appbar
 import kotlinx.android.synthetic.main.activity_album_detail.toolbar
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Audios
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Others
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Photos
+import kotlinx.android.synthetic.main.activity_album_detail.tv_Videos
+import kotlinx.android.synthetic.main.activity_trash.*
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
 
 class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.ItemSelectedListener, AlbumDetailVerticalAdapter.ItemSelectedListener {
     var presenter: AlbumDetailPresenter? = null
@@ -51,6 +63,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     var dialog: AlertDialog? = null
     var mMenuItem: MenuItem? = null
     lateinit var viewModel : AlbumDetailViewModel
+    var gridLayoutManager: NpaGridLayoutManager? = null
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(400, 400)
@@ -98,12 +111,12 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                             }
                         }
                         EnumStatus.EXPORT -> {
-                            Utils.onBasicAlertNotify(this,getString(R.string.key_alert),"Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
+                            Utils.onBasicAlertNotify(this, getString(R.string.key_alert), "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
                         }
-                        else -> Utils.Log(TAG,"Nothing")
+                        else -> Utils.Log(TAG, "Nothing")
                     }
                 } catch (e: Exception) {
-                    Utils.Log(TAG, e.message +"")
+                    Utils.Log(TAG, e.message + "")
                 }
             }
             EnumStatus.DOWNLOAD_COMPLETED -> {
@@ -120,9 +133,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 Utils.Log(TAG, "already sync ")
             }
             EnumStatus.DOWNLOAD_FAILED -> {
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.no_internet_connection))
+                Utils.onBasicAlertNotify(this, getString(R.string.key_alert), getString(R.string.no_internet_connection))
             }
-            else -> Utils.Log(TAG,"Nothing ==> Event bus")
+            else -> Utils.Log(TAG, "Nothing ==> Event bus")
         }
     }
 
@@ -165,11 +178,10 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         }
         toolbar?.inflateMenu(R.menu.menu_album_detail)
         mMenuItem = toolbar?.menu?.getItem(0)
-        val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-        if (isVertical) {
-            mMenuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_view_comfy_white_48)
+        if (Utils.isVertical()) {
+            mMenuItem?.icon = ContextCompat.getDrawable(this, R.drawable.baseline_view_comfy_white_48)
         } else {
-            mMenuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_format_list_bulleted_white_48)
+            mMenuItem?.icon = ContextCompat.getDrawable(this, R.drawable.baseline_format_list_bulleted_white_48)
         }
         return true
     }
@@ -192,16 +204,8 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             }
             R.id.action_view -> {
                 if (mMenuItem != null) {
-                    val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
-                    if (isVertical) {
-                        mMenuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_format_list_bulleted_white_48)
-                        PrefsController.putBoolean(getString(R.string.key_vertical_adapter), false)
-                        onInit()
-                    } else {
-                        mMenuItem?.icon = ContextCompat.getDrawable(this,R.drawable.baseline_view_comfy_white_48)
-                        PrefsController.putBoolean(getString(R.string.key_vertical_adapter), true)
-                        onInit()
-                    }
+                    switchLayout()
+                    switchIcon()
                 }
             }
             android.R.id.home -> {
@@ -214,39 +218,59 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
 
     override fun onClickItem(position: Int) {
         Utils.Log(TAG, "On clicked item")
-        if (position >= presenter?.mList?.size!!) {
-            return
+//        if (position >= presenter?.mList?.size!!) {
+//            return
+//        }
+//        if (actionMode != null) {
+//            toggleSelection(position)
+//            actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
+//        } else {
+//            try {
+//                when (EnumFormatType.values()[presenter?.mList?.get(position)?.formatType!!]) {
+//                    EnumFormatType.FILES -> {
+//                        Toast.makeText(getContext(), "Can not support to open type of this file", Toast.LENGTH_SHORT).show()
+//                    }
+//                    else -> {
+//                        presenter?.mainCategories?.let { Navigator.onPhotoSlider(this, presenter?.mList?.get(position)!!, presenter?.mList!!, it) }
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+
+
+        if (actionMode == null) {
+            actionMode = toolbar?.startActionMode(callback)
         }
-        if (actionMode != null) {
-            toggleSelection(position)
-            actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
-        } else {
-            try {
-                when (EnumFormatType.values()[presenter?.mList?.get(position)?.formatType!!]) {
-                    EnumFormatType.FILES -> {
-                        Toast.makeText(getContext(), "Can not support to open type of this file", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {
-                        presenter?.mainCategories?.let { Navigator.onPhotoSlider(this, presenter?.mList?.get(position)!!, presenter?.mList!!, it) }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        toggleSelections(position)
+        actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
+        if (countSelected == 0) {
+            actionMode?.finish()
         }
     }
 
     override fun onLongClickItem(position: Int) {
         Utils.Log(TAG, "On long clicked item")
+//        appbar.setExpanded(false)
+//        if (position >= presenter?.mList?.size!!) {
+//            return
+//        }
+//        if (actionMode == null) {
+//            actionMode = toolbar?.startActionMode(callback)
+//        }
+//        toggleSelection(position)
+//        actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+
         appbar.setExpanded(false)
-        if (position >= presenter?.mList?.size!!) {
-            return
-        }
         if (actionMode == null) {
             actionMode = toolbar?.startActionMode(callback)
         }
-        toggleSelection(position)
-        actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+        toggleSelections(position)
+        actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
+        if (countSelected == 0) {
+            actionMode?.finish()
+        }
     }
 
     override fun onStartLoading(status: EnumStatus) {}
@@ -283,6 +307,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                             Utils.Log(TAG, "request permission is failed")
                         }
                     }
+
                     override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest?>?, token: PermissionToken?) {
                         /* ... */
                         token?.continuePermissionRequest()
@@ -317,7 +342,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             }
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    Utils.Log(TAG,"Response data here")
+                    Utils.Log(TAG, "Response data here")
                     val images: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
                     val mListImportFiles: MutableList<ImportFilesModel>? = ArrayList<ImportFilesModel>()
                     var i = 0
@@ -411,7 +436,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                 }
                 isReload = true
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
@@ -423,7 +448,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     onUpdateAdapter(EnumStatus.REMOVE_AT_ADAPTER, `object`)
                 }
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
@@ -451,17 +476,19 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
             val i = item?.itemId
             if (i == R.id.menu_item_select_all) {
-                isSelectAll = !isSelectAll
-                selectAll()
+                //isSelectAll = !isSelectAll
+                //selectAll()
+                viewModel.isSelectAll.postValue(!(viewModel.isSelectAll.value ?: false))
                 return true
             }
             return false
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            if (countSelected > 0) {
-                deselectAll()
-            }
+//            if (countSelected > 0) {
+//                deselectAll()
+//            }
+            viewModel.isSelectAll.postValue(false)
             actionMode = null
             val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
             if (themeApp != null) {
@@ -508,7 +535,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                                     storage?.deleteFile(items.getOriginal())
                                 }
                             }
-                            else -> Utils.Log(TAG,"Nothing")
+                            else -> Utils.Log(TAG, "Nothing")
                         }
                         onUpdateAdapter(EnumStatus.UPDATE_AT_ADAPTER, i)
                     }
@@ -624,7 +651,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     }
 
     private fun onUpdateAdapter(status: EnumStatus?, position: Int)  = CoroutineScope(Dispatchers.Main).launch{
-        val isVertical: Boolean = PrefsController.getBoolean(getString(R.string.key_vertical_adapter), false)
+        val isVertical = Utils.isVertical()
         when (status) {
             EnumStatus.UPDATE_ENTIRE_ADAPTER -> {
                 if (isVertical) {
@@ -679,9 +706,12 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
                     }
                 }
             }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
-    companion object {
-    }
+
+    val dataSource : MutableList<ItemModel>
+        get() {
+            return adapter?.getDataSource() ?: mutableListOf()
+        }
 }

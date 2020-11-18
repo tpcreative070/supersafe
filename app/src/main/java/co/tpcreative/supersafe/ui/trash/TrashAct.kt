@@ -132,7 +132,7 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            deselectItems()
+            viewModel.isSelectAll.postValue(false)
             actionMode = null
             val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
             if (themeApp != null) {

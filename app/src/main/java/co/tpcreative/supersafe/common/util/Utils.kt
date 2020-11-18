@@ -1125,8 +1125,17 @@ object Utils {
     fun putAlreadyAskedExpiration(status: Boolean){
         PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), status)
     }
+
     fun isAlreadyAskedExpiration() : Boolean{
        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_already_asked_expiration), false)
+    }
+
+    fun isVertical() : Boolean {
+        return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_vertical_adapter), false)
+    }
+
+    fun setIsVertical(isVertical : Boolean){
+        return PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_vertical_adapter), isVertical)
     }
 }
 

@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
-import co.tpcreative.supersafe.common.adapter.FooterViewHolder
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
@@ -38,7 +37,7 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseHolder<ItemModel> {
-       return ItemHolder(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
+       return ItemHolderVerical(inflater!!.inflate(R.layout.custom_item_verical, parent, false))
     }
 
     interface ItemSelectedListener {
@@ -46,11 +45,11 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
         fun onLongClickItem(position: Int)
     }
 
-    inner class ItemHolder(itemView: View) : BaseHolder<ItemModel>(itemView) {
-        val imgAlbum = itemView.imgAlbum
-        val tvTitle = itemView.tvTitle
-        val tvSizeCreatedDate = itemView.tvSizeCreatedDate
-        var alpha = itemView.view_alpha
+    inner class ItemHolderVerical(itemView: View) : BaseHolder<ItemModel>(itemView) {
+        val imgAlbum = itemView.imgAlbumV
+        val tvTitle = itemView.tvTitleV
+        val tvSizeCreatedDate = itemView.tvSizeCreatedDateV
+        var alpha = itemView.view_alphaV
         var mPosition = 0
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
@@ -99,10 +98,10 @@ class AlbumDetailVerticalAdapter(inflater: LayoutInflater, private val context: 
                 e.printStackTrace()
             }
 
-            itemView.rlHome.setOnClickListener {
+            itemView.rlHomeV.setOnClickListener {
                 itemSelectedListener?.onClickItem(mPosition)
             }
-            itemView.rlHome.setOnLongClickListener {
+            itemView.rlHomeV.setOnLongClickListener {
                 itemSelectedListener?.onLongClickItem(mPosition)
                 true
             }

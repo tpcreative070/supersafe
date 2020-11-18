@@ -49,7 +49,6 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
             }
             emit(Resource.success(dataList))
         } catch (e: Exception) {
-            Utils.onWriteLog("" + e.message, EnumStatus.WRITE_FILE)
             emit(Resource.error(Utils.CODE_EXCEPTION,e.message?:"",null))
         }
     }
