@@ -7,6 +7,8 @@ import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.coroutineContext
 
 class TrashViewModel : BaseViewModel<ItemModel>(){
     override val videos : MutableLiveData<Int> by lazy {
@@ -44,8 +46,8 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
         try {
             dataList.clear()
             val data: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
-            if (data != null) {
-                dataList.addAll(data)
+            data?.let {
+                dataList.addAll(it)
                 onCalculate()
             }
             emit(Resource.success(dataList))
@@ -104,9 +106,12 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
                 items?.isDeleteLocal = false
                 if (dataList[i].isChecked) {
                     val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesLocalId(items?.categories_local_id)
-                    if (mainCategories != null) {
-                        mainCategories.isDelete = false
-                        SQLHelper.updateCategory(mainCategories)
+                    mainCategories?.let {
+                        if (it.isDelete){
+                            it.isDelete = false
+                            SQLHelper.updateCategory(it)
+                            Utils.Log(TAG,"Updated category....")
+                        }
                     }
                     SQLHelper.updatedItem(items!!)
                 }

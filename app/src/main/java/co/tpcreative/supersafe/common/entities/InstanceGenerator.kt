@@ -53,7 +53,6 @@ abstract class InstanceGenerator : RoomDatabase() {
                 Utils.Log(TAG, "Null???? ")
                 return
             }
-            Utils.Log(TAG, "updatedItem " + Gson().toJson(cTalkManager))
             instance?.itemsDao()?.update(cTalkManager)
         } catch (e: Exception) {
             Utils.Log(TAG, e.message +"")

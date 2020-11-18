@@ -73,7 +73,8 @@ fun AlbumDetailAct.initUI(){
     }
 
     imgMove.setOnClickListener {
-       openAlbum()
+        openAlbum()
+        Utils.Log(TAG,"Moving...")
     }
 
     recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {

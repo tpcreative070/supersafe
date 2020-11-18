@@ -17,4 +17,21 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
 
     override val others: MutableLiveData<Int>
         get() = super.others
+
+    override val count : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
+    override val dataList: MutableList<ItemModel>
+        get() = super.dataList
+
+    override var isRequestSyncData: Boolean = false
+
+    override val isSelectAll: MutableLiveData<Boolean>
+        get() = super.isSelectAll
+
+    init {
+
+    }
+
 }

@@ -37,16 +37,19 @@ fun MoveGalleryFragment.iniUI(){
     presenter?.bindView(this)
     Utils.Log(TAG, Gson().toJson(mConfig))
     presenter?.getData(mConfig!!.localCategoriesId, mConfig!!.isFakePIN)
+    Utils.Log(TAG,"Init data")
 }
 
 fun MoveGalleryFragment.openAlbum() {
     if (mConfig == null) {
         dialog?.dismiss()
+        Utils.Log(TAG,"Null...")
         return
     }
     val screenHeight: Int = Utils.getScreenHeight(activity!!)
     if (dialog != null && dialog?.isShowing!!) {
         dialog?.dismiss()
+        Utils.Log(TAG,"Null...???")
         return
     }
     dialog = BottomSheetDialog(activity!!)
