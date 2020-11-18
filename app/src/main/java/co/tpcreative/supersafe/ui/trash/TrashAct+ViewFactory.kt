@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-
 fun TrashAct.initUI(){
     TAG = this::class.java.simpleName
     setupViewModel()
@@ -35,8 +34,7 @@ fun TrashAct.initUI(){
             }
         }
     }
-
-
+    
     btnUpgradeVersion.setOnClickListener {
         Navigator.onMoveToPremium(applicationContext)
     }
