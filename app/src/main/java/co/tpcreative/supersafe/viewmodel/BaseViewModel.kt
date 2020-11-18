@@ -6,6 +6,7 @@ import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStepProgressing
 import co.tpcreative.supersafe.model.EnumValidationKey
 import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.model.MainCategoryModel
 
 open class BaseViewModel<T> : ViewModel() {
     open val isLoading : MutableLiveData<Boolean> by lazy {
@@ -44,6 +45,8 @@ open class BaseViewModel<T> : ViewModel() {
     }
 
     protected open val dataList : MutableList<T> = mutableListOf()
+
+    open lateinit var mainCategoryModel : MainCategoryModel
 
     open fun putErrorResponse(key: EnumValidationKey,value : String? = null){
         if (errorResponseMessage.value==null){

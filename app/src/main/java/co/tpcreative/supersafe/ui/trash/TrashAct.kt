@@ -77,7 +77,7 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         }
         toggleSelection(position)
         actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
-        if (countSelected == 0) {
+        if (countSelected==0){
             actionMode?.finish()
         }
     }

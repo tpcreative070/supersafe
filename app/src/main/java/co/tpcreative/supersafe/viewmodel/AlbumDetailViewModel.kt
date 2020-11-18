@@ -44,6 +44,7 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
             dataList.clear()
             val bundle: Bundle? = activity.intent?.extras
             val mMainCategory = bundle?.get(SuperSafeApplication.getInstance().getString(R.string.key_main_categories)) as MainCategoryModel
+            mainCategoryModel = mMainCategory
             val data: MutableList<ItemModel>? = SQLHelper.getListItems(mMainCategory.categories_local_id, isDeleteLocal = false, isExport = false, mMainCategory.isFakePin)
             data?.let {
                 dataList.addAll(it)

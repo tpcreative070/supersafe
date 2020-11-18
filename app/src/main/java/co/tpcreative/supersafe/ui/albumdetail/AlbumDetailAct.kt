@@ -239,14 +239,25 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
 //            }
 //        }
 
-
-        if (actionMode == null) {
-            actionMode = toolbar?.startActionMode(callback)
-        }
-        toggleSelections(position)
-        actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
-        if (countSelected == 0) {
-            actionMode?.finish()
+        if (actionMode != null) {
+            toggleSelections(position)
+            actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
+            if (countSelected==0){
+                actionMode?.finish()
+            }
+        }else{
+            try {
+                when (EnumFormatType.values()[dataSource.get(position).formatType]) {
+                    EnumFormatType.FILES -> {
+                        Toast.makeText(getContext(), "Can not support to open type of this file", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        Navigator.onPhotoSlider(this,dataSource.get(position), dataSource, mainCategory)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -268,9 +279,6 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         }
         toggleSelections(position)
         actionMode?.title = (countSelected.toString() + " " + getString(R.string.selected))
-        if (countSelected == 0) {
-            actionMode?.finish()
-        }
     }
 
     override fun onStartLoading(status: EnumStatus) {}
@@ -714,4 +722,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         get() {
             return adapter?.getDataSource() ?: mutableListOf()
         }
+    val mainCategory : MainCategoryModel
+        get(){
+            return viewModel.mainCategoryModel
+        }
+
 }
