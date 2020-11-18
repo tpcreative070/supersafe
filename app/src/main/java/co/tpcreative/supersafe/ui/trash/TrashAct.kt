@@ -5,6 +5,8 @@ import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
+import co.tpcreative.supersafe.common.controller.ServiceManager
+import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ItemModel
@@ -56,6 +58,8 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
+        SingletonPrivateFragment.getInstance()?.onUpdateView()
+        ServiceManager.getInstance()?.onPreparingSyncData()
     }
 
     override fun onStopListenerAWhile() {
@@ -121,16 +125,18 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
             val i = item?.itemId
             if (i == R.id.menu_item_select_all) {
                 isSelectAll = !isSelectAll
-                selectAll()
+                if (isSelectAll){
+                    selectItems()
+                }else{
+                    deselectItems()
+                }
                 return true
             }
             return false
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            if (countSelected > 0) {
-                deselectAll()
-            }
+            deselectItems()
             actionMode = null
             val themeApp: co.tpcreative.supersafe.model.ThemeApp? = co.tpcreative.supersafe.model.ThemeApp.getInstance()?.getThemeInfo()
             if (themeApp != null) {
@@ -139,8 +145,8 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         }
     }
 
-    val dataSource : MutableList<ItemModel>?
+    val dataSource : MutableList<ItemModel>
         get() {
-        return adapter?.getDataSource()
+        return adapter?.getDataSource() ?: mutableListOf()
     }
 }

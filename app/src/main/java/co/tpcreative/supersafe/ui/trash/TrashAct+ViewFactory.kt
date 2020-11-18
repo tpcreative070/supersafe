@@ -4,24 +4,22 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
-import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
-import co.tpcreative.supersafe.model.EnumStepProgressing
 import co.tpcreative.supersafe.viewmodel.TrashViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_trash.*
-import kotlinx.android.synthetic.main.activity_trash.recyclerView
-import kotlinx.android.synthetic.main.activity_trash.toolbar
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+
 
 fun TrashAct.initUI(){
     TAG = this::class.java.simpleName
@@ -29,7 +27,7 @@ fun TrashAct.initUI(){
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     btnTrash.setOnClickListener {
-        if (dataSource?.size!! > 0) {
+        if (dataSource.size > 0) {
             if (countSelected == 0) {
                 onShowDialog(getString(R.string.empty_all_trash), true)
             } else {
@@ -38,14 +36,15 @@ fun TrashAct.initUI(){
         }
     }
 
+
     btnUpgradeVersion.setOnClickListener {
         Navigator.onMoveToPremium(applicationContext)
     }
 
     viewModel.isLoading.observe(this, Observer {
-        if (it){
+        if (it) {
             progress_bar.visibility = View.VISIBLE
-        }else{
+        } else {
             progress_bar.visibility = View.INVISIBLE
         }
     })
@@ -74,6 +73,43 @@ fun TrashAct.initUI(){
     getData()
 }
 
+fun TrashAct.multipleDelete(){
+    var i = 0
+    while (i < dataSource.size) {
+        if (dataSource[i].isChecked) adapter?.removeAt(i) else i++
+    }
+    viewModel.onCalculate()
+    actionMode?.finish()
+}
+
+fun TrashAct.deselectItems(){
+    var i = 0
+    while (i < dataSource.size) {
+        if (dataSource[i].isChecked){
+            dataSource[i].isChecked = false
+            adapter?.notifyItemChanged(i)
+        }
+        i++
+    }
+    countSelected = 0
+    viewModel.count.postValue(countSelected)
+    actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+}
+
+fun TrashAct.selectItems(){
+    var i = 0
+    while (i < dataSource.size) {
+        if (!dataSource[i].isChecked){
+            dataSource[i].isChecked = true
+            adapter?.notifyItemChanged(i)
+        }
+        i++
+    }
+    countSelected = i
+    viewModel.count.postValue(countSelected)
+    actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
+}
+
 fun TrashAct.initRecycleView(layoutInflater: LayoutInflater){
     adapter = TrashAdapter(layoutInflater, applicationContext, this@initRecycleView)
     val mLayoutManager: RecyclerView.LayoutManager = NpaGridLayoutManager(applicationContext, 3)
@@ -94,8 +130,8 @@ fun TrashAct.onShowDialog(message: String, isEmpty: Boolean) {
 }
 
 fun TrashAct.toggleSelection(position: Int) {
-    dataSource?.get(position)?.isChecked = !(dataSource?.get(position)?.isChecked!!)
-    if (dataSource?.get(position)?.isChecked!!) {
+    dataSource.get(position).isChecked = !(dataSource.get(position).isChecked)
+    if (dataSource.get(position).isChecked) {
         countSelected++
     } else {
         countSelected--
@@ -104,50 +140,23 @@ fun TrashAct.toggleSelection(position: Int) {
     adapter?.notifyItemChanged(position)
 }
 
-fun TrashAct.deselectAll() {
-    var i = 0
-    val l: Int = dataSource?.size!!
-    while (i < l) {
-        dataSource?.get(i)?.isChecked = false
-        i++
-    }
-    countSelected = 0
-    viewModel.count.postValue(countSelected)
-    adapter?.notifyDataSetChanged()
-}
-
-fun TrashAct.selectAll() {
-    var countSelect = 0
-    for (i in dataSource?.indices!!) {
-        dataSource?.get(i)?.isChecked = isSelectAll
-        if (dataSource?.get(i)?.isChecked!!) {
-            countSelect++
-        }
-    }
-    countSelected = countSelect
-    viewModel.count.postValue(countSelected)
-    adapter?.notifyDataSetChanged()
-    actionMode?.title = countSelected.toString() + " " + getString(R.string.selected)
-
-}
-
 private fun TrashAct.getData(){
     viewModel.isLoading.postValue(true)
     viewModel.getData().observe(this, Observer {
-        when(it.status){
-            Status.SUCCESS ->{
+        when (it.status) {
+            Status.SUCCESS -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     val mResult = async {
-                        Utils.Log(TAG,"Loading...")
+                        Utils.Log(TAG, "Loading...")
                         adapter?.setDataSource(it.data)
                     }
                     mResult.await()
                     viewModel.isLoading.postValue(false)
-                    Utils.Log(TAG,"Loading done")
+                    Utils.Log(TAG, "Loading done")
                 }
             }
             else -> {
-                Utils.Log(TAG,"Nothing")
+                Utils.Log(TAG, "Nothing")
                 viewModel.isLoading.postValue(false)
             }
         }
@@ -156,13 +165,8 @@ private fun TrashAct.getData(){
 
 private fun TrashAct.deleteItems(isEmpty: Boolean){
     viewModel.onDeleteAll(isEmpty).observe(this, Observer {
-        if (actionMode != null) {
-            actionMode?.finish()
-        }
-        getData()
+        multipleDelete()
         btnTrash?.text = getString(R.string.key_empty_trash)
-        SingletonPrivateFragment.getInstance()?.onUpdateView()
-        ServiceManager.getInstance()?.onPreparingSyncData()
     })
 }
 

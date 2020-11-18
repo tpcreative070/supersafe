@@ -65,12 +65,9 @@ open class BaseAdapter<V, VH : BaseHolder<V>>(inflater: LayoutInflater) : Recycl
 
     fun removeAt(position: Int) {
         try {
-            if (mDataSource.size > position) {
-                notifyItemRemoved(position)
-                notifyItemRangeChanged(position, mDataSource.size)
-            } else {
-                Utils.Log(TAG, "Can not delete ")
-            }
+            mDataSource.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, mDataSource.size)
         } catch (e: Exception) {
             e.printStackTrace()
         }
