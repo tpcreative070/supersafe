@@ -64,6 +64,13 @@ fun TrashAct.initUI(){
             btnTrash?.text = getString(R.string.key_restore)
         }
     })
+    viewModel.isSelectAll.observe(this, Observer {
+        if (it){
+            selectItems()
+        }else{
+            deselectItems()
+        }
+    })
     initRecycleView(layoutInflater)
     getData()
 }

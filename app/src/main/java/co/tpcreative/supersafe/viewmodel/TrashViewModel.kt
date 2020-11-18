@@ -34,8 +34,10 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
 
     override var isRequestSyncData: Boolean = false
 
-    init {
+    override val isSelectAll: MutableLiveData<Boolean>
+        get() = super.isSelectAll
 
+    init {
     }
 
     fun getData() = liveData(Dispatchers.Main){

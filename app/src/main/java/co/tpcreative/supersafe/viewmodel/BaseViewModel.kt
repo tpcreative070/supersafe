@@ -39,6 +39,10 @@ open class BaseViewModel<T> : ViewModel() {
 
     open var isRequestSyncData : Boolean = false
 
+    open val isSelectAll : MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+
     protected open val dataList : MutableList<T> = mutableListOf()
 
     open fun putErrorResponse(key: EnumValidationKey,value : String? = null){

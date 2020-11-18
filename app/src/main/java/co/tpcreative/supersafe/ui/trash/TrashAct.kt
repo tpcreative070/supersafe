@@ -20,7 +20,6 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
     var adapter: TrashAdapter? = null
     var actionMode: ActionMode? = null
     var countSelected = 0
-    var isSelectAll = false
     lateinit var viewModel : TrashViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,12 +125,7 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
             val i = item?.itemId
             if (i == R.id.menu_item_select_all) {
-                isSelectAll = !isSelectAll
-                if (isSelectAll){
-                    selectItems()
-                }else{
-                    deselectItems()
-                }
+                viewModel.isSelectAll.postValue(!(viewModel.isSelectAll.value ?: false))
                 return true
             }
             return false
