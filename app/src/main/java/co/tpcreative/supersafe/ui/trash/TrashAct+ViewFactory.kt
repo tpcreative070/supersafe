@@ -73,10 +73,10 @@ fun TrashAct.initUI(){
     getData()
 }
 
-fun TrashAct.multipleDelete(){
+fun TrashAct.multipleDelete(isEmpty: Boolean){
     var i = 0
     while (i < dataSource.size) {
-        if (dataSource[i].isChecked) adapter?.removeAt(i) else i++
+        if (dataSource[i].isChecked || isEmpty) adapter?.removeAt(i) else i++
     }
     viewModel.onCalculate()
     actionMode?.finish()
@@ -165,7 +165,7 @@ private fun TrashAct.getData(){
 
 private fun TrashAct.deleteItems(isEmpty: Boolean){
     viewModel.onDeleteAll(isEmpty).observe(this, Observer {
-        multipleDelete()
+        multipleDelete(isEmpty)
         btnTrash?.text = getString(R.string.key_empty_trash)
     })
 }
