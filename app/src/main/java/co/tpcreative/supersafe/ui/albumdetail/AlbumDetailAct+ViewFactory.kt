@@ -96,7 +96,6 @@ fun AlbumDetailAct.initUI(){
             progress_bar.visibility = View.INVISIBLE
         }
     })
-
 }
 
 fun AlbumDetailAct.onExport(){
@@ -444,6 +443,7 @@ fun AlbumDetailAct.onCallData(){
         progress_bar.visibility = View.INVISIBLE
         llToolbarInfo.visibility = View.VISIBLE
         Utils.Log(TAG, "Loading data")
+        waitingToInit()
     }
 }
 

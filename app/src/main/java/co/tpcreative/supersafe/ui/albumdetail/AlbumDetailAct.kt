@@ -62,6 +62,9 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_detail)
         initUI()
+    }
+
+    fun waitingToInit(){
         attachFragment(R.id.gallery_root)
     }
 
