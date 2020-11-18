@@ -12,7 +12,6 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
-import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.viewmodel.TrashViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_trash.*
