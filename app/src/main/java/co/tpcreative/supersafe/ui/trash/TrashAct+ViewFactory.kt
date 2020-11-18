@@ -12,13 +12,11 @@ import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.GridSpacingItemDecoration
 import co.tpcreative.supersafe.common.views.NpaGridLayoutManager
+import co.tpcreative.supersafe.model.ItemModel
 import co.tpcreative.supersafe.viewmodel.TrashViewModel
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_trash.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 fun TrashAct.initUI(){
     TAG = this::class.java.simpleName
@@ -34,7 +32,7 @@ fun TrashAct.initUI(){
             }
         }
     }
-    
+
     btnUpgradeVersion.setOnClickListener {
         Navigator.onMoveToPremium(applicationContext)
     }
@@ -128,8 +126,8 @@ fun TrashAct.onShowDialog(message: String, isEmpty: Boolean) {
 }
 
 fun TrashAct.toggleSelection(position: Int) {
-    dataSource.get(position).isChecked = !(dataSource.get(position).isChecked)
-    if (dataSource.get(position).isChecked) {
+    dataSource[position].isChecked = !(dataSource[position].isChecked)
+    if (dataSource[position].isChecked) {
         countSelected++
     } else {
         countSelected--

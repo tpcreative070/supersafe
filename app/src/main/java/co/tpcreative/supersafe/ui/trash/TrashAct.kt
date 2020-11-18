@@ -58,8 +58,10 @@ class TrashAct : BaseActivity(), TrashAdapter.ItemSelectedListener {
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        SingletonPrivateFragment.getInstance()?.onUpdateView()
-        ServiceManager.getInstance()?.onPreparingSyncData()
+        if (viewModel.isRequestSyncData){
+            SingletonPrivateFragment.getInstance()?.onUpdateView()
+            ServiceManager.getInstance()?.onPreparingSyncData()
+        }
     }
 
     override fun onStopListenerAWhile() {

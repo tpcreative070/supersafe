@@ -37,6 +37,8 @@ open class BaseViewModel<T> : ViewModel() {
         MutableLiveData<Int>()
     }
 
+    open var isRequestSyncData : Boolean = false
+
     protected open val dataList : MutableList<T> = mutableListOf()
 
     open fun putErrorResponse(key: EnumValidationKey,value : String? = null){

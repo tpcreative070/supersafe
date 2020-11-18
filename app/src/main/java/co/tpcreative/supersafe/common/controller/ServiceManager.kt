@@ -222,12 +222,15 @@ class ServiceManager : BaseServiceView<Any?> {
                                                     val mResultUploadedFiles = driveViewModel.uploadData()
                                                     when(mResultUploadedFiles.status){
                                                         Status.SUCCESS -> {
+                                                            Utils.onPushEventBus(EnumStatus.DONE)
                                                             val mResultUpdatedItem = itemViewModel.updateItemToSystem()
                                                             when(mResultUpdatedItem.status){
                                                                 Status.SUCCESS -> {
+                                                                    Utils.onPushEventBus(EnumStatus.DONE)
                                                                     val mResultDeletedItem = driveViewModel.deleteItemFromCloud()
                                                                     when(mResultDeletedItem.status){
                                                                         Status.SUCCESS -> {
+                                                                            Utils.onPushEventBus(EnumStatus.DONE)
                                                                             Utils.Log(TAG,"Sync completed")
                                                                             Utils.checkRequestUploadItemData()
                                                                         }

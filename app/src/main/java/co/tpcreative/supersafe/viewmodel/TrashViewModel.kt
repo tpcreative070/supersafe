@@ -32,11 +32,13 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
     override val dataList: MutableList<ItemModel>
         get() = super.dataList
 
+    override var isRequestSyncData: Boolean = false
+
     init {
 
     }
 
-    fun getData() = liveData(Dispatchers.IO){
+    fun getData() = liveData(Dispatchers.Main){
         try {
             dataList.clear()
             val data: MutableList<ItemModel>? = SQLHelper.getDeleteLocalListItems(true, EnumDelete.NONE.ordinal, false)
@@ -78,7 +80,7 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
         this.others.postValue(others)
     }
 
-    fun onDeleteAll(isEmpty: Boolean) = liveData(Dispatchers.IO) {
+    fun onDeleteAll(isEmpty: Boolean) = liveData(Dispatchers.Main) {
         isLoading.postValue(true)
         for (i in dataList.indices) {
             if (isEmpty) {
@@ -108,6 +110,7 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
                 }
             }
         }
+        isRequestSyncData = true
         emit(dataList)
         isLoading.postValue(false)
     }
