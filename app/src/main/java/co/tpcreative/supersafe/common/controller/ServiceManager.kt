@@ -16,12 +16,11 @@ import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.requester.*
-import co.tpcreative.supersafe.common.extension.createFile
+import co.tpcreative.supersafe.common.extension.*
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.services.SuperSafeService
-import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Resource
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.Utils
@@ -30,8 +29,6 @@ import co.tpcreative.supersafe.viewmodel.*
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.common.net.MediaType
 import com.google.gson.Gson
-import com.snatik.storage.Storage
-import com.snatik.storage.helpers.OnStorageListener
 import com.snatik.storage.helpers.SizeUnit
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.format
@@ -46,8 +43,6 @@ import javax.crypto.Cipher
 class ServiceManager : BaseServiceView<Any?> {
     private var myService: SuperSafeService? = null
     private var mContext: Context? = null
-    private val storage: Storage? = Storage(SuperSafeApplication.getInstance())
-    private val mStorage: Storage? = Storage(SuperSafeApplication.getInstance())
     private val mListExport: MutableList<ExportFiles> = ArrayList<ExportFiles>()
 
     /*Improved sync data*/
@@ -63,14 +58,12 @@ class ServiceManager : BaseServiceView<Any?> {
     private val itemViewModel = ItemViewModel(ItemService())
     private val categoryViewModel = CategoryViewModel(CategoryService())
     private val driveViewModel = DriveViewModel(DriveService(), ItemService())
-    private var emailOutllookViewModel = EmailOutlookViewModel(MicService())
+    private var emailOutlookViewModel = EmailOutlookViewModel(MicService())
     private var myConnection: ServiceConnection? = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             Utils.Log(TAG, "connected")
             myService = (binder as SuperSafeService.LocalBinder?)?.getService()
             myService?.bindView(this@ServiceManager)
-            storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-            mStorage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
             initService()
             Utils.onScanFile(SuperSafeApplication.getInstance(), "scan.log")
         }
@@ -83,11 +76,9 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     fun onInitConfigurationFile() {
-        storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-        mStorage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
+
     }
 
-    private var mCiphers: Cipher? = null
     private var isWaitingSendMail = false
     fun setListImport(mListImport: MutableList<ImportFilesModel>) {
         if (!isImportData) {
@@ -311,161 +302,156 @@ class ServiceManager : BaseServiceView<Any?> {
         }
         /*Preparing upload file to Google drive*/
         if (listImport.size > 0) {
-            onImportData()
+//            onImportData()
         } else {
             Utils.Log(TAG, "Not found item to import")
         }
     }
 
     /*Import data from gallery*/
-    private fun onImportData()   = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            for (importFiles in listImport) {
-                val mMimeTypeFile: MimeTypeFile = importFiles.mimeTypeFile!!
-                val enumTypeFile = mMimeTypeFile.formatType
-                val mPath: String = importFiles.path!!
-                val mMimeType = mMimeTypeFile.mimeType
-                val mMainCategories: MainCategoryModel = importFiles.mainCategories!!
-                val mCategoriesId: String = mMainCategories.categories_id!!
-                val mCategoriesLocalId: String = mMainCategories.categories_local_id!!
-                val isFakePin: Boolean = mMainCategories.isFakePin
-                val uuId: String = importFiles.unique_id!!
-                var thumbnail: Bitmap? = null
-                when (enumTypeFile) {
-                    EnumFormatType.IMAGE -> {
-                        Utils.Log(TAG, "Start RXJava Image Progressing")
-                        try {
-                            val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
-                            val currentTime: String = Utils.getCurrentDateTime() as String
-                            val pathContent = "$rootPath$uuId/"
-                            storage?.createDirectory(pathContent)
-                            val thumbnailPath = pathContent + "thumbnail_" + currentTime
-                            val originalPath = pathContent + currentTime
-                            val itemsPhoto = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, Utils.getSaverSpace(), false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                            val file = getThumbnail(mPath)
-                            Utils.Log(TAG, "start compress")
-                            val createdThumbnail = storage?.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)
-                            val createdOriginal = storage?.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
-                            Utils.Log(TAG, "start end")
-                            if (createdThumbnail!! && createdOriginal!!) {
-                                handleResponseImport(itemsPhoto,mMainCategories,mPath)
-                                Utils.Log(TAG, "CreatedFile successful")
-                            } else {
-                                Utils.Log(TAG, "CreatedFile failed")
-                            }
-                        } catch (e: Exception) {
-                            Utils.Log(TAG, "Cannot write to $e")
-                        } finally {
-                            Utils.Log(TAG, "Finally")
-                        }
-                    }
-                    EnumFormatType.VIDEO -> {
-                        Utils.Log(TAG, "Start RXJava Video Progressing")
-                        try {
-                            try {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                    val mSize = Size(600, 600)
-                                    val ca = CancellationSignal()
-                                    thumbnail = ThumbnailUtils.createVideoThumbnail(File(mPath), mSize, ca)
-                                } else {
-                                    thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
-                                            MediaStore.Video.Thumbnails.MINI_KIND)
-                                }
-                                val orientation = ExifInterface(mPath).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
-                                Utils.Log("EXIF", "Exif: $orientation")
-                                val matrix = Matrix()
-                                if (orientation == 6) {
-                                    matrix.postRotate(90f)
-                                } else if (orientation == 3) {
-                                    matrix.postRotate(180f)
-                                } else if (orientation == 8) {
-                                    matrix.postRotate(270f)
-                                }
-                                thumbnail = Bitmap.createBitmap(thumbnail!!, 0, 0, thumbnail.width, thumbnail.height, matrix, true) // rotating bitmap
-                            } catch (e: Exception) {
-                                thumbnail = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources,
-                                        R.drawable.ic_default_video)
-                                Utils.Log(TAG, "Cannot write to $e")
-                            }
-                            val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
-                            val currentTime: String = Utils.getCurrentDateTime() as String
-                            val pathContent = "$rootPath$uuId/"
-                            storage?.createDirectory(pathContent)
-                            val thumbnailPath = pathContent + "thumbnail_" + currentTime
-                            val originalPath = pathContent + currentTime
-                            val itemsVideo = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.VIDEO, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                            Utils.Log(TAG, "Call thumbnail")
-                            val createdThumbnail: Boolean = storage?.createFile(thumbnailPath, thumbnail)!!
-                            mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
-                            val createdOriginal = mStorage?.createLargeFile(File(originalPath), File(mPath), mCiphers)
-                            Utils.Log(TAG, "Call original")
-                            if (createdThumbnail && createdOriginal!!) {
-                                handleResponseImport(itemsVideo,mMainCategories,mPath)
-                                Utils.Log(TAG, "CreatedFile successful")
-                            } else {
-                                Utils.Log(TAG, "CreatedFile failed")
-                            }
-                        } catch (e: Exception) {
-                            Utils.Log(TAG, "Cannot write to $e")
-                        } finally {
-                            Utils.Log(TAG, "Finally")
-                        }
-                    }
-                    EnumFormatType.AUDIO -> {
-                        Utils.Log(TAG, "Start RXJava Audio Progressing")
-                        try {
-                            val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
-                            val currentTime: String = Utils.getCurrentDateTime() as String
-                            val pathContent = "$rootPath$uuId/"
-                            storage?.createDirectory(pathContent)
-                            val originalPath = pathContent + currentTime
-                            val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                            mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
-                            val createdOriginal = mStorage?.createLargeFile(File(originalPath), File(mPath), mCiphers)
-                            if (createdOriginal!!) {
-                                handleResponseImport(itemsAudio,mMainCategories,mPath)
-                                Utils.Log(TAG, "CreatedFile successful")
-                            } else {
-                                Utils.Log(TAG, "CreatedFile failed")
-                            }
-                        } catch (e: Exception) {
-                            Utils.Log(TAG, "Cannot write to $e")
-                        } finally {
-                            Utils.Log(TAG, "Finally")
-                        }
-                    }
-                    EnumFormatType.FILES -> {
-                        Utils.Log(TAG, "Start RXJava Files Progressing")
-                        try {
-                            val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
-                            val currentTime: String = Utils.getCurrentDateTime() as String
-                            val pathContent = "$rootPath$uuId/"
-                            storage?.createDirectory(pathContent)
-                            val originalPath = pathContent + currentTime
-                            val itemsFile = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                            mCiphers = mStorage?.getCipher(Cipher.ENCRYPT_MODE)
-                            val createdOriginal = mStorage?.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
-                            if (createdOriginal!!) {
-                                Utils.Log(TAG, "CreatedFile successful")
-                                handleResponseImport(itemsFile,mMainCategories,mPath)
-                            } else {
-                                Utils.Log(TAG, "CreatedFile failed")
-                            }
-                        } catch (e: Exception) {
-                            Utils.Log(TAG, "Cannot write to $e")
-                        } finally {
-                            Utils.Log(TAG, "Finally")
-                        }
-                    }
-                }
-            }
-            Utils.onPushEventBus(EnumStatus.IMPORTED_COMPLETELY)
-            onPreparingSyncData()
-            listImport.clear()
-        }
-        catch (e : Exception){
-            e.printStackTrace()
-        }
+    suspend fun onImportData(mData : MutableList<ImportFilesModel>) : Resource<Boolean>{
+       return withContext(Dispatchers.IO){
+           try {
+               for (index in mData) {
+                   val mMimeTypeFile: MimeTypeFile = index.mimeTypeFile!!
+                   val enumTypeFile = mMimeTypeFile.formatType
+                   val mPath: String = index.path!!
+                   val mMimeType = mMimeTypeFile.mimeType
+                   val mMainCategories: MainCategoryModel = index.mainCategories!!
+                   val mCategoriesId: String = mMainCategories.categories_id!!
+                   val mCategoriesLocalId: String = mMainCategories.categories_local_id!!
+                   val isFakePin: Boolean = mMainCategories.isFakePin
+                   val uuId: String = index.unique_id!!
+                   var thumbnail: Bitmap?
+                   when (enumTypeFile) {
+                       EnumFormatType.IMAGE -> {
+                           try {
+                               val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
+                               val currentTime: String = Utils.getCurrentDateTime() as String
+                               val pathContent = "$rootPath$uuId/"
+                               pathContent.createDirectory()
+                               val thumbnailPath = pathContent + "thumbnail_" + currentTime
+                               val originalPath = pathContent + currentTime
+                               val itemsPhoto = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, Utils.getSaverSpace(), false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                               val file = getThumbnail(mPath)
+                               Utils.Log(TAG, "start compress")
+                               val createdThumbnail = file.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)
+                               val createdOriginal = file.createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
+                               if (createdThumbnail!! && createdOriginal!!) {
+                                   handleResponseImport(itemsPhoto,mMainCategories,mPath)
+                                   Utils.Log(TAG, "CreatedFile successful")
+                               } else {
+                                   Utils.Log(TAG, "CreatedFile failed")
+                               }
+                           } catch (e: Exception) {
+                               Utils.Log(TAG, "Cannot write to $e")
+                           } finally {
+                               Utils.Log(TAG, "Finally")
+                           }
+                       }
+                       EnumFormatType.VIDEO -> {
+                           Utils.Log(TAG, "Start RXJava Video Progressing")
+                           try {
+                               try {
+                                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                       val mSize = Size(600, 600)
+                                       val ca = CancellationSignal()
+                                       thumbnail = ThumbnailUtils.createVideoThumbnail(File(mPath), mSize, ca)
+                                   } else {
+                                       thumbnail = ThumbnailUtils.createVideoThumbnail(mPath,
+                                               MediaStore.Video.Thumbnails.MINI_KIND)
+                                   }
+                                   val orientation = ExifInterface(mPath).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1)
+                                   Utils.Log("EXIF", "Exif: $orientation")
+                                   val matrix = Matrix()
+                                   if (orientation == 6) {
+                                       matrix.postRotate(90f)
+                                   } else if (orientation == 3) {
+                                       matrix.postRotate(180f)
+                                   } else if (orientation == 8) {
+                                       matrix.postRotate(270f)
+                                   }
+                                   thumbnail = Bitmap.createBitmap(thumbnail!!, 0, 0, thumbnail.width, thumbnail.height, matrix, true) // rotating bitmap
+                               } catch (e: Exception) {
+                                   thumbnail = BitmapFactory.decodeResource(SuperSafeApplication.getInstance().resources,
+                                           R.drawable.ic_default_video)
+                                   Utils.Log(TAG, "Cannot write to $e")
+                               }
+                               val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
+                               val currentTime: String = Utils.getCurrentDateTime() as String
+                               val pathContent = "$rootPath$uuId/"
+                               pathContent.createDirectory()
+                               val thumbnailPath = pathContent + "thumbnail_" + currentTime
+                               val originalPath = pathContent + currentTime
+                               val itemsVideo = ItemModel(mMimeTypeFile.extension, originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.VIDEO, 0, false, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                               Utils.Log(TAG, "Call thumbnail")
+                               val createdThumbnail: Boolean = thumbnail?.toByteArray()?.createFile(thumbnailPath)!!
+                               val createdOriginal = File(originalPath).createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
+                               Utils.Log(TAG, "Call original")
+                               if (createdThumbnail && createdOriginal!!) {
+                                   handleResponseImport(itemsVideo,mMainCategories,mPath)
+                                   Utils.Log(TAG, "CreatedFile successful")
+                               } else {
+                                   Utils.Log(TAG, "CreatedFile failed")
+                               }
+                           } catch (e: Exception) {
+                               Utils.Log(TAG, "Cannot write to $e")
+                           } finally {
+                               Utils.Log(TAG, "Finally")
+                           }
+                       }
+                       EnumFormatType.AUDIO -> {
+                           try {
+                               val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
+                               val currentTime: String = Utils.getCurrentDateTime() as String
+                               val pathContent = "$rootPath$uuId/"
+                               pathContent.createDirectory()
+                               val originalPath = pathContent + currentTime
+                               val itemsAudio = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.AUDIO, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                               val createdOriginal = File(originalPath).createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
+                               if (createdOriginal!!) {
+                                   handleResponseImport(itemsAudio,mMainCategories,mPath)
+                                   Utils.Log(TAG, "CreatedFile successful")
+                               } else {
+                                   Utils.Log(TAG, "CreatedFile failed")
+                               }
+                           } catch (e: Exception) {
+                               Utils.Log(TAG, "Cannot write to $e")
+                           } finally {
+                               Utils.Log(TAG, "Finally")
+                           }
+                       }
+                       EnumFormatType.FILES -> {
+                           try {
+                               val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
+                               val currentTime: String = Utils.getCurrentDateTime() as String
+                               val pathContent = "$rootPath$uuId/"
+                               pathContent.createDirectory()
+                               val originalPath = pathContent + currentTime
+                               val itemsFile = ItemModel(mMimeTypeFile.extension, originalPath, "null", mCategoriesId, mCategoriesLocalId, mMimeType, uuId, EnumFormatType.FILES, 0, true, false, null, null, EnumFileType.NONE, currentTime, mMimeTypeFile.name, "null", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, false, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+                               val createdOriginal = File(originalPath).createFile(File(originalPath), File(mPath), Cipher.ENCRYPT_MODE)
+                               if (createdOriginal!!) {
+                                   Utils.Log(TAG, "CreatedFile successful")
+                                   handleResponseImport(itemsFile,mMainCategories,mPath)
+                               } else {
+                                   Utils.Log(TAG, "CreatedFile failed")
+                               }
+                           } catch (e: Exception) {
+                               Utils.Log(TAG, "Cannot write to $e")
+                           } finally {
+                               Utils.Log(TAG, "Finally")
+                           }
+                       }
+                   }
+               }
+               Utils.onPushEventBus(EnumStatus.IMPORTED_COMPLETELY)
+               Resource.success(true)
+           }
+           catch (e : Exception) {
+               e.printStackTrace()
+               Resource.error(Utils.CODE_EXCEPTION, e.message ?: "", null)
+           }
+       }
     }
 
     private fun handleResponseImport(mData: ItemModel,categories : MainCategoryModel,originalPath : String) {
@@ -474,24 +460,24 @@ class ServiceManager : BaseServiceView<Any?> {
                 var mb: Long
                 when (val enumFormatType = EnumFormatType.values()[items.formatType]) {
                     EnumFormatType.AUDIO -> {
-                        if (storage?.isFileExist(items.getOriginal())!!) {
-                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
+                        if (items.getOriginal().isFileExist()) {
+                            mb = +File(items.getOriginal()).getSize(SizeUnit.B).toLong()
                             items.size = "" + mb
                             SQLHelper.insertedItem(items)
                         }
                     }
                     EnumFormatType.FILES -> {
-                        if (storage?.isFileExist(items.getOriginal())!!) {
-                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
+                        if (items.getOriginal().isFileExist()) {
+                            mb = +File(items.getOriginal()).getSize(SizeUnit.B).toLong()
                             items.size = "" + mb
                             SQLHelper.insertedItem(items)
                         }
                     }
                     else -> {
-                        if (storage?.isFileExist(items.getOriginal())!! && storage.isFileExist(items.getThumbnail())) {
-                            mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
-                            if (storage.isFileExist(items.getThumbnail())) {
-                                mb += +storage.getSize(File(items.getThumbnail()), SizeUnit.B).toLong()
+                        if (items.getOriginal().isFileExist() && items.getThumbnail().isFileExist()) {
+                            mb = +File(items.getOriginal()).getSize(SizeUnit.B).toLong()
+                            if (items.getThumbnail().isFileExist()) {
+                                mb += +File(items.getThumbnail()).getSize( SizeUnit.B).toLong()
                             }
                             items.size = "" + mb
                             SQLHelper.insertedItem(items)
@@ -505,7 +491,6 @@ class ServiceManager : BaseServiceView<Any?> {
                         }
                     }
                 }
-                GalleryCameraMediaManager.getInstance()?.setProgressing(false)
                 Utils.onPushEventBus(EnumStatus.UPDATED_VIEW_DETAIL_ALBUM)
                 if (items.isFakePin) {
                     SingletonFakePinComponent.getInstance().onUpdateView()
@@ -526,6 +511,7 @@ class ServiceManager : BaseServiceView<Any?> {
     fun setIsWaitingSendMail(isWaitingSendMail: Boolean) {
         this.isWaitingSendMail = isWaitingSendMail
     }
+
     fun setListExport(mListExport: MutableList<ExportFiles>) {
         if (!isExportData) {
             this.mListExport.clear()
@@ -607,7 +593,7 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     fun onSendEmail() = CoroutineScope(Dispatchers.IO).launch {
-        emailOutllookViewModel.sendEmail(EnumStatus.RESET)
+        emailOutlookViewModel.sendEmail(EnumStatus.RESET)
     }
 
     fun getMyService(): SuperSafeService? {
@@ -639,58 +625,45 @@ class ServiceManager : BaseServiceView<Any?> {
             val mCategoriesId: String = mainCategories?.categories_id as String
             val mCategoriesLocalId: String = mainCategories.categories_local_id as String
             val isFakePin: Boolean = mainCategories.isFakePin
-                val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
-                val currentTime: String = Utils.getCurrentDateTime() as String
-                val uuId: String = Utils.getUUId() as String
-                val pathContent = "$rootPath$uuId/"
-                storage?.createDirectory(pathContent)
-                val thumbnailPath = pathContent + "thumbnail_" + currentTime
-                val originalPath = pathContent + currentTime
-                val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
-                val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
-                storage?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance(), mData, object : OnStorageListener {
-                    override fun onSuccessful() {}
-                    override fun onSuccessful(path: String?) {
-                        try {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val file = path?.let { getThumbnail(it) }
-                                val createdThumbnail = storage.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)
-                                val createdOriginal = storage.createFile(originalPath, mData, Cipher.ENCRYPT_MODE)
-                                if (createdThumbnail && createdOriginal) {
-                                    Utils.Log(TAG, "CreatedFile successful")
-                                } else {
-                                    Utils.Log(TAG, "CreatedFile failed")
-                                }
-                                var mb: Long
-                                if (storage.isFileExist(items.getOriginal()) && storage.isFileExist(items.getThumbnail())) {
-                                    mb = +storage.getSize(File(items.getOriginal()), SizeUnit.B).toLong()
-                                    if (storage.isFileExist(items.getThumbnail())) {
-                                        mb += +storage.getSize(File(items.getThumbnail()), SizeUnit.B).toLong()
-                                    }
-                                    items.size = "" + mb
-                                    SQLHelper.insertedItem(items)
-                                    Utils.Log(TAG,"Saved file to local db")
-                                    if (mainCategories.isCustom_Cover) {
-                                        mainCategories.items_id = items.items_id
-                                        SQLHelper.updateCategory(mainCategories)
-                                        Utils.Log(TAG, "Special main categories " + Gson().toJson(mainCategories))
-                                    }
-                                }
-                                GalleryCameraMediaManager.getInstance()?.setProgressing(false)
-                                if (items.isFakePin) {
-                                    SingletonFakePinComponent.getInstance().onUpdateView()
-                                } else {
-                                    SingletonPrivateFragment.getInstance()?.onUpdateView()
-                                }
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                    override fun onFailed() {
-                    }
-                    override fun onSuccessful(position: Int) {}
-                })
+            val rootPath: String = SuperSafeApplication.getInstance().getSuperSafePrivate()
+            val currentTime: String = Utils.getCurrentDateTime() as String
+            val uuId: String = Utils.getUUId() as String
+            val pathContent = "$rootPath$uuId/"
+            pathContent.createDirectory()
+            val thumbnailPath = pathContent + "thumbnail_" + currentTime
+            val originalPath = pathContent + currentTime
+            val isSaver: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
+            val items = ItemModel(getString(R.string.key_jpg), originalPath, thumbnailPath, mCategoriesId, mCategoriesLocalId, MediaType.JPEG.type() + "/" + MediaType.JPEG.subtype(), uuId, EnumFormatType.IMAGE, 0, false, false, null, null, EnumFileType.NONE, currentTime, currentTime + getString(R.string.key_jpg), "thumbnail_$currentTime", "0", EnumStatusProgress.NONE, false, false, EnumDelete.NONE, isFakePin, isSaver, false, false, 0, false, false, false, EnumStatus.UPLOAD)
+            val mFile = mData?.createFileByteDataNoEncrypt(SuperSafeApplication.getInstance())
+            val file = getThumbnail(mFile?.absolutePath!!)
+            val createdThumbnail = file.createFile(File(thumbnailPath), file, Cipher.ENCRYPT_MODE)!!
+            val createdOriginal = file.createFile(File(originalPath), file, Cipher.ENCRYPT_MODE)!!
+            if (createdThumbnail && createdOriginal) {
+                Utils.Log(TAG, "CreatedFile successful")
+            } else {
+                Utils.Log(TAG, "CreatedFile failed")
+            }
+            var mb: Long
+            if (file.isFileExist(items.getOriginal()) && file.isFileExist(items.getThumbnail())) {
+                mb = +File(items.getOriginal()).getSize(SizeUnit.B).toLong()
+                if (file.isFileExist(items.getThumbnail())) {
+                    mb += +File(items.getThumbnail()).getSize( SizeUnit.B).toLong()
+                }
+                items.size = "" + mb
+                SQLHelper.insertedItem(items)
+                Utils.Log(TAG,"Saved file to local db")
+                if (mainCategories.isCustom_Cover) {
+                    mainCategories.items_id = items.items_id
+                    SQLHelper.updateCategory(mainCategories)
+                    Utils.Log(TAG, "Special main categories " + Gson().toJson(mainCategories))
+                }
+            }
+            GalleryCameraMediaManager.getInstance()?.setProgressing(false)
+            if (items.isFakePin) {
+                SingletonFakePinComponent.getInstance().onUpdateView()
+            } else {
+                SingletonPrivateFragment.getInstance()?.onUpdateView()
+            }
         }catch (e : Exception){
             e.printStackTrace()
         }
@@ -708,63 +681,63 @@ class ServiceManager : BaseServiceView<Any?> {
     }
 
     fun onExportingFiles()  = CoroutineScope(Dispatchers.IO).launch{
-        try {
-            for (index in mListExport){
-                val mInput: File = index.input as File
-                val mOutPut: File = index.output as File
-                try {
-                    val storage = Storage(SuperSafeApplication.getInstance())
-                    storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-                    val mCipher = storage.getCipher(Cipher.DECRYPT_MODE)
-                    val formatType = EnumFormatType.values()[index.formatType]
-                    if (formatType == EnumFormatType.VIDEO || formatType == EnumFormatType.AUDIO) {
-                        storage.createLargeFile(mOutPut, mInput, mCipher, 0, object : OnStorageListener {
-                            override fun onSuccessful() {}
-                            override fun onFailed() {
-                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT)
-                                Utils.Log(TAG, "Exporting failed")
-                            }
-                            override fun onSuccessful(path: String?) {}
-                            override fun onSuccessful(position: Int) {
-                                try {
-                                    Utils.Log(TAG, "Exporting large file...............................Successful $position")
-                                    mListExport.get(position).isExport = true
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        })
-                    } else {
-                        storage.createFile(mOutPut, mInput, Cipher.DECRYPT_MODE, 0, object : OnStorageListener {
-                            override fun onSuccessful() {}
-                            override fun onFailed() {
-                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT)
-                                Utils.Log(TAG, "Exporting failed")
-                            }
-                            override fun onSuccessful(path: String?) {}
-                            override fun onSuccessful(position: Int) {
-                                try {
-                                    Utils.Log(TAG, "Exporting file...............................Successful $position")
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        })
-                    }
-                } catch (e: Exception) {
-                    Utils.Log(TAG, "Cannot write to $e")
-                } finally {
-                    Utils.Log(TAG, "Finally")
-                }
-            }
-            Utils.onPushEventBus(EnumStatus.STOP_PROGRESS)
-            setExporting(false)
-            mListExport.clear()
-            onPreparingSyncData()
-        }
-        catch (e : Exception){
-            e.printStackTrace()
-        }
+//        try {
+//            for (index in mListExport){
+//                val mInput: File = index.input as File
+//                val mOutPut: File = index.output as File
+//                try {
+//                    val storage = Storage(SuperSafeApplication.getInstance())
+//                    storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
+//                    val mCipher = storage.getCipher(Cipher.DECRYPT_MODE)
+//                    val formatType = EnumFormatType.values()[index.formatType]
+//                    if (formatType == EnumFormatType.VIDEO || formatType == EnumFormatType.AUDIO) {
+//                        storage.createLargeFile(mOutPut, mInput, mCipher, 0, object : OnStorageListener {
+//                            override fun onSuccessful() {}
+//                            override fun onFailed() {
+//                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT)
+//                                Utils.Log(TAG, "Exporting failed")
+//                            }
+//                            override fun onSuccessful(path: String?) {}
+//                            override fun onSuccessful(position: Int) {
+//                                try {
+//                                    Utils.Log(TAG, "Exporting large file...............................Successful $position")
+//                                    mListExport.get(position).isExport = true
+//                                } catch (e: Exception) {
+//                                    e.printStackTrace()
+//                                }
+//                            }
+//                        })
+//                    } else {
+//                        storage.createFile(mOutPut, mInput, Cipher.DECRYPT_MODE, 0, object : OnStorageListener {
+//                            override fun onSuccessful() {}
+//                            override fun onFailed() {
+//                                Utils.onWriteLog("Exporting failed", EnumStatus.EXPORT)
+//                                Utils.Log(TAG, "Exporting failed")
+//                            }
+//                            override fun onSuccessful(path: String?) {}
+//                            override fun onSuccessful(position: Int) {
+//                                try {
+//                                    Utils.Log(TAG, "Exporting file...............................Successful $position")
+//                                } catch (e: Exception) {
+//                                    e.printStackTrace()
+//                                }
+//                            }
+//                        })
+//                    }
+//                } catch (e: Exception) {
+//                    Utils.Log(TAG, "Cannot write to $e")
+//                } finally {
+//                    Utils.Log(TAG, "Finally")
+//                }
+//            }
+//            Utils.onPushEventBus(EnumStatus.STOP_PROGRESS)
+//            setExporting(false)
+//            mListExport.clear()
+//            onPreparingSyncData()
+//        }
+//        catch (e : Exception){
+//            e.printStackTrace()
+//        }
     }
 
     override fun onError(message: String?, status: EnumStatus) {

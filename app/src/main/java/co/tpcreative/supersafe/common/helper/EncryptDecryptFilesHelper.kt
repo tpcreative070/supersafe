@@ -1,9 +1,14 @@
 package co.tpcreative.supersafe.common.helper
+import android.content.Context
+import android.os.Environment
+import android.util.Log
 import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
 import co.tpcreative.supersafe.common.encypt.SecurityUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.User
+import com.snatik.storage.Storage
 import com.snatik.storage.helpers.ImmutablePair
+import com.snatik.storage.helpers.SizeUnit
 import java.io.*
 import java.util.*
 import javax.crypto.Cipher
@@ -105,6 +110,27 @@ class EncryptDecryptFilesHelper {
         return true
     }
 
+    fun createFileByteDataNoEncrypt(context: Context, data: ByteArray?)  : File{
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                "picture.jpg")
+        var os: OutputStream? = null
+        try {
+            os = FileOutputStream(file)
+            os.write(data)
+        } catch (e: IOException) {
+            Utils.Log(TAG, "Cannot write to $file")
+        } finally {
+            if (os != null) {
+                try {
+                    os.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        return file
+    }
+
     fun getCipher(mode: Int): Cipher? {
         if (configurationFile != null && configurationFile?.isEncrypted!!) {
             try {
@@ -120,6 +146,11 @@ class EncryptDecryptFilesHelper {
         return null
     }
 
+    fun getSize(file: File, unit: SizeUnit): Double {
+        val length = file.length()
+        return length.toDouble() / unit.inBytes().toDouble()
+    }
+
     fun readFile(path: String?): ByteArray? {
         val stream: FileInputStream
         return try {
@@ -131,7 +162,32 @@ class EncryptDecryptFilesHelper {
         }
     }
 
-     fun readFile(stream: FileInputStream): ByteArray? {
+    fun createFile(path: String?, content: ByteArray?): Boolean {
+        var mContent = content
+        var stream: OutputStream? = null
+        try {
+            stream = FileOutputStream(File(path))
+            if (configurationFile != null && configurationFile!!.isEncrypted) {
+                mContent = encrypt(mContent!!, Cipher.ENCRYPT_MODE)
+            }
+            stream.write(mContent)
+        } catch (e: IOException) {
+            Utils.Log(TAG, "Failed create file $e")
+            return false
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.flush()
+                    stream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        return true
+    }
+
+    fun readFile(stream: FileInputStream): ByteArray? {
         open class Reader : Thread() {
             var array: ByteArray? = null
         }

@@ -1,4 +1,5 @@
 package co.tpcreative.supersafe.ui.albumdetail
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
+import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -27,15 +29,13 @@ import kotlinx.android.synthetic.main.album_detail_item.view.view_alpha
 import kotlinx.android.synthetic.main.custom_item_verical.view.*
 import tpcreative.co.qrscanner.common.extension.setColorFilter
 
-class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, inflater: LayoutInflater, private val context: Context?, itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
+class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, inflater: LayoutInflater, private val context: Context?, private val itemSelectedListener: ItemSelectedListener?) : BaseAdapter<ItemModel, BaseHolder<ItemModel>>(inflater) {
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(200, 200)
             .placeholder(R.color.material_gray_100)
             .error(R.color.red_200)
             .priority(Priority.HIGH)
-    private val itemSelectedListener: ItemSelectedListener?
-    private val storage: Storage?
     private val TAG = AlbumDetailAdapter::class.java.simpleName
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(), themeApp!!.getAccentColor())
@@ -120,20 +120,20 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                         imgVideoCam?.visibility = View.VISIBLE
                         imgVideoCam?.setImageDrawable(ContextCompat.getDrawable(context!!, R.drawable.baseline_videocam_white_36))
                         tvTitle?.visibility = View.INVISIBLE
-                        if (storage?.isFileExist(path)!!) {
+                        if (path?.isFileExist()!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage.readFile(path))
+                                    .load(path.readFile())
                                     .apply(options!!).into(imgAlbum!!)
                         }
                     }
                     EnumFormatType.IMAGE -> {
                         tvTitle?.visibility = View.INVISIBLE
                         imgVideoCam?.visibility = View.INVISIBLE
-                        if (storage?.isFileExist(path)!!) {
+                        if (path!!.isFileExist()) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(path?.readFile())
+                                    .load(path.readFile())
                                     .apply(options!!).into(imgAlbum!!)
                         }
                     }
@@ -187,6 +187,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
         val tvSizeCreatedDate = itemView.tvSizeCreatedDateV
         var alpha = itemView.view_alphaV
         var mPosition = 0
+        @SuppressLint("SetTextI18n")
         override fun bind(data: ItemModel, position: Int) {
             super.bind(data, position)
             mPosition = position
@@ -209,18 +210,18 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                                 .apply(options!!).into(imgAlbum!!)
                     }
                     EnumFormatType.VIDEO -> {
-                        if (storage?.isFileExist(path)!!) {
+                        if (path?.isFileExist()!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage.readFile(path))
+                                    .load(path.readFile())
                                     .apply(options!!).into(imgAlbum!!)
                         }
                     }
                     EnumFormatType.IMAGE -> {
-                        if (storage?.isFileExist(path)!!) {
+                        if (path?.isFileExist()!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(path?.readFile())
+                                    .load(path.readFile())
                                     .apply(options!!).into(imgAlbum!!)
                         }
                     }
@@ -244,9 +245,4 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
         }
     }
 
-    init {
-        storage = Storage(context)
-        this.itemSelectedListener = itemSelectedListener
-        storage.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
-    }
 }

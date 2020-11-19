@@ -33,7 +33,6 @@ import kotlinx.android.synthetic.main.activity_album_detail.toolbar
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedListener {
     var adapter: AlbumDetailAdapter? = null
@@ -244,35 +243,11 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     Utils.Log(TAG, "Response data here")
-                    val images: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
-                    val mListImportFiles: MutableList<ImportFilesModel>? = ArrayList<ImportFilesModel>()
-                    var i = 0
-                    val l = images?.size
-                    while (i < l!!) {
-                        val path = images[i].path
-                        val name = images[i].name
-                        val id = "" + images[i].id
-                        val mimeType: String? = Utils.getMimeType(path)
-                        Utils.Log(TAG, "mimeType $mimeType")
-                        Utils.Log(TAG, "name $name")
-                        Utils.Log(TAG, "path $path")
-                        val fileExtension: String? = Utils.getFileExtension(path)
-                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path))
-                        try {
-                            val mimeTypeFile: MimeTypeFile = Utils.mediaTypeSupport().get(fileExtension)
-                                    ?: return
-                            mimeTypeFile.name = name
-                            val importFiles = ImportFilesModel(mainCategory, mimeTypeFile, path, i, false)
-                            mListImportFiles?.add(importFiles)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                        i++
+                    val mData: MutableList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
+                    mData?.let {
+                        val mResult = Utils.getDataItemsFromImport(mainCategory,it)
+                        importingData(mResult)
                     }
-                    if (mListImportFiles != null) {
-                        ServiceManager.getInstance()?.setListImport(mListImportFiles)
-                    }
-                    ServiceManager.getInstance()?.onPreparingImportData()
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery")
                 }
@@ -307,8 +282,6 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
             val i = item?.itemId
             if (i == R.id.menu_item_select_all) {
-                //isSelectAll = !isSelectAll
-                //selectAll()
                 viewModel.isSelectAll.postValue(!(viewModel.isSelectAll.value ?: false))
                 return true
             }
@@ -316,9 +289,6 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-//            if (countSelected > 0) {
-//                deselectAll()
-//            }
             viewModel.isSelectAll.postValue(false)
             actionMode = null
             window.statusBarColor = android.graphics.Color.TRANSPARENT

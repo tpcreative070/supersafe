@@ -9,3 +9,7 @@ fun String.readFile() : ByteArray?{
 fun String.isFileExist(): Boolean {
     return File(this).exists()
 }
+
+fun String.createDirectory(){
+    EncryptDecryptFilesHelper.getInstance()?.createDirectory(this)
+}

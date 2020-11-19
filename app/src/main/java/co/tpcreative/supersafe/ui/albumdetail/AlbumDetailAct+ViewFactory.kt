@@ -507,6 +507,16 @@ suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
     }
 }
 
+fun AlbumDetailAct.importingData(mData : MutableList<ImportFilesModel>) = CoroutineScope(Dispatchers.Main).launch{
+    val mResult = ServiceManager.getInstance()?.onImportData(mData)
+    when(mResult?.status){
+        Status.SUCCESS -> {
+            getData()
+        }
+        else -> Utils.Log(TAG,mResult?.message)
+    }
+}
+
 private fun AlbumDetailAct.setupViewModel() {
     viewModel = ViewModelProviders.of(
             this,

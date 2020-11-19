@@ -1189,6 +1189,32 @@ object Utils {
 //        val message: String = kotlin.String.format(getString(R.string.your_space_is_not_enough_to), "export. ", "Request spaces: $result")
 //        Utils.showDialog(this, message = message)
     }
+
+    fun getDataItemsFromImport(mainCategory : MainCategoryModel,mData : MutableList<ImageModel>) : MutableList<ImportFilesModel> {
+        val mList = mutableListOf<ImportFilesModel>()
+        for (index in mData){
+            val path = index.path
+            val name = index.name
+            val id = "" + index.id
+            val mimeType: String? = Utils.getMimeType(path)
+            Log(TAG, "mimeType $mimeType")
+            Log(TAG, "name $name")
+            Log(TAG, "path $path")
+            val fileExtension: String? = getFileExtension(path)
+            Log(TAG, "file extension " + getFileExtension(path))
+            try {
+                val mimeTypeFile: MimeTypeFile? = mediaTypeSupport()[fileExtension]
+                 mimeTypeFile?.let {mResult ->
+                     mResult.name = name
+                     val importFiles = ImportFilesModel(mainCategory, mResult, path, 0, false)
+                     mList.add(importFiles)
+                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return mList
+    }
 }
 
 interface UtilsListener {
