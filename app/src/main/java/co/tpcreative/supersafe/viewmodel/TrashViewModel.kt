@@ -82,26 +82,21 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
 
     fun onDeleteAll(isEmpty: Boolean) = liveData(Dispatchers.Main) {
         isLoading.postValue(true)
-        for (i in dataList.indices) {
+        for (index in dataList) {
             if (isEmpty) {
-                val formatTypeFile = EnumFormatType.values()[dataList[i].formatType]
-                if (formatTypeFile == EnumFormatType.AUDIO && dataList[i].global_original_id == null) {
-                    SQLHelper.deleteItem(dataList.get(i))
-                } else if (formatTypeFile == EnumFormatType.FILES && dataList[i].global_original_id == null) {
-                    SQLHelper.deleteItem(dataList.get(i))
-                } else if ((dataList[i].global_original_id == null) and (dataList[i].global_thumbnail_id == null)) {
-                    SQLHelper.deleteItem(dataList[i])
-                } else {
-                    dataList[i].deleteAction = EnumDelete.DELETE_WAITING.ordinal
-                    SQLHelper.updatedItem(dataList.get(i))
+                if (Utils.isRequestDeletedLocal(index)){
+                    SQLHelper.deleteItem(index)
+                }
+                else {
+                    index.deleteAction = EnumDelete.DELETE_WAITING.ordinal
+                    SQLHelper.updatedItem(index)
                     Utils.Log(TAG, "ServiceManager waiting for delete")
                 }
-                Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + dataList[i].items_id)
+                Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
             } else {
-                val items: ItemModel? = dataList[i]
-                items?.isDeleteLocal = false
-                if (dataList[i].isChecked) {
-                    val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesLocalId(items?.categories_local_id)
+                index.isDeleteLocal = false
+                if (index.isChecked) {
+                    val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesLocalId(index.categories_local_id)
                     mainCategories?.let {
                         if (it.isDelete){
                             it.isDelete = false
@@ -109,13 +104,13 @@ class TrashViewModel : BaseViewModel<ItemModel>(){
                             Utils.Log(TAG,"Updated category....")
                         }
                     }
-                    SQLHelper.updatedItem(items!!)
+                    SQLHelper.updatedItem(index)
                 }
             }
         }
         isRequestSyncData = true
-        emit(true)
         isLoading.postValue(false)
+        emit(true)
     }
     companion object {
         private val TAG = TrashViewModel::class.java.simpleName

@@ -15,6 +15,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
@@ -58,28 +59,23 @@ fun AlbumDetailAct.initUI(){
     llBottom?.visibility = View.GONE
     /*Root Fragment*/
     imgShare.setOnClickListener {
-//        if (countSelected > 0) {
-//            storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
-//            presenter?.status = EnumStatus.SHARE
-//            onShowDialog(presenter?.status)
-//        }
+        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
         viewModel.getCheckedItems().observe(this, Observer {
-            exportingFiles(it,true)
+            onShowDialog(it,EnumStatus.SHARE,true)
         })
     }
 
     imgExport.setOnClickListener {
-        //onExport()
+        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
         viewModel.getCheckedItems().observe(this, Observer {
-            exportingFiles(it,false)
+            onShowDialog(it,EnumStatus.EXPORT,false)
         })
     }
 
     imgDelete.setOnClickListener {
-        if (countSelected > 0) {
-            presenter?.status = EnumStatus.DELETE
-            onShowDialog(presenter?.status)
-        }
+       viewModel.getCheckedItems().observe(this, Observer {
+           onShowDialog(it,EnumStatus.DELETE,false)
+       })
     }
 
     imgMove.setOnClickListener {
@@ -232,8 +228,8 @@ private fun AlbumDetailAct.getData(){
     })
 }
 
-private fun AlbumDetailAct.deleteItems(){
-    viewModel.deleteItems().observe(this, Observer {
+private fun AlbumDetailAct.deleteItems(isExport : Boolean? = false){
+    viewModel.deleteItems(isExport).observe(this, Observer {
         multipleDelete()
     })
 }
@@ -294,7 +290,7 @@ fun AlbumDetailAct.onExport(){
             if (isSaver) {
                 onEnableSyncData()
             } else {
-                onShowDialog(presenter?.status)
+                //onShowDialog(presenter?.status)
             }
         }
     }
@@ -302,7 +298,7 @@ fun AlbumDetailAct.onExport(){
 
 
 
-fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
+fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatus?,isSharingFiles: Boolean) {
     var content: String? = ""
     when (status) {
         EnumStatus.EXPORT -> {
@@ -316,174 +312,23 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
         }
         EnumStatus.MOVE -> {
         }
+        else -> Utils.Log(TAG,"Nothing")
     }
     val builder: MaterialDialog = MaterialDialog(this)
             .title(text = getString(R.string.confirm))
             .message(text = content!!)
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
-            .negativeButton { presenter?.status = EnumStatus.CANCEL }
             .positiveButton {
                 val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
                 when (status) {
                     EnumStatus.SHARE -> {
-                        Utils.onPushEventBus(EnumStatus.START_PROGRESS)
-                        presenter?.mListShare?.clear()
-                        var i = 0
-                        while (i < presenter?.mList?.size!!) {
-                            val index: ItemModel? = presenter?.mList?.get(i)
-                            if (index != null) {
-                                if (index.isChecked) {
-                                    when (EnumFormatType.values()[index.formatType]) {
-                                        EnumFormatType.AUDIO -> {
-                                            val input = File(index.getOriginal())
-                                            var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                            if (storage?.isFileExist(output?.absolutePath)!!) {
-                                                output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                            }
-                                            if (storage?.isFileExist(input.absolutePath)!!) {
-                                                if (output != null) {
-                                                    presenter?.mListShare?.add(output)
-                                                }
-                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                mListExporting.add(exportFiles)
-                                            }
-                                        }
-                                        EnumFormatType.FILES -> {
-                                            val input = File(index.getOriginal())
-                                            var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                            if (storage?.isFileExist(output?.absolutePath)!!) {
-                                                output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                            }
-                                            if (storage?.isFileExist(input.absolutePath)!!) {
-                                                if (output != null) {
-                                                    presenter?.mListShare?.add(output)
-                                                }
-                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                mListExporting.add(exportFiles)
-                                            }
-                                        }
-                                        EnumFormatType.VIDEO -> {
-                                            val input = File(index.getOriginal())
-                                            var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                            if (storage?.isFileExist(output?.absolutePath)!!) {
-                                                output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                            }
-                                            if (storage?.isFileExist(input.absolutePath)!!) {
-                                                if (output != null) {
-                                                    presenter?.mListShare?.add(output)
-                                                }
-                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                mListExporting.add(exportFiles)
-                                            }
-                                        }
-                                        else -> {
-                                            var path = ""
-                                            path = if (index.mimeType == getString(R.string.key_gif)) {
-                                                index.getOriginal()
-                                            } else {
-                                                index.getThumbnail()
-                                            }
-                                            val input = File(path)
-                                            var output: File? = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + index.fileExtension)
-                                            if (storage?.isFileExist(output?.absolutePath)!!) {
-                                                output = File(SuperSafeApplication.getInstance().getSuperSafeShare() + index.originalName + "(1)" + index.fileExtension)
-                                            }
-                                            if (storage?.isFileExist(input.absolutePath)!!) {
-                                                if (output != null) {
-                                                    presenter?.mListShare?.add(output)
-                                                }
-                                                val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                                mListExporting.add(exportFiles)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            i++
-                        }
-                        onStartProgressing()
-                        ServiceManager.getInstance()?.setListExport(mListExporting)
-                        ServiceManager.getInstance()?.onExportingFiles()
+                      exportingFiles(mData,isSharingFiles)
                     }
                     EnumStatus.EXPORT -> {
-                        Utils.onPushEventBus(EnumStatus.START_PROGRESS)
-                        presenter?.mListShare?.clear()
-                        var i = 0
-                        while (i < presenter?.mList?.size!!) {
-                            val index: ItemModel? = presenter?.mList?.get(i)
-                            if (index?.isChecked!!) {
-                                val formatType = EnumFormatType.values()[index.formatType]
-                                when (formatType) {
-                                    EnumFormatType.AUDIO -> {
-                                        val input = File(index.getOriginal())
-                                        Utils.Log(TAG, "Name :" + index.originalName)
-                                        var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                        if (storage?.isFileExist(output?.getAbsolutePath())!!) {
-                                            output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
-                                        }
-                                        if (storage?.isFileExist(input.absolutePath)!!) {
-                                            if (output != null) {
-                                                presenter?.mListShare?.add(output)
-                                            }
-                                            val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                            mListExporting.add(exportFiles)
-                                        }
-                                    }
-                                    EnumFormatType.FILES -> {
-                                        val input = File(index.getOriginal())
-                                        Utils.Log(TAG, "Name :" + index.originalName)
-                                        var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                        if (storage?.isFileExist(output?.absolutePath)!!) {
-                                            output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
-                                        }
-                                        if (storage?.isFileExist(input.absolutePath)!!) {
-                                            if (output != null) {
-                                                presenter?.mListShare?.add(output)
-                                            }
-                                            val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                            mListExporting.add(exportFiles)
-                                        }
-                                    }
-                                    EnumFormatType.VIDEO -> {
-                                        val input = File(index.getOriginal())
-                                        var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                        if (storage?.isFileExist(output?.absolutePath)!!) {
-                                            output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
-                                        }
-                                        if (storage?.isFileExist(input.absolutePath)!!) {
-                                            if (output != null) {
-                                                presenter?.mListShare?.add(output)
-                                            }
-                                            val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                            mListExporting.add(exportFiles)
-                                        }
-                                    }
-                                    else -> {
-                                        val input = File(index.getOriginal())
-                                        var output: File? = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.title)
-                                        if (storage?.isFileExist(output?.absolutePath)!!) {
-                                            output = File(SuperSafeApplication.getInstance().getSuperSafePicture() + index.originalName + "(1)" + index.fileExtension)
-                                        }
-                                        if (storage?.isFileExist(input.absolutePath)!!) {
-                                            if (output != null) {
-                                                presenter?.mListShare?.add(output)
-                                            }
-                                            val exportFiles = ExportFiles(input, output, i, false, index.formatType)
-                                            mListExporting.add(exportFiles)
-                                        }
-                                        Utils.Log(TAG, "Exporting file " + input.absolutePath)
-                                    }
-                                }
-                            }
-                            i++
-                        }
-                        onStartProgressing()
-                        ServiceManager.getInstance()?.setListExport(mListExporting)
-                        ServiceManager.getInstance()?.onExportingFiles()
+                        exportingFiles(mData,isSharingFiles)
                     }
                     EnumStatus.DELETE -> {
-                        //presenter?.onDelete()
                         deleteItems()
                     }
                     else -> Utils.Log(TAG, "Nothing")
@@ -534,6 +379,7 @@ fun AlbumDetailAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles 
                             Utils.shareMultiple(mResultedExporting.data!!,this@exportingFiles)
                         }else{
                             Utils.onBasicAlertNotify(this@exportingFiles, getString(R.string.key_alert), "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
+                            deleteItems(true)
                         }
                     }else ->Utils.Log(TAG,"Exported files has issued")
                 }
@@ -556,16 +402,13 @@ fun AlbumDetailAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles 
                     Utils.shareMultiple(mResultedExporting.data!!,this@exportingFiles)
                 }else{
                     Utils.onBasicAlertNotify(this@exportingFiles, getString(R.string.key_alert), "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
+                    deleteItems(true)
                 }
             }else ->Utils.Log(TAG,"Exported files has issued")
         }
         progressing = EnumStepProgressing.NONE
         viewModel.isLoading.postValue(false)
     }
-}
-
-fun AlbumDetailAct.shareFiles(){
-
 }
 
 /*Init Floating View*/

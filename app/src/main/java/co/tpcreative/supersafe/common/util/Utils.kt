@@ -428,7 +428,7 @@ object Utils {
         val uris = ArrayList<Uri>()
         for (file in files) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val uri: Uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID.toString() + ".provider", file)
+                val uri: Uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file)
                 uris.add(uri)
             } else {
                 uris.add(Uri.fromFile(file))
@@ -437,7 +437,7 @@ object Utils {
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
         intent.type = "*/*"
         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
         context.startActivityForResult(Intent.createChooser(intent, context.getString(R.string.share)), Navigator.SHARE)
     }
@@ -1161,6 +1161,15 @@ object Utils {
             }
         }
         return File(path)
+    }
+
+    fun isRequestDeletedLocal(index : ItemModel) :Boolean{
+        val formatTypeFile = EnumFormatType.values()[index.formatType]
+        return if (formatTypeFile == EnumFormatType.AUDIO && index.global_original_id == null) {
+            true
+        } else if (formatTypeFile == EnumFormatType.FILES && index.global_original_id == null) {
+            true
+        } else (index.global_original_id == null) and (index.global_thumbnail_id == null)
     }
 }
 

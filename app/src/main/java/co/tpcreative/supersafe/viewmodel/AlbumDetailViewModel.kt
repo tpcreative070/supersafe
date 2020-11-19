@@ -83,17 +83,28 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
         this.others.postValue(others)
     }
 
-    fun deleteItems() = liveData(Dispatchers.Main){
+    fun deleteItems(isExport : Boolean? = false) = liveData(Dispatchers.Main){
         isLoading.postValue(true)
-        for (i in dataList.indices) {
-            if (dataList[i].isChecked()!!) {
-                dataList[i].isDeleteLocal = true
-                dataList[i].let { SQLHelper.updatedItem(it) }
+        for (index in dataList) {
+            if (index.isChecked()!!) {
+                if (isExport!!){
+                    if (Utils.isRequestDeletedLocal(index)){
+                        SQLHelper.deleteItem(index)
+                    }else{
+                        index.isDeleteLocal = true
+                        index.deleteAction = EnumDelete.DELETE_WAITING.ordinal
+                        SQLHelper.updatedItem(index)
+                    }
+                    Utils.deleteFolderOfItemId(SuperSafeApplication.getInstance().getSuperSafePrivate() + index.items_id)
+                }else{
+                    index.isDeleteLocal = true
+                    index.let { SQLHelper.updatedItem(it) }
+                }
             }
         }
         isRequestSyncData = true
-        emit(dataList)
         isLoading.postValue(false)
+        emit(dataList)
     }
 
     fun getCheckedItems() = liveData(Dispatchers.Main){

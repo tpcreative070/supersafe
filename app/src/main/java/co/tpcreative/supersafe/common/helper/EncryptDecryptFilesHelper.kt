@@ -12,7 +12,6 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 class EncryptDecryptFilesHelper {
-
     private fun getSecretKey(): String? {
         val user: User? = Utils.getUserInfo()
         if (user != null) {
@@ -192,6 +191,50 @@ class EncryptDecryptFilesHelper {
         val secretKey: ByteArray = configurationFile?.secretKey!!
         val ivx: ByteArray = configurationFile?.ivParameter!!
         return SecurityUtil.encrypt(content, encryptionMode, secretKey, ivx)
+    }
+
+    fun deleteDirectoryImpl(path: String): Boolean {
+        val directory = File(path)
+
+        // If the directory exists then delete
+        if (directory.exists()) {
+            val files = directory.listFiles() ?: return true
+            // Run on all sub files and folders and delete them
+            for (i in files.indices) {
+                if (files[i].isDirectory) {
+                    deleteDirectoryImpl(files[i].absolutePath)
+                } else {
+                    files[i].delete()
+                }
+            }
+        }
+        return directory.delete()
+    }
+
+    fun createDirectory(path: String): Boolean {
+        val directory = File(path)
+        if (directory.exists()) {
+            Utils.Log(TAG, "Directory $path already exists")
+            return false
+        }
+        return directory.mkdirs()
+    }
+
+    fun createDirectory(path: String, override: Boolean): Boolean {
+        // Check if directory exists. If yes, then delete all directory
+        if (override && isDirectoryExists(path)) {
+            deleteDirectory(path)
+        }
+        // Create new directory
+        return createDirectory(path)
+    }
+
+    fun deleteDirectory(path: String?): Boolean {
+        return deleteDirectoryImpl(path!!)
+    }
+
+    fun isDirectoryExists(path: String?): Boolean {
+        return File(path).exists()
     }
 
     companion object {
