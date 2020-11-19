@@ -1171,6 +1171,24 @@ object Utils {
             true
         } else (index.global_original_id == null) and (index.global_thumbnail_id == null)
     }
+
+    fun availableToSave(mData : MutableList<ItemModel>) : String?{
+        var spaceAvailable: Long = 0
+        for (index in mData) {
+            if (index.isSaver) {
+                spaceAvailable += index.size?.toLong()!!
+            }
+        }
+        val availableSpaceOS: Long = getAvailableSpaceInBytes()
+        if (availableSpaceOS < spaceAvailable) {
+            val mResutSpace = spaceAvailable - availableSpaceOS
+            val result: String? = ConvertUtils.byte2FitMemorySize(mResutSpace)
+            return result
+        }
+        return null
+//        val message: String = kotlin.String.format(getString(R.string.your_space_is_not_enough_to), "export. ", "Request spaces: $result")
+//        Utils.showDialog(this, message = message)
+    }
 }
 
 interface UtilsListener {

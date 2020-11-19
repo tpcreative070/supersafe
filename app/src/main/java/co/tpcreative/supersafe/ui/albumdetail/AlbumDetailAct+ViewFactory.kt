@@ -3,7 +3,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -21,7 +20,6 @@ import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.*
 import co.tpcreative.supersafe.model.*
@@ -52,9 +50,6 @@ fun AlbumDetailAct.initUI(){
     storage = Storage(this)
     storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
     initSpeedDial(true)
-    presenter = AlbumDetailPresenter()
-    presenter?.bindView(this)
-    onInit()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     llBottom?.visibility = View.GONE
@@ -207,7 +202,7 @@ fun AlbumDetailAct.initRecycleView(layoutInflater: LayoutInflater){
 }
 
 
-private fun AlbumDetailAct.getData(){
+fun AlbumDetailAct.getData(){
     viewModel.isLoading.postValue(true)
     viewModel.getData(this@getData).observe(this@getData, Observer {
         when (it.status) {
@@ -274,37 +269,6 @@ fun AlbumDetailAct.toggleSelections(position: Int) {
     adapter?.notifyItemChanged(position)
 }
 
-fun AlbumDetailAct.onExport(){
-    if (countSelected > 0) {
-        storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
-        presenter?.status = EnumStatus.EXPORT
-        var isSaver = false
-        var spaceAvailable: Long = 0
-        for (i in presenter?.mList?.indices!!) {
-            val items: ItemModel? = presenter?.mList?.get(i)
-            if (items?.isSaver!! && items.isChecked) {
-                isSaver = true
-                spaceAvailable += items.size?.toLong()!!
-            }
-        }
-        val availableSpaceOS: Long = Utils.getAvailableSpaceInBytes()
-        if (availableSpaceOS < spaceAvailable) {
-            val request_spaces = spaceAvailable - availableSpaceOS
-            val result: String? = ConvertUtils.byte2FitMemorySize(request_spaces)
-            val message: String = kotlin.String.format(getString(R.string.your_space_is_not_enough_to), "export. ", "Request spaces: $result")
-            Utils.showDialog(this, message = message)
-        } else {
-            if (isSaver) {
-                onEnableSyncData()
-            } else {
-                //onShowDialog(presenter?.status)
-            }
-        }
-    }
-}
-
-
-
 fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatus?,isSharingFiles: Boolean) {
     var content: String? = ""
     when (status) {
@@ -346,21 +310,6 @@ fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatu
 
 fun AlbumDetailAct.onDialogDownloadFile() {
     SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.downloading)
-}
-
-/*Download file*/
-fun AlbumDetailAct.onEnableSyncData() {
-    if (Utils.isVerifiedAccount()) {
-        if (Utils.isConnectedToGoogleDrive()) {
-            onDialogDownloadFile()
-            ServiceManager.getInstance()?.onPreparingEnableDownloadData(presenter?.mList?.let { Utils.getCheckedList(it) })
-
-        } else {
-            Navigator.onCheckSystem(this, null)
-        }
-    } else {
-        Navigator.onVerifyAccount(this)
-    }
 }
 
 fun AlbumDetailAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles : Boolean) = CoroutineScope(Dispatchers.Main).launch{
@@ -496,37 +445,6 @@ fun AlbumDetailAct.onStopProgressing() {
     }
 }
 
-fun AlbumDetailAct.onInit() {
-//    llToolbarInfo.visibility = View.INVISIBLE
-//    progress_bar.visibility = View.VISIBLE
-//    onCallData()
-}
-
-fun AlbumDetailAct.onCallData(){
-    mainScope.launch {
-        val mInitRecyclerView = async {
-            initRecycleView(layoutInflater)
-        }
-        val mResultData = async {
-            presenter?.getData(this@onCallData)
-        }
-        val mRecyclerViewLoading = async {
-            onLoading()
-        }
-        val mBannerLoading = async {
-            onBannerLoading()
-        }
-        mInitRecyclerView.await()
-        mResultData.await()
-        mRecyclerViewLoading.await()
-        mBannerLoading.await()
-        progress_bar.visibility = View.INVISIBLE
-        llToolbarInfo.visibility = View.VISIBLE
-        Utils.Log(TAG, "Loading data")
-    }
-}
-
-
 suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
     try {
         collapsing_toolbar.title = mainCategory.categories_name
@@ -586,26 +504,6 @@ suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
     }
     catch (e : Exception){
         e.printStackTrace()
-    }
-}
-
-suspend fun AlbumDetailAct.onLoading() = withContext(Dispatchers.Main){
-    if (Utils.isVertical()) {
-        verticalAdapter?.getDataSource()?.clear()
-        presenter?.mList?.let { verticalAdapter?.getDataSource()?.addAll(it) }
-    } else {
-        adapter?.getDataSource()?.clear()
-        presenter?.mList?.let { adapter?.getDataSource()?.addAll(it) }
-    }
-}
-
-fun AlbumDetailAct.onPushDataToList(){
-    mainScope.launch {
-        val mResult = async {
-            onLoading()
-        }
-        mResult.await()
-        Utils.Log(TAG, "Reload data completed====>")
     }
 }
 
