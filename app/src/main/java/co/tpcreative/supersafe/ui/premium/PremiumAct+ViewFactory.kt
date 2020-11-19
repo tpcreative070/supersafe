@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.ui.premium
 import android.content.DialogInterface
+import android.graphics.Color
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_premium.*
 
 fun PremiumAct.initUI(){
     TAG = this::class.java.simpleName
+    window.statusBarColor = Color.TRANSPARENT
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     presenter = PremiumPresenter()

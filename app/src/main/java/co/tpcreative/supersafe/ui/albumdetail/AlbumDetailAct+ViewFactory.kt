@@ -15,6 +15,7 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.network.Status
@@ -47,6 +48,7 @@ import java.util.*
 
 fun AlbumDetailAct.initUI(){
     TAG = this::class.java.simpleName
+    window.statusBarColor = Color.TRANSPARENT
     setupViewModel()
     storage = Storage(this)
     storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
@@ -145,6 +147,7 @@ fun AlbumDetailAct.initUI(){
     })
     initRecycleView(layoutInflater)
     getData()
+
 }
 
 fun AlbumDetailAct.multipleDelete(){
@@ -211,10 +214,14 @@ private fun AlbumDetailAct.getData(){
         when (it.status) {
             Status.SUCCESS -> {
                 CoroutineScope(Dispatchers.Main).launch {
+                    val mBanner = async {
+                        onBannerLoading()
+                    }
                     val mResult = async {
                         Utils.Log(TAG, "Loading...")
                         adapter?.setDataSource(it.data)
                     }
+                    mBanner.await()
                     mResult.await()
                     viewModel.isLoading.postValue(false)
                     Utils.Log(TAG, "Loading done")
@@ -522,59 +529,64 @@ fun AlbumDetailAct.onCallData(){
 
 
 suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
-    collapsing_toolbar.title = presenter?.mainCategories?.categories_name
-    val mList: MutableList<ItemModel>? = presenter?.mainCategories?.isFakePin?.let { SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, it) }
-    val items: ItemModel? = SQLHelper.getItemId(presenter?.mainCategories?.items_id)
-    if (items != null && mList != null && mList.size > 0) {
-        when (EnumFormatType.values()[items.formatType]) {
-            EnumFormatType.AUDIO -> {
-                try {
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+    try {
+        collapsing_toolbar.title = mainCategory.categories_name
+        val mList: MutableList<ItemModel>? = SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, mainCategory.isFakePin)
+        val items: ItemModel? = SQLHelper.getItemId(mainCategory.items_id)
+        if (items != null && mList != null && mList.size > 0) {
+            when (EnumFormatType.values()[items.formatType]) {
+                EnumFormatType.AUDIO -> {
+                    try {
+                        val myColor = Color.parseColor(mainCategory.image)
+                        backdrop?.setBackgroundColor(myColor)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
-            }
-            EnumFormatType.FILES -> {
-                try {
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                EnumFormatType.FILES -> {
+                    try {
+                        val myColor = Color.parseColor(mainCategory.image)
+                        backdrop?.setBackgroundColor(myColor)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
-            }
-            else -> {
-                if (storage?.isFileExist(items.getThumbnail())!!) {
-                    backdrop?.rotation = items.degrees.toFloat()
-                    Glide.with(this@onBannerLoading.applicationContext)
-                            .load(storage?.readFile(items.getThumbnail()))
-                            .apply(options!!)
-                            .into(backdrop!!)
-                } else {
-                    backdrop?.setImageResource(0)
-                    val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                    backdrop?.setBackgroundColor(myColor)
+                else -> {
+                    if (storage?.isFileExist(items.getThumbnail())!!) {
+                        backdrop?.rotation = items.degrees.toFloat()
+                        Glide.with(this@onBannerLoading.applicationContext)
+                                .load(items.getThumbnail().readFile())
+                                .apply(options!!)
+                                .into(backdrop!!)
+                    } else {
+                        backdrop?.setImageResource(0)
+                        val myColor = Color.parseColor(mainCategory.image)
+                        backdrop?.setBackgroundColor(myColor)
+                    }
                 }
-            }
-        }
-    } else {
-        backdrop?.setImageResource(0)
-        val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(presenter?.mainCategories?.mainCategories_Local_Id)
-        if (mainCategories != null) {
-            try {
-                val myColor = Color.parseColor(mainCategories.image)
-                backdrop?.setBackgroundColor(myColor)
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         } else {
-            try {
-                val myColor = Color.parseColor(presenter?.mainCategories?.image)
-                backdrop?.setBackgroundColor(myColor)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            backdrop?.setImageResource(0)
+            val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesPosition(mainCategory.mainCategories_Local_Id)
+            if (mainCategories != null) {
+                try {
+                    val myColor = Color.parseColor(mainCategories.image)
+                    backdrop?.setBackgroundColor(myColor)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else {
+                try {
+                    val myColor = Color.parseColor(mainCategory.image)
+                    backdrop?.setBackgroundColor(myColor)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
+    }
+    catch (e : Exception){
+        e.printStackTrace()
     }
 }
 
