@@ -505,10 +505,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
 //            }
             viewModel.isSelectAll.postValue(false)
             actionMode = null
-            val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-            if (themeApp != null) {
-                window.statusBarColor = ContextCompat.getColor(applicationContext, themeApp.getPrimaryDarkColor())
-            }
+            window.statusBarColor = android.graphics.Color.TRANSPARENT
         }
     }
 

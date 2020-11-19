@@ -531,7 +531,7 @@ fun AlbumDetailAct.onCallData(){
 suspend fun AlbumDetailAct.onBannerLoading() = withContext(Dispatchers.Main) {
     try {
         collapsing_toolbar.title = mainCategory.categories_name
-        val mList: MutableList<ItemModel>? = SQLHelper.getListItems(presenter?.mainCategories?.categories_local_id, mainCategory.isFakePin)
+        val mList: MutableList<ItemModel>? = SQLHelper.getListItems(mainCategory.categories_local_id, mainCategory.isFakePin)
         val items: ItemModel? = SQLHelper.getItemId(mainCategory.items_id)
         if (items != null && mList != null && mList.size > 0) {
             when (EnumFormatType.values()[items.formatType]) {
