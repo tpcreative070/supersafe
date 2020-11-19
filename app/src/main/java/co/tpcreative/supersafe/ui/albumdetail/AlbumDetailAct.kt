@@ -77,10 +77,6 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
         initUI()
     }
 
-    fun waitingToInit(){
-        attachFragment(R.id.gallery_root)
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
@@ -634,23 +630,21 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     override fun getConfiguration(): Configuration? {
         //default configuration
         try {
-            return presenter?.mainCategories?.isFakePin?.let {
-                Configuration.Builder()
-                        .hasCamera(true)
-                        ?.hasShade(true)
-                        ?.hasPreview(true)
-                        ?.setSpaceSize(4)
-                        ?.setPhotoMaxWidth(120)
-                        ?.setLocalCategoriesId(presenter?.mainCategories?.categories_local_id)
-                        ?.setCheckBoxColor(-0xc0ae4b)
-                        ?.setFakePIN(it)
-                        ?.setDialogHeight(Configuration.Companion.DIALOG_HALF)
-                        ?.setDialogMode(Configuration.Companion.DIALOG_LIST)
-                        ?.setMaximum(9)
-                        ?.setTip(null)
-                        ?.setAblumsTitle(null)
-                        ?.build()
-            }
+            return Configuration.Builder()
+                    .hasCamera(true)
+                    ?.hasShade(true)
+                    ?.hasPreview(true)
+                    ?.setSpaceSize(4)
+                    ?.setPhotoMaxWidth(120)
+                    ?.setLocalCategoriesId(mainCategory.categories_local_id)
+                    ?.setCheckBoxColor(-0xc0ae4b)
+                    ?.setFakePIN(mainCategory.isFakePin)
+                    ?.setDialogHeight(Configuration.Companion.DIALOG_HALF)
+                    ?.setDialogMode(Configuration.Companion.DIALOG_LIST)
+                    ?.setMaximum(9)
+                    ?.setTip(null)
+                    ?.setAblumsTitle(null)
+                    ?.build()
         } catch (e: Exception) {
             e.printStackTrace()
         }

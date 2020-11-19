@@ -43,7 +43,6 @@ import kotlinx.android.synthetic.main.activity_album_detail.tv_Photos
 import kotlinx.android.synthetic.main.activity_album_detail.tv_Videos
 import kotlinx.android.synthetic.main.footer_items_detail_album.*
 import kotlinx.coroutines.*
-import java.io.File
 import java.util.*
 
 fun AlbumDetailAct.initUI(){
@@ -145,9 +144,9 @@ fun AlbumDetailAct.initUI(){
             llBottom?.visibility = View.VISIBLE
         }
     })
+
     initRecycleView(layoutInflater)
     getData()
-
 }
 
 fun AlbumDetailAct.multipleDelete(){
@@ -210,7 +209,7 @@ fun AlbumDetailAct.initRecycleView(layoutInflater: LayoutInflater){
 
 private fun AlbumDetailAct.getData(){
     viewModel.isLoading.postValue(true)
-    viewModel.getData(this).observe(this, Observer {
+    viewModel.getData(this@getData).observe(this@getData, Observer {
         when (it.status) {
             Status.SUCCESS -> {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -224,6 +223,7 @@ private fun AlbumDetailAct.getData(){
                     mBanner.await()
                     mResult.await()
                     viewModel.isLoading.postValue(false)
+                    attachFragment(R.id.gallery_root)
                     Utils.Log(TAG, "Loading done")
                 }
             }
@@ -523,7 +523,6 @@ fun AlbumDetailAct.onCallData(){
         progress_bar.visibility = View.INVISIBLE
         llToolbarInfo.visibility = View.VISIBLE
         Utils.Log(TAG, "Loading data")
-        waitingToInit()
     }
 }
 

@@ -31,7 +31,7 @@ abstract class BaseGalleryActivity : AppCompatActivity(), MoveGalleryFragment.On
     private var fragment: MoveGalleryFragment? = null
     var TAG : String = this::class.java.simpleName
     val mainScope = CoroutineScope(Dispatchers.Main)
-    protected fun attachFragment(layoutId: Int) {
+    fun attachFragment(layoutId: Int) {
         fragment = MoveGalleryFragment.newInstance() as MoveGalleryFragment
         val fragmentManager: FragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(layoutId, fragment!!).commit()
