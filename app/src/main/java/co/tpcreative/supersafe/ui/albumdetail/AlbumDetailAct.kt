@@ -64,6 +64,7 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
     var mMenuItem: MenuItem? = null
     lateinit var viewModel : AlbumDetailViewModel
     var gridLayoutManager: NpaGridLayoutManager? = null
+    var progressing : EnumStepProgressing = EnumStepProgressing.NONE
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(400, 400)
@@ -157,6 +158,11 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
         storage?.deleteDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
+
+
+        if (viewModel.isRequestSyncData){
+            SingletonPrivateFragment.getInstance()?.onUpdateView()
+        }
     }
 
     override fun onStop() {
@@ -247,12 +253,12 @@ class AlbumDetailAct : BaseGalleryActivity(), BaseView<Int>, AlbumDetailAdapter.
             }
         }else{
             try {
-                when (EnumFormatType.values()[dataSource.get(position).formatType]) {
+                when (EnumFormatType.values()[dataSource[position].formatType]) {
                     EnumFormatType.FILES -> {
                         Toast.makeText(getContext(), "Can not support to open type of this file", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        Navigator.onPhotoSlider(this,dataSource.get(position), dataSource, mainCategory)
+                        Navigator.onPhotoSlider(this, dataSource[position], dataSource, mainCategory)
                     }
                 }
             } catch (e: Exception) {

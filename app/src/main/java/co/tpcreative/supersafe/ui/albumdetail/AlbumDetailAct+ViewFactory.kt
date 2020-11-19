@@ -58,15 +58,21 @@ fun AlbumDetailAct.initUI(){
     llBottom?.visibility = View.GONE
     /*Root Fragment*/
     imgShare.setOnClickListener {
-        if (countSelected > 0) {
-            storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
-            presenter?.status = EnumStatus.SHARE
-            onShowDialog(presenter?.status)
-        }
+//        if (countSelected > 0) {
+//            storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
+//            presenter?.status = EnumStatus.SHARE
+//            onShowDialog(presenter?.status)
+//        }
+        viewModel.getCheckedItems().observe(this, Observer {
+            exportingFiles(it,true)
+        })
     }
 
     imgExport.setOnClickListener {
-        onExport()
+        //onExport()
+        viewModel.getCheckedItems().observe(this, Observer {
+            exportingFiles(it,false)
+        })
     }
 
     imgDelete.setOnClickListener {
@@ -92,12 +98,23 @@ fun AlbumDetailAct.initUI(){
     })
 
     viewModel.isLoading.observe(this, Observer {
-        if (it) {
-            llToolbarInfo.visibility = View.INVISIBLE
-            progress_bar.visibility = View.VISIBLE
-        } else {
-            llToolbarInfo.visibility = View.VISIBLE
-            progress_bar.visibility = View.INVISIBLE
+        if (progressing == EnumStepProgressing.DOWNLOADING){
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.downloading)
+        }
+        else if (progressing == EnumStepProgressing.EXPORTING){
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.exporting)
+        }
+        else{
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+            if (it) {
+                llToolbarInfo.visibility = View.INVISIBLE
+                progress_bar.visibility = View.VISIBLE
+            } else {
+                llToolbarInfo.visibility = View.VISIBLE
+                progress_bar.visibility = View.INVISIBLE
+            }
         }
     })
 
@@ -466,7 +483,8 @@ fun AlbumDetailAct.onShowDialog(status: EnumStatus?) {
                         ServiceManager.getInstance()?.onExportingFiles()
                     }
                     EnumStatus.DELETE -> {
-                        presenter?.onDelete()
+                        //presenter?.onDelete()
+                        deleteItems()
                     }
                     else -> Utils.Log(TAG, "Nothing")
                 }
@@ -493,6 +511,62 @@ fun AlbumDetailAct.onEnableSyncData() {
     }
 }
 
+fun AlbumDetailAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles : Boolean) = CoroutineScope(Dispatchers.Main).launch{
+    if(!Utils.isConnectedToGoogleDrive()){
+        Utils.onBasicAlertNotify(this@exportingFiles,"Alert","Please connect Google drive first")
+        return@launch
+    }
+    if (Utils.getSaverSpace() && isSharingFiles){
+        progressing = EnumStepProgressing.DOWNLOADING
+        viewModel.isLoading.postValue(true)
+        val mDataRequestingDownload = mData.filter { value ->  EnumFormatType.values()[value.formatType] == EnumFormatType.IMAGE }.toMutableList()
+        val mResultedDownloading = ServiceManager.getInstance()?.downloadFilesToExporting(mDataRequestingDownload)
+        when(mResultedDownloading?.status){
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Downloaded completely files")
+                progressing = EnumStepProgressing.EXPORTING
+                viewModel.isLoading.postValue(true)
+                val mResultedExporting = ServiceManager.getInstance()?.exportingItems(mData,isSharingFiles)
+                when(mResultedExporting?.status){
+                    Status.SUCCESS -> {
+                        Utils.Log(TAG,"Completed exported files")
+                        if (isSharingFiles){
+                            Utils.shareMultiple(mResultedExporting.data!!,this@exportingFiles)
+                        }else{
+                            Utils.onBasicAlertNotify(this@exportingFiles, getString(R.string.key_alert), "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
+                        }
+                    }else ->Utils.Log(TAG,"Exported files has issued")
+                }
+                progressing = EnumStepProgressing.NONE
+                viewModel.isLoading.postValue(false)
+            }else -> {
+                Utils.Log(TAG,"Downloaded files has issued")
+                progressing = EnumStepProgressing.NONE
+                viewModel.isLoading.postValue(false)
+            }
+        }
+    }else{
+        progressing = EnumStepProgressing.EXPORTING
+        viewModel.isLoading.postValue(true)
+        val mResultedExporting = ServiceManager.getInstance()?.exportingItems(mData,isSharingFiles)
+          when(mResultedExporting?.status){
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Completed exported files")
+                if (isSharingFiles){
+                    Utils.shareMultiple(mResultedExporting.data!!,this@exportingFiles)
+                }else{
+                    Utils.onBasicAlertNotify(this@exportingFiles, getString(R.string.key_alert), "Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
+                }
+            }else ->Utils.Log(TAG,"Exported files has issued")
+        }
+        progressing = EnumStepProgressing.NONE
+        viewModel.isLoading.postValue(false)
+    }
+}
+
+fun AlbumDetailAct.shareFiles(){
+
+}
 
 /*Init Floating View*/
 fun AlbumDetailAct.initSpeedDial(addActionItems: Boolean) {

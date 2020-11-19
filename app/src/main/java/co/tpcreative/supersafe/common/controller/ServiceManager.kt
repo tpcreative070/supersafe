@@ -16,6 +16,7 @@ import androidx.exifinterface.media.ExifInterface
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.api.requester.*
+import co.tpcreative.supersafe.common.extension.createFile
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.presenter.BaseServiceView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -817,18 +818,77 @@ class ServiceManager : BaseServiceView<Any?> {
         }
     }
 
-    private suspend fun onPreparingEnableDownload(globalList: MutableList<ItemModel>?) = withContext(Dispatchers.IO){
-        isRequestingSyncCor = true
-        val mResult = driveViewModel.downLoadData(true,globalList)
-        Utils.Log(TAG,"Start download")
-        when(mResult.status){
-            Status.SUCCESS -> {
-                Utils.Log(TAG,"Completed download file")
-                Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED)
+    suspend fun onPreparingEnableDownload(globalList: MutableList<ItemModel>?) : Resource<Boolean> {
+        return withContext(Dispatchers.IO){
+            try {
+                isRequestingSyncCor = true
+                val mResult = driveViewModel.downLoadData(true,globalList)
+                Utils.Log(TAG,"Start download")
+                when(mResult.status){
+                    Status.SUCCESS -> {
+                        Utils.Log(TAG,"Completed download file")
+                        Utils.onPushEventBus(EnumStatus.DOWNLOAD_COMPLETED)
+                        Resource.success(true)
+                    }
+                    else ->{
+                        Utils.Log(TAG,mResult.message)
+                        Resource.error(mResult.code ?: Utils.CODE_EXCEPTION,mResult.message ?:"",null)
+                    }
+                }
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?:"", null)
             }
-            else ->Utils.Log(TAG,mResult.message)
+            finally {
+                isRequestingSyncCor = false
+            }
         }
-        isRequestingSyncCor = false
+    }
+
+    suspend fun downloadFilesToExporting(globalList: MutableList<ItemModel>?) : Resource<Boolean> {
+        return withContext(Dispatchers.IO){
+            try {
+                val mResult = driveViewModel.downLoadData(true,globalList)
+                Utils.Log(TAG,"Start download")
+                when(mResult.status){
+                    Status.SUCCESS -> {
+                        Utils.Log(TAG,"Completed download file")
+                        Resource.success(true)
+                    }
+                    else ->{
+                        Utils.Log(TAG,mResult.message)
+                        Resource.error(mResult.code ?: Utils.CODE_EXCEPTION,mResult.message ?:"",null)
+                    }
+                }
+            }catch (e : Exception){
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?:"", null)
+            }
+        }
+    }
+
+    suspend fun exportingItems(mData : MutableList<ItemModel>,isSharingFiles : Boolean) : Resource<MutableList<File>>{
+        return withContext(Dispatchers.IO){
+            try {
+                val mResponseList = mutableListOf<File>()
+                for (index in mData){
+                    val mInput  = Utils.geInputExportFiles(index,isSharingFiles)!!
+                    val mOutPut: File = Utils.geOutputExportFiles(index,isSharingFiles)!!
+                    try {
+                        mOutPut.createFile(mOutPut,mInput,Cipher.DECRYPT_MODE)
+                        mResponseList.add(mOutPut)
+                        Utils.Log(TAG,"Exported completely")
+                    } catch (e: Exception) {
+                        Utils.Log(TAG, "Cannot write to $e")
+                    } finally {
+                        Utils.Log(TAG, "Finally")
+                    }
+                }
+                Resource.success(mResponseList)
+            }
+            catch (e : Exception){
+                e.printStackTrace()
+                Resource.error(Utils.CODE_EXCEPTION,e.message ?:"",null)
+            }
+        }
     }
 
     fun onDefaultValue() {

@@ -91,7 +91,18 @@ class AlbumDetailViewModel : BaseViewModel<ItemModel>() {
                 dataList[i].let { SQLHelper.updatedItem(it) }
             }
         }
+        isRequestSyncData = true
         emit(dataList)
         isLoading.postValue(false)
+    }
+
+    fun getCheckedItems() = liveData(Dispatchers.Main){
+        val mData : MutableList<ItemModel> = mutableListOf()
+        for (index in dataList) {
+            if (index.isChecked()!!) {
+               mData.add(index)
+            }
+        }
+        emit(mData)
     }
 }

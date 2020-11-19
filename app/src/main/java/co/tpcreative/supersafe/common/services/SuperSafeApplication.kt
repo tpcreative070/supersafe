@@ -240,7 +240,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
     }
 
     fun initFolder() {
-        if (storage.isDirectoryExists(superSafe) and storage.isDirectoryExists(superSafePrivate) and storage.isDirectoryExists(superSafeBackup) and storage.isDirectoryExists(superSafeLog) and storage.isDirectoryExists(superSafeBreakInAlerts) and storage.isDirectoryExists(superSafeOldPath)) {
+        if (storage.isDirectoryExists(superSafe) and storage.isDirectoryExists(superSafePrivate) and storage.isDirectoryExists(superSafeBackup) and storage.isDirectoryExists(superSafeLog) and storage.isDirectoryExists(superSafeBreakInAlerts) and storage.isDirectoryExists(superSafeOldPath) and storage.isDirectoryExists(superSafePicture)) {
             Utils.Log(TAG, "SuperSafe is existing")
         } else {
             storage.createDirectory(superSafe)
@@ -249,6 +249,7 @@ class SuperSafeApplication : MultiDexApplication(), Application.ActivityLifecycl
             storage.createDirectory(superSafeBackup)
             storage.createDirectory(superSafeLog)
             storage.createDirectory(superSafeBreakInAlerts)
+            storage.createDirectory(superSafePicture)
             Utils.Log(TAG, "SuperSafe was created")
         }
     }

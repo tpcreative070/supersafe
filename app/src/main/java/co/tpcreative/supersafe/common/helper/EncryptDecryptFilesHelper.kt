@@ -1,0 +1,213 @@
+package co.tpcreative.supersafe.common.helper
+import co.tpcreative.supersafe.common.encypt.EncryptConfiguration
+import co.tpcreative.supersafe.common.encypt.SecurityUtil
+import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.model.User
+import com.snatik.storage.helpers.ImmutablePair
+import java.io.*
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.CipherOutputStream
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
+
+class EncryptDecryptFilesHelper {
+
+    private fun getSecretKey(): String? {
+        val user: User? = Utils.getUserInfo()
+        if (user != null) {
+            if (user._id != null) {
+                Utils.Log(TAG, "Get secret key " + user._id)
+               return user._id
+            }
+            Utils.Log(TAG, "secret id is null")
+        } else {
+            Utils.Log(TAG, "Get secret key null")
+        }
+        return SecurityUtil.SECRET_KEY
+    }
+
+    private fun getConfigurationFile(): EncryptConfiguration? {
+        getSecretKey()?.let {
+            configurationFile = EncryptConfiguration.Builder()
+                    .setChuckSize(1024 * 2)
+                    .setEncryptContent(SecurityUtil.IVX, it, SecurityUtil.SALT)
+                    .build()
+            Utils.Log(TAG, "config files")
+            return configurationFile
+        }
+        Utils.Log(TAG, "config files")
+        return configurationFile
+    }
+
+    fun createFile(output: File?, input: File?, mode: Int): Boolean {
+        var inputStream: FileInputStream? = null
+        try {
+            inputStream = FileInputStream(input)
+            var length = 0
+            val fOutputStream = FileOutputStream(
+                    output)
+            //note the following line
+            var buffer: ByteArray? = ByteArray(1024 * 1024)
+            while (inputStream.read(buffer).also { length = it } > 0) {
+                if (configurationFile != null && configurationFile?.isEncrypted!!) {
+                    buffer = encrypt(buffer!!, mode)
+                }
+                fOutputStream.write(buffer, 0, length)
+            }
+            fOutputStream.flush()
+            fOutputStream.close()
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            return false
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close()
+                } catch (ignored: IOException) {
+                    ignored.printStackTrace()
+                }
+            }
+        }
+        return true
+    }
+
+    fun createLargeFile(output: File?, input: File?, cipher: Cipher): Boolean {
+        if (configurationFile == null || !(configurationFile?.isEncrypted)!!) {
+            return false
+        }
+        var inputStream: FileInputStream? = null
+        val cipherOutputStream: CipherOutputStream
+        try {
+            inputStream = FileInputStream(input)
+            val outputStream = FileOutputStream(output)
+            cipherOutputStream = CipherOutputStream(outputStream, cipher)
+            //note the following line
+            val buffer = ByteArray(1024 * 1024)
+            var bytesRead: Int
+            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                cipherOutputStream.write(buffer, 0, bytesRead)
+            }
+            cipherOutputStream.close()
+            outputStream.flush()
+            outputStream.close()
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            return false
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close()
+                } catch (ignored: IOException) {
+                    ignored.printStackTrace()
+                }
+            }
+        }
+        return true
+    }
+
+    fun getCipher(mode: Int): Cipher? {
+        if (configurationFile != null && configurationFile?.isEncrypted!!) {
+            try {
+                val mSecretKeySpec = SecretKeySpec(configurationFile?.secretKey, com.snatik.storage.security.SecurityUtil.AES_ALGORITHM)
+                val mIvParameterSpec = IvParameterSpec(configurationFile?.ivParameter)
+                mCipher = Cipher.getInstance(com.snatik.storage.security.SecurityUtil.AES_TRANSFORMATION)
+                mCipher?.init(mode, mSecretKeySpec, mIvParameterSpec)
+                return mCipher
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return null
+    }
+
+    fun readFile(path: String?): ByteArray? {
+        val stream: FileInputStream
+        return try {
+            stream = FileInputStream(File(path))
+            readFile(stream)
+        } catch (e: FileNotFoundException) {
+            Utils.Log(TAG, "Failed to read file to input stream ${e.message}")
+            null
+        }
+    }
+
+     fun readFile(stream: FileInputStream): ByteArray? {
+        open class Reader : Thread() {
+            var array: ByteArray? = null
+        }
+        val reader: Reader = object : Reader() {
+            override fun run() {
+                val chunks = LinkedList<ImmutablePair<ByteArray, Int>>()
+                // read the file and build chunks
+                var size = 0
+                var globalSize = 0
+                do {
+                    try {
+                        val chunkSize = if (contextClassLoader != null) configurationFile?.chuckSize else 8192
+                        // read chunk
+                        val buffer = ByteArray(chunkSize!!)
+                        size = stream.read(buffer, 0, chunkSize)
+                        if (size > 0) {
+                            globalSize += size
+
+                            // add chunk to list
+                            chunks.add(ImmutablePair(buffer, size))
+                        }
+                    } catch (e: java.lang.Exception) {
+                        // very bad
+                    }
+                } while (size > 0)
+                try {
+                    stream.close()
+                } catch (e: java.lang.Exception) {
+                    // very bad
+                }
+                array = ByteArray(globalSize)
+                // append all chunks to one array
+                var offset = 0
+                for (chunk in chunks) {
+                    // flush chunk to array
+                    System.arraycopy(chunk.element1, 0, array, offset, chunk.element2)
+                    offset += chunk.element2
+                }
+            }
+        }
+        reader.start()
+        try {
+            reader.join()
+        } catch (e: InterruptedException) {
+            Utils.Log(TAG, "Failed on reading file from storage while the locking Thread ${e.message}")
+            return null
+        }
+        return if (configurationFile != null && configurationFile?.isEncrypted!!) {
+            encrypt(reader.array!!, Cipher.DECRYPT_MODE)
+        } else {
+            reader.array
+        }
+    }
+
+    @Synchronized
+    private fun encrypt(content: ByteArray, encryptionMode: Int): ByteArray? {
+        val secretKey: ByteArray = configurationFile?.secretKey!!
+        val ivx: ByteArray = configurationFile?.ivParameter!!
+        return SecurityUtil.encrypt(content, encryptionMode, secretKey, ivx)
+    }
+
+    companion object {
+        private var instance: EncryptDecryptFilesHelper? = null
+        private val TAG = EncryptDecryptFilesHelper::class.java.simpleName
+        private var mCipher: Cipher? = null
+        var configurationFile : EncryptConfiguration? = null
+        fun getInstance(): EncryptDecryptFilesHelper? {
+            if (instance == null) {
+                instance = EncryptDecryptFilesHelper()
+            }
+            return instance
+        }
+    }
+
+    init {
+        configurationFile = getConfigurationFile()
+    }
+}

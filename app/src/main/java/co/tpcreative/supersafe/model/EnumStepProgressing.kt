@@ -6,5 +6,7 @@ enum class EnumStepProgressing {
     RESEND_CODE,
     CHANGE_EMAIL,
     UNLOCK_ALBUMS,
-    NONE
+    NONE,
+    DOWNLOADING,
+    EXPORTING
 }

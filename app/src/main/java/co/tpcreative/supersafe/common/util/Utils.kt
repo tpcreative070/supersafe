@@ -35,6 +35,7 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManager
+import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.helper.ThemeHelper
 import co.tpcreative.supersafe.common.listener.Listener
@@ -1136,6 +1137,30 @@ object Utils {
 
     fun setIsVertical(isVertical : Boolean){
         return PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_vertical_adapter), isVertical)
+    }
+
+    fun geOutputExportFiles(item : ItemModel, isSharingFiles : Boolean) : File?{
+        var mFolderName = SuperSafeApplication.getInstance().getSuperSafePicture()
+        if (isSharingFiles){
+            mFolderName = SuperSafeApplication.getInstance().getSuperSafeShare()
+        }
+        var output: File? = File(mFolderName + item.originalName + item.fileExtension)
+        if (output?.isFileExist(output.absolutePath) == true) {
+            output = File(mFolderName + item.originalName + "(1)" + item.fileExtension)
+        }
+        return output
+    }
+
+    fun geInputExportFiles(item : ItemModel, isSharingFiles : Boolean) : File?{
+        var path = item.getOriginal()
+        if (isSharingFiles){
+            path = if (item.mimeType == SuperSafeApplication.getInstance().getString(R.string.key_gif)) {
+                item.getOriginal()
+            } else {
+                item.getThumbnail()
+            }
+        }
+        return File(path)
     }
 }
 

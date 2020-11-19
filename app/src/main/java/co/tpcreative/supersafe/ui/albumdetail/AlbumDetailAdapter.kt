@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.adapter.BaseAdapter
 import co.tpcreative.supersafe.common.adapter.BaseHolder
+import co.tpcreative.supersafe.common.extension.readFile
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
@@ -131,7 +133,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                         if (storage?.isFileExist(path)!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage.readFile(path))
+                                    .load(path?.readFile())
                                     .apply(options!!).into(imgAlbum!!)
                         }
                     }
@@ -218,7 +220,7 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
                         if (storage?.isFileExist(path)!!) {
                             imgAlbum?.rotation = data.degrees.toFloat()
                             Glide.with(context!!)
-                                    .load(storage.readFile(path))
+                                    .load(path?.readFile())
                                     .apply(options!!).into(imgAlbum!!)
                         }
                     }
