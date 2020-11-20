@@ -180,7 +180,9 @@ class DriveViewModel(private val driveService: DriveService, itemService: ItemSe
             } else {
                 if (mUser != null) {
                     mUser.driveConnected = true
+                    mUser.driveAbout = mData
                     Utils.setUserPreShare(mUser)
+                    Utils.Log(TAG,"set data here....")
                 }
             }
         }

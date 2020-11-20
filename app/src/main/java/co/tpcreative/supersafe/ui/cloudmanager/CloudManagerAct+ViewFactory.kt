@@ -1,26 +1,35 @@
 package co.tpcreative.supersafe.ui.cloudmanager
 import android.content.Context
-import android.content.DialogInterface
-import android.text.InputType
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
+import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.toJson
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.common.views.AppBarStateChangeListener
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
 import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.input.input
+import com.google.android.material.appbar.AppBarLayout
 import com.snatik.storage.Storage
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_cloud_manager.*
+import kotlinx.android.synthetic.main.activity_cloud_manager.collapsing_toolbar
+import kotlinx.android.synthetic.main.activity_cloud_manager.toolbar
 import kotlinx.android.synthetic.main.custom_view_dialog.view.*
 
+
 fun CloudManagerAct.initUI(){
+    window.statusBarColor = Color.TRANSPARENT
+    setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     storage = Storage(this)
@@ -28,7 +37,7 @@ fun CloudManagerAct.initUI(){
     presenter?.bindView(this)
     onShowUI()
     onUpdatedView()
-    presenter?.onGetDriveAbout()
+    //presenter?.onGetDriveAbout()
     btnSwitchPauseSync?.setOnCheckedChangeListener(this)
     switch_SaveSpace?.setOnCheckedChangeListener(this)
     val lefFiles: String = kotlin.String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD)
@@ -47,6 +56,27 @@ fun CloudManagerAct.initUI(){
     btnRemoveLimit.setOnClickListener {
         Navigator.onMoveToPremium(this)
     }
+
+    viewModel.isLoading.observe(this, Observer {
+        if (it) {
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.progressing)
+        } else {
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+        }
+    })
+
+    appbar.addOnOffsetChangedListener(object: AppBarStateChangeListener() {
+        override fun onStateChanged(appBarLayout: AppBarLayout?, state: State?) {
+            Utils.Log(TAG, state?.name)
+            when(state) {
+                State.COLLAPSED -> { collapsing_toolbar.title = getString(R.string.cloud_manager)/* Do something */ }
+                State.EXPANDED -> { collapsing_toolbar.title = ""/* Do something */ }
+                State.IDLE -> { collapsing_toolbar.title = "" /* Do something */ }
+            }
+        }
+    })
+
+    getData()
 }
 
 fun CloudManagerAct.onShowUI() {
@@ -59,9 +89,11 @@ fun CloudManagerAct.onShowUI() {
         val driveAbout: DriveAbout? = mUser.driveAbout
         tvDriveAccount?.text = mUser.cloud_id
         try {
+            Utils.Log(TAG, "supersafe space ${driveAbout?.toJson()}")
             val superSafeSpace: String? = driveAbout?.inAppUsed?.let { ConvertUtils.byte2FitMemorySize(it) }
             tvValueSupersafeSpace?.text = superSafeSpace
         } catch (e: Exception) {
+            e.printStackTrace()
             tvValueOtherSpace?.text = getString(R.string.calculating)
             isThrow = true
         }
@@ -72,6 +104,7 @@ fun CloudManagerAct.onShowUI() {
                 tvValueOtherSpace?.text = superSafeSpace
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             tvValueOtherSpace?.text = getString(R.string.calculating)
             isThrow = true
         }
@@ -83,6 +116,7 @@ fun CloudManagerAct.onShowUI() {
                 tvValueFreeSpace?.text = superSafeSpace
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             tvValueFreeSpace?.text = getString(R.string.calculating)
             isThrow = true
         }
@@ -92,6 +126,7 @@ fun CloudManagerAct.onShowUI() {
                 tvLeft?.text = lefFiles
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             val lefFiles: String = kotlin.String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD)
             tvLeft?.text = lefFiles
             isThrow = true
@@ -102,6 +137,7 @@ fun CloudManagerAct.onShowUI() {
                 tvUploaded?.text = uploadedFiles
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             val uploadedFiles: String = kotlin.String.format(getString(R.string.uploaded), "0")
             tvUploaded?.text = uploadedFiles
             isThrow = true
@@ -142,7 +178,7 @@ fun CloudManagerAct.onShowDialog() {
     view.tvSpaceRequired?.text = kotlin.String.format(getString(R.string.space_required), presenter?.sizeFile?.let { ConvertUtils.byte2FitMemorySize(it) })
     val builder : com.afollestad.materialdialogs.MaterialDialog = com.afollestad.materialdialogs.MaterialDialog(this)
             .title(text = getString(R.string.download_private_cloud_files))
-            .customView(view = view,scrollable =  false)
+            .customView(view = view, scrollable = false)
             .cancelable(false)
             .negativeButton(text = getString(R.string.cancel))
             .negativeButton {
@@ -160,7 +196,7 @@ fun CloudManagerAct.onShowDialog() {
 
 fun CloudManagerAct.onShowPremium() {
     try {
-        val builder = getContext()?.let { MaterialDialog.Builder(it,Utils.getCurrentTheme()) }
+        val builder = getContext()?.let { MaterialDialog.Builder(it, Utils.getCurrentTheme()) }
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         builder?.setHeaderBackground(themeApp?.getAccentColor()!!)
         builder?.setTitle(getString(R.string.this_is_premium_feature))
@@ -175,4 +211,20 @@ fun CloudManagerAct.onShowPremium() {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
+
+private fun CloudManagerAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(CloudManagerViewModel::class.java)
+}
+
+private fun CloudManagerAct.getData(){
+    viewModel.getDriveAbout().observe(this, Observer {
+        when (it.status) {
+            Status.SUCCESS -> onShowUI()
+            else -> Utils.Log(TAG, it.message)
+        }
+    })
 }

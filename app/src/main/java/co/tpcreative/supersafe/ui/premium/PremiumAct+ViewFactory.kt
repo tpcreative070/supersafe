@@ -8,12 +8,18 @@ import androidx.fragment.app.FragmentTransaction
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.extension.toSpanned
 import co.tpcreative.supersafe.common.util.Utils
+import co.tpcreative.supersafe.common.views.AppBarStateChangeListener
 import co.tpcreative.supersafe.model.CheckoutItems
 import co.tpcreative.supersafe.model.EnumPurchase
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.PurchaseData
+import com.google.android.material.appbar.AppBarLayout
 import de.mrapp.android.dialog.MaterialDialog
+import kotlinx.android.synthetic.main.activity_cloud_manager.*
 import kotlinx.android.synthetic.main.activity_premium.*
+import kotlinx.android.synthetic.main.activity_premium.appbar
+import kotlinx.android.synthetic.main.activity_premium.collapsing_toolbar
+import kotlinx.android.synthetic.main.activity_premium.toolbar
 
 fun PremiumAct.initUI(){
     TAG = this::class.java.simpleName
@@ -71,6 +77,17 @@ fun PremiumAct.initUI(){
             }
         }
     }
+
+    appbar.addOnOffsetChangedListener(object: AppBarStateChangeListener() {
+        override fun onStateChanged(appBarLayout: AppBarLayout?, state: State?) {
+            Utils.Log(TAG, state?.name)
+            when(state) {
+                State.COLLAPSED -> { collapsing_toolbar.title = getString(R.string.premium)/* Do something */ }
+                State.EXPANDED -> { collapsing_toolbar.title = ""/* Do something */ }
+                State.IDLE -> { collapsing_toolbar.title = "" /* Do something */ }
+            }
+        }
+    })
 }
 
 

@@ -15,6 +15,7 @@ import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
 import com.snatik.storage.Storage
 import kotlinx.android.synthetic.main.activity_cloud_manager.*
 import org.greenrobot.eventbus.EventBus
@@ -28,6 +29,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
     var isSpaceSaver = false
     var storage: Storage? = null
     var isRefresh = false
+    lateinit var viewModel : CloudManagerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cloud_manager)
@@ -41,7 +43,7 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             R.id.menu_item_refresh -> {
                 presenter?.onGetDriveAbout()
                 isRefresh = true

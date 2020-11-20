@@ -1,8 +1,7 @@
 package co.tpcreative.supersafe.ui.cloudmanager
-import android.app.Activity
-import android.content.Context
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.presenter.Presenter
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
@@ -11,7 +10,6 @@ import co.tpcreative.supersafe.common.utilimport.NetworkUtil
 import co.tpcreative.supersafe.model.EnumFormatType
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.ItemModel
-import co.tpcreative.supersafe.model.User
 import com.google.gson.Gson
 import com.snatik.storage.Storage
 import kotlinx.coroutines.CoroutineScope
@@ -100,7 +98,16 @@ class CloudManagerPresenter : Presenter<BaseView<Long>>() {
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            ServiceManager.getInstance()?.getInAppList()
+            val mResult = ServiceManager.getInstance()?.getDriveAbout()
+            when(mResult?.status){
+                Status.SUCCESS -> {
+                    val mResultList = ServiceManager.getInstance()?.getInAppList()
+                    when(mResultList?.status){
+                        Status.SUCCESS -> Utils.Log(TAG, "Fetch data completely")
+                        else -> Utils.Log(TAG,mResultList?.message)
+                    }
+                }else -> Utils.Log(TAG,mResult?.message)
+            }
             view.onSuccessful("Success",EnumStatus.GET_LIST_FILES_IN_APP)
         }
     }

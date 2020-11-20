@@ -165,7 +165,7 @@ class ServiceManager : BaseServiceView<Any?> {
             val mResult = driveViewModel.geInAppList()
             when(mResult.status){
                 Status.SUCCESS -> {
-                    Utils.Log(TAG,"Fetch drive about completed")
+                    Utils.Log(TAG,"Fetch drive list completed")
                     mResult
                 }
                 else ->{

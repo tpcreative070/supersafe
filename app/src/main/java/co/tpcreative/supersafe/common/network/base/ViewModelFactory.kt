@@ -38,6 +38,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(PhotoSlideShowViewModel::class.java)){
             return PhotoSlideShowViewModel() as T
         }
+        else if (modelClass.isAssignableFrom(CloudManagerViewModel::class.java)){
+            return CloudManagerViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }
