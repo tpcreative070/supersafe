@@ -1,7 +1,6 @@
 package co.tpcreative.supersafe.ui.sharefiles
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import co.tpcreative.supersafe.R
@@ -10,24 +9,20 @@ import co.tpcreative.supersafe.common.activity.BaseActivityNone
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.snatik.storage.Storage
+import co.tpcreative.supersafe.viewmodel.ShareFilesViewModel
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
 class ShareFilesAct : BaseActivityNone() {
-    val mListFile: MutableList<Int> = ArrayList()
     var dialog: AlertDialog? = null
-    val mListImport: MutableList<ImportFilesModel> = ArrayList<ImportFilesModel>()
-    var count = 0
-    var mStore : Storage? = null
+    lateinit var viewModel : ShareFilesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_share_files)
-        mStore = Storage(this)
         initUI()
     }
 
@@ -56,14 +51,6 @@ class ShareFilesAct : BaseActivityNone() {
         when (event) {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
-            }
-            EnumStatus.IMPORTED_COMPLETELY -> {
-                try {
-                    onStopProgressing()
-                    onShowUI(View.VISIBLE)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
             }
             else -> Utils.Log(TAG,"Nothing")
         }

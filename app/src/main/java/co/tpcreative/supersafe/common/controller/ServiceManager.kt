@@ -498,6 +498,7 @@ class ServiceManager : BaseServiceView<Any?> {
                     SingletonPrivateFragment.getInstance()?.onUpdateView()
                 }
                 Utils.Log(TAG, "Original path :" + originalPath)
+                /*Share intent is not deleted*/
                 if (!getRequestShareIntent()) {
                     Utils.onDeleteFile(originalPath)
                 }

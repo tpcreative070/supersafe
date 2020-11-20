@@ -32,6 +32,9 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(AlbumDetailViewModel::class.java)){
             return AlbumDetailViewModel() as T
         }
+        else if (modelClass.isAssignableFrom(ShareFilesViewModel::class.java)){
+            return ShareFilesViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

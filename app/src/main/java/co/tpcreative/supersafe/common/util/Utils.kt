@@ -1215,6 +1215,11 @@ object Utils {
         }
         return mList
     }
+
+    fun getId() : String?{
+        val mData = getUserInfo()
+        return mData?._id
+    }
 }
 
 interface UtilsListener {

@@ -5,41 +5,41 @@ import android.net.Uri
 import android.os.Build
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
+import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.helper.SQLHelper
+import co.tpcreative.supersafe.common.network.Status
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.PathUtil
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
-import com.google.gson.Gson
+import co.tpcreative.supersafe.viewmodel.ShareFilesViewModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_share_files.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.ArrayList
 
 fun ShareFilesAct.initUI(){
+    setupViewModel()
     TAG = this::class.java.simpleName
-    val mUser: User? = Utils.getUserInfo()
-    if (mUser != null) {
-        if (mUser._id != null) {
-            ServiceManager.getInstance()?.onInitConfigurationFile()
-        } else {
-            finish()
-            return
-        }
-    } else {
+    if (Utils.getId().isNullOrEmpty()){
         finish()
         return
     }
     onShowUI(View.GONE)
-    onAddPermission()
     try {
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
         if (themeApp != null) {
@@ -52,6 +52,15 @@ fun ShareFilesAct.initUI(){
     btnGotIt.setOnClickListener {
         finish()
     }
+    viewModel.isLoading.observe(this, Observer {
+        if (it){
+            SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.importing)
+        }else{
+            SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
+        }
+    })
+    viewModel.isLoading.postValue(true)
+    onAddPermission()
 }
 
 fun ShareFilesAct.onAddPermission() {
@@ -85,9 +94,8 @@ fun ShareFilesAct.onAddPermission() {
 
 fun ShareFilesAct.onHandlerIntent() {
     try {
-        val intent: Intent = getIntent()
-        val action: String? = intent.getAction()
-        val type: String? = intent.getType()
+        val action: String? = intent.action
+        val type: String? = intent.type
         Utils.Log(TAG, "original type :$type")
         if (Intent.ACTION_SEND == action && type != null) {
             handleSendSingleItem(intent)
@@ -97,6 +105,7 @@ fun ShareFilesAct.onHandlerIntent() {
             Utils.Log(TAG, "Sending items is not existing")
         }
     } catch (e: Exception) {
+        viewModel.isLoading.postValue(false)
         finish()
         e.printStackTrace()
     }
@@ -105,16 +114,14 @@ fun ShareFilesAct.onHandlerIntent() {
 fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
     try {
         val imageUri : Uri? = intent.getParcelableExtra(Intent.EXTRA_STREAM)
-        val type: String? = intent.getType()
+        val type: String? = intent.type
         val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
         val mainCategories: MainCategoryModel? = list?.get(0)
         if (imageUri != null && mainCategories != null) {
-            mListFile.clear()
-            onStartProgressing()
             var response : String? = ""
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Utils.Log(TAG, "value path :" + imageUri.path)
-                Utils.Log(TAG, "Path existing " + mStore?.isFileExist(imageUri.path))
+                Utils.Log(TAG, "Path existing " + imageUri.path?.isFileExist())
                 response = PathUtil.getRealPathFromUri(this, imageUri)
                 if (response == null) {
                     response = PathUtil.getFilePathFromURI(this, imageUri)
@@ -126,9 +133,10 @@ fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
                 }
             }
             if (response == null) {
-                onStopProgressing()
+                viewModel.isLoading.postValue(false)
                 finish()
             } else {
+                val mDataList = mutableListOf<ImportFilesModel>()
                 val mFile = File(response)
                 if (mFile.exists()) {
                     val path = mFile.absolutePath
@@ -168,21 +176,23 @@ fun ShareFilesAct.handleSendSingleItem(intent: Intent) {
                     if (mimeTypeFile.name == null || mimeTypeFile.name == "") {
                         mimeTypeFile.name = name
                     }
-                    count += 1
                     val importFiles = ImportFilesModel(mainCategories, mimeTypeFile, path, 0, false)
-                    mListImport.add(importFiles)
-                    ServiceManager.getInstance()?.setListImport(mListImport)
-                    ServiceManager.getInstance()?.onPreparingImportData()
+                    mDataList.add(importFiles)
+                    importingData(mDataList)
                 } else {
-                    onStopProgressing()
+                    viewModel.isLoading.postValue(false)
                     finish()
                 }
             }
         } else {
             Utils.Log(TAG, "Nothing to do at single item")
+            viewModel.isLoading.postValue(false)
+            finish()
         }
     } catch (e: Exception) {
         e.printStackTrace()
+        viewModel.isLoading.postValue(false)
+        finish()
     }
 }
 
@@ -192,19 +202,18 @@ fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
         val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
         val mainCategories: MainCategoryModel? = list?.get(0)
         if (imageUris != null) {
-            mListFile.clear()
-            onStartProgressing()
-            for (i in imageUris.indices) {
+            val mDataList = mutableListOf<ImportFilesModel>()
+            for (index in imageUris) {
                 var response : String? = ""
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    response = PathUtil.getRealPathFromUri(this, imageUris[i])
+                    response = PathUtil.getRealPathFromUri(this, index)
                     if (response == null) {
-                        response = PathUtil.getFilePathFromURI(this, imageUris[i])
+                        response = PathUtil.getFilePathFromURI(this, index)
                     }
                 } else {
-                    response = PathUtil.getPath(this, imageUris[i])
+                    response = PathUtil.getPath(this, index)
                     if (response == null) {
-                        response = PathUtil.getFilePathFromURI(this, imageUris[i])
+                        response = PathUtil.getFilePathFromURI(this, index)
                     }
                 }
                 if (response != null) {
@@ -212,7 +221,7 @@ fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
                     if (mFile.exists()) {
                         val path = mFile.absolutePath
                         val name = mFile.name
-                        val mimeType: String? = intent.getType()
+                        val mimeType: String? = intent.type
                         val fileExtension: String? = Utils.getFileExtension(path)
                         Utils.Log(TAG, "file extension $fileExtension")
                         Utils.Log(TAG, "Path file :$path")
@@ -247,49 +256,25 @@ fun ShareFilesAct.handleSendMultipleFiles(intent: Intent?) {
                         if (mimeTypeFile.name == null || mimeTypeFile.name == "") {
                             mimeTypeFile.name = name
                         }
-                        count += 1
-                        val importFiles = ImportFilesModel(mainCategories, mimeTypeFile, path, i, false)
-                        mListImport.add(importFiles)
-                        Utils.Log(TAG, Gson().toJson(mimeTypeFile))
-                    } else {
-                        onStopProgressing()
-                        finish()
+                        mDataList.add(ImportFilesModel(mainCategories, mimeTypeFile, path, 0, false))
                     }
-                } else {
-                    onStopProgressing()
-                    finish()
                 }
             }
-            ServiceManager.getInstance()?.setListImport(mListImport)
-            ServiceManager.getInstance()?.onPreparingImportData()
+            importingData(mDataList)
         } else {
+            viewModel.isLoading.postValue(false)
             finish()
             Utils.Log(TAG, "Nothing to do at multiple items")
+
         }
     } catch (e: Exception) {
+        viewModel.isLoading.postValue(false)
         finish()
         e.printStackTrace()
     }
 }
 
-fun ShareFilesAct.onStartProgressing() {
-    try {
-        SingletonManagerProcessing.getInstance()?.onStartProgressing(this,R.string.importing)
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
-fun ShareFilesAct.onStopProgressing() {
-    Utils.Log(TAG, "onStopProgressing")
-    try {
-        SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
-    } catch (e: Exception) {
-        Utils.Log(TAG, e.message+"")
-    }
-}
-
-fun ShareFilesAct.onShowUI(res: Int) {
+fun ShareFilesAct.onShowUI(res: Int,count : Int? = null) {
     runOnUiThread(Runnable {
         try {
             tvTitle?.visibility = res
@@ -301,4 +286,25 @@ fun ShareFilesAct.onShowUI(res: Int) {
             finish()
         }
     })
+}
+
+fun ShareFilesAct.importingData(mData : MutableList<ImportFilesModel>) = CoroutineScope(Dispatchers.Main).launch{
+    val mResult = ServiceManager.getInstance()?.onImportData(mData)
+    when(mResult?.status){
+        Status.SUCCESS -> {
+            viewModel.isLoading.postValue(false)
+            onShowUI(View.VISIBLE,mData.size)
+        }
+        else -> {
+            Utils.Log(TAG,mResult?.message)
+            viewModel.isLoading.postValue(false)
+        }
+    }
+}
+
+private fun ShareFilesAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(ShareFilesViewModel::class.java)
 }

@@ -200,9 +200,8 @@ class AlbumDetailAdapter(private val mLayoutManager: GridLayoutManager? = null, 
             try {
                 val path: String? = data.getThumbnail()
                 val formatTypeFile = EnumFormatType.values()[data.formatType]
-                tvTitle?.text = data.title
-                val value: String? = data.size?.toLong()?.let { ConvertUtils.byte2FitMemorySize(it) }
-                tvSizeCreatedDate?.text = value + " created " + Utils.getCurrentDate(data.originalName)
+                tvTitle?.text = data.titleView
+                tvSizeCreatedDate?.text = data.createdDateTimeView
                 when (formatTypeFile) {
                     EnumFormatType.AUDIO -> {
                         Glide.with(context!!)

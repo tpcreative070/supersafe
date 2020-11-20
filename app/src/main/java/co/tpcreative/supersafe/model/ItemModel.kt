@@ -1,5 +1,6 @@
 package co.tpcreative.supersafe.model
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
+import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import java.io.Serializable
 import java.util.*
@@ -360,5 +361,17 @@ class ItemModel : Serializable {
 
     fun setOriginal(path : String?){
         this.originalPath = path
+    }
+
+    /*This is view Area*/
+    val titleView : String
+    get() {
+        return title ?: ""
+    }
+
+    val createdDateTimeView : String
+    get() {
+        val value: String? = size?.toLong()?.let { ConvertUtils.byte2FitMemorySize(it) }
+        return value + " created " + Utils.getCurrentDate(originalName)
     }
 }

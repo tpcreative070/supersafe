@@ -22,6 +22,7 @@ import co.tpcreative.supersafe.common.controller.ServiceManager
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.listener.Listener
+import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.utilimport.NetworkUtil
 import co.tpcreative.supersafe.common.views.AnimationsContainer
@@ -39,6 +40,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.leinardi.android.speeddial.SpeedDialActionItem
 import com.leinardi.android.speeddial.SpeedDialView
 import kotlinx.android.synthetic.main.activity_main_tab.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun MainTabAct.initUI(){
     TAG = this::class.java.simpleName
@@ -360,4 +364,14 @@ fun MainTabAct.onAnimationIcon(status: EnumStatus?) {
     previousStatus = status
     animation = AnimationsContainer.getInstance()?.createSplashAnim(item, status)
     animation?.start()
+}
+
+fun MainTabAct.importingData(mData : MutableList<ImportFilesModel>) = CoroutineScope(Dispatchers.Main).launch{
+    val mResult = ServiceManager.getInstance()?.onImportData(mData)
+    when(mResult?.status){
+        Status.SUCCESS -> {
+            SingletonPrivateFragment.getInstance()?.onUpdateView()
+        }
+        else -> Utils.Log(TAG,mResult?.message)
+    }
 }

@@ -172,8 +172,6 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             }
             R.id.action_sync -> {
                 onEnableSyncData()
-                //ServiceManager.getInstance()?.waitingForResult()
-                //ServiceManager.getInstance()?.onPreparingSyncDataCor()
                 return true
             }
             R.id.settings -> {
@@ -219,40 +217,19 @@ class MainTabAct : BaseGoogleApi(), BaseView<EmptyModel> {
             }
             Navigator.REQUEST_CODE -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
-                    val images: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
-                    val mListImportFiles: MutableList<ImportFilesModel> = ArrayList<ImportFilesModel>()
-                    var i = 0
-                    val l = images?.size
-                    while (i < l!!) {
-                        val path = images[i].path
-                        val name = images[i].name
-                        val id = "" + images[i].id
-                        val mimeType: String? = Utils.getMimeType(path)
-                        Utils.Log(TAG, "mimeType $mimeType")
-                        Utils.Log(TAG, "name $name")
-                        Utils.Log(TAG, "path $path")
-                        val fileExtension: String? = Utils.getFileExtension(path)
-                        Utils.Log(TAG, "file extension " + Utils.getFileExtension(path))
-                        try {
-                            val mimeTypeFile: MimeTypeFile = Utils.mediaTypeSupport().get(fileExtension)
-                                    ?: return
-                            mimeTypeFile.name = name
-                            val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
-                            if (list == null) {
-                                Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
-                                return
-                            }
-                            val mCategory: MainCategoryModel? = list[0]
-                            Utils.Log(TAG, "Show category " + Gson().toJson(mCategory))
-                            val importFiles = ImportFilesModel(list[0], mimeTypeFile, path, i, false)
-                            mListImportFiles.add(importFiles)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                    val mData: ArrayList<ImageModel>? = data.getParcelableArrayListExtra(Navigator.INTENT_EXTRA_IMAGES)
+                    mData?.let {
+                        val list: MutableList<MainCategoryModel>? = SQLHelper.getList()
+                        if (list == null) {
+                            Utils.onWriteLog("Main categories is null", EnumStatus.WRITE_FILE)
+                            return
                         }
-                        i++
+                        val mCategory: MainCategoryModel? = list[0]
+                        val mResult = mCategory?.let { it1 -> Utils.getDataItemsFromImport(it1,it) }
+                        if (mResult != null) {
+                            importingData(mResult)
+                        }
                     }
-                    ServiceManager.getInstance()?.setListImport(mListImportFiles)
-                    ServiceManager.getInstance()?.onPreparingImportData()
                 } else {
                     Utils.Log(TAG, "Nothing to do on Gallery")
                 }
