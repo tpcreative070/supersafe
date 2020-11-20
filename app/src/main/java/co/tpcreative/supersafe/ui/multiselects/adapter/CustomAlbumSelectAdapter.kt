@@ -29,17 +29,17 @@ class CustomAlbumSelectAdapter(context: Context?, albums: ArrayList<AlbumMultiIt
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp?.getAccentColor()!!)
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-        var convertView = convertView
+        var mConvertView = convertView
         val viewHolder: ViewHolder
-        if (convertView == null) {
-            convertView = layoutInflater?.inflate(R.layout.grid_view_item_album_select, null)
+        if (mConvertView == null) {
+            mConvertView = layoutInflater?.inflate(R.layout.grid_view_item_album_select, null)
             viewHolder = ViewHolder()
-            viewHolder.imageView = convertView?.image_view_album_image
-            viewHolder.textView = convertView?.text_view_album_name
-            viewHolder.imgAudioVideo = convertView?.imgAudioVideo
-            convertView?.setTag(viewHolder)
+            viewHolder.imageView = mConvertView?.image_view_album_image
+            viewHolder.textView = mConvertView?.text_view_album_name
+            viewHolder.imgAudioVideo = mConvertView?.imgAudioVideo
+            mConvertView?.setTag(viewHolder)
         } else {
-            viewHolder = convertView.tag as ViewHolder
+            viewHolder = mConvertView.tag as ViewHolder
         }
         viewHolder.imageView?.layoutParams?.width = size
         viewHolder.imageView?.layoutParams?.height = size
@@ -86,7 +86,7 @@ class CustomAlbumSelectAdapter(context: Context?, albums: ArrayList<AlbumMultiIt
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return convertView
+        return mConvertView
     }
 
     private class ViewHolder {

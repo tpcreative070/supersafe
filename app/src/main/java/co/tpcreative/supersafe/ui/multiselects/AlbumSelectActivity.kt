@@ -52,9 +52,9 @@ class AlbumSelectActivity : HelperActivity() {
         text_view_error?.visibility = View.INVISIBLE
         progressBar = findViewById<View?>(R.id.progress_bar_album_select) as ProgressBar?
         grid_view_album_select?.setOnItemClickListener { parent, view, position, id ->
-            val intent = Intent(applicationContext, ImageSelectActivity::class.java)
-            intent.putExtra(Navigator.INTENT_EXTRA_ALBUM, albums?.get(position)?.name)
-            startActivityForResult(intent, Navigator.REQUEST_CODE)
+            val mIntent = Intent(applicationContext, ImageSelectActivity::class.java)
+            mIntent.putExtra(Navigator.INTENT_EXTRA_ALBUM, albums?.get(position)?.name)
+            startActivityForResult(mIntent, Navigator.REQUEST_CODE)
         }
     }
 

@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.grid_view_item_image_select.view.*
 import java.util.*
 
 class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?) : CustomGenericAdapter<ImageModel>(context, images) {
-    private val mContext: Context? = null
     var options: RequestOptions? = RequestOptions()
             .centerCrop()
             .override(200, 200)
@@ -31,18 +30,18 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?
     var note1: Drawable? = ContextCompat.getDrawable(SuperSafeApplication.getInstance(),themeApp?.getAccentColor()!!)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
+        var mConvertView = convertView
         val viewHolder: ViewHolder
-        if (convertView == null) {
-            convertView = layoutInflater?.inflate(R.layout.grid_view_item_image_select, null)
+        if (mConvertView == null) {
+            mConvertView = layoutInflater?.inflate(R.layout.grid_view_item_image_select, null)
             viewHolder = ViewHolder()
-            viewHolder.imageView = convertView?.image_view_image_select
-            viewHolder.imgAudioVideo = convertView?.imgAudioVideo
-            viewHolder.tvTitle = convertView?.tvTitle
-            viewHolder.view = convertView?.view_alpha
-            convertView?.setTag(viewHolder)
+            viewHolder.imageView = mConvertView?.image_view_image_select
+            viewHolder.imgAudioVideo = mConvertView?.imgAudioVideo
+            viewHolder.tvTitle = mConvertView?.tvTitle
+            viewHolder.view = mConvertView?.view_alpha
+            mConvertView?.setTag(viewHolder)
         } else {
-            viewHolder = convertView.tag as ViewHolder
+            viewHolder = mConvertView.tag as ViewHolder
         }
         viewHolder.imageView?.layoutParams?.width = size
         viewHolder.imageView?.layoutParams?.height = size
@@ -50,10 +49,10 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?
         viewHolder.view?.layoutParams?.height = size
         if (arrayList?.get(position)?.isSelected!!) {
             viewHolder.view?.alpha = 0.5f
-            (convertView as FrameLayout?)?.setForeground(ContextCompat.getDrawable(context!!,R.drawable.ic_done_white))
+            (mConvertView as FrameLayout?)?.setForeground(ContextCompat.getDrawable(context!!,R.drawable.ic_done_white))
         } else {
             viewHolder.view?.alpha = 0.0f
-            (convertView as FrameLayout?)?.foreground = null
+            (mConvertView as FrameLayout?)?.foreground = null
         }
         val data = arrayList!![position]
         try {
@@ -105,7 +104,7 @@ class CustomImageSelectAdapter(context: Context?, images: ArrayList<ImageModel>?
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return convertView!!
+        return mConvertView!!
     }
 
     private class ViewHolder {
