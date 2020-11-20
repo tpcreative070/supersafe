@@ -267,6 +267,7 @@ fun AlbumDetailAct.toggleSelections(position: Int) {
     }
     viewModel.count.postValue(countSelected)
     adapter?.notifyItemChanged(position)
+    speedDial.hide()
 }
 
 fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatus?,isSharingFiles: Boolean) {
@@ -291,7 +292,6 @@ fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatu
             .negativeButton(text = getString(R.string.cancel))
             .positiveButton(text = getString(R.string.ok))
             .positiveButton {
-                val mListExporting: MutableList<ExportFiles> = ArrayList<ExportFiles>()
                 when (status) {
                     EnumStatus.SHARE -> {
                       exportingFiles(mData,isSharingFiles)

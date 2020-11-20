@@ -13,3 +13,8 @@ fun String.isFileExist(): Boolean {
 fun String.createDirectory(){
     EncryptDecryptFilesHelper.getInstance()?.createDirectory(this)
 }
+
+fun String.deleteFile(){
+    val file = File(this)
+    file.delete()
+}

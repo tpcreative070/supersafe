@@ -1,33 +1,34 @@
 package co.tpcreative.supersafe.ui.photosslideshow
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
-import android.widget.*
+import android.widget.ImageView
+import android.widget.PopupMenu
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGalleryActivity
 import co.tpcreative.supersafe.common.controller.SingletonFakePinComponent
-import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.controller.SingletonPrivateFragment
+import co.tpcreative.supersafe.common.extension.deleteFile
+import co.tpcreative.supersafe.common.extension.readFile
+import co.tpcreative.supersafe.common.helper.EncryptDecryptFilesHelper
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
 import co.tpcreative.supersafe.common.util.Configuration
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.PhotoSlideShowViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.github.chrisbanes.photoview.PhotoView
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_photos_slideshow.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -35,7 +36,7 @@ import org.greenrobot.eventbus.ThreadMode
 import java.io.File
 import java.util.*
 
-class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<EmptyModel> {
+class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
     private val options: RequestOptions = RequestOptions()
             .centerInside()
             .placeholder(R.color.black38)
@@ -44,11 +45,9 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             .error(R.drawable.baseline_music_note_white_48)
             .priority(Priority.HIGH)
     var isHide = false
-    var presenter: PhotoSlideShowPresenter? = null
-    private var adapter: SamplePagerAdapter? = null
-    var isReload = false
+    var adapter: SamplePagerAdapter? = null
+    lateinit var dataSource : MutableList<ItemModel>
     var dialog: AlertDialog? = null
-    var subscriptions: Disposable? = null
     var isProgressing = false
     var position = 0
     private var photoView: PhotoView? = null
@@ -67,6 +66,8 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
         }
     }
 
+    lateinit var viewModel : PhotoSlideShowViewModel
+    var progressing : EnumStepProgressing = EnumStepProgressing.NONE
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -80,9 +81,6 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             }
             override fun onPageScrollStateChanged(state: Int) {}
         })
-        attachFragment(R.id.gallery_root)
-        adapter = SamplePagerAdapter(this)
-        view_pager?.adapter = adapter
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -91,38 +89,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
-            EnumStatus.START_PROGRESS -> {
-                onStartProgressing()
-            }
-            EnumStatus.STOP_PROGRESS -> {
-                try {
-                    Utils.Log(TAG, "onStopProgress")
-                    onStopProgressing()
-                    when (presenter?.status) {
-                        EnumStatus.SHARE -> {
-                            if (presenter?.mListShare != null) {
-                                if (presenter?.mListShare?.size!! > 0) {
-                                    Utils.shareMultiple(presenter?.mListShare!!, this)
-                                }
-                            }
-                        }
-                        EnumStatus.EXPORT -> {
-                            Utils.onBasicAlertNotify(this,getString(R.string.key_alert),"Exported at " + SuperSafeApplication.getInstance().getSuperSafePicture())
-                        }
-                    }
-                } catch (e: Exception) {
-                    Utils.Log(TAG, e.message+"")
-                }
-            }
-            EnumStatus.DOWNLOAD_COMPLETED -> {
-                SingletonManagerProcessing.getInstance()?.onStopProgressing(this)
-                onShowDialog(EnumStatus.EXPORT, position)
-                Utils.Log(TAG, " already sync")
-            }
-            EnumStatus.DOWNLOAD_FAILED -> {
-                Utils.onBasicAlertNotify(this,getString(R.string.key_alert),getString(R.string.no_internet_connection))
-            }
-            else -> Utils.Log(TAG,"Nothing")
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
@@ -138,17 +105,9 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
         onStopSlider()
         Utils.Log(TAG, "Destroy")
-        if (subscriptions != null) {
-            subscriptions?.dispose()
-        }
-        try {
-            storage?.deleteFile(Utils.getPackagePath(applicationContext).absolutePath)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        Utils.getPackagePath(applicationContext).absolutePath.deleteFile()
     }
 
     override fun onStopListenerAWhile() {
@@ -169,7 +128,8 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                     ?.hasPreview(true)
                     ?.setSpaceSize(4)
                     ?.setPhotoMaxWidth(120)
-                    ?.setLocalCategoriesId(presenter?.mainCategories?.categories_local_id)
+                    ?.setLocalCategoriesId(mainCategory.categories_local_id)
+                    ?.setFakePIN(mainCategory.isFakePin)
                     ?.setCheckBoxColor(-0xc0ae4b)
                     ?.setDialogHeight(Configuration.DIALOG_HALF)
                     ?.setDialogMode(Configuration.DIALOG_LIST)
@@ -186,7 +146,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
     override fun getListItems(): MutableList<ItemModel>? {
         try {
             val list: MutableList<ItemModel> = ArrayList<ItemModel>()
-            val item: ItemModel? = presenter?.mList?.get(position)
+            val item: ItemModel? = dataSource[position]
             if (item != null) {
                 item.isChecked = true
                 list.add(item)
@@ -200,9 +160,19 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
         return null
     }
 
-    internal inner class SamplePagerAdapter(private val context: Context?) : PagerAdapter() {
+    override fun onBackPressed() {
+        if (viewModel.isRequestSyncData) {
+            SingletonPrivateFragment.getInstance()?.onUpdateView()
+            SingletonFakePinComponent.getInstance().onUpdateView()
+            val intent = Intent()
+            setResult(RESULT_OK, intent)
+        }
+        super.onBackPressed()
+    }
+
+    inner class SamplePagerAdapter(private val context: Context?) : PagerAdapter() {
         override fun getCount(): Int {
-            return presenter?.mList?.size!!
+            return dataSource.size
         }
         override fun instantiateItem(container: ViewGroup, position: Int): View {
             //PhotoView photoView = new PhotoView(container.getContext());
@@ -210,7 +180,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             val myView: View = inflater.inflate(R.layout.content_view, null)
             photoView = myView.findViewById(R.id.imgPhoto)
             val imgPlayer = myView.findViewById<ImageView?>(R.id.imgPlayer)
-            val mItems: ItemModel? = presenter?.mList?.get(position)
+            val mItems: ItemModel? = dataSource[position]
             val enumTypeFile = EnumFormatType.values()[mItems!!.formatType]
             photoView?.setOnPhotoTapListener { view, x, y ->
                 Utils.Log(TAG, "on Clicked")
@@ -219,9 +189,9 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                 onHideView()
             }
             imgPlayer.setOnClickListener(View.OnClickListener {
-                val items: ItemModel? = view_pager?.currentItem?.let { it1 -> presenter?.mList?.get(it1) }
+                val items: ItemModel? = view_pager?.currentItem?.let { it1 -> dataSource[it1] }
                 if (items != null) {
-                    Navigator.onPlayer(this@PhotoSlideShowAct, items, presenter?.mainCategories!!)
+                    Navigator.onPlayer(this@PhotoSlideShowAct, items, mainCategory)
                 }
             })
             try {
@@ -235,13 +205,13 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
                         if (mFileOriginal.exists() || mFileOriginal.isFile) {
                             Glide.with(context!!)
                                     .asGif()
-                                    .load(storage?.readFile(mOriginal))
+                                    .load(mOriginal?.readFile())
                                     .apply(options)
                                     .into(photoView!!)
                         }
                     } else {
                         Glide.with(context!!)
-                                .load(storage?.readFile(path))
+                                .load(path?.readFile())
                                 .apply(options)
                                 .into(photoView!!)
                     }
@@ -285,7 +255,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
         position = view_pager?.currentItem!!
         when (view?.id) {
             R.id.imgArrowBack -> {
-                if (!isHide){
+                if (!isHide) {
                     onBackPressed()
                 }
             }
@@ -294,78 +264,46 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
             }
             R.id.imgShare -> {
                 if (!isHide) {
-                    try {
-                        if (presenter?.mList != null) {
-                            if (presenter?.mList?.size!! > 0) {
-                                storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
-                                presenter?.status = EnumStatus.SHARE
-                                onShowDialog(EnumStatus.SHARE, position)
-                            } else {
-                                onBackPressed()
-                            }
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    if (!isHide) {
+                        dataSource[position].isChecked = true
+                        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
+                        viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
+                            onShowDialog(it, EnumStatus.SHARE, true)
+                        })
                     }
                 }
             }
             R.id.imgDelete -> {
                 if (!isHide) {
-                    try {
-                        if (presenter?.mList != null) {
-                            if (presenter?.mList?.size!! > 0) {
-                                presenter?.status = EnumStatus.DELETE
-                                onShowDialog(EnumStatus.DELETE, position)
-                            } else {
-                                onBackPressed()
-                            }
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    dataSource[position].isChecked = true
+                    EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
+                    viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
+                        onShowDialog(it, EnumStatus.DELETE, false)
+                    })
                 }
             }
             R.id.imgExport -> {
                 if (!isHide) {
-                    Utils.Log(TAG, "Action here")
-                    try {
-                        if (presenter?.mList != null) {
-                            if (presenter?.mList?.size!! > 0) {
-                                storage?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
-                                presenter?.status = EnumStatus.EXPORT
-                                if (presenter?.mList?.get(position)?.isSaver!!) {
-                                    onEnableSyncData(position)
-                                } else {
-                                    onShowDialog(EnumStatus.EXPORT, position)
-                                }
-                            } else {
-                                onBackPressed()
-                            }
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    dataSource[position].isChecked = true
+                    EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
+                    viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
+                        onShowDialog(it, EnumStatus.EXPORT, false)
+                    })
                 }
             }
             R.id.imgRotate -> {
                 if (!isHide) {
-                    try {
-                        if (isProgressing) {
-                            return
-                        }
-                        val items: ItemModel? = SQLHelper.getItemId(presenter?.mList?.get(view_pager?.currentItem!!)?.items_id, presenter?.mList?.get(view_pager?.currentItem!!)?.isFakePin!!)
-                        val formatTypeFile = EnumFormatType.values()[items?.formatType!!]
-                        if (formatTypeFile != EnumFormatType.AUDIO && formatTypeFile != EnumFormatType.FILES) {
-                            onRotateBitmap(items)
-                            isReload = true
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    val items: ItemModel? = SQLHelper.getItemId(dataSource[view_pager?.currentItem!!].items_id, dataSource[view_pager?.currentItem!!].isFakePin)
+                    val formatTypeFile = EnumFormatType.values()[items?.formatType!!]
+                    if (formatTypeFile != EnumFormatType.AUDIO && formatTypeFile != EnumFormatType.FILES) {
+                       if (!isProgressing){
+                           onRotateBitmap(items)
+                           viewModel.isRequestSyncData = true
+                       }
                     }
                 }
             }
             R.id.imgMove -> {
-                presenter?.status = EnumStatus.MOVE
                 openAlbum()
             }
         }
@@ -373,9 +311,11 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
 
     override fun onMoveAlbumSuccessful() {
         try {
-            isReload = true
-            presenter?.mList?.removeAt(position)
+            dataSource.removeAt(position)
             adapter?.notifyDataSetChanged()
+            if (dataSource.size==0){
+                onBackPressed()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -401,47 +341,13 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener, BaseView<
         popup.show()
     }
 
-    /*ViewPresenter*/
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onBackPressed() {
-        if (isReload) {
-            SingletonPrivateFragment.getInstance()?.onUpdateView()
-            SingletonFakePinComponent.getInstance().onUpdateView()
-            val intent = Intent()
-            setResult(Activity.RESULT_OK, intent)
-        }
-        super.onBackPressed()
-    }
-
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
     override fun onPause() {
         super.onPause()
         onStopSlider()
     }
 
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.DELETE -> {
-                isReload = true
-                adapter?.notifyDataSetChanged()
-                if (presenter?.mList?.size == 0) {
-                    onBackPressed()
-                }
-            }
+    val mainCategory : MainCategoryModel
+        get(){
+            return viewModel.mainCategoryModel
         }
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 }

@@ -292,6 +292,7 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
             viewModel.isSelectAll.postValue(false)
             actionMode = null
             window.statusBarColor = android.graphics.Color.TRANSPARENT
+            speedDial.show()
         }
     }
 
@@ -320,7 +321,9 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
         return null
     }
 
-    override fun onMoveAlbumSuccessful() {}
+    override fun onMoveAlbumSuccessful() {
+
+    }
     override fun getListItems(): MutableList<ItemModel>? {
         return dataSource
     }

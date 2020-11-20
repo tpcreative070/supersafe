@@ -40,6 +40,8 @@ open class BaseViewModel<T> : ViewModel() {
 
     open var isRequestSyncData : Boolean = false
 
+    open var position : Int = 0
+
     open val isSelectAll : MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
