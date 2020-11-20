@@ -266,7 +266,7 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
                 if (!isHide) {
                     if (!isHide) {
                         dataSource[position].isChecked = true
-                        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
+                        EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafeShare())
                         viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
                             onShowDialog(it, EnumStatus.SHARE, true)
                         })
@@ -276,7 +276,6 @@ class PhotoSlideShowAct : BaseGalleryActivity(), View.OnClickListener {
             R.id.imgDelete -> {
                 if (!isHide) {
                     dataSource[position].isChecked = true
-                    EncryptDecryptFilesHelper.getInstance()?.createDirectory(SuperSafeApplication.getInstance().getSuperSafePicture())
                     viewModel.getCheckedItems().observe(this, androidx.lifecycle.Observer {
                         onShowDialog(it, EnumStatus.DELETE, false)
                     })

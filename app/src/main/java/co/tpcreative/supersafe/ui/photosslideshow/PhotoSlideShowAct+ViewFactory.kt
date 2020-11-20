@@ -197,7 +197,7 @@ fun PhotoSlideShowAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFil
         Utils.onBasicAlertNotify(this@exportingFiles,"Alert","Please connect Google drive first")
         return@launch
     }
-    if (Utils.getSaverSpace() && isSharingFiles){
+    if (Utils.getSaverSpace()){
         progressing = EnumStepProgressing.DOWNLOADING
         viewModel.isLoading.postValue(true)
         val mDataRequestingDownload = mData.filter { value ->  EnumFormatType.values()[value.formatType] == EnumFormatType.IMAGE }.toMutableList()
