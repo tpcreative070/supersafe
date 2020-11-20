@@ -333,5 +333,4 @@ class AlbumDetailAct : BaseGalleryActivity() ,AlbumDetailAdapter.ItemSelectedLis
         get(){
             return viewModel.mainCategoryModel
         }
-
 }

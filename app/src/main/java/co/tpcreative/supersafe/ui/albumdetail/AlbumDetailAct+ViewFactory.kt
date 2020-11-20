@@ -308,10 +308,6 @@ fun AlbumDetailAct.onShowDialog(mData : MutableList<ItemModel>,status: EnumStatu
     builder.show()
 }
 
-fun AlbumDetailAct.onDialogDownloadFile() {
-    SingletonManagerProcessing.getInstance()?.onStartProgressing(this, R.string.downloading)
-}
-
 fun AlbumDetailAct.exportingFiles(mData : MutableList<ItemModel>,isSharingFiles : Boolean) = CoroutineScope(Dispatchers.Main).launch{
     if(!Utils.isConnectedToGoogleDrive()){
         Utils.onBasicAlertNotify(this@exportingFiles,"Alert","Please connect Google drive first")
@@ -522,9 +518,5 @@ private fun AlbumDetailAct.setupViewModel() {
             this,
             ViewModelFactory()
     ).get(AlbumDetailViewModel::class.java)
-}
-
-private fun loadData(){
-
 }
 
