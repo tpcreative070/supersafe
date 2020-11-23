@@ -41,6 +41,12 @@ class ViewModelFactory() : ViewModelProvider.Factory{
         else if (modelClass.isAssignableFrom(CloudManagerViewModel::class.java)){
             return CloudManagerViewModel() as T
         }
+        else if (modelClass.isAssignableFrom(ThemeSettingsViewModel::class.java)){
+            return ThemeSettingsViewModel() as T
+        }
+        else if (modelClass.isAssignableFrom(AlbumSettingsViewModel::class.java)){
+            return AlbumSettingsViewModel() as T
+        }
         throw IllegalArgumentException("Unknown class name")
     }
 }

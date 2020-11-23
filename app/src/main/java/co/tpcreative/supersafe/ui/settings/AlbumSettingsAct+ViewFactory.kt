@@ -1,14 +1,35 @@
 package co.tpcreative.supersafe.ui.settings
-import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import com.snatik.storage.Storage
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import co.tpcreative.supersafe.common.network.base.ViewModelFactory
+import co.tpcreative.supersafe.ui.settings.AlbumSettingsAct.Companion.viewModel
+import co.tpcreative.supersafe.viewmodel.AlbumSettingsViewModel
 import kotlinx.android.synthetic.main.activity_album_settings.*
 
 fun AlbumSettingsAct.initUI(){
+    setupViewModel()
+    getData()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    AlbumSettingsAct.presenter = AlbumSettingsPresenter()
-    AlbumSettingsAct.presenter?.bindView(this)
-    AlbumSettingsAct.presenter?.getData(this)
-    AlbumSettingsAct.storage = Storage(applicationContext)
-    AlbumSettingsAct.storage?.setEncryptConfiguration(SuperSafeApplication.getInstance().getConfigurationFile())
+
+}
+
+private fun AlbumSettingsAct.getData(){
+    viewModel.getData(this).observe(this, Observer {
+        title = it.categories_name
+        onSetUpPreference()
+    })
+}
+
+fun AlbumSettingsAct.getReload(){
+    viewModel.getData(this).observe(this, Observer {
+        title = it.categories_name
+    })
+}
+
+private fun AlbumSettingsAct.setupViewModel() {
+    viewModel = ViewModelProviders.of(
+            this,
+            ViewModelFactory()
+    ).get(AlbumSettingsViewModel::class.java)
 }

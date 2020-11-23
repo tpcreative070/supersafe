@@ -44,7 +44,7 @@ class SettingsAct : BaseActivity() {
 
     override fun setStatusBarColored(context: AppCompatActivity, colorPrimary: Int, colorPrimaryDark: Int) {
         context.supportActionBar?.setBackgroundDrawable(ColorDrawable(ContextCompat
-                .getColor(context!!, colorPrimary)))
+                .getColor(context, colorPrimary)))
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = ContextCompat.getColor(context, colorPrimaryDark)

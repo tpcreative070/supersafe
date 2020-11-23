@@ -14,15 +14,18 @@ import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EmptyModel
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.ItemModel
+import co.tpcreative.supersafe.model.ThemeApp
+import co.tpcreative.supersafe.viewmodel.ThemeSettingsViewModel
 import kotlinx.android.synthetic.main.layout_premium_header.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class ThemeSettingsAct : BaseActivity(), BaseView<EmptyModel>, ThemeSettingsAdapter.ItemSelectedListener {
+class ThemeSettingsAct : BaseActivity(), ThemeSettingsAdapter.ItemSelectedListener {
     var adapter: ThemeSettingsAdapter? = null
     var isUpdated = false
-    var presenter: ThemeSettingsPresenter? = null
+    lateinit var viewModel : ThemeSettingsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_theme_settings)
@@ -50,7 +53,6 @@ class ThemeSettingsAct : BaseActivity(), BaseView<EmptyModel>, ThemeSettingsAdap
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
         if (isUpdated) {
             Utils.onPushEventBus(EnumStatus.RECREATE)
         }
@@ -66,15 +68,15 @@ class ThemeSettingsAct : BaseActivity(), BaseView<EmptyModel>, ThemeSettingsAdap
 
     override fun onClickItem(position: Int) {
         isUpdated = true
-        presenter?.mThemeApp = presenter?.mList?.get(position)
-        setStatusBarColored(this, presenter?.mThemeApp?.getPrimaryColor()!!, presenter?.mThemeApp?.getPrimaryDarkColor()!!)
-        tvTitle?.setTextColor(ContextCompat.getColor(this,presenter?.mThemeApp?.getAccentColor()!!))
+        viewModel.mThemeApp = dataSource[position]
+        setStatusBarColored(this, themeApp.getPrimaryColor(), themeApp.getPrimaryDarkColor())
+        tvTitle?.setTextColor(ContextCompat.getColor(this,themeApp.getAccentColor()))
         PrefsController.putInt(getString(R.string.key_theme_object), position)
         adapter?.notifyItemChanged(position)
     }
 
     override fun onBackPressed() {
-        val intent: Intent = getIntent()
+        val intent: Intent = intent
         if (isUpdated) {
             setResult(Activity.RESULT_OK, intent)
         }
@@ -91,29 +93,13 @@ class ThemeSettingsAct : BaseActivity(), BaseView<EmptyModel>, ThemeSettingsAdap
         return false
     }
 
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.SHOW_DATA -> {
-                adapter?.setDataSource(presenter?.mList)
-            }
-            EnumStatus.RELOAD -> {
-            }
+    private val dataSource : MutableList<ThemeApp>
+        get() {
+            return adapter?.getDataSource() ?: mutableListOf()
         }
-    }
 
-    override fun getActivity(): Activity? {
-        return this
+    val themeApp : ThemeApp
+    get() {
+        return viewModel.mThemeApp ?: ThemeApp()
     }
-
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
 }
