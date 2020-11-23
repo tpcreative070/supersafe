@@ -650,8 +650,12 @@ object Utils {
         return isAllowRequestDriveApis()
     }
 
-    private fun isPauseSync(): Boolean {
+    fun isPauseSync(): Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync), false)
+    }
+
+    fun pauseSync(isPaused : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_pause_cloud_sync),isPaused)
     }
 
     fun isCheckSyncSuggestion(): Boolean {
@@ -797,6 +801,10 @@ object Utils {
     /*Check saver space*/
     fun getSaverSpace(): Boolean {
         return PrefsController.getBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space), false)
+    }
+
+    fun putSaverSpace(isSaver : Boolean){
+        PrefsController.putBoolean(SuperSafeApplication.getInstance().getString(R.string.key_saving_space),isSaver)
     }
 
     /*Delete folder*/

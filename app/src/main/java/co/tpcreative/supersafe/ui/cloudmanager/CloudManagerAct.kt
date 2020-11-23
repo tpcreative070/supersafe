@@ -1,6 +1,4 @@
 package co.tpcreative.supersafe.ui.cloudmanager
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,9 +8,6 @@ import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseGoogleApi
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.ServiceManager
-import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.presenter.BaseView
-import co.tpcreative.supersafe.common.util.ConvertUtils
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
@@ -22,8 +17,8 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener, BaseView<Long> {
-    var presenter: CloudManagerPresenter? = null
+class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
+//    var presenter: CloudManagerPresenter? = null
     var isPauseCloudSync = true
     var isDownload = false
     var isSpaceSaver = false
@@ -37,7 +32,6 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_cloud_manager, menu)
         return true
     }
@@ -45,59 +39,10 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_refresh -> {
-                presenter?.onGetDriveAbout()
                 isRefresh = true
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.REQUEST_ACCESS_TOKEN -> {
-                Utils.Log(TAG, "Error response $message")
-                getAccessToken()
-            }
-            else -> {
-                Utils.Log(TAG, "Error response $message")
-            }
-        }
-    }
-
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.GET_LIST_FILES_IN_APP -> {
-                onShowUI()
-            }
-            EnumStatus.SAVER -> {
-                tvDeviceSaving?.text = presenter?.sizeSaverFiles?.let { ConvertUtils.byte2FitMemorySize(it) }
-            }
-            EnumStatus.GET_LIST_FILE -> {
-                onShowDialog()
-            }
-            EnumStatus.DOWNLOAD -> {
-                tvDeviceSaving?.text = ConvertUtils.byte2FitMemorySize(0)
-                isDownload = true
-            }
-            else -> Utils.Log(TAG,"Nothing")
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: Long?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<Long>?) {
-        Utils.Log(TAG, "Successful response $message")
-    }
-
-    override fun getContext(): Context? {
-        return this
-    }
-
-    override fun getActivity(): Activity? {
-        return this
     }
 
     override fun onCheckedChanged(compoundButton: CompoundButton?, b: Boolean) {
@@ -105,23 +50,23 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
         when (compoundButton?.getId()) {
             R.id.btnSwitchPauseSync -> {
                 isPauseCloudSync = b
-                PrefsController.putBoolean(getString(R.string.key_pause_cloud_sync), b)
+                Utils.pauseSync(b)
             }
             R.id.switch_SaveSpace -> {
                 if (!Utils.isPremium()) {
                     onShowPremium()
-                    PrefsController.putBoolean(getString(R.string.key_saving_space), false)
+                    Utils.putSaverSpace(false)
                     switch_SaveSpace?.isChecked = false
                 }
                 if (b) {
                     isDownload = false
                     isSpaceSaver = true
-                    presenter?.onEnableSaverSpace()
+                    enableSaverSpace()
                 } else {
                     isSpaceSaver = false
-                    presenter?.onDisableSaverSpace(EnumStatus.GET_LIST_FILE)
+                    disableSaverSpace(EnumStatus.GET_LIST_FILE)
                 }
-                PrefsController.putBoolean(getString(R.string.key_saving_space), b)
+                Utils.putSaverSpace(b)
             }
         }
     }
@@ -142,7 +87,6 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
             EventBus.getDefault().register(this)
         }
         onRegisterHomeWatcher()
-        onShowSwitch()
     }
 
     override fun onDestroy() {
@@ -159,23 +103,11 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener,
             Utils.Log(TAG, "Re-Download file")
         }
         if (isSpaceSaver) {
-            val mList: MutableList<ItemModel>? = SQLHelper.getListSyncData(true, true, false)
-            if (mList != null) {
-                for (index in mList) {
-                    when (EnumFormatType.values()[index.formatType]) {
-                        EnumFormatType.IMAGE -> {
-                            storage?.deleteFile(index.getOriginal())
-                        }
-                        else -> Utils.Log(TAG,"Nothing")
-                    }
-                }
-            }
+            viewModel.destroySaver()
         }
         if (isRefresh) {
-
             ServiceManager.getInstance()?.onPreparingSyncCategoryData()
         }
-        presenter?.unbindView()
     }
 
     override fun onStopListenerAWhile() {

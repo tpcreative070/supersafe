@@ -9,7 +9,6 @@ import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.controller.PrefsController
 import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
-import co.tpcreative.supersafe.common.extension.toJson
 import co.tpcreative.supersafe.common.network.Status
 import co.tpcreative.supersafe.common.network.base.ViewModelFactory
 import co.tpcreative.supersafe.common.util.ConvertUtils
@@ -19,32 +18,20 @@ import co.tpcreative.supersafe.model.*
 import co.tpcreative.supersafe.viewmodel.CloudManagerViewModel
 import com.afollestad.materialdialogs.customview.customView
 import com.google.android.material.appbar.AppBarLayout
-import com.snatik.storage.Storage
 import de.mrapp.android.dialog.MaterialDialog
 import kotlinx.android.synthetic.main.activity_cloud_manager.*
 import kotlinx.android.synthetic.main.activity_cloud_manager.collapsing_toolbar
 import kotlinx.android.synthetic.main.activity_cloud_manager.toolbar
 import kotlinx.android.synthetic.main.custom_view_dialog.view.*
 
-
 fun CloudManagerAct.initUI(){
     window.statusBarColor = Color.TRANSPARENT
     setupViewModel()
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    storage = Storage(this)
-    presenter = CloudManagerPresenter()
-    presenter?.bindView(this)
-    onShowUI()
     onUpdatedView()
-    //presenter?.onGetDriveAbout()
     btnSwitchPauseSync?.setOnCheckedChangeListener(this)
     switch_SaveSpace?.setOnCheckedChangeListener(this)
-    val lefFiles: String = kotlin.String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD)
-    tvLeft?.text = lefFiles
-    val updated: String = kotlin.String.format(getString(R.string.left), "0")
-    tvUploaded?.text = updated
-
     llPause.setOnClickListener {
         btnSwitchPauseSync?.isChecked = !btnSwitchPauseSync!!.isChecked
     }
@@ -76,78 +63,41 @@ fun CloudManagerAct.initUI(){
         }
     })
 
-    getData()
-}
+    val pauseCloudSync: Boolean = Utils.isPauseSync()
+    btnSwitchPauseSync?.isChecked = pauseCloudSync
+    val savingSpace: Boolean = Utils.getSaverSpace()
+    switch_SaveSpace?.isChecked = savingSpace
 
-fun CloudManagerAct.onShowUI() {
-    tvSupersafeSpace?.visibility = View.VISIBLE
-    tvOtherSpace?.visibility= View.VISIBLE
-    tvFreeSpace?.visibility = View.VISIBLE
-    val mUser: User? = Utils.getUserInfo()
-    var isThrow = false
-    if (mUser != null) {
-        val driveAbout: DriveAbout? = mUser.driveAbout
-        tvDriveAccount?.text = mUser.cloud_id
-        try {
-            Utils.Log(TAG, "supersafe space ${driveAbout?.toJson()}")
-            val superSafeSpace: String? = driveAbout?.inAppUsed?.let { ConvertUtils.byte2FitMemorySize(it) }
-            tvValueSupersafeSpace?.text = superSafeSpace
-        } catch (e: Exception) {
-            e.printStackTrace()
-            tvValueOtherSpace?.text = getString(R.string.calculating)
-            isThrow = true
-        }
-        try {
-            val storageQuota: StorageQuota? = driveAbout?.storageQuota
-            if (storageQuota != null) {
-                val superSafeSpace: String? = ConvertUtils.byte2FitMemorySize(storageQuota.usage)
-                tvValueOtherSpace?.text = superSafeSpace
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            tvValueOtherSpace?.text = getString(R.string.calculating)
-            isThrow = true
-        }
-        try {
-            val storageQuota: StorageQuota? = driveAbout?.storageQuota
-            if (storageQuota != null) {
-                val result = storageQuota.limit - storageQuota.usage
-                val superSafeSpace: String? = ConvertUtils.byte2FitMemorySize(result)
-                tvValueFreeSpace?.text = superSafeSpace
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            tvValueFreeSpace?.text = getString(R.string.calculating)
-            isThrow = true
-        }
-        try {
-            if (mUser.syncData != null) {
-                val lefFiles: String? = kotlin.String.format(getString(R.string.left), "" + mUser.syncData?.left)
-                tvLeft?.text = lefFiles
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            val lefFiles: String = kotlin.String.format(getString(R.string.left), "" + Navigator.LIMIT_UPLOAD)
-            tvLeft?.text = lefFiles
-            isThrow = true
-        }
-        try {
-            if (mUser.syncData != null) {
-                val uploadedFiles: String? = kotlin.String.format(getString(R.string.uploaded), "" + (Navigator.LIMIT_UPLOAD - mUser?.syncData?.left!!))
-                tvUploaded?.text = uploadedFiles
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            val uploadedFiles: String = kotlin.String.format(getString(R.string.uploaded), "0")
-            tvUploaded?.text = uploadedFiles
-            isThrow = true
-        }
-        if (isThrow) {
-            tvSupersafeSpace?.visibility = View.INVISIBLE
-            tvOtherSpace?.visibility  = View.INVISIBLE
-            tvFreeSpace?.visibility = View.INVISIBLE
-        }
-    }
+
+    viewModel.superSafeSpace.observe(this, Observer {
+        tvValueSupersafeSpace.text = it
+    })
+
+    viewModel.otherSpace.observe(this, Observer {
+        tvValueOtherSpace.text = it
+    })
+
+    viewModel.freeSpace.observe(this, Observer {
+        tvValueFreeSpace.text = it
+    })
+
+    viewModel.leftItems.observe(this, Observer {
+        tvLeft.text = it
+    })
+
+    viewModel.uploadedItems.observe(this, Observer {
+        tvUploaded.text = it
+    })
+
+    viewModel.driveAccount.observe(this, Observer {
+        tvDriveAccount.text = it
+    })
+
+    viewModel.deviceSaving.observe(this, Observer {
+        tvDeviceSaving.text = it
+    })
+    getData()
+    getDriveAboutData()
 }
 
 fun CloudManagerAct.onUpdatedView() {
@@ -160,22 +110,10 @@ fun CloudManagerAct.onUpdatedView() {
     }
 }
 
-fun CloudManagerAct.onShowSwitch() {
-    val pause_cloud_sync: Boolean = PrefsController.getBoolean(getString(R.string.key_pause_cloud_sync), false)
-    btnSwitchPauseSync?.isChecked = pause_cloud_sync
-    val saving_space: Boolean = PrefsController.getBoolean(getString(R.string.key_saving_space), false)
-    switch_SaveSpace?.isChecked = saving_space
-    if (saving_space) {
-        presenter?.onGetSaveData()
-    } else {
-        tvDeviceSaving?.text = ConvertUtils.byte2FitMemorySize(0)
-    }
-}
-
-fun CloudManagerAct.onShowDialog() {
-    val inflater: LayoutInflater = getContext()?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+fun CloudManagerAct.onShowDialog(size : Long) {
+    val inflater: LayoutInflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val view: View = inflater.inflate(R.layout.custom_view_dialog, null)
-    view.tvSpaceRequired?.text = kotlin.String.format(getString(R.string.space_required), presenter?.sizeFile?.let { ConvertUtils.byte2FitMemorySize(it) })
+    view.tvSpaceRequired?.text = kotlin.String.format(getString(R.string.space_required),  ConvertUtils.byte2FitMemorySize(size))
     val builder : com.afollestad.materialdialogs.MaterialDialog = com.afollestad.materialdialogs.MaterialDialog(this)
             .title(text = getString(R.string.download_private_cloud_files))
             .customView(view = view, scrollable = false)
@@ -189,25 +127,25 @@ fun CloudManagerAct.onShowDialog() {
             .positiveButton {
                 Utils.Log(TAG, "positive")
                 PrefsController.putBoolean(getString(R.string.key_saving_space), false)
-                presenter?.onDisableSaverSpace(EnumStatus.DOWNLOAD)
+               disableSaverSpace(EnumStatus.DOWNLOAD)
             }
     builder.show()
 }
 
 fun CloudManagerAct.onShowPremium() {
     try {
-        val builder = getContext()?.let { MaterialDialog.Builder(it, Utils.getCurrentTheme()) }
+        val builder = MaterialDialog.Builder(this, Utils.getCurrentTheme())
         val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
-        builder?.setHeaderBackground(themeApp?.getAccentColor()!!)
-        builder?.setTitle(getString(R.string.this_is_premium_feature))
-        builder?.setMessage(getString(R.string.upgrade_now))
-        builder?.setCustomHeader(R.layout.custom_header)
-        builder?.setPadding(40, 40, 40, 0)
-        builder?.setMargin(60, 0, 60, 0)
-        builder?.showHeader(true)
-        builder?.setPositiveButton(getString(R.string.get_premium)) { dialogInterface, i -> getContext()?.let { Navigator.onMoveToPremium(it) } }
-        builder?.setNegativeButton(getText(R.string.later)) { dialogInterface, i -> PrefsController.putBoolean(getString(R.string.key_saving_space), false) }
-        builder?.show()
+        builder.setHeaderBackground(themeApp?.getAccentColor()!!)
+        builder.setTitle(getString(R.string.this_is_premium_feature))
+        builder.setMessage(getString(R.string.upgrade_now))
+        builder.setCustomHeader(R.layout.custom_header)
+        builder.setPadding(40, 40, 40, 0)
+        builder.setMargin(60, 0, 60, 0)
+        builder.showHeader(true)
+        builder.setPositiveButton(getString(R.string.get_premium)) { _, i -> Navigator.onMoveToPremium(this) }
+        builder.setNegativeButton(getText(R.string.later)) { _, i -> PrefsController.putBoolean(getString(R.string.key_saving_space), false) }
+        builder.show()
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -220,11 +158,41 @@ private fun CloudManagerAct.setupViewModel() {
     ).get(CloudManagerViewModel::class.java)
 }
 
-private fun CloudManagerAct.getData(){
+private fun CloudManagerAct.getDriveAboutData(){
     viewModel.getDriveAbout().observe(this, Observer {
         when (it.status) {
-            Status.SUCCESS -> onShowUI()
+            Status.SUCCESS -> {
+                Utils.Log(TAG,"Get drive successful")
+                getData()
+            }
             else -> Utils.Log(TAG, it.message)
         }
+    })
+}
+
+fun CloudManagerAct.getData(){
+    viewModel.getSaveData().observe(this, Observer {
+        Utils.Log(TAG,"get data completely")
+    })
+}
+
+fun CloudManagerAct.disableSaverSpace(enumStatus: EnumStatus) {
+    viewModel.disableSaverSpace(enumStatus).observe(this, Observer {
+        when(enumStatus){
+            EnumStatus.GET_LIST_FILE -> {
+                onShowDialog(it)
+            }
+            EnumStatus.DOWNLOAD -> {
+                isDownload = true
+                tvDeviceSaving.text = ConvertUtils.byte2FitMemorySize(0)
+            }
+            else -> Utils.Log(TAG,"Nothing")
+        }
+    })
+}
+
+fun CloudManagerAct.enableSaverSpace(){
+    viewModel.enableSaverSpace().observe(this, Observer {
+        getData()
     })
 }
