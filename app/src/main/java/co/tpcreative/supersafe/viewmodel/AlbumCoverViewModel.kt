@@ -39,8 +39,10 @@ class AlbumCoverViewModel : BaseViewModel<AlbumCoverModel>() {
                 for (index in data) {
                     if (oldItem?.items_id == index.items_id && !isChecked) {
                         index.isChecked = true
+                        dataList.add(0,AlbumCoverModel(index,null,EnumTypeObject.ITEM))
+                    }else{
+                        dataList.add(AlbumCoverModel(index,null,EnumTypeObject.ITEM))
                     }
-                    dataList.add(AlbumCoverModel(index,null,EnumTypeObject.ITEM))
                 }
             }
         }

@@ -73,7 +73,6 @@ class AlbumCoverAct : BaseActivity(),CompoundButton.OnCheckedChangeListener,Albu
             mainCategory.mainCategories_Local_Id = ""
             SQLHelper.updateCategory(mainCategory)
 
-
             /*Updated all view of default item to unchecked*/
             for (index in dataSourceDefault.indices){
                 if (dataSourceDefault[index].category?.isChecked == true){
@@ -97,7 +96,6 @@ class AlbumCoverAct : BaseActivity(),CompoundButton.OnCheckedChangeListener,Albu
             mainCategory.mainCategories_Local_Id = mCategoryId
             SQLHelper.updateCategory(mainCategory)
 
-
             /*Updated all view of custom item to unchecked*/
             for (index in dataSourceCustom.indices){
                 if (dataSourceCustom[index].item?.isChecked == true){
@@ -117,7 +115,6 @@ class AlbumCoverAct : BaseActivity(),CompoundButton.OnCheckedChangeListener,Albu
         }
         isReload = true
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
