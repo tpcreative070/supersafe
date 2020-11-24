@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class AlbumCoverAct : BaseActivity() ,CompoundButton.OnCheckedChangeListener,AlbumCoverSection.ClickListener {
+class AlbumCoverAct : BaseActivity(),CompoundButton.OnCheckedChangeListener,AlbumCoverSection.ClickListener {
     var isReload = false
     lateinit var viewModel : AlbumCoverViewModel
     var sectionedAdapter: SectionedRecyclerViewAdapter =  SectionedRecyclerViewAdapter()
@@ -67,24 +67,57 @@ class AlbumCoverAct : BaseActivity() ,CompoundButton.OnCheckedChangeListener,Alb
     override fun onItemRootViewClicked(section: AlbumCoverSection, itemAdapterPosition: Int) {
         val mIndexOfHeader = sectionedAdapter.getAdapterForSection(section).sectionPosition
         if (mIndexOfHeader>0){
+            /*Updated data to db*/
             val mItemId =  dataSourceCustom[itemAdapterPosition].item?.items_id
             mainCategory.items_id = mItemId
             mainCategory.mainCategories_Local_Id = ""
             SQLHelper.updateCategory(mainCategory)
-            Utils.Log(TAG,"item id $mItemId")
+
+
+            /*Updated all view of default item to unchecked*/
+            for (index in dataSourceDefault.indices){
+                if (dataSourceDefault[index].category?.isChecked == true){
+                    dataSourceDefault[index].category?.isChecked = false
+                    sectionedAdapter.getAdapterForSection(Navigator.CATEGORY_TAG.toString()).notifyItemChanged(index)
+                }
+            }
+
+            /*Updated previous of checked to unchecked*/
+            section.previousPositionOfItem?.let {
+                dataSourceCustom[it.toInt()].item?.isChecked = false
+                sectionedAdapter.getAdapterForSection(section).notifyItemChanged(it.toInt())
+            }
+            /*Updated current view to checked*/
             dataSourceCustom[itemAdapterPosition].item?.isChecked = true
             sectionedAdapter.getAdapterForSection(section).notifyItemChanged(itemAdapterPosition)
         }else{
+            /*Updated data to db*/
             val mCategoryId = dataSourceDefault[itemAdapterPosition].category?.mainCategories_Local_Id
             mainCategory.items_id = ""
             mainCategory.mainCategories_Local_Id = mCategoryId
             SQLHelper.updateCategory(mainCategory)
-            Utils.Log(TAG,"category $mCategoryId")
+
+
+            /*Updated all view of custom item to unchecked*/
+            for (index in dataSourceCustom.indices){
+                if (dataSourceCustom[index].item?.isChecked == true){
+                    dataSourceCustom[index].item?.isChecked = false
+                    sectionedAdapter.getAdapterForSection(Navigator.ITEM_TAG.toString()).notifyItemChanged(index)
+                }
+            }
+
+            /*Updated previous of checked*/
+            section.previousPositionOfCategory?.let {
+                dataSourceDefault[it.toInt()].category?.isChecked = false
+                sectionedAdapter.getAdapterForSection(section).notifyItemChanged(it.toInt())
+            }
+            /*Updated current view to checked*/
             dataSourceDefault[itemAdapterPosition].category?.isChecked = true
             sectionedAdapter.getAdapterForSection(section).notifyItemChanged(itemAdapterPosition)
         }
         isReload = true
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -106,9 +139,14 @@ class AlbumCoverAct : BaseActivity() ,CompoundButton.OnCheckedChangeListener,Alb
                     onShowPremium()
                 } else {
                     mainCategory.isCustom_Cover = b
+                    /*Set default item*/
+                    if (!b && mainCategory.items_id?.isNotEmpty() == true){
+                        mainCategory.isCustom_Cover = false
+                        mainCategory.items_id = ""
+                        mainCategory.mainCategories_Local_Id = dataSourceDefault[0].category?.mainCategories_Local_Id
+                    }
                     SQLHelper.updateCategory(mainCategory)
                     getReload(mainCategory.isCustom_Cover)
-                    Utils.Log(TAG, "action here")
                 }
             }
         }
@@ -117,7 +155,6 @@ class AlbumCoverAct : BaseActivity() ,CompoundButton.OnCheckedChangeListener,Alb
     override fun onBackPressed() {
         if (isReload) {
             setResult(Activity.RESULT_OK, intent)
-            Utils.Log(TAG, "onBackPressed")
         }
         super.onBackPressed()
     }

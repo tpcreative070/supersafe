@@ -36,6 +36,8 @@ class AlbumCoverSection  constructor(@NonNull val context : Context, @NonNull va
             .error(R.color.red_200)
             .priority(Priority.HIGH)
     var themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+    var previousPositionOfItem : String? = null
+    var previousPositionOfCategory : String? = null
     override fun getContentItemsTotal(): Int {
         return list.size
     }
@@ -56,6 +58,7 @@ class AlbumCoverSection  constructor(@NonNull val context : Context, @NonNull va
                     val categoryData = data.category!!
                     Utils.Log(TAG,"category is... ${categoryData.isChecked}")
                     if (categoryData.isChecked) {
+                        previousPositionOfCategory = "$position"
                         viewHolder.viewAlpha.alpha = 0.5f
                         viewHolder.imgIcon.setColorFilter(ContextCompat.getColor(SuperSafeApplication.getInstance(),themeApp!!.getAccentColor()), PorterDuff.Mode.SRC_IN)
                         viewHolder.imgSelect.visibility = View.VISIBLE
@@ -79,6 +82,7 @@ class AlbumCoverSection  constructor(@NonNull val context : Context, @NonNull va
                     if (itemData.isChecked) {
                         viewHolder.viewAlpha.alpha = 0.5f
                         viewHolder.imgSelect.visibility = View.VISIBLE
+                        previousPositionOfItem = "$position"
                     } else {
                         viewHolder.viewAlpha.alpha = 0.0f
                         viewHolder.imgSelect.visibility = View.INVISIBLE

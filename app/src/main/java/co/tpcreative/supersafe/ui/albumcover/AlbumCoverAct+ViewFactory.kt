@@ -100,9 +100,9 @@ fun AlbumCoverAct.setupRecyclerView(isCustom : Boolean,data: MutableList<AlbumCo
             .headerResourceId(R.layout.album_cover_item_header)
             .build()
 
-    sectionedAdapter.addSection(AlbumCoverSection(this, "Default items", mainCategory,dataSourceDefault, this,parameterName))
+    sectionedAdapter.addSection(Navigator.CATEGORY_TAG.toString(),AlbumCoverSection(this, "Default items", mainCategory,dataSourceDefault, this,parameterName))
     if (isCustom){
-        sectionedAdapter.addSection(AlbumCoverSection(this, "Custom items", mainCategory,dataSourceCustom, this,parameterName))
+        sectionedAdapter.addSection(Navigator.ITEM_TAG.toString(),AlbumCoverSection(this, "Custom items", mainCategory,dataSourceCustom, this,parameterName))
     }
     val glm = NpaGridLayoutManager(this, 3)
     glm.spanSizeLookup = object : SpanSizeLookup() {

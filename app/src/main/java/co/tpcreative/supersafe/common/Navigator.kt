@@ -57,6 +57,8 @@ object Navigator {
     const val REQUEST_CODE_EMAIL_ANOTHER_ACCOUNT = 1008
     const val SHARE = 1009
     const val ALBUM_COVER = 1010
+    const val ITEM_TAG = 1111
+    const val CATEGORY_TAG = 222
 
     /*Multiple selects*/
     const val PERMISSION_REQUEST_CODE = 1000
