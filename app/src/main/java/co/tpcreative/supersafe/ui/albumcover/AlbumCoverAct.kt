@@ -147,6 +147,7 @@ class AlbumCoverAct : BaseActivity(),CompoundButton.OnCheckedChangeListener,Albu
                     }
                     SQLHelper.updateCategory(mainCategory)
                     getReload(mainCategory.isCustom_Cover)
+                    isReload = true
                 }
             }
         }
