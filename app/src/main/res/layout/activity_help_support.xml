@@ -42,7 +42,6 @@
             app:srv_dividerPaddingLeft="5dp"
             app:srv_dividerPaddingRight="5dp"
             app:srv_dividerPaddingTop="5dp"
-            app:srv_layoutMode="linearVertical"
             app:srv_showDivider="true"
             app:srv_showLastDivider="true" />
     </RelativeLayout>

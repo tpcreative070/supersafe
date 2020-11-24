@@ -27,7 +27,7 @@ class AlbumSettingsViewModel : BaseViewModel<EmptyModel>() {
 
     fun getData() = liveData(Dispatchers.Main){
         try {
-            val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesLocalId(mainCategoryModel.categories_local_id, mainCategoryModel.isFakePin!!)
+            val mainCategories: MainCategoryModel? = SQLHelper.getCategoriesLocalId(mainCategoryModel.categories_local_id, mainCategoryModel.isFakePin)
             if (mainCategories != null) {
                 mainCategoryModel = mainCategories
             }

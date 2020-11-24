@@ -1,30 +1,27 @@
 package co.tpcreative.supersafe.ui.albumcover
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.widget.CompoundButton
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BaseActivity
-import co.tpcreative.supersafe.common.controller.SingletonManagerProcessing
 import co.tpcreative.supersafe.common.helper.SQLHelper
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmptyModel
+import co.tpcreative.supersafe.model.AlbumCoverModel
 import co.tpcreative.supersafe.model.EnumStatus
+import co.tpcreative.supersafe.model.MainCategoryModel
+import co.tpcreative.supersafe.viewmodel.AlbumCoverViewModel
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.activity_album_cover.*
-import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnCheckedChangeListener, AlbumCoverAdapter.ItemSelectedListener, AlbumCoverDefaultAdapter.ItemSelectedListener {
-    var presenter: AlbumCoverPresenter? = null
-    var adapterDefault: AlbumCoverDefaultAdapter? = null
-    var adapterCustom: AlbumCoverAdapter? = null
+class AlbumCoverAct : BaseActivity() ,CompoundButton.OnCheckedChangeListener,AlbumCoverSection.ClickListener {
     var isReload = false
+    lateinit var viewModel : AlbumCoverViewModel
+    var sectionedAdapter: SectionedRecyclerViewAdapter =  SectionedRecyclerViewAdapter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_cover)
@@ -37,6 +34,7 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG,"Nothing")
         }
     }
 
@@ -52,8 +50,6 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
-        mainScope.cancel()
     }
 
     override fun onStopListenerAWhile() {
@@ -64,35 +60,30 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
         onFaceDown(isFaceDown)
     }
 
-    override fun onClickItem(position: Int) {
-        Utils.Log(TAG, "position...$position")
-        try {
-            val mIndex =  presenter?.mList?.get(position)
-            presenter?.mMainCategories?.items_id = mIndex?.items_id
-            presenter?.mMainCategories?.mainCategories_Local_Id = ""
-            presenter?.mMainCategories?.let { SQLHelper.updateCategory(it) }
-            presenter?.getFetchCustomData(position) {
-                onUpdatedCustomData(position,false)
-            }
-            isReload = true
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    override fun onHeaderMoreButtonClicked(section: AlbumCoverSection, itemAdapterPosition: Int) {
+
     }
 
-    override fun onClickedDefaultItem(position: Int) {
-        Utils.Log(TAG, "position...$position")
-        try {
-            presenter?.mMainCategories?.items_id = ""
-            presenter?.mMainCategories?.mainCategories_Local_Id = presenter?.mListMainCategories?.get(position)?.mainCategories_Local_Id
-            presenter?.mMainCategories?.let { SQLHelper.updateCategory(it) }
-            presenter?.getFetchDefaultData(position) {
-                onUpdatedDefaultData(position,false)
-            }
-            isReload = true
-        } catch (e: Exception) {
-            e.printStackTrace()
+    override fun onItemRootViewClicked(section: AlbumCoverSection, itemAdapterPosition: Int) {
+        val mIndexOfHeader = sectionedAdapter.getAdapterForSection(section).sectionPosition
+        if (mIndexOfHeader>0){
+            val mItemId =  dataSourceCustom[itemAdapterPosition].item?.items_id
+            mainCategory.items_id = mItemId
+            mainCategory.mainCategories_Local_Id = ""
+            SQLHelper.updateCategory(mainCategory)
+            Utils.Log(TAG,"item id $mItemId")
+            dataSourceCustom[itemAdapterPosition].item?.isChecked = true
+            sectionedAdapter.getAdapterForSection(section).notifyItemChanged(itemAdapterPosition)
+        }else{
+            val mCategoryId = dataSourceDefault[itemAdapterPosition].category?.mainCategories_Local_Id
+            mainCategory.items_id = ""
+            mainCategory.mainCategories_Local_Id = mCategoryId
+            SQLHelper.updateCategory(mainCategory)
+            Utils.Log(TAG,"category $mCategoryId")
+            dataSourceDefault[itemAdapterPosition].category?.isChecked = true
+            sectionedAdapter.getAdapterForSection(section).notifyItemChanged(itemAdapterPosition)
         }
+        isReload = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -114,61 +105,13 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
                     btnSwitch?.isChecked = false
                     onShowPremium()
                 } else {
-                    presenter?.mMainCategories?.isCustom_Cover = b
-                    presenter?.mMainCategories?.let { SQLHelper.updateCategory(it) }
-                    llRecyclerView?.visibility = (if (b) View.VISIBLE else View.INVISIBLE)
+                    mainCategory.isCustom_Cover = b
+                    SQLHelper.updateCategory(mainCategory)
+                    getReload(mainCategory.isCustom_Cover)
                     Utils.Log(TAG, "action here")
                 }
             }
         }
-    }
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun onError(message: String?) {}
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onSuccessful(message: String?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.RELOAD -> {
-                if (presenter?.mMainCategories != null) {
-                    if (Utils.isPremium()) {
-                        title = (presenter?.mMainCategories?.categories_name)
-                        presenter?.mMainCategories?.isCustom_Cover?.let { btnSwitch?.setChecked(it) }
-                        llRecyclerView?.visibility = (if (presenter?.mMainCategories?.isCustom_Cover!!) View.VISIBLE else View.INVISIBLE)
-                    } else {
-                        title = (presenter?.mMainCategories?.categories_name)
-                        presenter!!.mMainCategories?.isCustom_Cover = false
-                        presenter?.mMainCategories?.isCustom_Cover?.let { btnSwitch?.setChecked(it) }
-                        llRecyclerView?.visibility = (if (presenter?.mMainCategories?.isCustom_Cover!!) View.VISIBLE else View.INVISIBLE)
-                        SQLHelper.updateCategory(presenter?.mMainCategories!!)
-                    }
-                }
-            }
-            EnumStatus.GET_LIST_FILE -> {
-                Utils.Log(TAG, "load data")
-                mainScope.launch {
-                      val mResult = async {
-                          onLoading()
-                      }
-                    mResult.await()
-                    progress_bar.visibility = View.INVISIBLE
-                    llCoverAlbum.visibility = View.VISIBLE
-                    SingletonManagerProcessing.getInstance()?.onStopProgressing(this@AlbumCoverAct)
-                }
-            }
-            else -> Utils.Log(TAG, "Nothing")
-        }
-    }
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
-    override fun getContext(): Context? {
-        return this
-    }
-
-    override fun getActivity(): Activity? {
-        return this
     }
 
     override fun onBackPressed() {
@@ -178,4 +121,13 @@ class AlbumCoverAct : BaseActivity(), BaseView<EmptyModel>, CompoundButton.OnChe
         }
         super.onBackPressed()
     }
+
+    val mainCategory : MainCategoryModel
+        get(){
+            return viewModel.mainCategoryModel
+        }
+
+    var dataSourceCustom : MutableList<AlbumCoverModel> = mutableListOf()
+
+    var dataSourceDefault : MutableList<AlbumCoverModel> = mutableListOf()
 }

@@ -337,7 +337,7 @@ object Navigator {
     fun onMoveAlbumCover(context: Activity, categories: MainCategoryModel) {
         val intent = Intent(context, AlbumCoverAct::class.java)
         val bundle = Bundle()
-        bundle.putSerializable(MainCategoryModel::class.java.getSimpleName(), categories)
+        bundle.putSerializable(MainCategoryModel::class.java.simpleName, categories)
         intent.putExtras(bundle)
         context.startActivityForResult(intent, ALBUM_COVER)
     }
