@@ -13,7 +13,6 @@ import co.tpcreative.supersafe.common.extension.isFileExist
 import co.tpcreative.supersafe.common.extension.readFile
 import co.tpcreative.supersafe.common.helper.SQLHelper
 import co.tpcreative.supersafe.common.services.SuperSafeApplication
-import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.common.views.SquaredImageView
 import co.tpcreative.supersafe.common.views.SquaredView
 import co.tpcreative.supersafe.model.*
@@ -48,15 +47,12 @@ class AlbumCoverSection  constructor(@NonNull val context : Context, @NonNull va
 
     override fun onBindItemViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val viewHolder = holder as ItemViewHolder
-        Utils.Log(TAG,"Changed $position")
         viewHolder.mPosition = position
         try {
             val data: AlbumCoverModel = list[position]
             when(data.type){
                 EnumTypeObject.CATEGORY -> {
-                    Utils.Log(TAG,"category type... ${data.type.name}")
                     val categoryData = data.category!!
-                    Utils.Log(TAG,"category is... ${categoryData.isChecked}")
                     if (categoryData.isChecked) {
                         previousPositionOfCategory = "$position"
                         viewHolder.viewAlpha.alpha = 0.5f
