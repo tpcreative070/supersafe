@@ -239,7 +239,6 @@ object Utils {
                         override fun onFailed() {
                             ls.onError()
                         }
-
                         override fun onSuccessful(path: String?) {}
                         override fun onSuccessful(position: Int) {}
                     })

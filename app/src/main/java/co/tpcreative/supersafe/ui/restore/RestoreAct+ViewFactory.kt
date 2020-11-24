@@ -13,6 +13,9 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_restore.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 fun RestoreAct.initUI(){
     TAG = this::class.java.simpleName
@@ -20,9 +23,6 @@ fun RestoreAct.initUI(){
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     edtPreviousPIN?.addTextChangedListener(mTextWatcher)
     edtPreviousPIN?.setOnEditorActionListener(this)
-    presenter = RestorePresenter()
-    presenter?.bindView(this)
-    presenter?.onGetData()
 
     btnRestoreNow.setOnClickListener {
         val pin: String? = SuperSafeApplication.getInstance().readKey()
@@ -51,37 +51,25 @@ fun RestoreAct.initUI(){
     }
 }
 
-fun RestoreAct.onRestore() {
-    subscriptions = Observable.create<Any?> { subscriber: ObservableEmitter<Any?>? ->
-        Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeBackup(), SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
-            override fun onCompleted() {
-                subscriber?.onNext(true)
-                subscriber?.onComplete()
-                Utils.Log(TAG, "Exporting successful")
-                Utils.setUserPreShare(presenter?.mUser)
-                Navigator.onMoveToMainTab(this@onRestore,false)
-                finish()
-            }
+fun RestoreAct.onRestore()  = CoroutineScope(Dispatchers.Main).launch{
+    val mUser = SuperSafeApplication.getInstance().readUseSecret()
+    onStartProgressing()
+    Utils.onExportAndImportFile(SuperSafeApplication.getInstance().getSuperSafeBackup(), SuperSafeApplication.getInstance().getSuperSafeDataBaseFolder(), object : ServiceManager.ServiceManagerSyncDataListener {
+        override fun onCompleted() {
+            Utils.Log(TAG, "Exporting successful")
+            Utils.setUserPreShare(mUser)
+            Navigator.onMoveToMainTab(this@onRestore,false)
+            finish()
+        }
+        override fun onError() {
+            Utils.Log(TAG, "Exporting error")
+        }
 
-            override fun onError() {
-                Utils.Log(TAG, "Exporting error")
-                subscriber?.onNext(true)
-                subscriber?.onComplete()
-            }
-
-            override fun onCancel() {
-                subscriber?.onNext(true)
-                subscriber?.onComplete()
-            }
-        })
-    }
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .observeOn(Schedulers.io())
-            .subscribe {
-                ServiceManager.getInstance()?.onStartService()
-                onStopProgressing()
-            }
+        override fun onCancel() {
+        }
+    })
+    ServiceManager.getInstance()?.onStartService()
+    onStopProgressing()
 }
 
 fun RestoreAct.shake() {
