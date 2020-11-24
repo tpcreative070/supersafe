@@ -96,7 +96,8 @@ class CloudManagerAct : BaseGoogleApi(), CompoundButton.OnCheckedChangeListener{
         if (!isPauseCloudSync) {
             ServiceManager.getInstance()?.onPreparingSyncData()
         }
-        if (isDownload) {
+        /*Check disable saver func*/
+        if (isDownload && !isSpaceSaver) {
             /*Stopping saver saver*/
             Utils.stoppingSaverSpace()
             ServiceManager.getInstance()?.onPreparingSyncData()
