@@ -3,7 +3,6 @@ import android.os.CountDownTimer
 import co.tpcreative.supersafe.common.util.Utils
 import co.tpcreative.supersafe.model.EnumStatus
 import co.tpcreative.supersafe.model.User
-import com.google.gson.Gson
 
 class SingletonResetPin {
     var waitingLeft: Long = 0
@@ -16,8 +15,6 @@ class SingletonResetPin {
         }
         ServiceManager.getInstance()?.onStartService()
         ServiceManager.getInstance()?.setIsWaitingSendMail(true)
-        val mUser: User? = Utils.getUserInfo()
-        Utils.Log(TAG, "Start " + Gson().toJson(mUser))
         mCountDownTimer = object : CountDownTimer(value, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
@@ -25,17 +22,13 @@ class SingletonResetPin {
                 Utils.Log(TAG, "" + secondsRemaining)
                 Utils.onPushEventBus(EnumStatus.WAITING_LEFT)
             }
-
             override fun onFinish() {
                 Utils.Log(TAG, "Finish :")
                 val mUser: User? = Utils.getUserInfo()
-                Utils.Log(TAG, Gson().toJson(mUser))
                 mUser?.isWaitingSendMail = true
                 Utils.setUserPreShare(mUser)
                 mCountDownTimer = null
                 ServiceManager.getInstance()?.onSendEmail()
-
-
                 ServiceManager.getInstance()?.setIsWaitingSendMail(false)
                 Utils.onPushEventBus(EnumStatus.WAITING_DONE)
             }
