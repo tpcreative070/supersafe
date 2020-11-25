@@ -92,7 +92,6 @@ fun PremiumAct.initUI(){
     })
 }
 
-
 fun PremiumAct.onUpdatedView() {
     val isPremium: Boolean = Utils.isPremium()
     if (isPremium) {
@@ -176,7 +175,6 @@ fun PremiumAct.askWarningFakeCheckout() {
     val dialog = dialogBuilder.create()
     dialog.show()
 }
-
 
 fun PremiumAct.onStartInAppPurchase() {
     bp = BillingProcessor(this, Utils.GOOGLE_CONSOLE_KEY, this)

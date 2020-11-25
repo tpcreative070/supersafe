@@ -1,22 +1,16 @@
 package co.tpcreative.supersafe.ui.player
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import androidx.core.content.ContextCompat
 import co.tpcreative.supersafe.R
 import co.tpcreative.supersafe.common.Navigator
 import co.tpcreative.supersafe.common.activity.BasePlayerActivity
 import co.tpcreative.supersafe.common.controller.PrefsController
-import co.tpcreative.supersafe.common.presenter.BaseView
 import co.tpcreative.supersafe.common.util.Utils
-import co.tpcreative.supersafe.model.EmptyModel
-import co.tpcreative.supersafe.model.EnumFormatType
-import co.tpcreative.supersafe.model.EnumStatus
-import co.tpcreative.supersafe.model.ThemeApp
+import co.tpcreative.supersafe.model.*
+import co.tpcreative.supersafe.viewmodel.PlayerViewModel
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.source.MediaSource
 import kotlinx.android.synthetic.main.activity_player.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -26,18 +20,18 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.ItemSelectedListener {
+class PlayerAct : BasePlayerActivity(), PlayerAdapter.ItemSelectedListener {
     var mCipher: Cipher? = null
     var mSecretKeySpec: SecretKeySpec? = null
     var mIvParameterSpec: IvParameterSpec? = null
     var mEncryptedFile: File? = null
-    var presenter: PlayerPresenter? = null
     var player: SimpleExoPlayer? = null
     var adapter: PlayerAdapter? = null
     var lastWindowIndex = 0
     var isPortrait = false
     var seekTo: Long = 0
     val themeApp: ThemeApp? = ThemeApp.getInstance()?.getThemeInfo()
+    lateinit var viewModel: PlayerViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -52,19 +46,13 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
         player?.seekToDefaultPosition(position)
     }
 
-    fun onUpdatedUI(position: Int) {
-        for (i in presenter?.mList!!.indices) {
-            presenter?.mList?.get(i)?.isChecked = i == position
-        }
-        adapter?.notifyDataSetChanged()
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: EnumStatus?) {
         when (event) {
             EnumStatus.FINISH -> {
                 Navigator.onMoveToFaceDown(this)
             }
+            else -> Utils.Log(TAG, "Nothing")
         }
     }
 
@@ -80,7 +68,6 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
         super.onDestroy()
         Utils.Log(TAG, "OnDestroy")
         EventBus.getDefault().unregister(this)
-        presenter?.unbindView()
         if (player != null) {
             if (animationPlayer != null) {
                 animationPlayer?.stopNotesFall()
@@ -97,60 +84,13 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
         onFaceDown(isFaceDown)
     }
 
-
-    override fun onStartLoading(status: EnumStatus) {}
-    override fun onStopLoading(status: EnumStatus) {}
-    override fun getContext(): Context? {
-        return applicationContext
-    }
-
-    override fun onError(message: String?, status: EnumStatus?) {}
-    override fun onError(message: String?) {}
-    override fun onSuccessful(message: String?) {}
-
-    override fun onSuccessful(message: String?, status: EnumStatus?) {
-        when (status) {
-            EnumStatus.PLAY -> {
-                mEncryptedFile = File(presenter?.mItems?.getOriginal())
-                Utils.Log(TAG, mEncryptedFile!!.getAbsolutePath())
-                if (mCipher == null) {
-                    Utils.Log(TAG, " mcipher is null")
-                    return
-                }
-                when (EnumFormatType.values()[presenter?.mItems?.formatType!!]) {
-                    EnumFormatType.AUDIO -> {
-                        animationPlayer?.startNotesFall()
-                        animationPlayer?.visibility = View.VISIBLE
-                        playerView?.setBackgroundResource(R.color.yellow_700)
-                        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    }
-                    EnumFormatType.VIDEO -> {
-                        playerView?.setBackgroundColor(ContextCompat.getColor(this,R.color.black))
-                        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    }
-                    else -> Utils.Log(TAG,"Nothing")
-                }
-                tvTitle?.text = presenter?.mItems?.title
-                adapter?.setDataSource(presenter?.mList)
-                playVideo()
-            }
-        }
-    }
-
-    override fun getActivity(): Activity? {
-        return this
-    }
-
-
-    override fun onSuccessful(message: String?, status: EnumStatus?, `object`: EmptyModel?) {}
-    override fun onSuccessful(message: String?, status: EnumStatus?, list: MutableList<EmptyModel>?) {}
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val seekPosition: Long? = player?.getCurrentPosition()
+        val seekPosition: Long? = player?.currentPosition
         outState.putBoolean(getString(R.string.key_rotate), isPortrait)
         PrefsController.putLong(getString(R.string.key_seek_to), seekPosition!!.toLong())
         PrefsController.putInt(getString(R.string.key_lastWindowIndex), player!!.currentWindowIndex)
-        Utils.Log(TAG, "Saved------------------------ " + seekPosition + " - " + player?.getCurrentWindowIndex())
+        Utils.Log(TAG, "Saved------------------------ " + seekPosition + " - " + player?.currentWindowIndex)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -158,4 +98,12 @@ class PlayerAct : BasePlayerActivity(), BaseView<EmptyModel>, PlayerAdapter.Item
         isPortrait = savedInstanceState.getBoolean(getString(R.string.key_rotate), false)
         Utils.Log(TAG, "Restore $seekTo")
     }
+
+    val dataSource: MutableList<ItemModel>
+        get() {
+            return adapter?.getDataSource() ?: mutableListOf()
+        }
+
+    val mediaDataSource : MutableList<MediaSource> = mutableListOf()
 }
+
